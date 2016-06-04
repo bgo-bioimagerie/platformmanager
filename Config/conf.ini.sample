@@ -1,0 +1,16 @@
+; Configuration for dev
+
+[Installation]
+rootWeb = /platformmanager/
+saveImages = disable
+
+[BD]
+dsn = ''
+login = root
+pwd = ""
+
+[Modules]
+modules[] = "core"
+
+[Company]
+name = "H2P2"

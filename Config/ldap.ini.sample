@@ -1,0 +1,6 @@
+; Configuration for ldap
+ldapAdress = "ldapglobal.univ-rennes1.fr"
+ldapPort = "389"
+ldapId = ""
+ldapPwd = ""
+ldapBaseDN = "ou=people,dc=univ-rennes1,dc=fr"
