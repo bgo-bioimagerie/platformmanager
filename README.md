@@ -1,6 +1,3 @@
-sygrrif
-=======
-
-A ressource management and booking system including fee
-genomics branch of syGRRif
 # platformmanager
+
+Platform-Manager is a database web application to manage technological platform data: Resouces management, booking, services, shared files, bibliography...
