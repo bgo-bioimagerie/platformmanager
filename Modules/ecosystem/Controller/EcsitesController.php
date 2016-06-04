@@ -35,14 +35,8 @@ class EcsitesController extends CoresecureController {
     public function indexAction() {
         $lang = $this->getLanguage();
 
-        // get sort action
-        $sortentry = "id";
-        if ($this->request->isParameterNotEmpty('actionid')) {
-            $sortentry = $this->request->getParameter("actionid");
-        }
-
         // get the user list
-        $unitsArray = $this->siteModel->getAll($sortentry);
+        $unitsArray = $this->siteModel->getAll("name");
 
         $table = new TableView();
         $table->addLineEditButton("ecsitesedit");
@@ -103,25 +97,47 @@ class EcsitesController extends CoresecureController {
 
     public function usersAction($id_site) {
 
+        $lang = $this->getLanguage();
         // get all the admins for a given site
         $siteAdmins = $this->siteModel->getSiteAdmins($id_site);
 
         $modelUser = new CoreUser();
         $users = $modelUser->getActiveUsers("name");
+        $choicesU = array(); $choicesidU = array();
+        foreach($users as $user){
+            $choicesU[] = $user["name"] . " " . $user["firstname"];
+            $choicesidU[] = $user["id"];
+        }
+        
+        $admIds = array(); $admStatus = array();
+        foreach($siteAdmins as $adm){
+            $admStatus[] = $adm["id_status"];
+            $admIds[] = $adm["id_user"];
+            
+        }
 
         $siteInfo = $this->siteModel->get($id_site);
-
+        
+        $form = new Form($this->request, "usersAction");
+        $form->setTitle(EcosystemTranslator::Managers_for_site($lang) . ": " . $siteInfo["name"]);
+        $form->addHidden("id_site", $siteInfo["id"]);
+        
+        $formAdd = new FormAdd($this->request, "usersActionList");
+        $formAdd->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $admIds);
+        $formAdd->addSelect("id_status", CoreTranslator::Status($lang), array(EcosystemTranslator::Manager($lang), EcosystemTranslator::Admin($lang)), array(3,4), $admStatus);
+        $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
+        $form->setFormAdd($formAdd);  
+        $form->setValidationButton(CoreTranslator::Save($lang), "ecsitesuserquery");
+        $form->setButtonsWidth(2, 9);
+        
         // view
-        $lang = $this->getLanguage();
+        $formHtml = $form->getHtml($lang);
         $this->render(array(
-            'admins' => $siteAdmins,
-            'users' => $users,
-            'siteInfo' => $siteInfo,
-            'lang' => $lang
+            'formHtml' => $formHtml
                 ));
     }
 
-    public function siteusersquery() {
+    public function usersqueryAction() {
 
         $lang = $this->getLanguage();
 
@@ -129,14 +145,14 @@ class EcsitesController extends CoresecureController {
         $id_user = $this->request->getParameter("id_user");
         $id_status = $this->request->getParameter("id_status");
 
-        $modelSite = new CoreSite();
+        $modelSite = new EcSite();
         $modelSite->removeSiteAdmins($id_site);
 
         for ($i = 0; $i < count($id_user); $i++) {
             $modelSite->addUserToSite($id_user[$i], $id_site, $id_status[$i]);
         }
 
-        $_SESSION["message"] = CoreTranslator::Siteadminchangemessage($lang);
+        $_SESSION["message"] = EcosystemTranslator::Siteadminchangemessage($lang);
         $this->redirect("ecsitesusers/" .$id_site);
         //$this->siteusers($id_site);
     }

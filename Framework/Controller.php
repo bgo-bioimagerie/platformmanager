@@ -79,6 +79,7 @@ abstract class Controller
         if ($action != null) {
         	$actionView = $action . "Action";
         }
+        
         $classController = get_class($this);
         $controllerView = str_replace("Controller", "", $classController);
 

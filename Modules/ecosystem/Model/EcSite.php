@@ -52,6 +52,11 @@ class EcSite extends Model {
             return $this->runRequest($sql, array($id_site))->fetchAll();
         }
         
+        public function getSiteAdminsId($id_site){
+            $sql = "SELECT id_user FROM ec_j_user_site WHERE id_site=? AND id_status>=3";
+            return $this->runRequest($sql, array($id_site))->fetchAll();
+        }
+        
         public function setUserToSite($id_user, $id_site, $id_status){
             if ($this->isUserSite($id_user, $id_site)){
                 $this->updateUserSite($id_user, $id_site, $id_status);

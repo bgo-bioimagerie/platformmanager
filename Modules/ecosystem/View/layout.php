@@ -20,6 +20,7 @@
     require_once 'Modules/core/Controller/CorenavbarController.php';
     $navController = new CorenavbarController();
     echo $navController->navbar();
+    include 'Modules/ecosystem/View/navbar.php';
     ?>
     <?php endblock() ?>
 

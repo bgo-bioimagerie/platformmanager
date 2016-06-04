@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Request.php';
+require_once 'Framework/FormAdd.php';
+require_once 'Framework/FormHtml.php';
 
 /**
  * Class allowing to generate and check a form html view. 
@@ -51,6 +53,8 @@ class Form {
     private $useDownload;
     private $isDate;
     private $isTextArea;
+    private $formAdd;
+    private $isFormAdd;
 
     /**
      * Constructor
@@ -69,6 +73,7 @@ class Form {
         $this->cancelURL = "";
         $this->deleteURL = "";
         $this->isTextArea = false;
+        $this->isFormAdd = false;
 
         $this->parseRequest = false;
         $formID = $request->getParameterNoException("formid");
@@ -385,43 +390,38 @@ class Form {
         $this->isTextArea = true;
         $this->useJavascript[] = $userichtxt;
     }
+    
+    public function setFormAdd(FormAdd $formAdd){
+        $this->formAdd = $formAdd;
+        $this->types[] = "formAdd";
+        $this->names[] = "";
+        $this->labels[] = "";
+        $this->values[] = "";
+        $this->isMandatory[] = false;
+        $this->choices[] = array();
+        $this->choicesid[] = array();
+        $this->validated[] = true;
+        $this->enabled[] = "";
+        $this->useJavascript[] = false;
+        $this->isFormAdd = true;
+    }
 
     /**
      * Generate the html code
      * @return string
      */
-    public function getHtml($lang = "Fr") {
+    public function getHtml($lang = "en") {
 
         $html = "";
 
-        // form title
-        if ($this->title != "") {
-            $html .= "<div class=\"page-header\">";
-            $html .= "<h1>" . $this->title;
-            if ($this->subtitle != "") {
-                $html .= "<br/><small>" . $this->subtitle . "</small>";
-            }
-            $html .= "</h1>";
-            $html .= "</div>";
-        }
-
-        if ($this->errorMessage != "") {
-            $html .= "<div class=\"alert alert-danger text-center\">";
-            $html .= "<p>" . $this->errorMessage . "</p>";
-            $html .= "</div>";
-        }
-
-        // form header
-        if (!$this->useDownload) {
-            $html .= "<form role=\"form\" class=\"form-horizontal\" action=\"" . $this->validationURL . "\" method=\"post\">";
-        } else {
-            $html .= "<form role=\"form\" class=\"form-horizontal\" action=\"" . $this->validationURL . "\" method=\"post\" enctype=\"multipart/form-data\">";
-        }
-
-        // form id
-        $html .= "<input class=\"form-control\" type=\"hidden\" name=\"formid\" value=\"" . $this->id . "\" />";
-
-
+        $formHtml = new FormHtml();
+        
+        $html .= $formHtml->title($this->title, $this->subtitle);
+        $html .= $formHtml->errorMessage($this->errorMessage);
+        $html .= $formHtml->formHeader($this->validationURL, $this->useDownload);
+        $html .= $formHtml->id($this->id);
+        
+        // fields
         for ($i = 0; $i < count($this->types); $i++) {
 
             $required = "";
@@ -433,157 +433,65 @@ class Form {
                 $validated = "alert alert-danger";
             }
 
-            if ($this->types[$i] == "separator") {
-                $html .= "<div class=\"page-header\">";
-                $html .= "<h3>" . $this->names[$i] . "</h3>";
-                $html .= "</div>";
+            if ($this->types[$i] == "separator"){
+                $html .= $formHtml->separator($this->names[$i], 3);
             }
-            if ($this->types[$i] == "separator2") {
-                $html .= "<div class=\"page-header\">";
-                $html .= "<h5>" . $this->names[$i] . "</h5>";
-                $html .= "</div>";
+            if ($this->types[$i] == "separator2"){
+                $html .= $formHtml->separator($this->names[$i], 5);
             }
             if ($this->types[$i] == "comment") {
-                $html .= "<div >";
-                $html .= "<p>" . $this->names[$i] . "</p>";
-                $html .= "</div>";
+                $html .= $formHtml->comment($this->names[$i]);
             }
-
             if ($this->types[$i] == "hidden") {
-                $html .= "<input class=\"form-control\" type=\"hidden\" name=\"" . $this->names[$i] . "\"";
-                $html .= " value=\"" . $this->values[$i] . "\"" . $required;
-                $html .= "/>";
+                $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= "<div class=\"form-group" . $validated . "\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "<input class=\"form-control\" type=\"text\" name=\"" . $this->names[$i] . "\"";
-                $html .= " value=\"" . $this->values[$i] . "\"" . $required . " " . $this->enabled[$i];
-                $html .= "/>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "password") {
-                $html .= "<div class=\"form-group" . $validated . "\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "<input class=\"form-control\" type=\"password\" name=\"" . $this->names[$i] . "\"";
-                $html .= " value=\"" . $this->values[$i] . "\"" . $required . " " . $this->enabled[$i];
-                $html .= "/>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "date") {
-
-                $html .= "<div class=\"form-group" . $validated . "\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-
-                $html .= "<div class='col-xs-" . $this->labelWidth . "'>";
-                $html .= "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-                $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" name=\"" . $this->names[$i] . "\" value=\"" . $this->values[$i] . "\"/>";
-                $html .= "          <span class=\"input-group-addon\">";
-                $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
-                $html .= "          </span>";
-                $html .= "</div>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->date($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "color") {
-                $html .= "<div class=\"form-group" . $validated . "\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "<input class=\"form-control\" type=\"color\" name=\"" . $this->names[$i] . "\"";
-                $html .= " value=\"" . $this->values[$i] . "\"" . $required;
-                $html .= "/>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->color($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "email") {
-                $html .= "<div class=\"form-group " . $validated . "\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "<input class=\"form-control\" type=\"text\" name=\"" . $this->names[$i] . "\"";
-                $html .= " value=\"" . $this->values[$i] . "\"" . $required;
-                $html .= "/>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "number") {
-                $html .= "<div class=\"form-group\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "<input class=\"form-control\" type=\"number\" name=\"" . $this->names[$i] . "\"";
-                $html .= " value=\"" . $this->values[$i] . "\"" . $required;
-                $html .= "/>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "textarea") {
-                $divid = "";
-                if ($this->useJavascript[$i]) {
-                    $divid = "id='editor'";
-                }
-                $html .= "<div class=\"form-group\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "<textarea " . $divid . " class=\"form-control\" name=\"" . $this->names[$i] . "\">" . $this->values[$i] . "</textarea>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "download") {
-                $html .= "<div class=\"form-group\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= " <input type=\"file\" name=\"" . $this->names[$i] . "\" id=\"" . $this->names[$i] . "\"> ";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->download($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "downloadbutton") {
-                $html .= "<div class=\"form-group\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href = '" . $this->names[$i] . "'\">" . $this->labels[$i] . "</button>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->downloadbutton($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "select") {
-                $html .= "<div class=\"form-group\">";
-                $html .= "<label class=\"control-label col-xs-" . $this->labelWidth . "\">" . $this->labels[$i] . "</label>";
-                $html .= "	<div class=\"col-xs-" . $this->inputWidth . "\">";
-                $html .= "	<select class=\"form-control\" name=\"" . $this->names[$i] . "\">";
-                for ($v = 0; $v < count($this->choices[$i]); $v++) {
-                    $selected = "";
-                    if ($this->values[$i] == $this->choicesid[$i][$v]) {
-                        $selected = "selected=\"selected\"";
-                    }
-                    $html .= "<OPTION value=\"" . $this->choicesid[$i][$v] . "\"" . $selected . ">" . $this->choices[$i][$v] . "</OPTION>";
-                }
-                $html .= "</select>";
-                $html .= "</div>";
-                $html .= "</div>";
+                $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+            }
+            if ($this->types[$i] == "formAdd"){
+                $html .= $this->formAdd->getHtml($lang);
             }
         }
 
         // buttons area
-        $html .= "<div class=\"col-xs-" . $this->buttonsWidth . " col-xs-offset-" . $this->buttonsOffset . "\">";
-        if ($this->validationURL != "") {
-            $html .= "<input type=\"submit\" class=\"btn btn-primary\" value=\"" . $this->validationButtonName . "\" />";
-        }
-        if ($this->cancelURL != "") {
-            $html .= "<button type=\"button\" onclick=\"location.href='" . $this->cancelURL . "'\" class=\"btn btn-default\">" . $this->cancelButtonName . "</button>";
-        }
-        if ($this->deleteURL != "") {
-            $html .= "<button type=\"button\" onclick=\"location.href='" . $this->deleteURL . "/" . $this->deleteID . "'\" class=\"btn btn-danger\">" . $this->deleteButtonName . "</button>";
-        }
-        $html .= "</div>";
-        $html .= "</form>";
+        $html .= $formHtml->buttons($this->validationURL, $this->validationButtonName, $this->cancelURL, $this->cancelButtonName, $this->deleteURL, $this->deleteID, $this->deleteButtonName, $this->buttonsWidth, $this->buttonsOffset);
+        $html .= $formHtml->formFooter();
 
         if ($this->isDate == true) {
-            $html .= file_get_contents("Framework/timepicker_script.php");
+            $html .= $formHtml->timePickerScript();
         }
         if ($this->isTextArea == true) {
-            $html .= file_get_contents("Framework/textarea_script.php");
+            $html .= $formHtml->textAreaScript();
+        }
+        if ($this->isFormAdd == true){
+            $html .= $this->formAdd->getJavascript();
         }
 
         return $html;

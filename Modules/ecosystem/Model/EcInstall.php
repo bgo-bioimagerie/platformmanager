@@ -30,6 +30,7 @@ class EcInstall extends Model {
         
         $userModel = new EcUser();
         $userModel->createTable();
+        $userModel->importCoreUsers();
 
         $unitModel = new EcUnit();
         $unitModel->createTable();

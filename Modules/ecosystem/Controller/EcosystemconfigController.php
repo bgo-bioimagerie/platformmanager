@@ -49,6 +49,17 @@ class EcosystemconfigController extends CoresecureController {
             $this->redirect("ecosystemconfig");
             return;
         }
+        
+        // install form
+        $modelCoreConfig = new CoreConfig();
+        $formMenuColor = $this->menuColorForm($modelCoreConfig, $lang);
+        if ($formMenuColor->check()) {
+            $modelCoreConfig->setParam("ecosystemmenucolor", $this->request->getParameter("ecosystemmenucolor"));
+            $modelCoreConfig->setParam("ecosystemmenucolortxt", $this->request->getParameter("ecosystemmenucolortxt"));
+            
+            $this->redirect("ecosystemconfig");
+            return;
+        }
 
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang);
@@ -63,7 +74,8 @@ class EcosystemconfigController extends CoresecureController {
         }
 
         // view
-        $forms = array($formInstall->getHtml($lang), $formMenusactivation->getHtml($lang));
+        $forms = array($formInstall->getHtml($lang), $formMenusactivation->getHtml($lang),
+                        $formMenuColor->getHtml($lang));
         $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
@@ -108,4 +120,18 @@ class EcosystemconfigController extends CoresecureController {
         return $form;
     }
 
+    public function menuColorForm($modelCoreConfig, $lang){
+        $ecmenucolor = $modelCoreConfig->getParam("ecosystemmenucolor");
+        $ecmenucolortxt = $modelCoreConfig->getParam("ecosystemmenucolortxt");
+        
+        $form = new Form($this->request, "menuColorForm");
+        $form->addSeparator(EcosystemTranslator::color($lang));
+        $form->addColor("ecosystemmenucolor", EcosystemTranslator::menu_color($lang), false, $ecmenucolor);
+        $form->addColor("ecosystemmenucolortxt", EcosystemTranslator::text_color($lang), false, $ecmenucolortxt);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig");
+        $form->setButtonsWidth(2, 9);
+        
+        return $form;
+    }
 }

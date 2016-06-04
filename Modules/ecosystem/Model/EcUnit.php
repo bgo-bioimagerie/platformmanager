@@ -53,7 +53,7 @@ class EcUnit extends Model {
         $sql = "SELECT units.* ,
     				   belongings.name AS belonging
     			FROM ec_units AS units
-    			INNER JOIN core_belongings AS belongings ON units.id_belonging = belongings.id
+    			INNER JOIN ec_belongings AS belongings ON units.id_belonging = belongings.id
     			ORDER BY " . $sortentry . " ASC;";
 
         $user = $this->runRequest($sql);
