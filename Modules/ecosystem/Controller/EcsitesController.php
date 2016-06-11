@@ -25,6 +25,7 @@ class EcsitesController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+        $this->checkAuthorizationMenu("sites");
         $this->siteModel = new EcSite ();
     }
 

@@ -25,6 +25,7 @@ class TableView {
     private $linesButtonName;
     private $colorIndexes;
     private $textMaxLength;
+    private $numFixedCol;
 
     /**
      * Constructor
@@ -43,6 +44,7 @@ class TableView {
         $this->exportAction = "";
         $this->iscsv = false;
         $this->textMaxLength = 0;
+        $this->numFixedCol = 0;
     }
 
     /**
@@ -51,6 +53,11 @@ class TableView {
     public function setTitle($title) {
         $this->title = $title;
     }
+    
+    public function setFixedColumnsNum($num){
+        $this->numFixedCol = $num;
+    }
+    
 
     public function setTextMaxLength($value) {
         $this->textMaxLength = $value;
@@ -170,11 +177,12 @@ class TableView {
             $html .= "</div>";
         }
 
-        $html .= "<table id=\"dataTable\" class=\"table table-striped table-bordered\">";
+        $html .= "<table id=\"dataTable\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
 
         // table header
         $html .= "<thead>";
         $html .= "<tr>";
+        
         foreach ($headers as $key => $value) {
             $html .= "<th>" . $value . "</th>";
         }
@@ -249,13 +257,17 @@ class TableView {
     }
 
     private function addSearchHeader($html, $headerscount) {
+        
+        $js = file_get_contents("Framework/TableScript.php");
+        return str_replace("numFixedCol", $this->numFixedCol, $js);
+        
         $html .= "<head>";
 
         $html .= "<link rel=\"stylesheet\" href=\"externals/dataTables/dataTables.bootstrap.css\">";
         $html .= "<link rel=\"stylesheet\" href=\"externals/dataTables/dataTables.fixedHeader.css\">";
 
         $html .= "<script src=\"externals/jquery-1.11.1.js\"></script>";
-        $html .= "<script src=\"externals/dataTables/jquery.dataTables.js\"></script>";
+        $html .= "<script src=\"externals/dataTables/jquery.dataTables.min.js\"></script>";
         $html .= "<script src=\"externals/dataTables/dataTables.fixedHeader.min.js\"></script>";
         $html .= "<script src=\"externals/dataTables/dataTables.bootstrap.js\"></script>";
 

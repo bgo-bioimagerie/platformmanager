@@ -41,7 +41,8 @@ class CoreUser extends Model {
     public function add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
 
         $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active) VALUES(?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active));
+        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, $status_id, $date_end_contract, $is_active));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {

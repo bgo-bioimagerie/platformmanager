@@ -5,8 +5,8 @@
  * 
  * @author Sylvain Prigent
  */
-class Configuration
-{
+class Configuration {
+
     /** Configuration parameters table */
     private static $parameters;
 
@@ -17,13 +17,11 @@ class Configuration
      * @param string $defaultValue Value returned by default
      * @return string Value of the configuration parameter
      */
-    public static function get($name, $defaultValue = null)
-    {
+    public static function get($name, $defaultValue = null) {
         $parameters = self::getParameters();
         if (isset($parameters[$name])) {
             $value = $parameters[$name];
-        }
-        else {
+        } else {
             $value = $defaultValue;
         }
         return $value;
@@ -35,30 +33,30 @@ class Configuration
      * @return array Table containing the configuration parameters
      * @throws Exception If the configuration file cannot be located
      */
-    private static function getParameters()
-    {
+    private static function getParameters() {
         if (self::$parameters == null) {
 
-        	$urlFile = self::getConfigFile();
+            $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
                 throw new Exception("Unable to find the configuration file");
-            }
-            else {
+            } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
         }
         return self::$parameters;
     }
-    
-    public static function getConfigFile(){
-    	$urlFile = "Config/dev.ini";
-    	if (!file_exists($urlFile)) {
-    		$urlFile = "Config/conf.ini";
-    	}
-    	return $urlFile;
+
+    public static function getConfigFile() {
+        return "Config/conf.ini";
+    }
+
+    public static function read() {
+        return self::getParameters();
+    }
+
+    public static function write(array $config) {
+        $configd = var_export($config, true);
+        file_put_contents(self::getConfigFile(), "<?php return $configd ;");
     }
 
 }
-
-
-

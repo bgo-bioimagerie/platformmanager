@@ -174,7 +174,7 @@ class FormHtml {
         $html = "<div class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<button class=\"btn btn-default\" type=\"button\" onclick=\"location.href = '" . $name . "'\">" . $label . "</button>";
+        $html .= "<button class=\"btn  btn-default\" type=\"button\" onclick=\"location.href = '" . $name . "'\">" . $label . "</button>";
         $html .= "</div>";
         $html .= "</div>";
         return $html;

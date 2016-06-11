@@ -46,9 +46,16 @@ class FormAdd {
         $this->choicesid[] = $choicesid;
     }
 
-    public function getHtml($lang = "en") {
+    public function getHtml($lang = "en", $label = "", $labelWidth = 2, $inputWidth = 9) {
 
-        $html = "<table id=\"dataTable\" class=\"table table-striped\"> ";
+        $html = "";
+        if ($label != ""){
+            $html = "<div class=\"form-group\">";
+            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+            $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
+        }
+        
+        $html .= "<table id=\"dataTable\" class=\"table table-striped\"> ";
         $html .= "<thead>";
         $html .= "<tr>";
         $html .= "<th></th>";
@@ -90,10 +97,15 @@ class FormAdd {
         $html .= "</tbody>";
         $html .= "</table>";
         $html .= "<div class=\"col-md-6\">";
-        $html .= "<input type=\"button\" class=\"btn btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('dataTable')\"/>";
-        $html .= "<input type=\"button\" class=\"btn btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('dataTable')\"/>";
+        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('dataTable')\"/>";
+        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('dataTable')\"/>";
         $html .= "<br>";
         $html .= "</div>";
+        
+        if ($label != ""){
+            $html .= "</div>";
+            $html .= "</div>";
+        }
         return $html;
     }
 

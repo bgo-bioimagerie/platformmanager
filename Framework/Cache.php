@@ -96,15 +96,22 @@ class Cache extends Model {
      * @return type
      */
     protected function setCacheUrlDB($identifier, $url, $module, $controller, $action) {
+        
+        //echo "identifier = " . $identifier . "<br/>";
+        
         $id = $this->getChacheUrlID($identifier);
         //echo 'id = ' . $id . "<br/>";
         if ($id > 0) {
+            //echo "update cache_urls begin <br/>";
             $sql = "UPDATE cache_urls SET identifier=?, url=?, module=?, controller=?, action=? WHERE id=?";
             $this->runRequest($sql, array($identifier, $url, $module, $controller, $action, $id));
+            //echo "update cache_urls end <br/>";
         } else {
+            //echo "insert cache_urls begin <br/>";
             $sql = "INSERT INTO cache_urls (identifier, url, module, controller, action) VALUES(?,?,?,?,?) ";
             $this->runRequest($sql, array($identifier, $url, $module, $controller, $action));
             $id = $this->getDatabase()->lastInsertId();
+            //echo "insert cache_urls end <br/>";
         }
         return $id;
     }
@@ -118,14 +125,23 @@ class Cache extends Model {
      */
     protected function setCacheUrlGetDB($id_url, $name, $regexp) {
 
+        //echo "name = " . $name; echo "<br/>";
+        //echo "regexp = " . $regexp; echo "<br/>";
+        //echo "id_url = " . $id_url; echo "<br/>";
+        
         $id = $this->getChacheUrlGetID($id_url, $name);
+        //echo "id = "; print_r($id); echo "<br/>";
         if ($id > 0) {
+            //echo "UPDATE cache_urls_gets begin <br/>";
             $sql = "UPDATE cache_urls_gets SET `url_id`=?, `name`=?, `regexp`=? WHERE id=?";
             $this->runRequest($sql, array($id_url, $name, $regexp, $id));
+            //echo "UPDATE cache_urls_gets end <br/>";
         } else {
+            //echo "INSERT cache_urls_gets begin <br/>";
             $sql = "INSERT INTO cache_urls_gets (`url_id`, `name`, `regexp`) VALUES(?,?,?) ";
             $this->runRequest($sql, array($id_url, $name, $regexp));
             $id = $this->getDatabase()->lastInsertId();
+            //echo "INSERT cache_urls_gets end <br/>";
         }
         return $id;
     }
@@ -140,7 +156,8 @@ class Cache extends Model {
         $sql = "SELECT id FROM cache_urls_gets WHERE url_id=? AND name=?";
         $req = $this->runRequest($sql, array($id_url, $name));
         if ($req->rowCount() == 1) {
-            return $req->fetch();
+            $tmp = $req->fetch();
+            return $tmp[0];
         }
         return false;
     }

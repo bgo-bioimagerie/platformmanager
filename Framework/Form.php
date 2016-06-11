@@ -391,11 +391,11 @@ class Form {
         $this->useJavascript[] = $userichtxt;
     }
     
-    public function setFormAdd(FormAdd $formAdd){
+    public function setFormAdd(FormAdd $formAdd, $label = ""){
         $this->formAdd = $formAdd;
         $this->types[] = "formAdd";
         $this->names[] = "";
-        $this->labels[] = "";
+        $this->labels[] = $label;
         $this->values[] = "";
         $this->isMandatory[] = false;
         $this->choices[] = array();
@@ -476,7 +476,7 @@ class Form {
                 $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "formAdd"){
-                $html .= $this->formAdd->getHtml($lang);
+                $html .= $this->formAdd->getHtml($lang, $this->labels[$i], $this->labelWidth, $this->inputWidth);
             }
         }
 

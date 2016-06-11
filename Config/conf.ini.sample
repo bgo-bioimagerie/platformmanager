@@ -1,4 +1,4 @@
-; Configuration for dev
+; Configuration
 
 [Installation]
 rootWeb = /platformmanager/

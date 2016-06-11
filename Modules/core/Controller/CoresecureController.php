@@ -57,6 +57,13 @@ abstract class CoresecureController extends Controller {
         }
     }
     
+    public function isUserStatus($status){
+        if (intval ($_SESSION["user_status"]) >= intval($status)){
+            return true;
+        }
+        return false;
+    }
+    
     public function checkAuthorizationMenu($menuName){
         $auth = $this->isUserMenuAuthorized($menuName);
         if ($auth == 0) {

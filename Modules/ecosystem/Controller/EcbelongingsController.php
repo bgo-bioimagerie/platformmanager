@@ -25,6 +25,7 @@ class EcbelongingsController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+        $this->checkAuthorizationMenu("users/institutions");
         $this->belongingModel = new EcBelonging();
     }
 
