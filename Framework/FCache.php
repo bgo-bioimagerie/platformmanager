@@ -7,7 +7,7 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class Cache extends Model {
+class FCache extends Model {
 
     /**
      * Load the urls into the cach table

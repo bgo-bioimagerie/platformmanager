@@ -56,7 +56,7 @@ class CoremodulesmanagerController extends CoresecureController {
             "abstract" => CoreTranslator::Description($lang));
 
         $tableView = new TableView();
-        $tableView->setTitle(CoreTranslator::Modules_configuration($lang));
+        $tableView->setTitle(CoreTranslator::Modules_configuration($lang), 3);
         $tableView->addLineEditButton("coremodulesmanagerconfig");
         $tableHtml = $tableView->view($mods, $headers);
 

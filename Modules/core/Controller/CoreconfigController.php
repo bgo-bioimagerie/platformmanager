@@ -120,6 +120,26 @@ class CoreconfigController extends CoresecureController {
             return;
         }
         
+        $formNavbar = $this->navbarColorForm($modelCoreConfig, $lang);
+        if($formNavbar->check()){
+            
+            $modelCoreConfig->setParam("navbar_bg_color", $this->request->getParameter("navbar_bg_color"));
+            $modelCoreConfig->setParam("navbar_bg_highlight", $this->request->getParameter("navbar_bg_highlight"));
+            $modelCoreConfig->setParam("navbar_text_color", $this->request->getParameter("navbar_text_color"));
+            $modelCoreConfig->setParam("navbar_text_highlight", $this->request->getParameter("navbar_text_highlight"));
+            
+            $css = file_get_contents("Modules/core/Theme/navbar-fixed-top.css");
+            $css = str_replace("navbar_bg_color", $this->request->getParameter("navbar_bg_color"), $css);
+            $css = str_replace("navbar_bg_highlight", $this->request->getParameter("navbar_bg_highlight"), $css);
+            $css = str_replace("navbar_text_color", $this->request->getParameter("navbar_text_color"), $css);
+            $css = str_replace("navbar_text_highlight", $this->request->getParameter("navbar_text_highlight"), $css);
+
+            file_put_contents("data/core/theme/navbar-fixed-top.css", $css);
+        
+            $this->redirect("coreconfig");
+            return;
+        }
+        
         // backup form
         $formBackup = $this->backupForm($lang);
         if ($formBackup->check()){
@@ -134,7 +154,7 @@ class CoreconfigController extends CoresecureController {
             $formMenusactivation->getHtml($lang), $formDesactivateUser->getHtml($lang), 
             $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang), 
-            $formEmail->getHtml($lang), $formBackup->getHtml($lang));
+            $formEmail->getHtml($lang), $formNavbar->getHtml($lang), $formBackup->getHtml($lang));
         $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
@@ -273,6 +293,24 @@ class CoreconfigController extends CoresecureController {
         
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Run_backup($lang), "coreconfig");
+        return $form;
+    }
+    
+    protected function navbarColorForm($modelCoreConfig, $lang){
+        $navbar_bg_color = $modelCoreConfig->getParam("navbar_bg_color");
+        $navbar_bg_highlight = $modelCoreConfig->getParam("navbar_bg_highlight");
+        $navbar_text_color = $modelCoreConfig->getParam("navbar_text_color");
+        $navbar_text_highlight = $modelCoreConfig->getParam("navbar_text_highlight");
+        
+        $form = new Form($this->request, "navbarColorForm");
+        $form->addSeparator(CoreTranslator::menu_color($lang));
+        $form->addColor("navbar_bg_color", CoreTranslator::Background_color($lang), false, $navbar_bg_color);
+        $form->addColor("navbar_bg_highlight", CoreTranslator::Background_highlight($lang), false, $navbar_bg_highlight);
+        $form->addColor("navbar_text_color", CoreTranslator::Text_color($lang), false, $navbar_text_color);
+        $form->addColor("navbar_text_highlight", CoreTranslator::Text_highlight($lang), false, $navbar_text_highlight);
+        
+        $form->setButtonsWidth(2, 9);
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
         return $form;
     }
 }

@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="container">
+<div class="container" id="pm-form">
     
     <?php include "Modules/resources/View/Resources/edittabs.php" ?>
     <div class="col-xs-12"><p></p></div>

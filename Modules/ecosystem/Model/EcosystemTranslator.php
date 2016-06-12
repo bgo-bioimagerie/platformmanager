@@ -14,6 +14,13 @@ class EcosystemTranslator {
         }
         return "The Ecosystem module allows to manage sites, users and belongings";
     }
+    
+    public static function Ecosystem($lang){
+                if ($lang == "fr") {
+            return "Ecosystème";
+        }
+        return "Ecosystem";
+    }
 
     public static function Home($lang = "") {
         if ($lang == "fr") {

@@ -136,5 +136,61 @@ class ResourcesTranslator {
         return "Events";
     }
     
+    public static function Event_Types($lang){
+                if ($lang == "fr") {
+            return "Types d'évenement";
+        }
+        return "Event types";
+    }
+    
+        public static function Event_Type($lang){
+                if ($lang == "fr") {
+            return "Type d'évenement";
+        }
+        return "Event type";
+    }
+    
+    public static function States($lang){
+                if ($lang == "fr") {
+            return "Etats";
+        }
+        return "States";
+    }
+    
+    public static function State($lang){
+                if ($lang == "fr") {
+            return "Etat";
+        }
+        return "State";
+    }
+    
+    public static function Edit_Event_Type($lang){
+                if ($lang == "fr") {
+            return "Modifier type d'évenement";
+        }
+        return "Edit event type";
+    }
+    
+    public static function Comment($lang){
+                if ($lang == "fr") {
+            return "Commentaire";
+        }
+        return "Comment";
+    }
+    
+        public static function Add_event($lang){
+                if ($lang == "fr") {
+            return "Ajouter un évenement";
+        }
+        return "Add an event";
+    }
+    
+    public static function Edit_event_for($lang){
+                if ($lang == "fr") {
+            return "Modifier évenement pour la resource: ";
+        }
+        return "Edit event for:";
+    }
+    
     
  }

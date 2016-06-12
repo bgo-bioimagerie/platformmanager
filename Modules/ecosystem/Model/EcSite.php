@@ -37,6 +37,12 @@ class EcSite extends Model {
             
         }
         
+        public function getName($id) {
+            $sql = "SELECT name FROM ec_sites WHERE id=?";
+            $tmp = $this->runRequest($sql, array($id))->fetch();
+            return $tmp[0];
+        }
+        
         public function getUserManagingSites($id_user){
             $sql = "SELECT * FROM ec_sites WHERE id IN(SELECT id_site FROM ec_j_user_site WHERE id_user=? AND id_status>=3)";
             return $this->runRequest($sql, array($id_user))->fetchAll();

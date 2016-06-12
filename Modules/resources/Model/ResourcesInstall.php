@@ -4,6 +4,10 @@ require_once 'Framework/Model.php';
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/resources/Model/ReState.php';
+require_once 'Modules/resources/Model/ReEventType.php';
+require_once 'Modules/resources/Model/ReEvent.php';
+require_once 'Modules/resources/Model/ReEventData.php';
 
 /**
  * Class defining methods to install and initialize the core database
@@ -27,6 +31,18 @@ class ResourcesInstall extends Model {
         
         $model3 = new ResourceInfo();
         $model3->createTable();
+        
+        $model4 = new ReState();
+        $model4->createTable();
+        
+        $model5 = new ReEventType();
+        $model5->createTable();
+        
+        $model6 = new ReEvent();
+        $model6->createTable();
+        
+        $model7 = new ReEventData();
+        $model7->createTable();
         
         if (!file_exists('data/resources/')) {
             mkdir('data/resources/', 0777, true);

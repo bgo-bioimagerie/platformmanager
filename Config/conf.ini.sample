@@ -11,6 +11,9 @@ pwd = ""
 
 [Modules]
 modules[] = "core"
+modules[] = "ecosystem"
+modules[] = "dev"
+modules[] = "resources"
 
 [Company]
 name = "H2P2"

@@ -28,6 +28,12 @@ class ReCategory extends Model {
             $this->runRequest($sql, array($id))->fetch();
         }
         
+        public function getName($id) {
+            $sql = "SELECT name FROM re_category WHERE id=?";
+            $tmp = $this->runRequest($sql, array($id))->fetch();
+            return $tmp[0];
+        }
+        
         public function getAll($sort = "name"){
             $sql = "SELECT * FROM re_category ORDER BY ".$sort." ASC";
             return $this->runRequest($sql)->fetchAll();

@@ -7,7 +7,7 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreMenu.php';
-require_once 'Modules/Core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreUserSettings.php';
 
 /**
  * Class defining the Install model
@@ -20,15 +20,21 @@ class CoreInstall extends Model {
     
     public function createDatabase(){
         
-        $modelCache = new Cache();
+        $modelCache = new FCache();
         $modelCache->load();
         
         $modelConfig = new CoreConfig();
         $modelConfig->createTable();
-        $modelConfig->setParam("admin_email", "firstname.name@company.com");
-        $modelConfig->setParam("logo", "Modules/core/Themes/logo.jpg");        
-    	$modelConfig->setParam("home_title", "Platform-Manager");
-    	$modelConfig->setParam("home_message", "Connection");
+        
+        $modelConfig->initParam("admin_email", "firstname.name@company.com");
+        $modelConfig->initParam("logo", "Modules/core/Themes/logo.jpg");        
+    	$modelConfig->initParam("home_title", "Platform-Manager");
+    	$modelConfig->initParam("home_message", "Connection");
+        
+        $modelConfig->setParam("navbar_bg_color", "#e74c3c");
+        $modelConfig->setParam("navbar_bg_highlight", "#c0392b");
+        $modelConfig->setParam("navbar_text_color", "#ecf0f1");
+        $modelConfig->setParam("navbar_text_highlight", "#ffbbbc");
         
         $modelUser = new CoreUser();
         $modelUser->createTable();

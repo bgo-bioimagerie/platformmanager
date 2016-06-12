@@ -52,8 +52,15 @@ class ResourceInfo extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
     
+    public function getName($id){
+        $sql = "SELECT name FROM re_info WHERE id=?";
+        $tmp = $this->runRequest($sql, array($id))->fetch();
+        return $tmp[0];
+    }
+    
     public function set($id, $name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order){
-        if ($this->exists($id)){
+       
+        if (!$this->exists($id)){
             $sql = "INSERT INTO re_info (name, brand, type, desciption, id_category, id_area, id_site, display_order) "
                     . "VALUES (?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order));
@@ -73,5 +80,10 @@ class ResourceInfo extends Model {
             return true;
         }
         return false;
+    }
+    
+    public function delete($id){
+        $sql = "DELETE FROM re_info WHERE id=?";
+        $this->runRequest($sql, array($id));
     }
 }

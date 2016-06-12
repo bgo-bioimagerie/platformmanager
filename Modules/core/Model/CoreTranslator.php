@@ -42,6 +42,41 @@ class CoreTranslator {
 		return $date;
 	}
 	
+        public static function SQL_configuration($lang){
+		if ($lang == "fr"){
+			return "Configuration SQL";
+		}
+		return "SQL configuration";
+        }
+        
+        public static function this_will_edit_the_configuration_file($lang){
+		if ($lang == "fr"){
+			return "Cela va modifier le fichier de configuration (vérifier que www-data peut écrire dans ce fichier)";
+		}
+		return "This will edit the configuration file (make sure the file is writable by www-data)";
+        }
+        
+        public static function sql_host($lang){
+		if ($lang == "fr"){
+			return "adresse base sql";
+		}
+		return "sql host";
+        }
+        
+        public static function db_name($lang){
+		if ($lang == "fr"){
+			return "nom base de données";
+		}
+		return "database name";
+        }
+        
+        public static function Next($lang){
+		if ($lang == "fr"){
+			return "Suivant";
+		}
+		return "Next";
+        }
+        
 	
 	public static function Home($lang = ""){
 		if ($lang == "fr"){
@@ -1076,11 +1111,38 @@ class CoreTranslator {
         }
         
         public static function The_curent_password_is_not_correct($lang){
-                        if ($lang == "fr"){
+                if ($lang == "fr"){
 			return "Le mot de passe actuel n'est pas correct";
 		}
 		return "The curent password is not correct";
         }
         
+        public static function Date($lang){
+                if ($lang == "fr"){
+			return "Date";
+		}
+		return "Date";
+        }
+        
+        public static function Background_color($lang){
+                if ($lang == "fr"){
+			return "Couleur fond";
+		}
+		return "Background color";
+        }
+        
+        public static function Background_highlight($lang){
+                if ($lang == "fr"){
+			return "Couleur actif";
+		}
+		return "Background highlight";
+        }
+        
+        public static function Text_highlight($lang){
+                if ($lang == "fr"){
+			return "Text actif";
+		}
+		return "Text highlight";
+        }
         
 }

@@ -102,4 +102,10 @@ class CoreConfig extends Model {
             $this->addParam($key, $value);
         }
     }
+    
+    public function initParam($key, $value){
+        if (!$this->isKey($key)) {
+            $this->addParam($key, $value);
+        }
+    }
 }

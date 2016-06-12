@@ -3,7 +3,7 @@
 require_once 'Controller.php';
 require_once 'Request.php';
 require_once 'View.php';
-require_once 'Cache.php';
+require_once 'FCache.php';
 
 /**
  * Class that rout the input requests
@@ -15,7 +15,7 @@ class router {
     protected $modelCache;
 
     public function __construct() {
-        $this->modelCache = new Cache();
+        $this->modelCache = new FCache();
     }
 
     /**

@@ -27,6 +27,7 @@ class EcosystemRouting extends Routing{
         $this->addRoute("ecunitsdelete", "ecunitsdelete", "ecunits", "delete",  array("id"), array(""));
         
         // users
+        $this->addRoute("ecusers", "ecusers", "ecusers", "index");
         $this->addRoute("ecactiveusers", "ecactiveusers", "ecusers", "active");
         $this->addRoute("ecunactiveusers", "ecunactiveusers", "ecusers", "unactive");
         $this->addRoute("ecusersedit", "ecusersedit", "ecusers", "edit",  array("id"), array(""));

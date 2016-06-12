@@ -10,6 +10,7 @@ require_once 'Framework/Request.php';
 class TableView {
 
     private $title;
+    private $titleLevel;
     private $editURL;
     private $editIndex;
     private $useSearchVal;
@@ -50,8 +51,9 @@ class TableView {
     /**
      * Set the table title
      */
-    public function setTitle($title) {
+    public function setTitle($title, $level = 1) {
         $this->title = $title;
+        $this->titleLevel = $level;
     }
     
     public function setFixedColumnsNum($num){
@@ -173,7 +175,7 @@ class TableView {
 
         if ($this->title != "") {
             $html .= "<div class=\"page-header\">";
-            $html .= "<h1>" . $this->title . "</h1>";
+            $html .= "<h".$this->titleLevel.">" . $this->title . "</h".$this->titleLevel.">";
             $html .= "</div>";
         }
 

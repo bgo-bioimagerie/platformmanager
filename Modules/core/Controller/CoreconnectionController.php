@@ -5,8 +5,8 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreMenu.php';
 require_once 'Modules/core/Model/CoreLdap.php';
-require_once 'Modules/Core/Model/CoreTranslator.php';
-require_once 'Modules/Core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Modules/core/Model/CoreUserSettings.php';
 
 /**
  * Controler managing the user connection 

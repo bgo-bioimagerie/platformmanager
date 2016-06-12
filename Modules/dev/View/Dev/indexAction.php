@@ -4,7 +4,7 @@
 <?php startblock('content') ?>
 
 <div class="container">
-    
+    <div class="col-xs-12" id="pm-form">
         <?php 
     if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 
         $message = $_SESSION["message"];?>
@@ -27,6 +27,7 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <?php echo $htmlForm ?>
     </div>
+</div>
 </div>
 
 <?php endblock();

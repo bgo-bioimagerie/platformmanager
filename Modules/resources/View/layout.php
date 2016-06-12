@@ -1,5 +1,5 @@
 <!doctype html>
-<?php require_once 'Modules/core/View/layout.php' ?>
+<?php require_once 'Modules/layout.php' ?>
 
 <!-- header -->
     <?php startblock('title') ?>
@@ -8,7 +8,7 @@
         
     <?php startblock('stylesheet') ?>
     <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
-    <link href="Modules/core/Theme/navbar-fixed-top.css" rel="stylesheet">
+    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <link rel="stylesheet" href="Modules/core/Theme/core.css">
     <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
     <?php endblock() ?>
@@ -21,7 +21,5 @@
     echo $navController->navbar();
     include 'Modules/resources/View/navbar.php';
     ?>
-    <?php endblock() ?>
-
-    <?php startblock('content') ?>
     <?php endblock();
+

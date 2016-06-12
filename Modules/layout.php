@@ -20,7 +20,7 @@
     <?php startblock('navbar') ?>
     <?php endblock() ?>
     
-    <div id="content"/>
+    <div class="col-xs-12" id="pm-content"/>
     <?php startblock('content') ?>
     <?php endblock() ?>
     </div>

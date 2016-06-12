@@ -2,10 +2,8 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="container">
-    <div class="col-md-12">
+    <div class="col-xs-12 col-md-10 col-md-offset-1" id="pm-table">
         <?php echo $tableHtml ?>
     </div>
-</div>
 <?php
 endblock();

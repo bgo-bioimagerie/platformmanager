@@ -1,7 +1,9 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
 <?php startblock('stylesheet') ?>
+
 <link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
+    <link rel='stylesheet' type='text/css' href='data/core/theme/navbar-fixed-top.css' />
 <style>
 .bs-glyphicons{margin:0 -10px 20px;overflow:hidden}
 .bs-glyphicons-list{padding-left:0;list-style:none}
@@ -11,13 +13,13 @@ font-size:10px;line-height:1.4;text-align:center;background-color:#f9f9f9;border
 .bs-glyphicons .glyphicon{margin-top:5px;margin-bottom:10px;font-size:24px}
 .bs-glyphicons .glyphicon-class{display:block;text-align:center;word-wrap:break-word}
 
-.bs-glyphicons li:hover{color:#fff;background-color:#337ab7}@media (min-width:768px){
+.bs-glyphicons li:hover{color:#fff;background-color:<?php echo $navcolor ?>}@media (min-width:768px){
 .bs-glyphicons{margin-right:0;margin-left:0}
 .bs-glyphicons li{width:12.5%;font-size:12px}
 }
 
 .bs-glyphicons li a{color:#888888;}
-.bs-glyphicons li a:hover{color:#fff;}
+.bs-glyphicons li a:hover{color:<?php echo $navcolortxt ?>;}
 
 </style>
 

@@ -6,63 +6,63 @@ body {
 
 /* navbar */
 .navbar-default {
-    background-color: navbar_bg_color;
+    background-color: #ffffff;
     border-color: #e1e1e1;
 }
 /* title */
 .navbar-default .navbar-brand {
-    color: navbar_text_color;
+    color: #414141;
 }
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-    color: navbar_text_highlight;
+    color: #000000;
 }
 /* link */
 .navbar-default .navbar-nav > li > a {
-    color: navbar_text_color;
+    color: #414141;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-    color: navbar_text_highlight;
+    color: #000000;
 }
 .navbar-default .navbar-nav > .active > a, 
 .navbar-default .navbar-nav > .active > a:hover, 
 .navbar-default .navbar-nav > .active > a:focus {
-    color: navbar_text_highlight;
-    background-color: navbar_bg_highlight;
+    color: #000000;
+    background-color: #e1e1e1;
 }
 .navbar-default .navbar-nav > .open > a, 
 .navbar-default .navbar-nav > .open > a:hover, 
 .navbar-default .navbar-nav > .open > a:focus {
-    color: navbar_text_highlight;
-    background-color: navbar_bg_highlight;
+    color: #000000;
+    background-color: #e1e1e1;
 }
 /* caret */
 .navbar-default .navbar-nav > .dropdown > a .caret {
-    border-top-color: navbar_text_color;
-    border-bottom-color: navbar_text_color;
+    border-top-color: #414141;
+    border-bottom-color: #414141;
 }
 .navbar-default .navbar-nav > .dropdown > a:hover .caret,
 .navbar-default .navbar-nav > .dropdown > a:focus .caret {
-    border-top-color: navbar_text_highlight;
-    border-bottom-color: navbar_text_highlight;
+    border-top-color: #000000;
+    border-bottom-color: #000000;
 }
 .navbar-default .navbar-nav > .open > a .caret, 
 .navbar-default .navbar-nav > .open > a:hover .caret, 
 .navbar-default .navbar-nav > .open > a:focus .caret {
-    border-top-color: navbar_text_highlight;
-    border-bottom-color: navbar_text_highlight;
+    border-top-color: #000000;
+    border-bottom-color: #000000;
 }
 /* mobile version */
 .navbar-default .navbar-toggle {
-    border-color: navbar_text_color;
+    border-color: #414141;
 }
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
-    background-color: navbar_bg_highlight; 
+    background-color: #e1e1e1; 
 }
 .navbar-default .navbar-toggle .icon-bar {
-    background-color: navbar_text_color;
+    background-color: #414141;
 }
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
