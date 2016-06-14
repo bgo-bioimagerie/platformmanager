@@ -36,7 +36,7 @@ class CoreinstallController extends Controller {
         $form->setSubTitle(CoreTranslator::this_will_edit_the_configuration_file($lang));
         $form->addText("sql_host", coreTranslator::sql_host($lang), true, "localhost");
         $form->addText("login", coreTranslator::login($lang), true, "root");
-        $form->addPassword("password", coreTranslator::password($lang), true);
+        $form->addPassword("password", coreTranslator::password($lang), false);
         $form->addText("db_name", coreTranslator::db_name($lang), true, "");
         $form->setValidationButton(coreTranslator::Next($lang), "install");
         $form->setButtonsWidth(2, 10);

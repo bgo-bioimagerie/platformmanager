@@ -192,5 +192,26 @@ class ResourcesTranslator {
         return "Edit event for:";
     }
     
+    public static function Add_File($lang){
+        if ($lang == "fr") {
+            return "Ajouter un fichier";
+        }
+        return "Add file";
+    }
+    
+    public static function Files($lang){
+        if ($lang == "fr") {
+            return "Fichiers";
+        }
+        return "Files";
+    }
+
+    public static function Edit_State($lang){
+        if ($lang == "fr") {
+            return "Modifier un état";
+        }
+        return "Edit state";
+    }
+    
     
  }

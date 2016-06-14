@@ -40,7 +40,7 @@ if($menucolortxt == ""){
         <div class="col-md-4">
          <div class="btn-group col-xs-12" data-toggle="buttons">
             	<button onclick="location.href='reeventtypes/'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Event_Types($lang) ?></button>
-		<button onclick="location.href='resourcesedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+		<button onclick="location.href='reeventtypesedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
             <br/>
             <div class="btn-group col-xs-12" data-toggle="buttons">

@@ -387,7 +387,7 @@ class Form {
         $this->choicesid[] = array();
         $this->validated[] = true;
         $this->enabled[] = "";
-        $this->isTextArea = true;
+        $this->isTextArea = $userichtxt;
         $this->useJavascript[] = $userichtxt;
     }
     

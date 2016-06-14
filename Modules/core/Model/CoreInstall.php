@@ -31,10 +31,10 @@ class CoreInstall extends Model {
     	$modelConfig->initParam("home_title", "Platform-Manager");
     	$modelConfig->initParam("home_message", "Connection");
         
-        $modelConfig->setParam("navbar_bg_color", "#e74c3c");
-        $modelConfig->setParam("navbar_bg_highlight", "#c0392b");
-        $modelConfig->setParam("navbar_text_color", "#ecf0f1");
-        $modelConfig->setParam("navbar_text_highlight", "#ffbbbc");
+        $modelConfig->setParam("navbar_bg_color", "#404040");
+        $modelConfig->setParam("navbar_bg_highlight", "#333333");
+        $modelConfig->setParam("navbar_text_color", "#e3e2e4");
+        $modelConfig->setParam("navbar_text_highlight", "#ffffff");
         
         $modelUser = new CoreUser();
         $modelUser->createTable();

@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-xs-12 col-md-12" style="background-color: #e1e1e1; min-height: 2000px;">
+<div class="col-xs-12 col-md-12">
     
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <h1><?php echo EcosystemTranslator::Ec_configuration($lang) ?></h1>
@@ -32,7 +32,7 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1" style="height: 7px;">
         <p></p>
     </div>
-    <div class="col-xs-12 col-md-10 col-md-offset-1" style="background-color: #fff; border-radius: 7px; padding: 7px;">
+    <div class="col-xs-12 col-md-10 col-md-offset-1" id="pm-form">
         <?php echo $form ?>
     </div>
     <?php } ?>

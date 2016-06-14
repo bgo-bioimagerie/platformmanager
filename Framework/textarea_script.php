@@ -5,6 +5,7 @@
 	<script src="externals/ckeditor/samples/js/sample.js"></script>
 	<link rel="stylesheet" href="externals/ckeditor/samples/css/samples.css">
 	<link rel="stylesheet" href="externals/ckeditor/samples/toolbarconfigurator/lib/codemirror/neo.css">
+        <style>body{padding-top: 50px;}</style>
 </head>
 
 <script>

@@ -15,6 +15,7 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReEvent.php';
 require_once 'Modules/resources/Model/ReState.php';
 require_once 'Modules/resources/Model/ReEventType.php';
+require_once 'Modules/resources/Model/ReEventData.php';
 
 require_once 'Modules/ecosystem/Model/EcSite.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
@@ -191,7 +192,82 @@ class ResourcesController extends CoresecureController {
     
     public function editEventAction($id_resource, $id_event){
         
+        if($id_event == 0){
+            $modelEvent = new ReEvent();
+            $id_event = $modelEvent->addDefault($id_resource, $_SESSION["id_user"]);
+            $this->redirect("resourceeditevent/" . $id_resource . "/" .$id_event);
+            return;
+        }
+        
         $lang = $this->getLanguage();
+        
+        $formEvent = $this->createEventForm($id_resource, $id_event, $lang);
+        if($formEvent->check()){
+            
+            $modelEvent = new ReEvent();
+            $modelEvent->set($id_event, $id_resource, 
+                    $formEvent->getParameter("date"), 
+                    $formEvent->getParameter("id_user"),  
+                    $formEvent->getParameter("id_eventtype"),  
+                    $formEvent->getParameter("id_state"),  
+                    $formEvent->getParameter("comment"));
+            $this->redirect("resourceeditevent/" . $id_resource . "/" .$id_event);
+            return;
+        }
+        
+        $formDownload = $this->createDownloadForm($lang);
+        if($formDownload->check()){
+
+            $target_dir = "ecosystem/convention/";
+            if ($_FILES["convention_url"]["name"] != "") {
+                $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_EXTENSION);
+                Upload::uploadFile($target_dir, "convention_url", $id . "." . $ext);
+                
+                $modelEventData = new ReEventData();
+                $modelEventData->addFile();
+                
+                $this->userModel->setConventionUrl($id, $target_dir . $id . "." . $ext);
+            }
+        
+        }
+        $formDownloadHtml = $formDownload->getHtml($lang);
+        $filesTable = $this->createFilesTable($id_event, $lang);
+ 
+        
+        $headerInfo["curentTab"] = "events";
+        $headerInfo["resourceId"] = $id_resource;
+        $this->render(array("lang" => $lang, "formEvent" => $formEvent->getHtml($lang), 
+            "formDownload" => $formDownloadHtml, "headerInfo" => $headerInfo,
+            "filesTable" => $filesTable, "id_event" => $id_event));
+                
+    }
+    
+    protected function createFilesTable($id_event, $lang){
+        
+        $table = new TableView();
+        $table->setTitle(ResourcesTranslator::Files($lang), 3);
+        $table->useSearch(false);
+        $table->addLineButton("rdownloadevent", "url", "^");
+        
+        $headers = array( "name" => CoreTranslator::Name($lang), "name" => CoreTranslator::Name($lang) );
+        $modelEventData = new ReEventData();
+        $events = $modelEventData->getByEvent($id_event);
+        
+        return $table->view($events, $headers);
+        
+    }
+    
+    protected function createDownloadForm($lang){
+        
+        $form = new Form($this->request, "editeventurls");
+        $form->addSeparator(ResourcesTranslator::Add_File($lang));
+        $form->addDownload("file_url", "");
+        $form->setColumnsWidth(0, 12);
+        return $form;
+    }
+            
+    protected function createEventForm($id_resource, $id_event, $lang){
+        
         $modelResources = new ResourceInfo();
         
         $modelEvent = new ReEvent();
@@ -240,14 +316,11 @@ class ResourcesController extends CoresecureController {
         $form->addSelect("id_eventtype", ResourcesTranslator::Event_Type($lang), $choicesET, $choicesidET, $data["id_eventtype"]);
         $form->addSelect("id_state", ResourcesTranslator::State($lang), $choicesS, $choicesidS, $data["id_state"]);
         $form->addTextArea("comment", ResourcesTranslator::Description($lang), false, $data["comment"], true);
+        $form->setValidationButton(CoreTranslator::Save($lang), "resourceeditevent/".$id_resource."/".$id_event);
+        $form->setColumnsWidth(2, 10);
         
-        $formEvent = $form->getHtml($lang);
-        
-        $headerInfo["curentTab"] = "events";
-        $headerInfo["resourceId"] = $id_resource;
-        $this->render(array("lang" => $lang, "formEvent" => $formEvent, "headerInfo" => $headerInfo));
-                
-    }
+        return $form;
+    } 
     
     public function deleteAction($id){
         $modelResource = new ResourceInfo();

@@ -89,7 +89,7 @@ class EcusersController extends CoresecureController {
             }
         }
 
-//print_r($usersArray);
+        //print_r($usersArray);
         $modelCoreConfig = new CoreConfig();
         $authorisations_location = $modelCoreConfig->getParam("sy_authorisations_location");
 
@@ -130,7 +130,6 @@ class EcusersController extends CoresecureController {
         if ($modelCoreConfig->getParam("visible_source") > 0) {
             $tableContent["source"] = CoreTranslator::Source($lang);
         }
-
 
         $tableHtml = $table->view($usersArray, $tableContent);
         $this->render(array(
