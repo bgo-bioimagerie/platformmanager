@@ -219,7 +219,7 @@ class EcusersController extends CoresecureController {
         if ($user["convention_url"] != "") {
             $form->addDownloadButton(EcosystemTranslator::Convention($lang), $user["convention_url"]);
         }
-        $form->addDownload("convention_url", EcosystemTranslator::Convention($lang));
+        $form->addUpload("convention_url", EcosystemTranslator::Convention($lang));
 
         $form->addDate("date_end_contract", EcosystemTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
 

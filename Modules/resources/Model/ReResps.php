@@ -55,6 +55,19 @@ class ReResps extends Model {
         return 0;
     }
     
+    public function clean($id_resource, $id_users){
+        $sql = "SELECT id, id_user FROM re_resps WHERE id_resource=?";
+        $data = $this->runRequest($sql, array($id_resource))->fetchAll();
+        
+        foreach($data as $dat){
+            if (!in_array($dat["id_user"], $id_users)){
+                $sql = "DELETE FROM re_resps WHERE id=?";
+                $this->runRequest($sql, array($dat["id"]));
+            }
+        }
+        
+    }
+    
     
     /**
      * Delete a unit

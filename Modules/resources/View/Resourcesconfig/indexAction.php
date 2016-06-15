@@ -13,13 +13,13 @@
     if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 
         $message = $_SESSION["message"];?>
         <?php if (strpos($message, "Error")){ ?>
-        <div class="col-xs-12 col-md-10 col-md-offset-1" style="background-color: #e1e1e1;">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
             <div class="alert alert-danger" role="alert">
             <p><?php echo  $message ?></p>
             </div>
         </div>
     <?php }else{ ?>
-        <div class="col-xs-12 col-md-10 col-md-offset-1" style="background-color: #e1e1e1;">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
             <div class="alert alert-success" role="alert">
             <p><?php echo  $message ?></p>
             </div>

@@ -227,6 +227,13 @@ class ResourcesTranslator {
         return "Edit instructor status";
     }
     
+    public static function Status($lang){
+        if ($lang == "fr") {
+            return "Status";
+        }
+        return "Status";
+    }
+    
     
     
  }

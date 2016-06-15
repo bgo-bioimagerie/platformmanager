@@ -18,6 +18,9 @@ require_once 'Modules/resources/Model/ReEvent.php';
 require_once 'Modules/resources/Model/ReState.php';
 require_once 'Modules/resources/Model/ReEventType.php';
 require_once 'Modules/resources/Model/ReEventData.php';
+require_once 'Modules/resources/Model/ReResps.php';
+require_once 'Modules/resources/Model/ReRespsStatus.php';
+
 
 require_once 'Modules/ecosystem/Model/EcSite.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
@@ -331,36 +334,61 @@ class ResourcesController extends CoresecureController {
         return $form;
     } 
     
-    public function resps($id_resource){
+    public function respsAction($id_resource){
         
         $modelResps = new ReResps();
         $respsData = $modelResps->getResps($id_resource);
+        $resps = array(); $rstatus = array();
+        foreach($respsData as $r){
+            $resps[] = $r["id_user"];
+            $rstatus[] = $r["id_status"];
+        }
         
         $modelUser = new EcUser();
         $users = $modelUser->getActiveUsersInfo(1);
         $choicesU = array(); $choicesidU = array(); 
         foreach($users as $user){
-            $choicesU = $user["name"] . " " . $user["firstname"];
-            $choicesidU = $user["id"];
+            $choicesU[] = $user["name"] . " " . $user["firstname"];
+            $choicesidU[] = $user["id"];
         }
         
-        $modelRStatus = new EcRespsStatus();
+        $modelRStatus = new ReRespsStatus();
         $statuss = $modelRStatus->getAll();
         foreach($statuss as $status){
-            $choicesS = $user["name"];
-            $choicesidS = $user["id"];
+            $choicesS[] = $status["name"];
+            $choicesidS[] = $status["id"];
         }
         
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "respsform");
-        
         $formAdd = new FormAdd($this->request, "respaddform");
-        $formAdd->addSelect("user", CoreTranslator::User($lang), $choicesU, $choicesidU, $resps);
-        $formAdd->addSelect("status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $status);
+        $formAdd->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $resps);
+        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus);
+        $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
+
+        $form->setFormAdd($formAdd, "");
+        $form->setValidationButton(CoreTranslator::Save($lang), "resourcesresp/".$id_resource);
+
+        $form->setButtonsWidth(2, 9);
         
-        $form->setFormAdd($formAdd);
-        $form->setValidationButton(CoreTranslator::Save($lang), "resourcesresp");
+        if($form->check()){
+            
+            $id_users = $this->request->getParameter("id_user");
+            $id_statuss = $this->request->getParameter("id_status");
+            
+            for($i = 0 ; $i < count($id_users) ; $i++){
+                $modelResps->setResp($id_resource, $id_users[$i], $id_statuss[$i]);
+            }
+            $modelResps->clean($id_resource, $id_users);
+            $this->redirect("resourcesresp/".$id_resource);
+            return;
+            
+        }
+        
+        $headerInfo["curentTab"] = "resps";
+        $headerInfo["resourceId"] = $id_resource;
+        $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang), "headerInfo" => $headerInfo));
     }
     
     public function deleteAction($id){
