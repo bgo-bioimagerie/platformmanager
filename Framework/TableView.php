@@ -27,6 +27,7 @@ class TableView {
     private $colorIndexes;
     private $textMaxLength;
     private $numFixedCol;
+    private $downloadButton;
 
     /**
      * Constructor
@@ -46,6 +47,7 @@ class TableView {
         $this->iscsv = false;
         $this->textMaxLength = 0;
         $this->numFixedCol = 0;
+        $this->downloadButton = "";
     }
 
     /**
@@ -68,6 +70,10 @@ class TableView {
     public function addLineEditButton($editURL, $editIndex = "id") {
         $this->editURL = $editURL;
         $this->editIndex = $editIndex;
+    }
+    
+    public function addDownloadButton($urlIndex){
+        $this->downloadButton = $urlIndex;
     }
 
     public function addDeleteButton($deleteURL, $deleteIndex = "id", $deleteNameIndex = "name") {
@@ -194,6 +200,9 @@ class TableView {
         if ($this->deleteURL != "" && !$this->isprint) {
             $html .= "<th></th>";
         }
+        if ($this->downloadButton != ""){
+            $html .= "<th></th>";
+        }
         if (count($this->linesButtonActions) > 0) {
             for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
                 $html .= "<th></th>";
@@ -234,10 +243,15 @@ class TableView {
                 if ($this->deleteURL != "" && !$this->isprint) {
                     $html .= "<td style=\"width:12px;\">" . $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]) . "</td>";
                 }
+                
                 if (count($this->linesButtonActions) > 0) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
                         $html .= "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button>" . "</td>";
                     }
+                }
+                
+                if ($this->downloadButton != ""){
+                    $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
                 }
                 $html .= "</tr>";
             }
@@ -325,6 +339,12 @@ class TableView {
 
         $html .= "</head>";
 
+        return $html;
+    }
+    
+    private function addDownloadButtonHtml($url){
+        $html = "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
+                    
         return $html;
     }
 

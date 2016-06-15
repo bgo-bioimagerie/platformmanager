@@ -36,11 +36,12 @@ class FormHtml {
     }
 
     static public function formHeader($validationURL, $useDownload = false) {
-        if (!$useDownload) {
-            $html = "<form role=\"form\" class=\"form-horizontal\" action=\"" . $validationURL . "\" method=\"post\">";
-        } else {
-            $html = "<form role=\"form\" class=\"form-horizontal\" action=\"" . $validationURL . "\" method=\"post\" enctype=\"multipart/form-data\">";
-        }
+        if (!$useDownload){
+    		$html = "<form role=\"form\" class=\"form-horizontal\" action=\"".$validationURL."\" method=\"POST\">";
+    	}
+    	else{
+    		$html = "<form role=\"form\" class=\"form-horizontal\" action=\"".$validationURL."\" method=\"POST\" enctype=\"multipart/form-data\">";
+    	}
         return $html;
     }
 
@@ -160,9 +161,9 @@ class FormHtml {
         return $html;
     }
 
-    static public function download($label, $name, $labelWidth = 2, $inputWidth = 9) {
-        $html = "<div class=\"form-group\">";
-        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+    static public function upload($label, $name, $labelWidth = 2, $inputWidth = 9) {
+        $html = "<div class=\"form-group\"> ";
+        $html .= " <label class=\"control-label col-xs-" . $labelWidth . "\"> " . $label . " </label> ";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= " <input type=\"file\" name=\"" . $name . "\" id=\"" . $name . "\"> ";
         $html .= "</div>";

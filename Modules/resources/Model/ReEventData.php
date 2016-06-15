@@ -23,6 +23,11 @@ class ReEventData extends Model {
         $this->primaryKey = "id";
     }
 
+    public function addFile($id_event, $url){
+        $sql = "INSERT INTO re_event_data (id_event, url) VALUES (?,?)";
+        $this->runRequest($sql, array($id_event, $url));
+    }
+    
     public function get($id) {
         $sql = "SELECT * FROM re_event_data WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();

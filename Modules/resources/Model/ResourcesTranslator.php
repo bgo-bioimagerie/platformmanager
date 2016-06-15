@@ -213,5 +213,20 @@ class ResourcesTranslator {
         return "Edit state";
     }
     
+    public static function Resps_Status($lang){
+        if ($lang == "fr") {
+            return "Staus des responsables";
+        }
+        return "Instructors status";
+    }
+    
+    public static function Edit_Resps_status($lang){
+        if ($lang == "fr") {
+            return "Modifier un staus de responsable";
+        }
+        return "Edit instructor status";
+    }
+    
+    
     
  }

@@ -18,7 +18,7 @@
         <div class="col-xs-12" id="pm-form">
             <?php echo $formDownload ?>
         </div>
-        <div class="col-xs-12" id="pm-form">
+        <div class="col-xs-12" id="pm-table">
             <?php echo $filesTable ?>
         </div>
     </div>

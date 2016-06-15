@@ -50,7 +50,7 @@ class Form {
     private $buttonsOffset;
 
     /** for download feild */
-    private $useDownload;
+    private $useUpload;
     private $isDate;
     private $isTextArea;
     private $formAdd;
@@ -81,7 +81,7 @@ class Form {
             $this->parseRequest = true;
         }
 
-        $this->useDownload = false;
+        $this->useUpload = false;
         $this->isDate = false;
     }
 
@@ -216,15 +216,15 @@ class Form {
         $this->useJavascript[] = false;
     }
 
-    public function addDownload($name, $label) {
-        $this->types[] = "download";
+    public function addUpload($name, $label) {
+        $this->types[] = "upload";
         $this->names[] = $name;
         $this->labels[] = $label;
         $this->isMandatory[] = false;
         $this->choices[] = array();
         $this->choicesid[] = array();
         $this->validated[] = true;
-        $this->useDownload = true;
+        $this->useUpload = true;
         $this->enabled[] = "";
         $this->setValue($name, "");
         $this->useJavascript[] = false;
@@ -418,7 +418,7 @@ class Form {
         
         $html .= $formHtml->title($this->title, $this->subtitle);
         $html .= $formHtml->errorMessage($this->errorMessage);
-        $html .= $formHtml->formHeader($this->validationURL, $this->useDownload);
+        $html .= $formHtml->formHeader($this->validationURL, $this->useUpload);
         $html .= $formHtml->id($this->id);
         
         // fields
@@ -466,8 +466,8 @@ class Form {
             if ($this->types[$i] == "textarea") {
                 $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
-            if ($this->types[$i] == "download") {
-                $html .= $formHtml->download($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
+            if ($this->types[$i] == "upload") {
+                $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "downloadbutton") {
                 $html .= $formHtml->downloadbutton($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
