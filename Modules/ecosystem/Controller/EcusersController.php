@@ -98,6 +98,7 @@ class EcusersController extends CoresecureController {
         $table->setTitle($title);
         $table->addLineEditButton("ecusersedit");
         $table->addDeleteButton("ecusersdelete");
+        $table->setFixedColumnsNum(3);
         if ($authorisations_location == 2) {
             $table->addLineButton("Sygrrifauthorisations/userauthorizations", "id", CoreTranslator::Authorizations($lang));
         }

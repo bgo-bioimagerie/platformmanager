@@ -6,63 +6,63 @@ body {
 
 /* navbar */
 .navbar-default {
-    background-color: #ffffff;
+    background-color: #404040;
     border-color: #e1e1e1;
 }
 /* title */
 .navbar-default .navbar-brand {
-    color: #414141;
+    color: #e3e2e4;
 }
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-    color: #000000;
+    color: #ffffff;
 }
 /* link */
 .navbar-default .navbar-nav > li > a {
-    color: #414141;
+    color: #e3e2e4;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-    color: #000000;
+    color: #ffffff;
 }
 .navbar-default .navbar-nav > .active > a, 
 .navbar-default .navbar-nav > .active > a:hover, 
 .navbar-default .navbar-nav > .active > a:focus {
-    color: #000000;
-    background-color: #e1e1e1;
+    color: #ffffff;
+    background-color: #333333;
 }
 .navbar-default .navbar-nav > .open > a, 
 .navbar-default .navbar-nav > .open > a:hover, 
 .navbar-default .navbar-nav > .open > a:focus {
-    color: #000000;
-    background-color: #e1e1e1;
+    color: #ffffff;
+    background-color: #333333;
 }
 /* caret */
 .navbar-default .navbar-nav > .dropdown > a .caret {
-    border-top-color: #414141;
-    border-bottom-color: #414141;
+    border-top-color: #e3e2e4;
+    border-bottom-color: #e3e2e4;
 }
 .navbar-default .navbar-nav > .dropdown > a:hover .caret,
 .navbar-default .navbar-nav > .dropdown > a:focus .caret {
-    border-top-color: #000000;
-    border-bottom-color: #000000;
+    border-top-color: #ffffff;
+    border-bottom-color: #ffffff;
 }
 .navbar-default .navbar-nav > .open > a .caret, 
 .navbar-default .navbar-nav > .open > a:hover .caret, 
 .navbar-default .navbar-nav > .open > a:focus .caret {
-    border-top-color: #000000;
-    border-bottom-color: #000000;
+    border-top-color: #ffffff;
+    border-bottom-color: #ffffff;
 }
 /* mobile version */
 .navbar-default .navbar-toggle {
-    border-color: #414141;
+    border-color: #e3e2e4;
 }
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
-    background-color: #e1e1e1; 
+    background-color: #333333; 
 }
 .navbar-default .navbar-toggle .icon-bar {
-    background-color: #414141;
+    background-color: #e3e2e4;
 }
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
