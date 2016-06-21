@@ -11,8 +11,8 @@ class FileUpload {
      * @param type $uploadFile_id
      * @return string
      */
-    public static function uploadFile($target_dir, $uploadFile_id) {
-        $target_file = $target_dir . $_FILES[$uploadFile_id]["name"];
+    public static function uploadFile($target_dir, $uploadFile_id, $targetName) {
+        $target_file = $target_dir . $targetName;
 
         $uploadOk = 1;
         //$imageFileType = pathinfo($_FILES[$uploadFile_id]["name"], PATHINFO_EXTENSION);

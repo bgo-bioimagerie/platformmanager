@@ -22,7 +22,4 @@
     echo $navController->navbar();
     include 'Modules/ecosystem/View/navbar.php';
     ?>
-    <?php endblock() ?>
-
-    <?php startblock('content') ?>
-    <?php endblock();
+    <?php endblock(); ?>

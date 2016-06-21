@@ -89,7 +89,7 @@ class EcusersController extends CoresecureController {
             }
         }
 
-//print_r($usersArray);
+        //print_r($usersArray);
         $modelCoreConfig = new CoreConfig();
         $authorisations_location = $modelCoreConfig->getParam("sy_authorisations_location");
 
@@ -131,7 +131,6 @@ class EcusersController extends CoresecureController {
         if ($modelCoreConfig->getParam("visible_source") > 0) {
             $tableContent["source"] = CoreTranslator::Source($lang);
         }
-
 
         $tableHtml = $table->view($usersArray, $tableContent);
         $this->render(array(
@@ -221,7 +220,7 @@ class EcusersController extends CoresecureController {
         if ($user["convention_url"] != "") {
             $form->addDownloadButton(EcosystemTranslator::Convention($lang), $user["convention_url"]);
         }
-        $form->addDownload("convention_url", EcosystemTranslator::Convention($lang));
+        $form->addUpload("convention_url", EcosystemTranslator::Convention($lang));
 
         $form->addDate("date_end_contract", EcosystemTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
 

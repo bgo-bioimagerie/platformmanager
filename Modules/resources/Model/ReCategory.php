@@ -19,6 +19,7 @@ class ReCategory extends Model {
             $this->tableName = "re_category";
             $this->setColumnsInfo("id", "int(11)", 0);
             $this->setColumnsInfo("name", "varchar(250)", "");
+            $this->setColumnsInfo("id_site", "int(11)", 0);
             $this->primaryKey = "id";
 
 	}
@@ -39,14 +40,14 @@ class ReCategory extends Model {
             return $this->runRequest($sql)->fetchAll();
         }
 	
-        public function set($id, $name){
+        public function set($id, $name, $id_site){
             if ($this->exists($id)){
-                $sql = "UPDATE re_category SET name=? WHERE id=?";
-                $id = $this->runRequest($sql, array($id, $name));
+                $sql = "UPDATE re_category SET name=?, id_site=? WHERE id=?";
+                $id = $this->runRequest($sql, array($name, $id_site, $id));
             }
             else{
-                $sql = "INSERT INTO re_category (name) VALUES (?)";
-                $this->runRequest($sql, array($name));
+                $sql = "INSERT INTO re_category (name, id_site) VALUES (?, ?)";
+                $this->runRequest($sql, array($name, $id_site));
             }
             return $id;
         }

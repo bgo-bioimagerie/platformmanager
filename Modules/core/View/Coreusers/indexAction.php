@@ -1,10 +1,9 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="container">
-    <div class="col-md-12" style="margin-top: 7px; border-bottom: 1px solid #e1e1e1;">
+<div class="col-xs-12 col-md-10 col-md-offset-1" id="pm-table">
+    <div class="col-md-12">
         <div class="col-md-10">
             <h1>
                 <?php echo CoreTranslator::Users($lang) ?>

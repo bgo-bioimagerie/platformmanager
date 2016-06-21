@@ -6,6 +6,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
 require_once 'Modules/ecosystem/Model/EcBelonging.php';
+require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 /**
  * Manage the units (each user belongs to an unit)
@@ -89,7 +90,6 @@ class EcunitsController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "ecunitsedit/".$id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "ecunits");
 
-
         if ($form->check()) {
             // run the database query
             $model = new EcUnit();
@@ -98,7 +98,7 @@ class EcunitsController extends CoresecureController {
             $this->redirect("ecunits");
         } else {
             // set the view
-            $formHtml = $form->getHtml();
+            $formHtml = $form->getHtml($lang);
             // view
             $this->render(array(
                 'lang' => $lang,

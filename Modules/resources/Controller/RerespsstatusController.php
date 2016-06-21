@@ -5,21 +5,21 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
-require_once 'Modules/resources/Model/ReState.php';
+require_once 'Modules/resources/Model/ReRespsStatus.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class RestatesController extends CoresecureController {
+class RerespsstatusController extends CoresecureController {
 
     /**
      * Constructor
      */
     public function __construct() {
         parent::__construct();
-        $this->model = new ReState();
+        $this->model = new ReRespsStatus();
         $this->checkAuthorizationMenu("resources");
     }
     
@@ -32,32 +32,31 @@ class RestatesController extends CoresecureController {
         $lang = $this->getLanguage();
         
         $table = new TableView();
-        $table->setTitle(ResourcesTranslator::States($lang));
-        $table->addLineEditButton("restatesedit");
-        $table->addDeleteButton("restatesdelete");
+        $table->setTitle(ResourcesTranslator::Resps_Status($lang));
+        $table->addLineEditButton("rerespsstatusedit");
+        $table->addDeleteButton("rerespsstatusdelete");
         
         $headers = array(
             "id" => "ID",
-            "name" => CoreTranslator::Name($lang),
-            "color" => CoreTranslator::color($lang)
+            "name" => CoreTranslator::Name($lang)
         );
         
-        $categories = $this->model->getAll();
+        $categories = $this->model->getAllForUser($_SESSION["id_user"]);
             
         $tableHtml = $table->view($categories, $headers);
         
         $this->render(array("lang" => $lang, "htmlTable" => $tableHtml));
     }
     
-      /**
+    /**
      * Edit form
      */
     public function editAction($id) {
 
         // get belonging info
-        $data = array("id" => 0, "name" => "", "color" => "#ffffff");
+        $site = array("id" => 0, "name" => "");
         if ($id > 0) {
-            $data = $this->model->get($id);
+            $site = $this->model->get($id);
         }
 
         // lang
@@ -65,19 +64,18 @@ class RestatesController extends CoresecureController {
 
         // form
         // build the form
-        $form = new Form($this->request, "restatesedit");
-        $form->setTitle(ResourcesTranslator::Edit_State($lang));
-        $form->addHidden("id", $data["id"]);
-        $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
-        $form->addColor("color", CoreTranslator::color($lang), false, $data["color"]);
+        $form = new Form($this->request, "rerespsstatusedit");
+        $form->setTitle(ResourcesTranslator::Edit_Resps_status($lang));
+        $form->addHidden("id", $site["id"]);
+        $form->addText("name", CoreTranslator::Name($lang), true, $site["name"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "restatesedit/".$id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "restates");
+        $form->setValidationButton(CoreTranslator::Ok($lang), "rerespsstatusedit/".$id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "rerespsstatus");
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"));
-            $this->redirect("restates");
+            $this->model->set($form->getParameter("id"), $form->getParameter("name"));
+            $this->redirect("rerespsstatus");
         } else {
             // set the view
             $formHtml = $form->getHtml();
@@ -91,7 +89,7 @@ class RestatesController extends CoresecureController {
     
     public function deleteAction($id){
         $this->model->delete($id);
-        $this->redirect("restates");
+        $this->redirect("rerespsstatus");
     }
 
 }

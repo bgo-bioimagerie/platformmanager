@@ -3,6 +3,8 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/FileUpload.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
@@ -15,6 +17,10 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReEvent.php';
 require_once 'Modules/resources/Model/ReState.php';
 require_once 'Modules/resources/Model/ReEventType.php';
+require_once 'Modules/resources/Model/ReEventData.php';
+require_once 'Modules/resources/Model/ReResps.php';
+require_once 'Modules/resources/Model/ReRespsStatus.php';
+
 
 require_once 'Modules/ecosystem/Model/EcSite.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
@@ -53,7 +59,6 @@ class ResourcesController extends CoresecureController {
             "area" => ResourcesTranslator::Area($lang),
             "display_order" => ResourcesTranslator::Display_order($lang)
         );
-        
         
         $modelResource = new ResourceInfo();
         $modelSite = new EcSite();
@@ -158,8 +163,8 @@ class ResourcesController extends CoresecureController {
         $lang = $this->getLanguage();
         
         $table = new TableView();
-        $table->addLineEditButton("resourceseventedit");
-        $table->addDeleteButton("resourceseventdelete");
+        $table->addLineEditButton("resourceeditevent/" . $id);
+        $table->addDeleteButton("resourceseventdelete", "id", "date");
         
         $headers = array(
             "date" => CoreTranslator::Date($lang),
@@ -191,7 +196,90 @@ class ResourcesController extends CoresecureController {
     
     public function editEventAction($id_resource, $id_event){
         
+        if($id_event == 0){
+            $modelEvent = new ReEvent();
+            $id_event = $modelEvent->addDefault($id_resource, $_SESSION["id_user"]);
+            $this->redirect("resourceeditevent/" . $id_resource . "/" .$id_event);
+            return;
+        }
+        
         $lang = $this->getLanguage();
+        
+        $formEvent = $this->createEventForm($id_resource, $id_event, $lang);
+        if($formEvent->check()){
+            
+            $modelEvent = new ReEvent();
+            $modelEvent->set($id_event, $id_resource, 
+                    CoreTranslator::dateToEn($formEvent->getParameter("date"), $lang), 
+                    $formEvent->getParameter("id_user"),  
+                    $formEvent->getParameter("id_eventtype"),  
+                    $formEvent->getParameter("id_state"),  
+                    $formEvent->getParameter("comment"));
+            
+            $this->redirect("resourceeditevent/" . $id_resource . "/" .$id_event);
+            return;
+        }
+        $formDownload = $this->createDownloadForm($id_resource, $id_event, $lang);
+
+        $formDownloadHtml = $formDownload->getHtml($lang);
+        $filesTable = $this->createFilesTable($id_event, $lang);
+        
+        $headerInfo["curentTab"] = "events";
+        $headerInfo["resourceId"] = $id_resource;
+        $this->render(array("lang" => $lang, "formEvent" => $formEvent->getHtml($lang), 
+            "formDownload" => $formDownloadHtml, "headerInfo" => $headerInfo,
+            "filesTable" => $filesTable, "id_event" => $id_event));
+    }
+    
+    public function editeventfileAction(){
+
+        $id_resource = $this->request->getParameter("id_resource");
+        $id_event = $this->request->getParameter("id_event");
+
+        $target_dir = "data/resources/events/";
+        if ($_FILES["file_url"]["name"] != "") {
+            $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
+            FileUpload::uploadFile($target_dir, "file_url", $id_event . "_" . $ext);
+                
+            $modelEventData = new ReEventData();
+            $modelEventData->addFile($id_event, $target_dir . $id_event . "_" . $ext);        
+        }
+            
+        $this->redirect("resourceeditevent/" . $id_resource . "/" .$id_event);
+        
+    }
+    
+    protected function createFilesTable($id_event, $lang){
+        
+        $table = new TableView();
+        $table->setTitle(ResourcesTranslator::Files($lang), 3);
+        $table->useSearch(false);
+        $table->addDownloadButton("url");
+        
+        $headers = array( "name" => CoreTranslator::Name($lang) );
+        $modelEventData = new ReEventData();
+        $events = $modelEventData->getByEvent($id_event);
+        for($i = 0 ; $i < count($events) ; $i++){
+            $events[$i]["name"] = str_replace("data/resources/events/".$id_event."_", "", $events[$i]["url"]);
+        }
+        
+        return $table->view($events, $headers);
+    }
+    
+    protected function createDownloadForm($id_resource, $id_event, $lang){
+        
+        $form = new Form($this->request, "eventaddfileform");
+        $form->addSeparator(ResourcesTranslator::Add_File($lang));
+        $form->addHidden("id_resource", $id_resource);
+        $form->addHidden("id_event", $id_event);
+        $form->addUpload("file_url", "");
+        $form->setValidationButton(CoreTranslator::Save($lang), "resourceediteventfile");
+        $form->setColumnsWidth(0, 12);
+        return $form;
+    }
+            
+    protected function createEventForm($id_resource, $id_event, $lang){
+        
         $modelResources = new ResourceInfo();
         
         $modelEvent = new ReEvent();
@@ -234,19 +322,73 @@ class ResourcesController extends CoresecureController {
         
         $form = new Form($this->request, "editevent");
         $form->addSeparator(ResourcesTranslator::Edit_event_for($lang) . " " . $modelResources->getName($id_resource));
-        $form->addDate("date", CoreTranslator::Date($lang), true, $data["date"]);
+        $form->addDate("date", CoreTranslator::Date($lang), true, CoreTranslator::dateFromEn($data["date"], $lang));
         $form->addHidden("id_resource", $id_resource);
         $form->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $data["id_user"]);
         $form->addSelect("id_eventtype", ResourcesTranslator::Event_Type($lang), $choicesET, $choicesidET, $data["id_eventtype"]);
         $form->addSelect("id_state", ResourcesTranslator::State($lang), $choicesS, $choicesidS, $data["id_state"]);
-        $form->addTextArea("comment", ResourcesTranslator::Description($lang), false, $data["comment"], true);
+        $form->addTextArea("comment", ResourcesTranslator::Description($lang), false, $data["comment"], false);
+        $form->setValidationButton(CoreTranslator::Save($lang), "resourceeditevent/".$id_resource."/".$id_event);
+        $form->setColumnsWidth(2, 10);
         
-        $formEvent = $form->getHtml($lang);
+        return $form;
+    } 
+    
+    public function respsAction($id_resource){
         
-        $headerInfo["curentTab"] = "events";
+        $modelResps = new ReResps();
+        $respsData = $modelResps->getResps($id_resource);
+        $resps = array(); $rstatus = array();
+        foreach($respsData as $r){
+            $resps[] = $r["id_user"];
+            $rstatus[] = $r["id_status"];
+        }
+        
+        $modelUser = new EcUser();
+        $users = $modelUser->getActiveUsersInfo(1);
+        $choicesU = array(); $choicesidU = array(); 
+        foreach($users as $user){
+            $choicesU[] = $user["name"] . " " . $user["firstname"];
+            $choicesidU[] = $user["id"];
+        }
+        
+        $modelRStatus = new ReRespsStatus();
+        $statuss = $modelRStatus->getAll();
+        foreach($statuss as $status){
+            $choicesS[] = $status["name"];
+            $choicesidS[] = $status["id"];
+        }
+        
+        
+        $lang = $this->getLanguage();
+        $form = new Form($this->request, "respsform");
+        $formAdd = new FormAdd($this->request, "respaddform");
+        $formAdd->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $resps);
+        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus);
+        $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
+
+        $form->setFormAdd($formAdd, "");
+        $form->setValidationButton(CoreTranslator::Save($lang), "resourcesresp/".$id_resource);
+
+        $form->setButtonsWidth(2, 9);
+        
+        if($form->check()){
+            
+            $id_users = $this->request->getParameter("id_user");
+            $id_statuss = $this->request->getParameter("id_status");
+            
+            for($i = 0 ; $i < count($id_users) ; $i++){
+                $modelResps->setResp($id_resource, $id_users[$i], $id_statuss[$i]);
+            }
+            $modelResps->clean($id_resource, $id_users);
+            $this->redirect("resourcesresp/".$id_resource);
+            return;
+            
+        }
+        
+        $headerInfo["curentTab"] = "resps";
         $headerInfo["resourceId"] = $id_resource;
-        $this->render(array("lang" => $lang, "formEvent" => $formEvent, "headerInfo" => $headerInfo));
-                
+        $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang), "headerInfo" => $headerInfo));
     }
     
     public function deleteAction($id){

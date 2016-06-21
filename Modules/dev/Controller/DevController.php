@@ -37,7 +37,7 @@ class DevController extends CoresecureController {
         if ($form->check()) {
             $moduleName = $form->getParameter("name");
             $this->generateModule(strtolower($moduleName), "data/dev/template/", "Modules/");
-            $cache = new Cache();
+            $cache = new FCache();
             $cache->load();
             $_SESSION["message"] = DevTranslator::TheModuleHasBeenGenerated($lang);
         }

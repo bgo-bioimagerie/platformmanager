@@ -43,13 +43,19 @@ class ReEvent extends Model {
         return $this->runRequest($sql, array($id))->fetchAll();
         
     }
+    
+    public function addDefault($id_resource, $id_user){
+        $sql = "INSERT INTO re_event (date, id_resource, id_user, id_eventtype, id_state, comment) VALUES (?,?,?,?,?,?)";
+        $this->runRequest($sql, array(time("Y-m-d"), $id_resource, $id_user, 1, 1, ""));
+        return $this->getDatabase()->lastInsertId();
+    }
 
     public function set($id, $id_resource, $date, $id_user, $id_eventtype, $id_state, $comment) {
         if ($this->exists($id)) {
             $sql = "UPDATE re_event SET date=?, id_resource=?, id_user=?, id_eventtype=?, id_state=?, comment=? WHERE id=?";
-            $id = $this->runRequest($sql, array($date, $id_user, $id_eventtype, $id_state, $comment, $id));
+            $id = $this->runRequest($sql, array($date, $id_resource, $id_user, $id_eventtype, $id_state, $comment, $id));
         } else {
-            $sql = "INSERT INTO re_event (date, id_resource=?, id_user, id_eventtype, id_state, comment) VALUES (?,?,?,?,?,?)";
+            $sql = "INSERT INTO re_event (date, id_resource, id_user, id_eventtype, id_state, comment) VALUES (?,?,?,?,?,?)";
             $this->runRequest($sql, array($date, $id_resource, $id_user, $id_eventtype, $id_state, $comment));
         }
         return $id;

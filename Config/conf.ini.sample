@@ -14,6 +14,7 @@ modules[] = "core"
 modules[] = "ecosystem"
 modules[] = "dev"
 modules[] = "resources"
+modules[] = "booking"
 
 [Company]
 name = "H2P2"

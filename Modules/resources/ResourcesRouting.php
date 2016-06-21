@@ -14,11 +14,16 @@ class ResourcesRouting extends Routing{
         $this->addRoute("resourcesedit", "resourcesedit", "resources", "edit", array("id"), array(""));
         $this->addRoute("resourcesevents", "resourcesevents", "resources", "events", array("id"), array(""));
         $this->addRoute("resourceeditevent", "resourceeditevent", "resources", "editevent", array("id_resource", "id_event"), array("", ""));
-        
+        $this->addRoute("resourceediteventfile", "resourceediteventfile", "resources", "editeventfile");
+        $this->addRoute("resourcesresp", "resourcesresp", "resources", "resps", array("id_resource"), array(""));
         
         $this->addRoute("reareas", "reareas", "reareas", "index");
         $this->addRoute("reareasedit", "reareasedit", "reareas", "edit", array("id"), array(""));
         $this->addRoute("reareasdelete", "reareasdelete", "reareas", "delete", array("id"), array(""));
+        
+        $this->addRoute("rerespsstatus", "rerespsstatus", "rerespsstatus", "index");
+        $this->addRoute("rerespsstatusedit", "rerespsstatusedit", "rerespsstatus", "edit", array("id"), array(""));
+        $this->addRoute("rerespsstatusdelete", "rerespsstatusdelete", "rerespsstatus", "delete", array("id"), array(""));
         
         $this->addRoute("recategories", "recategories", "recategories", "index");
         $this->addRoute("recategoriesedit", "recategoriesedit", "recategories", "edit", array("id"), array(""));

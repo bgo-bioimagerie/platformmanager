@@ -192,5 +192,48 @@ class ResourcesTranslator {
         return "Edit event for:";
     }
     
+    public static function Add_File($lang){
+        if ($lang == "fr") {
+            return "Ajouter un fichier";
+        }
+        return "Add file";
+    }
+    
+    public static function Files($lang){
+        if ($lang == "fr") {
+            return "Fichiers";
+        }
+        return "Files";
+    }
+
+    public static function Edit_State($lang){
+        if ($lang == "fr") {
+            return "Modifier un état";
+        }
+        return "Edit state";
+    }
+    
+    public static function Resps_Status($lang){
+        if ($lang == "fr") {
+            return "Staus des responsables";
+        }
+        return "Instructors status";
+    }
+    
+    public static function Edit_Resps_status($lang){
+        if ($lang == "fr") {
+            return "Modifier un staus de responsable";
+        }
+        return "Edit instructor status";
+    }
+    
+    public static function Status($lang){
+        if ($lang == "fr") {
+            return "Status";
+        }
+        return "Status";
+    }
+    
+    
     
  }

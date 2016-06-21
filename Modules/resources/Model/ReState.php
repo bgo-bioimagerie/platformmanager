@@ -20,6 +20,7 @@ class ReState extends Model {
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("color", "varchar(7)", "#ffffff");
+        $this->setColumnsInfo("id_site", "int(11)", 0);
         $this->primaryKey = "id";
     }
 
@@ -39,13 +40,13 @@ class ReState extends Model {
         return $this->runRequest($sql)->fetchAll();
     }
 
-    public function set($id, $name, $color) {
+    public function set($id, $name, $color, $id_site) {
         if ($this->exists($id)) {
-            $sql = "UPDATE re_state SET name=?, color=? WHERE id=?";
-            $id = $this->runRequest($sql, array($name, $color, $id));
+            $sql = "UPDATE re_state SET name=?, color=?, id_site=? WHERE id=?";
+            $id = $this->runRequest($sql, array($name, $color, $id_site, $id));
         } else {
-            $sql = "INSERT INTO re_state (name, color) VALUES (?,?)";
-            $this->runRequest($sql, array($name, $color));
+            $sql = "INSERT INTO re_state (name, color, id_site) VALUES (?,?;?)";
+            $this->runRequest($sql, array($name, $color, $id_site));
         }
         return $id;
     }

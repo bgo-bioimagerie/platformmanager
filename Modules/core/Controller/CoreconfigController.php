@@ -41,7 +41,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-
         // install form
         $formInstall = $this->installForm($lang);
         if ($formInstall->check()) {
@@ -56,7 +55,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang);
         if ($formMenusactivation->check()) {
@@ -67,7 +65,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-        
         // maintenance form
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
@@ -75,7 +72,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreldapconfig");
             return;
         }
-        
         // homePageForm
         $formHomePage = $this->homePageForm($modelCoreConfig, $lang);
         if ($formHomePage->check()) {
@@ -83,7 +79,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-        
         // formConnectionPage
         $formConnectionPage = $this->connectionPageForm($modelCoreConfig, $lang);
         if ($formConnectionPage->check()) {
@@ -101,7 +96,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-        
         // desactivateUserForm
         $formDesactivateUser = $this->desactivateUserForm($modelCoreConfig, $lang);
         if ($formDesactivateUser->check()){
@@ -110,7 +104,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-        
         // email form
         $formEmail = $this->emailForm($modelCoreConfig, $lang);
         if ($formEmail->check()){
@@ -119,7 +112,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-        
         $formNavbar = $this->navbarColorForm($modelCoreConfig, $lang);
         if($formNavbar->check()){
             
@@ -139,7 +131,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-        
         // backup form
         $formBackup = $this->backupForm($lang);
         if ($formBackup->check()){
@@ -148,7 +139,6 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
-
         // view
         $forms = array($formMaintenance->getHtml($lang), $formInstall->getHtml($lang), 
             $formMenusactivation->getHtml($lang), $formDesactivateUser->getHtml($lang), 
@@ -245,7 +235,7 @@ class CoreconfigController extends CoresecureController {
 
         for ($i = 1; $i < 4; $i++) {
             $form->addSeparator2(CoreTranslator::Carousel($lang) . " " . strval($i));
-            $form->addDownload("image_url" . strval($i), CoreTranslator::Image_Url($lang));
+            $form->addUpload("image_url" . strval($i), CoreTranslator::Image_Url($lang));
         }
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");

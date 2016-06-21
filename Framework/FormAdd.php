@@ -54,6 +54,10 @@ class FormAdd {
             $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
             $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
         }
+        else{
+            $html .= "<div class=\"form-group\">";
+            $html .= "	<div class=\"col-xs-12\">";
+        }
         
         $html .= "<table id=\"dataTable\" class=\"table table-striped\"> ";
         $html .= "<thead>";
@@ -102,10 +106,9 @@ class FormAdd {
         $html .= "<br>";
         $html .= "</div>";
         
-        if ($label != ""){
             $html .= "</div>";
             $html .= "</div>";
-        }
+        
         return $html;
     }
 
