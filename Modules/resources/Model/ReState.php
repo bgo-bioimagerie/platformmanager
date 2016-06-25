@@ -15,7 +15,7 @@ class ReState extends Model {
      * @return PDOStatement
      */
     public function __construct() {
-        
+
         $this->tableName = "re_state";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
@@ -28,15 +28,18 @@ class ReState extends Model {
         $sql = "SELECT * FROM re_state WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
-    
-     public function getName($id) {
+
+    public function getName($id) {
         $sql = "SELECT name FROM re_state WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
     }
 
     public function getAll($sort = "name") {
-        $sql = "SELECT * FROM re_state ORDER BY " . $sort . " ASC";
+        $sql = "SELECT re_state.*, ec_sites.name AS site "
+                . " FROM re_state "
+                . " INNER JOIN ec_sites ON ec_sites.id = re_state.id_site "
+                . "ORDER BY re_state." . $sort . " ASC";
         return $this->runRequest($sql)->fetchAll();
     }
 

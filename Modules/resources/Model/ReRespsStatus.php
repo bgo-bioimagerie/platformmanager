@@ -15,33 +15,39 @@ class ReRespsStatus extends Model {
      * @return PDOStatement
      */
     public function __construct() {
-        
+
         $this->tableName = "re_resps_status";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("id_site", "int(11)", 0);
         $this->primaryKey = "id";
     }
-    
 
     public function get($id) {
         $sql = "SELECT * FROM re_resps_status WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
-    
-     public function getName($id) {
+
+    public function getName($id) {
         $sql = "SELECT name FROM re_resps_status WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
     }
 
-    public function getAllForUser($id_user, $sort = "name"){
-        $sql = "SELECT * FROM re_resps_status WHERE id_site IN (SELECT id_site FROM ec_j_user_site WHERE id_user=? AND id_status>=3) ORDER BY " . $sort . " ASC";
+    public function getAllForUser($id_user, $sort = "name") {
+        $sql = "SELECT re_resps_status.*, ec_sites.name AS site "
+                . "FROM re_resps_status "
+                . "INNER JOIN ec_sites ON ec_sites.id = re_resps_status.id_site "
+                . "WHERE id_site IN (SELECT id_site FROM ec_j_user_site WHERE id_user=? AND id_status>=3) ORDER BY " . $sort . " ASC";
         return $this->runRequest($sql, array($id_user))->fetchAll();
     }
-    
+
     public function getAll($sort = "name") {
-        $sql = "SELECT * FROM re_resps_status ORDER BY " . $sort . " ASC";
+
+        $sql = "SELECT re_resps_status.*, ec_sites.name AS site "
+                . " FROM re_resps_status "
+                . " INNER JOIN ec_sites ON ec_sites.id = re_resps_status.id_site "
+                . "ORDER BY re_resps_status." . $sort . " ASC";
         return $this->runRequest($sql)->fetchAll();
     }
 

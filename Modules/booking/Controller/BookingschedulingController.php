@@ -10,7 +10,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
  * @author sprigent
  * Controller for the home page
  */
-class BookingsettingsController extends CoresecureController {
+class BookingschedulingController extends CoresecureController {
 
     /**
      * Constructor

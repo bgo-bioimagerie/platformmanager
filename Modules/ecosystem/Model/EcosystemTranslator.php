@@ -1080,4 +1080,11 @@ class EcosystemTranslator {
         }
         return "Add site";
     }
+    
+    public static function NeedToBeSiteManager($lang){
+        if ($lang == "fr") {
+            return "Vous devez être gestoinaire d'au moins un site pour éditer cette page";
+        }
+        return "You need to be manager of at least one site to edit this page";
+    }
 }

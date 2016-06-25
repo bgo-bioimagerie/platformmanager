@@ -35,7 +35,10 @@ class ReArea extends Model {
     }
 
     public function getAll($sort = "name") {
-        $sql = "SELECT * FROM re_area ORDER BY " . $sort . " ASC";
+        $sql = "SELECT re_area.*, ec_sites.name AS site "
+                . " FROM re_area "
+                . " INNER JOIN ec_sites ON ec_sites.id = re_area.id_site "
+                . "ORDER BY re_area." . $sort . " ASC";
         return $this->runRequest($sql)->fetchAll();
     }
 
