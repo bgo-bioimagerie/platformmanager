@@ -31,6 +31,10 @@ class BkColorCode extends Model {
 		
 	}
 	
+        public function getDefault(){
+            return array("id" => 0, "name" => "", "color" => "#ffffff", "text" => "#000000", "display_order" => 0, "id_site" => 1);
+        }
+        
 	/**
 	 * Create the default empty SyColorCode
 	 * 
@@ -120,7 +124,7 @@ class BkColorCode extends Model {
 	}
         
         public function editColorCode($id, $name, $color, $text_color, $id_site, $display_order){
-            if($this->exists($id)){
+            if($this->isColorCodeId($id)){
                 $this->updateColorCode($id, $name, $color, $text_color, $id_site, $display_order);
             }
             else{
@@ -152,23 +156,14 @@ class BkColorCode extends Model {
 	public function isColorCodeId($id){
 		$sql = "select * from bk_color_codes where id=?";
 		$SyColorCode = $this->runRequest($sql, array($id));
-		if ($SyColorCode->rowCount() == 1)
+		if ($SyColorCode->rowCount() == 1){
 			return true;
-		else
+                }
+		else{
 			return false;
+                }
 	}
-	
-	/**
-	 * Add a color code if not exists
-	 * @param unknown $name
-	 * @param unknown $color
-	 * @param unknown $display_order
-	 */
-	public function setColorCode($name, $color, $text_color, $display_order){
-		if (!$this->isColorCode($name)){
-			$this->addSyColorCode($name, $color, $text_color, $display_order);
-		}
-	}
+
 	
 	/**
 	 * get the color of a SyColorCode from ID

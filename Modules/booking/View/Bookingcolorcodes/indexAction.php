@@ -3,11 +3,9 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="container">
+<div class="container" id="pm-table">
     
-    <p>
-        This is a default page for the <?php echo BookingTranslator::Booking_settings($lang) ?> module  
-    </p>
+    <?php echo $tableHtml ?>
     
 </div>
 
