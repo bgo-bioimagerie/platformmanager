@@ -14,5 +14,13 @@
     <?php endblock() ?>
             
 <!-- content -->
+    <?php startblock('navbar') ?>
+    <?php
+    require_once 'Modules/core/Controller/CorenavbarController.php';
+    $navController = new CorenavbarController();
+    echo $navController->navbar();
+    include 'Modules/booking/View/navbarbooking.php';
+    endblock(); ?>
+
     <?php startblock('content') ?>
     <?php endblock();

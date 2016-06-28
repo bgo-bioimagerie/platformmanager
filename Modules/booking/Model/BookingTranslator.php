@@ -10,7 +10,7 @@ class BookingTranslator {
 
     public static function booking($lang){
         if ($lang == "fr") {
-            return "alendrier";
+            return "Calendrier";
         }
         return "booking";
     }

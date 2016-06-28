@@ -10,9 +10,16 @@ class ResourcesTranslator {
 
     public static function resources($lang){
         if ($lang == "fr") {
-            return "Resources";
+            return "Ressources";
         }
         return "Resources";
+    }
+    
+    public static function resource($lang){
+        if ($lang == "fr") {
+            return "Ressource";
+        }
+        return "Resource";
     }
     
     public static function resourcesConfigAbstract($lang) {

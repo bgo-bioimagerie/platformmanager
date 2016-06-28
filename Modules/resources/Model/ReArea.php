@@ -15,7 +15,7 @@ class ReArea extends Model {
      * @return PDOStatement
      */
     public function __construct() {
-        
+
         $this->tableName = "re_area";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
@@ -27,8 +27,8 @@ class ReArea extends Model {
         $sql = "SELECT * FROM re_area WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
-    
-     public function getName($id) {
+
+    public function getName($id) {
         $sql = "SELECT name FROM re_area WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
@@ -57,6 +57,35 @@ class ReArea extends Model {
             return true;
         }
         return false;
+    }
+
+    public function getSiteID($id_area) {
+        $sql = "SELECT id_site from re_area WHERE id=?";
+        $req = $this->runRequest($sql, array($id_area));
+        $tmp = $req->fetch();
+        return $tmp[0];
+    }
+
+    /**
+     * Get the smallest area ID in the table
+     * @return Number Smallest ID
+     */
+    public function getSmallestID() {
+        $sql = "select id from re_area";
+        $req = $this->runRequest($sql);
+        $tmp = $req->fetch();
+        return $tmp[0];
+    }
+
+    /**
+     * 
+     * Get ID and Name of areas of all areas
+     * @return multitype: Areas info
+     */
+    public function getAreasIDName() {
+        $sql = "select id, name from re_area;";
+        $data = $this->runRequest($sql);
+        return $data->fetchAll();
     }
 
     /**

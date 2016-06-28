@@ -61,6 +61,12 @@ class router {
             $controller->runAction("core", "index");
             return true;
         }
+        else if($path == "caches"){
+            $modelCache = new FCache();
+            $modelCache->load();
+            echo "Caches up to date";
+            return true;
+        }
         return false;
     }
 

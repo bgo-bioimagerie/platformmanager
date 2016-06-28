@@ -2,6 +2,8 @@
 
 require_once 'Framework/Model.php';
 
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
+
 /**
  * Class defining methods to install and initialize the core database
  *
@@ -16,6 +18,9 @@ class BookingInstall extends Model {
      */
     public function createDatabase() {        
 
+        $model1 = new BkCalendarEntry();
+        $model1->createTable();
+        
         if (!file_exists('data/booking/')) {
             mkdir('data/booking/', 0777, true);
         }

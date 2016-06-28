@@ -7,7 +7,7 @@ class BookingRouting extends Routing{
     public function listRouts(){
         
         // config
-        $this->addRoute("bookingconfig", "bookingconfig", "bookingconfig", "index");
+        $this->addRoute("bookingconfig", "bookingconfig", "bookingconfig", "index", array("id_site", "id_area", "id_resource"), array("", "", ""));
         
         // add here the module routes
         $this->addRoute("booking", "booking", "booking", "index");
@@ -20,8 +20,7 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingcolorcodeedit", "bookingcolorcodeedit", "bookingcolorcodes", "edit", array("id"), array(""));
         $this->addRoute("bookingblock", "bookingblock", "bookingblock", "index");
         
-        
-        
+        $this->addRoute("bookingdayarea", "bookingdayarea", "booking", "dayarea");
         
         
     }

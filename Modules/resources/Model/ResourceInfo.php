@@ -28,7 +28,7 @@ class ResourceInfo extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getDefault(){
+    public function getDefault() {
         return array(
             "id" => 0,
             "name" => "",
@@ -41,49 +41,83 @@ class ResourceInfo extends Model {
             "display_order" => 0
         );
     }
-    
-    public function getAll($sort = "name"){
-        $sql = "SELECT * FROM re_info ORDER BY ". $sort." ASC";
+
+    public function getAll($sort = "name") {
+        $sql = "SELECT * FROM re_info ORDER BY " . $sort . " ASC";
         return $this->runRequest($sql)->fetchAll();
     }
-    
-    public function get($id){
+
+    public function get($id) {
         $sql = "SELECT * FROM re_info WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
-    
-    public function getName($id){
+
+    public function getName($id) {
         $sql = "SELECT name FROM re_info WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
     }
-    
-    public function set($id, $name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order){
-       
-        if (!$this->exists($id)){
+
+    public function set($id, $name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order) {
+
+        if (!$this->exists($id)) {
             $sql = "INSERT INTO re_info (name, brand, type, desciption, id_category, id_area, id_site, display_order) "
                     . "VALUES (?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order));
             return $this->getDatabase()->lastInsertId();
-        }
-        else{
+        } else {
             $sql = "UPDATE re_info SET name=?, brand=?, type=?, desciption=?, id_category=?, id_area=?, id_site=?, display_order=? WHERE id=?";
             $this->runRequest($sql, array($name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order, $id));
             return $id;
         }
     }
-    
-    public function exists($id){
+
+    public function exists($id) {
         $sql = "SELECT id FROM re_info WHERE id=?";
         $req = $this->runRequest($sql, array($id));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
-    
-    public function delete($id){
+
+    /**
+     * Get the first resource ID for a given area
+     * @param unknown $areaId
+     * @return mixed
+     */
+    public function firstResourceIDForArea($areaId) {
+        $sql = "select id from re_info where id_area=? ORDER BY display_order ASC;";
+        $req = $this->runRequest($sql, array($areaId));
+        $tmp = $req->fetch();
+        return $tmp[0];
+    }
+
+    /**
+     * Get the resources IDs and names for a given Area
+     * @param unknown $areaId
+     * @return multitype:
+     */
+    public function resourceIDNameForArea($areaId) {
+        $sql = "select id, name from re_info where id_area=? ORDER BY display_order";
+        $data = $this->runRequest($sql, array($areaId));
+        return $data->fetchAll();
+    }
+
+    /**
+     * Get the resources info for a given area
+     * @param unknown $areaId
+     * @return multitype:
+     */
+    public function resourcesForArea($areaId) {
+        $sql = "select * from re_info where id_area=? ORDER BY display_order";
+        $data = $this->runRequest($sql, array($areaId));
+        return $data->fetchAll();
+    }
+
+    public function delete($id) {
         $sql = "DELETE FROM re_info WHERE id=?";
         $this->runRequest($sql, array($id));
     }
+
 }
