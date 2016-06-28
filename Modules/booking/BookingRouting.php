@@ -18,6 +18,7 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingsups", "bookingsups", "bookingsups", "index");
         $this->addRoute("bookingcolorcodes", "bookingcolorcodes", "bookingcolorcodes", "index");
         $this->addRoute("bookingcolorcodeedit", "bookingcolorcodeedit", "bookingcolorcodes", "edit", array("id"), array(""));
+        $this->addRoute("bookingcolorcodedelete", "bookingcolorcodedelete", "bookingcolorcodes", "delete", array("id"), array(""));
         $this->addRoute("bookingblock", "bookingblock", "bookingblock", "index");
         
         $this->addRoute("bookingdayarea", "bookingdayarea", "booking", "dayarea");

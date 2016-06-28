@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/booking/Model/BkColorCode.php';
 
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
@@ -20,6 +21,9 @@ class BookingInstall extends Model {
 
         $model1 = new BkCalendarEntry();
         $model1->createTable();
+
+        $model2 = new BkColorCode();
+        $model2->createTable();
         
         if (!file_exists('data/booking/')) {
             mkdir('data/booking/', 0777, true);

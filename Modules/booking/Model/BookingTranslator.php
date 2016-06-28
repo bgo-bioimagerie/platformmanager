@@ -94,6 +94,31 @@ class BookingTranslator {
         return "Block resouces";
     }
     
+    public static function Edit_color_code($lang){
+        if ($lang == "fr") {
+            return "Modifier code couleur";
+        }
+        return "Edit color code";
+    }
     
+    public static function Color($lang){
+        if ($lang == "fr") {
+            return "Couleur";
+        }
+        return "Color";
+    }
     
+    public static function Text($lang){
+        if ($lang == "fr") {
+            return "Texte";
+        }
+        return "Text";
+    }
+    
+    public static function Display_order($lang){
+        if ($lang == "fr") {
+            return "Ordre d'affichage";
+        }
+        return "Display order";
+    }
  }
