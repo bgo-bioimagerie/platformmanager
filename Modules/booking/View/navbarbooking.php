@@ -60,21 +60,17 @@ if ($sygrrifmenucolortxt == "") {
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
-$lang = "En";
-if (isset($_SESSION["user_settings"]["language"])) {
-    $lang = $_SESSION["user_settings"]["language"];
-}
 ?>
 
 <div class="bs-docs-header" id="content" style="padding-top:7px;">
     <div class="container">
 
-        <form role="form" class="form-horizontal" action="sygrrif/booking" method="post" id="navform">
+        <form role="form" class="form-horizontal" action="booking" method="post" id="navform">
             <div class='col-md-3' id="well">
                 <fieldset>
                     <legend><?php echo EcosystemTranslator::Site($lang) ?></legend>
                     <div >
-                        <select class="form-control" name="id_area" onchange="getareaval(this);">
+                        <select class="form-control" name="id_site" onchange="getareaval(this);">
                             <?php
                             foreach ($menuData['sites'] as $site) {
                                 $siteID = $this->clean($site['id']);

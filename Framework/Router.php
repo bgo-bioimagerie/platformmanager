@@ -92,12 +92,24 @@ class router {
         $args = $urlInfo["pathInfo"]["gets"];
         $argsValues = array();
 
+        /*
         if (count($args) > count($urlInfo["pathData"]) - 1) {
             throw new Exception("Missing arguments in the URL");
         }
         for ($i = 0; $i < count($args); $i++) {
             $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
         }
+         */
+        for ($i = 0; $i < count($args); $i++) {
+            if (isset($urlInfo["pathData"][$i + 1])){
+                $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
+            }
+            else{
+                $argsValues[$args[$i]["name"]] = "";
+            }
+            
+        }
+        
 
         return $argsValues;
     }

@@ -77,9 +77,8 @@ abstract class Controller
         // Use the curent action by default
         $actionView = $this->action . "Action";
         if ($action != null) {
-        	$actionView = $action . "Action";
+        	$actionView = $action;
         }
-        
         $classController = get_class($this);
         $controllerView = str_replace("Controller", "", $classController);
 

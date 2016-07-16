@@ -51,7 +51,7 @@ class CoreconnectionController extends Controller {
             "urlCarousel2" => $urlCarousel2,
             "urlCarousel3" => $urlCarousel3,
             "language" => $language,
-            "viewCarousel" => $viewCarousel), "index");
+            "viewCarousel" => $viewCarousel), "indexAction");
     }
 
     /**

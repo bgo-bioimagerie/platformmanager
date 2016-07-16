@@ -36,6 +36,16 @@ class FormAdd {
         }
     }
 
+    public function addHidden($name, $values){
+        $this->types[] = "hidden";
+        $this->names[] = $name;
+        $this->labels[] = "";
+        $this->setValue($name, $values);
+        $this->isMandatory[] = false;
+        $this->choices[] = "";
+        $this->choicesid[] = "";
+    }
+    
     public function addSelect($name, $label, $choices, $choicesid, $values = array()) {
         $this->types[] = "select";
         $this->names[] = $name;
@@ -44,6 +54,26 @@ class FormAdd {
         $this->isMandatory[] = false;
         $this->choices[] = $choices;
         $this->choicesid[] = $choicesid;
+    }
+
+    public function addText($name, $label, $values = array()) {
+        $this->types[] = "text";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($name, $values);
+        $this->isMandatory[] = false;
+        $this->choices[] = "";
+        $this->choicesid[] = "";
+    }
+    
+    public function addNumber($name, $label, $values = array()) {
+        $this->types[] = "number";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($name, $values);
+        $this->isMandatory[] = false;
+        $this->choices[] = "";
+        $this->choicesid[] = "";
     }
 
     public function getHtml($lang = "en", $label = "", $labelWidth = 2, $inputWidth = 9) {
@@ -63,9 +93,15 @@ class FormAdd {
         $html .= "<thead>";
         $html .= "<tr>";
         $html .= "<th></th>";
-        foreach ($this->labels as $label) {
-            $html .= "<th style=\"min-width:10em;\">" . $label . "</th>";
+        for($l = 0 ; $l < count($this->labels) ; $l++){
+            if ($this->types[$l] == "hidden"){
+                $html .= "<th style=\"width:0em;\"> </th>";
+            }
+            else{
+                $html .= "<th style=\"min-width:10em;\">" . $this->labels[$l] . "</th>";
+            }
         }
+        
         $html .= "</tr>";
         $html .= "</thead>";
         $html .= "<tbody>";
@@ -80,7 +116,15 @@ class FormAdd {
                     if ($this->types[$j] == "select") {
                         $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], $this->values[$j][$i], true);
                     }
-
+                    else if($this->types[$j] == "text"){
+                        $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
+                    }
+                    else if($this->types[$j] == "number"){
+                        $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
+                    }
+                    else if($this->types[$j] == "hidden"){
+                        $html .= $formHtml->inlineHidden($this->names[$j], $this->values[$j][$i], false, true);
+                    }
                     $html .= "</td>";
                 }
                 $html .= "</tr>";
@@ -92,6 +136,15 @@ class FormAdd {
                 $html .= "<td>";
                 if ($this->types[$j] == "select") {
                     $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], "", true);
+                }
+                else if($this->types[$j] == "text"){
+                    $html .= $formHtml->inlineText($this->names[$j], "", false, true);
+                }
+                else if($this->types[$j] == "number"){
+                    $html .= $formHtml->inlineNumber($this->names[$j], "", false, true);
+                }
+                else if($this->types[$j] == "hidden"){
+                    $html .= $formHtml->inlineHidden($this->names[$j], "", false, true);
                 }
                 $html .= "</td>";
             }

@@ -30,12 +30,74 @@ class EcUser extends Model {
         $this->runRequest($sql);
     }
 
+    public function getStatus($id_user){
+        $sql = "SELECT id_status FROM core_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id_user));
+        return $req[0];
+    }
+    
     public function importCoreUsers() {
         $sql1 = "SELECT * FROM core_users WHERE id NOT IN (SELECT id FROM ec_users)";
         $users = $this->runRequest($sql1)->fetchAll();
         foreach ($users as $user) {
             $sql = "INSERT INTO ec_users (id) VALUES(?)";
             $this->runRequest($sql, array($user["id"]));
+        }
+    }
+    
+    public function getActiveUsers($sortentry){
+        $modelUser = new CoreUser();
+        return $modelUser->getActiveUsers($sortentry);
+    }
+    
+    public function getAcivesForSelect($sortentry){
+        $modelUser = new CoreUser();
+        $users = $modelUser->getActiveUsers($sortentry);
+        $names = array(); $ids = array();
+        foreach($users as $res){
+            $names[] = $res["name"] . " " . $res["firstname"];
+            $ids[] = $res["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+    
+        /**
+     * get the informations of a user from it's id
+     *
+     * @param int $id
+     *        	Id of the user to query
+     * @throws Exception if the user connot be found
+     */
+    public function userAllInfo($id) {
+        $sql = "SELECT core_users.*, ec_users.* "
+                . "FROM core_users "
+                . "INNER JOIN ec_users ON core_users.id = ec_users.id "
+                . "WHERE core_users.id=?";
+        $req = $this->runRequest($sql, array($id));
+        
+        
+        if ($req->rowCount() == 1) {
+            $userInfo = $req->fetch();
+            $userInfo["id_resps"] = $this->getUserResponsibles($id);
+        
+            return $userInfo; 
+        } else { 
+            return array("id" => 0,
+                "login" => 'unknown',
+                "firstname" => 'unknown',
+                "name" => 'unknown',
+                "email" => '',
+                "tel" => '',
+                "pwd" => '',
+                "id_unit" => 1,
+                "id_status" => 1,
+                "convention" => 0,
+                "date_convention" => '0000-00-00',
+                "date_created" => '0000-00-00',
+                "date_last_login" => '0000-00-00',
+                "date_end_contract" => '0000-00-00',
+                "is_active" => 1,
+                "source" => 'local');
         }
     }
 

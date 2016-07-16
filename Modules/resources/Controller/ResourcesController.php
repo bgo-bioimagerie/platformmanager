@@ -131,7 +131,8 @@ class ResourcesController extends CoresecureController {
         $form->addSelect("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
         $form->addSelect("id_site", EcosystemTranslator::Site($lang), $choicesS, $choicesidS, $data["id_site"]);
         $form->addNumber("display_order", ResourcesTranslator::Display_order($lang), false, $data["display_order"]);
-        $form->addTextArea("description", ResourcesTranslator::Description($lang), false, $data["desciption"], true);
+        $form->addText("description", ResourcesTranslator::Description($lang), false, $data["description"], true);
+        $form->addTextArea("long_description", ResourcesTranslator::Description($lang), false, $data["long_description"], true);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "resourcesedit/".$id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "resources");
@@ -144,6 +145,7 @@ class ResourcesController extends CoresecureController {
                     $form->getParameter("brand"),
                     $form->getParameter("type"),
                     $form->getParameter("description"), 
+                    $form->getParameter("long_description"), 
                     $form->getParameter("id_category"),
                     $form->getParameter("id_area"),
                     $form->getParameter("id_site"),

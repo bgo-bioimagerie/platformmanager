@@ -3,11 +3,8 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="container">
-    
-    <p>
-    </p>
-    
+<div class="container" id="pm-form">
+    <?php echo $htmlForm ?>
 </div>
 
 <?php endblock();

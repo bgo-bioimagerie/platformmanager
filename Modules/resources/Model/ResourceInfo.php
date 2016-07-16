@@ -20,7 +20,8 @@ class ResourceInfo extends Model {
         $this->setColumnsInfo("name", "varchar(150)", "");
         $this->setColumnsInfo("brand", "varchar(250)", "");
         $this->setColumnsInfo("type", "varchar(250)", "");
-        $this->setColumnsInfo("desciption", "text", "");
+        $this->setColumnsInfo("description", "varchar(500)", "");
+        $this->setColumnsInfo("long_description", "text", "");
         $this->setColumnsInfo("id_category", "int(11)", 0);
         $this->setColumnsInfo("id_area", "int(11)", 0);
         $this->setColumnsInfo("id_site", "int(11)", 0);
@@ -34,7 +35,8 @@ class ResourceInfo extends Model {
             "name" => "",
             "brand" => "",
             "type" => "",
-            "desciption" => "",
+            "description" => "",
+            "long_description" => "",
             "id_category" => 0,
             "id_area" => 0,
             "id_site" => 0,
@@ -46,28 +48,46 @@ class ResourceInfo extends Model {
         $sql = "SELECT * FROM re_info ORDER BY " . $sort . " ASC";
         return $this->runRequest($sql)->fetchAll();
     }
+    
+    public function getAllForSelect($sort = "name"){
+        $sql = "SELECT * FROM re_info ORDER BY " . $sort . " ASC";
+        $resources = $this->runRequest($sql)->fetchAll();
+        $names = array(); $ids = array();
+        foreach($resources as $res){
+            $names[] = $res["name"];
+            $ids[] = $res["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+        
+    }
 
     public function get($id) {
         $sql = "SELECT * FROM re_info WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
 
+    public function getAreaID($id){
+        $sql = "SELECT id_area FROM re_info WHERE id=?";
+        $tmp = $this->runRequest($sql, array($id))->fetch();
+        return $tmp[0];
+    }
+    
     public function getName($id) {
         $sql = "SELECT name FROM re_info WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
     }
 
-    public function set($id, $name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order) {
+    public function set($id, $name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_site, $display_order) {
 
         if (!$this->exists($id)) {
-            $sql = "INSERT INTO re_info (name, brand, type, desciption, id_category, id_area, id_site, display_order) "
-                    . "VALUES (?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order));
+            $sql = "INSERT INTO re_info (name, brand, type, description, long_description, id_category, id_area, id_site, display_order) "
+                    . "VALUES (?,?,?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_site, $display_order));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = "UPDATE re_info SET name=?, brand=?, type=?, desciption=?, id_category=?, id_area=?, id_site=?, display_order=? WHERE id=?";
-            $this->runRequest($sql, array($name, $brand, $type, $desciption, $id_category, $id_area, $id_site, $display_order, $id));
+            $sql = "UPDATE re_info SET name=?, brand=?, type=?, description=?, long_description=?, id_category=?, id_area=?, id_site=?, display_order=? WHERE id=?";
+            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_site, $display_order, $id));
             return $id;
         }
     }

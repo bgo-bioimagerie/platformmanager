@@ -1,9 +1,9 @@
-<?php include 'Modules/booking/View/layout.php' ?>
+<?php include 'Modules/core/View/layout.php' ?>
 
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-xs-12 col-md-12" style="background-color: #e1e1e1; min-height: 2000px;">
+<div class="col-xs-12 col-md-12">
     
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <h1><?php echo BookingTranslator::configuration($lang) ?></h1>
@@ -13,13 +13,13 @@
     if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 
         $message = $_SESSION["message"];?>
         <?php if (strpos($message, "Error")){ ?>
-        <div class="col-xs-12 col-md-10 col-md-offset-1" style="background-color: #e1e1e1;">
+        <div class="col-xs-12 col-md-10 col-md-offset-1" >
             <div class="alert alert-danger" role="alert">
             <p><?php echo  $message ?></p>
             </div>
         </div>
     <?php }else{ ?>
-        <div class="col-xs-12 col-md-10 col-md-offset-1" style="background-color: #e1e1e1;">
+        <div class="col-xs-12 col-md-10 col-md-offset-1" >
             <div class="alert alert-success" role="alert">
             <p><?php echo  $message ?></p>
             </div>
@@ -36,6 +36,8 @@
         <?php echo $form ?>
     </div>
     <?php } ?>
+    
+    <?php include('Modules/Booking/View/BookingConfig/summaryForm.php'); ?>
 </div>
 
 <?php endblock();

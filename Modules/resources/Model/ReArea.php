@@ -91,6 +91,18 @@ class ReArea extends Model {
         return $data->fetchAll();
     }
 
+    public function getUnrestrictedAreasIDNameForSite($id_site){
+        $sql = "select id, name from re_area where id_site=?";
+        $data = $this->runRequest($sql, array($id_site));
+        return $data->fetchAll();
+    }
+    
+    public function getAreasIDNameForSite($id_site){
+        $sql = "select id, name from re_area where id_site=?";
+        $data = $this->runRequest($sql, array($id_site));
+        return $data->fetchAll();
+    }
+    
     /**
      * Delete a unit
      * @param number $id ID

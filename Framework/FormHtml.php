@@ -69,6 +69,17 @@ class FormHtml {
         $html .= "/>";
         return $html;
     }
+    
+    static public function inlinehidden($name, $value, $required=false, $vect = false) {
+        $vectv = "";
+        if ($vect){
+            $vectv = "[]";
+        }
+        $html = "<input class=\"form-control\" type=\"hidden\" name=\"" . $name.$vectv . "\"";
+        $html .= " value=\"" . $value . "\"" . $required;
+        $html .= "/>";
+        return $html;
+    }
 
     static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9) {
         $html = "<div class=\"form-group" . $validated . "\">";
@@ -79,6 +90,19 @@ class FormHtml {
         $html .= "/>";
         $html .= "</div>";
         $html .= "</div>";
+        return $html;
+    }
+    
+    static public function inlineText($name, $value, $required=false, $vect = false){
+        
+        $vectv = "";
+        if ($vect){
+            $vectv = "[]";
+        }
+        $html = "<input class=\"form-control\" type=\"text\" name=\"" . $name . $vectv . "\"";
+        $html .= " value=\"" . $value . "\"" . $required . " ";
+        $html .= "/>";
+        
         return $html;
     }
 
@@ -146,6 +170,19 @@ class FormHtml {
         $html .= "</div>";
         return $html;
     }
+    
+    static public function inlineNumber($name, $value, $required=false, $vect = false){
+        
+        $vectv = "";
+        if ($vect){
+            $vectv = "[]";
+        }
+        $html = "<input class=\"form-control\" type=\"number\" name=\"" . $name . $vectv . "\"";
+        $html .= " value=\"" . $value . "\"" . $required . " ";
+        $html .= "/>";
+        
+        return $html;
+    }
 
     static public function textarea($useJavascript, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
         $divid = "";
@@ -208,7 +245,28 @@ class FormHtml {
         $html .= "</div>";
         return $html;
     }
-
+    
+    static public function choicesList($label, $choices, $choicesid, $values, $labelWidth, $inputWidth){
+        $html = "<div class=\"form-group\">";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
+        for($i = 0 ; $i < count($choices) ; $i++){
+            
+            $html .= "<div class=\"checkbox\"> ";
+            $html .= "<label> ";
+            $checked = "";
+            if ($values[$i] == 1){
+                $checked = "checked";
+            }
+            $html .= "<input type=\"checkbox\" name=\"".$choicesid[$i]."\"".$checked.">"  . $choices[$i] . " ";
+            $html .= "</label> ";
+            $html .= "</div>";
+        }
+        $html .= "</div>";
+        $html .= "</div>";
+        return $html;
+    }
+    
     static public function buttons($validationURL, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $buttonsWidth = 2, $buttonsOffset = 9) {
         $html = "<div class=\"col-xs-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
         if ($validationURL != "") {
@@ -223,7 +281,7 @@ class FormHtml {
         $html .= "</div>";
         return $html;
     }
-
+    
     static public function timePickerScript() {
         return file_get_contents("Framework/timepicker_script.php");
     }

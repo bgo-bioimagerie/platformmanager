@@ -391,6 +391,18 @@ class Form {
         $this->useJavascript[] = $userichtxt;
     }
     
+    public function addChoicesList($label, $listNames, $listIds, $values){
+        $this->types[] = "choicesList";
+        $this->names[] = "";
+        $this->labels[] = $label;
+        $this->isMandatory[] = false;
+        $this->choices[] = $listNames;
+        $this->choicesid[] = $listIds;
+        $this->values[] = $values;
+        $this->validated[] = true;
+        $this->enabled[] = "";
+    }
+    
     public function setFormAdd(FormAdd $formAdd, $label = ""){
         $this->formAdd = $formAdd;
         $this->types[] = "formAdd";
@@ -477,6 +489,9 @@ class Form {
             }
             if ($this->types[$i] == "formAdd"){
                 $html .= $this->formAdd->getHtml($lang, $this->labels[$i], $this->labelWidth, $this->inputWidth);
+            }
+            if ($this->types[$i] == "choicesList"){
+                $html .= $formHtml->choicesList($this->labels[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
         }
 

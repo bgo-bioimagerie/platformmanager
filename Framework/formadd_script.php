@@ -27,6 +27,12 @@
                 case "text":
                     newcell.childNodes[0].value = "";
                     break;
+                case "number":
+                    newcell.childNodes[0].value = "";
+                    break;  
+                case "hidden":
+                    newcell.childNodes[0].value = "";
+                    break;      
                 case "checkbox":
                     newcell.childNodes[0].checked = false;
                     break;

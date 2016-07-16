@@ -20,9 +20,9 @@
     <?php startblock('navbar') ?>
     <?php endblock() ?>
     
-    <div class="col-xs-12" id="pm-content"/>
+    <!-- <div class="col-xs-12" id="pm-content"/> -->
     <?php startblock('content') ?>
     <?php endblock() ?>
-    </div>
+    <!-- </div> -->
 </body>
 </html>

@@ -136,7 +136,7 @@ class EcusersController extends CoresecureController {
         $this->render(array(
             'lang' => $lang,
             'tableHtml' => $tableHtml
-                ), "index");
+                ), "indexAction");
     }
 
     public function activeAction() {
