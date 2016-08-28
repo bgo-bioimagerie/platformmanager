@@ -27,7 +27,7 @@ class BkPackage extends Model {
 
         $this->addColumn("bk_packages", "id_package", "int(11)", 0);
 
-        $sql2 = "CREATE TABLE IF NOT EXISTS `sy_j_packages_prices` (
+        $sql2 = "CREATE TABLE IF NOT EXISTS `bk_j_packages_prices` (
 		`id_package` int(11) NOT NULL,
 		`id_pricing` int(11) NOT NULL,
 		`price` decimal(10,2) NOT NULL
@@ -35,23 +35,41 @@ class BkPackage extends Model {
         $this->runRequest($sql2);
 
         // delete package with zero id
-        $sql3 = "DELETE FROM sy_j_packages_prices WHERE id_package IN(SELECT id FROM bk_packages WHERE id_package=0)";
+        $sql3 = "DELETE FROM bk_j_packages_prices WHERE id_package IN(SELECT id FROM bk_packages WHERE id_package=0)";
         $this->runRequest($sql3);
 
         $sql4 = "DELETE FROM bk_packages WHERE id_package = 0";
         $this->runRequest($sql4);
     }
 
-    public function getByResource($id_resource){
+    public function getByResource($id_resource) {
         $sql = "SELECT * FROM bk_packages WHERE id_resource=?";
         $req = $this->runRequest($sql, array($id_resource));
         return $req->fetchAll();
     }
-    
+
     public function getAll($sortentrey) {
         $sql = "SELECT * FROM bk_packages ORDER BY " . $sortentrey . " ASC;";
         $req = $this->runRequest($sql, array($sortentrey));
         return $req->fetchAll();
+    }
+    
+    public function getName($id){
+        $sql = "SELECT name FROM bk_packages WHERE id_package=?";
+        $req = $this->runRequest($sql, array($id))->fetch();
+        return $req[0];
+    }
+
+    public function getForSpace($id_space, $sort) {
+        $sql = "select * from bk_packages WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY " . $sort . " ASC;";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
+    public function getPackagePrice($id_package, $id_pricing) {
+
+        $sql = 'SELECT price FROM bk_j_packages_prices WHERE id_package=? and id_pricing=?';
+        $req = $this->runRequest($sql, array($id_package, $id_pricing));
+        return $price = $req->fetch();
     }
 
     public function getPrices($resourceID) {
@@ -69,7 +87,7 @@ class BkPackage extends Model {
 
         for ($p = 0; $p < count($packages); $p++) {
 
-            $sql = "select * from sy_j_packages_prices where id_package=?";
+            $sql = "select * from bk_j_packages_prices where id_package=?";
             $data = $this->runRequest($sql, array($packages[$p]["id"]));
             $prices = $data->fetchAll();
             foreach ($prices as $price) {
@@ -143,7 +161,7 @@ class BkPackage extends Model {
     }
 
     public function isPackagePrice($id_package, $id_pricing) {
-        $sql = "select * from sy_j_packages_prices where id_package=? AND id_pricing=?";
+        $sql = "select * from bk_j_packages_prices where id_package=? AND id_pricing=?";
         $req = $this->runRequest($sql, array($id_package, $id_pricing));
         if ($req->rowCount() == 1) {
             return true;
@@ -153,12 +171,12 @@ class BkPackage extends Model {
     }
 
     public function updatePackagePrice($id_package, $id_pricing, $price) {
-        $sql = "update sy_j_packages_prices set price=? where id_package=? AND id_pricing=?";
+        $sql = "update bk_j_packages_prices set price=? where id_package=? AND id_pricing=?";
         $this->runRequest($sql, array($price, $id_package, $id_pricing));
     }
 
     public function addPackagePrice($id_package, $id_pricing, $price) {
-        $sql = "insert into sy_j_packages_prices(id_package, id_pricing, price)"
+        $sql = "insert into bk_j_packages_prices(id_package, id_pricing, price)"
                 . " values(?, ?, ?)";
         $this->runRequest($sql, array($id_package, $id_pricing, $price));
     }
@@ -189,7 +207,7 @@ class BkPackage extends Model {
         $sql = "DELETE FROM bk_packages WHERE id = ?";
         $this->runRequest($sql, array($id));
 
-        $sql2 = "DELETE FROM sy_j_packages_prices WHERE id_package = ?";
+        $sql2 = "DELETE FROM bk_j_packages_prices WHERE id_package = ?";
         $this->runRequest($sql2, array($id));
     }
 

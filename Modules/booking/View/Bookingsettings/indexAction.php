@@ -3,10 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="container">
-    
-    <p>
-    </p>
+<div class="col-md-12">
     
 </div>
 

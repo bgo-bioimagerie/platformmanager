@@ -2,9 +2,9 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="container">
+<div class="col-md-12" id="pm-content">
     <div class="col-md-10 col-md-offset-1">
-        <form role="form" class="form-horizontal" action="ecuserschangepwdq" method="post">
+        <form role="form" class="form-horizontal" action="ecuserschangepwdq/<?php echo $id_space ?>" method="post">
             <div class="page-header">
                 <h1>
                     <?php echo CoreTranslator::Change_password($lang) ?>
@@ -40,7 +40,7 @@
                 <br>
                 <div class="col-xs-4 col-xs-offset-8" id="button-div">
                     <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Save($lang) ?>" />
-                    <button type="button" onclick="location.href = 'ecusers'" class="btn btn-default"><?php echo CoreTranslator::Cancel($lang) ?></button>
+                    <button type="button" onclick="location.href = 'ecusers/'<?php echo $id_space ?>" class="btn btn-default"><?php echo CoreTranslator::Cancel($lang) ?></button>
                 </div>
             </div>
         </form>

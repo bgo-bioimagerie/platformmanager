@@ -9,11 +9,8 @@ require_once 'Framework/Model.php';
  */
 class CoreStatus extends Model {
 
-    public static $VISITOR = 1;
-    public static $USER = 2;
-    public static $MANAGER = 3;
-    public static $ADMIN = 4;
-    public static $SUPERADMIN = 5;
+    public static $USER = 1;
+    public static $ADMIN = 2;
     
     /**
      * Create the status table
@@ -44,27 +41,12 @@ class CoreStatus extends Model {
     public function createDefaultStatus() {
 
         if (!$this->isStatus(1)) {
-            $sql = 'INSERT INTO `core_status` (`name`) VALUES("visitor")';
-            $pdo = $this->runRequest($sql);
-        }
-
-        if (!$this->isStatus(2)) {
             $sql = 'INSERT INTO `core_status` (`name`) VALUES("user")';
             $pdo = $this->runRequest($sql);
         }
 
-        if (!$this->isStatus(3)) {
-            $sql = 'INSERT INTO `core_status` (`name`) VALUES("manager")';
-            $pdo = $this->runRequest($sql);
-        }
-
-        if (!$this->isStatus(4)) {
+        if (!$this->isStatus(2)) {
             $sql = 'INSERT INTO `core_status` (`name`) VALUES("admin")';
-            $pdo = $this->runRequest($sql);
-        }
-        
-        if (!$this->isStatus(5)) {
-            $sql = 'INSERT INTO `core_status` (`name`) VALUES("superadmin")';
             $pdo = $this->runRequest($sql);
         }
    }

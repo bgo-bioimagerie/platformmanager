@@ -4,6 +4,8 @@ require_once 'Framework/Controller.php';
 require_once 'Modules/core/Controller/CoreconnectionController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreStatus.php';
 
 
 /**
@@ -74,6 +76,14 @@ abstract class CoresecureController extends Controller {
         }
     }
     
+    public function checkAuthorizationMenuSpace($menuName, $id_space, $id_user){
+        $modelSpace = new CoreSpace();
+        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
+        if ($auth == 0) {
+            throw new Exception("Error 503: Permission denied");
+        }
+    }
+    
     public function isUserAuthorized($minimumStatus){
         if ( isset($_SESSION["user_status"])){
             if (intval ($_SESSION["user_status"]) >= intval($minimumStatus)){
@@ -88,5 +98,19 @@ abstract class CoresecureController extends Controller {
         $controllerMenu = new CoreMenu();
         $minimumStatus = $controllerMenu->getMenuStatusByName($menuName);
         return $this->isUserAuthorized($minimumStatus);
+    }
+    
+    public function checkSpaceAdmin($id_space, $id_user){
+        
+        $modelUser = new CoreUser();
+        $userAppStatus = $modelUser->getStatus($id_user);
+        if ($userAppStatus > 1){
+            return true;
+        }
+        $modelSpace = new CoreSpace();
+        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
+        if ($spaceRole < 4) {
+            throw new Exception("Error 503: Permission denied");
+        }
     }
 }

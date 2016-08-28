@@ -55,6 +55,7 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
+        /*
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang);
         if ($formMenusactivation->check()) {
@@ -65,6 +66,8 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreconfig");
             return;
         }
+         
+         */
         // maintenance form
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
@@ -141,7 +144,7 @@ class CoreconfigController extends CoresecureController {
         }
         // view
         $forms = array($formMaintenance->getHtml($lang), $formInstall->getHtml($lang), 
-            $formMenusactivation->getHtml($lang), $formDesactivateUser->getHtml($lang), 
+            $formDesactivateUser->getHtml($lang), 
             $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang), 
             $formEmail->getHtml($lang), $formNavbar->getHtml($lang), $formBackup->getHtml($lang));

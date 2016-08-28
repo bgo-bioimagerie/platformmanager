@@ -50,8 +50,13 @@ a{
 <!-- Add the table title -->
 <div class="col-lg-12" style="background-color: #ffffff; padding-top: 12px;">
 <div class="col-lg-10 col-lg-offset-1" style="background-color: #ffffff;">
+        <?php
+        $message = "";
+            if (isset($_SESSION["message"])){
+            $message = $_SESSION["message"];
+        } ?>
 	<?php if ($message != ""): 
-		if (strpos($message, "Error") === false){?>
+		if (strpos($message, "Err") === false){?>
 			<div class="alert alert-success text-center">	
 		<?php 
 		}
@@ -63,7 +68,7 @@ a{
 	?>
     	<p><?php echo  $message ?></p>
     	</div>
-	<?php endif; ?>
+	<?php endif; unset($_SESSION["message"])?>
 
 </div>
 </div>
@@ -71,9 +76,9 @@ a{
 
 <div class="col-md-6 text-left">
     <div class="btn-group" role="group" aria-label="...">
-<button type="submit" class="btn btn-default" onclick="location.href='bookingday/daybefore'"> &lt; </button>
-<button type="submit" class="btn btn-default" onclick="location.href='bookingday/dayafter'"> > </button>
-<button type="submit" class="btn btn-default" onclick="location.href='bookingday/today'"><?php echo  BookingTranslator::Today($lang) ?></button>
+<button type="submit" class="btn btn-default" onclick="location.href='bookingday/<?php echo $id_space ?>/daybefore'"> &lt; </button>
+<button type="submit" class="btn btn-default" onclick="location.href='bookingday/<?php echo $id_space ?>/dayafter'"> > </button>
+<button type="submit" class="btn btn-default" onclick="location.href='bookingday/<?php echo $id_space ?>/today'"><?php echo  BookingTranslator::Today($lang) ?></button>
     </div>
     <?php 
 $d = explode("-", $date);
@@ -95,14 +100,14 @@ for ($p = 0 ; $p < count($day_position) ; $p++){
 
 
 <div class="col-md-6 text-right">
-     <div class="btn-group" role="group" aria-label="...">
-<button type="button" class="btn btn-default active"><?php echo  BookingTranslator::Day($lang) ?></button>
-<button type="button" onclick="location.href='bookingdayarea'" class="btn btn-default"><?php echo  BookingTranslator::Day_Area($lang) ?></button>
-<button type="button" onclick="location.href='bookingweek'" class="btn btn-default "><?php echo  BookingTranslator::Week($lang) ?></button>
-<button type="button" onclick="location.href='bookingweekarea'" class="btn btn-default "><?php echo BookingTranslator::Week_Area($lang) ?></button>
-<button type="button" onclick="location.href='bookingmonth'" class="btn btn-default"><?php echo  BookingTranslator::Month($lang) ?></button>
-</div>
-</div>
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default active" ><?php echo  BookingTranslator::Day($lang) ?></button>
+        <button type="button" onclick="location.href='bookingdayarea/<?php echo $id_space ?>'"class="btn btn-default"><?php echo  BookingTranslator::Day_Area($lang) ?></button>
+        <button type="button" onclick="location.href='bookingweek/<?php echo $id_space ?>'" class="btn btn-default "><?php echo  BookingTranslator::Week($lang) ?></button>
+        <button type="button" onclick="location.href='bookingweekarea/<?php echo $id_space ?>'" class="btn btn-default "><?php echo  BookingTranslator::Week_Area($lang) ?></button>
+        <button type="button" onclick="location.href='bookingmonth/<?php echo $id_space ?>'" class="btn btn-default"><?php echo  BookingTranslator::Month($lang) ?></button>
+    </div>
+    </div>
 </div>
 
 <?php 
@@ -162,7 +167,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 		$isAvailableDay = true;
 	}
 	
-	bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle);
+	bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle);
 	?>
 	
 </div>

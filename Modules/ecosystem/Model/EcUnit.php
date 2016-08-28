@@ -60,6 +60,20 @@ class EcUnit extends Model {
         return $user->fetchAll();
     }
 
+    public function getUnitsForList($sortentry = 'id') {
+        $sql = "SELECT id, name FROM ec_units ORDER BY " . $sortentry . " ASC;";
+        $req = $this->runRequest($sql)->fetchAll();
+        $ids = array();
+        $names = array();
+        $ids[] = 0;
+        $names[] = "--";
+        foreach ($req as $r) {
+            $ids[] = $r["id"];
+            $names[] = $r["name"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+
     /**
      * get the names of all the units
      *
@@ -101,6 +115,21 @@ class EcUnit extends Model {
         $sql = "insert into ec_units(id, name, address, id_belonging)"
                 . " values(?, ?, ?, ?)";
         $this->runRequest($sql, array($id, $name, $address, $id_belonging));
+    }
+    
+    public function importUnit2($name, $address, $id_belonging){
+        $sql = "SELECT name FROM ec_units WHERE name=?";
+        $req = $this->runRequest($sql, array("name"));
+        if($req->rowCount() == 0){
+            $sql = "insert into ec_units(name, address, id_belonging)"
+                . " values(?, ?, ?)";
+            $this->runRequest($sql, array($name, $address, $id_belonging));
+            return $this->getDatabase()->lastInsertId();
+        }
+        else{
+            $u = $req->fetch();
+            return $u[0];
+        }
     }
 
     /**

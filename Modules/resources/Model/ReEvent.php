@@ -46,7 +46,7 @@ class ReEvent extends Model {
     
     public function addDefault($id_resource, $id_user){
         $sql = "INSERT INTO re_event (date, id_resource, id_user, id_eventtype, id_state, comment) VALUES (?,?,?,?,?,?)";
-        $this->runRequest($sql, array(time("Y-m-d"), $id_resource, $id_user, 1, 1, ""));
+        $this->runRequest($sql, array(date("Y-m-d", time()), $id_resource, $id_user, 1, 1, ""));
         return $this->getDatabase()->lastInsertId();
     }
 

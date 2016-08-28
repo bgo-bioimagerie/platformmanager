@@ -24,7 +24,7 @@ class ResourceInfo extends Model {
         $this->setColumnsInfo("long_description", "text", "");
         $this->setColumnsInfo("id_category", "int(11)", 0);
         $this->setColumnsInfo("id_area", "int(11)", 0);
-        $this->setColumnsInfo("id_site", "int(11)", 0);
+        $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("display_order", "int(11)", 0);
         $this->primaryKey = "id";
     }
@@ -39,7 +39,7 @@ class ResourceInfo extends Model {
             "long_description" => "",
             "id_category" => 0,
             "id_area" => 0,
-            "id_site" => 0,
+            "id_space" => 0,
             "display_order" => 0
         );
     }
@@ -49,9 +49,24 @@ class ResourceInfo extends Model {
         return $this->runRequest($sql)->fetchAll();
     }
     
-    public function getAllForSelect($sort = "name"){
-        $sql = "SELECT * FROM re_info ORDER BY " . $sort . " ASC";
-        $resources = $this->runRequest($sql)->fetchAll();
+    public function getForSpace($id_space){
+        $sql = "SELECT * FROM re_info WHERE id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+    
+    public function getForList($id_space){
+        $data = $this->getForSpace($id_space);
+        $names = array(); $ids = array();
+        foreach($data as $d){
+           $names[] =  $d["name"];
+           $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+    
+    public function getAllForSelect($id_space, $sort = "name"){
+        $sql = "SELECT * FROM re_info WHERE id_space=? ORDER BY " . $sort . " ASC";
+        $resources = $this->runRequest($sql, array($id_space))->fetchAll();
         $names = array(); $ids = array();
         foreach($resources as $res){
             $names[] = $res["name"];
@@ -64,6 +79,11 @@ class ResourceInfo extends Model {
     public function get($id) {
         $sql = "SELECT * FROM re_info WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
+    }
+    
+    public function getBySpace($id) {
+        $sql = "SELECT * FROM re_info WHERE id_space=?";
+        return $this->runRequest($sql, array($id))->fetchAll();
     }
 
     public function getAreaID($id){
@@ -78,16 +98,16 @@ class ResourceInfo extends Model {
         return $tmp[0];
     }
 
-    public function set($id, $name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_site, $display_order) {
+    public function set($id, $name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order) {
 
         if (!$this->exists($id)) {
-            $sql = "INSERT INTO re_info (name, brand, type, description, long_description, id_category, id_area, id_site, display_order) "
+            $sql = "INSERT INTO re_info (name, brand, type, description, long_description, id_category, id_area, id_space, display_order) "
                     . "VALUES (?,?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_site, $display_order));
+            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = "UPDATE re_info SET name=?, brand=?, type=?, description=?, long_description=?, id_category=?, id_area=?, id_site=?, display_order=? WHERE id=?";
-            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_site, $display_order, $id));
+            $sql = "UPDATE re_info SET name=?, brand=?, type=?, description=?, long_description=?, id_category=?, id_area=?, id_space=?, display_order=? WHERE id=?";
+            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order, $id));
             return $id;
         }
     }

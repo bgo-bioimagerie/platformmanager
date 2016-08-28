@@ -12,8 +12,8 @@ require_once 'View.php';
 abstract class Controller
 {
     /** Action to run */
-    private $action;
-    private $module;
+    protected $action;
+    protected $module;
 
     /** recieved request */
     protected $request;
@@ -64,7 +64,7 @@ abstract class Controller
     /**
      * Define the default action
      */
-    public abstract function indexAction();
+    //public abstract function indexAction();
 
     /**
      * Generate the vue associated to the curent controller
@@ -85,7 +85,6 @@ abstract class Controller
         // Geneate the view
         
         //echo "parent = " . basename(__DIR__) . "<br/>"; 
-        
         $view = new View($actionView, $controllerView, $this->module);
         $view->generate($dataView);
     }

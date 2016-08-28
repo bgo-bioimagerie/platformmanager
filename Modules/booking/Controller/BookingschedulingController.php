@@ -8,7 +8,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ReArea.php';
-
+require_once 'Modules/core/Model/CoreStatus.php';
 
 /**
  * 
@@ -22,32 +22,36 @@ class BookingschedulingController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("bookingsettings");
+        //$this->checkAuthorizationMenu("bookingsettings");
     }
     
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
 
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
+        
         $lang = $this->getLanguage();
         
         $modelArea = new ReArea();
-        $areas = $modelArea->getAll("name");
+        $areas = $modelArea->getForSpace($id_space);
         
         $table = new TableView();
         $table->setTitle(BookingTranslator::Scheduling($lang));
-        $table->addLineEditButton("bookingschedulingedit");
+        $table->addLineEditButton("bookingschedulingedit/".$id_space);
         
         $headers = array("name" => CoreTranslator::Name($lang));
         
         $tableHtml = $table->view($areas, $headers);
         
-        $this->render(array("lang" => $lang, "tableHtml" => $tableHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
     
-    public function editAction($id){
+    public function editAction($id_space, $id){
+        
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         
         $lang = $this->getLanguage();
         
@@ -77,7 +81,7 @@ class BookingschedulingController extends CoresecureController {
         $form->addSelect("resa_time_setting", BookingTranslator::The_user_specify($lang), array(BookingTranslator::the_booking_duration($lang), BookingTranslator::the_date_time_when_reservation_ends($lang)), array(1, 2), $data["resa_time_setting"]);
         
         $modelColor = new BkColorCode();
-        $colors = $modelColor->getColorCodes("name");
+        $colors = $modelColor->getForSpace($id_space);
         
         $cc = array(); $ccid = array();
         foreach($colors as $color){
@@ -86,7 +90,7 @@ class BookingschedulingController extends CoresecureController {
         }
         $form->addSelect("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $data["default_color_id"]);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingschedulingedit/".$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingschedulingedit/".$id_space."/".$id);
         $form->setColumnsWidth(3, 9);
         $form->setButtonsWidth(3, 9);
         if ($form->check()){
@@ -107,10 +111,10 @@ class BookingschedulingController extends CoresecureController {
                     $this->request->getParameter("default_color_id"));
              
              
-            $this->redirect("bookingschedulingedit/".$id);
+            $this->redirect("bookingschedulingedit/".$id_space."/".$id);
              
         }
-        $this->render(array("lang" => $lang, "htmlForm" => $form->getHtml($lang) ));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang) ));
         
     }
 }

@@ -10,7 +10,7 @@ require_once 'Modules/ecosystem/Model/EcResponsible.php';
  * @author Sylvain Prigent
  */
 class EcUser extends Model {
-
+    
     /**
      * Create the user table
      *
@@ -30,9 +30,19 @@ class EcUser extends Model {
         $this->runRequest($sql);
     }
 
+    public function getUnit($id_user){
+        $sql = "SELECT id_unit FROM ec_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id_user));
+        if($req->rowCount() == 1){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     public function getStatus($id_user){
         $sql = "SELECT id_status FROM core_users WHERE id=?";
-        $req = $this->runRequest($sql, array($id_user));
+        $req = $this->runRequest($sql, array($id_user))->fetch();
         return $req[0];
     }
     
@@ -55,6 +65,21 @@ class EcUser extends Model {
         $users = $modelUser->getActiveUsers($sortentry);
         $names = array(); $ids = array();
         foreach($users as $res){
+            $names[] = $res["name"] . " " . $res["firstname"];
+            $ids[] = $res["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+    
+    public function getAcivesRespsForSelect($sortentry = "name"){
+        $sql = "SELECT ec_users.id, core_users.name, core_users.firstname "
+                . "FROM ec_users "
+                . "INNER JOIN core_users ON ec_users.id = core_users.id "
+                . "WHERE ec_users.is_responsible=1 "
+                . "ORDER BY core_users.".$sortentry." ASC";
+        $data = $this->runRequest($sql)->fetchAll();
+        $names = array(); $ids = array();
+        foreach($data as $res){
             $names[] = $res["name"] . " " . $res["firstname"];
             $ids[] = $res["id"];
         }
@@ -117,6 +142,20 @@ class EcUser extends Model {
         
         $sql = "UPDATE ec_users SET phone=?, id_unit=?, is_responsible=?, date_convention=? WHERE id=?";
         $this->runRequest($sql, array($phone, $unit, $is_responsible, $date_convention, $id));
+    }
+    
+    public function import2($id, $phone, $id_unit, $date_convention, $is_responsible, $convention_url){
+     
+        $sql = "SELECT id FROM ec_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id));
+        if ($req->rowCount() > 0){
+            $sql = "UPDATE ec_users SET phone=?, id_unit=?, date_convention=?, is_responsible=?, convention_url=? WHERE id=?";
+            $this->runRequest($sql, array($phone, $id_unit, $date_convention, $is_responsible, $convention_url, $id));
+        }
+        else{
+            $sql = "INSERT INTO ec_users (id, phone, id_unit, date_convention, is_responsible, convention_url) VALUES (?,?,?,?,?,?)";
+            $this->runRequest($sql, array($id, $phone, $id_unit, $date_convention, $is_responsible, $convention_url));
+        }
     }
 
     public function getDefault() {
@@ -204,6 +243,22 @@ class EcUser extends Model {
             return "";
         }
     }
+    
+    public function getResponsibleOfUnit($id_unit){
+        $sql = "SELECT core_users.id AS id, core_users.name AS name, core_users.firstname AS firstname "
+                . "FROM ec_users "
+                . "INNER JOIN core_users ON core_users.id = ec_users.id "
+                . "WHERE ec_users.is_responsible=1 AND ec_users.id_unit=?";
+        $users = $this->runRequest($sql, array($id_unit))->fetchAll();
+        
+        $names = array(); $ids = array();
+        $names[] = "--"; $ids[] = 0;
+        foreach($users as $u){
+            $names[] = $u["name"] . " " . $u["firstname"];
+            $ids[] = $u["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
 
     public function delete($id) {
         $sql = "DELETE FROM ec_users WHERE id=?";
@@ -213,4 +268,9 @@ class EcUser extends Model {
         $this->runRequest($sql1, array($id));
     }
 
+    public function getAllActifEmails() {
+        $sql = "select email from core_users where is_active=1 order by name ASC;";
+        $user = $this->runRequest($sql);
+        return $user->fetchAll();
+    }
 }

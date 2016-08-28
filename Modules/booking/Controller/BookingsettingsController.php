@@ -4,6 +4,8 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/core/Model/CoreStatus.php';
+
 
 /**
  * 
@@ -17,16 +19,18 @@ class BookingsettingsController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("bookingsettings");
+        //$this->checkAuthorizationMenu("bookingsettings");
     }
     
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
 
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        
         $lang = $this->getLanguage();
-        $this->render(array("lang" => $lang));
+        $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
 }

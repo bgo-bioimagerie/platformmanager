@@ -17,16 +17,17 @@ class TemplateController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("template");
+        //$this->checkAuthorizationMenu("template");
     }
     
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
+        $this->checkAuthorizationMenuSpace("template", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        $this->render(array("lang" => $lang));
+        $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
 }

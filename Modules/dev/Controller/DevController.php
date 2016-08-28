@@ -17,7 +17,9 @@ class DevController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("dev");
+        if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
+            throw new Exception("Error 503: Permission denied");
+        }
     }
 
     /**

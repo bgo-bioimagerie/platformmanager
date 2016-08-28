@@ -60,8 +60,7 @@ class router {
             $controller = $this->createControllerImp("core", "coreinstall", $request);
             $controller->runAction("core", "index");
             return true;
-        }
-        else if($path == "caches"){
+        } else if ($path == "caches") {
             $modelCache = new FCache();
             $modelCache->load();
             echo "Caches up to date";
@@ -77,12 +76,15 @@ class router {
         if ($request->isParameterNotEmpty('path')) {
             $path = $request->getParameter('path');
         } else {
-            throw new Exception("The URL is not valid: unable to find the path");
+            $path = "coretiles";
+            //throw new Exception("The URL is not valid: unable to find the path");
         }
 
         //echo "path = " . $path . "<br/>";
         $pathData = explode("/", $path);
-        //echo "path data = "; print_r($pathData); echo "<br/>";
+        //echo "path data = ";
+        //print_r($pathData);
+        //echo "<br/>";
         $pathInfo = $this->modelCache->getURLInfos($pathData[0]);
         return array("pathData" => $pathData, "pathInfo" => $pathInfo);
     }
@@ -93,23 +95,21 @@ class router {
         $argsValues = array();
 
         /*
-        if (count($args) > count($urlInfo["pathData"]) - 1) {
-            throw new Exception("Missing arguments in the URL");
-        }
-        for ($i = 0; $i < count($args); $i++) {
-            $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
-        }
+          if (count($args) > count($urlInfo["pathData"]) - 1) {
+          throw new Exception("Missing arguments in the URL");
+          }
+          for ($i = 0; $i < count($args); $i++) {
+          $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
+          }
          */
         for ($i = 0; $i < count($args); $i++) {
-            if (isset($urlInfo["pathData"][$i + 1])){
+            if (isset($urlInfo["pathData"][$i + 1])) {
                 $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
-            }
-            else{
+            } else {
                 $argsValues[$args[$i]["name"]] = "";
             }
-            
         }
-        
+
 
         return $argsValues;
     }

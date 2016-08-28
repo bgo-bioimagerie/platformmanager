@@ -28,7 +28,7 @@ class EcusersController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("users/institutions");
+        //$this->checkAuthorizationMenu("users/institutions");
         $this->userModel = new EcUser ();
     }
 
@@ -36,8 +36,10 @@ class EcusersController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction($active = "") {
+    public function indexAction($id_space, $active = "") {
 
+        $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
+        
         if ($active == "") {
             if (isset($_SESSION["users_lastvisited"])) {
                 $active = $_SESSION["users_lastvisited"];
@@ -96,8 +98,15 @@ class EcusersController extends CoresecureController {
         $table = new TableView();
 
         $table->setTitle($title);
-        $table->addLineEditButton("ecusersedit");
-        $table->addDeleteButton("ecusersdelete");
+        
+        $modelCoreSpace = new CoreSpace();
+        $isBooking = $modelCoreSpace->isSpaceMenu($id_space, "booking");
+        if ($isBooking){
+            $table->addLineButton("bookingauthorisations/".$id_space, "id", CoreTranslator::Authorizations($lang));
+        }
+        
+        $table->addLineEditButton("ecusersedit/".$id_space);
+        $table->addDeleteButton("ecusersdelete/".$id_space);
         $table->setFixedColumnsNum(3);
         if ($authorisations_location == 2) {
             $table->addLineButton("Sygrrifauthorisations/userauthorizations", "id", CoreTranslator::Authorizations($lang));
@@ -133,24 +142,28 @@ class EcusersController extends CoresecureController {
         }
 
         $tableHtml = $table->view($usersArray, $tableContent);
+        
         $this->render(array(
             'lang' => $lang,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
                 ), "indexAction");
     }
 
-    public function activeAction() {
+    public function activeAction($id_space) {
         $_SESSION["users_lastvisited"] = "active";
-        $this->indexAction("active");
+        $this->indexAction($id_space, "active");
     }
 
-    public function unactiveAction() {
+    public function unactiveAction($id_space) {
         $_SESSION["users_lastvisited"] = "unactive";
-        $this->indexAction("unactive");
+        $this->indexAction($id_space, "unactive");
     }
 
-    public function editAction($id) {
+    public function editAction($id_space, $id) {
 
+        $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
+        
 // get info
         if ($id > 0) {
             $user = $this->userModel->getInfo($id);
@@ -229,8 +242,8 @@ class EcusersController extends CoresecureController {
             $form->addText("source", CoreTranslator::Source($lang), false, $user["source"], "disabled");
         }
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "ecusersedit/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "ecusers");
+        $form->setValidationButton(CoreTranslator::Ok($lang), "ecusersedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "ecusers/".$id_space);
         $form->setColumnsWidth(2, 9);
         $form->setButtonsWidth(2, 9);
 
@@ -243,7 +256,7 @@ class EcusersController extends CoresecureController {
                 $modelResp = new EcResponsible();
                 $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                 $this->uploadConvention($id);
-                $this->redirect("ecusers");
+                $this->redirect("ecusers/".$id_space);
             } else {
                 $modelUser = new CoreUser();
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
@@ -261,7 +274,7 @@ class EcusersController extends CoresecureController {
                     $modelResp = new EcResponsible();
                     $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                     $this->uploadConvention($id);
-                    $this->redirect("ecusers");
+                    $this->redirect("ecusers/".$id_space);
                 }
             }
         }
@@ -269,6 +282,7 @@ class EcusersController extends CoresecureController {
         $formHtml = $form->getHtml();
 // view
         $this->render(array(
+            'id_space' => $id_space,
             'lang' => $lang,
             'script' => $script,
             'id' => $id,
@@ -277,7 +291,7 @@ class EcusersController extends CoresecureController {
     }
 
     public function uploadConvention($id) {
-        $target_dir = "ecosystem/convention/";
+        $target_dir = "data/ecosystem/convention/";
         if ($_FILES["convention_url"]["name"] != "") {
             $ext = pathinfo($_FILES["convention_url"]["name"], PATHINFO_EXTENSION);
             Upload::uploadFile($target_dir, "convention_url", $id . "." . $ext);
@@ -285,20 +299,25 @@ class EcusersController extends CoresecureController {
         }
     }
 
-    public function changepwdAction($id) {
+    public function changepwdAction($id_space, $id) {
 
+        $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
+        
         $user = $this->userModel->getInfo($id);
 
         // generate view
         $lang = $this->getLanguage();
         $this->render(array(
+            'id_space' => $id_space,
             'lang' => $lang,
             'user' => $user
         ));
     }
 
-    public function changepwdqAction() {
+    public function changepwdqAction($id_space) {
 
+        $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
+        
         $lang = $this->getLanguage();
         $id = $this->request->getParameter("id");
         $pwd = $this->request->getParameter("pwd");
@@ -313,14 +332,16 @@ class EcusersController extends CoresecureController {
         }
 
         // generate view
-        $this->render(array("lang" => $lang
+        $this->render(array("lang" => $lang, "id_space" => $id_space
         ));
     }
 
-    public function deleteAction($id) {
+    public function deleteAction($id_space, $id) {
 
+        $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
+        
         $this->userModel->delete($id);
-        $this->redirect("ecusers");
+        $this->redirect("ecusers/".$id_space);
     }
 
 }

@@ -32,6 +32,7 @@ class Form {
     private $choicesid;
     private $validated;
     private $useJavascript;
+    private $submitOnChange;
 
     /** Validations/cancel/delete buttons */
     private $validationButtonName;
@@ -55,7 +56,9 @@ class Form {
     private $isTextArea;
     private $formAdd;
     private $isFormAdd;
-
+    
+    private $externalButtons;
+    
     /**
      * Constructor
      * @param Request $request Request that contains the post data
@@ -74,6 +77,7 @@ class Form {
         $this->deleteURL = "";
         $this->isTextArea = false;
         $this->isFormAdd = false;
+        $this->externalButtons = array();
 
         $this->parseRequest = false;
         $formID = $request->getParameterNoException("formid");
@@ -93,6 +97,10 @@ class Form {
     public function setColumnsWidth($labelWidth, $inputWidth) {
         $this->labelWidth = $labelWidth;
         $this->inputWidth = $inputWidth;
+    }
+    
+    public function addExternalButton($name, $url, $type="danger"){
+        $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type); 
     }
 
     /**
@@ -118,6 +126,10 @@ class Form {
      */
     public function setValidationButton($name, $url) {
         $this->validationButtonName = $name;
+        $this->validationURL = $url;
+    }
+    
+    public function setValisationUrl($url){
         $this->validationURL = $url;
     }
 
@@ -167,6 +179,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
     
     public function addSeparator2($name) {
@@ -180,10 +193,9 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
     
-    
-
     public function addComment($text) {
         $this->types[] = "comment";
         $this->names[] = $text;
@@ -195,6 +207,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     /**
@@ -214,6 +227,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     public function addUpload($name, $label) {
@@ -228,6 +242,7 @@ class Form {
         $this->enabled[] = "";
         $this->setValue($name, "");
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     public function addDownloadButton($label, $url) {
@@ -240,6 +255,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     /**
@@ -260,6 +276,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = $enabled;
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     public function addPassword($name, $label, $isMandatory = true) {
@@ -273,6 +290,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = true;
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     public function addDate($name, $label, $isMandatory = false, $value = "") {
@@ -287,6 +305,22 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
+    }
+    
+    public function addHour($name, $label, $isMandatory = false, $value = array("","")) {
+        $this->isDate = true;
+        $this->types[] = "hour";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($name, $value);
+        $this->isMandatory[] = $isMandatory;
+        $this->choices[] = array();
+        $this->choicesid[] = array();
+        $this->validated[] = true;
+        $this->enabled[] = "";
+        $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     /**
@@ -307,6 +341,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     /**
@@ -327,6 +362,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     /**
@@ -347,6 +383,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
     }
 
     /**
@@ -357,7 +394,7 @@ class Form {
      * @param unknown $choicesid List of options ids
      * @param string $value Input default value
      */
-    public function addSelect($name, $label, $choices, $choicesid, $value = "") {
+    public function addSelect($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
         $this->types[] = "select";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -368,6 +405,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
+        $this->submitOnChange[] = $submitOnChange;
     }
 
     /**
@@ -389,6 +427,7 @@ class Form {
         $this->enabled[] = "";
         $this->isTextArea = $userichtxt;
         $this->useJavascript[] = $userichtxt;
+        $this->submitOnChange[] = false;
     }
     
     public function addChoicesList($label, $listNames, $listIds, $values){
@@ -401,6 +440,7 @@ class Form {
         $this->values[] = $values;
         $this->validated[] = true;
         $this->enabled[] = "";
+        $this->submitOnChange[] = false;
     }
     
     public function setFormAdd(FormAdd $formAdd, $label = ""){
@@ -416,21 +456,35 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->isFormAdd = true;
+        $this->submitOnChange[] = false;
     }
 
+    public function htmlOpen(){
+        $formHtml = new FormHtml();
+        return $formHtml->formHeader($this->validationURL, $this->id, $this->useUpload);
+    }
+    
+    public function htmlClose(){
+        $formHtml = new FormHtml();
+        return $formHtml->formFooter();
+    }
+    
     /**
      * Generate the html code
      * @return string
      */
-    public function getHtml($lang = "en") {
+    public function getHtml($lang = "en", $headers = true) {
 
+        
         $html = "";
 
         $formHtml = new FormHtml();
         
         $html .= $formHtml->title($this->title, $this->subtitle);
         $html .= $formHtml->errorMessage($this->errorMessage);
-        $html .= $formHtml->formHeader($this->validationURL, $this->useUpload);
+        if ($headers){
+            $html .= $formHtml->formHeader($this->validationURL, $this->id, $this->useUpload);
+        }
         $html .= $formHtml->id($this->id);
         
         // fields
@@ -466,6 +520,9 @@ class Form {
             if ($this->types[$i] == "date") {
                 $html .= $formHtml->date($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
             }
+            if ($this->types[$i] == "hour") {
+                $html .= $formHtml->hour($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
+            }
             if ($this->types[$i] == "color") {
                 $html .= $formHtml->color($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
@@ -485,7 +542,11 @@ class Form {
                 $html .= $formHtml->downloadbutton($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "select") {
-                $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                $sub = "";
+                if ($this->submitOnChange[$i]){
+                    $sub = $this->id;
+                }
+                $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth, $sub);
             }
             if ($this->types[$i] == "formAdd"){
                 $html .= $this->formAdd->getHtml($lang, $this->labels[$i], $this->labelWidth, $this->inputWidth);
@@ -496,8 +557,11 @@ class Form {
         }
 
         // buttons area
-        $html .= $formHtml->buttons($this->validationURL, $this->validationButtonName, $this->cancelURL, $this->cancelButtonName, $this->deleteURL, $this->deleteID, $this->deleteButtonName, $this->buttonsWidth, $this->buttonsOffset);
-        $html .= $formHtml->formFooter();
+        $html .= $formHtml->buttons($this->validationURL, $this->validationButtonName, $this->cancelURL, $this->cancelButtonName, $this->deleteURL, $this->deleteID, $this->deleteButtonName, $this->externalButtons, $this->buttonsWidth, $this->buttonsOffset);
+        
+        if ($headers){
+            $html .= $formHtml->formFooter();
+        }
 
         if ($this->isDate == true) {
             $html .= $formHtml->timePickerScript();

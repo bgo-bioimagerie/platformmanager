@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
     
-    <div class="col-xs-12 col-md-12">
+    <div class="col-md-12" id="pm-content">
 
     <?php include "Modules/resources/View/Resources/edittabs.php" ?>
     <div class="col-xs-12"><p></p></div>
@@ -14,7 +14,7 @@
     </div>
     
     <?php if ($id_event > 0){ ?>
-    <div class="col-xs-12 col-md-3">
+    <div class="col-xs-12 col-md-4">
         <div class="col-xs-12" id="pm-form">
             <?php echo $formDownload ?>
         </div>

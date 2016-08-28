@@ -20,41 +20,46 @@ if($menucolortxt == ""){
         <div class="col-md-3">
             <!-- <legend><?php echo ResourcesTranslator::Area($lang) ?></legend> -->
             <div class="btn-group col-xs-12" data-toggle="buttons">
-            	<button onclick="location.href='reareas/'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Areas($lang) ?></button>
-		<button onclick="location.href='reareasedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+            	<button onclick="location.href='reareas/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Areas($lang) ?></button>
+		<button onclick="location.href='reareasedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
             <br/>
             <div class="btn-group col-xs-12" data-toggle="buttons">
-            	<button onclick="location.href='recategories/'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Categories($lang) ?></button>
-		<button onclick="location.href='recategoriesedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+            	<button onclick="location.href='recategories/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Categories($lang) ?></button>
+		<button onclick="location.href='recategoriesedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
         </div>
         <div class="col-md-3">
              <!--	<legend><?php echo ResourcesTranslator::Resources($lang) ?></legend> -->
             <div class="btn-group" data-toggle="buttons" style="width: 100%;">
-		<button onclick="location.href='rerespsstatus'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Resps_Status($lang) ?> </button>
-                <button onclick="location.href='rerespsstatusedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+		<button onclick="location.href='rerespsstatus/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Resps_Status($lang) ?> </button>
+                <button onclick="location.href='rerespsstatusedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
+            <div class="btn-group" data-toggle="buttons" style="width: 100%;">
+		<button onclick="location.href='resourcesvisa/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Visas($lang) ?> </button>
+                <button onclick="location.href='resourceseditvisa/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+            </div>
+            
        </div>
         
 
         <div class="col-md-3">
          <div class="btn-group col-xs-12" data-toggle="buttons">
-            	<button onclick="location.href='reeventtypes/'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Event_Types($lang) ?></button>
-		<button onclick="location.href='reeventtypesedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+            	<button onclick="location.href='reeventtypes/<?php echo $id_space ?>/'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Event_Types($lang) ?></button>
+		<button onclick="location.href='reeventtypesedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
             <br/>
             <div class="btn-group col-xs-12" data-toggle="buttons">
-            	<button onclick="location.href='restates/'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::States($lang) ?></button>
-		<button onclick="location.href='restatesedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+            	<button onclick="location.href='restates/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::States($lang) ?></button>
+		<button onclick="location.href='restatesedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>		
         </div>
         
         <div class="col-md-3">
              <!--	<legend><?php echo ResourcesTranslator::Resources($lang) ?></legend> -->
             <div class="btn-group" data-toggle="buttons" style="width: 100%;">
-		<button onclick="location.href='resources'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Resources($lang) ?> </button>
-                <button onclick="location.href='resourcesedit/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
+		<button onclick="location.href='resources/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ResourcesTranslator::Resources($lang) ?> </button>
+                <button onclick="location.href='resourcesedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
        </div>
     </div>

@@ -10,7 +10,7 @@ require_once 'Modules/resources/Model/ReEvent.php';
 require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
-
+require_once 'Modules/resources/Model/ReVisa.php';
 /**
  * Class defining methods to install and initialize the core database
  *
@@ -51,6 +51,10 @@ class ResourcesInstall extends Model {
         
         $model9 = new ReRespsStatus();
         $model9->createTable();
+        
+        $model10 = new ReVisa();
+        $model10->createTable();
+        
         
         if (!file_exists('data/resources/')) {
             mkdir('data/resources/', 0777, true);

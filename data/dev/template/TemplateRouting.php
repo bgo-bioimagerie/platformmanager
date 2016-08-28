@@ -7,10 +7,12 @@ class TemplateRouting extends Routing{
     public function listRouts(){
         
         // config
-        $this->addRoute("templateconfig", "templateconfig", "templateconfig", "index");
+        $this->addRoute("templateconfigadmin", "templateconfigadmin", "templateconfigadmin", "index");
+        $this->addRoute("templateconfig", "templateconfig", "templateconfig", "index", array("id_space"), array(""));
+
         
         // add here the module routes
-        $this->addRoute("template", "template", "template", "index");
+        $this->addRoute("template", "template", "template", "index", array("id_space"), array(""));
         
     }
 }

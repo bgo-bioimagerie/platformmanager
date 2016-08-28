@@ -49,7 +49,11 @@ class BkCalQuantities extends Model {
         $sql = "select * from bk_calquantities";
         return $this->runRequest($sql)->fetchAll();
     }
-
+    
+    public function getForSpace($id_space, $sort) {
+        $sql = "select * from bk_calquantities WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY ".$sort." ASC;";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
     /**
      * get a supplementary info from it ID
      * @param unknown $id

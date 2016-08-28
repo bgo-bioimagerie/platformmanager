@@ -34,6 +34,8 @@ abstract class Model {
             $result = self::getDatabase()->query($sql);   // direct query
         } else {
             $result = self::getDatabase()->prepare($sql); // prepared request
+            //print_r($params);
+            //echo "class = " . get_class($this) . "<br/>";
             $result->execute($params);
         }
         return $result;

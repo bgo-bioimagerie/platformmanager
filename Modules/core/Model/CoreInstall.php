@@ -9,6 +9,8 @@ require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreMenu.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreProject.php';
+require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreInstalledModules.php';
 
 /**
  * Class defining the Install model
@@ -55,6 +57,12 @@ class CoreInstall extends Model {
         
         $modelProject = new CoreProject();
         $modelProject->createTable();
+        
+        $modelSpace = new CoreSpace();
+        $modelSpace->createTable();
+        
+        $modelModules = new CoreInstalledModules();
+        $modelModules->createTable();
         
     }
     /**

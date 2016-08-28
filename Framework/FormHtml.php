@@ -35,12 +35,12 @@ class FormHtml {
         return "<input class=\"form-control\" type=\"hidden\" name=\"formid\" value=\"" . $id . "\" />";
     }
 
-    static public function formHeader($validationURL, $useDownload = false) {
+    static public function formHeader($validationURL, $id, $useDownload = false) {
         if (!$useDownload){
-    		$html = "<form role=\"form\" class=\"form-horizontal\" action=\"".$validationURL."\" method=\"POST\">";
+    		$html = "<form role=\"form\" id=\"".$id."\" class=\"form-horizontal\" action=\"".$validationURL."\" method=\"POST\">";
     	}
     	else{
-    		$html = "<form role=\"form\" class=\"form-horizontal\" action=\"".$validationURL."\" method=\"POST\" enctype=\"multipart/form-data\">";
+    		$html = "<form role=\"form\" id=\"".$id."\" class=\"form-horizontal\" action=\"".$validationURL."\" method=\"POST\" enctype=\"multipart/form-data\">";
     	}
         return $html;
     }
@@ -135,6 +135,51 @@ class FormHtml {
         return $html;
     }
 
+    static public function inlineDate($name, $value, $vect = false, $lang="en"){
+        
+        $vectv = "";
+        if ($vect){
+            $vectv = "[]";
+        }
+        
+        $html = "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
+        $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" name=\"" . $name . $vectv."\" value=\"" . $value . "\"/>";
+        $html .= "          <span class=\"input-group-addon\">";
+        $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
+        $html .= "          </span>";
+        $html .= "</div>";
+        $html .= "</div>";
+        /*
+        $html = "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
+        $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" name=\"" . $name . $vectv . "\" value=\"" . $value . "\"/>";
+        $html .= "          <span class=\"input-group-addon\">";
+        $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
+        $html .= "          </span>";
+        $html .= "</div>";
+         */
+        
+        return $html;
+    }
+    
+    static public function hour($validated, $label, $name, $value, $lang, $labelWidth = 2, $inputWidth = 9) {
+
+        $html = "<div class=\"form-group" . $validated . "\">";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<div class='col-xs-" . $inputWidth . "'>";
+        
+        $html .= "<div class=\"form-group row\">";
+        $html .= "<div class=\"col-md-5\">";
+        $html .= "<input class=\"form-control\" type=\"number\" name=\"" . $name . "H" . "\"" . " value=\"" . $value[0] . "\"" . "/>";
+        $html .= "</div><div class=\"col-md-1\">";
+        $html .= ":";
+        $html .= "</div><div class=\"col-md-5\">";
+        $html .= "<input class=\"form-control\" type=\"number\" name=\"" . $name . "m" . "\"" . " value=\"" . $value[1] . "\"" . "\"/>";
+        $html .= "</div>";
+        $html .= "</div>";
+        $html .= "</div>";
+        return $html;
+    }
+    
     static public function color($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
@@ -218,29 +263,41 @@ class FormHtml {
         return $html;
     }
 
-    static public function inlineSelect($name, $choices, $choicesid, $value, $vect = false){
+    static public function inlineSelect($name, $choices, $choicesid, $value, $vect = false, $submitOnchange = ""){
         
         $vectv = "";
         if ($vect){
             $vectv = "[]";
         }
-        $html = "<select class=\"form-control\" name=\"" . $name . $vectv . "\">";
+        $submit = "";
+        if ($submitOnchange != ""){
+            $submit = "onchange=\"updateResponsibe(this);\"";
+        }
+        $html = "<select class=\"form-control\" name=\"" . $name . $vectv . "\" ".$submit." >";
         for ($v = 0; $v < count($choices); $v++) {
             $selected = "";
             if ($value == $choicesid[$v]) {
                 $selected = "selected=\"selected\"";
             }
-            $html .= "<OPTION value=\"" . $choicesid[$v] . "\"" . $selected . ">" . $choices[$v] . "</OPTION>";
+            $html .= "<OPTION value=\"" . $choicesid[$v] . "\" " . $selected . ">" . $choices[$v] . "</OPTION>";
         }
         $html .= "</select>";
+        if ($submitOnchange != ""){
+            $html .= "<script type=\"text/javascript\">
+    				function updateResponsibe(sel) {
+    					$( \"#".$submitOnchange."\" ).submit();
+    				}
+				</script>";
+        }
         return $html;
     }
     
-    static public function select($label, $name, $choices, $choicesid, $value, $labelWidth = 2, $inputWidth = 9) {
+    static public function select($label, $name, $choices, $choicesid, $value, $labelWidth = 2, $inputWidth = 9, $submitOnChange="") {
+        
         $html = "<div class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value);
+        $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value, false, $submitOnChange);
         $html .= "</div>";
         $html .= "</div>";
         return $html;
@@ -267,9 +324,9 @@ class FormHtml {
         return $html;
     }
     
-    static public function buttons($validationURL, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $buttonsWidth = 2, $buttonsOffset = 9) {
+    static public function buttons($validationURL, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $externalButtons = array(), $buttonsWidth = 2, $buttonsOffset = 9) {
         $html = "<div class=\"col-xs-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
-        if ($validationURL != "") {
+        if ($validationButtonName != "") {
             $html .= "<input type=\"submit\" class=\"btn btn-primary\" value=\"" . $validationButtonName . "\" />";
         }
         if ($cancelURL != "") {
@@ -278,6 +335,10 @@ class FormHtml {
         if ($deleteURL != "") {
             $html .= "<button type=\"button\" onclick=\"location.href='" . $deleteURL . "/" . $deleteID . "'\" class=\"btn btn-danger\">" . $deleteButtonName . "</button>";
         }
+        foreach( $externalButtons as $ext ){
+                $html .= "<button type=\"button\" onclick=\"location.href='" . $ext["url"] . "'\" class=\"btn btn-".$ext["type"]."\">" . $ext["name"] . "</button>";
+        }
+        
         $html .= "</div>";
         return $html;
     }

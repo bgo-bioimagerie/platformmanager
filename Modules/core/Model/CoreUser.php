@@ -21,6 +21,26 @@ class CoreUser extends Model {
         $this->primaryKey = "id";
     }
 
+    public function getStatus($id_user) {
+        $sql = "SELECT status_id FROM core_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id_user));
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+
+    public function getEmail($id_user) {
+        $sql = "SELECT email FROM core_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id_user));
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+
     public function installDefault() {
         if (!$this->exists(1)) {
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created) VALUES(?,?,?,?,?,?,?,?)";
@@ -49,6 +69,20 @@ class CoreUser extends Model {
 
         $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+    }
+
+    public function importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+        $sql = "SELECT id FROM core_users WHERE login=?";
+        $req = $this->runRequest($sql, array($login));
+        //echo "import user " . $login . "row count " . $req->rowCount();
+        if ($req->rowCount() == 0) {
+            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active) VALUES(?,?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active));
+            return $this->getDatabase()->lastInsertId();
+        } else {
+            $u = $req->fetch();
+            return $u[0];
+        }
     }
 
     public function getUser($id) {
@@ -199,6 +233,16 @@ class CoreUser extends Model {
             $active,
             $id
         ));
+    }
+
+    public function getUserFUllName($id) {
+        $sql = "SELECT name, firstname FROM core_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id));
+        if ($req->rowCount() == 1) {
+            $data = $req->fetch();
+            return $data["name"] . " " . $data["firstname"];
+        }
+        return "";
     }
 
     /**

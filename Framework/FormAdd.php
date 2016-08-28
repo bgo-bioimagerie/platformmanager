@@ -66,6 +66,16 @@ class FormAdd {
         $this->choicesid[] = "";
     }
     
+    public function addDate($name, $label, $values = array()) {
+        $this->types[] = "textdate";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($name, $values);
+        $this->isMandatory[] = false;
+        $this->choices[] = "";
+        $this->choicesid[] = "";
+    }
+    
     public function addNumber($name, $label, $values = array()) {
         $this->types[] = "number";
         $this->names[] = $name;
@@ -77,7 +87,7 @@ class FormAdd {
     }
 
     public function getHtml($lang = "en", $label = "", $labelWidth = 2, $inputWidth = 9) {
-
+        //print_r($this->types);
         $html = "";
         if ($label != ""){
             $html = "<div class=\"form-group\">";
@@ -111,19 +121,27 @@ class FormAdd {
             for ($i = 0; $i < count($this->values[0]); $i++) {
                 $html .= "<tr>";
                 $html .= "<td><input type=\"checkbox\" name=\"chk\"/></td>";
-                for ($j = 0; $j < count($this->names); $j++) {
+                for ($j = 0; $j < count($this->types); $j++) {
                     $html .= "<td>";
+                    
                     if ($this->types[$j] == "select") {
                         $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], $this->values[$j][$i], true);
                     }
                     else if($this->types[$j] == "text"){
                         $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
                     }
+                    else if($this->types[$j] == "textdate"){
+                        
+                        $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true, $lang);
+                    }
                     else if($this->types[$j] == "number"){
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
                     }
                     else if($this->types[$j] == "hidden"){
                         $html .= $formHtml->inlineHidden($this->names[$j], $this->values[$j][$i], false, true);
+                    }
+                    else{
+                        $html .= "error undefine form input type " . $this->types[$j];
                     }
                     $html .= "</td>";
                 }
@@ -139,6 +157,9 @@ class FormAdd {
                 }
                 else if($this->types[$j] == "text"){
                     $html .= $formHtml->inlineText($this->names[$j], "", false, true);
+                }
+                else if($this->types[$j] == "textdate"){
+                    $html .= $formHtml->inlineDate($this->names[$j], "", true, $lang);
                 }
                 else if($this->types[$j] == "number"){
                     $html .= $formHtml->inlineNumber($this->names[$j], "", false, true);

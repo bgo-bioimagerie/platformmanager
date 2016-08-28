@@ -3,16 +3,19 @@
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/core/Model/CoreProject.php';
 
-function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1){
+function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1){
 	
+        $modelSpace = new CoreSpace();
+        $user_space_role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
+    
 	if ($resourceID < 0){
-		$resourceID = $_SESSION["id_resource"];
+		$resourceID = $_SESSION["bk_id_resource"];
 	}
 	$dateString = date("Y-m-d", $date_unix);
 	$moduleProject = new CoreProject();
 	$ModulesManagerModel = new CoreMenu();
 	$modelBookingSupplemetary = new BkCalSupInfo();
-	$isProjectMode = $ModulesManagerModel->getDataMenusUserType("projects");
+	$isProjectMode = false;
 	if ($isProjectMode > 0){
 		$isProjectMode = true;
 	}
@@ -71,7 +74,7 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 							$text .= $modelBookingSupplemetary->getSummary($calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
-						$linkAdress = "bookingeditreservation/r_" . $calEntry['id'];
+						$linkAdress = "bookingeditreservation/".$id_space ."/r_" . $calEntry['id'];
 						?>
 						<div class="text-center" id="tcellResa" style="height:<?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
 							<a class="text-center" style="color:<?php echo $calEntry["color_text"]?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $linkAdress?>"><?php echo $text?></a>
@@ -111,7 +114,7 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 						$text .= $modelBookingSupplemetary->getSummary($calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 					}
-					$linkAdress = "bookingeditreservation/r_" . $calEntry['id']; 
+					$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id']; 
 					?>
 								<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
 								<a class="text-center" style="color:<?php echo $calEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $linkAdress?>"><?php echo $text?></a>
@@ -144,8 +147,8 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 							if ($he[1] == "75"){$he[1] = "45";}
 							if ($he[0] < 10){$he[0] = "0". $he[0];}
 							$hed = $he[0] . "-" .$he[1];
-							if( $_SESSION["user_status"] >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-								$linkAdress = "bookingeditreservation/t_" . $dateString."_".$h2."_".$resourceID;
+							if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+								$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$h2."_".$resourceID;
 								?>
 						<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
 						<?php }}}?>
@@ -207,7 +210,7 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 							$text .= $modelBookingSupplemetary->getSummary($calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
-						$linkAdress = "bookingeditreservation/r_" . $calEntry['id'];
+						$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
 						?>
 						<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
 							
@@ -247,7 +250,7 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 						$text .= $modelBookingSupplemetary->getSummary($calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 					}	
-					$linkAdress = "bookingeditreservation/r_" . $calEntry['id'];
+					$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
 					?>
 						<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
 						<a class="text-center" style="color:<?php echo $calEntry["color_text"]?>;  font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $linkAdress?>"><?php echo $text?></a>
@@ -280,8 +283,8 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 					if ($he[1] == "5"){$he[1] = "30";}
 					if ($he[0] < 10){$he[0] = "0". $he[0];}
 					$hed = $he[0] . "-" .$he[1];
-					if( $_SESSION["user_status"] >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-						$linkAdress = "bookingeditreservation/t_" . $dateString."_".$h2."_".$resourceID;
+					if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$h2."_".$resourceID;
 						?>
 						 <a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
 				<?php }}}?>
@@ -341,7 +344,7 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 							$text .= $modelBookingSupplemetary->getSummary($calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
-						$linkAdress = "bookingeditreservation/r_" . $calEntry['id'];
+						$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
 						?>
 						<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
 							<a class="text-center" style="color:<?php echo $calEntry["color_text"]?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $linkAdress?>"><?php echo $text?></a>
@@ -381,7 +384,7 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 						$text .= $modelBookingSupplemetary->getSummary($calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 					}
-					$linkAdress = "bookingeditreservation/r_" . $calEntry['id'];
+					$linkAdress = "bookingeditreservation/".$id_space ."/r_" . $calEntry['id'];
 					?>
 								<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
 								<a class="text-center" style="color:<?php echo $calEntry["color_text"]?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $linkAdress?>"><?php echo $text?></a>
@@ -417,8 +420,8 @@ function bookday($size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries,
 						if ($he[1] == "75"){$he[1] = "45";}
 						if ($he[0] < 10){$he[0] = "0". $he[0];}
 						$hed = $he[0] . "-" .$he[1];
-						if( $_SESSION["user_status"] >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-							$linkAdress = "bookingeditreservation/t_" . $dateString."_".$h2."_".$resourceID;
+						if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+							$linkAdress = "bookingeditreservation/".$id_space ."/t_" . $dateString."_".$h2."_".$resourceID;
 							?>
 						<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
 						<?php }}}?>

@@ -29,7 +29,7 @@ class TemplateconfigController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
 
         $lang = $this->getLanguage();
 
@@ -62,7 +62,7 @@ class TemplateconfigController extends CoresecureController {
         // view
         $forms = array($formInstall->getHtml($lang), $formMenusactivation->getHtml($lang)
                         );
-        $this->render(array("forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
     protected function installForm($lang) {

@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="container">
+<div class="col-md-12" id="pm-content">
     <div class="col-md-6 col-md-offset-3">
 
         <div class="page-header">
@@ -21,7 +21,7 @@
             <?php } ?>
         </div>
         <div class="col-md-1 col-md-offset-10">
-            <button onclick="location.href = 'coreusers'" class="btn btn-success" id="navlink"><?php echo CoreTranslator::Ok($lang) ?></button>
+            <button onclick="location.href = 'ecusers/<?php echo $id_space ?>'" class="btn btn-success" id="navlink"><?php echo CoreTranslator::Ok($lang) ?></button>
         </div>
 
     </div>

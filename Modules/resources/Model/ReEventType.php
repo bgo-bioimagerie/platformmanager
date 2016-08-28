@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/core/Model/CoreStatus.php';
 
 /**
  * Class defining the Area model
@@ -19,7 +20,7 @@ class ReEventType extends Model {
         $this->tableName = "re_event_type";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
-        $this->setColumnsInfo("id_site", "int(11)", 0);
+        $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->primaryKey = "id";
     }
 
@@ -33,22 +34,19 @@ class ReEventType extends Model {
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
     }
-
-    public function getAll($sort = "name") {
-        $sql = "SELECT re_event_type.*, ec_sites.name AS site "
-                . " FROM re_event_type "
-                . " INNER JOIN ec_sites ON ec_sites.id = re_event_type.id_site "
-                . "ORDER BY re_event_type." . $sort . " ASC";
-        return $this->runRequest($sql)->fetchAll();
+    
+    public function getForSpace($id_space){
+       $sql = "SELECT * FROM re_event_type WHERE id_space=?";
+       return $this->runRequest($sql, array($id_space))->fetchAll(); 
     }
 
-    public function set($id, $name, $id_site) {
+    public function set($id, $name, $id_space) {
         if ($this->exists($id)) {
-            $sql = "UPDATE re_event_type SET name=?, id_site=? WHERE id=?";
-            $id = $this->runRequest($sql, array($name, $id_site, $id));
+            $sql = "UPDATE re_event_type SET name=?, id_space=? WHERE id=?";
+            $id = $this->runRequest($sql, array($name, $id_space, $id));
         } else {
-            $sql = "INSERT INTO re_event_type (name, id_site) VALUES (?,?)";
-            $this->runRequest($sql, array($name, $id_site));
+            $sql = "INSERT INTO re_event_type (name, id_space) VALUES (?,?)";
+            $this->runRequest($sql, array($name, $id_space));
         }
         return $id;
     }

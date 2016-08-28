@@ -22,22 +22,120 @@ class CoreMenu extends Model {
 		`link` varchar(150) NOT NULL DEFAULT '',
 		`icon` varchar(40) NOT NULL DEFAULT '',		
 		PRIMARY KEY (`id`)
-		);
+		);";
+        $this->runRequest($sql);
 
-		CREATE TABLE IF NOT EXISTS `core_datamenu` (
+	$sql2 = "CREATE TABLE IF NOT EXISTS `core_datamenu` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(40) NOT NULL DEFAULT '',
 		`link` varchar(150) NOT NULL DEFAULT '',
-		`usertype` int(11) NOT NULL,
-		`icon` varchar(40) NOT NULL DEFAULT '',			
+		`icon` varchar(300) NOT NULL DEFAULT '',
+                `id_menu` int(11) NOT NULL DEFAULT 1,
 		PRIMARY KEY (`id`)
-		);
-		";
-
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+		);";
+        $this->runRequest($sql2);
+        
+                
+        $sql3 = "CREATE TABLE IF NOT EXISTS `core_menu` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`name` varchar(100) NOT NULL DEFAULT '',
+                `display_order` int(11) NOT NULL DEFAULT 0,
+		PRIMARY KEY (`id`)
+		);";
+        $this->runRequest($sql3);
     }
 
+    public function getItemsFormMenu($id_menu){
+        $sql = "SELECT * FROM core_datamenu WHERE id_menu=?";
+        $req = $this->runRequest($sql, array($id_menu))->fetchAll();
+        return $req;
+    }
+    public function getItem($id){
+        $sql = "SELECT * FROM core_datamenu WHERE id=?";
+        $req = $this->runRequest($sql, array($id))->fetch();
+        return $req;
+    }
+    
+    public function menuName($id){
+        $sql = "SELECT name FROM core_menu WHERE id=?";
+        $req = $this->runRequest($sql, array($id))->fetch();
+        return $req[0];
+    }
+    
+    public function getItems(){
+        $sql = "SELECT * FROM core_datamenu ORDER BY name ASC;";
+        return $this->runRequest($sql)->fetchAll();
+    }
+    
+    public function getMenus($sort){
+        $sql = "SELECT * FROM core_menu ORDER BY " . $sort . " ASC;";
+        return $this->runRequest($sql)->fetchAll();
+    }
+    
+    public function setMenu($id, $name, $displayOrder){
+        if ($this->isMenu($id)){
+            $sql = "UPDATE core_menu SET name=?, display_order=? WHERE id=?";
+            $this->runRequest($sql, array($name, $displayOrder, $id));
+            return $id;
+        }
+        else{
+            $sql= "INSERT INTO core_menu (name, display_order) VALUES(?,?)";
+            $this->runRequest($sql, array($name, $displayOrder));
+            return $this->getDatabase()->lastInsertId();
+        }
+    }
+    
+    public function isMenu($id){
+        $sql = "select id from core_menu where id=?";
+        $unit = $this->runRequest($sql, array($id));
+        if ($unit->rowCount() == 1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    
+        public function removeUnlistedMenus($packageID) {
+
+        $sql = "select id from core_menu";
+        $req = $this->runRequest($sql);
+        $databasePackages = $req->fetchAll();
+
+        foreach ($databasePackages as $dbPackage) {
+            $found = false;
+            foreach ($packageID as $pid) {
+                if ($dbPackage["id"] == $pid) {
+                    //echo "found package " . $pid . "in the database <br/>";
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                //echo "delete pacjkage id = " . $dbPackage["id"] . " package-id = " . $dbPackage["id_package"] . "<br/>"; 
+                $this->deleteMenu($dbPackage["id"]);
+            }
+        }
+    }
+    
+    public function deleteMenu($id){
+        $sql = "DELETE FROM core_menu WHERE id = ?";
+        $this->runRequest($sql, array($id));
+    }
+    
+    public function setAdminMenu($name, $link, $icon, $status){
+        if ($status > 0){
+            if (!$this->isAdminMenu($name)) {
+                $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
+                $this->runRequest($sql, array($name, $link, $icon));
+            }
+        }
+        else{
+            $sql = "DELETE FROM core_adminmenu WHERE name=?";
+            $this->runRequest($sql, array($name));
+        }
+    }
+    
     /**
      * Add the default menus
      */
@@ -47,10 +145,16 @@ class CoreMenu extends Model {
             $this->runRequest($sql, array("Modules", "coremodulesmanager", "glyphicon-th-large"));
         }
 
-        if (!$this->isDataMenu("users/institutions")) {
-            $sql = "INSERT INTO core_datamenu (name, link, usertype, icon) VALUES(?,?,?,?)";
-            $this->runRequest($sql, array("users/institutions", "coreusers", 3, "glyphicon-user"));
+        if (!$this->isAdminMenu("Menus")) {
+            $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
+            $this->runRequest($sql, array("Menus", "coremenus", "glyphicon-th-list"));
         }
+        
+        if (!$this->isAdminMenu("Spaces")) {
+            $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
+            $this->runRequest($sql, array("Spaces", "spaceadmin", "glyphicon-briefcase"));
+        }
+        
     }
 
     // Admin menu methods
@@ -114,9 +218,9 @@ class CoreMenu extends Model {
      * @param string $icon Menu icon (bootstrap icon)
      * @return PDOStatement
      */
-    public function addDataMenu($name, $link, $usertype, $icon) {
-        $sql = "INSERT INTO core_datamenu (name, link, usertype, icon) VALUES(?,?,?,?)";
-        $pdo = $this->runRequest($sql, array($name, $link, $usertype, $icon));
+    public function addDataMenu($name, $link, $icon) {
+        $sql = "INSERT INTO core_datamenu (name, link, icon) VALUES(?,?,?,?)";
+        $pdo = $this->runRequest($sql, array($name, $link, $icon));
         return $pdo;
     }
 
@@ -125,11 +229,9 @@ class CoreMenu extends Model {
      * @param string $name Menu name
      * @return PDOStatement
      */
-    public function removeDataMenu($name) {
-        $sql = "DELETE FROM core_datamenu
-				WHERE name='" . $name . "';";
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+    public function removeDataMenu($id) {
+        $sql = "DELETE FROM core_datamenu WHERE id=?";
+        $this->runRequest($sql, array($id));
     }
 
     /**
@@ -138,7 +240,7 @@ class CoreMenu extends Model {
      * @return boolean
      */
     public function isDataMenu($name) {
-        $sql = "select id from core_datamenu where name=?";
+        $sql = "select id from core_datamenu where id=?";
         $unit = $this->runRequest($sql, array($name));
         if ($unit->rowCount() == 1){
             return true;
@@ -150,94 +252,28 @@ class CoreMenu extends Model {
 
     /**
      * Set (add if not exists therwise update) a data (tool) menu
+     * @param string $id ID
      * @param string $name Menu Name
-     * @param string $link Url link
-     * @param string $usertype Index of user who can see this menu
-     * @param string $icon Menu icon (bootstrap icon)
+     * @param string $url Url link
+     * @param string $id_menu ID of the parent menu
      */
-    public function setDataMenu($name, $link, $usertype, $icon) {
+    public function setDataMenu($id, $name, $url, $id_menu) {
 
-        //echo "user type = ". $usertype . "</br>";
-        $exists = $this->isDataMenu($name);
-        if (!$exists && $usertype == 0) {
-            //echo "do nothing </br>";
-            return;
+        if ($this->isDataMenu($id)){
+            $sql = "UPDATE core_datamenu SET name=?, link=?, id_menu=? WHERE id=?";
+            $this->runRequest($sql, array($name, $url, $id_menu, $id));
+            return $id;
         }
-        if ($exists && $usertype == 0) {
-            //echo "remove </br>";
-            $this->removeDataMenu($name);
-            return;
+        else{
+            $sql = "INSERT INTO core_datamenu (name, link, id_menu) VALUES(?,?,?)";
+            $this->runRequest($sql, array($name, $url, $id_menu));
+            return $this->getDatabase()->lastInsertId();
         }
-        if (!$exists && $usertype > 0) {
-            //echo "add data menu </br>";
-            $this->addDataMenu($name, $link, $usertype, $icon);
-            return;
-        }
-        if ($exists && $usertype > 0) {
-            //echo "update nothing </br>";
-            $this->updateDataMenu($name, $link, $usertype, $icon);
-            return;
-        }
-    }
-
-    /**
-     * Update a data (tool) menu
-     * @param string $name Menu Name
-     * @param string $link Url link
-     * @param string $usertype Index of user who can see this menu
-     * @param string $icon Menu icon (bootstrap icon)
-     */
-    public function updateDataMenu($name, $link, $usertype, $icon) {
-        $sql = "select id from core_datamenu where name=?";
-        $req = $this->runRequest($sql, array($name));
-        $idt = $req->fetch();
-        $id = $idt[0];
-
-        $sqlu = "update core_datamenu set name=?, link=?, usertype=?, icon=? where id=?";
-        $this->runRequest($sqlu, array("" . $name . "", "" . $link . "",
-            "" . $usertype . "", "" . $icon . "", $id));
-    }
-
-    /**
-     * Get the user type allowed to see a menu
-     * @param string $name Menu name
-     * @return number Allowed user type
-     */
-    public function getDataMenusUserType($name) {
-        if ($this->isDataMenu($name)) {
-            $sql = "select usertype from core_datamenu where name=?";
-            $data = $this->runRequest($sql, array($name));
-            $tmp = $data->fetch();
-            return $tmp[0];
-        }
-        return 0;
     }
     
-    public function getMenuStatusByName($name){
-        
-        $sql1 = "SELECT usertype FROM core_datamenu WHERE name=?";
-        $req1 = $this->runRequest($sql1, array($name));
-        if ($req1->rowCount() > 0){
-            $tmp = $req1->fetch();
-            return $tmp[0];
-        }
-        $sql2 = "SELECT id FROM core_adminmenu WHERE name=?";
-        $req2 = $this->runRequest($sql2, array($name));
-        if ($req2->rowCount() > 0){
-            return 5;
-        }
-        return 0;
-    }
-
-    /**
-     * Get all the data (tool) menus for a given user type
-     * @param number $user_status User type
-     * @return multitype: Menus informations
-     */
-    public function getDataMenus($user_status = 1) {
-        $sql = "select name, link, icon, usertype from core_datamenu where usertype<=?";
-        $data = $this->runRequest($sql, array($user_status));
-        return $data->fetchAll();
+    public function setDataMenuIcon($id, $url){
+        $sql = "UPDATE core_datamenu SET icon=? WHERE id=?";
+        $this->runRequest($sql, array($url, $id));
     }
 
 }

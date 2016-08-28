@@ -19,7 +19,7 @@ class ReRespsStatus extends Model {
         $this->tableName = "re_resps_status";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
-        $this->setColumnsInfo("id_site", "int(11)", 0);
+        $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->primaryKey = "id";
     }
 
@@ -34,30 +34,18 @@ class ReRespsStatus extends Model {
         return $tmp[0];
     }
 
-    public function getAllForUser($id_user, $sort = "name") {
-        $sql = "SELECT re_resps_status.*, ec_sites.name AS site "
-                . "FROM re_resps_status "
-                . "INNER JOIN ec_sites ON ec_sites.id = re_resps_status.id_site "
-                . "WHERE id_site IN (SELECT id_site FROM ec_j_user_site WHERE id_user=? AND id_status>=3) ORDER BY " . $sort . " ASC";
-        return $this->runRequest($sql, array($id_user))->fetchAll();
+    public function getForSpace($id_space){
+         $sql = "SELECT * FROM re_resps_status WHERE id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function getAll($sort = "name") {
-
-        $sql = "SELECT re_resps_status.*, ec_sites.name AS site "
-                . " FROM re_resps_status "
-                . " INNER JOIN ec_sites ON ec_sites.id = re_resps_status.id_site "
-                . "ORDER BY re_resps_status." . $sort . " ASC";
-        return $this->runRequest($sql)->fetchAll();
-    }
-
-    public function set($id, $name, $id_site) {
+    public function set($id, $name, $id_space) {
         if ($this->exists($id)) {
-            $sql = "UPDATE re_resps_status SET name=?, id_site=? WHERE id=?";
-            $id = $this->runRequest($sql, array($name, $id_site, $id));
+            $sql = "UPDATE re_resps_status SET name=?, id_space=? WHERE id=?";
+            $id = $this->runRequest($sql, array($name, $id_space, $id));
         } else {
-            $sql = "INSERT INTO re_resps_status (name, id_site) VALUES (?, ?)";
-            $this->runRequest($sql, array($name, $id_site));
+            $sql = "INSERT INTO re_resps_status (name, id_space) VALUES (?, ?)";
+            $this->runRequest($sql, array($name, $id_space));
         }
         return $id;
     }

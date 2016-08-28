@@ -49,6 +49,16 @@ class BkCalSupInfo extends Model {
         $sql = "select * from bk_calsupinfo";
         return $this->runRequest($sql)->fetchAll();
     }
+    
+    public function getForSpace($id_space, $sort) {
+        $sql = "select * from bk_calsupinfo WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY ".$sort." ASC;";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+    
+    public function getForResource($id_resource, $sort = "name"){
+        $sql = "select * from bk_calsupinfo WHERE id_resource=? ORDER BY ".$sort." ASC;";
+        return $this->runRequest($sql, array($id_resource))->fetchAll();
+    }
 
     /**
      * get a supplementary info from it ID
@@ -186,15 +196,17 @@ class BkCalSupInfo extends Model {
      * @return array supplementary
      */
     public function getSupInfoData($id) {
-        $sql = "select supplementary from bk_calendar_entry where id=?";
+        $sql = "select supplementaries from bk_calendar_entry where id=?";
         $req = $this->runRequest($sql, array($id));
         $tmp = $req->fetch();
         $sups = explode(";", $tmp[0]);
         $supData = array();
         foreach ($sups as $sup) {
-            $sup2 = explode(":=", $sup);
+            $sup2 = explode("=", $sup);
             if (count($sup2) == 2) {
-                $supData[$sup2[0]] = $sup2[1];
+                $sql = "SELECT name FROM bk_calsupinfo WHERE id=?";
+                $name = $this->runRequest($sql, array($sup2[0]))->fetch();
+                $supData[$name[0]] = $sup2[1];
             }
         }
         return $supData;

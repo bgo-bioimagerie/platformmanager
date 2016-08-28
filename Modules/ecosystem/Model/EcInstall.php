@@ -1,7 +1,6 @@
 <?php
 
 require_once 'Framework/Model.php';
-require_once 'Modules/ecosystem/Model/EcSite.php';
 require_once 'Modules/ecosystem/Model/EcBelonging.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
@@ -21,9 +20,6 @@ class EcInstall extends Model {
      * @return boolean True if the base is created successfully
      */
     public function createDatabase() {
-
-        $modelSite = new EcSite();
-        $modelSite->createTable();
         
         $model = new EcBelonging();
         $model->createTable();

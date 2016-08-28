@@ -19,7 +19,7 @@ class ReCategory extends Model {
         $this->tableName = "re_category";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
-        $this->setColumnsInfo("id_site", "int(11)", 0);
+        $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->primaryKey = "id";
     }
 
@@ -28,29 +28,22 @@ class ReCategory extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
-    public function getName($id) {
-        $sql = "SELECT name FROM re_category WHERE id=?";
-        $tmp = $this->runRequest($sql, array($id))->fetch();
-        return $tmp[0];
+    public function getBySpace($id_space) {
+        $sql = "SELECT * FROM re_category WHERE id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function getAll($sort = "name") {
-        $sql = "SELECT re_category.*, ec_sites.name AS site "
-                . " FROM re_category "
-                . " INNER JOIN ec_sites ON ec_sites.id = re_category.id_site "
-                . "ORDER BY re_category." . $sort . " ASC";
-        return $this->runRequest($sql)->fetchAll();
-    }
-
-    public function set($id, $name, $id_site) {
+    public function set($id, $name, $id_space) {
         if ($this->exists($id)) {
-            $sql = "UPDATE re_category SET name=?, id_site=? WHERE id=?";
-            $id = $this->runRequest($sql, array($name, $id_site, $id));
+            $sql = "UPDATE re_category SET name=?, id_space=? WHERE id=?";
+            $this->runRequest($sql, array($name, $id_space, $id));
+            return $id;
         } else {
-            $sql = "INSERT INTO re_category (name, id_site) VALUES (?, ?)";
-            $this->runRequest($sql, array($name, $id_site));
+            $sql = "INSERT INTO re_category (name, id_space) VALUES (?, ?)";
+            $this->runRequest($sql, array($name, $id_space));
+            return $this->getDatabase()->lastInsertId();
         }
-        return $id;
+        
     }
 
     public function exists($id) {
@@ -60,6 +53,23 @@ class ReCategory extends Model {
             return true;
         }
         return false;
+    }
+
+    /**
+     * get the name of a resources category
+     *
+     * @param int $id Id of the resources category to query
+     * @throws Exception if the resources category is not found
+     * @return mixed array
+     */
+    public function getName($id) {
+        $sql = "select name from re_category where id=?";
+        $unit = $this->runRequest($sql, array($id));
+        if ($unit->rowCount() == 1) {
+            $tmp = $unit->fetch();
+            return $tmp[0];  // get the first line of the result
+        }
+        return "";
     }
 
     /**

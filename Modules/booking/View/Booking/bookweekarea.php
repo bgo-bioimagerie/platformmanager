@@ -67,12 +67,17 @@ $dayWidth = 100 / 8;
     </head>
 
     <!-- Add the table title -->
-    
+
     <div class="col-lg-12"  style="background-color: #ffffff; padding-top: 12px;">
         <div class="col-lg-10 col-lg-offset-1">
             <?php
-            if ($message != "") {
-                if (strpos($message, "Error") === false) {
+            $message = "";
+            if (isset($_SESSION["message"])) {
+                $message = $_SESSION["message"];
+            }
+            ?>
+            <?php if ($message != ""):
+                if (strpos($message, "Err") === false) {
                     ?>
                     <div class="alert alert-success text-center">	
                         <?php
@@ -84,57 +89,55 @@ $dayWidth = 100 / 8;
                         ?>
                         <p><?php echo $message ?></p>
                     </div>
+<?php endif;
+unset($_SESSION["message"]) ?>
+            </div>
+
+            <div class="col-lg-12"  style="background-color: #ffffff; padding-bottom: 12px;">
+
+                <div class="col-md-6 text-left">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="submit" class="btn btn-default"
+                                onclick="location.href = 'bookingweekarea/<?php echo $id_space ?>/dayweekbefore'">&lt;</button>
+                        <button type="submit" class="btn btn-default"
+                                onclick="location.href = 'bookingweekarea/<?php echo $id_space ?>/dayweekafter'">></button>
+                        <button type="submit" class="btn btn-default"
+                                onclick="location.href = 'bookingweekarea/<?php echo $id_space ?>/thisWeek'"><?php echo BookingTranslator::This_week($lang) ?></button>
+                    </div>            
                     <?php
-                }
-                ?>
-            </div>
-        </div>
+                    $d = explode("-", $mondayDate);
+                    $time = mktime(0, 0, 0, $d [1], $d [2], $d [0]);
+                    $dayStream = date("l", $time);
+                    $monthStream = date("F", $time);
+                    $dayNumStream = date("d", $time);
+                    $yearStream = date("Y", $time);
+                    $sufixStream = date("S", $time);
+                    ?>
+                    <b><?php echo BookingTranslator::DateFromTime($time, $lang) ?>  -  </b>
+                    <?php
+                    $d = explode("-", $sundayDate);
+                    $time = mktime(0, 0, 0, $d [1], $d [2], $d [0]);
+                    $dayStream = date("l", $time);
+                    $monthStream = date("F", $time);
+                    $dayNumStream = date("d", $time);
+                    $yearStream = date("Y", $time);
+                    $sufixStream = date("S", $time);
+                    ?>
+                    <b><?php echo BookingTranslator::DateFromTime($time, $lang) ?> </b>
 
-        <div class="col-lg-12"  style="background-color: #ffffff; padding-bottom: 12px;">
+                </div>
 
-            <div class="col-md-6 text-left">
-                <div class="btn-group" role="group" aria-label="...">
-                <button type="submit" class="btn btn-default"
-                        onclick="location.href = 'bookingweekarea/dayweekbefore'">&lt;</button>
-                <button type="submit" class="btn btn-default"
-                        onclick="location.href = 'bookingweekarea/dayweekafter'">></button>
-                <button type="submit" class="btn btn-default"
-                        onclick="location.href = 'bookingweekarea/thisWeek'"><?php echo BookingTranslator::This_week($lang) ?></button>
-                </div>            
-                <?php
-                        $d = explode("-", $mondayDate);
-                        $time = mktime(0, 0, 0, $d [1], $d [2], $d [0]);
-                        $dayStream = date("l", $time);
-                        $monthStream = date("F", $time);
-                        $dayNumStream = date("d", $time);
-                        $yearStream = date("Y", $time);
-                        $sufixStream = date("S", $time);
-                        ?>
-                <b><?php echo BookingTranslator::DateFromTime($time, $lang) ?>  -  </b>
-                        <?php
-                        $d = explode("-", $sundayDate);
-                        $time = mktime(0, 0, 0, $d [1], $d [2], $d [0]);
-                        $dayStream = date("l", $time);
-                        $monthStream = date("F", $time);
-                        $dayNumStream = date("d", $time);
-                        $yearStream = date("Y", $time);
-                        $sufixStream = date("S", $time);
-                        ?>
-                <b><?php echo BookingTranslator::DateFromTime($time, $lang) ?> </b>
+                <div class="col-md-6 text-right">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" onclick="location.href = 'bookingday/<?php echo $id_space ?>'" class="btn btn-default" ><?php echo BookingTranslator::Day($lang) ?></button>
+                        <button type="button" onclick="location.href = 'bookingdayarea/<?php echo $id_space ?>'"class="btn btn-default"><?php echo BookingTranslator::Day_Area($lang) ?></button>
+                        <button type="button" onclick="location.href = 'bookingweek/<?php echo $id_space ?>'" class="btn btn-default"><?php echo BookingTranslator::Week($lang) ?></button>
+                        <button type="button" class="btn btn-default active"><?php echo BookingTranslator::Week_Area($lang) ?></button>
+                        <button type="button" onclick="location.href = 'bookingmonth/<?php echo $id_space ?>'" class="btn btn-default"><?php echo BookingTranslator::Month($lang) ?></button>
+                    </div>
+                </div>
+            </div> 
 
-            </div>
-
-            <div class="col-md-6 text-right">
-                <div class="btn-group" role="group" aria-label="...">
-                <button type="button" onclick="location.href = 'bookingday'"
-                        class="btn btn-default"><?php echo BookingTranslator::Day($lang) ?></button>
-                <button type="button" onclick="location.href = 'bookingdayarea'" class="btn btn-default"><?php echo BookingTranslator::Day_Area($lang) ?></button>
-                <button type="button" onclick="location.href = 'bookingweek'"
-                        class="btn btn-default "><?php echo BookingTranslator::Week($lang) ?></button>
-                <button type="button" class="btn btn-default active"><?php echo BookingTranslator::Week_Area($lang) ?></button>
-                <button type="button" onclick="location.href = 'bookingmonth'" class="btn btn-default"><?php echo BookingTranslator::Month($lang) ?></button>
-            </div>
-            </div>
         </div>
         <br></br>
 
@@ -156,205 +159,207 @@ $dayWidth = 100 / 8;
             </div>
         </div>	
 
-        <div class="row seven-cols">
-            <div class="row-same-height">
-<?php
-$resourceCount = - 1;
-$modelBookingSetting = new BkBookingSettings ();
-$moduleProject = new CoreProject ();
-$ModulesManagerModel = new CoreMenu ();
-$isProjectMode = $ModulesManagerModel->getDataMenusUserType("projects");
-
-for ($i = -1; $i < count($resourcesBase); $i++) {
-    //foreach ( $resourcesBase as $ResourceBase ) {
-
-    $resourceID = -1;
-    if ($i >= 0) {
-        $resourceID = $resourcesBase [$i] ["id"];
-    }
-    // echo "resource id = " . $resourcesBase[$resourceCount]["id"] . "</br>";
-    // resource title
-    ?>
-
+        <div class="col-lg-12">
+            <div class="row seven-cols">
+                <div class="row-same-height">
                     <?php
-                    $styleLine = "";
-                    $styleLineHeader = "style=\" text-align: center; background-color:" . $agendaStyle["header_background"] . "; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1; color: " . $agendaStyle["header_color"] . ";\"";
-                    if (!($i % 2)) {
-                        $styleLine = "style=\"background-color:#e1e1e1; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1;\"";
-                    } else {
-                        $styleLine = "style=\"background-color:#ffffff; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1;\"";
-                    }
-                    ?>
+                    $resourceCount = - 1;
+                    $modelBookingSetting = new BkBookingSettings ();
+                    $moduleProject = new CoreProject ();
+                    $ModulesManagerModel = new CoreMenu ();
+                    $isProjectMode = false; //$ModulesManagerModel->getDataMenusUserType("projects");
 
-                    <div class="row"  > <!-- id="colDivglobal" -->
+                    for ($i = -1; $i < count($resourcesBase); $i++) {
+                        //foreach ( $resourcesBase as $ResourceBase ) {
 
-                        <div class="col-lg-12" id="colDiv">
-                            <!-- Content of each day -->
-                            <div class="">
+                        $resourceID = -1;
+                        if ($i >= 0) {
+                            $resourceID = $resourcesBase [$i] ["id"];
+                        }
+                        // echo "resource id = " . $resourcesBase[$resourceCount]["id"] . "</br>";
+                        // resource title
+                        ?>
 
-                                <!-- Title -->
-    <?php
-    if ($i > -1) {
-        ?>
-                                    <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?> >
-                                        <p>
-                                            <b><?php echo $this->clean($resourcesBase[$i]['name']) ?></b>
-                                        </p>
-                                    </div>
-        <?php
-    } else {
-        ?>
-                                    <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?>>
-                                        <p> </p>
-                                    </div>
+                        <?php
+                        $styleLine = "";
+                        $styleLineHeader = "style=\" text-align: center; background-color:" . $agendaStyle["header_background"] . "; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1; color: " . $agendaStyle["header_color"] . ";\"";
+                        if (!($i % 2)) {
+                            $styleLine = "style=\"background-color:#e1e1e1; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1;\"";
+                        } else {
+                            $styleLine = "style=\"background-color:#ffffff; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1;\"";
+                        }
+                        ?>
+
+                        <div class="row"  > <!-- id="colDivglobal" -->
+
+                            <div class="col-lg-12" id="colDiv">
+                                <!-- Content of each day -->
+                                <div class="">
+
+                                    <!-- Title -->
                                     <?php
-                                }
-                                ?>	
-
-                                <?php
-                                for ($d = 0; $d < 7; $d ++) {
-                                    ?>
-                                    <?php
-                                    if ($i == -1) {
-                                        // day title
-                                        $temp = explode("-", $mondayDate);
-                                        $date_unix = mktime(0, 0, 0, $temp [1], $temp [2] + $d, $temp [0]);
-                                        $dayStream = date("l", $date_unix);
-                                        $monthStream = date("M", $date_unix);
-                                        $dayNumStream = date("d", $date_unix);
-                                        $sufixStream = date("S", $date_unix);
-
-                                        $dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);
+                                    if ($i > -1) {
+                                        ?>
+                                        <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?> >
+                                            <p>
+                                                <b><?php echo $this->clean($resourcesBase[$i]['name']) ?></b>
+                                            </p>
+                                        </div>
+                                        <?php
+                                    } else {
                                         ?>
                                         <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?>>
-
-                                            <div id="tcelltop" style="height: 60px;" class="text-center">
-                                                <p class="text-center">
-                                                    <b> <?php echo $dayTitle ?> </b>
-                                                </p>
-                                            </div>
+                                            <p> </p>
                                         </div>
-            <?php
-        } else {
-            ?>
-                                        <div class="col-lg-1 row-cell" <?php echo $styleLine ?>>
-                                            <!-- Print the reservations for the given day -->
-            <?php
-            $resourceCount = $i;
-            $temp = explode("-", $mondayDate);
-            $date_unix = mktime(0, 0, 0, $temp [1], $temp [2] + $d, $temp [0]);
+                                        <?php
+                                    }
+                                    ?>	
 
-            $day_begin = $this->clean($scheduling ['day_begin']);
-            $day_end = $this->clean($scheduling ['day_end']);
-            $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
-            
-            $isDayAvailable = false;
-            if ($available_days [$d] == 1) {
-                $isDayAvailable = true;
-            }
+                                    <?php
+                                    for ($d = 0; $d < 7; $d ++) {
+                                        ?>
+                                        <?php
+                                        if ($i == -1) {
+                                            // day title
+                                            $temp = explode("-", $mondayDate);
+                                            $date_unix = mktime(0, 0, 0, $temp [1], $temp [2] + $d, $temp [0]);
+                                            $dayStream = date("l", $date_unix);
+                                            $monthStream = date("M", $date_unix);
+                                            $dayNumStream = date("d", $date_unix);
+                                            $sufixStream = date("S", $date_unix);
 
-            // add here the reservations
-            $foundEntry = false;
-            foreach ($calEntries as $entry) {
+                                            $dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);
+                                            ?>
+                                            <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?>>
 
-                if ($entry ["resource_id"] == $resourceID && $entry['start_time'] <= $date_unix && $entry['end_time'] >= $date_unix) {
-                    $foundEntry = true;
-                    // draw entry
-                    $shortDescription = $entry ['short_description'];
-                    if ($isProjectMode) {
-                        $shortDescription = $moduleProject->getProjectName($entry ['short_description']);
-                    }
+                                                <div id="tcelltop" style="height: 60px;" class="text-center">
+                                                    <p class="text-center">
+                                                        <b> <?php echo $dayTitle ?> </b>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <?php
+                                        } else {
+                                            ?>
+                                            <div class="col-lg-1 row-cell" <?php echo $styleLine ?>>
+                                                <!-- Print the reservations for the given day -->
+                                                <?php
+                                                $resourceCount = $i;
+                                                $temp = explode("-", $mondayDate);
+                                                $date_unix = mktime(0, 0, 0, $temp [1], $temp [2] + $d, $temp [0]);
 
-                    $txtEndTime = date("H:i", $entry ["end_time"]);
-                    if ($entry['end_time'] - $date_unix > 3600 * 24) {
-                        $txtEndTime = "23:59";
-                    }
+                                                $day_begin = $this->clean($scheduling ['day_begin']);
+                                                $day_end = $this->clean($scheduling ['day_end']);
+                                                $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 
-                    $text = "00:00" . " - " . $txtEndTime . "<br />";
-                    $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
-                    ?>
-                                                    <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
-                                                        <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="calendar/editreservation/r_<?php echo $entry['id'] ?>">
-                                                    <?php echo $text ?>
-                                                        </a>
-                                                    </div>
-                                                    <?php
+                                                $isDayAvailable = false;
+                                                if ($available_days [$d] == 1) {
+                                                    $isDayAvailable = true;
                                                 }
 
-                                                if ($entry ["resource_id"] == $resourceID && $entry ["start_time"] >= $date_unix && $entry ["start_time"] <= $date_unix + 86400) {
-                                                    $foundEntry = true;
-                                                    // draw entry
-                                                    $shortDescription = $entry ['short_description'];
-                                                    if ($isProjectMode) {
-                                                        $shortDescription = $moduleProject->getProjectName($entry ['short_description']);
+                                                // add here the reservations
+                                                $foundEntry = false;
+                                                foreach ($calEntries as $entry) {
+
+                                                    if ($entry ["resource_id"] == $resourceID && $entry['start_time'] <= $date_unix && $entry['end_time'] >= $date_unix) {
+                                                        $foundEntry = true;
+                                                        // draw entry
+                                                        $shortDescription = $entry ['short_description'];
+                                                        if ($isProjectMode) {
+                                                            $shortDescription = $moduleProject->getProjectName($entry ['short_description']);
+                                                        }
+
+                                                        $txtEndTime = date("H:i", $entry ["end_time"]);
+                                                        if ($entry['end_time'] - $date_unix > 3600 * 24) {
+                                                            $txtEndTime = "23:59";
+                                                        }
+
+                                                        $text = "00:00" . " - " . $txtEndTime . "<br />";
+                                                        $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
+                                                        ?>
+                                                        <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
+                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/r_<?php echo $entry['id'] ?>">
+                                                        <?php echo $text ?>
+                                                            </a>
+                                                        </div>
+                                                        <?php
                                                     }
 
-                                                    $txtEndTime = date("H:i", $entry ["end_time"]);
-                                                    if (date("d", $entry ["end_time"]) > date("d", $date_unix)) {
-                                                        $txtEndTime = "23:59";
-                                                    }
+                                                    if ($entry ["resource_id"] == $resourceID && $entry ["start_time"] >= $date_unix && $entry ["start_time"] <= $date_unix + 86400) {
+                                                        $foundEntry = true;
+                                                        // draw entry
+                                                        $shortDescription = $entry ['short_description'];
+                                                        if ($isProjectMode) {
+                                                            $shortDescription = $moduleProject->getProjectName($entry ['short_description']);
+                                                        }
 
-                                                    $text = date("H:i", $entry ["start_time"]) . " - " . $txtEndTime . "<br />";
-                                                    $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
-                                                    ?>
-                                                    <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
-                                                        <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="calendar/editreservation/r_<?php echo $entry['id'] ?>">
-                                                    <?php echo $text ?>
-                                                        </a>
-                                                    </div>
-                                                    <?php
+                                                        $txtEndTime = date("H:i", $entry ["end_time"]);
+                                                        if (date("d", $entry ["end_time"]) > date("d", $date_unix)) {
+                                                            $txtEndTime = "23:59";
+                                                        }
+
+                                                        $text = date("H:i", $entry ["start_time"]) . " - " . $txtEndTime . "<br />";
+                                                        $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
+                                                        ?>
+                                                        <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
+                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/r_<?php echo $entry['id'] ?>">
+                                                        <?php echo $text ?>
+                                                            </a>
+                                                        </div>
+                                                        <?php
+                                                    }
                                                 }
-                                            }
-                                            // plus button
-                                            if ($isDayAvailable) {
-                                                if ($isUserAuthorizedToBook [$resourceCount]) {
-                                                    $dateString = date("Y-m-d", $date_unix);
+                                                // plus button
+                                                if ($isDayAvailable) {
+                                                    if ($isUserAuthorizedToBook [$resourceCount]) {
+                                                        $dateString = date("Y-m-d", $date_unix);
 
-                                                    $styleTxt = "";
-                                                    if (!$foundEntry) {
-                                                        $styleTxt = "style=\"height: 60px;\"";
+                                                        $styleTxt = "";
+                                                        if (!$foundEntry) {
+                                                            $styleTxt = "style=\"height: 60px;\"";
+                                                        }
+                                                        ?>
+                                                        <div class="text-center">
+                                                            <a class="glyphicon glyphicon-plus"
+                                                               href="bookingeditreservation/t_<?php echo $dateString . "_" . "8" . "_" . $resourceID ?>">
+                                                            </a>
+                                                        </div>
+                                                        <?php
+                                                    } else {
+                                                        ?>
+                                                        <div class="text-center">
+                                                            <p></p>
+                                                        </div>
+                                                        <?php
                                                     }
-                                                    ?>
-                                                    <div class="text-center">
-                                                        <a class="glyphicon glyphicon-plus"
-                                                           href="calendar/editreservation/t_<?php echo $dateString . "_" . "8" . "_" . $resourceID ?>">
-                                                        </a>
-                                                    </div>
-                                                    <?php
                                                 } else {
                                                     ?>
                                                     <div class="text-center">
                                                         <p></p>
                                                     </div>
-                    <?php
-                }
-            } else {
-                ?>
-                                                <div class="text-center">
-                                                    <p></p>
-                                                </div>
-                <?php
-            }
-            ?>
-                                        </div>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </div>
                                             <?php
                                         }
                                     }
                                     ?>
-                            </div> <!--  seven-cols -->
-                        </div> <!-- col11 days --> 
-                    </div> 
-                                    <?php
-                                }
-                                ?>
+                                </div> <!--  seven-cols -->
+                            </div> <!-- col11 days --> 
+                        </div> 
+                        <?php
+                    }
+                    ?>
+                </div>
             </div>
         </div>
-        <div class="col-xs-12">
+        <div class="col-md-12">
 
-                            <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
 
         </div>
 
-                <?php
-                endblock();
-                
+        <?php
+        endblock();
+        

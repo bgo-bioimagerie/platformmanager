@@ -4,9 +4,9 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/ecosystem/Model/EcInstall.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-
 
 /**
  * 
@@ -21,7 +21,7 @@ class EcosystemconfigController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         
-        if (!$this->isUserAuthorized(CoreStatus::$SUPERADMIN)) {
+        if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new Exception("Error 503: Permission denied");
         }
     }
@@ -30,106 +30,69 @@ class EcosystemconfigController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
-
+    public function indexAction($id_space) {
+        
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         //$modelCoreConfig = new CoreConfig();
 
-        // install form
-        $formInstall = $this->installForm($lang);
-        if ($formInstall->check()) {
-            $message = "<b>Success:</b> the database have been successfully installed";
-            try {
-                $installModel = new EcInstall();
-                $installModel->createDatabase();
-            } catch (Exception $e) {
-                $message = "<b>Error:</b>" . $e->getMessage();
-            }
-            $_SESSION["message"] = $message;
-            $this->redirect("ecosystemconfig");
-            return;
-        }
-        
-        // install form
+        $modelSpace = new CoreSpace();
+        // color menu form
         $modelCoreConfig = new CoreConfig();
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $lang);
+        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
         if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("ecosystemmenucolor", $this->request->getParameter("ecosystemmenucolor"));
-            $modelCoreConfig->setParam("ecosystemmenucolortxt", $this->request->getParameter("ecosystemmenucolortxt"));
+            $modelCoreConfig->setParam("ecosystemmenucolor", $this->request->getParameter("ecosystemmenucolor"), $id_space);
+            $modelCoreConfig->setParam("ecosystemmenucolortxt", $this->request->getParameter("ecosystemmenucolortxt"), $id_space);
             
-            $this->redirect("ecosystemconfig");
+            $this->redirect("ecosystemconfig/".$id_space);
             return;
         }
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang);
+        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            $modelMenu = new CoreMenu();
-            $modelMenu->setDataMenu("sites", "ecsites", $this->request->getParameter("sitemenustatus"), "glyphicon-map-marker");
-            $modelMenu->setDataMenu("users/institutions", "ecusers", $this->request->getParameter("usermenustatus"), "glyphicon-user");
-
-            $this->redirect("ecosystemconfig");
+            
+            $modelSpace->setSpaceMenu($id_space, "ecosystem", "ecusers", "glyphicon-user", $this->request->getParameter("usermenustatus"));
+            
+            $this->redirect("ecosystemconfig/".$id_space);
             return;
         }
 
         // view
-        $forms = array($formInstall->getHtml($lang), $formMenusactivation->getHtml($lang),
-                        $formMenuColor->getHtml($lang));
-        $this->render(array("forms" => $forms, "lang" => $lang));
+        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang));
+        
+        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function installForm($lang) {
+    protected function menusactivationForm($lang, $id_space) {
 
-        $form = new Form($this->request, "installForm");
-        $form->addSeparator(EcosystemTranslator::Install_Repair_database($lang));
-        $form->addComment(EcosystemTranslator::Install_Txt($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig");
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    protected function menusactivationForm($lang) {
-
-        $modelMenu = new CoreMenu();
-        $statusSiteMenu = $modelMenu->getDataMenusUserType("sites");
-        $statusUserMenu = $modelMenu->getDataMenusUserType("users/institutions");
-
+        $modelSpace = new CoreSpace();
+        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "ecusers");
+        
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
-        $modelStatus = new CoreStatus();
-        $status = $modelStatus->allStatusInfo();
+        $roles = $modelSpace->roles($lang);
 
-        $choices = array();
-        $choicesid = array();
-        $choices[] = CoreTranslator::disable($lang);
-        $choicesid[] = 0;
-        for ($i = 0; $i < count($status); $i++) {
-            $choices[] = CoreTranslator::Translate_status($lang, $status[$i]["name"]);
-            $choicesid[] = $status[$i]["id"];
-        }
-
-        $form->addSelect("sitemenustatus", EcosystemTranslator::Sites($lang), $choices, $choicesid, $statusSiteMenu);
-        $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $choices, $choicesid, $statusUserMenu);
+        $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;
     }
 
-    public function menuColorForm($modelCoreConfig, $lang){
-        $ecmenucolor = $modelCoreConfig->getParam("ecosystemmenucolor");
-        $ecmenucolortxt = $modelCoreConfig->getParam("ecosystemmenucolortxt");
+    public function menuColorForm($modelCoreConfig, $id_space, $lang){
+        $ecmenucolor = $modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
+        $ecmenucolortxt = $modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
         
         $form = new Form($this->request, "menuColorForm");
         $form->addSeparator(EcosystemTranslator::color($lang));
         $form->addColor("ecosystemmenucolor", EcosystemTranslator::menu_color($lang), false, $ecmenucolor);
         $form->addColor("ecosystemmenucolortxt", EcosystemTranslator::text_color($lang), false, $ecmenucolortxt);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
         
         return $form;

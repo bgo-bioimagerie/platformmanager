@@ -20,41 +20,42 @@ class BookingdisplayController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("bookingsettings");
+        //$this->checkAuthorizationMenu("bookingsettings");
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        
+
         $modelArea = new ReArea();
-        $areas = $modelArea->getAll("name");
-        
+        $areas = $modelArea->getForSpace($id_space);
+
         $table = new TableView();
         $table->setTitle(BookingTranslator::Display($lang));
-        $table->addLineEditButton("bookingdisplayedit");
-        
+        $table->addLineEditButton("bookingdisplayedit/".$id_space);
+
         $headers = array("name" => CoreTranslator::Name($lang));
-        
+
         $tableHtml = $table->view($areas, $headers);
-        
-        $this->render(array("lang" => $lang, "tableHtml" => $tableHtml));
+
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
-    
-    public function editAction($id){
-        
+
+    public function editAction($id_space, $id) {
+
         $lang = $this->getLanguage();
-        
+
         $modelCSS = new BkBookingTableCSS();
         $data = $modelCSS->getAreaCss($id);
-        
+
         $modelArea = new ReArea();
         $name = $modelArea->getName($id);
-        
+
         $form = new Form($this->request, "bookingschedulingedit");
         $form->setTitle(BookingTranslator::Display($lang) . ": " . $name);
         $form->addColor("header_background", BookingTranslator::Header_Color($lang), false, $data["header_background"]);
@@ -63,21 +64,15 @@ class BookingdisplayController extends CoresecureController {
         $form->addNumber("resa_font_size", BookingTranslator::Resa_font_size($lang), false, $data["resa_font_size"]);
         $form->addNumber("header_height", BookingTranslator::Header_height($lang), false, $data["header_height"]);
         $form->addNumber("line_height", BookingTranslator::Line_height($lang), false, $data["line_height"]);
-       
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingdisplayedit/".$id);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingdisplayedit/".$id_space. "/" . $id);
         $form->setColumnsWidth(3, 9);
         $form->setButtonsWidth(3, 9);
-        if ($form->check()){
-            $modelCSS->setAreaCss($id, $this->request->getParameter("header_background"), 
-                    $this->request->getParameter("header_color"),
-                    $this->request->getParameter("header_font_size"),
-                    $this->request->getParameter("resa_font_size"),
-                    $this->request->getParameter("header_height"),
-                    $this->request->getParameter("line_height"));
-            $this->redirect("bookingdisplayedit/".$id);
-             
+        if ($form->check()) {
+            $modelCSS->setAreaCss($id, $this->request->getParameter("header_background"), $this->request->getParameter("header_color"), $this->request->getParameter("header_font_size"), $this->request->getParameter("resa_font_size"), $this->request->getParameter("header_height"), $this->request->getParameter("line_height"));
+            $this->redirect("bookingdisplayedit/".$id_space. "/" . $id);
         }
-        $this->render(array("lang" => $lang, "htmlForm" => $form->getHtml($lang) ));
-        
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang)));
     }
+
 }

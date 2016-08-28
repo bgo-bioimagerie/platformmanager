@@ -1,9 +1,9 @@
-<?php include 'Modules/core/View/layout.php' ?>
+<?php include 'Modules/core/View/spacelayout.php' ?>
 
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-xs-12 col-md-12">
+<div class="col-md-12" id="pm-content">
     
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <h1><?php echo ResourcesTranslator::configuration($lang) ?></h1>

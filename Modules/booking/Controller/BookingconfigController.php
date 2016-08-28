@@ -20,7 +20,7 @@ class BookingconfigController extends CoresecureController {
     public function __construct() {
         parent::__construct();
 
-        if (!$this->isUserAuthorized(CoreStatus::$SUPERADMIN)) {
+        if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new Exception("Error 503: Permission denied");
         }
     }
@@ -29,70 +29,57 @@ class BookingconfigController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
 
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        // install form
-        $formInstall = $this->installForm($lang);
-        if ($formInstall->check()) {
-            $message = "<b>Success:</b> the database have been successfully installed";
-            try {
-                $installModel = new BookingInstall();
-                $installModel->createDatabase();
-            } catch (Exception $e) {
-                $message = "<b>Error:</b>" . $e->getMessage();
-            }
-            $_SESSION["message"] = $message;
-            $this->redirect("bookingconfig");
-            return;
-        }
-
-        // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang);
+        
+        // menu activation form
+        $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
 
-            $modelMenu = new CoreMenu();
-            $modelMenu->setDataMenu("booking", "booking", $this->request->getParameter("bookingmenustatus"), "glyphicon glyphicon-calendar");
-            $modelMenu->setDataMenu("bookingsettings", "bookingsettings", $this->request->getParameter("bookingsettingsmenustatus"), "glyphicon glyphicon-calendar");
-
-            $this->redirect("bookingconfig");
+            $modelSpace = new CoreSpace();
+            $modelSpace->setSpaceMenu($id_space, "booking", "booking", "glyphicon glyphicon-calendar", $this->request->getParameter("bookingmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "booking", "bookingsettings", "glyphicon glyphicon-calendar", $this->request->getParameter("bookingsettingsmenustatus"));
+            
+            $this->redirect("bookingconfig/".$id_space);
             return;
         }
         
-        $formeditReservation = $this->editReservationPlugin($lang);
+        $formeditReservation = $this->editReservationPlugin($id_space, $lang);
         if ($formeditReservation->check()){
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("bkReservationPlugin", $this->request->getParameter("bkReservationPlugin"));
+            $modelConfig->setParam("bkReservationPlugin", $this->request->getParameter("bkReservationPlugin"), $id_space);
         
-            $this->redirect("bookingconfig");
+            $this->redirect("bookingconfig/".$id_space);
             return;
         }
         
-        $formBookingOption = $this->bookingOptionForm($lang);
+        $formBookingOption = $this->bookingOptionForm($id_space, $lang);
         if ($formBookingOption->check()){
             $editBookingDescriptionSettings = $this->request->getParameterNoException ( "BkDescriptionFields" );
             $modelCoreConfig = new CoreConfig();
-            $modelCoreConfig->setParam("BkDescriptionFields", $editBookingDescriptionSettings);
+            $modelCoreConfig->setParam("BkDescriptionFields", $editBookingDescriptionSettings, $id_space);
         }
         
-        $formSettingsMenu = $this->settingsMenuColors($lang);
+        $formSettingsMenu = $this->settingsMenuColors($id_space, $lang);
         if ($formSettingsMenu->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("bookingsettingsmenucolor", $this->request->getParameter("bookingsettingsmenucolor"));
-            $modelConfig->setParam("bookingsettingsmenucolortxt", $this->request->getParameter("bookingsettingsmenucolortxt"));
+            $modelConfig->setParam("bookingsettingsmenucolor", $this->request->getParameter("bookingsettingsmenucolor"), $id_space);
+            $modelConfig->setParam("bookingsettingsmenucolortxt", $this->request->getParameter("bookingsettingsmenucolortxt"), $id_space);
             
-            $this->redirect("bookingconfig");
+            $this->redirect("bookingconfig/".$id_space);
             return;
         }
         
-        $formEditBookingMailing = $this->editBookingMailingForm($lang);
+        $formEditBookingMailing = $this->editBookingMailingForm($id_space, $lang);
         if($formEditBookingMailing->check()){
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("BkEditBookingMailing", $this->request->getParameter("BkEditBookingMailing"));
-            $modelConfig->setParam("BkBookingMailingAdmins", $this->request->getParameter("BkBookingMailingAdmins"));
+            $modelConfig->setParam("BkEditBookingMailing", $this->request->getParameter("BkEditBookingMailing"), $id_space);
+            $modelConfig->setParam("BkBookingMailingAdmins", $this->request->getParameter("BkBookingMailingAdmins"), $id_space);
             
-            $this->redirect("bookingconfig");
+            $this->redirect("bookingconfig/".$id_space);
             return;
         }
         
@@ -106,27 +93,16 @@ class BookingconfigController extends CoresecureController {
         }
 
         // view
-        $forms = array($formInstall->getHtml($lang), $formMenusactivation->getHtml($lang), 
+        $forms = array($formMenusactivation->getHtml($lang), 
             $formSettingsMenu->getHtml($lang), $formBookingOption->getHtml($lang),
             $formeditReservation->getHtml($lang), $formEditBookingMailing->getHtml($lang));
-        $this->render(array("forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
     }
-
-    protected function installForm($lang) {
-
-        $form = new Form($this->request, "installForm");
-        $form->addSeparator(BookingTranslator::Install_Repair_database($lang));
-        $form->addComment(BookingTranslator::Install_Txt($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig");
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-    
-    protected function bookingOptionForm($lang) {
+ 
+    protected function bookingOptionForm($id_space, $lang) {
 
         $modelCoreConfig = new CoreConfig();
-        $BkDescriptionFields = $modelCoreConfig->getParam("BkDescriptionFields");
+        $BkDescriptionFields = $modelCoreConfig->getParamSpace("BkDescriptionFields", $id_space);
             
         $form = new Form($this->request, "bookingOptionForm");
         $form->addSeparator(BookingTranslator::Edit_booking_options($lang));
@@ -137,77 +113,71 @@ class BookingconfigController extends CoresecureController {
 	BookingTranslator::Only_full_description($lang));
         $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(1,2,3), $BkDescriptionFields);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;
     }
     
-    protected function settingsMenuColors($lang){
+    protected function settingsMenuColors($id_space, $lang){
         
         $modelConfig = new CoreConfig();
-        $menucolor = $modelConfig->getParam("bookingsettingsmenucolor");
-        $menucolortxt = $modelConfig->getParam("bookingsettingsmenucolortxt");
+        $menucolor = $modelConfig->getParamSpace("bookingsettingsmenucolor",$id_space);
+        $menucolortxt = $modelConfig->getParamSpace("bookingsettingsmenucolortxt",$id_space);
         
         $form = new Form($this->request, "settingsMenuColorsForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
         $form->addColor("bookingsettingsmenucolor", BookingTranslator::Color($lang), false, $menucolor);
         $form->addColor("bookingsettingsmenucolortxt", BookingTranslator::Text($lang), false, $menucolortxt);
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
         
         return $form;
     }
 
-    protected function editReservationPlugin($lang){
+    protected function editReservationPlugin($id_space, $lang){
         $modelConfig = new CoreConfig();
-        $bkReservationPlugin = $modelConfig->getParam("bkReservationPlugin");
+        $bkReservationPlugin = $modelConfig->getParamSpace("bkReservationPlugin", $id_space);
         
         $form = new Form($this->request, "editReservationPluginForm");
         $form->addSeparator(BookingTranslator::EditReservationPlugin($lang));
         $form->addText("bkReservationPlugin", BookingTranslator::Url($lang), false, $bkReservationPlugin);
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
         
         return $form;
     } 
     
-    protected function menusactivationForm($lang) {
+    protected function menusactivationForm($id_space, $lang) {
 
-        $modelMenu = new CoreMenu();
-        $statusBookingMenu = $modelMenu->getDataMenusUserType("booking");
-        $statusSettingsMenu = $modelMenu->getDataMenusUserType("bookingsettings");
+        $modelMenu = new CoreSpace();
+        $statusBookingMenu = $modelMenu->getSpaceMenusRole($id_space, "booking");
+        $statusSettingsMenu = $modelMenu->getSpaceMenusRole($id_space, "bookingsettings");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
-        $modelStatus = new CoreStatus();
-        $status = $modelStatus->allStatusInfo();
+        $modelStatus = new CoreSpace();
+        $status = $modelStatus->roles($lang);
+        
+        $status["names"][] = CoreTranslator::Unactive($lang);
+        $status["ids"][] = 0;
 
-        $choices = array();
-        $choicesid = array();
-        $choices[] = CoreTranslator::disable($lang);
-        $choicesid[] = 0;
-        for ($i = 0; $i < count($status); $i++) {
-            $choices[] = CoreTranslator::Translate_status($lang, $status[$i]["name"]);
-            $choicesid[] = $status[$i]["id"];
-        }
+        $form->addSelect("bookingmenustatus", BookingTranslator::Booking($lang), $status["names"], $status["ids"], $statusBookingMenu);
+        $form->addSelect("bookingsettingsmenustatus", BookingTranslator::Booking_settings($lang), $status["names"], $status["ids"], $statusSettingsMenu);
 
-        $form->addSelect("bookingmenustatus", BookingTranslator::Booking($lang), $choices, $choicesid, $statusBookingMenu);
-        $form->addSelect("bookingsettingsmenustatus", BookingTranslator::Booking_settings($lang), $choices, $choicesid, $statusSettingsMenu);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;
     }
     
-    protected function editBookingMailingForm($lang){
+    protected function editBookingMailingForm($id_space, $lang){
         
         $modelCoreConfig = new CoreConfig();
-	$BkEditBookingMailing = $modelCoreConfig->getParam("BkEditBookingMailing");
-        $BkBookingMailingAdmins = $modelCoreConfig->getParam("BkBookingMailingAdmins");
+	$BkEditBookingMailing = $modelCoreConfig->getParam("BkEditBookingMailing", $id_space);
+        $BkBookingMailingAdmins = $modelCoreConfig->getParam("BkBookingMailingAdmins", $id_space);
                 
         $form = new Form($this->request, "editBookingMailingForm");
         $form->addSeparator(BookingTranslator::EditBookingMailing($lang));
@@ -215,7 +185,7 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect('BkEditBookingMailing', BookingTranslator::Send_emails($lang), array(BookingTranslator::Never($lang), BookingTranslator::When_manager_admin_edit_a_reservation($lang)), array(1,2), $BkEditBookingMailing);
         $form->addSelect('BkBookingMailingAdmins', BookingTranslator::EmailManagers($lang), array(BookingTranslator::Never($lang), BookingTranslator::WhenAUserBook($lang)), array(1,2), $BkBookingMailingAdmins);
   
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;

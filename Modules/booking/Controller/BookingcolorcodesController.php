@@ -6,7 +6,6 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 
 require_once 'Modules/booking/Model/BkColorCode.php';
-require_once 'Modules/ecosystem/Model/EcSite.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 /**
@@ -21,32 +20,28 @@ class BookingcolorcodesController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("bookingsettings");
+        //$this->checkAuthorizationMenu("bookingsettings");
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
 
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
+        
         $lang = $this->getLanguage();
-
-        // get sort action
-        $sortentry = "id";
-        if ($this->request->isParameterNotEmpty('actionid')) {
-            $sortentry = $this->request->getParameter("actionid");
-        }
 
         // get the user list
         $colorModel = new BkColorCode();
-        $colorTable = $colorModel->getColorCodes($sortentry);
+        $colorTable = $colorModel->getForSpace($id_space);
 
         $table = new TableView ();
 
         $table->setTitle(BookingTranslator::Color_codes($lang));
-        $table->addLineEditButton("bookingcolorcodeedit");
-        $table->addDeleteButton("bookingcolorcodedelete");
+        $table->addLineEditButton("bookingcolorcodeedit/".$id_space);
+        $table->addDeleteButton("bookingcolorcodedelete/".$id_space);
         $table->setColorIndexes(array("color" => "color"));
 
         $tableContent = array(
@@ -57,10 +52,12 @@ class BookingcolorcodesController extends CoresecureController {
 
         $tableHtml = $table->view($colorTable, $tableContent);
 
-        $this->render(array("tableHtml" => $tableHtml, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "tableHtml" => $tableHtml, "lang" => $lang));
     }
     
-    public function editAction($id){
+    public function editAction($id_space, $id){
+        
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         
         $model = new BkColorCode();
         if ($id > 0){
@@ -86,34 +83,26 @@ class BookingcolorcodesController extends CoresecureController {
             $choicesid[] = $s["id"];
         }
         
-        if(count($sites) == 1){
-            $form->addHidden("id_site", $sites[0]["id"]);
-        }
-        else if (count($sites) > 1){
-            $form->addSelect("id_site", EcosystemTranslator::Site($lang), $choices, $choicesid, $data["id_site"]);
-        }
-        else{
-            throw new Exception(EcosystemTranslator::NeedToBeSiteManager($lang));
-        }
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingcolorcodeedit/".$id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "bookingcolorcodes");
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingcolorcodeedit/".$id_space."/".$id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "bookingcolorcodes/".$id_space);
         $form->setButtonsWidth(3, 9);
         
         if ($form->check()){
             
-            $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $form->getParameter("id_site"), $form->getParameter("display_order"));
-            $this->redirect("bookingcolorcodes");
+            $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
+            $this->redirect("bookingcolorcodes/".$id_space);
         }
         $formHtml = $form->getHtml($lang);
         
-        $this->render(array("lang" => $lang, "formHtml" => $formHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $formHtml));
     }
     
-    public function deleteAction($id){
+    public function deleteAction($id_space, $id){
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         
         $model = new BkColorCode();
         $model->delete($id);
-        $this->redirect("bookingcolorcodes");
+        $this->redirect("bookingcolorcodes/".$id_space);
     }
 
 }

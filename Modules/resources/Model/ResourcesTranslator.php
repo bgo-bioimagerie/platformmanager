@@ -8,20 +8,20 @@
  */
 class ResourcesTranslator {
 
-    public static function resources($lang){
+    public static function resources($lang) {
         if ($lang == "fr") {
             return "Ressources";
         }
         return "Resources";
     }
-    
-    public static function resource($lang){
+
+    public static function resource($lang) {
         if ($lang == "fr") {
             return "Ressource";
         }
         return "Resource";
     }
-    
+
     public static function resourcesConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Resources permet de gérer des resources (descirption, fiches de vie)";
@@ -65,182 +65,222 @@ class ResourcesTranslator {
         }
         return "Category";
     }
-    
+
     public static function Categories($lang = "") {
         if ($lang == "fr") {
             return "Catégories";
         }
         return "Categories";
     }
-    
+
     public static function Area($lang = "") {
         if ($lang == "fr") {
             return "Domaine";
         }
         return "Area";
     }
-    
+
     public static function Areas($lang = "") {
         if ($lang == "fr") {
             return "Domaines";
         }
         return "Areas";
     }
-    
+
     public static function Display_order($lang = "") {
         if ($lang == "fr") {
             return "Ordre d'affichage";
         }
         return "Display order";
     }
-    
+
     public static function Edit_Area($lang) {
         if ($lang == "fr") {
             return "Modifier domaine";
         }
         return "Edit area";
     }
-    
+
     public static function Edit_Category($lang) {
         if ($lang == "fr") {
             return "Editer catégorie";
         }
         return "Edit category";
     }
-    
-    public static function Brand($lang){
-                if ($lang == "fr") {
+
+    public static function Brand($lang) {
+        if ($lang == "fr") {
             return "Marque";
         }
         return "Brand";
     }
-    
-    public static function Type($lang){
-                if ($lang == "fr") {
+
+    public static function Type($lang) {
+        if ($lang == "fr") {
             return "Type";
         }
         return "Type";
     }
-    
-    public static function Description($lang){
-                if ($lang == "fr") {
+
+    public static function Description($lang) {
+        if ($lang == "fr") {
             return "Description";
         }
         return "Description";
     }
-    
-    public static function Infos($lang){
-                if ($lang == "fr") {
+
+    public static function Infos($lang) {
+        if ($lang == "fr") {
             return "Informations";
         }
         return "Informations";
     }
-    
-    public static function Events($lang){
-                if ($lang == "fr") {
+
+    public static function Events($lang) {
+        if ($lang == "fr") {
             return "Suivi";
         }
         return "Events";
     }
-    
-    public static function Event_Types($lang){
-                if ($lang == "fr") {
-            return "Types d'évenement";
+
+    public static function Event_Types($lang) {
+        if ($lang == "fr") {
+            return "Types évenement";
         }
         return "Event types";
     }
-    
-        public static function Event_Type($lang){
-                if ($lang == "fr") {
+
+    public static function Event_Type($lang) {
+        if ($lang == "fr") {
             return "Type d'évenement";
         }
         return "Event type";
     }
-    
-    public static function States($lang){
-                if ($lang == "fr") {
+
+    public static function States($lang) {
+        if ($lang == "fr") {
             return "Etats";
         }
         return "States";
     }
-    
-    public static function State($lang){
-                if ($lang == "fr") {
+
+    public static function State($lang) {
+        if ($lang == "fr") {
             return "Etat";
         }
         return "State";
     }
-    
-    public static function Edit_Event_Type($lang){
-                if ($lang == "fr") {
+
+    public static function Edit_Event_Type($lang) {
+        if ($lang == "fr") {
             return "Modifier type d'évenement";
         }
         return "Edit event type";
     }
-    
-    public static function Comment($lang){
-                if ($lang == "fr") {
+
+    public static function Comment($lang) {
+        if ($lang == "fr") {
             return "Commentaire";
         }
         return "Comment";
     }
-    
-        public static function Add_event($lang){
-                if ($lang == "fr") {
+
+    public static function Add_event($lang) {
+        if ($lang == "fr") {
             return "Ajouter un évenement";
         }
         return "Add an event";
     }
-    
-    public static function Edit_event_for($lang){
-                if ($lang == "fr") {
+
+    public static function Edit_event_for($lang) {
+        if ($lang == "fr") {
             return "Modifier évenement pour la resource: ";
         }
         return "Edit event for:";
     }
-    
-    public static function Add_File($lang){
+
+    public static function Add_File($lang) {
         if ($lang == "fr") {
             return "Ajouter un fichier";
         }
         return "Add file";
     }
-    
-    public static function Files($lang){
+
+    public static function Files($lang) {
         if ($lang == "fr") {
             return "Fichiers";
         }
         return "Files";
     }
 
-    public static function Edit_State($lang){
+    public static function Edit_State($lang) {
         if ($lang == "fr") {
             return "Modifier un état";
         }
         return "Edit state";
     }
-    
-    public static function Resps_Status($lang){
+
+    public static function Resps_Status($lang) {
         if ($lang == "fr") {
-            return "Staus des responsables";
+            return "Status responsables";
         }
         return "Instructors status";
     }
-    
-    public static function Edit_Resps_status($lang){
+
+    public static function Edit_Resps_status($lang) {
         if ($lang == "fr") {
             return "Modifier un staus de responsable";
         }
         return "Edit instructor status";
     }
-    
-    public static function Status($lang){
+
+    public static function Status($lang) {
         if ($lang == "fr") {
             return "Status";
         }
         return "Status";
     }
+
+    public static function Visas($lang) {
+        if ($lang == "fr") {
+            return "Visas";
+        }
+        return "Visas";
+    }
+
+    public static function Visa($lang) {
+        if ($lang == "fr") {
+            return "Visa";
+        }
+        return "Visa";
+    }
+
+    public static function Instructor($lang) {
+        if ($lang == "fr") {
+            return "Formateur";
+        }
+        return "Instructor";
+    }
+
+    public static function Instructor_status($lang) {
+        if ($lang == "fr") {
+            return "Statut du formateur";
+        }
+        return "Instructor status";
+    }
+
+    public static function Edit_Visa($lang = "") {
+        if ($lang == "fr") {
+            return "Editer Visa";
+        }
+        return "Edit Visa";
+    }
+
+    public static function Responsible($lang = "") {
+        if ($lang == "fr") {
+            return "Responsible";
+        }
+        return "Responsable";
+    }
     
-    
-    
- }
+}

@@ -20,14 +20,18 @@ if ($menuUrl != ""){
 		</div>
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				
 				<li><a href="coretiles"><span class="glyphicon glyphicon-th"></span></a></li>
+                            <?php 
+                            for($i = 0 ; $i < count($toolMenu) ; $i++){
+                                ?>
+                            
+				
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <?php echo  CoreTranslator::Tools($lang) ?> <span class="caret"></span></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <?php echo $toolMenu[$i]["name"] ?> <span class="caret"></span></a>
 					<ul class="dropdown-menu" role="menu">
 					<?php 
 					
-        				foreach ($toolMenu as $tool) {
+        				foreach ($toolMenu[$i]["items"] as $tool) {
         					$key = $tool['link'];
         					$value = $tool['name'];
         					?>
@@ -37,6 +41,9 @@ if ($menuUrl != ""){
         			?>
 					</ul>
 				</li>
+                                <?php
+                            }
+                            ?>
 				
 				<?php 
 				if ($toolAdmin){

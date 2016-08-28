@@ -15,7 +15,7 @@ class CoremodulesmanagerController extends CoresecureController {
 
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorization(CoreStatus::$SUPERADMIN);
+        $this->checkAuthorization(CoreStatus::$ADMIN);
     }
 
     /**
@@ -35,7 +35,7 @@ class CoremodulesmanagerController extends CoresecureController {
             $abstractMethod = $moduleName . "ConfigAbstract";
             //echo "abstractMethod = " . $abstractMethod . "<br/>";
             //echo "abstractMethod = " . $abstractMethod . "<br/>";
-            $configFile = "Modules/" . $modules[$i] . "/Controller/" . $moduleName . "configController.php";
+            $configFile = "Modules/" . $modules[$i] . "/Controller/" . $moduleName . "configadminController.php";
             if (file_exists($configFile)) {
                 $count++;
                 // name
@@ -67,7 +67,7 @@ class CoremodulesmanagerController extends CoresecureController {
 
     public function configAction($id){
         $modules = Configuration::get('modules');
-        $path = $modules[$id] . "config";
+        $path = $modules[$id] . "configadmin";
         $this->redirect($path);
     }
 }

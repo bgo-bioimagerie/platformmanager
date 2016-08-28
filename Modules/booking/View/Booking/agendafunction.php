@@ -1,15 +1,6 @@
 <?php
 
-function drawAgenda($mois, $annee, $entries, $resourceBase){
-	
-	$lang = "en";
-	if (isset($_SESSION["user_settings"]["language"])){
-		$lang = $_SESSION["user_settings"]["language"];
-	}
-	
-	$list_fer=array(7);//Liste pour les jours ferié; EX: $list_fer=array(7,1)==>tous les dimanches et les Lundi seront des jours fériers
-	$list_spe=array('1986-10-31','2015-3-17','2009-9-23');//Mettez vos dates des evenements ; NB format(annee-m-j)
-	$lien_redir="date_info.php";//Lien de redirection apres un clic sur une date, NB la date selectionner va etre ajouter à ce lien afin de la récuperer ultérieurement
+function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase){
 	
 	$mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août","Septembre", "Octobre", "Novembre", "Décembre");
 	
@@ -32,22 +23,22 @@ function drawAgenda($mois, $annee, $entries, $resourceBase){
 	
 	<div class="col-md-3" style="text-align: left;">
             <div class="btn-group" role="group" aria-label="...">
-		<button type="button" onclick="location.href='bookingmonth/daymonthbefore'" class="btn btn-default"> &lt; </button>
-		<button type="button" onclick="location.href='bookingmonth/daymonthafter'" class="btn btn-default"> > </button>
-		<button type="button" onclick="location.href='bookingmonth/thisMonth'" class="btn btn-default"><?php echo BookingTranslator::This_month($lang) ?> </button>
+		<button type="button" onclick="location.href='bookingmonth/<?php echo $id_space ?>/daymonthbefore'" class="btn btn-default"> &lt; </button>
+		<button type="button" onclick="location.href='bookingmonth/<?php echo $id_space ?>/daymonthafter'" class="btn btn-default"> > </button>
+		<button type="button" onclick="location.href='bookingmonth/<?php echo $id_space ?>/thisMonth'" class="btn btn-default"><?php echo BookingTranslator::This_month($lang) ?> </button>
             </div>
         </div>
-	<div class="col-md-4">
+	<div class="col-md-3">
 		<p ><strong> <?php echo  $mois_fr[$mois] . " " . $annee ?></strong></p>
 		
 		<p ><strong> <?php echo  $resourceBase["name"] ?></strong></p>
 	</div>
-	<div class="col-md-5" style="text-align: right;">
+	<div class="col-md-6" style="text-align: right;">
             <div class="btn-group" role="group" aria-label="...">
-                <button type="button" onclick="location.href='bookingday'" class="btn btn-default"><?php echo BookingTranslator::Day($lang) ?></button>
-		<button type="button" onclick="location.href='bookingdayarea'" class="btn btn-default"><?php echo  BookingTranslator::Day_Area($lang) ?></button>
-		<button type="button" onclick="location.href='bookingweek'" class="btn btn-default"><?php echo  BookingTranslator::Week($lang) ?></button>
-		<button type="button" onclick="location.href='bookingweekarea'" class="btn btn-default "><?php echo  BookingTranslator::Week_Area($lang) ?></button>
+                <button type="button" onclick="location.href='bookingday/<?php echo $id_space ?>'" class="btn btn-default"><?php echo BookingTranslator::Day($lang) ?></button>
+		<button type="button" onclick="location.href='bookingdayarea/<?php echo $id_space ?>'" class="btn btn-default"><?php echo  BookingTranslator::Day_Area($lang) ?></button>
+		<button type="button" onclick="location.href='bookingweek/<?php echo $id_space ?>'" class="btn btn-default"><?php echo  BookingTranslator::Week($lang) ?></button>
+		<button type="button" onclick="location.href='bookingweekarea/<?php echo $id_space ?>'" class="btn btn-default "><?php echo  BookingTranslator::Week_Area($lang) ?></button>
 		<button type="button" class="btn btn-default active"><?php echo  BookingTranslator::Month($lang) ?></button>
             </div>
             </div>
@@ -76,7 +67,7 @@ function drawAgenda($mois, $annee, $entries, $resourceBase){
 		$modelBookingSetting = new BkBookingSettings();
 		$moduleProject = new CoreProject();
 		$ModulesManagerModel = new CoreMenu();
-		$isProjectMode = $ModulesManagerModel->getDataMenusUserType("projects");
+		$isProjectMode = false;//$ModulesManagerModel->getDataMenusUserType("projects");
 		if ($isProjectMode > 0){
 			$isProjectMode = true;
 		}
@@ -91,7 +82,7 @@ function drawAgenda($mois, $annee, $entries, $resourceBase){
 					$shortDescription = $moduleProject->getProjectName($entry['short_description']);
 				}
 				?>
-				<a href="calendar/editreservation/r_<?php echo $entry["id"] ?>">
+				<a href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry["id"] ?>">
 				
 				<div style="background-color: <?php echo $entry['color_bg']?>; max-width:200px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;" >
 				<p style="border-bottom: thin solid #e1e1e1; font-size:12px; color:<?php echo $entry['color_text']?>;" >

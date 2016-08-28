@@ -21,6 +21,13 @@ class EcosystemTranslator {
         }
         return "Ecosystem";
     }
+    
+    public static function ecusers($lang){
+        if ($lang == "fr") {
+            return "Utilisateurs";
+        }
+        return "Users/Institutions"; 
+    } 
 
     public static function Home($lang = "") {
         if ($lang == "fr") {

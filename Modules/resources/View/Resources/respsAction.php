@@ -2,12 +2,13 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
+<div class="col-md-12" id="pm-content">
+    <div class="col-md-12" id="pm-form">
 
-<div class="container" id="pm-form">
-    
-    <?php include "Modules/resources/View/Resources/edittabs.php" ?>
-    <div class="col-xs-12"><p></p></div>
-    <?php echo $formHtml ?>
+        <?php include "Modules/resources/View/Resources/edittabs.php" ?>
+        <div class="col-xs-12"><p></p></div>
+                <?php echo $formHtml ?>
+    </div>
 </div>
-
-<?php endblock();
+<?php
+endblock();

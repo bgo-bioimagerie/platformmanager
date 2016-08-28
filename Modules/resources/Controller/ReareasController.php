@@ -4,10 +4,10 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/resources/Model/ReArea.php';
-require_once 'Modules/ecosystem/Model/EcSite.php';
 
 /**
  * 
@@ -22,103 +22,86 @@ class ReareasController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new ReArea();
-        $this->checkAuthorizationMenu("resources");
+        //$this->checkAuthorizationMenu("resources");
     }
     
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction($id_space) {
 
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        
         $lang = $this->getLanguage();
-        
-        $modelSite = new EcSite();
-        $sites = $modelSite->getUserAdminSites($_SESSION["id_user"]);
-        
-        
+       
         $table = new TableView();
         $table->setTitle(ResourcesTranslator::Areas($lang));
-        $table->addLineEditButton("reareasedit");
-        $table->addDeleteButton("reareasdelete");
+        $table->addLineEditButton("reareasedit/".$id_space);
+        $table->addDeleteButton("reareasdelete/".$id_space);
         
         $headers = array(
             "id" => "ID",
             "name" => CoreTranslator::Name($lang)
         );
         
-        if (count($sites) > 1){
-            $headers["site"] = EcosystemTranslator::Site($lang);
-        }
-        
-        $categories = $this->model->getAll();
+        $data = $this->model->getForSpace($id_space);
             
-        $tableHtml = $table->view($categories, $headers);
+        $tableHtml = $table->view($data, $headers);
         
-        $this->render(array("lang" => $lang, "htmlTable" => $tableHtml));
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "htmlTable" => $tableHtml));
     }
     
       /**
      * Edit form
      */
-    public function editAction($id) {
+    public function editAction($id_space, $id) {
 
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        
         // get belonging info
-        $site = array("id" => 0, "name" => "", "id_site" => 1);
-        if ($id > 0) {
-            $site = $this->model->get($id);
+        if ($id == 0){
+            $area = array("id" => 0, "name" => "", "id_space" => 1);
         }
-
+        else{
+            $area = $this->model->get($id);
+        }
+        
         // lang
         $lang = $this->getLanguage();
         
-        $modelSite = new EcSite();
-        $sites = $modelSite->getUserAdminSites($_SESSION["id_user"]);
-        $allSites = $modelSite->getAll("name");
-        $choices = array(); $choicesid = array();
-        foreach($allSites as $s){
-            $choices[] = $s["name"];
-            $choicesid[] = $s["id"];
-        }
 
         // form
         // build the form
-        $form = new Form($this->request, "reareasedit");
+        $form = new Form($this->request, "reareasedit/".$id_space);
         $form->setTitle(ResourcesTranslator::Edit_Area($lang));
-        $form->addHidden("id", $site["id"]);
-        $form->addText("name", CoreTranslator::Name($lang), true, $site["name"]);
+        $form->addHidden("id", $area["id"]);
+        $form->addText("name", CoreTranslator::Name($lang), true, $area["name"]);
         
-        if(count($sites) == 1){
-            $form->addHidden("id_site", $sites[0]["id"]);
-        }
-        else if (count($sites) > 1){
-            $form->addSelect("id_site", EcosystemTranslator::Site($lang), $choices, $choicesid, $site["id_site"]);
-        }
-        else{
-            throw new Exception(EcosystemTranslator::NeedToBeSiteManager($lang));
-        }
-
-        $form->setValidationButton(CoreTranslator::Ok($lang), "reareasedit/".$id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "reareas");
+        $form->setValidationButton(CoreTranslator::Ok($lang), "reareasedit/".$id_space."/".$id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "reareas/".$id_space);
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("id_site"));
-            $this->redirect("reareas");
+            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
+            $this->redirect("reareas/".$id_space);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
             $this->render(array(
+                'id_space' => $id_space,
                 'lang' => $lang,
                 'formHtml' => $formHtml
             ));
         }
     }
     
-    public function deleteAction($id){
+    public function deleteAction($id_space, $id){
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        
         $this->model->delete($id);
-        $this->redirect("reareas");
+        $this->redirect("reareas/".$id_space);
     }
 
 }

@@ -19,7 +19,8 @@ class ReArea extends Model {
         $this->tableName = "re_area";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
-        $this->setColumnsInfo("id_site", "int(11)", 0);
+        $this->setColumnsInfo("id_space", "int(11)", 0);
+        $this->setColumnsInfo("restricted", "int(1)", 0);
         $this->primaryKey = "id";
     }
 
@@ -28,27 +29,26 @@ class ReArea extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM re_area WHERE id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
     public function getName($id) {
         $sql = "SELECT name FROM re_area WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
     }
 
-    public function getAll($sort = "name") {
-        $sql = "SELECT re_area.*, ec_sites.name AS site "
-                . " FROM re_area "
-                . " INNER JOIN ec_sites ON ec_sites.id = re_area.id_site "
-                . "ORDER BY re_area." . $sort . " ASC";
-        return $this->runRequest($sql)->fetchAll();
-    }
-
-    public function set($id, $name, $id_site) {
+    public function set($id, $name, $id_space) {
         if ($this->exists($id)) {
-            $sql = "UPDATE re_area SET name=?, id_site=? WHERE id=?";
-            $id = $this->runRequest($sql, array($name, $id_site, $id));
+            $sql = "UPDATE re_area SET name=?, id_space=? WHERE id=?";
+            $this->runRequest($sql, array($name, $id_space, $id));
+            return $id;
         } else {
-            $sql = "INSERT INTO re_area (name, id_site) VALUES (?,?)";
-            $this->runRequest($sql, array($name, $id_site));
+            $sql = "INSERT INTO re_area (name, id_space) VALUES (?,?)";
+            $this->runRequest($sql, array($name, $id_space));
+            return $this->getDatabase()->lastInsertId();
         }
         return $id;
     }
@@ -63,8 +63,19 @@ class ReArea extends Model {
     }
 
     public function getSiteID($id_area) {
-        $sql = "SELECT id_site from re_area WHERE id=?";
+        $sql = "SELECT id_space from re_area WHERE id=?";
         $req = $this->runRequest($sql, array($id_area));
+        $tmp = $req->fetch();
+        return $tmp[0];
+    }
+
+    /**
+     * Get the smallest unrestricted area ID in the table
+     * @return Number Smallest ID
+     */
+    public function getSmallestUnrestrictedID() {
+        $sql = "select id from re_area where restricted=0";
+        $req = $this->runRequest($sql);
         $tmp = $req->fetch();
         return $tmp[0];
     }
@@ -91,18 +102,18 @@ class ReArea extends Model {
         return $data->fetchAll();
     }
 
-    public function getUnrestrictedAreasIDNameForSite($id_site){
-        $sql = "select id, name from re_area where id_site=?";
-        $data = $this->runRequest($sql, array($id_site));
+    public function getUnrestrictedAreasIDNameForSite($id_space) {
+        $sql = "select id, name from re_area where id_space=?";
+        $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }
-    
-    public function getAreasIDNameForSite($id_site){
-        $sql = "select id, name from re_area where id_site=?";
-        $data = $this->runRequest($sql, array($id_site));
+
+    public function getAreasIDNameForSite($id_space) {
+        $sql = "select id, name from re_area where id_space=?";
+        $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }
-    
+
     /**
      * Delete a unit
      * @param number $id ID

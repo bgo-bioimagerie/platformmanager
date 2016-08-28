@@ -28,11 +28,12 @@ class TableView {
     private $textMaxLength;
     private $numFixedCol;
     private $downloadButton;
+    private $tableID;
 
     /**
      * Constructor
      */
-    public function __construct() {
+    public function __construct($tableID = "dataTable") {
         $this->title = "";
         $this->useSearchVal = true;
         $this->isprint = false;
@@ -48,6 +49,7 @@ class TableView {
         $this->textMaxLength = 0;
         $this->numFixedCol = 0;
         $this->downloadButton = "";
+        $this->tableID = $tableID;
     }
 
     /**
@@ -185,7 +187,7 @@ class TableView {
             $html .= "</div>";
         }
 
-        $html .= "<table id=\"dataTable\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
+        $html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
 
         // table header
         $html .= "<thead>";
@@ -232,6 +234,13 @@ class TableView {
                     }
                     $html .= "<td style=\"background-color:" . $ccolor . ";\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
                 }
+                
+                if (count($this->linesButtonActions) > 0 && !$this->isprint) {
+                    for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
+                        $html .= "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button>" . "</td>";
+                    }
+                }
+                
                 if ($this->editURL != "" && !$this->isprint) {
                     $idxVal = "";
                     if ($this->editIndex != "") {
@@ -244,11 +253,7 @@ class TableView {
                     $html .= "<td style=\"width:12px;\">" . $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]) . "</td>";
                 }
                 
-                if (count($this->linesButtonActions) > 0) {
-                    for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
-                        $html .= "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button>" . "</td>";
-                    }
-                }
+                
                 
                 if ($this->downloadButton != ""){
                     $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
@@ -308,7 +313,7 @@ class TableView {
 
         $html .= "<script>";
         $html .= "$(document).ready( function() {";
-        $html .= "$('#dataTable').dataTable( {";
+        $html .= "$('#".$this->tableID."').dataTable( {";
         $html .= "\"aoColumns\": [";
 
         for ($c = 0; $c < $headerscount; $c++) {
@@ -329,7 +334,7 @@ class TableView {
 
         $html .="<script>";
         $html .="$(document).ready(function() {";
-        $html .="	var table = $('#dataTable').DataTable();";
+        $html .="	var table = $('#".$this->tableID."').DataTable();";
         $html .="	new $.fn.dataTable.FixedHeader( table, {";
         $html .="		alwaysCloneTop: true";
         $html .="	});";

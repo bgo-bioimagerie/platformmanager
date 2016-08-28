@@ -13,6 +13,7 @@ class CorenavbarController extends CoresecureController {
 
     public function __construct() {
         parent::__construct();
+        $this->checkAuthorization(CoreStatus::$USER);
     }
     
     public function indexAction() {
@@ -33,14 +34,16 @@ class CorenavbarController extends CoresecureController {
      * Get the tool menu
      * @return multitype: tool menu content
      */
-    public function getToolsMenu() {
-        $user_status_id = $_SESSION["user_status"];
-
+    public function getMenu() {
         $modulesModel = new CoreMenu();
-        $toolMenu = $modulesModel->getDataMenus($user_status_id);
+        $toolMenu = $modulesModel->getMenus("name");
+        
+        for($i = 0 ; $i < count($toolMenu) ; $i++){
+            $toolMenu[$i]["items"] = $modulesModel->getItemsFormMenu($toolMenu[$i]["id"]);
+        }
         return $toolMenu;
     }
-
+    
     /**
      * Get the admin menu
      * @return multitype: Amdin menu
@@ -49,7 +52,7 @@ class CorenavbarController extends CoresecureController {
         $user_status_id = $_SESSION["user_status"];
 
         $toolAdmin = null;
-        if ($user_status_id > 4) {
+        if ($user_status_id >= CoreStatus::$ADMIN) {
             $modulesModel = new CoreMenu();
             $toolAdmin = $modulesModel->getAdminMenus();
         }
@@ -64,7 +67,7 @@ class CorenavbarController extends CoresecureController {
     public function buildNavBar($login) {
         $userName = $login;
         $lang = $this->getLanguage();
-        $toolMenu = $this->getToolsMenu();
+        $toolMenu = $this->getMenu();
         $toolAdmin = $this->getAdminMenu();
 
         // get the view menu,fill it, and return the content

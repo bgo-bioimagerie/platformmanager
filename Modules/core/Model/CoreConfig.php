@@ -19,6 +19,7 @@ class CoreConfig extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `core_config` (
 		`id` varchar(30) NOT NULL DEFAULT '',
 		`value` text NOT NULL DEFAULT '',
+                `id_space` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
@@ -58,9 +59,9 @@ class CoreConfig extends Model {
      * @param string $key
      * @param string $value
      */
-    public function addParam($key, $value) {
-        $sql = "INSERT INTO core_config (id, value) VALUES(?,?)";
-        $this->runRequest($sql, array($key, $value));
+    public function addParam($key, $value, $id_space = 0) {
+        $sql = "INSERT INTO core_config (id, value, id_space) VALUES(?,?,?)";
+        $this->runRequest($sql, array($key, $value, $id_space));
     }
 
     /**
@@ -68,9 +69,9 @@ class CoreConfig extends Model {
      * @param string $key
      * @param string $value
      */
-    public function updateParam($key, $value) {
-        $sql = "update core_config set value=? where id=?";
-        $this->runRequest($sql, array($value, $key));
+    public function updateParam($key, $value, $id_space = 0) {
+        $sql = "update core_config set value=?, id_space=? where id=?";
+        $this->runRequest($sql, array($value, $id_space, $key));
     }
 
     /**
@@ -90,22 +91,40 @@ class CoreConfig extends Model {
         }
     }
 
+   /**
+     * Get a parameter
+     * @param string $key
+     * @return string: value
+     */
+    public function getParamSpace($key, $id_space) {
+        $sql = "SELECT value FROM core_config WHERE id=? AND id_space=?";
+        $req = $this->runRequest($sql, array($key, $id_space));
+
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            return $tmp[0];
+        } else {
+            return "";
+        }
+    }
+
     /**
      * Set a parameter (add if not exists, otherwise update)
      * @param string $key
      * @param string $value
      */
-    public function setParam($key, $value) {
+    public function setParam($key, $value, $id_space = 0) {
         if ($this->isKey($key)) {
-            $this->updateParam($key, $value);
+            $this->updateParam($key, $value, $id_space);
         } else {
-            $this->addParam($key, $value);
+            $this->addParam($key, $value, $id_space);
         }
     }
-    
-    public function initParam($key, $value){
+
+    public function initParam($key, $value) {
         if (!$this->isKey($key)) {
             $this->addParam($key, $value);
         }
     }
+
 }

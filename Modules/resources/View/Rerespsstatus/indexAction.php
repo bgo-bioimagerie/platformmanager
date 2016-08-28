@@ -2,9 +2,9 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-
-<div class="container" id="pm-table">
+<div class="col-md-12" id="pm-content">
+<div class="col-md-12" id="pm-table">
     <?php echo $htmlTable ?>
 </div>
-
+</div>
 <?php endblock();
