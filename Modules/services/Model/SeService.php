@@ -95,6 +95,12 @@ class SeService extends Model {
         return $user->fetchAll();
     }
     
+    public function getBySpace($id_space){
+        $sql = "SELECT * FROM se_services WHERE id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+    
     public function getAll($id_space){
         $sql = "SELECT se_services.*, se_service_types.local_name as type "
                 . "FROM se_services "

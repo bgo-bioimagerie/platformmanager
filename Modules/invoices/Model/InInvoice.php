@@ -120,7 +120,7 @@ class InInvoice extends Model {
     
     public function getInvoicesPeriod($controller, $periodStart, $periodEnd){
         $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ? AND controller=?";
-        $user = $this->runRequest($sql, array($controller, $periodStart, $periodEnd));
+        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $controller));
         return $user->fetchAll();
     }
             

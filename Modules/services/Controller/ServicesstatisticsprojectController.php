@@ -18,6 +18,8 @@ require_once 'Modules/services/Model/SeStats.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
 
+require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+
 /**
  * 
  * @author sprigent
@@ -57,12 +59,12 @@ class ServicesstatisticsprojectController extends CoresecureController {
         if ($form->check()) {
             $date_start = CoreTranslator::dateToEn($form->getParameter("begining_period"), $lang);
             $date_end = CoreTranslator::dateToEn($form->getParameter("end_period"), $lang);
-            $this->generateBalance($date_start, $date_end);
+            $this->generateBalance($id_space, $date_start, $date_end);
             return;
         }
 
         // set the view
-        $formHtml = $form->getHtml();
+        $formHtml = $form->getHtml($lang);
         // view
         $this->render(array(
             "id_space" => $id_space, 
@@ -73,7 +75,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         
     }
 
-    private function generateBalance($periodStart, $periodEnd) {
+    private function generateBalance($id_space, $periodStart, $periodEnd) {
 
         //echo "not yet implemented <br/> " . $periodStart . "<br/>" . $periodEnd . "<br/>";
         // get all the opened projects informations
@@ -81,7 +83,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd);
 
         // get all the priced projects details
-        $projectsBalance = $modelProjects->getPeriodeServicesBalances($periodStart, $periodEnd);
+        $projectsBalance = $modelProjects->getPeriodeServicesBalances($id_space, $periodStart, $periodEnd);
         $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($periodStart, $periodEnd);
 
         // get the stats
@@ -367,7 +369,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($items as $itemsT) {
             $itemIdx++;
             $colLetter = $this->get_col_letter($itemIdx);
-            $objPHPExcel->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "3:" . $colLetter . $lastLine . ")");
+            $objPHPExcel->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "2:" . $colLetter . $lastLine . ")");
         }
 
         for ($r = 1; $r <= $curentLine; $r++) {
@@ -398,18 +400,18 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::No_Projet($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
 
         $total = 0;
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_resp"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_resp"]));
+            $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
+            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["no_project"]);
+            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["total_ht"]);
             $total += $invoice["total_ht"];
         }
@@ -487,7 +489,6 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->setActiveSheetIndex(4);
         $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
-
         $curentLine = 1;
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
@@ -503,11 +504,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         $itemIdx = 4;
         $items = $projectsBalance["items"];
+        //print_r($items);
         $modelItem = new SeService();
 
         foreach ($items as $item) {
             $itemIdx++;
-            
             $name = $modelItem->getItemName($item[0]);
             $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
@@ -526,6 +527,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         //$objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBalance["projects"];
+        //print_r($projects);
         foreach ($projects as $proj) {
             $curentLine++;
             $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
@@ -558,10 +560,13 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $offset = 4;
             $projItemCount = 0;
             foreach ($entries as $entry) {
+                // print_r($entry);
+                // echo "<br/>";
                 $idx++;
-                $pos = $this->findItemPos($items, $entry["id"]);
+                $pos = $this->findItemPos2($items, $entry["id"]);
+                //echo "id = " . $entry["id"] . " pos = " . $pos . "<br/>";
                 if ($pos > 0 && $entry["pos"] > 0) {
-                    //print_r($entry);
+                   
                     $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
                     $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
@@ -582,7 +587,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($items as $itemsT) {
             $itemIdx++;
             $colLetter = $this->get_col_letter($itemIdx);
-            $objPHPExcel->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "3:" . $colLetter . $lastLine . ")");
+            $objPHPExcel->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "2:" . $colLetter . $lastLine . ")");
         }
 
         for ($r = 1; $r <= $curentLine; $r++) {
@@ -616,6 +621,17 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($items as $item) {
             $c++;
             if ($item == $id) {
+                return $c;
+            }
+        }
+        return 0;
+    }
+    
+    private function findItemPos2($items, $id) {
+        $c = 0;
+        foreach ($items as $item) {
+            $c++;
+            if ($item["id"] == $id) {
                 return $c;
             }
         }

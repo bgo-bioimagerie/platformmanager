@@ -88,6 +88,12 @@ class EcResponsible extends Model {
         }
         return true;
     }
+    
+    public function import($idUser, $idResp){
+        if(!$this->isUserRespJoin($idUser, $idResp)){
+            $this->addUserRespJoin($idUser, $idResp);
+        }
+    }
 
     /**
      * Remove a user/responsible join to the database

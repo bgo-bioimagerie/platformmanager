@@ -9,22 +9,19 @@ require_once 'Framework/Model.php';
  */
 class BkNightWE extends Model {
 
-    public function createTable() {
-        $sql = "CREATE TABLE IF NOT EXISTS `bk_nightwe` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_belonging` int(11) NOT NULL DEFAULT 0,
-		`tarif_unique` int(11) NOT NULL DEFAULT 1,
-		`tarif_night` int(3) NOT NULL DEFAULT 0,
-		`night_start` int(11) NOT NULL DEFAULT 19,
-		`night_end` int(11) NOT NULL DEFAULT 8,
-		`tarif_we` int(3) NOT NULL DEFAULT 0,
-		`choice_we`  varchar(100) NOT NULL DEFAULT '',
-                `id_space`  varchar(100) NOT NULL DEFAULT '',
-		PRIMARY KEY (`id`)
-		);";
+    public function __construct() {
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        $this->tableName = "bk_nightwe";
+        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id_belonging", "int(11)", 0);
+        $this->setColumnsInfo("tarif_unique", "int(11)", 1);
+        $this->setColumnsInfo("tarif_night", "int(3)", 0);
+        $this->setColumnsInfo("night_start", "int(3)", 19);
+        $this->setColumnsInfo("night_end", "int(11)", 8);
+        $this->setColumnsInfo("tarif_we", "int(3)", 0);
+        $this->setColumnsInfo("choice_we", "varchar(100)", "");
+        $this->setColumnsInfo("id_space", "int(11)", 0);
+        $this->primaryKey = "id";
     }
 
     public function isNight($id) {

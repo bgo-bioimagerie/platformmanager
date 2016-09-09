@@ -5,6 +5,7 @@ require_once 'Framework/Controller.php';
 // ecosystem
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
+require_once 'Modules/ecosystem/Model/EcResponsible.php';
 
 // resources
 require_once 'Modules/resources/Model/ReArea.php';
@@ -52,7 +53,7 @@ class v1tov2Controller extends Controller {
         $id_space = 1;
         $importSupplies = false;
         
-        // todo bug import no visa dans autorisations
+        // todo bug import resps dans réservations
         
         // ---------- IMPORT ----------
         $belongingMap[1] = 1; // --
@@ -65,6 +66,7 @@ class v1tov2Controller extends Controller {
         echo "import ecosystem <br/>";
         $unitsMap = $this->importUnits($pdo_old, $belongingMap);
         $usersMap = $this->importUsers($pdo_old, $unitsMap);
+        $this->importResponsibles($pdo_old, $usersMap);
         
         // resources
         echo "import resources <br/>";
@@ -76,25 +78,25 @@ class v1tov2Controller extends Controller {
         // Booking
         echo "import booking <br/>"; 
         $this->importBkAccess($pdo_old, $resourcesMap);
-        //echo "fn 1 <br/>";
+        echo "fn 1 <br/>";
         $this->importAuthorizations($pdo_old, $usersMap, $unitsMap, $visasMap, $resourcesMap);
-        //echo "fn 2 <br/>";
+        echo "fn 2 <br/>";
         $this->importBookingSettings($pdo_old, $id_space);
-        //echo "fn 3 <br/>";
+        echo "fn 3 <br/>";
         $this->importBookingCss($pdo_old, $areasMap);
-        //echo "fn 4 <br/>";
+        echo "fn 4 <br/>";
         $this->importCalQuantities($pdo_old, $resourcesMap);
-        //echo "fn 5 <br/>";
+        echo "fn 5 <br/>";
         $colorMap = $this->importColorCode($pdo_old, $id_space);
-        //echo "fn 6 <br/>";
+        echo "fn 6 <br/>";
         $this->importCalendarEntry($pdo_old, $resourcesMap, $usersMap, $colorMap);
-        //echo "fn 7 <br/>";
-        $this->importNightWe($pdo_old, $belongingMap);
-        //echo "fn 8 <br/>";
+        echo "fn 7 <br/>";
+        $this->importNightWe($pdo_old, $id_space, $belongingMap);
+        echo "fn 8 <br/>";
         $packagesMap = $this->importPackage($pdo_old);
-        //echo "fn 9 <br/>";
+        echo "fn 9 <br/>";
         $this->importBookingPrices($pdo_old);
-        //echo "fn 10 <br/>";
+        echo "fn 10 <br/>";
         $this->importScheduling($pdo_old, $areasMap);
         
         // sprojects
@@ -194,6 +196,19 @@ class v1tov2Controller extends Controller {
         
         return $userMap;
     }
+    
+    public function importResponsibles($pdo_old, $usersMap){
+        $sql = "SELECT * FROM core_j_user_responsible";
+        $result = $pdo_old->query($sql);
+	$j_old = $result->fetchAll();
+        
+        $model = new EcResponsible();
+        foreach($j_old as $d){
+            if (isset($usersMap[$d["id_user"]]) && isset($usersMap[$d["id_resp"]])){
+                $model->import($usersMap[$d["id_user"]], $usersMap[$d["id_resp"]]);
+            }
+        }
+    }
 
     public function importAreas($pdo_old, $id_space){
         $sql = "SELECT * FROM sy_areas";
@@ -269,7 +284,8 @@ class v1tov2Controller extends Controller {
             }
             $id_instructor = $usersMap[$d["id_instructor"]]; 
             $instructor_status = $d["instructor_status"]; 
-            $modelVisas->setVisas(0, $id_resource_category, $id_instructor, $instructor_status);
+            $id_new = $modelVisas->setVisas(0, $id_resource_category, $id_instructor, $instructor_status);
+            $visasMap[$d["id"]] = $id_new;
         }
         return $visasMap;
     }
@@ -288,6 +304,9 @@ class v1tov2Controller extends Controller {
     }
     
     public function importAuthorizations($pdo_old, $usersMap, $unitsMap, $visasMap, $resourcesMap){
+        
+        //print_r($visasMap);
+        
         $sql = "SELECT * FROM sy_authorization";
         $result = $pdo_old->query($sql);
 	$auth_old = $result->fetchAll();
@@ -399,16 +418,32 @@ class v1tov2Controller extends Controller {
             if(isset($usersMap[$d["recipient_id"]])){
                 $recipient_id = $usersMap[$d["recipient_id"]];
             }
+            $responsible_id = 0;
+            if(isset($usersMap[$d["responsible_id"]])){
+                $responsible_id = $usersMap[$d["responsible_id"]];
+            }
+            
+            //$package_id = 0;
+            //if(isset($usersMap[$d["responsible_id"]])){
+                $package_id = $d["package_id"];
+            //}
+                
+            $supplementaries = $d["supplementary"];
+            $quantities = $d["quantity"];
+            
             $last_update = $d["last_update"];
             $color_type_id = $colorMap[$d["color_type_id"]];
             $short_description = $d["short_description"];
             $full_description = $d["full_description"];
-            $model->addEntry($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, 
-                    $last_update, $color_type_id, $short_description, $full_description);
+            
+            $model->setEntry(0, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, 
+                    $last_update, $color_type_id, $short_description, $full_description, 
+                    $quantities, $supplementaries, $package_id, $responsible_id);
+            
         }
     }
     
-    public function importNightWe($pdo_old, $belongingMap){
+    public function importNightWe($pdo_old, $id_space, $belongingMap){
         $sql = "SELECT * FROM sy_pricing";
         $result = $pdo_old->query($sql);
 	$pricing_old = $result->fetchAll();
@@ -416,7 +451,7 @@ class v1tov2Controller extends Controller {
         $model = new BkNightWE();
         foreach ($pricing_old as $d){
             
-            $model->setPricing($belongingMap[$d["id"]], $d["tarif_unique"], $d["tarif_night"], $d["night_start"], $d["night_end"], $d["tarif_we"], $d["choice_we"]);
+            $model->setPricing($belongingMap[$d["id"]], $id_space, $d["tarif_unique"], $d["tarif_night"], $d["night_start"], $d["night_end"], $d["tarif_we"], $d["choice_we"]);
         }
     }
     

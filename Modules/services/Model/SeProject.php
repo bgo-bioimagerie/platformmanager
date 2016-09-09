@@ -248,17 +248,22 @@ class SeProject extends Model {
         return $req->fetchAll();
     }
 
-    public function getPeriodeServicesBalances($beginPeriod, $endPeriod) {
+    public function getPeriodeServicesBalances($id_space, $beginPeriod, $endPeriod) {
         $sql = "select * from se_project where date_close>=? OR date_close='0000-00-00'";
         $req = $this->runRequest($sql, array($beginPeriod));
         $projects = $req->fetchAll();
-        $items = array();
+        //$items = array();
+        $modelServices = new SeService();
+        $items = $modelServices->getBySpace($id_space);
+        //print_r($items);
+        
         $modelUser = new EcUser();
         $modelUnit = new EcUnit();
         for ($i = 0; $i < count($projects); $i++) {
 
             $projectEntries = $this->getPeriodProjectEntries($projects[$i]["id"], $beginPeriod, $endPeriod);
 
+            
             // get active items
             $activeItems = $this->getProjectItems($projectEntries);
             $itemsSummary = $this->getProjectItemsSymmary($projectEntries, $activeItems);
@@ -266,7 +271,7 @@ class SeProject extends Model {
 
             $projects[$i]["entries"] = $itemsSummary;
             //print_r($itemsSummary);
-            $items = $this->getProjectServices($projects[$i]["id"]);
+            //$items = $this->getProjectServices($projects[$i]["id"]);
 
             $id_unit = $modelUser->getUnit($projects[$i]["id_resp"]);
             $LABpricingid = $modelUnit->getBelonging($id_unit);
@@ -311,6 +316,22 @@ class SeProject extends Model {
         return array("items" => $items, "projects" => $projects);
     }
 
+    protected function getPeriodBilledProjectEntries($id_proj, $beginPeriod, $endPeriod){
+        $sql = "select * from se_project_service where id_project=? AND id_invoice IN (SELECT id FROM in_invoice WHERE date_generated>=? AND date_generated<=? AND module='services')";
+        $req = $this->runRequest($sql, array(
+            $id_proj, $beginPeriod, $endPeriod
+        ));
+        $entries = $req->fetchAll();
+        
+        $modelBill = new InInvoice();
+        for($i = 0 ; $i < count($entries) ; $i++){
+            if ($entries[$i]["id_invoice"] > 0){
+                $entries[$i]["invoice"] = $modelBill->getInvoiceNumber($entries[$i]["id_invoice"]);
+            }
+        }
+        return $entries;
+    }
+    
     public function getPeriodProjectEntries($id_proj, $beginPeriod, $endPeriod) {
         $sql = "select * from se_project_service where id_project=? AND date>=? AND date<=?";
         $req = $this->runRequest($sql, array(

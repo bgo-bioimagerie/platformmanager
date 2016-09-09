@@ -21,6 +21,20 @@ class CoreUser extends Model {
         $this->primaryKey = "id";
     }
 
+    public function getUserInitiales($id) {
+        $sql = "select firstname, name from core_users where id=?";
+        $user = $this->runRequest($sql, array(
+            $id
+        ));
+
+        if ($user->rowCount() == 1) {
+            $userf = $user->fetch();
+            return substr(ucfirst($userf ['name']), 0, 1) . " " . substr(ucfirst($userf ['firstname']), 0, 1);
+        } else {
+            return "";
+        }
+    }
+
     public function getStatus($id_user) {
         $sql = "SELECT status_id FROM core_users WHERE id=?";
         $req = $this->runRequest($sql, array($id_user));

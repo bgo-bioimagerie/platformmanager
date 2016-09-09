@@ -13,8 +13,6 @@ require_once 'Modules/ecosystem/Model/EcBelonging.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
-
-
 /**
  * 
  * @author sprigent
