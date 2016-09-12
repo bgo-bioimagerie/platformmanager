@@ -59,7 +59,7 @@ class BookingTranslator {
 
     public static function bookingsettings($lang) {
         if ($lang == "fr") {
-            return "Calendrier config";
+            return "Réglages calendrier";
         }
         return "booking settings";
     }
