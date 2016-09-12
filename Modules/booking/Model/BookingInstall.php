@@ -10,7 +10,7 @@ require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/Model/BkAccess.php';
 require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Model/BkCalQuantities.php';
-require_once 'Modules/booking/Model/BkCalSupinfo.php';
+require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/booking/Model/BkAuthorization.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
@@ -44,7 +44,7 @@ class BookingInstall extends Model {
         $model5 = new BkBookingSettings();
         $model5->createTable();
         
-        $model6 = new BkCalSupinfo();
+        $model6 = new BkCalSupInfo();
         $model6->createTable();
         
         $model7 = new BkAccess();

@@ -22,7 +22,7 @@ class EcosystemconfigadminController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         
-        if (!$this->isUserAuthorized(CoreStatus::$SUPERADMIN)) {
+        if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new Exception("Error 503: Permission denied");
         }
     }

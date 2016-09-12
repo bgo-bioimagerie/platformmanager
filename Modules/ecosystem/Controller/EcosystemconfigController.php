@@ -34,7 +34,6 @@ class EcosystemconfigController extends CoresecureController {
         
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        //$modelCoreConfig = new CoreConfig();
 
         $modelSpace = new CoreSpace();
         // color menu form

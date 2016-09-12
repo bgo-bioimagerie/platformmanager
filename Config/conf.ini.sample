@@ -5,9 +5,9 @@ rootWeb = /platformmanager/
 saveImages = disable
 
 [BD]
-dsn = ''
+dsn = 'mysql:host=localhost;dbname=platformmanager;charset=utf8'
 login = root
-pwd = ""
+pwd = "root"
 
 [Modules]
 modules[] = "core"
@@ -15,6 +15,11 @@ modules[] = "ecosystem"
 modules[] = "dev"
 modules[] = "resources"
 modules[] = "booking"
+modules[] = "services"
+modules[] = "invoices"
+modules[] = "statistics"
+modules[] = "mailer"
+modules[] = "documents"
 
 [Company]
-name = "H2P2"
+name = "Platform-Manager"
