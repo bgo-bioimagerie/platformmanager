@@ -21,7 +21,8 @@ class CoreusersController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorizationMenu("users");
+        $this->checkAuthorization(CoreStatus::$USER);
+        //$this->checkAuthorizationMenu("users");
     }
 
     /**
@@ -213,7 +214,7 @@ class CoreusersController extends CoresecureController {
                 $pwd = $formPwd->getParameter("pwd");
                 $pwdc = $formPwd->getParameter("confirm");
                 if ($pwd == $pwdc) {
-                    $this->userModel->changePwd($id, $pwd);
+                    $modelUser->changePwd($id, $pwd);
                 } else {
                     throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
                 }

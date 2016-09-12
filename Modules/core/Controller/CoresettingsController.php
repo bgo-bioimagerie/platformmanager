@@ -17,7 +17,7 @@ class CoresettingsController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorization(CoreStatus::$VISITOR);
+        $this->checkAuthorization(CoreStatus::$USER);
     }
     
     /**

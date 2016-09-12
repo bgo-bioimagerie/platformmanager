@@ -104,6 +104,12 @@ class CoreUser extends Model {
         $req = $this->runRequest($sql, array($id));
         return $req->fetch();
     }
+    
+    public function getpwd($id){
+        $sql = "select pwd from core_users where id=?";
+        $req = $this->runRequest($sql, array($id))->fetch();
+        return $req;
+    }
 
     public function getEmpty() {
         return array("id" => 0,
