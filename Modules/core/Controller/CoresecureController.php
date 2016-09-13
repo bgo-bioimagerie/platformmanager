@@ -100,6 +100,17 @@ abstract class CoresecureController extends Controller {
         return $this->isUserAuthorized($minimumStatus);
     }
     
+    public function getUserSpaceStatus($id_space, $id_user){
+        $modelUser = new CoreUser();
+        $userAppStatus = $modelUser->getStatus($id_user);
+        if ($userAppStatus > 1){
+            return 4;
+        }
+        $modelSpace = new CoreSpace();
+        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
+        return $spaceRole;
+    }
+    
     public function checkSpaceAdmin($id_space, $id_user){
         
         $modelUser = new CoreUser();

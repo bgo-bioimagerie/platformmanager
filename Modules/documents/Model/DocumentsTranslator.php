@@ -52,4 +52,54 @@ class DocumentsTranslator {
         return "Activate/deactivate menus";
     }
 
+    public static function Title($lang){
+        if ($lang == "fr") {
+            return "Title";
+        }
+        return "Title";
+    }
+    
+    public static function Owner($lang){
+        if ($lang == "fr") {
+            return "Propriétaire";
+        }
+        return "Owner";
+    }
+ 
+    public static function LastModified($lang){
+        if ($lang == "fr") {
+            return "Dernière modification";
+        }
+        return "Last modified";
+    }
+ 
+    public static function Open($lang){
+        if ($lang == "fr") {
+            return "Ouvrir";
+        }
+        return "Open";
+    }
+    
+    public static function Add_Doc($lang){
+        if ($lang == "fr") {
+            return "Ajouter document";
+        }
+        return "Add document";
+    }
+    
+    public static function File($lang){
+        if ($lang == "fr") {
+            return "Fichier";
+        }
+        return "File";
+    }
+    
+    public static function Edit_Document($lang){
+        if ($lang == "fr") {
+            return "Modifier document";
+        }
+        return "Edit document";
+    }
+    
+    
  }

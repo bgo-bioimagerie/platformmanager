@@ -1,13 +1,21 @@
 <?php include 'Modules/documents/View/layout.php' ?>
 
-<!-- body -->     
+<!-- body --> 
 <?php startblock('content') ?>
+<div class="container"> 
 
-<div class="container">
-    <p>
-        This is a default page for the <?php echo DocumentsTranslator::documents($lang) ?> module  
-    </p>
-    
+    <?php if($userSpaceStatus){ ?> 
+    <div class="col-md-2" style="padding-top:7px;">
+        <button type="button" class="btn btn-default" onclick="window.location.href = 'documentsedit/<?php echo $id_space ?>/0/'">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <?php echo DocumentsTranslator::Add_Doc($lang) ?>
+        </button>
+        <p></p>
+    </div>
+    <?php } ?>
+    <div class="col-md-12" >
+        <?php echo $tableHtml ?>
+    </div>
 </div>
 
-<?php endblock();
+<?php
+endblock();
