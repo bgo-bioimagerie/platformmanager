@@ -5,6 +5,7 @@ require_once 'Framework/Controller.php';
 // ecosystem
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
+require_once 'Modules/ecosystem/Model/EcBelonging.php';
 require_once 'Modules/ecosystem/Model/EcResponsible.php';
 
 // resources
@@ -12,7 +13,6 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReVisa.php';
-
 
 // booking
 require_once 'Modules/booking/Model/BkAccess.php';
@@ -43,7 +43,7 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
         
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=h2p2_old;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_micropicell;charset=utf8';
 	$login_old = "root";
 	$pwd_old = "root";
 		
@@ -51,21 +51,32 @@ class v1tov2Controller extends Controller {
             array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
         
         $id_space = 1;
-        $importSupplies = false;
+        $importProjects = false;
+        $importSupplies = true;
         
-        // todo bug import resps dans réservations
         
         // ---------- IMPORT ----------
+        // Rennes MRic
+        /*
         $belongingMap[1] = 1; // --
         $belongingMap[2] = 2; // Biosit
         $belongingMap[3] = 3; // UR1
         $belongingMap[4] = 4; // Public
         $belongingMap[5] = 5; // Privé
+        */
+        
+        // Nantes
+        $belongingMap = $this->importBelongings($pdo_old);
+        //print_r($belongingMap);
         
         // ecosystem
         echo "import ecosystem <br/>";
+        echo "   import units <br/>";
         $unitsMap = $this->importUnits($pdo_old, $belongingMap);
+        //print_r($unitsMap);
+        echo "   import users <br/>";
         $usersMap = $this->importUsers($pdo_old, $unitsMap);
+        echo "   import responsibles <br/>";
         $this->importResponsibles($pdo_old, $usersMap);
         
         // resources
@@ -93,34 +104,59 @@ class v1tov2Controller extends Controller {
         echo "fn 7 <br/>";
         $this->importNightWe($pdo_old, $id_space, $belongingMap);
         echo "fn 8 <br/>";
-        $packagesMap = $this->importPackage($pdo_old);
+        $packagesMap = $this->importPackage($pdo_old, $resourcesMap);
         echo "fn 9 <br/>";
         $this->importBookingPrices($pdo_old);
         echo "fn 10 <br/>";
         $this->importScheduling($pdo_old, $areasMap);
         
         // sprojects
-        echo "import sprojects <br/>";
         $serviceTypeMap[1] = 1;
         $serviceTypeMap[2] = 2;
         $serviceTypeMap[3] = 3;
         $serviceTypeMap[4] = 4;
-        $servicesMap = $this->importProjectServices($pdo_old, $id_space, $serviceTypeMap);
-        //echo "fn 1 <br/>";
-        $this->importProjectPrices($pdo_old, $servicesMap, $belongingMap);
-        //echo "fn 2 <br/>";
-        $mapProjectInvoices = $this->importProjectInvoices($pdo_old, $id_space, $unitsMap, $usersMap);
-        //echo "fn 3 <br/>";
-        $this->importProject($pdo_old, $id_space, $usersMap, $mapProjectInvoices, $servicesMap);
+        
+        if($importProjects){
+            echo "import sprojects <br/>";
+            $servicesMap = $this->importProjectServices($pdo_old, $id_space, $serviceTypeMap);
+            //echo "fn 1 <br/>";
+            $this->importProjectPrices($pdo_old, $servicesMap, $belongingMap);
+            //echo "fn 2 <br/>";
+            $mapProjectInvoices = $this->importProjectInvoices($pdo_old, $id_space, $unitsMap, $usersMap);
+            //echo "fn 3 <br/>";
+            $this->importProject($pdo_old, $id_space, $usersMap, $mapProjectInvoices, $servicesMap);
+        }
         
         // supplies
         if ($importSupplies){
+            echo "import supplies <br/>";
             $servicesOrderMap = $this->importOrderServices($pdo_old, $id_space, $serviceTypeMap);
+            echo "fn 1 <br/>";
             $this->importOrderPrices($pdo_old, $servicesOrderMap, $belongingMap);
+            echo "fn 2 <br/>";
             $mapOrderInvoices = $this->importOrderInvoices($pdo_old, $id_space, $unitsMap, $usersMap);
-            $this->importOrder($pdo_old, $id_space, $usersMap, $servicesMap);
+            echo "fn 3 <br/>";
+            $this->importOrder($pdo_old, $id_space, $usersMap, $servicesOrderMap);
         }
+        echo "end <br/>";
+    }
     
+    protected function importBelongings($pdo_old){
+        $sql = "SELECT * FROM core_belongings";
+        $result = $pdo_old->query($sql);
+	$bel_old = $result->fetchAll();
+        
+        $model = new EcBelonging();
+        $unitMap = array();
+        foreach($bel_old as $uo){
+            $name = $uo["name"];
+            $color = $uo["color"];
+            $type = $uo["type"];
+            $newID = $model->add($name, $color, $type);
+            $unitMap[$uo["id"]] = $newID;
+        }
+        
+        return $unitMap;
     }
     
     protected function importUnits($pdo_old, $belongingMap){
@@ -186,7 +222,10 @@ class v1tov2Controller extends Controller {
             
             //echo "imported id = " . $userNewID . "<br/>";
             $phone = $uo["tel"];
-            $unit = $unitsMap[$uo["id_unit"]];
+            $unit = 1;
+            if(isset($unitsMap[$uo["id_unit"]])){
+                $unit = $unitsMap[$uo["id_unit"]];
+            }
             
             $date_convention = $uo["date_convention"];
             $convention_url = "";//$uo["convention_url"];
@@ -432,7 +471,10 @@ class v1tov2Controller extends Controller {
             $quantities = $d["quantity"];
             
             $last_update = $d["last_update"];
-            $color_type_id = $colorMap[$d["color_type_id"]];
+            $color_type_id = 1;
+            if(isset($colorMap[$d["color_type_id"]])){
+                $color_type_id = $colorMap[$d["color_type_id"]];
+            }
             $short_description = $d["short_description"];
             $full_description = $d["full_description"];
             
@@ -455,7 +497,7 @@ class v1tov2Controller extends Controller {
         }
     }
     
-    public function importPackage($pdo_old){
+    public function importPackage($pdo_old, $resourcesMap){
         $sql = "SELECT * FROM sy_packages";
         $result = $pdo_old->query($sql);
 	$package_old = $result->fetchAll();
@@ -465,7 +507,12 @@ class v1tov2Controller extends Controller {
         foreach($package_old as $d){
             
             /// chage id if several platform import 
-            $model->setPackage($d["id_package"], $d["id_resource"], $d["name"], $d["duration"]);
+            $idResource = 1;
+            if(isset($resourcesMap[$d["id_resource"]])){
+                $idResource = $resourcesMap[$d["id_resource"]];
+            }
+            
+            $model->setPackage($d["id_package"], $idResource, $d["name"], $d["duration"]);
             $packagesMap[$d["id_package"]] = $d["id_package"];
         }
         return $packagesMap;
@@ -642,7 +689,7 @@ class v1tov2Controller extends Controller {
         $model = new SeService();
         $servicesMap = array();
         foreach($services_old as $d){
-            $newID = $model->setService(0, $id_space, $d["name"], $d["description"], $d["display_order"], $serviceTypeMap[$d["type_id"]]);
+            $newID = $model->setService(0, $id_space, $d["name"], $d["description"], 1, 1);
             $servicesMap[$d["id"]] = $newID;
         }
         return $servicesMap;
@@ -654,8 +701,14 @@ class v1tov2Controller extends Controller {
         
         $modelPrice = new SePrice();
         foreach($prices_old as $d){
-            $id_service = $servicesOrderMap[$d["id_item"]];
-            $id_belongings = $belongingMap[$d["id_pricing"]];
+            $id_service = 1;
+            if(isset($servicesOrderMap[$d["id_item"]])){
+                $id_service = $servicesOrderMap[$d["id_item"]];
+            }
+            $id_belongings = 1;
+            if(isset($belongingMap[$d["id_pricing"]])){
+                $id_belongings = $belongingMap[$d["id_pricing"]];
+            }
             $price = $d["price"];
             $modelPrice->setPrice($id_service, $id_belongings, $price);
         }
@@ -675,7 +728,10 @@ class v1tov2Controller extends Controller {
             $number = $d["number"];
             $date_generated = $d["date_generated"]; 
             $id_unit = $unitsMap[$d["id_unit"]]; 
-            $id_responsible = $usersMap[$d["id_resp"]]; 
+            $id_responsible = 1;
+            if(isset($usersMap[$d["id_resp"]])){
+                $id_responsible = $usersMap[$d["id_resp"]]; 
+            }
             $total_ht = $d["total_ht"] ;
             $period_begin = ""; 
             $period_end = "";
@@ -688,7 +744,7 @@ class v1tov2Controller extends Controller {
     
     public function importOrder($pdo_old, $id_space, $usersMap, $servicesMap){
         // import project
-        $sql = "SELECT * FROM sp_entries";
+        $sql = "SELECT * FROM su_entries";
         $result = $pdo_old->query($sql);
 	$order_old = $result->fetchAll();
         
@@ -697,9 +753,12 @@ class v1tov2Controller extends Controller {
         foreach($order_old as $d){
             
             
-            $no_identification = $d["name"];
+            $no_identification = $d["no_identification"];
             //$id_resp = $usersMap[$d["id_resp"]];
-            $id_user = $usersMap[$d["id_user"]];
+            $id_user = 1;
+            if(isset($usersMap[$d["id_user"]])){
+                $id_user = $usersMap[$d["id_user"]];
+            }
             $date_open = $d["date_open"];
             $date_close = $d["date_close"]; 
             $date_last_modified = $d["date_last_modified"];
@@ -710,10 +769,13 @@ class v1tov2Controller extends Controller {
             foreach($content as $c){
                 $item = explode("=", $c);
                 if (count($item) == 2){
-                    $modelOrder->setService($newOrderID, $servicesMap[$item[0]], $item[1]);
+                    $itm = 1;
+                    if (isset($servicesMap[$item[0]])){
+                        $itm = $servicesMap[$item[0]];
+                    }
+                    $modelOrder->setService($newOrderID, $itm, $item[1]);
                 }
             }
-            
         }
     }
 }
