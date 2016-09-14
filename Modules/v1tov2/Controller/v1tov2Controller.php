@@ -43,7 +43,7 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
         
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_micropicell;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_mric;charset=utf8';
 	$login_old = "root";
 	$pwd_old = "root";
 		
@@ -52,7 +52,7 @@ class v1tov2Controller extends Controller {
         
         $id_space = 1;
         $importProjects = false;
-        $importSupplies = true;
+        $importSupplies = false;
         
         
         // ---------- IMPORT ----------
