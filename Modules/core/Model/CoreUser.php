@@ -104,8 +104,8 @@ class CoreUser extends Model {
         $req = $this->runRequest($sql, array($id));
         return $req->fetch();
     }
-    
-    public function getpwd($id){
+
+    public function getpwd($id) {
         $sql = "select pwd from core_users where id=?";
         $req = $this->runRequest($sql, array($id))->fetch();
         return $req;
@@ -365,6 +365,19 @@ class CoreUser extends Model {
      */
     public function getActiveUsers($sortentry = 'id', $is_active = 1) {
         $sql = "select * from core_users where is_active=" . $is_active . " order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql);
+        return $user->fetchAll();
+    }
+
+    /**
+     * Get the users summary (id, name, firstname)
+     *
+     * @param string $sortentry
+     *        	column used to sort the users
+     * @return multitype:
+     */
+    public function getUsersSummary($sortentry = 'id', $active = 1) {
+        $sql = "select id, name, firstname from core_users where is_active >= " . $active . " order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql);
         return $user->fetchAll();
     }

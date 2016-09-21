@@ -157,4 +157,11 @@ class InvoicesTranslator {
         return "Period end";
     }
 
+    public static function OwnerPrice($lang) {
+        if ($lang == "fr") {
+            return "Tarifs préférentiel";
+        }
+        return "Owner price";
+    }
+    
 }

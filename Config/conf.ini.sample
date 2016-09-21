@@ -20,6 +20,7 @@ modules[] = "invoices"
 modules[] = "statistics"
 modules[] = "mailer"
 modules[] = "documents"
+modules[] = "antibodies"
 
 [Company]
 name = "Platform-Manager"

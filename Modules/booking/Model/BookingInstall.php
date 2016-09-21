@@ -14,6 +14,7 @@ require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/booking/Model/BkAuthorization.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
+require_once 'Modules/booking/Model/BkOwnerPrice.php';
 
 /**
  * Class defining methods to install and initialize the core database
@@ -64,6 +65,9 @@ class BookingInstall extends Model {
         
         $model12 = new BkPrice();
         $model12->createTable();
+        
+        $model13 = new BkOwnerPrice();
+        $model13->createTable();
         
         if (!file_exists('data/booking/')) {
             mkdir('data/booking/', 0777, true);

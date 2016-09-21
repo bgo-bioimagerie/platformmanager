@@ -14,6 +14,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Controller/BookingController.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
+require_once 'Modules/booking/Model/BkOwnerPrice.php';
 
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
@@ -267,8 +268,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resources = $modelResouces->getBySpace($id_space);
 
         // get the pricing
-        $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid);
-        $packagesPrices = $this->getUnitPackagePricesForEachResource($resources, $LABpricingid);
+        $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid, $id_unit);
+        $packagesPrices = $this->getUnitPackagePricesForEachResource($resources, $LABpricingid, $id_unit);
         
         // add the invoice to the database
         $modelInvoice = new InInvoice();
@@ -350,19 +351,26 @@ class BookinginvoiceController extends InvoiceAbstractController {
         
     }
 
-    protected function getUnitPackagePricesForEachResource($resources, $LABpricingid) {
+    protected function getUnitPackagePricesForEachResource($resources, $LABpricingid, $id_unit) {
 
         // calculate the reservations for each equipments
         $packagesPrices = array();
         $modelPackage = new BkPackage();
+        $modelPrice = new BkPrice();
+        $modelPriceOwner = new BkOwnerPrice();
         foreach ($resources as $resource) {
             // get the packages prices
             $packages = $modelPackage->getByResource($resource["id"]);
             
             $pricesPackages = array();
             for ($i = 0; $i < count($packages); $i++) {
-                $price = $modelPackage->getPackagePrice($packages[$i]["id"], $LABpricingid);
-                $packages[$i]["price"] = $price;
+                $price = $modelPriceOwner->getPackagePrice($packages[$i]["id"], $resource["id"], $id_unit);
+                if ($price >= 0 ){
+                    $packages[$i]["price"] = $price;
+                }
+                else{
+                    $packages[$i]["price"] = $modelPrice->getPackagePrice($packages[$i]["id"], $resource["id"], $LABpricingid);
+                }
                 $pricesPackages[] = $packages[$i];
             }
             $packagesPrices[$resource["id"]] = $pricesPackages;
@@ -372,7 +380,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $packagesPrices;
     }
 
-    protected function getUnitTimePricesForEachResource($resources, $LABpricingid) {
+    protected function getUnitTimePricesForEachResource($resources, $LABpricingid, $id_unit) {
 
         // get the pricing informations
         $pricingModel = new BkNightWE();
@@ -392,18 +400,41 @@ class BookinginvoiceController extends InvoiceAbstractController {
         }
 
         $timePrices = array();
+        $modelRessourcePricing = new BkPrice();
+        $modelRessourcePricingOwner = new BkOwnerPrice();
         foreach ($resources as $resource) {
             // get the time prices
-            $modelRessourcePricing = new BkPrice();
+            
             $timePrices[$resource["id"]]["tarif_unique"] = $tarif_unique;
             $timePrices[$resource["id"]]["tarif_night"] = $tarif_nuit;
             $timePrices[$resource["id"]]["tarif_we"] = $tarif_we;
             $timePrices[$resource["id"]]["night_end"] = $night_end;
             $timePrices[$resource["id"]]["night_start"] = $night_start;
             $timePrices[$resource["id"]]["we_array"] = $we_array;
-            $timePrices[$resource["id"]]["price_day"] = $modelRessourcePricing->getDayPrice($resource["id"], $LABpricingid); //Tarif jour pour l'utilisateur selectionne
-            $timePrices[$resource["id"]]["price_night"] = $modelRessourcePricing->getNightPrice($resource["id"], $LABpricingid); //Tarif nuit pour l'utilisateur selectionne
-            $timePrices[$resource["id"]]["price_we"] = $modelRessourcePricing->getWePrice($resource["id"], $LABpricingid);  //Tarif w-e pour l'utilisateur selectionne
+            
+            $pday = $modelRessourcePricingOwner->getDayPrice($resource["id"], $id_unit);
+            if ($pday >= 0){
+                $timePrices[$resource["id"]]["price_day"] = $pday;
+            }
+            else{
+                $timePrices[$resource["id"]]["price_day"] = $modelRessourcePricing->getDayPrice($resource["id"], $LABpricingid); //Tarif jour pour l'utilisateur selectionne
+            }
+            
+            $pnight = $modelRessourcePricingOwner->getNightPrice($resource["id"], $id_unit);
+            if ($pnight >= 0){
+                $timePrices[$resource["id"]]["price_night"] = $pnight;
+            }
+            else{
+                $timePrices[$resource["id"]]["price_night"] = $modelRessourcePricing->getNightPrice($resource["id"], $LABpricingid); //Tarif nuit pour l'utilisateur selectionne
+            }
+            
+            $pwe = $modelRessourcePricingOwner->getWePrice($resource["id"], $id_unit);
+            if ($pwe >= 0 ){
+                $timePrices[$resource["id"]]["price_we"] = $pwe;
+            }
+            else{
+                $timePrices[$resource["id"]]["price_we"] = $modelRessourcePricing->getWePrice($resource["id"], $LABpricingid);  //Tarif w-e pour l'utilisateur selectionne
+            }
         }
         return $timePrices;
     }
@@ -412,7 +443,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         // initialize output
         $nb_hours_day = 0;
-        ;
+        
         $nb_hours_night = 0;
         $nb_hours_we = 0;
 
