@@ -8,7 +8,6 @@ require_once 'Modules/invoices/Controller/InvoiceAbstractController.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 
-
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/booking/Controller/BookingController.php';
