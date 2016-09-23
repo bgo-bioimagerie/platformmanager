@@ -418,6 +418,28 @@ class CoreUser extends Model {
         }
     }
 
+    /**
+     * Check if a user is active
+     * @param string $login User login
+     * @return string Error or success message
+     */
+    public function isActive($login) {
+        $sql = "select id, is_active from core_users where login=?";
+        $user = $this->runRequest($sql, array(
+            $login
+        ));
+        if ($user->rowCount() == 1) {
+            $req = $user->fetch();
+            if ($req ["is_active"] == 1) {
+                return "allowed";
+            } else {
+                return "Your account is not active";
+            }
+        } else {
+            return "Login or password not correct";
+        }
+    }
+
     public function delete($id) {
         $sql = "DELETE FROM core_users WHERE id=?";
         $this->runRequest($sql, array($id));
