@@ -382,6 +382,42 @@ class CoreUser extends Model {
         return $user->fetchAll();
     }
 
+    /**
+     * Set (add if not exists, update otherwise) external (i.e. LDAP) user info
+     * @param unknown $login
+     * @param unknown $name
+     * @param unknown $firstname
+     * @param unknown $email
+     * @param unknown $id_status
+     */
+    public function setExtBasicInfo($login, $name, $firstname, $email, $id_status) {
+
+        // insert
+        if (!$this->isUser($login)) {
+            $sql = "insert into core_users(login, firstname, name, email, id_status, source, date_created)" . " values(?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array(
+                $login,
+                $firstname,
+                $name,
+                $email,
+                $id_status,
+                "ext",
+                "" . date("Y-m-d") . ""
+            ));
+        }
+        // update
+        else {
+            $sql = "update core_users set firstname=?, name=?, email=?
+    			                  where login=?";
+            $this->runRequest($sql, array(
+                $firstname,
+                $name,
+                $email,
+                $login
+            ));
+        }
+    }
+
     public function delete($id) {
         $sql = "DELETE FROM core_users WHERE id=?";
         $this->runRequest($sql, array($id));
