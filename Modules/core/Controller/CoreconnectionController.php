@@ -163,7 +163,7 @@ class CoreconnectionController extends Controller {
             $modelCoreConfig = new CoreConfig();
             if ($modelCoreConfig->getParam("useLdap") == true) {
 
-                $modelLdap = new Ldap();
+                $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
                 if ($ldapResult == "error") {
                     return "Cannot connect to ldap using the given login and password";

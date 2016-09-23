@@ -263,6 +263,7 @@ class CoreLdap {
 		if (! $ds) {
 			$ds = $this->grr_connect_ldap ( $ldap_adresse, $ldap_port, $_login, $_password, $use_tls );
 		}
+                $result = false;
 		if ($ds) {
 			$result = @ldap_read ( $ds, $_dn, "objectClass=*", array (
 					$m_setting_ldap_champ_nom,

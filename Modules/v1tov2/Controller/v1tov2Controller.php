@@ -43,7 +43,7 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
         
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_mric;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_micro;charset=utf8';
 	$login_old = "root";
 	$pwd_old = "root";
 		
@@ -217,7 +217,8 @@ class v1tov2Controller extends Controller {
             }
             $date_end_contract = $uo["date_end_contract"];
             $is_active = $uo["is_active"];
-            $userNewID = $modelCoreUser->importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active);
+            $source = $uo["source"];
+            $userNewID = $modelCoreUser->importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source);
             $userMap[$uo["id"]] = $userNewID;
             
             //echo "imported id = " . $userNewID . "<br/>";

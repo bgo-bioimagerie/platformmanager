@@ -85,13 +85,13 @@ class CoreUser extends Model {
         $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }
 
-    public function importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+    public function importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source) {
         $sql = "SELECT id FROM core_users WHERE login=?";
         $req = $this->runRequest($sql, array($login));
         //echo "import user " . $login . "row count " . $req->rowCount();
         if ($req->rowCount() == 0) {
-            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active) VALUES(?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active));
+            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, source) VALUES(?,?,?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source));
             return $this->getDatabase()->lastInsertId();
         } else {
             $u = $req->fetch();

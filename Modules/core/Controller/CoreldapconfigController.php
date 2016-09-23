@@ -19,7 +19,7 @@ class CoreldapconfigController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorization(CoreStatus::$SUPERADMIN);
+        $this->checkAuthorization(CoreStatus::$ADMIN);
     }
     
     /**
@@ -75,6 +75,7 @@ class CoreldapconfigController extends CoresecureController {
         
         if ($form->check()){
             $this->editquery();
+            $this->redirect("coreconfigadmin");
             return;
         }
         
