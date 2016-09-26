@@ -25,6 +25,47 @@ class EcResponsible extends Model {
         $this->runRequest($sql1);
     }
 
+    
+        /**
+     * GEt the responsible of a given user
+     * @param number $id User id
+     * @return number Responsible ID
+     */
+    public function getUserResponsibles($id) {
+
+        $sql = "SELECT id_resp FROM ec_j_user_responsible WHERE id_user = ?";
+        $req = $this->runRequest($sql, array($id));
+        $userr = $req->fetchAll();
+
+        for ($i = 0; $i < count($userr); $i++) {
+            $userr[$i]["id"] = $userr[$i]["id_resp"];
+            $userr[$i]["fullname"] = $this->getUserFUllName($userr[$i]["id_resp"]);
+        }
+        return $userr;
+    }
+    
+        /**
+     * get the firstname and name of a user from it's id
+     *
+     * @param int $id
+     *        	Id of the user to get
+     * @throws Exception
+     * @return string "firstname name"
+     */
+    public function getUserFUllName($id) {
+        $sql = "select firstname, name from core_users where id=?";
+        $user = $this->runRequest($sql, array(
+            $id
+                ));
+
+        if ($user->rowCount() == 1) {
+            $userf = $user->fetch();
+            return $userf ['name'] . " " . $userf ['firstname'];
+        } else {
+            return "";
+        }
+    }
+    
     /**
      * Get the names and firstname of the responsible users 
      * 

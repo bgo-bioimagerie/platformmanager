@@ -52,6 +52,11 @@ class BkCalendarEntry extends Model {
     }
 
     public function getDefault($start_time, $end_time, $resource_id, $id_user) {
+        
+        $modelResp = new EcResponsible();
+        $resps = $modelResp->getUserResponsibles($id_user);
+        //print_r($resps);
+        
         return array("id" => 0,
             "start_time" => $start_time,
             "end_time" => $end_time,
@@ -65,7 +70,7 @@ class BkCalendarEntry extends Model {
             "quantities" => "",
             "supplementaries" => "",
             "package_id" => 0,
-            "responsible_id" => 0,
+            "responsible_id" => $resps[0]['id_resp'],
             "invoice_id" => 0);
     }
 
