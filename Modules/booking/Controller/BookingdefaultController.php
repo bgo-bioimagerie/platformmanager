@@ -348,9 +348,9 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     private function editReservationInfo($param) {
-        echo "param = " . $param . "<br/>";
+        //echo "param = " . $param . "<br/>";
         $contentAction = explode("_", $param);
-        print_r($contentAction);
+        //print_r($contentAction);
         $id = $contentAction[1];
         
         $modelCalEntry = new BkCalendarEntry();
