@@ -278,7 +278,7 @@ unset($_SESSION["message"]) ?>
                                                         $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
                                                         ?>
                                                         <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
-                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/r_<?php echo $entry['id'] ?>">
+                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">
                                                         <?php echo $text ?>
                                                             </a>
                                                         </div>
@@ -302,7 +302,7 @@ unset($_SESSION["message"]) ?>
                                                         $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
                                                         ?>
                                                         <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
-                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/r_<?php echo $entry['id'] ?>">
+                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">
                                                         <?php echo $text ?>
                                                             </a>
                                                         </div>
@@ -321,7 +321,7 @@ unset($_SESSION["message"]) ?>
                                                         ?>
                                                         <div class="text-center">
                                                             <a class="glyphicon glyphicon-plus"
-                                                               href="bookingeditreservation/t_<?php echo $dateString . "_" . "8" . "_" . $resourceID ?>">
+                                                               href="bookingeditreservation/<?php echo $id_space ?>/t_<?php echo $dateString . "_" . "8" . "_" . $resourceID ?>">
                                                             </a>
                                                         </div>
                                                         <?php
