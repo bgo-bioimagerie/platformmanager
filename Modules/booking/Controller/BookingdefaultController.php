@@ -36,7 +36,7 @@ class BookingdefaultController extends BookingabstractController {
      */
     public function __construct() {
         parent::__construct();
-        $this->module = "Booking";
+        $this->module = "booking";
         //$this->checkAuthorizationMenu("booking");
     }
 
