@@ -20,7 +20,7 @@ class View {
      */
     public function __construct($action, $controller = "", $module = "") {
         $file = 'Modules/' . $module . '/View/' . $controller . "/" . $action . '.php';
-        echo "view file = " . $file . "<br/>";
+        //echo "view file = " . $file . "<br/>";
         if (file_exists($file)) {
             $this->file = $file;
         }
