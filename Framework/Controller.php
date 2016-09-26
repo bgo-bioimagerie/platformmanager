@@ -83,6 +83,7 @@ abstract class Controller
         $controllerView = str_replace("Controller", "", $classController);
 
         // Geneate the view
+        echo "controllerView = " . $controllerView . "<br/>";
         
         //echo "parent = " . basename(__DIR__) . "<br/>"; 
         $view = new View($actionView, $controllerView, $this->module);
