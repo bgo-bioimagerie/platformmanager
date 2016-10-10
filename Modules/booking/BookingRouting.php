@@ -10,6 +10,9 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingconfig", "bookingconfig", "bookingconfig", "index", array("id_space"), array(""));
         $this->addRoute("bookingconfigadmin", "bookingconfigadmin", "bookingconfigadmin", "index");
         
+        // user srttings
+        $this->addRoute("bookingusersettings", "bookingusersettings", "bookingusersettings", "index");
+        
         // add here the module routes
         $this->addRoute("booking", "booking", "booking", "index", array("is_space"), array(""));
         

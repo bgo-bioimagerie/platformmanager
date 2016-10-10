@@ -39,6 +39,10 @@ class CorespaceController extends CoresecureController {
         //$this->render(array("lang" => $lang, "id_space" => $id_space));
     }
 
+    /**
+     * 
+     * @param type $id_space
+     */
     public function viewAction($id_space) {
         
         $space = $this->spaceModel->getSpace($id_space);
@@ -60,6 +64,10 @@ class CorespaceController extends CoresecureController {
         $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "spaceMenuItems" => $spaceMenuItems, "showAdmMenu" => $showAdmMenu));
     }
 
+    /**
+     * 
+     * @param type $id_space
+     */
     public function configAction($id_space){
         
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
@@ -70,6 +78,10 @@ class CorespaceController extends CoresecureController {
     
     }
     
+    /**
+     * 
+     * @param type $id_space
+     */
     public function configusersAction($id_space) {
 
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
@@ -93,6 +105,12 @@ class CorespaceController extends CoresecureController {
         $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "userForm" => $userForm->getHtml($lang), "userTable" => $userTable));
     }
 
+    /**
+     * 
+     * @param type $lang
+     * @param type $id_space
+     * @return type
+     */
     protected function configModulesTable($lang, $id_space){
         
         $modelInstalledMod = new CoreInstalledModules();
@@ -131,7 +149,12 @@ class CorespaceController extends CoresecureController {
 
     }
 
-
+    /**
+     * 
+     * @param type $lang
+     * @param type $id_space
+     * @return type
+     */
     protected function configUsersTable($lang, $id_space) {
         
         $data = $this->spaceModel->getUsers($id_space);
@@ -140,11 +163,22 @@ class CorespaceController extends CoresecureController {
         return $tableUsers->view($data, array("name" => CoreTranslator::Name($lang), "firstname" => CoreTranslator::Firstname($lang), "role" => CoreTranslator::Role($lang)));
     }
     
+    /**
+     * 
+     * @param type $id_space
+     * @param type $id_user
+     */
     public function configdeleteuserAction($id_space, $id_user){
         $this->spaceModel->deleteUser($id_space, $id_user);
         $this->redirect("spaceconfiguser/" . $id_space);
     }
 
+    /**
+     * 
+     * @param type $lang
+     * @param type $id_space
+     * @return \Form
+     */
     protected function configUsersForm($lang, $id_space) {
 
         $modeluser = new CoreUser();
@@ -168,11 +202,21 @@ class CorespaceController extends CoresecureController {
         return $formUser;
     }
 
+    /**
+     * 
+     * @param type $id_space
+     * @return type
+     */
     public function spaceName($id_space){
         $space = $this->spaceModel->getSpace($id_space);
         return $space["name"];
     }
     
+    /**
+     * 
+     * @param type $id_space
+     * @return string
+     */
     public function menu($id_space) {
 
         $space = $this->spaceModel->getSpace($id_space);
@@ -231,6 +275,11 @@ class CorespaceController extends CoresecureController {
         return $html;
     }
 
+    /**
+     * 
+     * @param type $id_space
+     * @param type $name_module
+     */
     public function configmoduleAction($id_space, $name_module){
         
         $path = $name_module . "config/";

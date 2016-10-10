@@ -56,7 +56,7 @@ if (count($urls) > 3){
                 if($i < count($urls)){
                 ?>
             
-            <div class="btn-group col-xs-12" data-toggle="buttons">
+            <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='<?php echo $urls[$i]["url"] ?>/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo $urls[$i]["name"] ?></button>
             </div>
                 <?php
@@ -68,7 +68,7 @@ if (count($urls) > 3){
                 if($i < count($urls)){
                 ?>
             
-            <div class="btn-group col-xs-12" data-toggle="buttons">
+            <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='<?php echo $urls[$i]["url"] ?>/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo $urls[$i]["name"] ?></button>
             </div>
                 <?php
@@ -80,7 +80,7 @@ if (count($urls) > 3){
                 if($i < count($urls)){
                 ?>
             
-            <div class="btn-group col-xs-12" data-toggle="buttons">
+            <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='<?php echo $urls[$i]["url"] ?>/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo $urls[$i]["name"] ?></button>
             </div>
                 <?php

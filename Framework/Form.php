@@ -89,16 +89,32 @@ class Form {
         $this->isDate = false;
     }
 
+    /**
+     * 
+     * @param type $buttonsWidth Number of bootstrap columns for the buttons
+     * @param type $buttonsOffset Number of offset bootstrap columns
+     */
     public function setButtonsWidth($buttonsWidth, $buttonsOffset) {
         $this->buttonsWidth = $buttonsWidth;
         $this->buttonsOffset = $buttonsOffset;
     }
 
+    /**
+     * 
+     * @param type $labelWidth Number of bootstrap columns for the form labels
+     * @param type $inputWidth Number of bootstrap columns for the form fields
+     */
     public function setColumnsWidth($labelWidth, $inputWidth) {
         $this->labelWidth = $labelWidth;
         $this->inputWidth = $inputWidth;
     }
     
+    /**
+     * Add a button in the form validation button bar
+     * @param type $name Button text
+     * @param type $url Action URL
+     * @param type $type Bootstrap button type
+     */
     public function addExternalButton($name, $url, $type="danger"){
         $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type); 
     }
@@ -129,6 +145,10 @@ class Form {
         $this->validationURL = $url;
     }
     
+    /**
+     * 
+     * @param type $url URL of the validation button
+     */
     public function setValisationUrl($url){
         $this->validationURL = $url;
     }
@@ -161,13 +181,17 @@ class Form {
      * @param string $value Default value
      */
     protected function setValue($name, $value) {
-        if ($this->parseRequest) {
-            $this->values[] = $this->request->getParameterNoException($name);
-        } else {
+        //if ($this->parseRequest) {
+        //    $this->values[] = $this->request->getParameterNoException($name);
+        //} else {
             $this->values[] = $value;
-        }
+        //}
     }
 
+    /**
+     * Add a label of type h1 to partition the form
+     * @param type $name Label of the separator
+     */
     public function addSeparator($name) {
         $this->types[] = "separator";
         $this->names[] = $name;
@@ -182,6 +206,10 @@ class Form {
         $this->submitOnChange[] = false;
     }
     
+    /**
+     * Add a label of type h2 to partition the form
+     * @param type $name Label of the separator
+     */
     public function addSeparator2($name) {
         $this->types[] = "separator2";
         $this->names[] = $name;
@@ -196,6 +224,10 @@ class Form {
         $this->submitOnChange[] = false;
     }
     
+    /**
+     * Add a comment field
+     * @param type $text Text
+     */
     public function addComment($text) {
         $this->types[] = "comment";
         $this->names[] = $text;
@@ -230,6 +262,11 @@ class Form {
         $this->submitOnChange[] = false;
     }
 
+    /**
+     * Add an upload button to upload file
+     * @param type $name 
+     * @param type $label
+     */
     public function addUpload($name, $label) {
         $this->types[] = "upload";
         $this->names[] = $name;
@@ -245,6 +282,11 @@ class Form {
         $this->submitOnChange[] = false;
     }
 
+    /**
+     * To download a file from the database
+     * @param type $label
+     * @param type $url
+     */
     public function addDownloadButton($label, $url) {
         $this->types[] = "downloadbutton";
         $this->names[] = $url;
@@ -279,6 +321,12 @@ class Form {
         $this->submitOnChange[] = false;
     }
 
+    /**
+     * Password field
+     * @param type $name Form variable name
+     * @param type $label Field label
+     * @param type $isMandatory is mandatory field
+     */
     public function addPassword($name, $label, $isMandatory = true) {
         $this->types[] = "password";
         $this->names[] = $name;
@@ -293,6 +341,13 @@ class Form {
         $this->submitOnChange[] = false;
     }
 
+    /**
+     * Add date field
+     * @param type $name Form variable name
+     * @param type $label Field label
+     * @param type $isMandatory is mandatory field
+     * @param type $value default value
+     */
     public function addDate($name, $label, $isMandatory = false, $value = "") {
         $this->isDate = true;
         $this->types[] = "date";
@@ -430,6 +485,13 @@ class Form {
         $this->submitOnChange[] = false;
     }
     
+    /**
+     * Add a combo list 
+     * @param type $label Field label
+     * @param type $listNames List of choices name
+     * @param type $listIds List of choices ids
+     * @param type $values Default value
+     */
     public function addChoicesList($label, $listNames, $listIds, $values){
         $this->types[] = "choicesList";
         $this->names[] = "";
@@ -443,6 +505,11 @@ class Form {
         $this->submitOnChange[] = false;
     }
     
+    /**
+     * Add a form add in the form
+     * @param FormAdd $formAdd FotmAdd to add
+     * @param type $label Label of the formAdd
+     */
     public function setFormAdd(FormAdd $formAdd, $label = ""){
         $this->formAdd = $formAdd;
         $this->types[] = "formAdd";
@@ -459,11 +526,19 @@ class Form {
         $this->submitOnChange[] = false;
     }
 
+    /**
+     * Internal function to add the form header
+     * @return type HTML content
+     */
     public function htmlOpen(){
         $formHtml = new FormHtml();
         return $formHtml->formHeader($this->validationURL, $this->id, $this->useUpload);
     }
     
+    /**
+     * Internal function to add the form footer 
+     * @return type
+     */
     public function htmlClose(){
         $formHtml = new FormHtml();
         return $formHtml->formFooter();
@@ -587,6 +662,9 @@ class Form {
         if ($formID == $this->id) {
             for ($i = 0; $i < count($this->types); $i++) {
                 if ($this->types[$i] == "email") {
+                    if($this->request->getParameter($this->names[$i]) == ""){
+                        return 1;
+                    }
                     //echo "check email " . $this->request->getParameter($this->names[$i]) . " <br/>";
 
                     if (!preg_match('#^[\w.-]+@[\w.-]+\.[a-z]{2,6}$#i', $this->request->getParameter($this->names[$i]))) {

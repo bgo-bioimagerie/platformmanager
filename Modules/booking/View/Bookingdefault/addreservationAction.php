@@ -17,6 +17,7 @@
     ?>
     
     <?php if($use_packages){ ?>
+    <div>
         <div class="checkbox col-xs-8 col-xs-offset-4">
             <label>
                 <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?>> <?php echo BookingTranslator::Use_Package($lang) ?>
@@ -26,12 +27,16 @@
         <div id="package_div">
             <?php echo $formPackage ?>
         </div>
+    </div>
     <?php } ?>
+    <div>
     <div id="resa_time_div">
         <?php echo $formEndDate ?>
     </div>
+    </div>
     
-    <div class="col-xs-4 col-xs-offset-8">
+    <div class="col-xs-12"></div>
+    <div id="buttons" class="col-xs-4 col-xs-offset-8">
     <?php if ($userCanEdit){ ?>	
         <input type="submit" class="btn btn-primary" value="Save" />
         <?php if ($id_reservation > 0){?>
@@ -39,6 +44,7 @@
 	<?php }} ?>
 	<button type="button" class="btn btn-default" onclick="location.href='booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
     </div>
+        
     <?php echo $form->htmlClose() ?>
     
 </div>

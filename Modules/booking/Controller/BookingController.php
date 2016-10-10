@@ -53,8 +53,11 @@ class BookingController extends BookingabstractController {
      */
     public function bookingAction($id_space, $id_area, $id_resource) {
 
-        $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, date("Y-m-d", time()));
-
+        $curentDate = date("Y-m-d", time());
+        if(isset($_SESSION['bk_curentDate'])){
+            $curentDate = $_SESSION['bk_curentDate'];
+        }
+        $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
 
         $modelResource = new ResourceInfo();
         $modelArea = New ReArea();
@@ -83,7 +86,7 @@ class BookingController extends BookingabstractController {
             //$menuData = $this->calendarMenuData($id_area, $id_resource, date("Y-m-d", time()));
             $_SESSION['bk_id_resource'] = $id_resource;
             $_SESSION['bk_id_area'] = $id_area;
-            $_SESSION['bk_curentDate'] = date("Y-m-d", time());
+            $_SESSION['bk_curentDate'] = $curentDate;
 
             if ($id_resource == 0) {
                 $this->render(array(
@@ -93,7 +96,15 @@ class BookingController extends BookingabstractController {
                 return;
             }
         }
-        $this->redirect("bookingdayarea/".$id_space);
+        
+        $calendarDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
+        if($calendarDefaultView == ""){
+            $this->redirect("bookingdayarea/".$id_space);
+        }    
+        else{
+            $this->redirect($calendarDefaultView."/".$id_space);
+        }
+        
     }
 
     public function book($id_space, $message) {

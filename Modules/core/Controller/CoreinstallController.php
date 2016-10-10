@@ -73,6 +73,14 @@ class CoreinstallController extends Controller {
         $this->render(array("formHtml" => $formHtml, "message" => $message));
     }
     
+    /**
+     * 
+     * @param type $sql_host
+     * @param type $login
+     * @param type $password
+     * @param type $db_name
+     * @throws Exception
+     */
     private function writedbConfig($sql_host, $login, $password, $db_name) {
         if (!$this->installModel->writedbConfig($sql_host, $login, $password, $db_name)) {
             throw new Exception(coreTranslator::Cannot_write_config_file($this->getLanguage()));

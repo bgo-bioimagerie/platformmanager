@@ -11,11 +11,17 @@ require_once 'Modules/core/Model/CoreMenu.php';
  */
 class CorenavbarController extends CoresecureController {
 
+    /**
+     * 
+     */
     public function __construct() {
         parent::__construct();
         $this->checkAuthorization(CoreStatus::$USER);
     }
     
+    /**
+     * 
+     */
     public function indexAction() {
         
     }

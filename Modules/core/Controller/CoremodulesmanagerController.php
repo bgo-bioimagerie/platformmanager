@@ -65,6 +65,10 @@ class CoremodulesmanagerController extends CoresecureController {
         ));
     }
 
+    /**
+     * 
+     * @param type $id
+     */
     public function configAction($id){
         $modules = Configuration::get('modules');
         $path = $modules[$id] . "configadmin";

@@ -49,6 +49,11 @@ abstract class CoresecureController extends Controller {
         }
     }
 
+    /**
+     * 
+     * @param type $minimumStatus
+     * @throws Exception
+     */
     public function checkAuthorization($minimumStatus){
         $auth = $this->isUserAuthorized($minimumStatus);
         if ($auth == 0) {
@@ -59,6 +64,11 @@ abstract class CoresecureController extends Controller {
         }
     }
     
+    /**
+     * 
+     * @param type $status
+     * @return boolean
+     */
     public function isUserStatus($status){
         if (intval ($_SESSION["user_status"]) >= intval($status)){
             return true;
@@ -66,6 +76,11 @@ abstract class CoresecureController extends Controller {
         return false;
     }
     
+    /**
+     * 
+     * @param type $menuName
+     * @throws Exception
+     */
     public function checkAuthorizationMenu($menuName){
         $auth = $this->isUserMenuAuthorized($menuName);
         if ($auth == 0) {
@@ -76,6 +91,13 @@ abstract class CoresecureController extends Controller {
         }
     }
     
+    /**
+     * 
+     * @param type $menuName
+     * @param type $id_space
+     * @param type $id_user
+     * @throws Exception
+     */
     public function checkAuthorizationMenuSpace($menuName, $id_space, $id_user){
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
@@ -84,6 +106,11 @@ abstract class CoresecureController extends Controller {
         }
     }
     
+    /**
+     * 
+     * @param type $minimumStatus
+     * @return int
+     */
     public function isUserAuthorized($minimumStatus){
         if ( isset($_SESSION["user_status"])){
             if (intval ($_SESSION["user_status"]) >= intval($minimumStatus)){
@@ -94,12 +121,23 @@ abstract class CoresecureController extends Controller {
         return -1;
     }
     
+    /**
+     * 
+     * @param type $menuName
+     * @return type
+     */
     public function isUserMenuAuthorized($menuName){
         $controllerMenu = new CoreMenu();
         $minimumStatus = $controllerMenu->getMenuStatusByName($menuName);
         return $this->isUserAuthorized($minimumStatus);
     }
     
+    /**
+     * 
+     * @param type $id_space
+     * @param type $id_user
+     * @return int
+     */
     public function getUserSpaceStatus($id_space, $id_user){
         $modelUser = new CoreUser();
         $userAppStatus = $modelUser->getStatus($id_user);
@@ -111,6 +149,13 @@ abstract class CoresecureController extends Controller {
         return $spaceRole;
     }
     
+    /**
+     * 
+     * @param type $id_space
+     * @param type $id_user
+     * @return boolean
+     * @throws Exception
+     */
     public function checkSpaceAdmin($id_space, $id_user){
         
         $modelUser = new CoreUser();

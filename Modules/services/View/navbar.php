@@ -18,18 +18,18 @@ if($menucolortxt == ""){
     </div>
     <div class="col-md-10">
         <div class="col-md-3">
-            <div class="btn-group col-xs-12" data-toggle="buttons">
+            <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='services/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Services($lang) ?></button>
 		<button onclick="location.href='servicesedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
             
         </div>
         <div class="col-md-3">
-             <div class="btn-group col-xs-12" data-toggle="buttons">
+             <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='servicesstock/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Stock($lang) ?></button>
 	 </div>
             <br/>
-            <div class="btn-group col-xs-12" data-toggle="buttons">
+            <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='servicespurchase/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Purchase($lang) ?></button>
 		<button onclick="location.href='servicespurchaseedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
             </div>
@@ -37,7 +37,7 @@ if($menucolortxt == ""){
         
 
         <div class="col-md-3">
-         <div class="btn-group col-xs-12" data-toggle="buttons">
+         <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='servicesordersopened/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Opened_orders($lang) ?></button>
 		<br/>
                 <button onclick="location.href='servicesordersclosed/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Closed_orders($lang) ?></button>
@@ -49,7 +49,7 @@ if($menucolortxt == ""){
         </div>
         
         <div class="col-md-3">
-         <div class="btn-group col-xs-12" data-toggle="buttons">
+         <div class="btn-group" data-toggle="buttons">
             	<button onclick="location.href='servicesprojectsopened/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Opened_projects($lang) ?></button>
 		<br/>
                 <button onclick="location.href='servicesprojectsclosed/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Closed_projects($lang) ?></button>

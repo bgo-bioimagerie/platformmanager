@@ -150,6 +150,12 @@ class CoreconfigadminController extends CoresecureController {
         $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
+    /**
+     * 
+     * @param type $modelCoreConfig
+     * @param type $lang
+     * @return \Form
+     */
     protected function maintenanceForm($modelCoreConfig, $lang) {
         $is_maintenance = $modelCoreConfig->getParam("is_maintenance");
         $maintenance_message = $modelCoreConfig->getParam("maintenance_message");
@@ -164,6 +170,11 @@ class CoreconfigadminController extends CoresecureController {
         return $formMaintenance;
     }
 
+    /**
+     * 
+     * @param type $lang
+     * @return \Form
+     */
     protected function installForm($lang) {
 
         $form = new Form($this->request, "installForm");
@@ -175,6 +186,11 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
 
+    /**
+     * 
+     * @param type $lang
+     * @return \Form
+     */
     protected function menusactivationForm($lang) {
 
         $modelMenu = new CoreMenu();
@@ -202,6 +218,11 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
 
+    /**
+     * 
+     * @param type $lang
+     * @return \Form
+     */
     protected function ldapForm($lang){
         
         $form = new Form($this->request, "ldapForm");
@@ -212,6 +233,12 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
     
+    /**
+     * 
+     * @param type $modelCoreConfig
+     * @param type $lang
+     * @return \Form
+     */
     protected function homePageForm($modelCoreConfig, $lang){
         
         $form = new Form($this->request, "homePageForm");
@@ -223,6 +250,12 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
     
+    /**
+     * 
+     * @param type $modelCoreConfig
+     * @param type $lang
+     * @return \Form
+     */
     protected function connectionPageForm($modelCoreConfig, $lang) {
 
         $home_title = $modelCoreConfig->getParam("home_title");
@@ -244,6 +277,12 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
     
+    /**
+     * 
+     * @param type $modelCoreConfig
+     * @param type $lang
+     * @return \Form
+     */
     protected function desactivateUserForm($modelCoreConfig, $lang){
         
 	$value = $modelCoreConfig->getParam("user_desactivate");
@@ -266,6 +305,12 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
 
+    /**
+     * 
+     * @param type $modelCoreConfig
+     * @param type $lang
+     * @return \Form
+     */
     protected function emailForm($modelCoreConfig, $lang){
         $value = $modelCoreConfig->getParam("admin_email");
         
@@ -278,6 +323,11 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
     
+    /**
+     * 
+     * @param type $lang
+     * @return \Form
+     */
     protected function backupForm($lang){
         
         $form = new Form($this->request, "backupForm");
@@ -288,6 +338,12 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
     
+    /**
+     * 
+     * @param type $modelCoreConfig
+     * @param type $lang
+     * @return \Form
+     */
     protected function navbarColorForm($modelCoreConfig, $lang){
         $navbar_bg_color = $modelCoreConfig->getParam("navbar_bg_color");
         $navbar_bg_highlight = $modelCoreConfig->getParam("navbar_bg_highlight");

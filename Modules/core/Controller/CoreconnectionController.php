@@ -102,6 +102,10 @@ class CoreconnectionController extends Controller {
         }
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function getRedirectPath() {
         $modelConfig = new CoreConfig();
         $redirectController = $modelConfig->getParam("default_home_path");
@@ -118,6 +122,9 @@ class CoreconnectionController extends Controller {
         return $redirectController;
     }
 
+    /**
+     * 
+     */
     public function runModuleConnectionActions() {
         $modules = Configuration::get("modules");
         foreach ($modules as $module) {

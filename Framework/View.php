@@ -26,6 +26,10 @@ class View {
         }
     }
 
+    /**
+     * 
+     * @param type $fileURL
+     */
     public function setFile($fileURL) {
         $this->file = $fileURL;
     }

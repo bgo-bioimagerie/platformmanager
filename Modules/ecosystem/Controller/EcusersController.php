@@ -209,20 +209,24 @@ class EcusersController extends CoresecureController {
         $form = new Form($this->request, "ecusersedit");
         $form->setTitle(CoreTranslator::Edit_User($lang));
         $form->addHidden("id", $user["id"]);
-        $form->addText("name", EcosystemTranslator::Name($lang), false, $user["name"]);
-        $form->addText("firstname", EcosystemTranslator::Firstname($lang), false, $user["firstname"]);
-        $form->addText("login", EcosystemTranslator::Login($lang), false, $user["login"]);
+        $form->addText("name", EcosystemTranslator::Name($lang), true, $user["name"]);
+        $form->addText("firstname", EcosystemTranslator::Firstname($lang), true, $user["firstname"]);
+        $form->addText("login", EcosystemTranslator::Login($lang), true, $user["login"]);
         if ($id == 0) {
             $form->addPassword("pwd", EcosystemTranslator::Password($lang), true);
             $form->addPassword("confirm", EcosystemTranslator::Confirm($lang), true);
         }
-        $form->addEmail("email", EcosystemTranslator::Email($lang), true, $user["email"]);
+        $form->addEmail("email", EcosystemTranslator::Email($lang), false, $user["email"]);
         $form->addText("phone", EcosystemTranslator::Phone($lang), false, $user["phone"]);
         $form->addSelect("unit", EcosystemTranslator::Unit($lang), $choicesU, $choicesidU, $user["id_unit"]);
 
         $formAdd = new FormAdd($this->request, "userformadd");
 
-        $formAdd->addSelect("responsibles", EcosystemTranslator::Responsible($lang), $choicesR, $choicesidR, $user["id_resps"]);
+        $resps = array();
+        foreach($user["id_resps"] as $idResp){
+            $resps[] = $idResp["id_resp"];
+        }
+        $formAdd->addSelect("responsibles", EcosystemTranslator::Responsible($lang), $choicesR, $choicesidR, $resps);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd, CoreTranslator::Responsible($lang));
 

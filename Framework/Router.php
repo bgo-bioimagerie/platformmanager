@@ -44,6 +44,12 @@ class router {
         }
     }
 
+    /**
+     * Install request 
+     * @param type $request
+     * @return boolean
+     * @throws Exception
+     */
     private function install($request) {
         $path = "";
         if ($request->isParameterNotEmpty('path')) {
@@ -69,6 +75,11 @@ class router {
         return false;
     }
 
+    /**
+     * 
+     * @param Request $request
+     * @return type
+     */
     private function getUrlData(Request $request) {
 
         // get controller name
@@ -89,6 +100,11 @@ class router {
         return array("pathData" => $pathData, "pathInfo" => $pathInfo);
     }
 
+    /**
+     * 
+     * @param type $urlInfo
+     * @return string
+     */
     private function getArgs($urlInfo) {
 
         $args = $urlInfo["pathInfo"]["gets"];
@@ -139,6 +155,12 @@ class router {
         }
     }
 
+    /**
+     * 
+     * @param type $urlInfo
+     * @param Request $request
+     * @return type
+     */
     private function createController($urlInfo, Request $request) {
         //print_r($urlInfo);
         return $this->createControllerImp($urlInfo["pathInfo"]["module"], $urlInfo["pathInfo"]["controller"], $request);

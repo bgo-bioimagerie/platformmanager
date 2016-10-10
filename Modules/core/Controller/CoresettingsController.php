@@ -19,7 +19,7 @@ class CoresettingsController extends CoresecureController {
         parent::__construct();
         $this->checkAuthorization(CoreStatus::$USER);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::index()
@@ -37,6 +37,7 @@ class CoresettingsController extends CoresecureController {
             $controllerName = ucfirst(strtolower($controllerName));
 
             $fileController = 'Modules/' . $module . "/Controller/" . $controllerName . "Controller.php";
+            //echo "file controller = " . $fileController . "<br/>";
             if (file_exists($fileController)) {
                 $i++;
                 $modulesControllers[$i]["module"] = $module;
@@ -46,7 +47,7 @@ class CoresettingsController extends CoresecureController {
 
         $lang = $this->getLanguage();
         $this->render(array(
-            "lang" => $lang, 
+            "lang" => $lang,
             'modulesControllers' => $modulesControllers
         ));
     }

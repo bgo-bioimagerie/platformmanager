@@ -46,14 +46,26 @@ class Configuration {
         return self::$parameters;
     }
 
+    /**
+     * 
+     * @return string Configuration file
+     */
     public static function getConfigFile() {
         return "Config/conf.ini";
     }
 
+    /**
+     * 
+     * @return type Reas the parameter file
+     */
     public static function read() {
         return self::getParameters();
     }
 
+    /**
+     * Write the param in the config file
+     * @param array $config Config file URL
+     */
     public static function write(array $config) {
         $configd = var_export($config, true);
         file_put_contents(self::getConfigFile(), "<?php return $configd ;");

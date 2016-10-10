@@ -60,57 +60,110 @@ class TableView {
         $this->titleLevel = $level;
     }
     
+    /**
+     * 
+     * @param type $num
+     */
     public function setFixedColumnsNum($num){
         $this->numFixedCol = $num;
     }
     
-
+    /**
+     * 
+     * @param type $value
+     */
     public function setTextMaxLength($value) {
         $this->textMaxLength = $value;
     }
 
+    /**
+     * 
+     * @param type $editURL
+     * @param type $editIndex
+     */
     public function addLineEditButton($editURL, $editIndex = "id") {
         $this->editURL = $editURL;
         $this->editIndex = $editIndex;
     }
     
+    /**
+     * 
+     * @param type $urlIndex
+     */
     public function addDownloadButton($urlIndex){
         $this->downloadButton = $urlIndex;
     }
 
+    /**
+     * 
+     * @param type $deleteURL
+     * @param type $deleteIndex
+     * @param type $deleteNameIndex
+     */
     public function addDeleteButton($deleteURL, $deleteIndex = "id", $deleteNameIndex = "name") {
         $this->deleteURL = $deleteURL;
         $this->deleteIndex = $deleteIndex;
         $this->deleteNameIndex = $deleteNameIndex;
     }
 
+    /**
+     * 
+     * @param type $action
+     * @param type $actionIndex
+     * @param type $buttonTitle
+     */
     public function addLineButton($action, $actionIndex = "id", $buttonTitle = "edit") {
         $this->linesButtonActions[] = $action;
         $this->linesButtonActionsIndex[] = $actionIndex;
         $this->linesButtonName[] = $buttonTitle;
     }
 
+    /**
+     * 
+     * @param type $key
+     * @param type $value
+     */
     public function ignoreEntry($key, $value) {
         $this->ignoredEntryKey = $key;
         $this->ignoredEntryValue = $value;
     }
 
+    /**
+     * 
+     * @param type $value
+     */
     public function useSearch($value) {
         $this->useSearchVal = $value;
     }
 
+    /**
+     * 
+     * @param type $action
+     */
     public function addPrintButton($action) {
         $this->printAction = $action;
     }
 
+    /**
+     * 
+     * @param type $action
+     */
     public function addExportButton($action) {
         $this->exportAction = $action;
     }
 
+    /**
+     * 
+     * @param type $indexesArray
+     */
     public function setColorIndexes($indexesArray) {
         $this->colorIndexes = $indexesArray;
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function isPrint() {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         //echo "url = " . $actual_link . "<br/>";
@@ -121,6 +174,10 @@ class TableView {
         return false;
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function isExport() {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         // echo "url = " . $actual_link . "<br/>";
@@ -267,6 +324,11 @@ class TableView {
         return $html;
     }
 
+    /**
+     * 
+     * @param type $dat
+     * @return boolean
+     */
     private function printIt($dat) {
         if ($this->ignoredEntryKey != "") {
             if ($dat[$this->ignoredEntryKey] == $this->ignoredEntryValue) {
@@ -277,6 +339,12 @@ class TableView {
         return true;
     }
 
+    /**
+     * 
+     * @param type $html
+     * @param type $headerscount
+     * @return string
+     */
     private function addSearchHeader($html, $headerscount) {
         
         $js = file_get_contents("Framework/TableScript.php");
@@ -347,12 +415,23 @@ class TableView {
         return $html;
     }
     
+    /**
+     * 
+     * @param type $url
+     * @return string
+     */
     private function addDownloadButtonHtml($url){
         $html = "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
                     
         return $html;
     }
 
+    /**
+     * 
+     * @param type $id
+     * @param type $name
+     * @return string
+     */
     private function addDeleteButtonHtml($id, $name) {
 
         $html = $this->addDeleteScript($id, $name);
@@ -361,6 +440,12 @@ class TableView {
         return $html;
     }
 
+    /**
+     * 
+     * @param type $id
+     * @param type $name
+     * @return string
+     */
     private function addDeleteScript($id, $name) {
         $html = "<script type=\"text/javascript\">";
         $html .= "function ConfirmDelete" . $id . "()";

@@ -110,6 +110,9 @@ class CoremenusController extends CoresecureController {
 
     }
     
+    /**
+     * 
+     */
     public function itemsAction(){
         
         $lang = $this->getLanguage();
@@ -133,6 +136,10 @@ class CoremenusController extends CoresecureController {
         
     }
     
+    /**
+     * 
+     * @param type $id
+     */
     public function itemeditAction($id){
         
         // queries
@@ -182,6 +189,10 @@ class CoremenusController extends CoresecureController {
                 ));
     }
     
+    /**
+     * 
+     * @param type $id
+     */
     public function itemdeleteAction($id){
         $model = new CoreMenu();
         $model->removeDataMenu($id);

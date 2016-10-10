@@ -1172,4 +1172,19 @@ class BookingTranslator {
         return "Output";
     }
 
+    public static function Calendar_Default_view($lang = "") {
+        if ($lang == "fr") {
+            return "Vue par défaut dans le calendrier";
+        }
+        return "Calendar default view";
+    }
+    
+    public static function Default_view($lang = "") {
+        if ($lang == "fr") {
+            return "Vue par défaut";
+        }
+        return "Default view";
+    }
+    
+
 }

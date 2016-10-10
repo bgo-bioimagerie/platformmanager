@@ -99,6 +99,8 @@ class BookingdefaultController extends BookingabstractController {
     
     public function editreservationqueryAction($id_space) {
 
+        $responsible_id = $this->request->getParameterNoException("responsible_id"); 
+        
         $id = $this->request->getParameter("id");
         $id_resource = $this->request->getParameter("id_resource");
         $booked_by_id = $_SESSION["id_user"];
@@ -107,7 +109,22 @@ class BookingdefaultController extends BookingabstractController {
         $color_type_id = $this->request->getParameter("color_type_id");
         $short_description = $this->request->getParameter("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
+        
+        $lang = $this->getLanguage();
+        $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
+        $dateResaStartArray = explode("-", $dateResaStart);
+        $hour_startH = $this->request->getParameter("hour_startH");
+        $hour_startM = $this->request->getParameter("hour_startm");
+        $start_time = mktime($hour_startH, $hour_startM, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
 
+        $dateResaEnd = CoreTranslator::dateToEn($this->request->getParameter("resa_end"), $lang);
+        
+        $dateResaEndArray = explode("-", $dateResaEnd);
+        $hour_endH = $this->request->getParameter("hour_endH");
+        //echo "hour_endH = " . $hour_endH . "<br/>";
+        $hour_endM = $this->request->getParameter("hour_endm");
+        $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
+  
         $modelSupInfo = new BkCalSupInfo();
         $supInfos = $modelSupInfo->getForResource($id_resource);
         $supplementaries = "";
@@ -130,22 +147,37 @@ class BookingdefaultController extends BookingabstractController {
             $package_id = $this->request->getParameter("package_id");
         }
 
-        $responsible_id = $this->request->getParameterNoException("responsible_id"); /// TODO add field resp
-
-        $lang = $this->getLanguage();
-        $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
-        $dateResaStartArray = explode("-", $dateResaStart);
-        $hour_startH = $this->request->getParameter("hour_startH");
-        $hour_startM = $this->request->getParameter("hour_startm");
-        $start_time = mktime($hour_startH, $hour_startM, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
-
-        $dateResaEnd = CoreTranslator::dateToEn($this->request->getParameter("resa_end"), $lang);
-        $dateResaEndArray = explode("-", $dateResaEnd);
-        $hour_endH = $this->request->getParameter("hour_endH");
-        $hour_endM = $this->request->getParameter("hour_endm");
-        $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
-
+        $modelResp = new EcResponsible();
+        $userResps = $modelResp->getUserResponsibles($recipient_id);
+        $foundResp = false;
+        foreach($userResps as $uresp){
+            if($uresp["id"] == $responsible_id){
+                $foundResp = true;
+                break;
+            }
+        }
         
+        if( !$foundResp ){
+            $resaInfo = array(
+                "id" => $id,
+                "start_time" => $start_time,
+                "end_time" => $end_time,
+                "resource_id" => $id_resource,
+                "booked_by_id" => $booked_by_id,
+                "recipient_id" => $recipient_id,
+                "last_update" => time(),
+                "color_type_id" => $color_type_id,
+                "short_description" => $short_description,
+                "full_description" => $full_description,
+                "quantities" => $quantities,
+                "supplementaries" => $supplementaries,
+                "package_id" => $package_id,
+                "responsible_id" => 0
+            );
+            $this->editReservation($id_space, $resaInfo);
+            return;
+        }
+
         $canEdit = $this->canUserEditReservation($id_space, $_SESSION["id_user"], $id, $recipient_id, $start_time);
         if (!$canEdit){
             throw new Exception("ERROR: You're not allowed to modify this reservation"); 
@@ -192,7 +224,7 @@ class BookingdefaultController extends BookingabstractController {
         $form->setTitle(BookingTranslator::Edit_Reservation($lang));
         $form->addSelect("id_resource", ResourcesTranslator::resource($lang), $resources["names"], $resources["ids"], $id_resource);
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
-            $form->addSelect("recipient_id", CoreTranslator::User($lang), $users["names"], $users["ids"], $resaInfo["recipient_id"]);
+            $form->addSelect("recipient_id", CoreTranslator::User($lang), $users["names"], $users["ids"], $resaInfo["recipient_id"], true);
         } else {
             $form->addHidden("recipient_id", $resaInfo["recipient_id"]);
         }
@@ -202,7 +234,11 @@ class BookingdefaultController extends BookingabstractController {
             $modelUser = new EcUser();
             $choices = array();
             $choicesid = array();
-            $resps = $modelResp->responsibleSummaries("name");
+            $rID = $this->request->getParameterNoException("recipient_id");
+            if ($rID == ""){
+                $rID = $_SESSION["id_user"];
+            }
+            $resps = $modelResp->getUserResponsibles($rID);
             foreach ($resps as $r) {
                 $choicesid[] = $r["id"];
                 $choices[] = $modelUser->getUserFUllName($r["id"]);
@@ -294,7 +330,8 @@ class BookingdefaultController extends BookingabstractController {
         // booking nav bar
         $curentResource = $_SESSION['bk_id_resource'];
         $curentAreaId = $_SESSION['bk_id_area'];
-        $curentDate = $_SESSION['bk_curentDate'];
+        $curentDate = date("Y-m-d", $resaInfo["start_time"]);
+        $_SESSION['bk_curentDate'] = $curentDate;
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
         // date time

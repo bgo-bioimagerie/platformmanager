@@ -31,6 +31,10 @@ abstract class Controller
         $this->request = $request;
     }
     
+    /**
+     * 
+     * @return type The navigator language
+     */
     public function getLanguage(){
     	$lang = substr(filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'), 0, 2);
     	if (isset($_SESSION["user_settings"]["language"])){

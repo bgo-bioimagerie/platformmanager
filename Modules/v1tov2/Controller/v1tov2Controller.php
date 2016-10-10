@@ -43,7 +43,7 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
         
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_micro;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_h2p2;charset=utf8';
 	$login_old = "root";
 	$pwd_old = "root";
 		
@@ -51,7 +51,7 @@ class v1tov2Controller extends Controller {
             array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
         
         $id_space = 1;
-        $importProjects = false;
+        $importProjects = true;
         $importSupplies = false;
         
         

@@ -29,6 +29,9 @@ abstract class Routing {
          */
     }
 
+    /**
+     * 
+     */
     public abstract function listRouts();
 
     /**
@@ -51,31 +54,65 @@ abstract class Routing {
         $this->getsRegexp[] = $getsRegexp;
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function count() {
         //echo "count urls = " . count($this->identifiers) . "<br/>";
         return count($this->identifiers);
     }
 
+    /**
+     * 
+     * @param type $i
+     * @return type
+     */
     public function getIdentifier($i) {
         return $this->identifiers[$i];
     }
 
+    /**
+     * 
+     * @param type $i
+     * @return type
+     */
     public function getUrl($i) {
         return $this->urls[$i];
     }
 
+    /**
+     * 
+     * @param type $i
+     * @return type
+     */
     public function getController($i) {
         return $this->controllers[$i];
     }
 
+    /**
+     * 
+     * @param type $i
+     * @return type
+     */
     public function getAction($i) {
         return $this->actions[$i];
     }
 
+    /**
+     * 
+     * @param type $i
+     * @return type
+     */
     public function getGet($i) {
         return $this->gets[$i];
     }
 
+    /**
+     * 
+     * @param type $i
+     * @return type
+     */
     public function getGetRegexp($i) {
         return $this->getsRegexp[$i];
     }

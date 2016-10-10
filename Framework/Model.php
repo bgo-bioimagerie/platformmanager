@@ -60,6 +60,12 @@ abstract class Model {
         return self::$bdd;
     }
 
+    /**
+     * 
+     * @param type $dsn
+     * @param type $login
+     * @param type $pwd
+     */
     public function setDatabase($dsn, $login, $pwd) {
 
         //echo "dsn = " . $dsn . "<br/>";
@@ -70,6 +76,13 @@ abstract class Model {
         self::$bdd->exec("SET CHARACTER SET utf8");
     }
 
+    /**
+     * 
+     * @param type $tableName
+     * @param type $columnName
+     * @param type $columnType
+     * @param type $defaultValue
+     */
     public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
 
         $sql = "SHOW COLUMNS FROM `" . $tableName . "` LIKE '" . $columnName . "'";
@@ -81,6 +94,11 @@ abstract class Model {
         }
     }
 
+    /**
+     * 
+     * @param type $table
+     * @return boolean
+     */
     public function isTable($table) {
 
         $dsn = Configuration::get("dsn");
@@ -105,6 +123,9 @@ abstract class Model {
         return false;
     }
 
+    /**
+     * 
+     */
     public function createTable() {
 
         // create database if not exists
@@ -137,12 +158,22 @@ abstract class Model {
         }
     }
 
+    /**
+     * 
+     * @param type $name
+     * @param type $type
+     * @param type $value
+     */
     public function setColumnsInfo($name, $type, $value) {
         $this->columnsNames[] = $name;
         $this->columnsTypes[] = $type;
         $this->columnsDefaultValue[] = $value;
     }
 
+    /**
+     * 
+     * @param type $data
+     */
     public function insert($data) {
         $sql = "INSERT INTO " . $this->tableName;
         $keyString = "";
@@ -160,6 +191,11 @@ abstract class Model {
         $this->getDatabase()->lastInsertId();
     }
 
+    /**
+     * 
+     * @param type $conditions
+     * @param type $data
+     */
     public function update($conditions, $data) {
         $sql = "UPDATE " . $this->tableName . " SET ";
         $condStr = "";
@@ -174,6 +210,11 @@ abstract class Model {
         $this->runRequest($sql);
     }
 
+    /**
+     * 
+     * @param type $sortEntry
+     * @return type
+     */
     public function selectAll($sortEntry = "") {
         $sql = "SELECT * FROM " . $this->tableName;
         if ($sortEntry != "") {
@@ -182,6 +223,12 @@ abstract class Model {
         return $this->runRequest($sql)->fetchAll();
     }
 
+    /**
+     * 
+     * @param type $conditions
+     * @param type $columnsToSelect
+     * @return type
+     */
     public function select($conditions, $columnsToSelect = array()) {
         $sql = "SELECT ";
         if (count($columnsToSelect) < 1) {
@@ -202,6 +249,12 @@ abstract class Model {
         return $this->runRequest($sql);
     }
 
+    /**
+     * 
+     * @param type $key
+     * @param type $value
+     * @return boolean
+     */
     public function isEntry($key, $value) {
         $sql = "SELECT " . $key . " FROM " . $this->tableName . " WHERE " . $key . "=" . $value;
         $req = $this->runRequest($sql);
@@ -211,6 +264,9 @@ abstract class Model {
         return false;
     }
 
+    /**
+     *  Delete all the data from a table
+     */
     public function deleteAll() {
         $sql = "DELETE FROM " . $this->tableName;
         $this->runRequest($sql);
