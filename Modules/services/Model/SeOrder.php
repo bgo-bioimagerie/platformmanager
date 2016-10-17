@@ -2,6 +2,8 @@
 
 require_once 'Framework/Model.php';
 
+require_once 'Modules/ecosystem/Model/EcUser.php';
+
 /**
  * Class defining the Unit model for consomable module
  *
@@ -12,6 +14,7 @@ class SeOrder extends Model {
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_order` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
+                `id_resp` int(11) NOT NULL,
                 `id_space` int(11) NOT NULL,
                 `id_user` int(11) NOT NULL,
 		`id_status` int(1) NOT NULL,
@@ -23,6 +26,9 @@ class SeOrder extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        
+        $this->addColumn("se_order", "id_resp", "int(11)", 0);
+        $this->addColumn("se_order", "id_invoice", "int(11)", 0);
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_order_service` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -200,6 +206,107 @@ class SeOrder extends Model {
         return $this->runRequest($sql, array($id_resp))->fetchAll();
     }
     
+    public function getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd){
+        $sql = "SELECT * FROM se_order WHERE id_space = ? AND date_open >= ? AND date_open <= ?";
+        $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
+        return $req->fetchAll();
+    }
+    
+    public function getPeriodeServicesBalancesOrders($id_space, $periodStart, $periodEnd){
+        $sql = "select * from se_order where id_space=? AND date_open>=? OR date_open=?";
+        $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
+        $orders = $req->fetchAll();
+        
+        //$items = array();
+        $modelServices = new SeService();
+        $items = $modelServices->getBySpace($id_space);
+        //print_r($items);
+        
+        $modelUser = new EcUser();
+        $modelUnit = new EcUnit();
+        for ($i = 0; $i < count($orders); $i++) {
+            
+            if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
+                //echo "id user = " . $orders[$i]["id_user"] . "<br/>";
+                $resps = $modelUser->getUserResponsibles($orders[$i]["id_user"]);
+                //echo "coucou 1 <br/>";echo "resps = <br/>";
+                //print_r($resps);
+                if (count($resps) > 0){
+                    
+                    $orders[$i]["id_resp"] = $resps[0]["id"];
+                }
+                else{
+                    $orders[$i]["id_resp"] = 0;
+                }
+            }
+            $sql = "SELECT * FROM se_order_service WHERE id_order=?";
+            $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"]));
+            
+            //print_r($itemsSummary);
+
+            $orders[$i]["entries"] = $itemsSummary;
+            //print_r($itemsSummary);
+            //$items = $this->getProjectServices($projects[$i]["id"]);
+
+            $id_unit = $modelUser->getUnit($orders[$i]["id_resp"]);
+            $LABpricingid = $modelUnit->getBelonging($id_unit);
+            $orders[$i]["total"] = $this->calculateOrderTotal($itemsSummary, $LABpricingid);
+        }
+
+        return array("items" => $items, "orders" => $orders);
+    }
+    
+    protected function calculateOrderTotal($itemsSummary, $LABpricingid){
+        
+        $itemPricing = new SePrice();
+        $totalHT = 0;
+        foreach($itemsSummary as $item){
+            if($item["quantity"] > 0){
+                $unitaryPrice = $itemPricing->getPrice($item["id_service"], $LABpricingid);
+                //print_r($unitaryPrice);
+                $totalHT += (float) $item["quantity"] * (float) $unitaryPrice;
+            }
+        }
+        return $totalHT;
+    }
+    
+    public function getPeriodeBilledServicesBalancesOrders($id_space, $periodStart, $periodEnd){
+        // get the projects 
+        $sql1 = "SELECT * FROM se_order WHERE id_space=? AND id_invoice > 0 AND date_open >= ? AND date_open <= ?";
+        $req1 = $this->runRequest($sql1, array($id_space, $periodStart, $periodEnd));
+        $orders = $req1->fetchAll();
+
+        $items = array();
+        $modelUser = new EcUser();
+        $modelUnit = new EcUnit();
+        for ($i = 0; $i < count($orders); $i++) {
+
+            if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
+                //echo "id user = " . $orders[$i]["id_user"] . "<br/>";
+                $resps = $modelUser->getUserResponsibles($orders[$i]["id_user"]);
+                //echo "coucou 1 <br/>";echo "resps = <br/>";
+                //print_r($resps);
+                if (count($resps) > 0){
+                    
+                    $orders[$i]["id_resp"] = $resps[0]["id"];
+                }
+                else{
+                    $orders[$i]["id_resp"] = 0;
+                }
+            }
+            $sql = "SELECT * FROM se_order_service WHERE id_order=?";
+            $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"]));
+            //print_r($itemsSummary);
+
+            $orders[$i]["entries"] = $itemsSummary;
+            
+            $id_unit = $modelUser->getUnit($orders[$i]["id_resp"]);
+            $LABpricingid = $modelUnit->getBelonging($id_unit);
+            $orders[$i]["total"] = $this->calculateOrderTotal($itemsSummary, $LABpricingid);
+        }
+
+        return array("items" => $items, "orders" => $orders);
+    }
     /**
      * Delete a unit
      * @param number $id Unit ID

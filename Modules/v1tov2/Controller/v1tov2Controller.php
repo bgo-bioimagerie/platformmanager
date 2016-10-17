@@ -43,7 +43,7 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
         
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_h2p2;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_micro;charset=utf8';
 	$login_old = "root";
 	$pwd_old = "root";
 		
@@ -51,8 +51,9 @@ class v1tov2Controller extends Controller {
             array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
         
         $id_space = 1;
-        $importProjects = true;
-        $importSupplies = false;
+        $importUserSygrrif = true;
+        $importProjects = false;
+        $importSupplies = true;
         
         
         // ---------- IMPORT ----------
@@ -69,46 +70,49 @@ class v1tov2Controller extends Controller {
         $belongingMap = $this->importBelongings($pdo_old);
         //print_r($belongingMap);
         
-        // ecosystem
-        echo "import ecosystem <br/>";
-        echo "   import units <br/>";
-        $unitsMap = $this->importUnits($pdo_old, $belongingMap);
-        //print_r($unitsMap);
-        echo "   import users <br/>";
-        $usersMap = $this->importUsers($pdo_old, $unitsMap);
-        echo "   import responsibles <br/>";
-        $this->importResponsibles($pdo_old, $usersMap);
+        if ($importUserSygrrif){
+            // ecosystem
+            echo "import ecosystem <br/>";
+            echo "   import units <br/>";
+            $unitsMap = $this->importUnits($pdo_old, $belongingMap);
+            //print_r($unitsMap);
+            echo "   import users <br/>";
+            $usersMap = $this->importUsers($pdo_old, $unitsMap);
+            echo "   import responsibles <br/>";
+            $this->importResponsibles($pdo_old, $usersMap);
+
+            // resources
+            echo "import resources <br/>";
+            $areasMap = $this->importAreas($pdo_old, $id_space);
+            $resourcesCategoriesMap = $this->importResourcesCategories($pdo_old, $id_space);
+            $resourcesMap = $this->importResources($pdo_old, $id_space, $resourcesCategoriesMap, $areasMap);
+            $visasMap = $this->importVisas($pdo_old, $resourcesCategoriesMap, $usersMap);
         
-        // resources
-        echo "import resources <br/>";
-        $areasMap = $this->importAreas($pdo_old, $id_space);
-        $resourcesCategoriesMap = $this->importResourcesCategories($pdo_old, $id_space);
-        $resourcesMap = $this->importResources($pdo_old, $id_space, $resourcesCategoriesMap, $areasMap);
-        $visasMap = $this->importVisas($pdo_old, $resourcesCategoriesMap, $usersMap);
+            // Booking
+            echo "import booking <br/>"; 
+            $this->importBkAccess($pdo_old, $resourcesMap);
+            echo "fn 1 <br/>";
+            $this->importAuthorizations($pdo_old, $usersMap, $unitsMap, $visasMap, $resourcesMap);
+            echo "fn 2 <br/>";
+            $this->importBookingSettings($pdo_old, $id_space);
+            echo "fn 3 <br/>";
+            $this->importBookingCss($pdo_old, $areasMap);
+            echo "fn 4 <br/>";
+            $this->importCalQuantities($pdo_old, $resourcesMap);
+            echo "fn 5 <br/>";
+            $colorMap = $this->importColorCode($pdo_old, $id_space);
+            echo "fn 6 <br/>";
+            $this->importCalendarEntry($pdo_old, $resourcesMap, $usersMap, $colorMap);
+            echo "fn 7 <br/>";
+            $this->importNightWe($pdo_old, $id_space, $belongingMap);
+            echo "fn 8 <br/>";
+            $packagesMap = $this->importPackage($pdo_old, $resourcesMap);
+            echo "fn 9 <br/>";
+            $this->importBookingPrices($pdo_old);
+            echo "fn 10 <br/>";
+            $this->importScheduling($pdo_old, $areasMap);
         
-        // Booking
-        echo "import booking <br/>"; 
-        $this->importBkAccess($pdo_old, $resourcesMap);
-        echo "fn 1 <br/>";
-        $this->importAuthorizations($pdo_old, $usersMap, $unitsMap, $visasMap, $resourcesMap);
-        echo "fn 2 <br/>";
-        $this->importBookingSettings($pdo_old, $id_space);
-        echo "fn 3 <br/>";
-        $this->importBookingCss($pdo_old, $areasMap);
-        echo "fn 4 <br/>";
-        $this->importCalQuantities($pdo_old, $resourcesMap);
-        echo "fn 5 <br/>";
-        $colorMap = $this->importColorCode($pdo_old, $id_space);
-        echo "fn 6 <br/>";
-        $this->importCalendarEntry($pdo_old, $resourcesMap, $usersMap, $colorMap);
-        echo "fn 7 <br/>";
-        $this->importNightWe($pdo_old, $id_space, $belongingMap);
-        echo "fn 8 <br/>";
-        $packagesMap = $this->importPackage($pdo_old, $resourcesMap);
-        echo "fn 9 <br/>";
-        $this->importBookingPrices($pdo_old);
-        echo "fn 10 <br/>";
-        $this->importScheduling($pdo_old, $areasMap);
+        }
         
         // sprojects
         $serviceTypeMap[1] = 1;

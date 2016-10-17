@@ -282,6 +282,14 @@ class ServicesTranslator {
         }
         return "Services balance";
     }
+    
+    public static function OrderBalance($lang = "") {
+        if ($lang == "fr") {
+            return "Bilan commandes";
+        }
+        return "Orders balance";
+    }
+    
 
     public static function Beginning_period($lang = "") {
         if ($lang == "fr") {
@@ -373,7 +381,7 @@ class ServicesTranslator {
         }
         return "Projects balance";
     }
-
+    
     public static function Project_number($lang = "") {
         if ($lang == "fr") {
             return "Projet number";

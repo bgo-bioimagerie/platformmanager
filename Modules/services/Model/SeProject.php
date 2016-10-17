@@ -249,9 +249,10 @@ class SeProject extends Model {
     }
 
     public function getPeriodeServicesBalances($id_space, $beginPeriod, $endPeriod) {
-        $sql = "select * from se_project where date_close>=? OR date_close='0000-00-00'";
-        $req = $this->runRequest($sql, array($beginPeriod));
+        $sql = "select * from se_project where id_space=? AND date_close>=? OR date_close='0000-00-00'";
+        $req = $this->runRequest($sql, array($id_space, $beginPeriod));
         $projects = $req->fetchAll();
+        
         //$items = array();
         $modelServices = new SeService();
         $items = $modelServices->getBySpace($id_space);

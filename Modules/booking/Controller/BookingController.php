@@ -61,8 +61,8 @@ class BookingController extends BookingabstractController {
 
         $modelResource = new ResourceInfo();
         $modelArea = New ReArea();
+        $userSettingsModel = new CoreUserSettings();
         if ($id_resource == "" || $id_resource == 0) { // booking home page
-            $userSettingsModel = new CoreUserSettings();
             $calendarDefaultResource = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultResource");
             if ($calendarDefaultResource != "") {
                 $id_resource = $calendarDefaultResource;
