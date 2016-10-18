@@ -39,7 +39,7 @@ class EcusersController extends CoresecureController {
     public function indexAction($id_space, $active = "") {
 
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
-        
+
         if ($active == "") {
             if (isset($_SESSION["users_lastvisited"])) {
                 $active = $_SESSION["users_lastvisited"];
@@ -98,15 +98,15 @@ class EcusersController extends CoresecureController {
         $table = new TableView();
 
         $table->setTitle($title);
-        
+
         $modelCoreSpace = new CoreSpace();
         $isBooking = $modelCoreSpace->isSpaceMenu($id_space, "booking");
-        if ($isBooking){
-            $table->addLineButton("bookingauthorisations/".$id_space, "id", CoreTranslator::Authorizations($lang));
+        if ($isBooking) {
+            $table->addLineButton("bookingauthorisations/" . $id_space, "id", CoreTranslator::Authorizations($lang));
         }
-        
-        $table->addLineEditButton("ecusersedit/".$id_space);
-        $table->addDeleteButton("ecusersdelete/".$id_space);
+
+        $table->addLineEditButton("ecusersedit/" . $id_space);
+        $table->addDeleteButton("ecusersdelete/" . $id_space);
         $table->setFixedColumnsNum(3);
         if ($authorisations_location == 2) {
             $table->addLineButton("Sygrrifauthorisations/userauthorizations", "id", CoreTranslator::Authorizations($lang));
@@ -142,7 +142,7 @@ class EcusersController extends CoresecureController {
         }
 
         $tableHtml = $table->view($usersArray, $tableContent);
-        
+
         $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
@@ -163,7 +163,7 @@ class EcusersController extends CoresecureController {
     public function editAction($id_space, $id) {
 
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
-        
+
 // get info
         if ($id > 0) {
             $user = $this->userModel->getInfo($id);
@@ -223,7 +223,7 @@ class EcusersController extends CoresecureController {
         $formAdd = new FormAdd($this->request, "userformadd");
 
         $resps = array();
-        foreach($user["id_resps"] as $idResp){
+        foreach ($user["id_resps"] as $idResp) {
             $resps[] = $idResp["id_resp"];
         }
         $formAdd->addSelect("responsibles", EcosystemTranslator::Responsible($lang), $choicesR, $choicesidR, $resps);
@@ -247,7 +247,7 @@ class EcusersController extends CoresecureController {
         }
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "ecusersedit/" . $id_space . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "ecusers/".$id_space);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "ecusers/" . $id_space);
         $form->setColumnsWidth(2, 9);
         $form->setButtonsWidth(2, 9);
 
@@ -260,7 +260,7 @@ class EcusersController extends CoresecureController {
                 $modelResp = new EcResponsible();
                 $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                 $this->uploadConvention($id);
-                $this->redirect("ecusers/".$id_space);
+                $this->redirect("ecusers/" . $id_space);
             } else {
                 $modelUser = new CoreUser();
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
@@ -278,7 +278,7 @@ class EcusersController extends CoresecureController {
                     $modelResp = new EcResponsible();
                     $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                     $this->uploadConvention($id);
-                    $this->redirect("ecusers/".$id_space);
+                    $this->redirect("ecusers/" . $id_space);
                 }
             }
         }
@@ -306,7 +306,7 @@ class EcusersController extends CoresecureController {
     public function changepwdAction($id_space, $id) {
 
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
-        
+
         $user = $this->userModel->getInfo($id);
 
         // generate view
@@ -321,7 +321,7 @@ class EcusersController extends CoresecureController {
     public function changepwdqAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
         $id = $this->request->getParameter("id");
         $pwd = $this->request->getParameter("pwd");
@@ -343,9 +343,32 @@ class EcusersController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
-        
+
         $this->userModel->delete($id);
-        $this->redirect("ecusers/".$id_space);
+        $this->redirect("ecusers/" . $id_space);
+    }
+
+    public function exportrespAction($id_space) {
+
+        $lang = $this->getLanguage();
+
+        $form = new Form($this->request, "exportRespFrom");
+        $form->setTitle(EcosystemTranslator::ExportResponsibles($lang));
+
+        $choicesid = array(0, 1, 2);
+        $choices = array(CoreTranslator::All($lang), CoreTranslator::Active($lang), CoreTranslator::Unactive($lang));
+        $form->addSelect("exporttype", EcosystemTranslator::Responsible($lang), $choices, $choicesid);
+
+        $form->setButtonsWidth(2, 9);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "ecexportresponsible/" . $id_space);
+        
+        if ($form->check()) {
+            $exportType = $this->request->getParameter("exporttype");
+            $this->userModel->exportResponsible($exportType);
+            return;
+        }
+
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
     }
 
 }
