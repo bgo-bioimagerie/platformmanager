@@ -105,7 +105,7 @@ class BookingdefaultController extends BookingabstractController {
         $id_resource = $this->request->getParameter("id_resource");
         $booked_by_id = $_SESSION["id_user"];
         $recipient_id = $this->request->getParameter("recipient_id");
-        $last_update = time();
+        $last_update = date("Y-m-d H:m:i", time());
         $color_type_id = $this->request->getParameter("color_type_id");
         $short_description = $this->request->getParameter("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
@@ -145,6 +145,9 @@ class BookingdefaultController extends BookingabstractController {
         $package_id = 0;
         if ($use_package == "yes") {
             $package_id = $this->request->getParameter("package_id");
+            $modelPackage = new BkPackage();
+            $pk_duration = $modelPackage->getPackageDuration($package_id);
+            $end_time = $start_time + 3600*$pk_duration;
         }
 
         $modelResp = new EcResponsible();
@@ -165,7 +168,7 @@ class BookingdefaultController extends BookingabstractController {
                 "resource_id" => $id_resource,
                 "booked_by_id" => $booked_by_id,
                 "recipient_id" => $recipient_id,
-                "last_update" => time(),
+                "last_update" => date("Y-m-d H:m:i", time()),
                 "color_type_id" => $color_type_id,
                 "short_description" => $short_description,
                 "full_description" => $full_description,
@@ -353,7 +356,7 @@ class BookingdefaultController extends BookingabstractController {
             $use_packages = true;
         }
         $formPackage = new Form($this->request, "formPackage");
-        $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, "value", false);
+        $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, $resaInfo["package_id"], false);
 
         $formEndDate = new Form($this->request, "formEndDate");
         $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["end_time"]), $lang));

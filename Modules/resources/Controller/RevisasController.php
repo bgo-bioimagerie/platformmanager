@@ -97,7 +97,7 @@ class RevisasController extends CoresecureController {
         $form->setTitle(ResourcesTranslator::Edit_Visa($lang));
 
         $modelResourcesCategory = new ReCategory();
-        $resourcesCategories = $modelResourcesCategory->getAll();
+        $resourcesCategories = $modelResourcesCategory->getBySpace($id_space);
         $rcchoices = array();
         $rcchoicesid = array();
         foreach ($resourcesCategories as $rc) {
@@ -194,4 +194,12 @@ class RevisasController extends CoresecureController {
         echo $content;
     }
 
+    
+    public function deleteAction($id_space, $id){
+        
+        $modelVisa = new ReVisa();
+        $modelVisa->delete($id);
+        
+        $this->redirect("resourcesvisa/" . $id_space);
+    }
 }

@@ -20,7 +20,7 @@
     <div>
         <div class="checkbox col-xs-8 col-xs-offset-4">
             <label>
-                <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?>> <?php echo BookingTranslator::Use_Package($lang) ?>
+                <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
             </label>
         </div>
 
@@ -49,19 +49,31 @@
     
 </div>
 </div>
+
+
+<?php 
+$isPackageCheched = 0;
+if( $packageChecked > 0){
+    $isPackageCheched = 1;
+}
+?>
+
 <script>
-    var php_var = "<?php echo $packageChecked; ?>";
-    if (php_var === 0){
+    
+    var php_var = "<?php echo $isPackageCheched; ?>";
+        if (php_var === 0){
         document.getElementById('resa_time_div').style.display = 'none';
     }
     else{
         document.getElementById('package_div').style.display = 'none';
     }
+    
     document.getElementById('use_package').onchange = function () {
     document.getElementById('package_div').style.display = this.checked ? 'block' : 'none';
     document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
-
+    
     };
+    
 </script>
 
 <script type="text/javascript">

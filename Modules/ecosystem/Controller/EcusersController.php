@@ -213,8 +213,8 @@ class EcusersController extends CoresecureController {
         $form->addText("firstname", EcosystemTranslator::Firstname($lang), true, $user["firstname"]);
         $form->addText("login", EcosystemTranslator::Login($lang), true, $user["login"]);
         if ($id == 0) {
-            $form->addPassword("pwd", EcosystemTranslator::Password($lang), true);
-            $form->addPassword("confirm", EcosystemTranslator::Confirm($lang), true);
+            $form->addPassword("pwd", EcosystemTranslator::Password($lang), false);
+            $form->addPassword("confirm", EcosystemTranslator::Confirm($lang), false);
         }
         $form->addEmail("email", EcosystemTranslator::Email($lang), false, $user["email"]);
         $form->addText("phone", EcosystemTranslator::Phone($lang), false, $user["phone"]);
@@ -272,8 +272,14 @@ class EcusersController extends CoresecureController {
                     $script .= 'alert("' . CoreTranslator::TheTwoPasswordAreDifferent($lang) . '")';
                     $script .= '</script>';
                 } else {
+
+                    $password = $this->request->getParameter("pwd");
+                    if ($password == "") {
+                        $password = $this->randomPassword();
+                    }
+
                     $id = $this->userModel->add(
-                            $this->request->getParameter("name"), $this->request->getParameter("firstname"), $this->request->getParameter("login"), $this->request->getParameter("pwd"), $this->request->getParameter("email"), $this->request->getParameter("phone"), $this->request->getParameter("unit"), $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), $this->request->getParameter("date_convention"), $this->request->getParameter("date_end_contract")
+                            $this->request->getParameter("name"), $this->request->getParameter("firstname"), $this->request->getParameter("login"), $password, $this->request->getParameter("email"), $this->request->getParameter("phone"), $this->request->getParameter("unit"), $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), $this->request->getParameter("date_convention"), $this->request->getParameter("date_end_contract")
                     );
                     $modelResp = new EcResponsible();
                     $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
@@ -292,6 +298,17 @@ class EcusersController extends CoresecureController {
             'id' => $id,
             'formHtml' => $formHtml
         ));
+    }
+
+    function randomPassword() {
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 
     public function uploadConvention($id) {
@@ -361,7 +378,7 @@ class EcusersController extends CoresecureController {
 
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Ok($lang), "ecexportresponsible/" . $id_space);
-        
+
         if ($form->check()) {
             $exportType = $this->request->getParameter("exporttype");
             $this->userModel->exportResponsible($exportType);

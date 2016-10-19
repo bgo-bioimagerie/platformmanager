@@ -378,6 +378,8 @@ class ResourcesController extends CoresecureController {
 
         $modelResource = new ResourceInfo();
         $modelResource->delete($id);
+        
+        $this->redirect("resources/" . $id_space);
     }
 
 }

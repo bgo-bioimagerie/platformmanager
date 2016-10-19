@@ -158,9 +158,27 @@ class CorespaceController extends CoresecureController {
     protected function configUsersTable($lang, $id_space) {
         
         $data = $this->spaceModel->getUsers($id_space);
+        //print_r($data);
+        for( $i = 0 ; $i < count($data) ; $i++){
+            if ($data[$i]["role"] == 1){
+                $data[$i]["role"] = CoreTranslator::Visitor($lang);
+            }
+            if ($data[$i]["role"] == 2){
+                $data[$i]["role"] = CoreTranslator::User($lang);
+            }
+            if ($data[$i]["role"] == 3){
+                $data[$i]["role"] = CoreTranslator::Manager($lang);
+            }
+            if ($data[$i]["role"] == 4){
+                $data[$i]["role"] = CoreTranslator::Admin($lang);
+            }
+        }
+        
         $tableUsers = new TableView();
         $tableUsers->addDeleteButton("spaceconfigdeleteuser/".$id_space);
-        return $tableUsers->view($data, array("name" => CoreTranslator::Name($lang), "firstname" => CoreTranslator::Firstname($lang), "role" => CoreTranslator::Role($lang)));
+        return $tableUsers->view($data, array("name" => CoreTranslator::Name($lang), 
+            "firstname" => CoreTranslator::Firstname($lang), 
+            "role" => CoreTranslator::Role($lang)));
     }
     
     /**
