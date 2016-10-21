@@ -74,15 +74,6 @@ class BookingcolorcodesController extends CoresecureController {
         $form->addColor("text", BookingTranslator::Text($lang), false, $data["text"]);
         $form->addNumber("display_order", BookingTranslator::Display_order($lang), false, $data["display_order"]);
         
-        $modelSite = new EcSite();
-        $sites = $modelSite->getUserAdminSites($_SESSION["id_user"]);
-        $allSites = $modelSite->getAll("name");
-        $choices = array(); $choicesid = array();
-        foreach($allSites as $s){
-            $choices[] = $s["name"];
-            $choicesid[] = $s["id"];
-        }
-        
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingcolorcodeedit/".$id_space."/".$id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "bookingcolorcodes/".$id_space);
         $form->setButtonsWidth(3, 9);

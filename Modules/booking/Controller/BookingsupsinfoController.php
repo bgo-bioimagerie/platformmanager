@@ -4,7 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
-require_once 'Modules/booking/Model/BkCalSupinfo.php';
+require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 
 /**
