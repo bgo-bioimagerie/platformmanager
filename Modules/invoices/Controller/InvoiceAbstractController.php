@@ -31,7 +31,7 @@ abstract class InvoiceAbstractController extends CoresecureController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function genreratePDF($number, $date, $unit, $resp, $adress, $table, $total) {
+    public function genreratePDF($number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true) {
         ob_start();
         include('data/invoices/template_1.php');
         $content = ob_get_clean();
@@ -43,7 +43,7 @@ abstract class InvoiceAbstractController extends CoresecureController {
             //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            $html2pdf->Output($number . '.pdf');
+            $html2pdf->Output($unit . "_" . $resp . " " . $number . '.pdf');
         } catch (HTML2PDF_exception $e) {
             echo $e;
             exit;

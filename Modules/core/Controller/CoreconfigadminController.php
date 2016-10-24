@@ -137,7 +137,7 @@ class CoreconfigadminController extends CoresecureController {
         if ($formBackup->check()){
             $modelBackup = new CoreBackupDatabase();
             $modelBackup->run();
-            $this->redirect("coreconfigadmin");
+            //$this->redirect("coreconfigadmin");
             return;
         }
         // view

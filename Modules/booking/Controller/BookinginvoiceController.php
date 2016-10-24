@@ -577,7 +577,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $adress = $modelUnit->getAdress($invoice["id_unit"]);
         $modelUser = new EcUser();
         $resp = $modelUser->getUserFUllName($invoice["id_responsible"]);
-        $this->genreratePDF($invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
+        $useTTC = true;
+        $this->genreratePDF($invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC);
     }
 
     protected function unparseContent($id_item, $lang) {
