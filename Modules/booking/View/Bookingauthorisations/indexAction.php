@@ -16,7 +16,7 @@
 </head>
 
 <br>
-	<div class="col-md-12">
+	<div class="col-md-10" id="pm-form">
 	
 	<?php 
 	if (isset($_SESSION["message"])){

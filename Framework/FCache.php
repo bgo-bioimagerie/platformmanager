@@ -60,8 +60,9 @@ class FCache extends Model {
             $actions = $routingClass->getAction($r);
             $gets = $routingClass->getGet($r);
             $getsRegexp = $routingClass->getGetRegexp($r);
+            $isApi = $routingClass->isApi($r);
 
-            $this->setCacheUrl($identifier, $url, $moduleName, $controller, $actions, $gets, $getsRegexp);
+            $this->setCacheUrl($identifier, $url, $moduleName, $controller, $actions, $gets, $getsRegexp, $isApi);
         }
     }
 
@@ -75,10 +76,10 @@ class FCache extends Model {
      * @param type $gets
      * @param type $getsRegexp
      */
-    protected function setCacheUrl($identifier, $url, $module, $controller, $actions, $gets, $getsRegexp) {
+    protected function setCacheUrl($identifier, $url, $module, $controller, $actions, $gets, $getsRegexp, $isApi) {
 
         // insert the urls
-        $id = $this->setCacheUrlDB($identifier, $url, $module, $controller, $actions);
+        $id = $this->setCacheUrlDB($identifier, $url, $module, $controller, $actions, $isApi);
 
         // instert the gets
         for ($g = 0; $g < count($gets); $g++) {
@@ -95,21 +96,22 @@ class FCache extends Model {
      * @param type $action
      * @return type
      */
-    protected function setCacheUrlDB($identifier, $url, $module, $controller, $action) {
+    protected function setCacheUrlDB($identifier, $url, $module, $controller, $action, $isApi) {
         
         //echo "identifier = " . $identifier . "<br/>";
+        //echo "isApi = " . $isApi . "<br/>";
         
         $id = $this->getChacheUrlID($identifier);
         //echo 'id = ' . $id . "<br/>";
         if ($id > 0) {
             //echo "update cache_urls begin <br/>";
-            $sql = "UPDATE cache_urls SET identifier=?, url=?, module=?, controller=?, action=? WHERE id=?";
-            $this->runRequest($sql, array($identifier, $url, $module, $controller, $action, $id));
+            $sql = "UPDATE cache_urls SET identifier=?, url=?, module=?, controller=?, action=?, isapi=? WHERE id=?";
+            $this->runRequest($sql, array($identifier, $url, $module, $controller, $action, $isApi, $id));
             //echo "update cache_urls end <br/>";
         } else {
             //echo "insert cache_urls begin <br/>";
-            $sql = "INSERT INTO cache_urls (identifier, url, module, controller, action) VALUES(?,?,?,?,?) ";
-            $this->runRequest($sql, array($identifier, $url, $module, $controller, $action));
+            $sql = "INSERT INTO cache_urls (identifier, url, module, controller, action, isapi) VALUES(?,?,?,?,?,?) ";
+            $this->runRequest($sql, array($identifier, $url, $module, $controller, $action, $isApi));
             $id = $this->getDatabase()->lastInsertId();
             //echo "insert cache_urls end <br/>";
         }
@@ -203,9 +205,12 @@ class FCache extends Model {
                 `module` varchar(255) NOT NULL DEFAULT '',
                 `controller` varchar(255) NOT NULL DEFAULT '',
                 `action` varchar(255) NOT NULL DEFAULT '',
+                `isapi` int(1) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
+        $this->addColumn("cache_urls", "isapi", "int(1)", 0);
+        
         $this->runRequest($sql);
 
         $sqlg = "CREATE TABLE IF NOT EXISTS `cache_urls_gets` (

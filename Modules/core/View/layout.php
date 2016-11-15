@@ -11,6 +11,7 @@
     <link rel='stylesheet' type='text/css' href='data/core/theme/navbar-fixed-top.css' />
     <link rel="stylesheet" href="Modules/core/Theme/core.css">
     <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link rel='stylesheet' type='text/css' href='Modules/core/Theme/spacemenu.css' />
     <?php endblock() ?>
             
 <!-- content -->

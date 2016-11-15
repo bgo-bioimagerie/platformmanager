@@ -85,7 +85,7 @@ img{
 
 <!-- Add the table title -->
 <div class="col-md-12"  style="background-color: #ffffff; padding-top: 12px;">
-<div class="col-md-10">
+<div class="col-lg-10 col-lg-offset-1">
 <?php
         $message = "";
             if (isset($_SESSION["message"])){

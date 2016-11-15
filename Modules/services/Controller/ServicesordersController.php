@@ -59,7 +59,7 @@ class ServicesordersController extends CoresecureController {
         }
 
         $table = new TableView();
-        $table->setTitle(ServicesTranslator::Services_Orders($lang));
+        $table->setTitle(ServicesTranslator::Services_Orders($lang), 3);
         $table->addLineEditButton("servicesorderedit/" . $id_space);
         $table->addDeleteButton("servicesorderdelete/" . $id_space, "id", "id");
 
@@ -126,7 +126,7 @@ class ServicesordersController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $form = new Form($this->request, "orderEditForm");
-        $form->setTitle(ServicesTranslator::Edit_order($lang));
+        $form->setTitle(ServicesTranslator::Edit_order($lang), 3);
 
         $modelOrder = new SeOrder();
 

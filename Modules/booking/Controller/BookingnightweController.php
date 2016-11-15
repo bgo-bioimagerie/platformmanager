@@ -60,7 +60,7 @@ class BookingnightweController extends CoresecureController {
 
         $table = new TableView ();
 
-        $table->setTitle(BookingTranslator::Nightwe($lang));
+        $table->setTitle(BookingTranslator::Nightwe($lang), 3);
         //$table->ignoreEntry("id", 1);
         $table->addLineEditButton("bookingnightweedit/".$id_space, "id_belonging");
         $table->addDeleteButton("bookingnightwedelete/".$id_space);

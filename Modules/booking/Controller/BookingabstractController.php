@@ -58,7 +58,7 @@ class BookingabstractController extends CoresecureController {
 
         $modelArea = new ReArea();
         $areas = array();
-        if ($_SESSION["user_status"] < 3) {
+        if ($_SESSION["user_status"] < 2) {
             $areas = $modelArea->getUnrestrictedAreasIDNameForSite($curentSiteId);
         } else {
             $areas = $modelArea->getAreasIDNameForSite($curentSiteId);

@@ -36,7 +36,7 @@ class BookingdisplayController extends CoresecureController {
         $areas = $modelArea->getForSpace($id_space);
 
         $table = new TableView();
-        $table->setTitle(BookingTranslator::Display($lang));
+        $table->setTitle(BookingTranslator::Display($lang), 3);
         $table->addLineEditButton("bookingdisplayedit/".$id_space);
 
         $headers = array("name" => CoreTranslator::Name($lang));
@@ -57,7 +57,7 @@ class BookingdisplayController extends CoresecureController {
         $name = $modelArea->getName($id);
 
         $form = new Form($this->request, "bookingschedulingedit");
-        $form->setTitle(BookingTranslator::Display($lang) . ": " . $name);
+        $form->setTitle(BookingTranslator::Display($lang) . ": " . $name, 3);
         $form->addColor("header_background", BookingTranslator::Header_Color($lang), false, $data["header_background"]);
         $form->addColor("header_color", BookingTranslator::Header_Text($lang), false, $data["header_color"]);
         $form->addNumber("header_font_size", BookingTranslator::Header_font_size($lang), false, $data["header_font_size"]);

@@ -1,0 +1,14 @@
+.pm-space-menu .bs-glyphicons{margin:0 0px 0px;overflow:hidden}
+.pm-space-menu .bs-glyphicons-list{padding-left:0;list-style:none}
+.pm-space-menu .bs-glyphicons li{}
+
+.pm-space-menu .bs-glyphicons .glyphicon{margin-left:5px; padding-bottom:10px;font-size:14px}
+.pm-space-menu .bs-glyphicons .glyphicon-class{display:block; text-align:left;}
+
+.pm-space-menu .bs-glyphicons li:hover{color:#fff;background-color:#337ab7}@media (min-width:768px){
+    .pm-space-menu .bs-glyphicons{padding-top:2px;padding-bottom:2px;}
+    .pm-space-menu .bs-glyphicons li{width:100%;font-size:14px;}
+}
+
+.pm-space-menu .bs-glyphicons li a{color:#333; background-color:#337ab7;}
+.pm-space-menu .bs-glyphicons li a:hover{color:#fff; background-color:#337ab7;}

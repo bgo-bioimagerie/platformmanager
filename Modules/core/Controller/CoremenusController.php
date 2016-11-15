@@ -179,6 +179,9 @@ class CoremenusController extends CoresecureController {
                 Upload::uploadFile($target_dir, "icon", $id . "." . $ext);
                 $modelMenu->setDataMenuIcon($id, $target_dir . $id . "." . $ext);
             }
+            
+            $this->redirect("coremenusitems");
+            return;
         }
         
         // view
@@ -196,6 +199,8 @@ class CoremenusController extends CoresecureController {
     public function itemdeleteAction($id){
         $model = new CoreMenu();
         $model->removeDataMenu($id);
+        
+        $this->redirect("coremenusitems");
     }
 
 }

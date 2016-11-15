@@ -10,11 +10,19 @@ class InvoicesTranslator {
 
     public static function invoices($lang) {
         if ($lang == "fr") {
-            return "invoices";
+            return "Relevés";
         }
-        return "invoices";
+        return "Invoices";
     }
 
+    public static function All_invoices($lang) {
+        if ($lang == "fr") {
+            return "Tous les relevés";
+        }
+        return "All invoices";
+    }
+    
+    
     public static function invoicesConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Invoices permet de générer des factures";

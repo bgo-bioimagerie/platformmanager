@@ -2,7 +2,7 @@
     function addRow(tableID) {
 
         var idx = 1;
-        if (tableID == "dataTable") {
+        if (tableID === "tableIDname") {
             idx = 1;
         }
         var table = document.getElementById(tableID);
@@ -47,7 +47,7 @@
         try {
 
             var idx = 2;
-            if (tableID == "dataTable") {
+            if (tableID === "tableIDname") {
                 idx = 2;
             }
             var table = document.getElementById(tableID);

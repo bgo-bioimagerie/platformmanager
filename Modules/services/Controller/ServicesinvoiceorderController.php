@@ -138,7 +138,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
     protected function createByUnitForm($id_space, $lang) {
         $form = new Form($this->request, "invoicebyunitform");
-        $form->addSeparator2(ServicesTranslator::Invoice_by_unit($lang));
+        $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
 
         $unitId = $this->request->getParameterNoException("id_unit");
         $respId = $this->request->getParameterNoException("id_resp");

@@ -7,15 +7,15 @@
  */
 class FormHtml {
 
-    static public function title($title, $subtitle = "") {
+    static public function title($title, $subtitle = "", $titlelevel = 1) {
         $html = "";
         if ($title != "") {
             $html .= "<div class=\"page-header\">";
-            $html .= "<h1>" . $title;
+            $html .= "<h".$titlelevel.">" . $title;
             if ($subtitle != "") {
                 $html .= "<br/><small>" . $subtitle . "</small>";
             }
-            $html .= "</h1>";
+            $html .= "</h".$titlelevel.">";
             $html .= "</div>";
         }
         return $html;
@@ -103,7 +103,7 @@ class FormHtml {
      * @return string HTML code
      */
     static public function hidden($name, $value, $required) {
-        $html = "<input class=\"form-control\" type=\"hidden\" name=\"" . $name . "\"";
+        $html = "<input class=\"form-control\" type=\"hidden\" id=\"". $name ."\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         return $html;
@@ -122,7 +122,7 @@ class FormHtml {
         if ($vect){
             $vectv = "[]";
         }
-        $html = "<input class=\"form-control\" type=\"hidden\" name=\"" . $name.$vectv . "\"";
+        $html = "<input class=\"form-control\" type=\"hidden\" id=\"". $name ."\" name=\"" . $name.$vectv . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         return $html;
@@ -150,8 +150,8 @@ class FormHtml {
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"text\" name=\"" . $name . "\"";
-        $html .= " value=\"" . $value . "\"" . $required . " " . $enabled;
+        $html .= "<input class=\"form-control\" type=\"text\" id=\"". $name ."\" name=\"" . $name . "\"";
+        $html .= " value=\"" . $value . "\" " . $required . " " . $enabled;
         $html .= "/>";
         $html .= "</div>";
         $html .= "</div>";
@@ -172,7 +172,7 @@ class FormHtml {
         if ($vect){
             $vectv = "[]";
         }
-        $html = "<input class=\"form-control\" type=\"text\" name=\"" . $name . $vectv . "\"";
+        $html = "<input class=\"form-control\" type=\"text\" id=\"". $name ."\" name=\"" . $name . $vectv . "\"";
         $html .= " value=\"" . $value . "\"" . $required . " ";
         $html .= "/>";
         
@@ -201,7 +201,7 @@ class FormHtml {
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"password\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control\" type=\"password\" id=\"". $name ."\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required . " " . $enabled;
         $html .= "/>";
         $html .= "</div>";
@@ -227,7 +227,7 @@ class FormHtml {
 
         $html .= "<div class='col-xs-" . $inputWidth . "'>";
         $html .= "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-        $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
+        $html .= "<input type='text' class=\"form-control\" id=\"". $name ."\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
         $html .= "          <span class=\"input-group-addon\">";
         $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
         $html .= "          </span>";
@@ -253,7 +253,7 @@ class FormHtml {
         }
         
         $html = "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-        $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" name=\"" . $name . $vectv."\" value=\"" . $value . "\"/>";
+        $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" id=\"". $name ."\" name=\"" . $name . $vectv."\" value=\"" . $value . "\"/>";
         $html .= "          <span class=\"input-group-addon\">";
         $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
         $html .= "          </span>";
@@ -292,17 +292,48 @@ class FormHtml {
         
         $html .= "<div class=\"form-group row\">";
         $html .= "<div class=\"col-md-5\">";
-        $html .= "<input class=\"form-control\" type=\"number\" name=\"" . $name . "H" . "\"" . " value=\"" . $value[0] . "\"" . "/>";
+        $html .= "<input class=\"form-control\" type=\"number\" id=\"". $name . "H" . "\" name=\"" . $name . "H" . "\"" . " value=\"" . $value[0] . "\"" . "/>";
         $html .= "</div><div class=\"col-md-1\">";
         $html .= ":";
         $html .= "</div><div class=\"col-md-5\">";
-        $html .= "<input class=\"form-control\" type=\"number\" name=\"" . $name . "m" . "\"" . " value=\"" . $value[1] . "\"" . "\"/>";
+        $html .= "<input class=\"form-control\" type=\"number\" id=\"". $name . "m" . "\" name=\"" . $name . "m" . "\"" . " value=\"" . $value[1] . "\"" . "/>";
         $html .= "</div>";
         $html .= "</div>";
         $html .= "</div>";
         return $html;
     }
     
+    static public function datetime($validated, $label, $name, $value, $lang, $labelWidth = 2, $inputWidth = 9) {
+
+        //echo "hours values html = ";
+        //print_r($value); echo "<br/>";
+        $html = "<div class=\"col-xs-12\">";
+        $html .= "<div class=\"form-group" . $validated . "\">";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<div class='col-xs-" . $inputWidth . "'>";
+        
+        $html .= "<div class=\"form-group row\">";
+        
+        $html .= "<div class=\"col-md-7\">";
+        $html .= "<div class='input-group date form_date_" . $lang . "'>";
+        $html .= "<input type='text' class=\"form-control\" id=\"". $name ."\" name=\"" . $name ."\" value=\"" . $value[0] . "\"/>";
+        $html .= "          <span class=\"input-group-addon\">";
+        $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
+        $html .= "          </span>";
+        $html .= "</div>";
+        $html .= "</div>";
+        
+        $html .= "<div class=\"col-md-2\">";
+        $html .= "<input class=\"form-control\" type=\"number\" id=\"". $name . "H" . "\" name=\"" . $name . "H" . "\"" . " value=\"" . $value[1] . "\"" . "/>";
+        $html .= "</div><div class=\"col-md-1\">";
+        $html .= ":";
+        $html .= "</div><div class=\"col-md-2\">";
+        $html .= "<input class=\"form-control\" type=\"number\" id=\"". $name . "m" . "\" name=\"" . $name . "m" . "\"" . " value=\"" . $value[2] . "\"" . "/>";
+        $html .= "</div>";
+        $html .= "</div>";
+        $html .= "</div>";
+        return $html;
+    }
     /**
      * 
      * @param type $validated
@@ -318,7 +349,7 @@ class FormHtml {
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"color\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control\" type=\"color\" id=\"". $name ."\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         $html .= "</div>";
@@ -346,7 +377,7 @@ class FormHtml {
         $html = "<div class=\"form-group " . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"text\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control\" type=\"text\" id=\"". $name ."\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         $html .= "</div>";
@@ -374,7 +405,7 @@ class FormHtml {
         $html = "<div class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"number\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control\" type=\"number\" id=\"". $name ."\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         $html .= "</div>";
@@ -396,7 +427,7 @@ class FormHtml {
         if ($vect){
             $vectv = "[]";
         }
-        $html = "<input class=\"form-control\" type=\"number\" name=\"" . $name . $vectv . "\"";
+        $html = "<input class=\"form-control\" type=\"number\" id=\"". $name ."\" name=\"" . $name . $vectv . "\"";
         $html .= " value=\"" . $value . "\"" . $required . " ";
         $html .= "/>";
         
@@ -421,7 +452,7 @@ class FormHtml {
         $html = "<div class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<textarea " . $divid . " class=\"form-control\" name=\"" . $name . "\">" . $value . "</textarea>";
+        $html .= "<textarea " . $divid . " class=\"form-control\" id=\"". $name ."\" name=\"" . $name . "\">" . $value . "</textarea>";
         $html .= "</div>";
         $html .= "</div>";
         return $html;
@@ -457,7 +488,7 @@ class FormHtml {
         $html = "<div class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<button class=\"btn  btn-default\" type=\"button\" onclick=\"location.href = '" . $name . "'\">" . $label . "</button>";
+        $html .= "<button class=\"btn  btn-default\" id=\"". $name ."\" type=\"button\" onclick=\"location.href = '" . $name . "'\">" . $label . "</button>";
         $html .= "</div>";
         $html .= "</div>";
         return $html;
@@ -483,7 +514,7 @@ class FormHtml {
         if ($submitOnchange != ""){
             $submit = "onchange=\"updateResponsibe(this);\"";
         }
-        $html = "<select class=\"form-control\" name=\"" . $name . $vectv . "\" ".$submit." >";
+        $html = "<select class=\"form-control\" id=\"". $name ."\" name=\"" . $name . $vectv . "\" ".$submit." >";
         for ($v = 0; $v < count($choices); $v++) {
             $selected = "";
             if ($value == $choicesid[$v]) {
@@ -570,18 +601,23 @@ class FormHtml {
      * @param type $buttonsOffset
      * @return string
      */
-    static public function buttons($validationURL, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $externalButtons = array(), $buttonsWidth = 2, $buttonsOffset = 9) {
+    static public function buttons($formid, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $externalButtons = array(), $buttonsWidth = 2, $buttonsOffset = 9) {
         $html = "<div class=\"col-xs-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
         if ($validationButtonName != "") {
-            $html .= "<input type=\"submit\" class=\"btn btn-primary\" value=\"" . $validationButtonName . "\" />";
+            $html .= "<input type=\"submit\" id=\"".$formid . "submit" ."\" class=\"btn btn-primary\" value=\"" . $validationButtonName . "\" />";
         }
         if ($cancelURL != "") {
             $html .= "<button type=\"button\" onclick=\"location.href='" . $cancelURL . "'\" class=\"btn btn-default\">" . $cancelButtonName . "</button>";
         }
         if ($deleteURL != "") {
-            $html .= "<button type=\"button\" onclick=\"location.href='" . $deleteURL . "/" . $deleteID . "'\" class=\"btn btn-danger\">" . $deleteButtonName . "</button>";
+            $onclickdelete = "";
+            if($deleteURL !=""){
+                $onclickdelete = "onclick=\"location.href='" . $deleteURL . "/" . $deleteID . "'\"";
+            }
+            $html .= "<button type=\"button\" id=\"".$formid . "delete" ."\" ".$onclickdelete." class=\"btn btn-danger\">" . $deleteButtonName . "</button>";
         }
         foreach( $externalButtons as $ext ){
+               
                 $html .= "<button type=\"button\" onclick=\"location.href='" . $ext["url"] . "'\" class=\"btn btn-".$ext["type"]."\">" . $ext["name"] . "</button>";
         }
         
@@ -603,6 +639,12 @@ class FormHtml {
      */
     static public function textAreaScript() {
         return file_get_contents("Framework/textarea_script.php");
+    }
+    
+    static public function ajaxScript($formId, $validationURL){
+        $string =  file_get_contents('Framework/formajax_script.php');
+        $string1 = str_replace("formid", $formId, $string);
+        return str_replace("validationurl", $validationURL, $string1);
     }
 
 }

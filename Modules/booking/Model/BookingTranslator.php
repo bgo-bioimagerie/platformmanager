@@ -36,6 +36,20 @@ class BookingTranslator {
         return "Authorizations lists";
     }
 
+    public static function bookingprices($lang) {
+        if ($lang == "fr") {
+            return "Tarifs";
+        }
+        return "Prices";
+    }
+
+    public static function bookinginvoice($lang) {
+        if ($lang == "fr") {
+            return "Nouveau relevé";
+        }
+        return "New invoice";
+    }
+
     public static function bookingreservationstats($lang) {
         if ($lang == "fr") {
             return "Stats réservations";
@@ -45,9 +59,9 @@ class BookingTranslator {
 
     public static function bookinggrrstats($lang) {
         if ($lang == "fr") {
-            return "Stats personalisés réservations";
+            return "Stats personalisés";
         }
-        return "Manual reservations stats";
+        return "Manual stats";
     }
 
     public static function configuration($lang = "") {
@@ -145,7 +159,7 @@ class BookingTranslator {
 
     public static function SupplementariesInfo($lang) {
         if ($lang == "fr") {
-            return "Informations complémentaires";
+            return "Informations sup";
         }
         return "Supplementaries info";
     }
@@ -1178,13 +1192,33 @@ class BookingTranslator {
         }
         return "Calendar default view";
     }
-    
+
     public static function Default_view($lang = "") {
         if ($lang == "fr") {
             return "Vue par défaut";
         }
         return "Default view";
     }
-    
+
+    public static function Calendar_View($lang = "") {
+        if ($lang == "fr") {
+            return "Vue calendrier";
+        }
+        return "Calendar View";
+    }
+
+    public static function Additional_info($lang = "") {
+        if ($lang == "fr") {
+            return "Informations réservation";
+        }
+        return "Additional info";
+    }
+
+    public static function block_resources($lang) {
+        if ($lang == "Fr") {
+            return "Bloquer des ressources";
+        }
+        return "Block resources";
+    }
 
 }

@@ -38,7 +38,7 @@ class RestatesController extends CoresecureController {
 
 
         $table = new TableView();
-        $table->setTitle(ResourcesTranslator::States($lang));
+        $table->setTitle(ResourcesTranslator::States($lang), 3);
         $table->addLineEditButton("restatesedit/" . $id_space);
         $table->addDeleteButton("restatesdelete/" . $id_space);
 
@@ -73,7 +73,7 @@ class RestatesController extends CoresecureController {
         // form
         // build the form
         $form = new Form($this->request, "restatesedit");
-        $form->setTitle(ResourcesTranslator::Edit_State($lang));
+        $form->setTitle(ResourcesTranslator::Edit_State($lang), 3);
         $form->addHidden("id", $data["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $data["color"]);

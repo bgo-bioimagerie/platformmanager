@@ -56,7 +56,7 @@ class ServicespricesController extends CoresecureController {
         }
         
         $form = new Form($this->request, "servicesPricesForm");
-        $form->setTitle(ServicesTranslator::Prices($lang));
+        $form->setTitle(ServicesTranslator::Prices($lang), 3);
         
         $formAdd = new FormAdd($this->request, "servicesPricesFormAdd");
         $formAdd->addHidden("id_service", $servicesIds);

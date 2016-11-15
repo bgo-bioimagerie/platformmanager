@@ -10,6 +10,8 @@ select {
 #pm-content {
     background-color: #f1f1f1;
     min-height: 2000px;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
 }
 
 #pm-form{

@@ -1283,4 +1283,12 @@ class CoreTranslator {
         }
         return "View menu";
     }
+    
+    public static function Neww($lang) {
+        if ($lang == "fr") {
+            return "Nouveau";
+        }
+        return "New";
+    }
+    
 }

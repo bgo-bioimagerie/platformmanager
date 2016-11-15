@@ -1,51 +1,92 @@
 <?php
 require_once 'Modules/core/Model/CoreConfig.php';
 $modelCoreConfig = new CoreConfig();
-$ecmenucolor = $modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
-$ecmenucolortxt = $modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
+$ecmenucolor = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
+$ecmenucolortxt = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
 if ($ecmenucolor == "") {
-    $ecmenucolor = "#337ab7";
+    $ecmenucolor = "#f1f1f1";
 }
 if ($ecmenucolortxt == "") {
-    $ecmenucolortxt = "#ffffff";
+    $ecmenucolortxt = "#000";
 }
 ?>
 
-<div class="col-md-12" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
+<head>
+    <style>
+        #menu-button-div a{
+            font: 12px Arial;
+            text-decoration: none;
+            color: #333333;
+            padding-left: 12px;
+            /* padding: 2px 6px 2px 6px; */
+        }
+        
+        #menu-button-div{
+            margin-top: -2px;
+            /* padding: 2px 6px 2px 6px; */
+        }
+        
+        #menu-button-div:hover{
+            font: 12px Arial;
+            text-decoration: none;
+            background-color: #e1e1e1;
+            color: #333333;
+            padding: 2px 2px 2px 2px;
+        }
+        
+        #separatorp{
+            padding-top: 12px;
+            text-transform: uppercase; 
+            font-weight: bold; 
+            font-size: 11px;
+            color: #616161;
+        }
+    </style>
+</head>
 
-    <div class="col-md-2" style="margin-top: 0px;">
-        <h2><?php echo EcosystemTranslator::Ecosystem($lang) ?></h2>
+<div class="col-md-2" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
+
+    <div class="col-md-12" style="margin-top: 0px;">
+        <h4 style="text-transform: uppercase;"><?php echo EcosystemTranslator::Ecosystem($lang) ?></h4>
     </div>
-    <div class="col-md-10">
-        <div class="col-md-4">
-            <!-- <legend><?php echo CoreTranslator::Belongings($lang) . " & " . CoreTranslator::Units($lang) ?></legend> -->
-            <div class="btn-group" data-toggle="buttons">
-                <button onclick="location.href = 'ecbelongings/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;"><?php echo CoreTranslator::Belongings($lang) ?></button>
-                <button onclick="location.href = 'ecbelongingsedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;">+</button>
-            </div>	
-            <br/>
-            <div class="btn-group" data-toggle="buttons">
-                <button onclick="location.href = 'ecunits/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;"><?php echo CoreTranslator::Units($lang) ?></button>
-                <button onclick="location.href = 'ecunitsedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;">+</button>
-            </div>
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo CoreTranslator::Belongings($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="ecbelongingsedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
         </div>
-        <div class="col-md-4">
-             <!--	<legend><?php echo CoreTranslator::Users($lang) ?></legend> -->
-            <div class="btn-group" data-toggle="buttons" style="width: 100%;">
-                <button onclick="location.href = 'ecactiveusers/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;"><?php echo CoreTranslator::Users($lang) ?> </button>
-                <button onclick="location.href = 'ecusersedit//<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;">+</button>
-            </div>
-            <br/>
-            <div class="btn-group" data-toggle="buttons" style="width: 100%;">
-                <button onclick="location.href = 'ecunactiveusers/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;"><?php echo CoreTranslator::Unactive_Users($lang) ?></button>
-            </div>		
+        <div  class="btn-block" id="menu-button-div">
+            <a id="menu-button" href="ecbelongings/<?php echo $id_space ?>"><?php echo CoreTranslator::Belongings($lang) ?></a><br/>
+        </div>	
+    </div>
+    
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo CoreTranslator::Units($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="ecunitsedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
         </div>
-        <div class="col-md-4">
-           <!--  	<legend><?php echo CoreTranslator::Export($lang) ?></legend> -->
-            <button onclick="location.href = 'ecexportresponsible/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo $ecmenucolortxt ?>;"><?php echo CoreTranslator::Responsible($lang) ?> </button>
-
+        <div  class="btn-block" id="menu-button-div">
+            <a id="menu-button" href="ecunits/<?php echo $id_space ?>"><?php echo CoreTranslator::Units($lang) ?></a><br/>
         </div>
-
+    </div>
+    
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo CoreTranslator::Users($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="ecusersedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a id="menu-button" href="ecactiveusers/<?php echo $id_space ?>"><?php echo CoreTranslator::Active($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a id="menu-button" href="ecunactiveusers/<?php echo $id_space ?>"><?php echo CoreTranslator::Unactive($lang) ?></a><br/>
+        </div>
+    </div>
+    
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo CoreTranslator::Export($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="ecexportresponsible/<?php echo $id_space ?>"><?php echo CoreTranslator::Responsible($lang) ?></a>      
+        </div>
     </div>
 
 </div>

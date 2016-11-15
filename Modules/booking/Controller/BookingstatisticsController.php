@@ -306,13 +306,13 @@ class BookingstatisticsController extends CoresecureController {
         header("Content-disposition: filename=rapport.csv");
 
         $content = "";
-        $content.= SyTranslator::Area($lang) . " ; "
-                . SyTranslator::Resource($lang) . " ; "
-                . SyTranslator::Short_description($lang) . " ; "
-                . SyTranslator::Date($lang) . " ; "
-                . SyTranslator::Full_description($lang) . " ; "
-                . SyTranslator::Color_code($lang) . " ; "
-                . SyTranslator::recipient($lang) . " \r\n";
+        $content.= ResourcesTranslator::Area($lang) . " ; "
+                . ResourcesTranslator::resource($lang) . " ; "
+                . BookingTranslator::Short_description($lang) . " ; "
+                . CoreTranslator::Date($lang) . " ; "
+                . BookingTranslator::Full_description($lang) . " ; "
+                . BookingTranslator::Color_codes($lang) . " ; "
+                . BookingTranslator::Recipient($lang) . " \r\n";
 
 
         foreach ($table as $t) {

@@ -39,7 +39,12 @@ class CorespaceadminController extends CoresecureController {
         
         $modelSpace = new CoreSpace();
         $data = $modelSpace->getSpaces("name");
-        $headers = array("name" => CoreTranslator::Name($lang), "status" => CoreTranslator::Status($lang));
+        for($i = 0 ; $i < count($data) ; $i++){
+            $data[$i]["url"] = "corespace/" . $data[$i]["id"];
+        }
+        
+        $headers = array("name" => CoreTranslator::Name($lang), "status" => CoreTranslator::Status($lang),
+                         "url" => CoreTranslator::Url($lang));
         
         $table->addLineEditButton("spaceadminedit");
         $table->addDeleteButton("spaceadmindelete");
@@ -98,5 +103,12 @@ class CorespaceadminController extends CoresecureController {
         
     }
     
+    public function deleteAction($id){
+        
+        $model = new CoreSpace();
+        $model->delete($id);
+        $this->redirect("spaceadmin");
+        
+    }
 
 }

@@ -36,7 +36,7 @@ class ReeventtypesController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $table = new TableView();
-        $table->setTitle(ResourcesTranslator::Event_types($lang));
+        $table->setTitle(ResourcesTranslator::Event_types($lang), 3);
         $table->addLineEditButton("reeventtypesedit/".$id_space);
         $table->addDeleteButton("reeventtypesdelete/".$id_space);
 
@@ -71,7 +71,7 @@ class ReeventtypesController extends CoresecureController {
         // form
         // build the form
         $form = new Form($this->request, "reeventtypesedit");
-        $form->setTitle(ResourcesTranslator::Edit_Event_Type($lang));
+        $form->setTitle(ResourcesTranslator::Edit_Event_Type($lang), 3);
         $form->addHidden("id", $site["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $site["name"]);
         

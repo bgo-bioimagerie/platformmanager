@@ -37,10 +37,29 @@ class router {
                 $args = $this->getArgs($urlInfo);
                 //echo "args = "; print_r($args); echo "<br/>";
 
-                $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
+                $this->runAction($controller, $urlInfo, $action, $args);
+                //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         } catch (Exception $e) {
             $this->manageError($e);
+        }
+    }
+
+    protected function runAction($controller, $urlInfo, $action, $args) {
+        if ($urlInfo["pathInfo"]["isapi"]) {
+            try {
+                $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
+            } 
+            catch (Exception $ex) {
+                echo json_encode(array(
+                    'error' => array(
+                        'msg' => $ex->getMessage(),
+                        'code' => $ex->getCode(),
+                    ),
+                ));
+            }
+        } else {
+            $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
         }
     }
 
@@ -63,13 +82,13 @@ class router {
                 throw new Exception("The database is already installed");
             }
 
-            $controller = $this->createControllerImp("core", "coreinstall", $request);
+            $controller = $this->createControllerImp("core", "coreinstall", 0, $request);
             $controller->runAction("core", "index");
             return true;
         } else if ($path == "caches") {
             $modelCache = new FCache();
             $modelCache->load();
-            echo "Caches up to date";
+            echo "Caches are up to date";
             return true;
         }
         return false;
@@ -138,11 +157,18 @@ class router {
      * @return Instance of a controller
      * @throws Exception If the controller cannot be instanciate
      */
-    private function createControllerImp($moduleName, $controllerName, Request $request) {
+    private function createControllerImp($moduleName, $controllerName, $isApi, Request $request) {
 
-        $classController = ucfirst(strtolower($controllerName)) . "Controller";
-        $module = $moduleName;
-        $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
+        if ($isApi) {
+            $classController = ucfirst(strtolower($controllerName)) . "Api";
+            $module = $moduleName;
+            $fileController = 'Modules/' . $module . "/Api/" . $classController . ".php";
+        } else {
+            $classController = ucfirst(strtolower($controllerName)) . "Controller";
+            $module = $moduleName;
+            $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
+        }
+
         //echo "controller file = " . $fileController . "<br/>";
         if (file_exists($fileController)) {
             // Instantiate controler
@@ -163,7 +189,7 @@ class router {
      */
     private function createController($urlInfo, Request $request) {
         //print_r($urlInfo);
-        return $this->createControllerImp($urlInfo["pathInfo"]["module"], $urlInfo["pathInfo"]["controller"], $request);
+        return $this->createControllerImp($urlInfo["pathInfo"]["module"], $urlInfo["pathInfo"]["controller"], $urlInfo["pathInfo"]["isapi"], $request);
     }
 
     /**

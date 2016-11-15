@@ -55,19 +55,19 @@ class TableView {
     /**
      * Set the table title
      */
-    public function setTitle($title, $level = 1) {
+    public function setTitle($title, $level = 3) {
         $this->title = $title;
         $this->titleLevel = $level;
     }
-    
+
     /**
      * 
      * @param type $num
      */
-    public function setFixedColumnsNum($num){
+    public function setFixedColumnsNum($num) {
         $this->numFixedCol = $num;
     }
-    
+
     /**
      * 
      * @param type $value
@@ -85,12 +85,12 @@ class TableView {
         $this->editURL = $editURL;
         $this->editIndex = $editIndex;
     }
-    
+
     /**
      * 
      * @param type $urlIndex
      */
-    public function addDownloadButton($urlIndex){
+    public function addDownloadButton($urlIndex) {
         $this->downloadButton = $urlIndex;
     }
 
@@ -204,17 +204,8 @@ class TableView {
             $html .= "<link rel=\"stylesheet\" href=\"externals/bootstrap/css/bootstrap.min.css\">";
             $html .= "</head>";
         }
-
-        if ($this->useSearchVal && !$this->isprint) {
-            $headerCount = count($headers);
-            if ($this->editURL != "") {
-                $headerCount++;
-            }
-            if ($this->deleteURL != "") {
-                $headerCount++;
-            }
-            $headerCount += count($this->linesButtonActions);
-            $html = $this->addSearchHeader($html, $headerCount);
+        else{
+            $html .= $this->addHeader();
         }
 
         if ($this->printAction != "" && $this->exportAction != "" && !$this->isprint) {
@@ -240,32 +231,34 @@ class TableView {
 
         if ($this->title != "") {
             $html .= "<div class=\"page-header\">";
-            $html .= "<h".$this->titleLevel.">" . $this->title . "</h".$this->titleLevel.">";
+            $html .= "<h" . $this->titleLevel . ">" . $this->title . "</h" . $this->titleLevel . ">";
             $html .= "</div>";
         }
 
-        $html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
+       
+        //$html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
+        $html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";
 
         // table header
         $html .= "<thead>";
         $html .= "<tr>";
-        
-        foreach ($headers as $key => $value) {
-            $html .= "<th>" . $value . "</th>";
-        }
+
         if ($this->editURL != "" && !$this->isprint) {
             $html .= "<th></th>";
         }
         if ($this->deleteURL != "" && !$this->isprint) {
             $html .= "<th></th>";
         }
-        if ($this->downloadButton != ""){
+        if ($this->downloadButton != "") {
             $html .= "<th></th>";
         }
         if (count($this->linesButtonActions) > 0) {
             for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
                 $html .= "<th></th>";
             }
+        }
+        foreach ($headers as $key => $value) {
+            $html .= "<th>" . $value . "</th>";
         }
         $html .= "</tr>";
         $html .= "</thead>";
@@ -275,45 +268,44 @@ class TableView {
         foreach ($data as $dat) {
             if ($this->printIt($dat)) {
                 $html .= "<tr>";
-                foreach ($headers as $key => $value) {
-
-                    $ccolor = "#ffffff";
-                    if (isset($this->colorIndexes[$key])) {
-                        $ccolor = $dat[$this->colorIndexes[$key]];
-                    } else {
-                        if (isset($this->colorIndexes["all"])) {
-                            $ccolor = $dat[$this->colorIndexes["all"]];
-                        }
-                    }
-                    $val = $dat[$key];
-                    if (count($dat[$key]) && $this->textMaxLength > 0) {
-                        $val = substr($dat[$key], 0, $this->textMaxLength);
-                    }
-                    $html .= "<td style=\"background-color:" . $ccolor . ";\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
-                }
                 
                 if (count($this->linesButtonActions) > 0 && !$this->isprint) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
-                        $html .= "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button>" . "</td>";
+                        $html .= "<td>" . "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button>" . "</td>";
                     }
                 }
-                
+
                 if ($this->editURL != "" && !$this->isprint) {
                     $idxVal = "";
                     if ($this->editIndex != "") {
                         $idxVal = $dat[$this->editIndex];
                     }
-
-                    $html .= "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button>" . "</td>";
+                    $html .= "<td>" . "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button>" . "</td>";
                 }
                 if ($this->deleteURL != "" && !$this->isprint) {
-                    $html .= "<td style=\"width:12px;\">" . $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]) . "</td>";
+                    $html .= "<td>" . $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]) . "</td>";
                 }
-                
-                
-                
-                if ($this->downloadButton != ""){
+
+                if ($this->downloadButton != "") {
                     $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
+                }
+                foreach ($headers as $key => $value) {
+
+                    $ccolor = "#ffffff";
+                    if (isset($this->colorIndexes[$key])){  
+                        $ccolor = $dat[$this->colorIndexes[$key]];
+                    }
+                    else{
+                        if (isset($this->colorIndexes["all"])){
+                            $ccolor = $dat[$this->colorIndexes["all"]];
+	    		}
+                    }
+                    
+                    $val = $dat[$key];
+                    if (count($dat[$key]) && $this->textMaxLength > 0) {
+                        $val = substr($dat[$key], 0, $this->textMaxLength);
+                    }
+                    $html .= "<td style=\"background-color:" .$ccolor.";\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
                 }
                 $html .= "</tr>";
             }
@@ -339,6 +331,11 @@ class TableView {
         return true;
     }
 
+    private function addHeader(){
+        $string =  file_get_contents("Framework/TableScript.php");
+        return str_replace("numFixedCol", $this->numFixedCol, $string);  
+    }
+    
     /**
      * 
      * @param type $html
@@ -346,10 +343,10 @@ class TableView {
      * @return string
      */
     private function addSearchHeader($html, $headerscount) {
-        
+
         $js = file_get_contents("Framework/TableScript.php");
         return str_replace("numFixedCol", $this->numFixedCol, $js);
-        
+
         $html .= "<head>";
 
         $html .= "<link rel=\"stylesheet\" href=\"externals/dataTables/dataTables.bootstrap.css\">";
@@ -359,6 +356,9 @@ class TableView {
         $html .= "<script src=\"externals/dataTables/jquery.dataTables.min.js\"></script>";
         $html .= "<script src=\"externals/dataTables/dataTables.fixedHeader.min.js\"></script>";
         $html .= "<script src=\"externals/dataTables/dataTables.bootstrap.js\"></script>";
+        
+        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css\">";
+        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/fixedcolumns/3.2.2/css/fixedColumns.bootstrap.min.css\">";
 
         $html .= "<style>";
         //$html .= "body { font-size: 120%; padding: 1em; margin-top:30px; margin-left: -15px;}";
@@ -381,7 +381,7 @@ class TableView {
 
         $html .= "<script>";
         $html .= "$(document).ready( function() {";
-        $html .= "$('#".$this->tableID."').dataTable( {";
+        $html .= "$('#" . $this->tableID . "').dataTable( {";
         $html .= "\"aoColumns\": [";
 
         for ($c = 0; $c < $headerscount; $c++) {
@@ -402,7 +402,7 @@ class TableView {
 
         $html .="<script>";
         $html .="$(document).ready(function() {";
-        $html .="	var table = $('#".$this->tableID."').DataTable();";
+        $html .="	var table = $('#" . $this->tableID . "').DataTable();";
         $html .="	new $.fn.dataTable.FixedHeader( table, {";
         $html .="		alwaysCloneTop: true";
         $html .="	});";
@@ -414,15 +414,15 @@ class TableView {
 
         return $html;
     }
-    
+
     /**
      * 
      * @param type $url
      * @return string
      */
-    private function addDownloadButtonHtml($url){
-        $html = "<td style=\"width:12px;\">" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
-                    
+    private function addDownloadButtonHtml($url) {
+        $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
+
         return $html;
     }
 

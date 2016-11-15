@@ -1,19 +1,60 @@
-<?php 
+<?php
 require_once 'Modules/core/Model/CoreConfig.php';
+require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 $modelCoreConfig = new CoreConfig();
-$menucolor = $modelCoreConfig->getParam("statisticsmenucolor");
-$menucolortxt = $modelCoreConfig->getParam("statisticsmenucolortxt");
-if ($menucolor == ""){
-	$menucolor = "#337ab7";
+$ecmenucolor = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
+$ecmenucolortxt = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
+if ($ecmenucolor == "") {
+    $ecmenucolor = "#f1f1f1";
 }
-if($menucolortxt == ""){
-	$menucolortxt = "#ffffff";
+if ($ecmenucolortxt == "") {
+    $ecmenucolortxt = "#000";
 }
 ?>
 
+<head>
+    <style>
+        #menu-button-div a{
+            font: 12px Arial;
+            text-decoration: none;
+            color: #333333;
+            padding-left: 12px;
+            /* padding: 2px 6px 2px 6px; */
+        }
+        
+        #menu-button-div{
+            margin-top: -2px;
+            /* padding: 2px 6px 2px 6px; */
+        }
+        
+        #menu-button-div:hover{
+            font: 12px Arial;
+            text-decoration: none;
+            background-color: #e1e1e1;
+            color: #333333;
+            padding: 2px 2px 2px 2px;
+        }
+        
+        #separatorp{
+            padding-top: 12px;
+            text-transform: uppercase; 
+            font-weight: bold; 
+            font-size: 11px;
+            color: #616161;
+        }
+    </style>
+</head>
+
+
+<div class="col-md-2" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
+
+    <div class="col-md-12" style="margin-top: 0px;">
+        <h4 style="text-transform: uppercase;"><?php echo StatisticsTranslator::statistics($lang) ?></h4>
+    </div>
+ 
 <?php 
 $modelSpace = new CoreSpace();
-$menus = $modelSpace->getAllSpaceMenus($id_space);
+$menus = $modelSpace->getAllSpaceMenusModules($id_space);
 $urls = array();
 $urlss = array();
 foreach($menus as $menu){
@@ -25,67 +66,33 @@ foreach($menus as $menu){
         require_once $rootingFile;
         $className = ucfirst($module)."Statistics";
         $classTranslator = ucfirst($module)."Translator";
+        require_once 'Modules/' . $module . "/Model/" . $classTranslator . ".php"; 
         $translator = new $classTranslator();
         $model = new $className();
         $model->listRouts();
+        if($model->count() > 0){
+            ?>
+            <div class="col-md-12">
+                <p id="separatorp"><?php echo $module ?></p>
+            <?php
+        }
         for ($i = 0 ; $i < $model->count() ; $i++){
             $url = $model->getUrl($i);
-            if(!in_array($url, $urlss)){
-                $urlss[] = $url;
-                $urls[] = array("url" => $url, "name" => $translator->$url($lang) );
-            }
-        }           
+            $txt = $translator->$url($lang);
+            ?>
+                <div  class="btn-block" id="menu-button-div">
+                    <a href="<?php echo $url . "/" . $id_space ?>"><?php echo $txt ?></a>      
+                </div>
+            <?php  
+        }  
+        if($model->count() > 0){
+            ?>
+            </div>
+            <?php    
+        }
     }
-}
-$step = count($urls);
-if (count($urls) > 3){
-    $step = floor(count($urls)/3);
 }
 
 ?>
 
-<div class="col-md-12" style="padding: 7px; background-color: <?php echo $menucolor ?>; color:<?php echo $menucolortxt ?>;">
-    
-    <div class="col-md-2" style="margin-top: 0px;">
-        <h2><?php echo StatisticsTranslator::Statistics($lang) ?></h2>
-    </div>
-    <div class="col-md-10">
-        <div class="col-md-3">
-            <?php for($i = 0 ; $i<$step ; $i++){
-                //echo "i = " . $i . "<br/>";
-                if($i < count($urls)){
-                ?>
-            
-            <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='<?php echo $urls[$i]["url"] ?>/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo $urls[$i]["name"] ?></button>
-            </div>
-                <?php
-            }} ?>
-        </div>
-        <div class="col-md-3">
-            <?php for($i = $step ; $i<2*$step ; $i++){
-                //echo "i = " . $i . "<br/>";
-                if($i < count($urls)){
-                ?>
-            
-            <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='<?php echo $urls[$i]["url"] ?>/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo $urls[$i]["name"] ?></button>
-            </div>
-                <?php
-            }} ?>
-        </div>
-        <div class="col-md-3">
-            <?php for($i = 2*$step ; $i<count($urls) ; $i++){
-                //echo "i = " . $i . "<br/>";
-                if($i < count($urls)){
-                ?>
-            
-            <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='<?php echo $urls[$i]["url"] ?>/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo $urls[$i]["name"] ?></button>
-            </div>
-                <?php
-            }} ?>
-        </div>
-    </div>
-    
 </div>

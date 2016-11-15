@@ -16,10 +16,12 @@ class Form {
 
     /** form info */
     private $title;
+    private $titlelevel;
     private $subtitle;
     private $id;
     private $parseRequest;
     private $errorMessage;
+    private $useAjax;
 
     /** form description */
     private $types;
@@ -56,15 +58,14 @@ class Form {
     private $isTextArea;
     private $formAdd;
     private $isFormAdd;
-    
     private $externalButtons;
-    
+
     /**
      * Constructor
      * @param Request $request Request that contains the post data
      * @param unknown $id Form ID
      */
-    public function __construct(Request $request, $id) {
+    public function __construct(Request $request, $id, $useAjax = false) {
         $this->request = $request;
         $this->id = $id;
         $this->labelWidth = 4;
@@ -78,6 +79,7 @@ class Form {
         $this->isTextArea = false;
         $this->isFormAdd = false;
         $this->externalButtons = array();
+        $this->useAjax = $useAjax;
 
         $this->parseRequest = false;
         $formID = $request->getParameterNoException("formid");
@@ -108,23 +110,24 @@ class Form {
         $this->labelWidth = $labelWidth;
         $this->inputWidth = $inputWidth;
     }
-    
+
     /**
      * Add a button in the form validation button bar
      * @param type $name Button text
      * @param type $url Action URL
      * @param type $type Bootstrap button type
      */
-    public function addExternalButton($name, $url, $type="danger"){
-        $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type); 
+    public function addExternalButton($name, $url, $type = "danger") {
+        $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type);
     }
 
     /**
      * Set the form title
      * @param string $title Form title
      */
-    public function setTitle($title) {
+    public function setTitle($title, $level = 3) {
         $this->title = $title;
+        $this->titlelevel = $level;
     }
 
     /**
@@ -144,12 +147,12 @@ class Form {
         $this->validationButtonName = $name;
         $this->validationURL = $url;
     }
-    
+
     /**
      * 
      * @param type $url URL of the validation button
      */
-    public function setValisationUrl($url){
+    public function setValisationUrl($url) {
         $this->validationURL = $url;
     }
 
@@ -184,7 +187,7 @@ class Form {
         //if ($this->parseRequest) {
         //    $this->values[] = $this->request->getParameterNoException($name);
         //} else {
-            $this->values[] = $value;
+        $this->values[] = $value;
         //}
     }
 
@@ -205,7 +208,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
     }
-    
+
     /**
      * Add a label of type h2 to partition the form
      * @param type $name Label of the separator
@@ -223,7 +226,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
     }
-    
+
     /**
      * Add a comment field
      * @param type $text Text
@@ -362,8 +365,23 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
     }
-    
-    public function addHour($name, $label, $isMandatory = false, $value = array("","")) {
+
+    public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
+        $this->isDate = true;
+        $this->types[] = "datetime";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($name, $value);
+        $this->isMandatory[] = $isMandatory;
+        $this->choices[] = array();
+        $this->choicesid[] = array();
+        $this->validated[] = true;
+        $this->enabled[] = "";
+        $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
+    }
+
+    public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
         $this->isDate = true;
         $this->types[] = "hour";
         $this->names[] = $name;
@@ -484,7 +502,7 @@ class Form {
         $this->useJavascript[] = $userichtxt;
         $this->submitOnChange[] = false;
     }
-    
+
     /**
      * Add a combo list 
      * @param type $label Field label
@@ -492,7 +510,7 @@ class Form {
      * @param type $listIds List of choices ids
      * @param type $values Default value
      */
-    public function addChoicesList($label, $listNames, $listIds, $values){
+    public function addChoicesList($label, $listNames, $listIds, $values) {
         $this->types[] = "choicesList";
         $this->names[] = "";
         $this->labels[] = $label;
@@ -504,13 +522,13 @@ class Form {
         $this->enabled[] = "";
         $this->submitOnChange[] = false;
     }
-    
+
     /**
      * Add a form add in the form
      * @param FormAdd $formAdd FotmAdd to add
      * @param type $label Label of the formAdd
      */
-    public function setFormAdd(FormAdd $formAdd, $label = ""){
+    public function setFormAdd(FormAdd $formAdd, $label = "") {
         $this->formAdd = $formAdd;
         $this->types[] = "formAdd";
         $this->names[] = "";
@@ -530,38 +548,38 @@ class Form {
      * Internal function to add the form header
      * @return type HTML content
      */
-    public function htmlOpen(){
+    public function htmlOpen() {
         $formHtml = new FormHtml();
         return $formHtml->formHeader($this->validationURL, $this->id, $this->useUpload);
     }
-    
+
     /**
      * Internal function to add the form footer 
      * @return type
      */
-    public function htmlClose(){
+    public function htmlClose() {
         $formHtml = new FormHtml();
         return $formHtml->formFooter();
     }
-    
+
     /**
      * Generate the html code
      * @return string
      */
     public function getHtml($lang = "en", $headers = true) {
 
-        
+
         $html = "";
 
         $formHtml = new FormHtml();
-        
-        $html .= $formHtml->title($this->title, $this->subtitle);
+
+        $html .= $formHtml->title($this->title, $this->subtitle, $this->titlelevel);
         $html .= $formHtml->errorMessage($this->errorMessage);
-        if ($headers){
+        if ($headers) {
             $html .= $formHtml->formHeader($this->validationURL, $this->id, $this->useUpload);
         }
         $html .= $formHtml->id($this->id);
-        
+
         // fields
         for ($i = 0; $i < count($this->types); $i++) {
 
@@ -574,10 +592,10 @@ class Form {
                 $validated = "alert alert-danger";
             }
 
-            if ($this->types[$i] == "separator"){
+            if ($this->types[$i] == "separator") {
                 $html .= $formHtml->separator($this->names[$i], 3);
             }
-            if ($this->types[$i] == "separator2"){
+            if ($this->types[$i] == "separator2") {
                 $html .= $formHtml->separator($this->names[$i], 5);
             }
             if ($this->types[$i] == "comment") {
@@ -594,6 +612,9 @@ class Form {
             }
             if ($this->types[$i] == "date") {
                 $html .= $formHtml->date($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
+            }
+            if ($this->types[$i] == "datetime") {
+                $html .= $formHtml->datetime($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "hour") {
                 $html .= $formHtml->hour($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
@@ -618,23 +639,23 @@ class Form {
             }
             if ($this->types[$i] == "select") {
                 $sub = "";
-                if ($this->submitOnChange[$i]){
+                if ($this->submitOnChange[$i]) {
                     $sub = $this->id;
                 }
                 $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth, $sub);
             }
-            if ($this->types[$i] == "formAdd"){
+            if ($this->types[$i] == "formAdd") {
                 $html .= $this->formAdd->getHtml($lang, $this->labels[$i], $this->labelWidth, $this->inputWidth);
             }
-            if ($this->types[$i] == "choicesList"){
+            if ($this->types[$i] == "choicesList") {
                 $html .= $formHtml->choicesList($this->labels[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
         }
 
         // buttons area
-        $html .= $formHtml->buttons($this->validationURL, $this->validationButtonName, $this->cancelURL, $this->cancelButtonName, $this->deleteURL, $this->deleteID, $this->deleteButtonName, $this->externalButtons, $this->buttonsWidth, $this->buttonsOffset);
-        
-        if ($headers){
+        $html .= $formHtml->buttons($this->id, $this->validationButtonName, $this->cancelURL, $this->cancelButtonName, $this->deleteURL, $this->deleteID, $this->deleteButtonName, $this->externalButtons, $this->buttonsWidth, $this->buttonsOffset);
+
+        if ($headers) {
             $html .= $formHtml->formFooter();
         }
 
@@ -644,8 +665,11 @@ class Form {
         if ($this->isTextArea == true) {
             $html .= $formHtml->textAreaScript();
         }
-        if ($this->isFormAdd == true){
+        if ($this->isFormAdd == true) {
             $html .= $this->formAdd->getJavascript();
+        }
+        if ($this->useAjax) {
+            //$html .= $formHtml->ajaxScript($this->id, $this->validationURL);
         }
 
         return $html;
@@ -662,7 +686,7 @@ class Form {
         if ($formID == $this->id) {
             for ($i = 0; $i < count($this->types); $i++) {
                 if ($this->types[$i] == "email") {
-                    if($this->request->getParameter($this->names[$i]) == ""){
+                    if ($this->request->getParameter($this->names[$i]) == "") {
                         return 1;
                     }
                     //echo "check email " . $this->request->getParameter($this->names[$i]) . " <br/>";

@@ -40,14 +40,14 @@ class ReArea extends Model {
         return $tmp[0];
     }
 
-    public function set($id, $name, $id_space) {
+    public function set($id, $name, $restricted, $id_space) {
         if ($this->exists($id)) {
-            $sql = "UPDATE re_area SET name=?, id_space=? WHERE id=?";
-            $this->runRequest($sql, array($name, $id_space, $id));
+            $sql = "UPDATE re_area SET name=?, restricted=?, id_space=? WHERE id=?";
+            $this->runRequest($sql, array($name, $restricted, $id_space, $id));
             return $id;
         } else {
-            $sql = "INSERT INTO re_area (name, id_space) VALUES (?,?)";
-            $this->runRequest($sql, array($name, $id_space));
+            $sql = "INSERT INTO re_area (name, restricted, id_space) VALUES (?,?)";
+            $this->runRequest($sql, array($name, $restricted, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
         return $id;
@@ -103,7 +103,7 @@ class ReArea extends Model {
     }
 
     public function getUnrestrictedAreasIDNameForSite($id_space) {
-        $sql = "select id, name from re_area where id_space=?";
+        $sql = "select id, name from re_area where id_space=? AND restricted=0";
         $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }

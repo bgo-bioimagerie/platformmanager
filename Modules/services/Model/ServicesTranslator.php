@@ -24,9 +24,9 @@ class ServicesTranslator {
 
     public static function services($lang) {
         if ($lang == "fr") {
-            return "services";
+            return "Services";
         }
-        return "services";
+        return "Services";
     }
 
     public static function service($lang) {
@@ -36,6 +36,36 @@ class ServicesTranslator {
         return "service";
     }
 
+    public static function servicesprices($lang) {
+        if ($lang == "fr") {
+            return "Tarifs";
+        }
+        return "Prices";
+    }
+    
+    public static function servicesinvoiceorder($lang) {
+        if ($lang == "fr") {
+            return "Relever commandes";
+        }
+        return "Invoice orders";
+    }
+    
+    public static function servicesinvoiceproject($lang) {
+        if ($lang == "fr") {
+            return "Relever projets";
+        }
+        return "Invoice projects";
+    }
+    
+    
+    
+    public static function Listing($lang) {
+        if ($lang == "fr") {
+            return "Listing";
+        }
+        return "Listing";
+    }
+    
     public static function UnitPrice($lang) {
         if ($lang == "fr") {
             return "Prix unitaire";
@@ -92,6 +122,13 @@ class ServicesTranslator {
             return "Achat";
         }
         return "Purchase";
+    }
+    
+    public static function New_Purchase($lang) {
+        if ($lang == "fr") {
+            return "Nouvel achat";
+        }
+        return "New purchase";
     }
 
     public static function Opened_orders($lang) {

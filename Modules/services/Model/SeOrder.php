@@ -209,7 +209,16 @@ class SeOrder extends Model {
     public function getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd){
         $sql = "SELECT * FROM se_order WHERE id_space = ? AND date_open >= ? AND date_open <= ?";
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
-        return $req->fetchAll();
+        $orders = $req->fetchAll();
+        
+        for($i = 0 ; $i < count($orders) ; $i++){
+            if ($orders[$i]["id_resp"] == 0){
+                $sql = "SELECT id_resp FROM ec_j_user_responsible WHERE id_user=?";
+                $resp_id = $this->runRequest($sql, array($orders[$i]["id_user"]))->fetch();
+                $orders[$i]["id_resp"] = $resp_id[0];
+            }
+        }
+        return $orders;
     }
     
     public function getPeriodeServicesBalancesOrders($id_space, $periodStart, $periodEnd){

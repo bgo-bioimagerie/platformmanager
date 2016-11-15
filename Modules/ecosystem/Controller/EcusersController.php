@@ -36,8 +36,12 @@ class EcusersController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction($id_space, $active = "") {
+    public function indexAction($id_space, $letter = "A", $active = "") {
 
+        if( $letter == ""){
+            $letter = "A";
+        }
+        
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
 
         if ($active == "") {
@@ -54,9 +58,9 @@ class EcusersController extends CoresecureController {
         $usersArray = array();
         $title = CoreTranslator::Users($lang);
         if ($active == "active") {
-            $usersArray = $this->userModel->getActiveUsersInfo(1);
+            $usersArray = $this->userModel->getActiveUsersInfoLetter($letter, 1);
         } else {
-            $usersArray = $this->userModel->getActiveUsersInfo(0);
+            $usersArray = $this->userModel->getActiveUsersInfoLetter($letter, 0);
             $title = CoreTranslator::Unactive_Users($lang);
         }
 
@@ -97,7 +101,7 @@ class EcusersController extends CoresecureController {
 
         $table = new TableView();
 
-        $table->setTitle($title);
+        //$table->setTitle($title);
 
         $modelCoreSpace = new CoreSpace();
         $isBooking = $modelCoreSpace->isSpaceMenu($id_space, "booking");
@@ -107,7 +111,7 @@ class EcusersController extends CoresecureController {
 
         $table->addLineEditButton("ecusersedit/" . $id_space);
         $table->addDeleteButton("ecusersdelete/" . $id_space);
-        $table->setFixedColumnsNum(3);
+        $table->setFixedColumnsNum(5);
         if ($authorisations_location == 2) {
             $table->addLineButton("Sygrrifauthorisations/userauthorizations", "id", CoreTranslator::Authorizations($lang));
         }
@@ -146,18 +150,21 @@ class EcusersController extends CoresecureController {
         $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
-            'tableHtml' => $tableHtml
+            'tableHtml' => $tableHtml,
+            'active' => $active,
+            'letter' => $letter,
                 ), "indexAction");
     }
 
-    public function activeAction($id_space) {
+    public function activeAction($id_space, $letter = "A") {
+        
         $_SESSION["users_lastvisited"] = "active";
-        $this->indexAction($id_space, "active");
+        $this->indexAction($id_space, $letter, "active");
     }
 
-    public function unactiveAction($id_space) {
+    public function unactiveAction($id_space, $letter = "A") {
         $_SESSION["users_lastvisited"] = "unactive";
-        $this->indexAction($id_space, "unactive");
+        $this->indexAction($id_space, $letter, "unactive");
     }
 
     public function editAction($id_space, $id) {
@@ -207,7 +214,7 @@ class EcusersController extends CoresecureController {
 // form
 // build the form
         $form = new Form($this->request, "ecusersedit");
-        $form->setTitle(CoreTranslator::Edit_User($lang));
+        $form->setTitle(CoreTranslator::Edit_User($lang), 3);
         $form->addHidden("id", $user["id"]);
         $form->addText("name", EcosystemTranslator::Name($lang), true, $user["name"]);
         $form->addText("firstname", EcosystemTranslator::Firstname($lang), true, $user["firstname"]);
@@ -370,7 +377,7 @@ class EcusersController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $form = new Form($this->request, "exportRespFrom");
-        $form->setTitle(EcosystemTranslator::ExportResponsibles($lang));
+        $form->setTitle(EcosystemTranslator::ExportResponsibles($lang), 3);
 
         $choicesid = array(0, 1, 2);
         $choices = array(CoreTranslator::All($lang), CoreTranslator::Active($lang), CoreTranslator::Unactive($lang));

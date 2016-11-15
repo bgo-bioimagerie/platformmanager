@@ -150,6 +150,13 @@ class ResourcesTranslator {
         return "Event types";
     }
 
+    public static function New_Event_Types($lang) {
+        if ($lang == "fr") {
+            return "Nouveau type d'évenement";
+        }
+        return "New event type";
+    }
+
     public static function Event_Type($lang) {
         if ($lang == "fr") {
             return "Type d'évenement";
@@ -162,6 +169,13 @@ class ResourcesTranslator {
             return "Etats";
         }
         return "States";
+    }
+
+    public static function New_States($lang) {
+        if ($lang == "fr") {
+            return "Nouvel états";
+        }
+        return "New states";
     }
 
     public static function State($lang) {
@@ -227,6 +241,13 @@ class ResourcesTranslator {
         return "Instructors status";
     }
 
+    public static function New_Resps_Status($lang) {
+        if ($lang == "fr") {
+            return "Nouveau status";
+        }
+        return "New instructors status";
+    }
+
     public static function Edit_Resps_status($lang) {
         if ($lang == "fr") {
             return "Modifier un staus de responsable";
@@ -246,6 +267,13 @@ class ResourcesTranslator {
             return "Visas";
         }
         return "Visas";
+    }
+
+    public static function New_Visas($lang) {
+        if ($lang == "fr") {
+            return "Nouveau visas";
+        }
+        return "New visas";
     }
 
     public static function Visa($lang) {
@@ -278,9 +306,58 @@ class ResourcesTranslator {
 
     public static function Responsible($lang = "") {
         if ($lang == "fr") {
-            return "Responsible";
+            return "Responsable";
         }
-        return "Responsable";
+        return "Responsible";
+    }
+
+    public static function Sorting($lang = "") {
+        if ($lang == "fr") {
+            return "Classement";
+        }
+        return "Sorting";
+    }
+
+    public static function Add_area($lang = "") {
+        if ($lang == "fr") {
+            return "Nouveau domaine";
+        }
+        return "New area";
+    }
+
+    public static function Add_category($lang = "") {
+        if ($lang == "fr") {
+            return "Nouvelle catégorie";
+        }
+        return "New category";
+    }
+
+    public static function New_Resource($lang = "") {
+        if ($lang == "fr") {
+            return "Nouvelle ressource";
+        }
+        return "New resource";
+    }
+
+    public static function Alerts($lang = "") {
+        if ($lang == "fr") {
+            return "Alertes";
+        }
+        return "Alerts";
+    }
+
+    public static function Suivi($lang = "") {
+        if ($lang == "fr") {
+            return "Suivi";
+        }
+        return "Suivi";
+    }
+
+    public static function IsRestricted($lang = "") {
+        if ($lang == "fr") {
+            return "Est restreint";
+        }
+        return "Is restricted";
     }
     
 }

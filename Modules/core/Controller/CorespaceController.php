@@ -257,8 +257,9 @@ class CorespaceController extends CoresecureController {
         //    "spaceconfiguser/" . $space["id"] => CoreTranslator::Access($lang));
 
         //$html = "<h3 style=\"text-align:center;\">" . $space["name"] . "</h3>";
-
-        $html = "<div class=\"bs-glyphicons\">";
+        
+        $html = "<div class=\"pm-space-menu\">";
+        $html .= "<div class=\"bs-glyphicons\">";
         $html .= "<ul class=\"bs-glyphicons-list\">";
         
         if ($showAdmMenu){
@@ -289,6 +290,7 @@ class CorespaceController extends CoresecureController {
             $html .= "</a>";
             $html .= "</li>";
         }
+        $html .= "</div>";
         $html .= "</div>";
         return $html;
     }

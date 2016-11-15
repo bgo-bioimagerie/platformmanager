@@ -50,7 +50,7 @@ class ResourcesController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $table = new TableView();
-        $table->setTitle(ResourcesTranslator::resources($lang));
+        $table->setTitle(ResourcesTranslator::resources($lang), 3);
         $table->addLineEditButton("resourcesedit/" . $id_space);
         $table->addDeleteButton("resourcesdelete/" . $id_space);
 

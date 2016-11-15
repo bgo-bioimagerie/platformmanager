@@ -39,7 +39,7 @@ class BookingcolorcodesController extends CoresecureController {
 
         $table = new TableView ();
 
-        $table->setTitle(BookingTranslator::Color_codes($lang));
+        $table->setTitle(BookingTranslator::Color_codes($lang), 3);
         $table->addLineEditButton("bookingcolorcodeedit/".$id_space);
         $table->addDeleteButton("bookingcolorcodedelete/".$id_space);
         $table->setColorIndexes(array("color" => "color"));
@@ -68,7 +68,7 @@ class BookingcolorcodesController extends CoresecureController {
         }
         $lang = $this->getLanguage();
         $form = new Form($this->request, "editActionForm");
-        $form->setTitle(BookingTranslator::Edit_color_code($lang));
+        $form->setTitle(BookingTranslator::Edit_color_code($lang), 3);
         $form->addText("name", CoreTranslator::Name($lang), false, $data["name"]);
         $form->addColor("color", BookingTranslator::Color($lang), false, $data["color"]);
         $form->addColor("text", BookingTranslator::Text($lang), false, $data["text"]);

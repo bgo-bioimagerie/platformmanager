@@ -51,7 +51,7 @@ class EcbelongingsController extends CoresecureController {
         }
 
         $table = new TableView();
-        $table->setTitle(CoreTranslator::belongings($lang));
+        $table->setTitle(CoreTranslator::belongings($lang), 3);
         $table->addLineEditButton("ecbelongingsedit/".$id_space);
         $table->addDeleteButton("ecbelongingsdelete/".$id_space);
         $table->setColorIndexes(array("color" => "color"));
@@ -86,7 +86,7 @@ class EcbelongingsController extends CoresecureController {
         // form
         // build the form
         $form = new Form($this->request, "corebelongings/edit");
-        $form->setTitle(EcosystemTranslator::Edit_belonging($lang));
+        $form->setTitle(EcosystemTranslator::Edit_belonging($lang), 3);
         $form->addHidden("id", $belonging["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $belonging["name"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $belonging["color"]);

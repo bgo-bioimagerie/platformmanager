@@ -14,19 +14,13 @@ abstract class Routing {
     protected $actions;
     protected $gets;
     protected $getsRegexp;
+    protected $areApi;
 
     /**
      * Construct
      */
     public function __construct() {
-        /*
-          $this->identifiers = array();
-          $this->url = array();
-          $this->controller = array();
-          $this->action = array();
-          $this->gets = array();
-          $this->getsRegexp = array();
-         */
+
     }
 
     /**
@@ -45,13 +39,19 @@ abstract class Routing {
      * @param string $getsRegexp List of gets variables type as regrexp
      * 
      */
-    public function addRoute($identifier, $url, $controller, $action, $gets = array(), $getsRegexp = array()) {
+    public function addRoute($identifier, $url, $controller, $action, $gets = array(), $getsRegexp = array(), $isAPI = false) {
         $this->identifiers[] = $identifier;
         $this->urls[] = $url;
         $this->controllers[] = $controller;
         $this->actions[] = $action;
         $this->gets[] = $gets;
         $this->getsRegexp[] = $getsRegexp;
+        
+        $isapiint = 0;
+        if($isAPI){
+            $isapiint = 1;
+        }
+        $this->areApi[] = $isapiint;
     }
 
     /**
@@ -115,6 +115,15 @@ abstract class Routing {
      */
     public function getGetRegexp($i) {
         return $this->getsRegexp[$i];
+    }
+    
+    /**
+     * 
+     * @param type $i
+     * @return type
+     */
+    public function isApi($i){
+        return $this->areApi[$i];
     }
 
 }

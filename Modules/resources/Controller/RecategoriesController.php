@@ -36,7 +36,7 @@ class RecategoriesController extends CoresecureController {
         $lang = $this->getLanguage();
        
         $table = new TableView();
-        $table->setTitle(ResourcesTranslator::Categories($lang));
+        $table->setTitle(ResourcesTranslator::Categories($lang), 3);
         
         $table->addLineEditButton("recategoriesedit/".$id_space);
         $table->addDeleteButton("recategoriesdelete/".$id_space);
@@ -70,7 +70,7 @@ class RecategoriesController extends CoresecureController {
         // form
         // build the form
         $form = new Form($this->request, "recategoriesedit/".$id_space);
-        $form->setTitle(ResourcesTranslator::Edit_Category($lang));
+        $form->setTitle(ResourcesTranslator::Edit_Category($lang), 3);
         $form->addHidden("id", $data["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
         

@@ -3,17 +3,16 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12" id="pm-content">
-    <div class="col-md-10 col-md-offset-1" id="pm-form">
+    <div class="col-md-10" id="pm-form">
         <div class="col-md-8 col-md-offset-2">
             <form role="form" class="form-horizontal" action="bookingnightweeditq/<?php echo $id_space ?>"
                   method="post">
 
                 <div class="page-header">
-                    <h1>
+                    <h3>
                         <?php echo BookingTranslator::Edit_NightWE($lang) ?>
                         <br> <small></small>
-                    </h1>
+                    </h3>
                 </div>
 
                 <div class="form-group">
@@ -198,6 +197,5 @@ if (count($list) < 7) {
             </form>
         </div>
     </div>
-</div>
 <?php
 endblock();

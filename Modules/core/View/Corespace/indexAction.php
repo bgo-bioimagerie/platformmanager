@@ -2,5 +2,4 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-
 <?php endblock();

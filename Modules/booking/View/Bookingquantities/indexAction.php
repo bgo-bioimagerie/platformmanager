@@ -3,8 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12" id="pm-content">
-<div class="col-md-10 col-md-offset-1" id="pm-table">
+<div class="col-md-10" id="pm-table">
     
     <?php 
     if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 
@@ -20,6 +19,5 @@
     
     <?php echo $formHtml ?>
     
-</div>
 </div>
 <?php endblock();

@@ -4,16 +4,16 @@
 <?php startblock('content') ?>
 
 <br>
-<div class="container">
-    <div class="col-md-8 col-md-offset-2">
+<div class="col-md-10" id="pm-form">
+    <div class="col-md-12">
         <form role="form" class="form-horizontal" action="bookingreservationstatsquery/<?php echo $id_space ?>"
               method="post">
 
             <div class="page-header">
-                <h1>
+                <h3>
                     <?php echo BookingTranslator::bookingreservationstats($lang) ?>
                     <br> <small></small>
-                </h1>
+                </h3>
             </div>
 
             <div class="form-group">

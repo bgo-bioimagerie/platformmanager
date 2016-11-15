@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12">
+<div class="col-md-10" id="pm-table">
     <h2><?php echo BookingTranslator::Invoice_booking($lang) ?> </h2>
     <div class="col-md-12">
         <?php echo $formByProjects ?>

@@ -59,7 +59,7 @@ class ServicesprojectsController extends CoresecureController {
         }
 
         $table = new TableView();
-        $table->setTitle(ServicesTranslator::Services_Projects($lang));
+        $table->setTitle(ServicesTranslator::Services_Projects($lang), 3);
         $table->addLineEditButton("servicesprojectedit/" . $id_space);
         $table->addDeleteButton("servicesprojectdelete/" . $id_space, "id", "id");
 
@@ -123,7 +123,7 @@ class ServicesprojectsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $form = new Form($this->request, "projectEditForm");
-        $form->setTitle(ServicesTranslator::Edit_projects($lang));
+        $form->setTitle(ServicesTranslator::Edit_projects($lang), 3);
 
         $modelProject = new SeProject();
 

@@ -38,7 +38,7 @@ class RerespsstatusController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $table = new TableView();
-        $table->setTitle(ResourcesTranslator::Resps_Status($lang));
+        $table->setTitle(ResourcesTranslator::Resps_Status($lang), 3);
         $table->addLineEditButton("rerespsstatusedit/".$id_space);
         $table->addDeleteButton("rerespsstatusdelete/".$id_space);
 
@@ -73,7 +73,7 @@ class RerespsstatusController extends CoresecureController {
         // form
         // build the form
         $form = new Form($this->request, "rerespsstatusedit");
-        $form->setTitle(ResourcesTranslator::Edit_Resps_status($lang));
+        $form->setTitle(ResourcesTranslator::Edit_Resps_status($lang), 3);
         $form->addHidden("id", $data["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
         

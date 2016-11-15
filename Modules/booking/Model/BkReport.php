@@ -25,8 +25,8 @@ class BkReport extends Model {
 		$sql = "SELECT distinct e.id, e.start_time, e.end_time, e.short_description, e.full_description, "
 				. "e.color_type_id, e.recipient_id, "
 				. "a.name as area_name, r.name as resource, r.description, a.id as area, u.login, c.name color"
-				. " FROM sy_calendar_entry e, sy_areas a, sy_resources r, core_users u, sy_color_codes c "
-				. " WHERE e.resource_id = r.id  AND u.id = e.recipient_id AND r.area_id = a.id AND c.id = e.color_type_id"		
+				. " FROM bk_calendar_entry e, re_area a, re_info r, core_users u, bk_color_codes c "
+				. " WHERE e.resource_id = r.id  AND u.id = e.recipient_id AND r.id_area = a.id AND c.id = e.color_type_id"		
 				. " AND e.start_time >= " . $datebegin . " AND e.end_time <= " .$dateend . " ";
 		
 		//echo "contition_et_ou = " . $contition_et_ou . "<br/>";

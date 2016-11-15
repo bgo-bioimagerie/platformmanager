@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12">
+<div class="col-md-10" id="pm-form">
     
     <h3><?php echo InvoicesTranslator::Edit_invoice($lang) . " : " . $invoice["number"] ?></h3>
     

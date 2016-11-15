@@ -39,7 +39,7 @@ class BookingschedulingController extends CoresecureController {
         $areas = $modelArea->getForSpace($id_space);
         
         $table = new TableView();
-        $table->setTitle(BookingTranslator::Scheduling($lang));
+        $table->setTitle(BookingTranslator::Scheduling($lang), 3);
         $table->addLineEditButton("bookingschedulingedit/".$id_space);
         
         $headers = array("name" => CoreTranslator::Name($lang));
@@ -62,7 +62,7 @@ class BookingschedulingController extends CoresecureController {
         $name = $modelArea->getName($id);
         
         $form = new Form($this->request, "bookingschedulingedit");
-        $form->setTitle(BookingTranslator::Edit_scheduling($lang) . ": " . $name);
+        $form->setTitle(BookingTranslator::Edit_scheduling($lang) . ": " . $name, 3);
         $form->addChoicesList(BookingTranslator::Availables_days($lang), 
                 BookingTranslator::DaysList($lang), 
                 array("is_monday", "is_tuesday", "is_wednesday", "is_thursday", "is_friday", "is_saturday", "is_sunday"),
@@ -70,7 +70,7 @@ class BookingschedulingController extends CoresecureController {
                 );
         
         $dc = array(); $dcid = array();  
-        for ($d = 1 ; $d < 25 ; $d++){
+        for ($d = 0 ; $d < 25 ; $d++){
             $dc[] = $d . "h";
             $dcid[] = $d;
         }

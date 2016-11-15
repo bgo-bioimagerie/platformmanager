@@ -46,7 +46,7 @@ class EcunitsController extends CoresecureController {
         $unitsArray = $this->unitModel->getUnits($sortentry);
 
         $table = new TableView();
-        $table->setTitle(CoreTranslator::Units($lang));
+        $table->setTitle(CoreTranslator::Units($lang), 3);
         $table->addLineEditButton("ecunitsedit/" . $id_space);
         $table->addDeleteButton("ecunitsdelete/" . $id_space);
         $tableHtml = $table->view($unitsArray, array("id" => "ID", "name" => CoreTranslator::Name($lang), "address" => CoreTranslator::Address($lang), "belonging" => CoreTranslator::Belonging($lang)));
@@ -81,7 +81,7 @@ class EcunitsController extends CoresecureController {
         // form
         // build the form
         $form = new Form($this->request, "Coreunits/edit");
-        $form->setTitle(CoreTranslator::Edit_Unit($lang));
+        $form->setTitle(CoreTranslator::Edit_Unit($lang), 3);
         $form->addHidden("id", $unit["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $unit["name"]);
         $form->addTextArea("address", CoreTranslator::Address($lang), false, $unit["address"]);

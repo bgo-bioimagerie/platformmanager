@@ -194,6 +194,16 @@ class EcUser extends Model {
         $this->runRequest($sql, array($url, $id_user));
     }
 
+    public function getActiveUsersInfoLetter($letter, $active) {
+        $sql = "SELECT core.*, ec.*, ecunit.name as unit, corestatus.name as status "
+                . "FROM ec_users as ec "
+                . "INNER JOIN core_users as core ON ec.id = core.id "
+                . "INNER JOIN ec_units as ecunit ON ec.id_unit = ecunit.id "
+                . "INNER JOIN core_status as corestatus ON core.status_id = corestatus.id "
+                . "WHERE core.is_active=? AND core.name LIKE '".$letter."%'";
+        return $this->runRequest($sql, array($active))->fetchAll();
+    }
+    
     public function getActiveUsersInfo($active) {
         $sql = "SELECT core.*, ec.*, ecunit.name as unit, corestatus.name as status "
                 . "FROM ec_users as ec "

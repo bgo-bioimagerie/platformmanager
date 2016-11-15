@@ -25,9 +25,11 @@ class Request {
      * @param array $parameters
      *        	Parameters of the request
      */
-    public function __construct($parameters) {
+    public function __construct($parameters, $createSession = true) {
         $this->parameters = $parameters;
-        $this->session = new Session ();
+        if($createSession){
+            $this->session = new Session ();
+        }
     }
 
     /**

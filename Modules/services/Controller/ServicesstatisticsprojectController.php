@@ -6,7 +6,6 @@ require_once 'Framework/TableView.php';
 
 require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
-
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeService.php';
@@ -49,7 +48,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         // build the form
         $form = new Form($this->request, "formbalancesheet");
-        $form->setTitle(ServicesTranslator::Projects_balance($lang));
+        $form->setTitle(ServicesTranslator::Projects_balance($lang), 3);
         $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, "");
         $form->addDate("end_period", ServicesTranslator::End_period($lang), true, "");
 

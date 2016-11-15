@@ -1,64 +1,107 @@
-<?php 
+<?php
 require_once 'Modules/core/Model/CoreConfig.php';
 $modelCoreConfig = new CoreConfig();
-$menucolor = $modelCoreConfig->getParamSpace("servicesmenucolor", $id_space);
-$menucolortxt = $modelCoreConfig->getParamSpace("servicesmenucolortxt", $id_space);
-if ($menucolor == ""){
-	$menucolor = "#337ab7";
+$ecmenucolor = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
+$ecmenucolortxt = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
+if ($ecmenucolor == "") {
+    $ecmenucolor = "#f1f1f1";
 }
-if($menucolortxt == ""){
-	$menucolortxt = "#ffffff";
+if ($ecmenucolortxt == "") {
+    $ecmenucolortxt = "#000";
 }
 ?>
 
-<div class="col-md-12" style="padding: 7px; background-color: <?php echo $menucolor ?>; color:<?php echo $menucolortxt ?>;">
-    
-    <div class="col-md-2" style="margin-top: 0px;">
-        <h2><?php echo ServicesTranslator::services($lang) ?></h2>
-    </div>
-    <div class="col-md-10">
-        <div class="col-md-3">
-            <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='services/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Services($lang) ?></button>
-		<button onclick="location.href='servicesedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
-            </div>
-            
-        </div>
-        <div class="col-md-3">
-             <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='servicesstock/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Stock($lang) ?></button>
-	 </div>
-            <br/>
-            <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='servicespurchase/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Purchase($lang) ?></button>
-		<button onclick="location.href='servicespurchaseedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;">+</button>
-            </div>
-       </div>
+<head>
+    <style>
+        #menu-button-div a{
+            font: 12px Arial;
+            text-decoration: none;
+            color: #333333;
+            padding-left: 12px;
+            /* padding: 2px 6px 2px 6px; */
+        }
         
+        #menu-button-div{
+            margin-top: -2px;
+            /* padding: 2px 6px 2px 6px; */
+        }
+        
+        #menu-button-div:hover{
+            font: 12px Arial;
+            text-decoration: none;
+            background-color: #e1e1e1;
+            color: #333333;
+            padding: 2px 2px 2px 2px;
+        }
+        
+        #separatorp{
+            padding-top: 12px;
+            text-transform: uppercase; 
+            font-weight: bold; 
+            font-size: 11px;
+            color: #616161;
+        }
+    </style>
+</head>
 
-        <div class="col-md-3">
-         <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='servicesordersopened/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Opened_orders($lang) ?></button>
-		<br/>
-                <button onclick="location.href='servicesordersclosed/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Closed_orders($lang) ?></button>
-                <br/>
-            	<button onclick="location.href='servicesordersall/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::All_orders($lang) ?></button>
-		<br/>
-                <button onclick="location.href='servicesorderedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::New_orders($lang) ?></button>
-            </div>		
+<div class="col-md-2" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
+
+    <div class="col-md-12" style="margin-top: 0px;">
+        <h4 style="text-transform: uppercase;"><?php echo ServicesTranslator::services($lang) ?></h4>
+    </div>
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo ServicesTranslator::Listing($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
         </div>
-        
-        <div class="col-md-3">
-         <div class="btn-group" data-toggle="buttons">
-            	<button onclick="location.href='servicesprojectsopened/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Opened_projects($lang) ?></button>
-		<br/>
-                <button onclick="location.href='servicesprojectsclosed/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::Closed_projects($lang) ?></button>
-                <br/>
-            	<button onclick="location.href='servicesprojectsall/<?php echo $id_space ?>'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::All_projects($lang) ?></button>
-		<br/>
-                <button onclick="location.href='servicesprojectedit/<?php echo $id_space ?>/0'" class="btn btn-link" style="color: <?php echo  $menucolortxt ?>;"><?php echo  ServicesTranslator::New_project($lang) ?></button>
-            </div>		
+        <div  class="btn-block" id="menu-button-div">
+            <a id="menu-button" href="services/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a><br/>
+        </div>	
+    </div>
+    
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesstock/<?php echo $id_space ?>"><?php echo ServicesTranslator::Stock($lang) ?></a>      
+        </div>
+        <br/>
+        <div  class="btn-block" id="menu-button-div">
+            <a id="menu-button" href="servicespurchaseedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_Purchase($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicespurchase/<?php echo $id_space ?>"><?php echo ServicesTranslator::Purchase($lang) ?></a>      
         </div>
     </div>
     
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo ServicesTranslator::Opened_orders($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesordersopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_orders($lang) ?></a>      
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesordersclosed/<?php echo $id_space ?>"><?php echo ServicesTranslator::Closed_orders($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesordersall/<?php echo $id_space ?>"><?php echo ServicesTranslator::All_orders($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesorderedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_orders($lang) ?></a><br/>
+        </div>
+    </div>
+    
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo ServicesTranslator::Projects($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesprojectsopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_projects($lang) ?></a>      
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesprojectsclosed/<?php echo $id_space ?>"><?php echo ServicesTranslator::Closed_projects($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesprojectsall/<?php echo $id_space ?>"><?php echo ServicesTranslator::All_projects($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesprojectedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_project($lang) ?></a><br/>
+        </div>
+    </div>
 </div>

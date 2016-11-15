@@ -88,6 +88,11 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space, $user_role))->fetchAll();
     }
     
+    public function getAllSpaceMenusModules($id_space){
+        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+    
     public function getAllSpaceMenus($id_space){
         $sql = "SELECT * FROM core_space_menus WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
@@ -246,4 +251,8 @@ class CoreSpace extends Model {
         $this->runRequest($sql, array($id_space, $id_user));
     }
 
+    public function delete($id){
+        $sql = "DELETE FROM core_spaces WHERE id=?";
+        $this->runRequest($sql, array($id));
+    }
 }

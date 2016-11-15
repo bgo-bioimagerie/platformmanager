@@ -147,7 +147,8 @@ class FormAdd {
             $html .= "	<div class=\"col-xs-12\">";
         }
 
-        $html .= "<table id=\"dataTable\" class=\"table table-striped\"> ";
+        $tableID = $this->id . "table";
+        $html .= "<table id=\"".$tableID."\" class=\"table table-striped\"> ";
         $html .= "<thead>";
         $html .= "<tr>";
         $html .= "<th></th>";
@@ -213,8 +214,8 @@ class FormAdd {
         $html .= "</tbody>";
         $html .= "</table>";
         $html .= "<div class=\"col-md-6\">";
-        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('dataTable')\"/>";
-        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('dataTable')\"/>";
+        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
+        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
         $html .= "<br>";
         $html .= "</div>";
 
@@ -229,7 +230,9 @@ class FormAdd {
      * @return string FormAdd Javascript content
      */
     public function getJavascript() {
-        return file_get_contents('Framework/formadd_script.php');
+        $tableID = $this->id . "table";
+        $string =  file_get_contents('Framework/formadd_script.php');
+        return str_replace("tableIDname", $tableID, $string);
     }
 
 }

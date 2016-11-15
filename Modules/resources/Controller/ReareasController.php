@@ -36,7 +36,7 @@ class ReareasController extends CoresecureController {
         $lang = $this->getLanguage();
        
         $table = new TableView();
-        $table->setTitle(ResourcesTranslator::Areas($lang));
+        $table->setTitle(ResourcesTranslator::Areas($lang), 3);
         $table->addLineEditButton("reareasedit/".$id_space);
         $table->addDeleteButton("reareasdelete/".$id_space);
         
@@ -74,16 +74,19 @@ class ReareasController extends CoresecureController {
         // form
         // build the form
         $form = new Form($this->request, "reareasedit/".$id_space);
-        $form->setTitle(ResourcesTranslator::Edit_Area($lang));
+        $form->setTitle(ResourcesTranslator::Edit_Area($lang), 3);
         $form->addHidden("id", $area["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $area["name"]);
+        $form->addSelect("is_restricted", ResourcesTranslator::IsRestricted("lang"), 
+                array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $area["restricted"]);
         
         $form->setValidationButton(CoreTranslator::Ok($lang), "reareasedit/".$id_space."/".$id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "reareas/".$id_space);
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
+            $this->model->set($form->getParameter("id"), $form->getParameter("name"), 
+                    $form->getParameter("is_restricted"), $id_space);
             $this->redirect("reareas/".$id_space);
         } else {
             // set the view

@@ -52,7 +52,7 @@ class ServicesstatisticsorderController extends CoresecureController {
 
         // build the form
         $form = new Form($this->request, "formbalancesheet");
-        $form->setTitle(ServicesTranslator::OrderBalance($lang));
+        $form->setTitle(ServicesTranslator::OrderBalance($lang), 3);
         $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, "");
         $form->addDate("end_period", ServicesTranslator::End_period($lang), true, "");
 
@@ -196,7 +196,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('C2', CoreTranslator::User($lang));
         $objPHPExcel->getActiveSheet()->getStyle('C2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('D2', ServicesTranslator::Project_number($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('D2', ServicesTranslator::No_identification($lang));
         $objPHPExcel->getActiveSheet()->getStyle('D2')->applyFromArray($styleBorderedCell);
 
 
@@ -261,7 +261,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->setCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_identification($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
 
         $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -401,7 +401,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_identification($lang));
         //$objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
 
         $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);

@@ -43,7 +43,7 @@ class RevisasController extends CoresecureController {
 
         $table = new TableView ();
 
-        $table->setTitle(ResourcesTranslator::Visa($lang));
+        $table->setTitle(ResourcesTranslator::Visa($lang), 3);
         //$table->ignoreEntry("id", 1);
         $table->addLineEditButton("resourceseditvisa/" . $id_space);
         $table->addDeleteButton("resourcesdeletevisa/" . $id_space, "id", "id");
@@ -94,7 +94,7 @@ class RevisasController extends CoresecureController {
 
         // build the form
         $form = new Form($this->request, "formeditVisa");
-        $form->setTitle(ResourcesTranslator::Edit_Visa($lang));
+        $form->setTitle(ResourcesTranslator::Edit_Visa($lang), 3);
 
         $modelResourcesCategory = new ReCategory();
         $resourcesCategories = $modelResourcesCategory->getBySpace($id_space);
