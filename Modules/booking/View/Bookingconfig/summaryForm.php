@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-md-10 col-md-offset-1">
+<div class="col-xs-12 col-md-10 col-md-offset-1" id="pm-form">
     <div class="page-header">
         <h3>
             <?php echo BookingTranslator::Booking_summary_options($lang) ?> <br> <small></small>

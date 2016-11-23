@@ -48,18 +48,26 @@ class BkBookingSettings extends Model {
      * @param string $sortEntry
      * @return array List of the entries
      */
-    public function entries($sortEntry = "id") {
+    public function entries($id_space, $sortEntry = "id") {
 
         try {
-            //if ($this->isTable("bk_booking_settings")){
-            $sql = "select * from bk_booking_settings order by " . $sortEntry;
-            $req = $this->runRequest($sql);
-            return $req->fetchAll();
-            //}
-            //else{
-            //	return "";
-            //}
-        } catch (Exception $e) {
+            $sql = "select * from bk_booking_settings WHERE id_space=? order by " . $sortEntry;
+            $req = $this->runRequest($sql, array($id_space));
+            if($req->rowCount() > 0){
+                return $req->fetchAll();
+            }
+            else{
+                $this->setEntry("User", 1, 1, 1, "normal", $id_space);
+                $this->setEntry("Phone", 1, 1, 2, "normal", $id_space);
+                $this->setEntry("Short desc", 1, 1, 3, "normal", $id_space);
+                $this->setEntry("Desc", 0, 0, 4, "normal", $id_space);
+                
+                $sql = "select * from bk_booking_settings WHERE id_space=? order by " . $sortEntry;
+                $req = $this->runRequest($sql, array($id_space));
+                return $req->fetchAll();
+            }
+        } 
+        catch (Exception $e) {
             return "";
         }
     }

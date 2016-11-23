@@ -34,7 +34,6 @@ class BookingconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        
         // menu activation form
         $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
@@ -85,11 +84,11 @@ class BookingconfigController extends CoresecureController {
         
         $setbookingoptionsquery = $this->request->getParameterNoException("setbookingoptionsquery");
         if ($setbookingoptionsquery == "yes") {
-            $bookingSettings = $this->optionsQuery();
+            $bookingSettings = $this->optionsQuery($id_space);
         }
         else{
             $modelBookingSettings = new BkBookingSettings();
-            $bookingSettings = $modelBookingSettings->entries();
+            $bookingSettings = $modelBookingSettings->entries($id_space);
         }
 
         // view
@@ -191,7 +190,7 @@ class BookingconfigController extends CoresecureController {
         return $form;
     }
 
-    protected function optionsQuery() {
+    protected function optionsQuery($id_space) {
         // set booking settings
 
         $modelBookingSetting = new BkBookingSettings();
@@ -200,26 +199,25 @@ class BookingconfigController extends CoresecureController {
         $tag_title_visible_rname = $this->request->getParameterNoException("tag_title_visible_rname");
         $tag_position_rname = $this->request->getParameterNoException("tag_position_rname");
         $tag_font_rname = $this->request->getParameterNoException("tag_font_rname");
-        $modelBookingSetting->setEntry("User", $tag_visible_rname, $tag_title_visible_rname, $tag_position_rname, $tag_font_rname);
-
+        $modelBookingSetting->setEntry("User", $tag_visible_rname, $tag_title_visible_rname, $tag_position_rname, $tag_font_rname, $id_space);
 
         $tag_visible_rphone = $this->request->getParameterNoException("tag_visible_rphone");
         $tag_title_visible_rphone = $this->request->getParameterNoException("tag_title_visible_rphone");
         $tag_position_rphone = $this->request->getParameterNoException("tag_position_rphone");
         $tag_font_rphone = $this->request->getParameterNoException("tag_font_rphone");
-        $modelBookingSetting->setEntry("Phone", $tag_visible_rphone, $tag_title_visible_rphone, $tag_position_rphone, $tag_font_rphone);
+        $modelBookingSetting->setEntry("Phone", $tag_visible_rphone, $tag_title_visible_rphone, $tag_position_rphone, $tag_font_rphone, $id_space);
 
         $tag_visible_sdesc = $this->request->getParameterNoException("tag_visible_sdesc");
         $tag_title_visible_sdesc = $this->request->getParameterNoException("tag_title_visible_sdesc");
         $tag_position_sdesc = $this->request->getParameterNoException("tag_position_sdesc");
         $tag_font_sdesc = $this->request->getParameterNoException("tag_font_sdesc");
-        $modelBookingSetting->setEntry("Short desc", $tag_visible_sdesc, $tag_title_visible_sdesc, $tag_position_sdesc, $tag_font_sdesc);
+        $modelBookingSetting->setEntry("Short desc", $tag_visible_sdesc, $tag_title_visible_sdesc, $tag_position_sdesc, $tag_font_sdesc, $id_space);
 
         $tag_visible_desc = $this->request->getParameterNoException("tag_visible_desc");
         $tag_title_visible_desc = $this->request->getParameterNoException("tag_title_visible_desc");
         $tag_position_desc = $this->request->getParameterNoException("tag_position_desc");
         $tag_font_desc = $this->request->getParameterNoException("tag_font_desc");
-        $modelBookingSetting->setEntry("Desc", $tag_visible_desc, $tag_title_visible_desc, $tag_position_desc, $tag_font_desc);
+        $modelBookingSetting->setEntry("Desc", $tag_visible_desc, $tag_title_visible_desc, $tag_position_desc, $tag_font_desc, $id_space);
 
         //$bookingOptionMessage = "Changes have been saved";
         $modelBookingSettings = new BkBookingSettings();
