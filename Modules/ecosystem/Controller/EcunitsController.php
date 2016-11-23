@@ -72,8 +72,9 @@ class EcunitsController extends CoresecureController {
 
         // belongings
         $modelBelonging = new EcBelonging();
-        $belongingsid = $modelBelonging->getIds();
-        $belongingsnames = $modelBelonging->getNames();
+        $belongingsList = $modelBelonging->getForList();
+        //$belongingsid = $modelBelonging->getIds();
+        //$belongingsnames = $modelBelonging->getNames();
 
         // lang
         $lang = $this->getLanguage();
@@ -85,7 +86,7 @@ class EcunitsController extends CoresecureController {
         $form->addHidden("id", $unit["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $unit["name"]);
         $form->addTextArea("address", CoreTranslator::Address($lang), false, $unit["address"]);
-        $form->addSelect("id_belonging", CoreTranslator::Belonging($lang), $belongingsnames, $belongingsid, $unit["id_belonging"]);
+        $form->addSelect("id_belonging", CoreTranslator::Belonging($lang), $belongingsList["names"], $belongingsList["ids"], $unit["id_belonging"]);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "ecunitsedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "ecunits/" . $id_space);

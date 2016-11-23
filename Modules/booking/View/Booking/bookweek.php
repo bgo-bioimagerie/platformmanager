@@ -180,7 +180,7 @@ else if($size_bloc_resa == 3600){
 	$heightCol = $agendaStyle["line_height"] . "px";;
 }
 ?>
-	<div id="tcelltop" style="height: <?php echo  $agendaStyle["line_height"]+50 ?>px; background-color:<?php echo $agendaStyle["header_background"]?>; color: <?php echo  $agendaStyle["header_color"]?>"></div> <!-- For the resource title space -->
+	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]+50 ?>px; background-color:<?php echo $agendaStyle["header_background"]?>; color: <?php echo  $agendaStyle["header_color"]?>"></div> <!-- For the resource title space -->
 	
 	<?php 
 	// Hours
@@ -199,7 +199,7 @@ else if($size_bloc_resa == 3600){
 <!-- hours reservation -->
 <div class="col-xs-11" id="colDiv">
 
-	<div id="tcelltop" style="height: <?php echo  $agendaStyle["line_height"] ?>px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
+	<div id="tcelltop" style="width:100%; height: <?php echo $agendaStyle["header_height"] ?>px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
 	<p class="text-center"><b><?php echo  $this->clean($resourceBase['name']) ?></b><br/><?php echo  $this->clean($resourceBase['description']) ?></p>
 	</div>
 

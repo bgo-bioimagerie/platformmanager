@@ -54,6 +54,19 @@ class EcBelonging extends Model {
         return $user->fetchAll();
     }
 
+    public function getForList(){
+        $sql = "select * from ec_belongings order by id ASC;";
+        $user = $this->runRequest($sql);
+        $data =  $user->fetchAll();
+        
+        $ids = array();
+        $names = array();
+        foreach($data as $d){
+            $ids[] = $d["id"];
+            $names[] = $d["name"]; 
+        }
+        return array("ids" => $ids, "names" => $names);
+    }
     /**
      * get the names of all the belongings
      *

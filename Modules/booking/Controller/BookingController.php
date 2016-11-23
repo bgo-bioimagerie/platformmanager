@@ -672,6 +672,9 @@ class BookingController extends BookingabstractController {
         $resourceBase["accessibility_id"] = $modelAccess->getAccessId($resourceBase["id"]);
         $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
+        $modelCSS = new BkBookingTableCSS();
+        $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
+        
         // view
         $this->render(array(
             'lang' => $lang,
@@ -688,7 +691,8 @@ class BookingController extends BookingabstractController {
             'calEntries' => $calEntries,
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
-            'message' => $message
+            'message' => $message,
+            'agendaStyle' => $agendaStyle
                 ), "bookmonth");
     }
 

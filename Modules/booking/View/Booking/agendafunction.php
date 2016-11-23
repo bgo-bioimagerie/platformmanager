@@ -1,6 +1,6 @@
 <?php
 
-function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase){
+function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle){
 	
 	$mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août","Septembre", "Octobre", "Novembre", "Décembre");
 	
@@ -85,10 +85,10 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase){
 				<a href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry["id"] ?>">
 				
 				<div style="background-color: <?php echo $entry['color_bg']?>; max-width:200px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;" >
-				<p style="border-bottom: thin solid #e1e1e1; font-size:12px; color:<?php echo $entry['color_text']?>;" >
+				<p style="border-bottom: thin solid #e1e1e1; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px; color:<?php echo $entry['color_text']?>;" >
 				 <?php echo  date("H:i", $entry["start_time"]) . " - " . date("H:i", $entry["end_time"]) ?></p>
 				 <?php $text = $modelBookingSetting->getSummary($entry["recipient_fullname"], $entry['phone'], $shortDescription, $entry['full_description'], true); ?>
-				<p style="font-size:12px; color:<?php echo $entry['color_text']?>;"><?php echo  $text ?></p>
+				<p style="font-size:<?php echo $agendaStyle["resa_font_size"] ?>px; color:<?php echo $entry['color_text']?>;"><?php echo  $text ?></p>
 				</div>
 				</a>
 				<?php

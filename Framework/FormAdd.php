@@ -16,11 +16,13 @@ class FormAdd {
     protected $parseRequest;
     protected $addButtonName;
     protected $removeButtonName;
+    protected $buttonsVisible;
 
     public function __construct(Request $request, $id) {
         $this->request = $request;
         $this->id = $id;
         $this->parseRequest = false;
+        $this->buttonsVisible = true;
     }
 
     /**
@@ -33,6 +35,10 @@ class FormAdd {
         $this->removeButtonName = $removeButtonName;
     }
 
+    public function setButtonsVisible($visible){
+        $this->buttonsVisible = $visible;
+    }
+    
     /**
      * Set content values
      * @param type $name content name
@@ -151,7 +157,9 @@ class FormAdd {
         $html .= "<table id=\"".$tableID."\" class=\"table table-striped\"> ";
         $html .= "<thead>";
         $html .= "<tr>";
-        $html .= "<th></th>";
+        if($this->buttonsVisible){
+            $html .= "<th></th>";
+        }
         for ($l = 0; $l < count($this->labels); $l++) {
             if ($this->types[$l] == "hidden") {
                 $html .= "<th style=\"width:0em;\"> </th>";
@@ -168,7 +176,9 @@ class FormAdd {
         if (count($this->values[0]) > 0) {
             for ($i = 0; $i < count($this->values[0]); $i++) {
                 $html .= "<tr>";
-                $html .= "<td><input type=\"checkbox\" name=\"chk\"/></td>";
+                if($this->buttonsVisible){
+                    $html .= "<td><input type=\"checkbox\" name=\"chk\"/></td>";
+                }
                 for ($j = 0; $j < count($this->types); $j++) {
                     $html .= "<td>";
 
@@ -192,7 +202,9 @@ class FormAdd {
             }
         } else {
             $html .= "<tr>";
-            $html .= "<td><input type=\"checkbox\" name=\"chk\"/></td>";
+            if($this->buttonsVisible){
+                $html .= "<td><input type=\"checkbox\" name=\"chk\"/></td>";
+            }
             for ($j = 0; $j < count($this->names); $j++) {
                 $html .= "<td>";
                 if ($this->types[$j] == "select") {
@@ -213,11 +225,14 @@ class FormAdd {
 
         $html .= "</tbody>";
         $html .= "</table>";
-        $html .= "<div class=\"col-md-6\">";
-        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
-        $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
-        $html .= "<br>";
-        $html .= "</div>";
+        
+        if($this->buttonsVisible){
+            $html .= "<div class=\"col-md-6\">";
+            $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
+            $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
+            $html .= "<br>";
+            $html .= "</div>";
+        }
 
         $html .= "</div>";
         $html .= "</div>";

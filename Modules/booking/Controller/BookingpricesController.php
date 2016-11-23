@@ -97,6 +97,7 @@ class BookingpricesController extends CoresecureController {
         $form->setTitle(BookingTranslator::Prices($lang));
 
         $formAdd = new FormAdd($this->request, "bookingPricesFormAdd");
+        $formAdd->setButtonsVisible(false);
         $formAdd->addHidden("id_resource", $resourcesIds);
         $formAdd->addText("name", ResourcesTranslator::resources($lang), $resourcesNames);
         for ($b = 0; $b < count($belongings); $b++) {

@@ -30,7 +30,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		
 		//echo "cal entries size = " . count($calEntries) . "--";
 		//print_r($calEntries);
-		$modelBookingSetting = new SyBookingSettings();
+		$modelBookingSetting = new BkBookingSettings();
 		$leftBlocks = ($day_end*3600 - $day_begin*3600)/900;
 		//echo "leftBlocks = " . $leftBlocks . "</br>";
 		$lineColorId = 0;
@@ -168,7 +168,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		//echo "cal entries size = " . count($calEntries) . "--";
 		//print_r($calEntries);
 		$leftBlocks = ($day_end*3600 - $day_begin*3600)/1800;
-		$modelBookingSetting = new SyBookingSettings();
+		$modelBookingSetting = new BkBookingSettings();
 		$lineColorId = 0;
 		for ($h = $day_begin ; $h < $day_end ; $h = $h+0.5){
 			

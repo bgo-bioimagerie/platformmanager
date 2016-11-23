@@ -15,7 +15,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 	
 <div class="col-xs-12" style="background-color: #ffffff;">
 <?php 	
-drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourceBase);
+drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourceBase, $agendaStyle);
 ?>
 </div>
 

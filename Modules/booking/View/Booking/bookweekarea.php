@@ -68,8 +68,8 @@ $dayWidth = 100 / 8;
 
     <!-- Add the table title -->
 
-    <div class="col-lg-12"  style="background-color: #ffffff; padding-top: 12px;">
-        <div class="col-lg-10 col-lg-offset-1">
+    <div class="col-md-12"  style="background-color: #ffffff; padding-top: 12px;">
+        <div class="col-md-10 col-md-offset-1">
             <?php
             $message = "";
             if (isset($_SESSION["message"])) {
@@ -93,7 +93,7 @@ $dayWidth = 100 / 8;
 unset($_SESSION["message"]) ?>
             </div>
 
-            <div class="col-lg-12"  style="background-color: #ffffff; padding-bottom: 12px;">
+            <div class="col-md-12"  style="background-color: #ffffff; padding-bottom: 12px;">
 
                 <div class="col-md-6 text-left">
                     <div class="btn-group" role="group" aria-label="...">
@@ -144,13 +144,13 @@ unset($_SESSION["message"]) ?>
         <!-- hours reservation -->
 
 
-        <div class="col-lg-12" id="colDiv0">
+        <div class="col-md-12" id="colDiv0">
 
             <!--  Area title -->
 
-            <div class="col-lg-2" id="colDiv0">
+            <div class="col-md-2" id="colDiv0">
             </div>
-            <div class="col-lg-8" id="colDiv0">
+            <div class="col-md-8" id="colDiv0">
                 <div style="height: 50px;">
                     <p class="text-center">
                         <b><?php echo $this->clean($areaname) ?></b>
@@ -159,7 +159,7 @@ unset($_SESSION["message"]) ?>
             </div>
         </div>	
 
-        <div class="col-lg-12">
+        <div class="col-md-12">
             <div class="row seven-cols">
                 <div class="row-same-height">
                     <?php
@@ -182,7 +182,7 @@ unset($_SESSION["message"]) ?>
 
                         <?php
                         $styleLine = "";
-                        $styleLineHeader = "style=\" text-align: center; background-color:" . $agendaStyle["header_background"] . "; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1; color: " . $agendaStyle["header_color"] . ";\"";
+                        $styleLineHeader = "style=\"text-align: center; background-color:" . $agendaStyle["header_background"] . "; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1; color: " . $agendaStyle["header_color"] . ";\"";
                         if (!($i % 2)) {
                             $styleLine = "style=\"background-color:#e1e1e1; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1;\"";
                         } else {
@@ -301,8 +301,8 @@ unset($_SESSION["message"]) ?>
                                                         $text = date("H:i", $entry ["start_time"]) . " - " . $txtEndTime . "<br />";
                                                         $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
                                                         ?>
-                                                        <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
-                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">
+                                                        <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>; "> 
+                                                            <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px;" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">
                                                         <?php echo $text ?>
                                                             </a>
                                                         </div>
