@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
-require_once 'Modules/documents/Model/Documents.php';
+require_once 'Modules/documents/Model/Document.php';
 
 /**
  * Class defining methods to install and initialize the core database
@@ -17,7 +17,7 @@ class DocumentsInstall extends Model {
      */
     public function createDatabase() {        
 
-        $model = new Documents();
+        $model = new Document();
         $model->createTable();
         
         if (!file_exists('data/documents/')) {
