@@ -88,10 +88,14 @@ class FormHtml {
      * @param type $name Text to display
      * @return string HTML code
      */
-    static public function comment($name) {
-        $html = "<div >";
+    static public function comment($name, $labelWidth, $inputWidth) {
+        $html = "<div class=\"form-group" . "\">";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . "</label>";
+        $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<p>" . $name . "</p>";
         $html .= "</div>";
+        $html .= "</div>";
+        
         return $html;
     }
 

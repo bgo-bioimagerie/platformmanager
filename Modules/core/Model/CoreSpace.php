@@ -97,6 +97,31 @@ class CoreSpace extends Model {
         $sql = "SELECT * FROM core_space_menus WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+    
+    public function getUserSpacesRoles($id_space, $id_user, $lang = "en"){
+        $sql = "SELECT * FROM core_j_spaces_user WHERE id_space!=? AND id_user=?";
+        $req = $this->runRequest($sql, array($id_space, $id_user));
+        $roles = $req->fetchAll();
+        //print_r($roles);
+        for($i = 0 ; $i < count($roles) ; $i++){
+            $sql = "SELECT name FROM core_spaces WHERE id=?";
+            $name = $this->runRequest($sql, array($roles[$i]["id_space"]))->fetch();
+            $roles[$i]["space_name"] = $name[0];
+            if($roles[$i]["status"]  == 1){
+                $roles[$i]["role_name"] = CoreTranslator::Visitor($lang);
+            }
+            else if($roles[$i]["status"]  == 2){
+                $roles[$i]["role_name"] = CoreTranslator::User($lang);
+            }
+            else if($roles[$i]["status"]  == 3){
+                $roles[$i]["role_name"] = CoreTranslator::Manager($lang);
+            }
+            else if($roles[$i]["status"]  == 4){
+                $roles[$i]["role_name"] = CoreTranslator::Admin($lang);
+            }
+        }
+        return $roles;
+    }
 
     public function getUserSpaceRole($id_space, $id_user) {
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
@@ -105,10 +130,10 @@ class CoreSpace extends Model {
             $tmp = $req->fetch();
             return $tmp["status"];
         } else {
-            if ($this->isSpacePublic($id_space)) {
-                return CoreSpace::$USER;
-            }
-            return 0;
+            //if ($this->isSpacePublic($id_space)) {
+            //    return CoreSpace::$USER;
+            //}
+            return -1;
         }
     }
 

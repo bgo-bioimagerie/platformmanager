@@ -1290,5 +1290,13 @@ class CoreTranslator {
         }
         return "New";
     }
+ 
+    public static function Inactive($lang) {
+        if ($lang == "fr") {
+            return "Inactif";
+        }
+        return "Inactive";
+    }
+    
     
 }

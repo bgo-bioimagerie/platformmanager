@@ -249,7 +249,30 @@ class EcusersController extends CoresecureController {
         $form->addDate("date_end_contract", EcosystemTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
 
         if ($id > 0) {
-            $form->addSelect("is_active", CoreTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $user["is_active"]);
+            //$form->addSelect("is_active", CoreTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $user["is_active"]);
+            //$form->addText("source", CoreTranslator::Source($lang), false, $user["source"], "disabled");
+            
+            // get the user status for each public space
+            $modelSpace = new CoreSpace();
+            $spaceName = $modelSpace->getSpace($id_space);
+            $spaceName = $spaceName["name"];
+            $role = $modelSpace->getUserSpaceRole($id_space, $id);
+            if($role == -1){
+                $role = 0;
+            }
+            $roles = $modelSpace->roles($lang);
+            $roles["names"][] = CoreTranslator::Inactive($lang);
+            $roles["ids"][] = 0;
+            
+            $otherRoles = $modelSpace->getUserSpacesRoles($id_space, $id, $lang);
+            $text = "";
+            
+            for($i = 0 ; $i < count($otherRoles) ; $i++){
+                $text .= $otherRoles[$i]["space_name"] . ": " . $otherRoles[$i]["role_name"] . ","; 
+            }
+            
+            $form->addSelect("space_status", EcosystemTranslator::Status($lang) . " " . $spaceName, $roles["names"], $roles["ids"], $role);
+            $form->addComment($text, "");
             $form->addText("source", CoreTranslator::Source($lang), false, $user["source"], "disabled");
         }
 
@@ -262,11 +285,12 @@ class EcusersController extends CoresecureController {
         if ($form->check()) {
 
             if ($id > 0) {
-                $this->userModel->edit($id, $this->request->getParameter("name"), $this->request->getParameter("firstname"), $this->request->getParameter("login"), $this->request->getParameter("email"), $this->request->getParameter("phone"), $this->request->getParameter("unit"), $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), $this->request->getParameter("date_convention"), $this->request->getParameter("date_end_contract"), $this->request->getParameter("is_active")
+                $this->userModel->edit($id, $this->request->getParameter("name"), $this->request->getParameter("firstname"), $this->request->getParameter("login"), $this->request->getParameter("email"), $this->request->getParameter("phone"), $this->request->getParameter("unit"), $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), $this->request->getParameter("date_convention"), $this->request->getParameter("date_end_contract"), 1
                 );
                 $modelResp = new EcResponsible();
                 $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                 $this->uploadConvention($id);
+                $modelSpace->setUser($id, $id_space, $this->request->getParameter("space_status"));
                 $this->redirect("ecusers/" . $id_space);
             } else {
                 $modelUser = new CoreUser();
@@ -291,6 +315,7 @@ class EcusersController extends CoresecureController {
                     $modelResp = new EcResponsible();
                     $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                     $this->uploadConvention($id);
+                    $modelSpace->setUser($id, $id_space, $this->request->getParameter("space_status"));
                     $this->redirect("ecusers/" . $id_space);
                 }
             }

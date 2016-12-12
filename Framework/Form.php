@@ -599,7 +599,7 @@ class Form {
                 $html .= $formHtml->separator($this->names[$i], 5);
             }
             if ($this->types[$i] == "comment") {
-                $html .= $formHtml->comment($this->names[$i]);
+                $html .= $formHtml->comment($this->names[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "hidden") {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
