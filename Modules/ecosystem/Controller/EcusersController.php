@@ -252,12 +252,12 @@ class EcusersController extends CoresecureController {
 
         $form->addDate("date_end_contract", EcosystemTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
 
+        $modelSpace = new CoreSpace();
         if ($id > 0) {
             //$form->addSelect("is_active", CoreTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $user["is_active"]);
             //$form->addText("source", CoreTranslator::Source($lang), false, $user["source"], "disabled");
             
             // get the user status for each public space
-            $modelSpace = new CoreSpace();
             $spaceName = $modelSpace->getSpace($id_space);
             $spaceName = $spaceName["name"];
             $role = $modelSpace->getUserSpaceRole($id_space, $id);
