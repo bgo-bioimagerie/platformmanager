@@ -93,6 +93,9 @@ class EcusersController extends CoresecureController {
                     $usersArray[$i]['resp_name'] .= ", ";
                 }
             }
+// spaces
+            $modelSpace = new CoreSpace();
+            $usersArray[$i]['spaces'] = $modelSpace->getUserSpacesRolesSummary($usersArray[$i]['id']);
         }
 
         //print_r($usersArray);
@@ -125,6 +128,7 @@ class EcusersController extends CoresecureController {
             "resp_name" => CoreTranslator::Responsible($lang),
             "status" => CoreTranslator::Status($lang),
             "is_responsible" => CoreTranslator::is_responsible($lang),
+            "spaces" => CoreTranslator::Spaces($lang),
             "id" => "ID",
         );
 

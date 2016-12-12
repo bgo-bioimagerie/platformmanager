@@ -98,6 +98,22 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
+    
+    public function getUserSpacesRolesSummary($id_user){
+        $sql = "SELECT id_space FROM core_j_spaces_user WHERE id_user=?";
+        $req = $this->runRequest($sql, array($id_user));
+        $roles = $req->fetchAll();
+        $spacesNames = "";
+        for($i = 0 ; $i < count($roles) ; $i++){
+            $sql = "SELECT name FROM core_spaces WHERE id=?";
+            $name = $this->runRequest($sql, array($roles[$i]["id_space"]))->fetch();
+            $spacesNames .= $name[0];
+            if ($i < count($roles)-1){
+                $spacesNames .= ", ";
+            }
+        }
+        return $spacesNames;
+    }
     public function getUserSpacesRoles($id_space, $id_user, $lang = "en"){
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_space!=? AND id_user=?";
         $req = $this->runRequest($sql, array($id_space, $id_user));
