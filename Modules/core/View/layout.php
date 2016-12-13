@@ -1,4 +1,5 @@
 <!doctype html>
+<?php require_once 'Framework/ti.php' ?>
 <?php require_once 'Modules/layout.php' ?>
 
 <!-- header -->
