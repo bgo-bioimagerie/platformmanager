@@ -243,6 +243,17 @@ class CoreSpace extends Model {
             $this->runRequest($sql, array($id_user, $id_space, $status));
         }
     }
+    
+    public function setAllUsers($id_space, $status){
+        $sql = "SELECT id FROM core_users";
+        $users = $this->runRequest($sql)->fetchAll();
+        foreach($users as $user){
+            $role = $this->getUserSpaceRole($id_space, $user["id"]);
+            if($role < $status){
+                $this->setUser($user["id"], $id_space, $status);
+            }
+        }
+    }
 
     public function isUser($id_user, $id_space) {
         $sql = "SELECT id_user FROM core_j_spaces_user WHERE id_user=? AND id_space=?";

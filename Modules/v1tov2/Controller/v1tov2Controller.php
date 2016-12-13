@@ -37,12 +37,15 @@ require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 
+require_once 'Modules/core/Model/CoreSpace.php';
+
+
 class v1tov2Controller extends Controller {
 
     public function indexAction() {
 
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_h2p2;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_mric;charset=utf8';
         $login_old = "root";
         $pwd_old = "root";
 
@@ -50,7 +53,7 @@ class v1tov2Controller extends Controller {
 
         $id_space = 1;
         $importUserSygrrif = true;
-        $importProjects = true;
+        $importProjects = false;
         $importSupplies = false;
 
 
@@ -75,7 +78,7 @@ class v1tov2Controller extends Controller {
             $unitsMap = $this->importUnits($pdo_old, $belongingMap);
             //print_r($unitsMap);
             echo "   import users <br/>";
-            $usersMap = $this->importUsers($pdo_old, $unitsMap);
+            $usersMap = $this->importUsers($pdo_old, $unitsMap, $id_space);
             echo "   import responsibles <br/>";
             $this->importResponsibles($pdo_old, $usersMap);
 
@@ -89,6 +92,7 @@ class v1tov2Controller extends Controller {
             $resourcesMap = $this->importResources($pdo_old, $id_space, $resourcesCategoriesMap, $areasMap);
             echo "fn 4 <br/>";
             $visasMap = $this->importVisas($pdo_old, $resourcesCategoriesMap, $usersMap);
+            
 
             // Booking
             echo "import booking <br/>";
@@ -196,11 +200,12 @@ class v1tov2Controller extends Controller {
         return $name;
     }
 
-    protected function importUsers($pdo_old, $unitsMap) {
+    protected function importUsers($pdo_old, $unitsMap, $id_space) {
         $sql = "SELECT * FROM core_users";
         $result = $pdo_old->query($sql);
         $users_old = $result->fetchAll();
 
+        $modelSpace = new CoreSpace();
         $modelCoreUser = new CoreUser();
         $modelEcUser = new EcUser();
         $userMap = array();
@@ -237,6 +242,7 @@ class v1tov2Controller extends Controller {
             $date_convention = $uo["date_convention"];
             $convention_url = ""; //$uo["convention_url"];
             $modelEcUser->import2($userNewID, $phone, $unit, $date_convention, $is_responsible, $convention_url);
+            $modelSpace->setUser($userNewID, $id_space, 2);
             //echo "done <br/>";
         }
 

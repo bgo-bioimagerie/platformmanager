@@ -7,6 +7,7 @@ class v1tov2Routing extends Routing{
     public function listRouts(){
         
         $this->addRoute("v1tov2", "v1tov2", "v1tov2", "index", array(), array());
+        $this->addRoute("activateusers", "activateusers", "activateusers", "index", array(), array());
         
     }
 }
