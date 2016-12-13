@@ -33,6 +33,7 @@ class FCache extends Model {
 
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
+            echo "module file = " . $routingClassUrl . "<br/>";
             if (file_exists($routingClassUrl)) {
 
                 $this->addRoutsToDatabase($moduleName, $routingClassUrl);
