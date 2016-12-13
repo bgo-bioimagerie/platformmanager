@@ -1,3 +1,4 @@
+<?php require_once 'Framework/ti.php' ?>
 <?php include 'Modules/layout.php' ?>
 
 <!-- header -->
