@@ -46,7 +46,7 @@ class ReArea extends Model {
             $this->runRequest($sql, array($name, $restricted, $id_space, $id));
             return $id;
         } else {
-            $sql = "INSERT INTO re_area (name, restricted, id_space) VALUES (?,?)";
+            $sql = "INSERT INTO re_area (name, restricted, id_space) VALUES (?,?,?)";
             $this->runRequest($sql, array($name, $restricted, $id_space));
             return $this->getDatabase()->lastInsertId();
         }

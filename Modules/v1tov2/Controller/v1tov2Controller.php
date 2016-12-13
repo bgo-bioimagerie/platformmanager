@@ -42,7 +42,7 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
 
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_micro;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_h2p2;charset=utf8';
         $login_old = "root";
         $pwd_old = "root";
 
@@ -50,8 +50,8 @@ class v1tov2Controller extends Controller {
 
         $id_space = 1;
         $importUserSygrrif = true;
-        $importProjects = false;
-        $importSupplies = true;
+        $importProjects = true;
+        $importSupplies = false;
 
 
         // ---------- IMPORT ----------
@@ -81,9 +81,13 @@ class v1tov2Controller extends Controller {
 
             // resources
             echo "import resources <br/>";
+            echo "fn 1 <br/>";
             $areasMap = $this->importAreas($pdo_old, $id_space);
+            echo "fn 2 <br/>";
             $resourcesCategoriesMap = $this->importResourcesCategories($pdo_old, $id_space);
+            echo "fn 3 <br/>";
             $resourcesMap = $this->importResources($pdo_old, $id_space, $resourcesCategoriesMap, $areasMap);
+            echo "fn 4 <br/>";
             $visasMap = $this->importVisas($pdo_old, $resourcesCategoriesMap, $usersMap);
 
             // Booking
@@ -260,7 +264,7 @@ class v1tov2Controller extends Controller {
         $modelArea = new ReArea();
         $areasMap = array();
         foreach ($areas_old as $ao) {
-            $newID = $modelArea->set(0, $ao["name"], $id_space);
+            $newID = $modelArea->set(0, $ao["name"], $ao["restricted"], $id_space);
             $areasMap[$ao["id"]] = $newID;
         }
         return $areasMap;
@@ -655,9 +659,21 @@ class v1tov2Controller extends Controller {
         $modelProject = new SeProject();
         $projectMap = array();
         foreach ($projects_old as $d) {
+            //print_r($d);
             $name = $d["name"];
-            $id_resp = $usersMap[$d["id_resp"]];
-            $id_user = $usersMap[$d["id_user"]];
+            if(isset($usersMap[$d["id_resp"]])){
+                $id_resp = $usersMap[$d["id_resp"]];
+            }
+            else{
+                $id_resp = 1; 
+            }
+            
+            if(isset($usersMap[$d["id_user"]])){
+                $id_user = $usersMap[$d["id_user"]];
+            }
+            else{
+                $id_user = 1;
+            }
             $date_open = $d["date_open"];
             $date_close = $d["date_close"];
             $new_team = $d["new_team"];

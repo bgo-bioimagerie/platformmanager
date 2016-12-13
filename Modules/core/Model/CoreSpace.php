@@ -100,7 +100,7 @@ class CoreSpace extends Model {
     
     
     public function getUserSpacesRolesSummary($id_user){
-        $sql = "SELECT id_space FROM core_j_spaces_user WHERE id_user=?";
+        $sql = "SELECT id_space FROM core_j_spaces_user WHERE id_user=? AND status>0";
         $req = $this->runRequest($sql, array($id_user));
         $roles = $req->fetchAll();
         $spacesNames = "";
