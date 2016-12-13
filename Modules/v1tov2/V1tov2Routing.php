@@ -2,7 +2,7 @@
 
 require_once 'Framework/Routing.php';
 
-class v1tov2Routing extends Routing{
+class V1tov2Routing extends Routing{ 
     
     public function listRouts(){
         

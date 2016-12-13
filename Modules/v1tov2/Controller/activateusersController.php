@@ -40,7 +40,7 @@ require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 
-class activateusersController extends Controller {
+class ActivateusersController extends Controller {
 
     public function indexAction() {
 
