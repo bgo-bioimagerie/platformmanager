@@ -23,7 +23,7 @@ require_once 'Modules/booking/Model/BkCalQuantities.php';
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
-require_once 'Modules/booking/Model/BkNightWe.php';
+require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkPackage.php';
