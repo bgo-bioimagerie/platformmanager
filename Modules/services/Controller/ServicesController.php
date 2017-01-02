@@ -81,10 +81,10 @@ class ServicesController extends CoresecureController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "services/" . $id_space);
 
         if ($form->check()) {
-            $this->serviceModel->setService($id, $this->request->getParameter("id_space"), $this->request->getParameter("name"), $this->request->getParameter("description"), $this->request->getParameter("display_order"), $this->request->getParameter("type_id")
+            $this->serviceModel->setService($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("description"), $this->request->getParameter("display_order"), $this->request->getParameter("type_id")
             );
 
-            $this->redirect("services");
+            $this->redirect("services/".$id_space);
             return;
         }
 
