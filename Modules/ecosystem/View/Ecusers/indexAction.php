@@ -7,6 +7,7 @@
     <div class="col-md-12" id="pm-table">
         <div class="text-center">
             <div class="btn-group btn-group-sm">
+                <button class="btn btn-default <?php if($letter == "All"){ echo "active";} ?>" onclick="location.href='ecusers/<?php echo $id_space ?>/All/<?php echo $active ?>';"><?php echo EcosystemTranslator::All($lang) ?></button>
                 <button class="btn btn-default <?php if($letter == "A"){ echo "active";} ?>" onclick="location.href='ecusers/<?php echo $id_space ?>/A/<?php echo $active ?>';">A</button>
                 <button class="btn btn-default <?php if($letter == "B"){ echo "active";} ?>" onclick="location.href='ecusers/<?php echo $id_space ?>/B/<?php echo $active ?>';">B</button>
                 <button class="btn btn-default <?php if($letter == "C"){ echo "active";} ?>" onclick="location.href='ecusers/<?php echo $id_space ?>/C/<?php echo $active ?>';">C</button>

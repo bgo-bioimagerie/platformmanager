@@ -83,7 +83,7 @@ class ServicesController extends CoresecureController {
         if ($form->check()) {
             $this->serviceModel->setService($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("description"), $this->request->getParameter("display_order"), $this->request->getParameter("type_id")
             );
-
+            
             $this->redirect("services/".$id_space);
             return;
         }

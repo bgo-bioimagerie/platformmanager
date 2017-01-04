@@ -53,10 +53,20 @@ class BookingController extends BookingabstractController {
      */
     public function bookingAction($id_space, $id_area, $id_resource) {
 
+        $lang = $this->getLanguage();
+        
         $curentDate = date("Y-m-d", time());
         if(isset($_SESSION['bk_curentDate'])){
-            $curentDate = $_SESSION['bk_curentDate'];
+            if($this->request->getParameterNoException("curentDate") != ""){
+                $curentDate = CoreTranslator::dateToEn($this->request->getParameterNoException("curentDate"), $lang);
+                $_SESSION['bk_curentDate'] = $curentDate;
+            }
+            else{
+                $curentDate = $_SESSION['bk_curentDate'];
+            }
         }
+        
+        //echo "curent date booking = " . $curentDate . "<br/>";
         $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
 
         $modelResource = new ResourceInfo();
@@ -98,7 +108,11 @@ class BookingController extends BookingabstractController {
         }
         
         $calendarDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
-        if($calendarDefaultView == ""){
+        if (isset($_SESSION['lastbookview'])) {
+            $lastView = $_SESSION['lastbookview'];
+            $this->redirect($lastView."/".$id_space);
+        }
+        else if($calendarDefaultView == ""){
             $this->redirect("bookingdayarea/".$id_space);
         }    
         else{
@@ -115,16 +129,16 @@ class BookingController extends BookingabstractController {
         if (isset($_SESSION['lastbookview'])) {
             $lastView = $_SESSION['lastbookview'];
         }
-        if ($lastView == "bookday") {
+        if ($lastView == "bookingday") {
             $this->dayAction($id_space, "", $message);
             return;
-        } else if ($lastView == "bookweek") {
+        } else if ($lastView == "bookingweek") {
             $this->weekAction($id_space, "", $message);
             return;
-        } else if ($lastView == "bookweekarea") {
+        } else if ($lastView == "bookingweekarea") {
             $this->weekareaAction($id_space, "", $message);
             return;
-        } else if ($lastView == "bookdayarea") {
+        } else if ($lastView == "bookingdayarea") {
             $this->dayareaAction($id_space, "", $message);
             return;
         }
@@ -134,7 +148,7 @@ class BookingController extends BookingabstractController {
     public function dayAction($id_space, $action, $message) {
 
         //print_r($_SESSION);
-        $_SESSION['lastbookview'] = "bookday";
+        $_SESSION['lastbookview'] = "bookingday";
 
         $lang = $this->getLanguage();
 
@@ -243,7 +257,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function dayareaAction($id_space, $action, $message) {
-        $_SESSION['lastbookview'] = "bookdayarea";
+        $_SESSION['lastbookview'] = "bookingdayarea";
 
         $lang = $this->getLanguage();
 
@@ -300,6 +314,7 @@ class BookingController extends BookingabstractController {
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $curentDate);
+        //echo "curent date = " . $curentDate . "<br/>";
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
         for ($t = 0; $t < count($resourcesBase); $t++) {
@@ -347,7 +362,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function weekAction($id_space, $action, $message) {
-        $_SESSION['lastbookview'] = "bookweek";
+        $_SESSION['lastbookview'] = "bookingweek";
         $lang = $this->getLanguage();
 
         // get inputs
@@ -460,7 +475,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function weekareaAction($id_space, $action, $message) {
-        $_SESSION['lastbookview'] = "bookweekarea";
+        $_SESSION['lastbookview'] = "bookingweekarea";
 
         $lang = $this->getLanguage();
 
@@ -585,7 +600,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function monthAction($id_space, $action, $message) {
-        $_SESSION['lastbookview'] = "bookmonth";
+        $_SESSION['lastbookview'] = "bookingmonth";
         $lang = $this->getLanguage();
 
         // get inputs

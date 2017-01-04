@@ -58,9 +58,20 @@ class EcusersController extends CoresecureController {
         $usersArray = array();
         $title = CoreTranslator::Users($lang);
         if ($active == "active") {
-            $usersArray = $this->userModel->getActiveUsersInfoLetter($letter, 1);
+            if($letter == "All"){
+                $usersArray = $this->userModel->getActiveUsersInfo(1);
+            }
+            else{
+                $usersArray = $this->userModel->getActiveUsersInfoLetter($letter, 1);
+            }
         } else {
-            $usersArray = $this->userModel->getActiveUsersInfoLetter($letter, 0);
+            if($letter == "All"){
+                $usersArray = $this->userModel->getActiveUsersInfo(0);
+            }
+            else{
+                $usersArray = $this->userModel->getActiveUsersInfoLetter($letter, 0);
+            }
+            
             $title = CoreTranslator::Unactive_Users($lang);
         }
 
