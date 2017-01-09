@@ -68,6 +68,13 @@ class ReVisa extends Model {
         $user = $this->runRequest($sql);
         return $user->fetchAll();
     }
+    
+    public function getVisasBySpace($id_space, $sortentry = 'id') {
+    
+        $sql = "SELECT * FROM re_visas WHERE id_resource_category IN (SELECT id FROM re_category WHERE id_space=?) order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
+        return $user->fetchAll();
+    }
 
     /**
      * add a visa to the table

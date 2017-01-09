@@ -39,7 +39,7 @@ class RevisasController extends CoresecureController {
 
         // get the user list
         $visaModel = new ReVisa();
-        $visaTable = $visaModel->getVisas();
+        $visaTable = $visaModel->getVisasBySpace($id_space);
 
         $table = new TableView ();
 
