@@ -5,6 +5,7 @@
 
 <div class="col-md-10" id="pm-form">
 
+
     <?php
     if (isset($_SESSION["message"]) && $_SESSION["message"] != "") {
         ?>
@@ -18,7 +19,9 @@
     $_SESSION["message"] = "";
     ?>
 
-    <?php echo $formHtml ?>
+    <div class="col-xs-12">
+        <?php echo $formHtml ?>
+    </div>
 
 </div>
 <?php

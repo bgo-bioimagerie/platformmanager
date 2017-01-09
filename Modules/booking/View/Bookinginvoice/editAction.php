@@ -7,7 +7,7 @@
     
     <h3><?php echo InvoicesTranslator::Edit_invoice($lang) . " : " . $invoice["number"] ?></h3>
     
-    <h4> <?php echo ServicesTranslator::Projects($lang) ?> </h4>
+    <h4> <?php echo BookingTranslator::Details($lang) ?> </h4>
     
     <?php 
         foreach ($details as $d){

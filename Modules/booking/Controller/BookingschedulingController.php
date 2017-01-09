@@ -94,7 +94,7 @@ class BookingschedulingController extends CoresecureController {
         $form->setColumnsWidth(3, 9);
         $form->setButtonsWidth(3, 9);
         if ($form->check()){
-            
+           
             $modelScheduling->edit($id, 
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
@@ -112,8 +112,11 @@ class BookingschedulingController extends CoresecureController {
              
              
             $this->redirect("bookingschedulingedit/".$id_space."/".$id);
+            //echo "form checked <br/>"; 
+            return;
              
         }
+         
         $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang) ));
         
     }

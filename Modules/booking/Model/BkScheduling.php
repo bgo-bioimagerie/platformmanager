@@ -103,6 +103,7 @@ class BkScheduling extends Model {
                 . "is_saturday=?, is_sunday=?, day_begin=?, day_end=?, size_bloc_resa=?, booking_time_scale=?, "
                 . "resa_time_setting=?, default_color_id=? "
                 . "where id=?";
+        //echo "request = " . $sql . "<br/>";
         $this->runRequest($sql, array($is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday,
             $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa,
             $booking_time_scale, $resa_time_setting, $default_color_id, $id));
@@ -120,6 +121,7 @@ class BkScheduling extends Model {
     
     public function edit($id, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id) {
         if ($this->exists($id)) {
+            //echo "edit id=" . $id . "<br/>";
             $this->update2($id, $this->onToBool($is_monday), $this->onToBool($is_tuesday), $this->onToBool($is_wednesday), $this->onToBool($is_thursday), $this->onToBool($is_friday), $this->onToBool($is_saturday), $this->onToBool($is_sunday), $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id);
         } else {
             $this->add($this->onToBool($is_monday), $this->onToBool($is_tuesday), $this->onToBool($is_wednesday), $this->onToBool($is_thursday), $this->onToBool($is_friday), $this->onToBool($is_saturday), $this->onToBool($is_sunday), $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id);

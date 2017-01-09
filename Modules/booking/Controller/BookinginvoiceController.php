@@ -43,6 +43,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
         $formByProjects = $this->createAllForm($id_space, $lang);
         if ($formByProjects->check()) {
+            //echo "coucou <br/>";
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
 
@@ -50,9 +51,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $this->redirect("invoices/" . $id_space);
             return;
         }
+        
         $formByPeriod = $this->createByPeriodForm($id_space, $lang);
         if ($formByPeriod->check()) {
-
+            
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
             $id_resp = $this->request->getParameter("id_resp");
@@ -247,13 +249,16 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resps = $modelResp->responsiblesIds();
         $number = "";
         foreach($resps as $resp){
-            print_r($resp);
+            //print_r($resp);
             $billIt = $modelCal->hasResponsibleEntry($id_space, $resp["id"], $beginPeriod, $endPeriod);
-            echo "billIt = " . $billIt . "<br/>";
+            //echo "billIt = " . $billIt . "<br/>";
             if ($billIt){
                 $id_unit = $modelUser->getUnit($resp["id"]);
+                //echo "unit got<br>";
                 $number = $modelInvoice->getNextNumber($number);
+                //echo "invoice num got ".$number."<br>";
                 $this->invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $resp["id"], $number);
+                //echo "invoice got<br>";
             }
         }
     }
@@ -266,10 +271,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelResouces = new ResourceInfo();
         $resources = $modelResouces->getBySpace($id_space);
 
+        //echo "LABpricingid = " . $LABpricingid . "<br/>";
+        
         // get the pricing
         $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid, $id_unit);
+        //echo "pass 1<br/>";
         $packagesPrices = $this->getUnitPackagePricesForEachResource($resources, $LABpricingid, $id_unit);
-        
+        //echo "pass 2<br/>";
         // add the invoice to the database
         $modelInvoice = new InInvoice();
         if ($number == ""){
@@ -384,6 +392,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         // get the pricing informations
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid);
+        //echo "getUnitTimePricesForEachResource 1 <br>";
         //$tarif_name = $pricingInfo['tarif_name'];
         $tarif_unique = $pricingInfo['tarif_unique'];
         $tarif_nuit = $pricingInfo['tarif_night'];

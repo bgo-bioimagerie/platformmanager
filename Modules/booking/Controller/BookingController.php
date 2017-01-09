@@ -169,6 +169,7 @@ class BookingController extends BookingabstractController {
             $curentDate = $_SESSION['bk_curentDate'];
         }
 
+        
         //print_r($_SESSION);
         //echo "curent resource bookday 2 = " . $curentResource . "<br/>";
         //sreturn;
@@ -190,7 +191,21 @@ class BookingController extends BookingabstractController {
         }
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
-
+        //print_r($menuData);
+        
+        $foundR = false;
+        foreach($menuData["resources"] as $r){
+            if($r["id"] == $curentResource){
+                $foundR = true;
+                break;
+            }
+        }
+        if(!$foundR){
+            $curentResource = $menuData["resources"][0]["id"];
+            $_SESSION['bk_id_resource'] = $curentResource;
+        }
+        
+        
         // save the menu info in the session
         //$_SESSION['bk_id_resource'] = $curentResource;
         //$_SESSION['bk_id_area'] = $curentAreaId;
@@ -294,7 +309,18 @@ class BookingController extends BookingabstractController {
         }
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
-
+        $foundA = false;
+        foreach($menuData["areas"] as $are){
+            if($curentAreaId == $are["id"]){
+                $foundA = true;
+                break;
+            }
+        }
+        if(!$foundA){
+            $curentAreaId = $menuData["areas"][0]["id"];
+        }
+        
+        
         // save the menu info in the session
         $_SESSION['bk_id_resource'] = $curentResource;
         $_SESSION['bk_id_area'] = $curentAreaId;
@@ -306,6 +332,7 @@ class BookingController extends BookingabstractController {
         // get the resource info
         $modelRes = new ResourceInfo();
         $modelAccess = new BkAccess();
+        //echo "curentAreaId = " . $curentAreaId . "<br/>"; 
         $resourcesBase = $modelRes->resourcesForArea($curentAreaId);
         for ($r = 0; $r < count($resourcesBase); $r++) {
             $resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($resourcesBase[$r]["id"]);
@@ -409,6 +436,17 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
+        $foundR = false;
+        foreach($menuData["resources"] as $r){
+            if($r["id"] == $curentResource){
+                $foundR = true;
+                break;
+            }
+        }
+        if(!$foundR){
+            $curentResource = $menuData["resources"][0]["id"];
+            $_SESSION['bk_id_resource'] = $curentResource;
+        }
         // save the menu info in the session
         //$_SESSION['bk_id_resource'] = $curentResource;
         //$_SESSION['bk_id_area'] = $curentAreaId;
