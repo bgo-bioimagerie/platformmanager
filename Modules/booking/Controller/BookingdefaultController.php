@@ -76,6 +76,8 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelResa = new BkCalendarEntry();
         $id_user = $_SESSION["id_user"];
+        
+        
         return $modelResa->getDefault($start_time, $end_time, $id_resource, $id_user);
     }
 
@@ -188,13 +190,29 @@ class BookingdefaultController extends BookingabstractController {
         
         $modelCalEntry = new BkCalendarEntry();
         
+        $valid = true;
+        if($start_time >= $end_time){
+            $_SESSION["message"] = "Error: Start Time Must Be Before End Time";
+            $valid = false;
+        }
+        if($start_time==0){
+            $_SESSION["message"] = "Error: Start Time Cannot Be Null";
+            $valid = false;
+        }
+        if($start_time==0){
+            $_SESSION["message"] = "Error: End Time Cannot Be Null";
+            $valid = false;
+        }
+        
 	// test if a resa already exists on this periode
 	$conflict = $modelCalEntry->isConflict($start_time, $end_time, $id_resource, $id);
 			
 	if ($conflict){
             $_SESSION["message"] = BookingTranslator::reservationError($lang);
+            $valid = false;
 	}
-        else{
+        
+        if($valid){
             $modelCalEntry->setEntry($id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, 
                 $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
             $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);    

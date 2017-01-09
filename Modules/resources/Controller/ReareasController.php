@@ -61,7 +61,7 @@ class ReareasController extends CoresecureController {
         
         // get belonging info
         if ($id == 0){
-            $area = array("id" => 0, "name" => "", "id_space" => 1);
+            $area = array("id" => 0, "name" => "", "id_space" => $id_space, "restricted" => 0);
         }
         else{
             $area = $this->model->get($id);
