@@ -41,6 +41,11 @@ class BkCalendarEntry extends Model {
         $this->runRequest($sql);
     }
     
+    public function cleanBadResa(){
+        $sql = "DELETE FROM bk_calendar_entry WHERE (start_time>end_time) OR start_time=0 OR end_time=0";
+        $this->runRequest($sql);
+    }
+    
     public function setReservationInvoice($reservation_id, $invoice_id){
         $sql = "UPDATE bk_calendar_entry SET invoice_id=? WHERE id=?";
         $this->runRequest($sql, array($invoice_id, $reservation_id));
