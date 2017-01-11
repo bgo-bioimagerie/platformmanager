@@ -394,7 +394,7 @@ class CoreUser extends Model {
 
         // insert
         if (!$this->isUser($login)) {
-            $sql = "insert into core_users(login, firstname, name, email, id_status, source, date_created)" . " values(?, ?, ?, ?, ?, ?, ?)";
+            $sql = "insert into core_users(login, firstname, name, email, status_id, source, date_created)" . " values(?, ?, ?, ?, ?, ?, ?)";
             $this->runRequest($sql, array(
                 $login,
                 $firstname,
