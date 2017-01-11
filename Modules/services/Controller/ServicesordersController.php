@@ -24,6 +24,8 @@ class ServicesordersController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+        
+        $this->serviceModel = new SeOrder();
         //$this->checkAuthorizationMenu("services");
     }
 
@@ -61,7 +63,7 @@ class ServicesordersController extends CoresecureController {
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Services_Orders($lang), 3);
         $table->addLineEditButton("servicesorderedit/" . $id_space);
-        $table->addDeleteButton("servicesorderdelete/" . $id_space, "id", "id");
+        $table->addDeleteButton("servicesorderdelete/" . $id_space, "id", "no_identification");
 
         $headersArray = array(
             "no_identification" => ServicesTranslator::No_identification($lang),
@@ -118,7 +120,7 @@ class ServicesordersController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $this->serviceModel->delete($id);
-        $this->redirect("services/" . $id_space);
+        $this->redirect("servicesorders/" . $id_space);
     }
 
     public function editAction($id_space, $id) {

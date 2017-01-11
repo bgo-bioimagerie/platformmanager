@@ -167,8 +167,9 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $orders = $modelOrder->openedForResp($id_resp);
 
         if (count($orders) == 0) {
-            echo "there are no orders open for this responsible";
-            return;
+            throw new Exception("there are no orders open for this responsible");
+            //echo "there are no orders open for this responsible";
+            //return;
         }
 
         // get the bill number
