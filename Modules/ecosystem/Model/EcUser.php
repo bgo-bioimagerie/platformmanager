@@ -193,55 +193,63 @@ class EcUser extends Model {
         $sql = "UPDATE ec_users SET convention_url=? WHERE id=?";
         $this->runRequest($sql, array($url, $id_user));
     }
-
+    
     public function getActiveUsersInfoLetter($letter, $active) {
-        /*
-        $sql = "SELECT core.*, ec.*, ecunit.name as unit, corestatus.name as status "
-                . "FROM ec_users as ec "
-                . "INNER JOIN core_users as core ON ec.id = core.id "
-                . "INNER JOIN ec_units as ecunit ON ec.id_unit = ecunit.id "
-                . "INNER JOIN core_status as corestatus ON core.status_id = corestatus.id "
-                . "WHERE core.is_active=? AND core.name LIKE '".$letter."%'";
-         return $this->runRequest($sql, array($active))->fetchAll();
-         */
         
-        $sql = "SELECT core.*, ec.* "
-                . "FROM ec_users as ec "
-                . "INNER JOIN core_users as core ON ec.id = core.id "
-                . "WHERE core.is_active=? AND core.name LIKE '".$letter."%'";
+        $sql = "SELECT * FROM core_users WHERE is_active=? AND name LIKE '".$letter."%'";
         $users = $this->runRequest($sql, array($active))->fetchAll();
-        
-        //print_r($users);
         $modelUnit = new EcUnit();
         $modelStatus = new CoreStatus();
         for($i = 0 ; $i < count($users) ; $i++){
-            $users[$i]["unit"] = $modelUnit->getUnitName($users[$i]["id_unit"]);
+            
+            $sql = "SELECT * FROM ec_users WHERE id=?";
+            $req=$this->runRequest($sql, array($users[$i]["id"]));
+            if ($req->rowCount() == 0){
+                $sql = "INSERT into ec_users (id, phone, id_unit, date_convention, is_responsible, convention_url) VALUES (?,?,?,?,?,?)";
+                $this->runRequest($sql, array($users[$i]["id"], "", 0, "0000-00-00", 0, ""));
+            }
+            
+            $sql2 = "SELECT * FROM ec_users WHERE id=?";
+            $userInfo = $this->runRequest($sql2, array($users[$i]["id"]))->fetch();
+            
             $users[$i]["status"] = $modelStatus->getStatusName($users[$i]["status_id"]);
+            
+            $users[$i]["phone"] = $userInfo["phone"];
+            $users[$i]["unit"] = $modelUnit->getUnitName($userInfo["id_unit"]);
+            $users[$i]["date_convention"] = $userInfo["date_convention"];
+            $users[$i]["is_responsible"] = $userInfo["is_responsible"];
+            $users[$i]["convention_url"] = $userInfo["convention_url"];
+            
         }
         return $users;
+       
     }
     
-    public function getActiveUsersInfo($active) {
-        /*
-        $sql = "SELECT core.*, ec.*, ecunit.name as unit, corestatus.name as status "
-                . "FROM ec_users as ec "
-                . "INNER JOIN core_users as core ON ec.id = core.id "
-                . "INNER JOIN ec_units as ecunit ON ec.id_unit = ecunit.id "
-                . "INNER JOIN core_status as corestatus ON core.status_id = corestatus.id "
-                . "WHERE core.is_active=?";
-        return $this->runRequest($sql, array($active))->fetchAll();
-         */
-                $sql = "SELECT core.*, ec.* "
-                . "FROM ec_users as ec "
-                . "INNER JOIN core_users as core ON ec.id = core.id "
-                . "WHERE core.is_active=? ";
+    public function getActiveUsersInfo($active) {        
+        $sql = "SELECT * FROM core_users WHERE is_active=?";
         $users = $this->runRequest($sql, array($active))->fetchAll();
-        
         $modelUnit = new EcUnit();
         $modelStatus = new CoreStatus();
         for($i = 0 ; $i < count($users) ; $i++){
-            $users[$i]["unit"] = $modelUnit->getUnitName($users[$i]["id_unit"]);
+            
+            $sql = "SELECT * FROM ec_users WHERE id=?";
+            $req=$this->runRequest($sql, array($users[$i]["id"]));
+            if ($req->rowCount() == 0){
+                $sql = "INSERT into ec_users (id, phone, id_unit, date_convention, is_responsible, convention_url) VALUES (?,?,?,?,?,?)";
+                $this->runRequest($sql, array($users[$i]["id"], "", 0, "0000-00-00", 0, ""));
+            }
+            
+            $sql2 = "SELECT * FROM ec_users WHERE id=?";
+            $userInfo = $this->runRequest($sql2, array($users[$i]["id"]))->fetch();
+            
             $users[$i]["status"] = $modelStatus->getStatusName($users[$i]["status_id"]);
+            
+            $users[$i]["phone"] = $userInfo["phone"];
+            $users[$i]["unit"] = $modelUnit->getUnitName($userInfo["id_unit"]);
+            $users[$i]["date_convention"] = $userInfo["date_convention"];
+            $users[$i]["is_responsible"] = $userInfo["is_responsible"];
+            $users[$i]["convention_url"] = $userInfo["convention_url"];
+            
         }
         return $users;
     }
