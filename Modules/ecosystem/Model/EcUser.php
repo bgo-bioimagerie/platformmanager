@@ -195,16 +195,34 @@ class EcUser extends Model {
     }
 
     public function getActiveUsersInfoLetter($letter, $active) {
+        /*
         $sql = "SELECT core.*, ec.*, ecunit.name as unit, corestatus.name as status "
                 . "FROM ec_users as ec "
                 . "INNER JOIN core_users as core ON ec.id = core.id "
                 . "INNER JOIN ec_units as ecunit ON ec.id_unit = ecunit.id "
                 . "INNER JOIN core_status as corestatus ON core.status_id = corestatus.id "
                 . "WHERE core.is_active=? AND core.name LIKE '".$letter."%'";
-        return $this->runRequest($sql, array($active))->fetchAll();
+         return $this->runRequest($sql, array($active))->fetchAll();
+         */
+        
+        $sql = "SELECT core.*, ec.* "
+                . "FROM ec_users as ec "
+                . "INNER JOIN core_users as core ON ec.id = core.id "
+                . "WHERE core.is_active=? AND core.name LIKE '".$letter."%'";
+        $users = $this->runRequest($sql, array($active))->fetchAll();
+        
+        //print_r($users);
+        $modelUnit = new EcUnit();
+        $modelStatus = new CoreStatus();
+        for($i = 0 ; $i < count($users) ; $i++){
+            $users[$i]["unit"] = $modelUnit->getUnitName($users[$i]["id_unit"]);
+            $users[$i]["status"] = $modelStatus->getStatusName($users[$i]["status_id"]);
+        }
+        return $users;
     }
     
     public function getActiveUsersInfo($active) {
+        /*
         $sql = "SELECT core.*, ec.*, ecunit.name as unit, corestatus.name as status "
                 . "FROM ec_users as ec "
                 . "INNER JOIN core_users as core ON ec.id = core.id "
@@ -212,6 +230,20 @@ class EcUser extends Model {
                 . "INNER JOIN core_status as corestatus ON core.status_id = corestatus.id "
                 . "WHERE core.is_active=?";
         return $this->runRequest($sql, array($active))->fetchAll();
+         */
+                $sql = "SELECT core.*, ec.* "
+                . "FROM ec_users as ec "
+                . "INNER JOIN core_users as core ON ec.id = core.id "
+                . "WHERE core.is_active=? ";
+        $users = $this->runRequest($sql, array($active))->fetchAll();
+        
+        $modelUnit = new EcUnit();
+        $modelStatus = new CoreStatus();
+        for($i = 0 ; $i < count($users) ; $i++){
+            $users[$i]["unit"] = $modelUnit->getUnitName($users[$i]["id_unit"]);
+            $users[$i]["status"] = $modelStatus->getStatusName($users[$i]["status_id"]);
+        }
+        return $users;
     }
 
     /**
