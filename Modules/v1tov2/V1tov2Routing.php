@@ -9,6 +9,7 @@ class V1tov2Routing extends Routing{
         $this->addRoute("v1tov2", "v1tov2", "v1tov2", "index", array(), array());
         $this->addRoute("activateusers", "activateusers", "activateusers", "index", array(), array());
         $this->addRoute("cleanresa", "cleanresa", "cleanresa", "index", array(), array());
-        
+     
+        $this->addRoute("phpinfo", "phpinfo", "phpinfo", "index", array(), array());
     }
 }

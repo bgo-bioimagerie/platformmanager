@@ -284,7 +284,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $form = new Form($this->request, "editinvoiceorderform");
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/0");
-        $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/1");
+        $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
         $form->addNumber("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);

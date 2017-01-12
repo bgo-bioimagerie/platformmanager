@@ -117,8 +117,8 @@ class Form {
      * @param type $url Action URL
      * @param type $type Bootstrap button type
      */
-    public function addExternalButton($name, $url, $type = "danger") {
-        $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type);
+    public function addExternalButton($name, $url, $type = "danger", $newtab = false) {
+        $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type, "newtab" => $newtab);
     }
 
     /**

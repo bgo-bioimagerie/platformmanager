@@ -42,10 +42,11 @@ abstract class InvoiceAbstractController extends CoresecureController {
             $html2pdf = new HTML2PDF('P', 'A4', 'fr');
             //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
-            $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
+            //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+            $html2pdf->writeHTML($content);
+            //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
             $html2pdf->Output($unit . "_" . $resp . " " . $number . '.pdf');
-            
+            return;
         } catch (HTML2PDF_exception $e) {
             echo $e;
             exit;

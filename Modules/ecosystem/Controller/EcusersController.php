@@ -39,9 +39,15 @@ class EcusersController extends CoresecureController {
     public function indexAction($id_space, $letter = "A", $active = "") {
 
         if( $letter == ""){
-            $letter = "A";
+            if (isset($_SESSION["user_last_letter"])){
+                $letter = $_SESSION["user_last_letter"];
+            }
+            else{
+                $letter = "A";
+            }
         }
-        
+
+        $_SESSION["user_last_letter"] = $letter;
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
 
         if ($active == "") {
@@ -171,13 +177,13 @@ class EcusersController extends CoresecureController {
                 ), "indexAction");
     }
 
-    public function activeAction($id_space, $letter = "A") {
+    public function activeAction($id_space, $letter = "") {
         
         $_SESSION["users_lastvisited"] = "active";
         $this->indexAction($id_space, $letter, "active");
     }
 
-    public function unactiveAction($id_space, $letter = "A") {
+    public function unactiveAction($id_space, $letter = "") {
         $_SESSION["users_lastvisited"] = "unactive";
         $this->indexAction($id_space, $letter, "unactive");
     }
