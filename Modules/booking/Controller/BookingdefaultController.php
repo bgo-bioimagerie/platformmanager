@@ -45,7 +45,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function editreservationdefault($id_space, $param) {
-
+        
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
         if ($this->isNew($param)) {
@@ -77,6 +77,10 @@ class BookingdefaultController extends BookingabstractController {
         $modelResa = new BkCalendarEntry();
         $id_user = $_SESSION["id_user"];
         
+        $modelResource = new ResourceInfo();
+        $_SESSION['bk_id_resource'] = $id_resource;
+        $_SESSION['bk_id_area'] = $modelResource->getAreaID($id_resource);
+        $_SESSION['bk_curentDate'] = date("Y-m-d", $start_time);
         
         return $modelResa->getDefault($start_time, $end_time, $id_resource, $id_user);
     }
@@ -218,7 +222,7 @@ class BookingdefaultController extends BookingabstractController {
             $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);    
         }
         
-        $this->redirect("booking/".$id_space);
+        $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
     }
 
     private function editreservation($id_space, $resaInfo) {
@@ -412,7 +416,14 @@ class BookingdefaultController extends BookingabstractController {
         $id = $contentAction[1];
         
         $modelCalEntry = new BkCalendarEntry();
-        return $modelCalEntry->getEntry($id);
+        $entryInfo =  $modelCalEntry->getEntry($id);
+        
+        $modelResource = new ResourceInfo();
+        $_SESSION['bk_id_resource'] = $entryInfo["resource_id"];
+        $_SESSION['bk_id_area'] = $modelResource->getAreaID($entryInfo["resource_id"]);
+        $_SESSION['bk_curentDate'] = date("Y-m-d", $entryInfo["start_time"]);
+        
+        return $entryInfo;
     }
 
     private function isNew($param) {

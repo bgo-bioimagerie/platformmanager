@@ -43,7 +43,17 @@ class BookingController extends BookingabstractController {
         $id_area = $this->request->getParameterNoException("id_area");
         $id_resource = $this->request->getParameterNoException("id_resource");
         $curentDate = $this->request->getParameterNoException("curentDate");
-
+        
+        if($id_area == ""){
+            $id_area = $_SESSION['bk_id_area'];
+        }
+        if($id_resource == ""){
+            $id_resource = $_SESSION['bk_id_resource'];
+        } 
+        if($id_resource == ""){
+            $curentDate = $_SESSION['bk_curentDate'];
+        } 
+        //echo "index: id_area = " . $id_area . ", id_resource = " . "curentDate = " . $curentDate . "<br/>";
         $this->bookingAction($id_space, $id_area, $id_resource, $curentDate);
     }
 
@@ -97,7 +107,8 @@ class BookingController extends BookingabstractController {
             $_SESSION['bk_id_resource'] = $id_resource;
             $_SESSION['bk_id_area'] = $id_area;
             $_SESSION['bk_curentDate'] = $curentDate;
-
+            //echo "booking: id_area = " . $id_area . ", id_resource = " . "curentDate = " . $curentDate . "<br/>";
+            
             if ($id_resource == 0) {
                 $this->render(array(
                     'id_space' => $id_space,
