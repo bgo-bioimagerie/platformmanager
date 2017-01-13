@@ -45,15 +45,15 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
 
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_mric;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_h2p2;charset=utf8';
         $login_old = "root";
         $pwd_old = "root";
 
         $pdo_old = new PDO($dsn_old, $login_old, $pwd_old, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
-        $id_space = 1;
+        $id_space = 2;
         $importUserSygrrif = true;
-        $importProjects = false;
+        $importProjects = true;
         $importSupplies = false;
 
 
