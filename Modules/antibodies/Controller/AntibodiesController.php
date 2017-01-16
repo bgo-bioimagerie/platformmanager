@@ -36,7 +36,7 @@ class AntibodiesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
 
         if (isset($_SESSION["ac_advSearch"])) {
-            $this->advsearchquery("index");
+            $this->advsearchqueryAction($id_space, "index");
             //echo "go to adv search";
             return;
         }
@@ -355,10 +355,11 @@ class AntibodiesController extends CoresecureController {
         if ($id == "") {
             // add anticorps to table 
             $id = $modelAnticorps->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
+        
         } else {
 
             // update antibody
-            $modelAnticorps->updateAnticorps($id, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
+            $modelAnticorps->updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
 
             // remove all the owners
             $modelAnticorps->removeOwners($id);
@@ -385,7 +386,7 @@ class AntibodiesController extends CoresecureController {
             // load tissus image
             $this->uploadTissusImage($id);
         }
-
+            
         // add catalog informations
         if ($export_catalog == "on") {
             $export_catalog = 1;
@@ -575,6 +576,8 @@ class AntibodiesController extends CoresecureController {
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus();
+        
+        $lang = $this->getLanguage();
 
         $this->render(array(
             'id_space' => $id_space,
@@ -585,8 +588,9 @@ class AntibodiesController extends CoresecureController {
             'searchCible' => $searchCible,
             'searchValide' => $searchValide,
             'searchResp' => $searchResp,
-            'status' => $status
-                ), "index");
+            'status' => $status,
+            'lang' => $lang
+                ), "indexAction");
     }
 
     public function deleteAction($id_space, $id) {

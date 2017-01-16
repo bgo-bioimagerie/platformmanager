@@ -28,7 +28,6 @@ class Tissus extends Model {
   				`ref_protocol` varchar(11) NOT NULL,
 				`prelevement` int(1) NOT NULL,
 				`comment` text NOT NULL,
-                                `id_space` int(11) NOT NULL,
                                 `image_url` int(11) NOT NULL,
   				PRIMARY KEY (`id`)
 				);";
@@ -42,14 +41,14 @@ class Tissus extends Model {
         $this->runRequest($sql, array($url, $id));
     }
 
-    public function addTissus($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "") {
-        $sql = "insert into ac_j_tissu_anticorps(id_space, id_anticorps, espece, 
+    public function addTissus($id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "") {
+        $sql = "insert into ac_j_tissu_anticorps(id_anticorps, espece, 
 				                                    organe, status, ref_bloc,
 													dilution, temps_incubation, 
 													ref_protocol, prelevement,
 													comment)"
-                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
+                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $this->runRequest($sql, array($id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
         return $this->getDatabase()->lastInsertId();
     }
 

@@ -53,6 +53,7 @@ class Anticorps extends Model {
         $this->addColumn("ac_anticorps", "export_catalog", "int(1)", 1);
         $this->addColumn("ac_anticorps", "image_url", "varchar(250)", "");
         $this->addColumn("ac_anticorps", "image_desc", "varchar(250)", "");
+        $this->addColumn("ac_anticorps", "id_space", "INT(11)", "2");
     }
 
     public function setExportCatalog($id, $exportCatalog) {

@@ -3,6 +3,7 @@
 require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/ecosystem/Model/EcResponsible.php';
+require_once 'Modules/ecosystem/Model/EcUnit.php';
 
 /**
  * Class defining the User model

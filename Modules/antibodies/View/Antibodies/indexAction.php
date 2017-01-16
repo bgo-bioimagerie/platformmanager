@@ -111,7 +111,7 @@ $(document).ready(function() {
 		</div>
 		
 		<div class="col-md-12">
-			<form role="form" class="form-horizontal" action="anticorpsadvsearchquery"
+			<form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
 				  method="post">
 		
 				<?php
