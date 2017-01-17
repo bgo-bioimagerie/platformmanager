@@ -272,6 +272,13 @@ class EcUser extends Model {
         }
         return $userr;
     }
+    
+    public function getIdFromLogin($login){
+        $sql = "SELECT id FROM core_users WHERE login=?";
+        $req = $this->runRequest($sql, array($login));
+        $userr = $req->fetch();
+        return $userr[0];
+    }
 
     /**
      * get the firstname and name of a user from it's id

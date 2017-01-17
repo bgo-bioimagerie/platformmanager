@@ -49,27 +49,20 @@ if ($ecmenucolortxt == "") {
     <div class="col-md-12" style="margin-top: 0px;">
         <h4 style="text-transform: uppercase;"><?php echo ServicesTranslator::services($lang) ?></h4>
     </div>
-    <div class="col-md-12">
-        <p id="separatorp"><?php echo ServicesTranslator::Listing($lang) ?></p>
-        <div  class="btn-block" id="menu-button-div">
-            <a href="servicesedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
-        </div>
-        <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="services/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a><br/>
-        </div>	
-    </div>
     
     <div class="col-md-12">
-        <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
+        <p id="separatorp"><?php echo ServicesTranslator::Projects($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesstock/<?php echo $id_space ?>"><?php echo ServicesTranslator::Stock($lang) ?></a>      
-        </div>
-        <br/>
-        <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="servicespurchaseedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_Purchase($lang) ?></a><br/>
+            <a href="servicesprojectsopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_projects($lang) ?></a>      
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicespurchase/<?php echo $id_space ?>"><?php echo ServicesTranslator::Purchase($lang) ?></a>      
+            <a href="servicesprojectsclosed/<?php echo $id_space ?>"><?php echo ServicesTranslator::Closed_projects($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesprojectsall/<?php echo $id_space ?>"><?php echo ServicesTranslator::All_projects($lang) ?></a><br/>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesprojectedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_project($lang) ?></a><br/>
         </div>
     </div>
     
@@ -90,18 +83,26 @@ if ($ecmenucolortxt == "") {
     </div>
     
     <div class="col-md-12">
-        <p id="separatorp"><?php echo ServicesTranslator::Projects($lang) ?></p>
+        <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectsopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_projects($lang) ?></a>      
+            <a href="servicesstock/<?php echo $id_space ?>"><?php echo ServicesTranslator::Stock($lang) ?></a>      
+        </div>
+        <br/>
+        <div  class="btn-block" id="menu-button-div">
+            <a id="menu-button" href="servicespurchaseedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_Purchase($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectsclosed/<?php echo $id_space ?>"><?php echo ServicesTranslator::Closed_projects($lang) ?></a><br/>
+            <a href="servicespurchase/<?php echo $id_space ?>"><?php echo ServicesTranslator::Purchase($lang) ?></a>      
+        </div>
+    </div>
+    
+    <div class="col-md-12">
+        <p id="separatorp"><?php echo ServicesTranslator::Listing($lang) ?></p>
+        <div  class="btn-block" id="menu-button-div">
+            <a href="servicesedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectsall/<?php echo $id_space ?>"><?php echo ServicesTranslator::All_projects($lang) ?></a><br/>
-        </div>
-        <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_project($lang) ?></a><br/>
-        </div>
+            <a id="menu-button" href="services/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a><br/>
+        </div>	
     </div>
 </div>
