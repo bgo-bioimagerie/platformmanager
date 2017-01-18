@@ -193,6 +193,11 @@ class ServicesprojectsController extends CoresecureController {
                 $servicesIds = $this->request->getParameter("services");
                 $servicesQuantities = $this->request->getParameter("quantities");
                 $servicesComments = $this->request->getParameter("comment");
+                
+                for($i=0 ; $i<count($servicesDates) ; $i++){
+                    $servicesDates[$i] = CoreTranslator::dateToEn($servicesDates[$i], $lang);
+                }
+                
 
                 for ($i = 0; $i < count($servicesQuantities); $i++) {
                     if ($id == 0) {
@@ -202,8 +207,9 @@ class ServicesprojectsController extends CoresecureController {
                     }
                     $qDelta = $servicesQuantities[$i] - $qOld[0];
                     $modelServices->editquantity($servicesIds[$i], $qDelta, "subtract");
-                    $modelProject->setService($id, $servicesIds[$i], CoreTranslator::dateToEn($servicesDates[$i], $lang), $servicesQuantities[$i], $servicesComments[$i]);
+                    $modelProject->setService($id, $servicesIds[$i], $servicesDates[$i], $servicesQuantities[$i], $servicesComments[$i]);
                 }
+                $modelProject->removeUnsetServices($id, $servicesIds, $servicesDates);
             }
             $this->redirect("servicesprojects/" . $id_space);
             return;

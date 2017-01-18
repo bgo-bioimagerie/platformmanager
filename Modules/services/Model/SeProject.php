@@ -93,10 +93,13 @@ class SeProject extends Model {
     }
 
     public function setService($id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
-        if ($this->isProjectService($id_project, $id_service)) {
-            $sql = "UPDATE se_project_service SET date=?, quantity=?, comment=?, id_invoice=? WHERE id_project=? AND id_service=?";
-            $this->runRequest($sql, array($date, $quantity, $comment, $id_invoice, $id_project, $id_service));
+        
+        if ($this->isProjectService($id_project, $id_service, $date)) {
+            //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
+            $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=? WHERE id_project=? AND id_service=? AND date=?";
+            $this->runRequest($sql, array($quantity, $comment, $id_invoice, $id_project, $id_service, $date));
         } else {
+            //echo "add service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
             $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice) VALUES (?,?,?,?,?,?)";
             $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice));
         }
@@ -106,11 +109,31 @@ class SeProject extends Model {
         $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice) VALUES (?,?,?,?,?,?)";
         $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice));
     }
+    
+    public function removeUnsetServices($id_project, $servicesIds, $servicesDates){
+        
+        $sql = "SELECT * FROM se_project_service WHERE id_project=?";
+        $data = $this->runRequest($sql, array($id_project))->fetchAll();
+        foreach($data as $d){
+            $found = false;
+            for($i = 0 ; $i < count($servicesIds) ; $i++){
+                if ($servicesIds[$i] == $d["id_service"] && $servicesDates[$i] == $d["date"]){
+                    $found = true;
+                    break;
+                }
+            }
+            if(!$found){
+                //echo "delete service id: " . $d["id_service"] . ", date: " . $d["date"] . "<br/>";
+                $sql = "DELETE FROM se_project_service WHERE id_project=? AND id_service=? AND date=?";
+                $this->runRequest($sql, array($id_project, $d["id_service"], $d["date"]));
+            }
+        }
+    }
 
-    public function isProjectService($id_project, $id_service) {
-        $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_service=?";
-        $req = $this->runRequest($sql, array($id_project, $id_service));
-        if ($req->rowCount() == 1) {
+    public function isProjectService($id_project, $id_service, $date) {
+        $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_service=? AND date=?";
+        $req = $this->runRequest($sql, array($id_project, $id_service, $date));
+        if ($req->rowCount() >= 1) {
             return true;
         }
         return false;
