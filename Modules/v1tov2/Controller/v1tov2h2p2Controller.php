@@ -39,6 +39,7 @@ require_once 'Modules/invoices/Model/InInvoiceItem.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 
+require_once 'Modules/antibodies/Model/Anticorps.php';
 
 class v1tov2h2P2Controller extends Controller {
 
@@ -53,21 +54,22 @@ class v1tov2h2P2Controller extends Controller {
 
         $id_space = 2;
         $importUserSygrrif = false;
-        $importProjects = true;
+        $importProjects = false;
         $importSupplies = false;
+        $importAntibodies = true;
 
 
         // ---------- IMPORT ----------
         // Rennes MRic
-        
-          $belongingMap[1] = 1; // --
-          $belongingMap[2] = 2; // Biosit
-          $belongingMap[3] = 3; // UR1
-          $belongingMap[4] = 4; // Public
-          $belongingMap[5] = 5; // Privé
-          $belongingMap[6] = 6;
-          $belongingMap[7] = 7;
-        
+
+        $belongingMap[1] = 1; // --
+        $belongingMap[2] = 2; // Biosit
+        $belongingMap[3] = 3; // UR1
+        $belongingMap[4] = 4; // Public
+        $belongingMap[5] = 5; // Privé
+        $belongingMap[6] = 6;
+        $belongingMap[7] = 7;
+
 
         // Nantes
         //$belongingMap = $this->importBelongings($pdo_old);
@@ -94,7 +96,7 @@ class v1tov2h2P2Controller extends Controller {
             $resourcesMap = $this->importResources($pdo_old, $id_space, $resourcesCategoriesMap, $areasMap);
             echo "fn 4 <br/>";
             $visasMap = $this->importVisas($pdo_old, $resourcesCategoriesMap, $usersMap);
-            
+
 
             // Booking
             echo "import booking <br/>";
@@ -128,7 +130,7 @@ class v1tov2h2P2Controller extends Controller {
         $serviceTypeMap[2] = 2;
         $serviceTypeMap[3] = 3;
         $serviceTypeMap[4] = 4;
-        
+
         $unitsMap = "";
         $usersMap = "";
         if ($importProjects) {
@@ -152,6 +154,11 @@ class v1tov2h2P2Controller extends Controller {
             $mapOrderInvoices = $this->importOrderInvoices($pdo_old, $id_space, $unitsMap, $usersMap);
             echo "fn 3 <br/>";
             $this->importOrder($pdo_old, $id_space, $usersMap, $servicesOrderMap);
+        }
+
+        // antibodies
+        if ($importAntibodies) {
+            $this->mapAntibodiesUsers($pdo_old);
         }
         echo "end <br/>";
     }
@@ -528,8 +535,8 @@ class v1tov2h2P2Controller extends Controller {
         }
         return $packagesMap;
     }
-    
-    public function importPackagePices($pdo_old, $belongingMap, $packagesMap){
+
+    public function importPackagePices($pdo_old, $belongingMap, $packagesMap) {
         $sql = "SELECT * FROM sy_j_packages_prices";
         $result = $pdo_old->query($sql);
         $prices_old = $result->fetchAll();
@@ -631,17 +638,17 @@ class v1tov2h2P2Controller extends Controller {
         $modelUser = new EcUser();
         $invoicesMap = array();
         foreach ($bills_old as $d) {
-            
+
             // get the new resp new id
             //echo "select resp login <br/>";
             //echo "id resp = " . $d["id_resp"] . "</br>";
-            $sql = "SELECT login FROM core_users WHERE id=".$d["id_resp"];
+            $sql = "SELECT login FROM core_users WHERE id=" . $d["id_resp"];
             $resu = $pdo_old->query($sql);
             $resplogin = $resu->fetch();
             $resplogin = $resplogin[0];
             //echo "resplogin = " . $resplogin . "<br/>";
             $id_resp = $modelUser->getIdFromLogin($resplogin);
-            
+
             $module = "services";
             $controller = "servicesinvoiceproject";
             $number = $d["number"];
@@ -678,25 +685,25 @@ class v1tov2h2P2Controller extends Controller {
         foreach ($projects_old as $d) {
             //print_r($d);
             $name = $d["name"];
-            
+
             // get the resp new ID
-            $sql = "SELECT login FROM core_users WHERE id=".$d["id_resp"];
+            $sql = "SELECT login FROM core_users WHERE id=" . $d["id_resp"];
             $resu = $pdo_old->query($sql);
             $resplogin = $resu->fetch();
             $resplogin = $resplogin[0];
             $id_resp = $modelUser->getIdFromLogin($resplogin);
-            
+
             // get the user new ID
-            $sql = "SELECT login FROM core_users WHERE id=".$d["id_user"];
+            $sql = "SELECT login FROM core_users WHERE id=" . $d["id_user"];
             $resu = $pdo_old->query($sql);
             $resplogin = $resu->fetch();
             $resplogin = $resplogin[0];
             $id_user = $modelUser->getIdFromLogin($resplogin);
-            if($id_user == ""){
+            if ($id_user == "") {
                 $id_user = 0;
             }
             //echo "import project id_user = " . $id_user . "<br/>";
-            
+
             $date_open = $d["date_open"];
             $date_close = $d["date_close"];
             $new_team = $d["new_team"];
@@ -709,16 +716,16 @@ class v1tov2h2P2Controller extends Controller {
         // import project services
         $sql2 = "SELECT * FROM sp_projects_entries";
         $result2 = $pdo_old->query($sql2);
-        
+
         echo "number of projects entries = " . $result2->rowCount() . "<br/>";
         $entries_old = $result2->fetchAll();
-        
+
         foreach ($entries_old as $d) {
             $id_project = 0;
             if (isset($projectMap[$d["id_proj"]])) {
                 $id_project = $projectMap[$d["id_proj"]];
             }
-            
+
             $date = $d["date"];
             $id_service = 0;
             if (isset($servicesMap[$d["id_item"]])) {
@@ -831,6 +838,34 @@ class v1tov2h2P2Controller extends Controller {
                     $modelOrder->setService($newOrderID, $itm, $item[1]);
                 }
             }
+        }
+    }
+
+    public function mapAntibodiesUsers($pdo_old) {
+        // import project
+        $sql = "SELECT * FROM ac_j_user_anticorps";
+        $result = $pdo_old->query($sql);
+        $users_old = $result->fetchAll();
+
+        $modelUser = new EcUser();
+        $modelAnticorps = new Anticorps();
+        foreach($users_old as $d){
+        
+            // get the user new ID
+            $sql = "SELECT login FROM core_users WHERE id=" . $d["id_utilisateur"];
+            $resu = $pdo_old->query($sql);
+            $resplogin = $resu->fetch();
+            $resplogin = $resplogin[0];
+            echo "login old = " . $resplogin . "<br/>";
+            $id_user = $modelUser->getIdFromLogin($resplogin);
+            if ($id_user == "") {
+                $id_user = 0;
+            }
+            
+            echo "change user " . $d["id_utilisateur"] . "by " . $id_user . "for antibody " . $d["id_anticorps"] . "<br/>" ;
+            
+            $modelAnticorps->updateOwnerId($d["id_utilisateur"], $d["id_anticorps"], $id_user);
+            
         }
     }
 

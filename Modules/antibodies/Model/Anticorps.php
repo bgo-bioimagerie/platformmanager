@@ -175,7 +175,7 @@ class Anticorps extends Model {
      * @param string $sortentry column used to sort the users
      * @return Ambigous <multitype:, boolean>
      */
-    public function getAnticorpsInfo($sortentry = 'id') {
+    public function getAnticorpsInfo($sortentry = 'no_h2p2') {
         $ac = $this->getAnticorps($sortentry);
 
         return $this->anticorpsInfo($ac);
@@ -380,6 +380,11 @@ class Anticorps extends Model {
         $pdo = $this->runRequest($sql, array($id_user, $id_anticorps, $date, $disponible, $no_dossier));
 
         return $this->getDatabase()->lastInsertId();
+    }
+    
+    public function updateOwnerId($old_id, $anticorps_id, $new_id){
+        $sql = "UPDATE ac_j_user_anticorps SET id_utilisateur=? WHERE id_utilisateur=? AND id_anticorps=?";
+        $this->runRequest($sql, array($new_id, $old_id, $anticorps_id));
     }
 
     public function removeOwners($id) {

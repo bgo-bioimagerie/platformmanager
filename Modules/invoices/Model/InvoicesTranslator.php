@@ -125,14 +125,14 @@ class InvoicesTranslator {
 
     public static function Quantity($lang) {
         if ($lang == "fr") {
-            return "Quantié";
+            return "Quantité";
         }
         return "Quantity";
     }
 
     public static function Price_HT($lang) {
         if ($lang == "fr") {
-            return "Prix net";
+            return "Prix HT";
         }
         return "Net price";
     }

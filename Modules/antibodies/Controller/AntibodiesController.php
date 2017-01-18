@@ -31,7 +31,7 @@ class AntibodiesController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $sortentry = "id") {
+    public function indexAction($id_space, $sortentry = "no_h2p2") {
 
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
 
