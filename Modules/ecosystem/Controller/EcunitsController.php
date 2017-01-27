@@ -43,7 +43,7 @@ class EcunitsController extends CoresecureController {
         $sortentry = "id";
 
         // get the user list
-        $unitsArray = $this->unitModel->getUnits($sortentry);
+        $unitsArray = $this->unitModel->getUnits($id_space, $sortentry);
 
         $table = new TableView();
         $table->setTitle(CoreTranslator::Units($lang), 3);
@@ -72,7 +72,7 @@ class EcunitsController extends CoresecureController {
 
         // belongings
         $modelBelonging = new EcBelonging();
-        $belongingsList = $modelBelonging->getForList();
+        $belongingsList = $modelBelonging->getForList($id_space);
         //$belongingsid = $modelBelonging->getIds();
         //$belongingsnames = $modelBelonging->getNames();
 
@@ -86,7 +86,9 @@ class EcunitsController extends CoresecureController {
         $form->addHidden("id", $unit["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $unit["name"]);
         $form->addTextArea("address", CoreTranslator::Address($lang), false, $unit["address"]);
-        $form->addSelect("id_belonging", CoreTranslator::Belonging($lang), $belongingsList["names"], $belongingsList["ids"], $unit["id_belonging"]);
+        
+        $id_belonging = $this->unitModel->getBelonging($unit["id"], $id_space);
+        $form->addSelect("id_belonging", CoreTranslator::Belonging($lang), $belongingsList["names"], $belongingsList["ids"], $id_belonging);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "ecunitsedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "ecunits/" . $id_space);
@@ -94,8 +96,9 @@ class EcunitsController extends CoresecureController {
         if ($form->check()) {
             // run the database query
             $model = new EcUnit();
-            $model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("id_belonging"));
-
+            $unit_id = $model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("address"));
+            $model->setBelonging($id_space, $form->getParameter("id_belonging"), $unit_id);    
+            
             $this->redirect("ecunits/" . $id_space);
         } else {
             // set the view

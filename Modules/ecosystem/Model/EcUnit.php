@@ -19,14 +19,49 @@ class EcUnit extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `ec_units` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(150) NOT NULL DEFAULT '',
-		`address` varchar(350) NOT NULL DEFAULT '',
-		`id_belonging` int(11) NOT NULL,		
+		`address` varchar(350) NOT NULL DEFAULT '',	
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
 
-        $this->addColumn("ec_units", "id_belonging", "int(11)", 1);
+        $sql2 = "CREATE TABLE IF NOT EXISTS `ec_j_belonging_units` (
+		`id_unit` int(11) NOT NULL,
+                `id_belonging` int(11) NOT NULL,
+		`id_space` int(11) NOT NULL
+		);";
+
+        $this->runRequest($sql2);
+    }
+
+    public function getBelonging($id_unit, $id_space) {
+        $sql = "SELECT id_belonging FROM ec_j_belonging_units WHERE id_unit=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id_unit, $id_space));
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            return $tmp[0];
+        } else {
+            return 0;
+        }
+    }
+
+    public function setBelonging($id_space, $id_belonging, $id_unit) {
+        if ($this->isSetUnit($id_space, $id_belonging)) {
+            $sql = "UPDATE ec_j_belonging_units SET id_unit=? WHERE id_belonging=? AND id_space=?";
+            $this->runRequest($sql, array($id_unit, $id_belonging, $id_space));
+        } else {
+            $sql = "INSERT INTO ec_j_belonging_units (id_unit, id_belonging, id_space) VALUES(?,?,?)";
+            $this->runRequest($sql, array($id_unit, $id_belonging, $id_space));
+        }
+    }
+
+    public function isSetUnit($id_space, $id_belonging) {
+        $sql = "SELECT id_unit FROM ec_j_belonging_units WHERE id_space=? AND id_belonging=?";
+        $req = $this->runRequest($sql, array($id_space, $id_belonging));
+        if ($req->rowCount() > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -48,16 +83,28 @@ class EcUnit extends Model {
      * @param string $sortentry Entry that is used to sort the units
      * @return multitype: array
      */
-    public function getUnits($sortentry = 'id') {
+    public function getUnits($id_space, $sortentry = 'id') {
 
-        $sql = "SELECT units.* ,
-    				   belongings.name AS belonging
-    			FROM ec_units AS units
-    			INNER JOIN ec_belongings AS belongings ON units.id_belonging = belongings.id
-    			ORDER BY " . $sortentry . " ASC;";
-
+        $sql = "SELECT * FROM ec_units ORDER BY " . $sortentry . " ASC;";
         $user = $this->runRequest($sql);
-        return $user->fetchAll();
+        $units = $user->fetchAll();
+
+        for ($i = 0; $i < count($units); $i++) {
+            //echo "unit id = " . $units[$i]["id"] ."<br/>"; 
+            $sql = "SELECT id_belonging FROM ec_j_belonging_units WHERE id_space=? AND id_unit=?";
+            $req = $this->runRequest($sql, array($id_space, $units[$i]["id"]));
+            if ($req->rowCount() == 1) {
+                $sql2 = "SELECT name FROM ec_belongings WHERE id=?";
+                $val = $req->fetch();
+                //echo "belonging id = " . $val[0] . "<br/>";
+                $belonging = $this->runRequest($sql2, array($val[0]))->fetch();
+                //echo "belonging name = " . $belonging[0] . "<br/>";
+                $units[$i]["belonging"] = $belonging[0];
+            } else {
+                $units[$i]["belonging"] = "";
+            }
+        }
+        return $units;
     }
 
     public function getUnitsForList($sortentry = 'id') {
@@ -104,11 +151,12 @@ class EcUnit extends Model {
      * @param string $name name of the unit
      * @param string $address address of the unit
      */
-    public function addUnit($name, $address, $id_belonging) {
+    public function addUnit($name, $address) {
 
-        $sql = "insert into ec_units(name, address, id_belonging)"
+        $sql = "insert into ec_units(name, address)"
                 . " values(?, ?, ?)";
-        $this->runRequest($sql, array($name, $address, $id_belonging));
+        $this->runRequest($sql, array($name, $address));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function importUnit($id, $name, $address, $id_belonging) {
@@ -116,17 +164,16 @@ class EcUnit extends Model {
                 . " values(?, ?, ?, ?)";
         $this->runRequest($sql, array($id, $name, $address, $id_belonging));
     }
-    
-    public function importUnit2($name, $address, $id_belonging){
+
+    public function importUnit2($name, $address, $id_belonging) {
         $sql = "SELECT name FROM ec_units WHERE name=?";
         $req = $this->runRequest($sql, array("name"));
-        if($req->rowCount() == 0){
+        if ($req->rowCount() == 0) {
             $sql = "insert into ec_units(name, address, id_belonging)"
-                . " values(?, ?, ?)";
+                    . " values(?, ?, ?)";
             $this->runRequest($sql, array($name, $address, $id_belonging));
             return $this->getDatabase()->lastInsertId();
-        }
-        else{
+        } else {
             $u = $req->fetch();
             return $u[0];
         }
@@ -139,10 +186,10 @@ class EcUnit extends Model {
      * @param string $name New name of the unit
      * @param string $address New Address of the unit
      */
-    public function editUnit($id, $name, $address, $id_belonging) {
+    public function editUnit($id, $name, $address) {
 
-        $sql = "update ec_units set name=?, address=?, id_belonging=? where id=?";
-        $this->runRequest($sql, array($name, $address, $id_belonging, $id));
+        $sql = "update ec_units set name=?, address=? where id=?";
+        $this->runRequest($sql, array($name, $address, $id));
     }
 
     /**
@@ -165,11 +212,12 @@ class EcUnit extends Model {
      * @param string $name Unit name
      * @param string $address Unit adress
      */
-    public function set($id, $name, $address, $id_belonging) {
+    public function set($id, $name, $address) {
         if (!$this->isUnit($id)) {
-            $this->addUnit($name, $address, $id_belonging);
+            return $this->addUnit($name, $address);
         } else {
-            $this->editUnit($id, $name, $address, $id_belonging);
+            $this->editUnit($id, $name, $address);
+            return $id;
         }
     }
 
@@ -227,17 +275,6 @@ class EcUnit extends Model {
 
     public function getAdress($id) {
         $sql = "select address from ec_units where id=?";
-        $unit = $this->runRequest($sql, array($id));
-        if ($unit->rowCount() == 1) {
-            $tmp = $unit->fetch();
-            return $tmp[0];  // get the first line of the result
-        } else {
-            return "";
-        }
-    }
-
-    public function getBelonging($id) {
-        $sql = "select id_belonging from ec_units where id=?";
         $unit = $this->runRequest($sql, array($id));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();

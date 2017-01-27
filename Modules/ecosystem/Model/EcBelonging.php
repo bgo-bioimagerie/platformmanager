@@ -20,12 +20,14 @@ class EcBelonging extends Model {
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(150) NOT NULL DEFAULT '',
 		`color` varchar(7) NOT NULL DEFAULT '#ffffff',
-		`type` int(1) NOT NULL DEFAULT 1,		
+		`type` int(1) NOT NULL DEFAULT 1,
+                `id_space` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
         $pdo = $this->runRequest($sql);
-        return $pdo;
+        $this->addColumn('ec_belongings', 'id_space', 'int(11)', 0);
+        return 1;
     }
 
     /**
@@ -47,16 +49,16 @@ class EcBelonging extends Model {
      * @param string $sortentry Entry that is used to sort the belongings
      * @return multitype: array
      */
-    public function getBelongings($sortentry = 'id') {
+    public function getBelongings($id_space, $sortentry = 'id') {
 
-        $sql = "select * from ec_belongings order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "SELECT * FROM ec_belongings WHERE id_space=? order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
-    public function getForList(){
-        $sql = "select * from ec_belongings order by id ASC;";
-        $user = $this->runRequest($sql);
+    public function getForList($id_space){
+        $sql = "SELECT * FROM ec_belongings WHERE id_space=? order by id ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         $data =  $user->fetchAll();
         
         $ids = array();
@@ -72,10 +74,10 @@ class EcBelonging extends Model {
      *
      * @return multitype: array
      */
-    public function getNames() {
+    public function getNames($id_space) {
 
-        $sql = "select name from ec_belongings";
-        $req = $this->runRequest($sql);
+        $sql = "SELECT name FROM ec_belongings WHERE id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
         $inter = $req->fetchAll();
         $names = array();
         foreach ($inter as $name) {
@@ -89,17 +91,17 @@ class EcBelonging extends Model {
      *
      * @return array
      */
-    public function getAll() {
+    public function getAll($id_space) {
 
-        $sql = "select id, name, color, type from ec_belongings";
-        $req = $this->runRequest($sql);
+        $sql = "select id, name, color, type from ec_belongings WHERE id_space";
+        $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
 
-    public function getIds() {
+    public function getIds($id_space) {
 
-        $sql = "select id from ec_belongings";
-        $req = $this->runRequest($sql);
+        $sql = "select id from ec_belongings WHERE id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
         $inter = $req->fetchAll();
         $ids = array();
         foreach ($inter as $id) {
@@ -113,11 +115,11 @@ class EcBelonging extends Model {
      *
      * @param string $name name of the belonging
      */
-    public function add($name, $color, $type) {
+    public function add($id_space, $name, $color, $type) {
 
-        $sql = "insert into ec_belongings(name, color, type)"
-                . " values(?,?,?)";
-        $this->runRequest($sql, array($name, $color, $type));
+        $sql = "insert into ec_belongings(id_space, name, color, type)"
+                . " values(?,?,?,?)";
+        $this->runRequest($sql, array($id_space, $name, $color, $type));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -127,10 +129,10 @@ class EcBelonging extends Model {
      * @param int $id Id of the belonging to update
      * @param string $name New name of the belonging
      */
-    public function edit($id, $name, $color, $type) {
+    public function edit($id, $id_space, $name, $color, $type) {
 
-        $sql = "update ec_belongings set name=?, color=?, type=? where id=?";
-        $this->runRequest($sql, array($name, $color, $type, $id));
+        $sql = "update ec_belongings set id_space=?, name=?, color=?, type=? where id=?";
+        $this->runRequest($sql, array($id_space, $name, $color, $type, $id));
     }
 
     /**
@@ -152,11 +154,11 @@ class EcBelonging extends Model {
      * Set a Belonging (add if not exists)
      * @param string $name Belonging name
      */
-    public function set($id, $name, $color, $type) {
+    public function set($id, $id_space, $name, $color, $type) {
         if (!$this->exists($id)) {
-            $this->add($name, $color, $type);
+            $this->add($id_space, $name, $color, $type);
         } else {
-            $this->edit($id, $name, $color, $type);
+            $this->edit($id, $id_space, $name, $color, $type);
         }
     }
 

@@ -259,7 +259,16 @@ class EcusersController extends CoresecureController {
         $form->setFormAdd($formAdd, CoreTranslator::Responsible($lang));
 
         $form->addSelect("is_responsible", EcosystemTranslator::is_responsible($lang), array(EcosystemTranslator::yes($lang), EcosystemTranslator::no($lang)), array(1, 0), $user["is_responsible"]);
-        $form->addSelect("id_status", EcosystemTranslator::Status($lang), $choicesS, $choicesidS, $user["status_id"]);
+        
+        
+        $modelUser = new CoreUser();
+        $curentUserStatus = $modelUser->getStatus($_SESSION["id_user"]);
+        if ($curentUserStatus > 1 ){
+            $form->addSelect("id_status", EcosystemTranslator::Status($lang), $choicesS, $choicesidS, $user["status_id"]);
+        }
+        else{
+            $form->addHidden("id_status", 1);
+        }
         $form->addDate("date_convention", EcosystemTranslator::Date_convention($lang), false, CoreTranslator::dateFromEn($user["date_convention"], $lang));
 
         if ($user["convention_url"] != "") {
@@ -270,7 +279,7 @@ class EcusersController extends CoresecureController {
         $form->addDate("date_end_contract", EcosystemTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
 
         $modelSpace = new CoreSpace();
-        if ($id > 0) {
+        //if ($id > 0) {
             //$form->addSelect("is_active", CoreTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $user["is_active"]);
             //$form->addText("source", CoreTranslator::Source($lang), false, $user["source"], "disabled");
             
@@ -295,7 +304,7 @@ class EcusersController extends CoresecureController {
             $form->addSelect("space_status", EcosystemTranslator::Status($lang) . " " . $spaceName, $roles["names"], $roles["ids"], $role);
             $form->addComment($text, "");
             $form->addText("source", CoreTranslator::Source($lang), false, $user["source"], "disabled");
-        }
+        //}
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "ecusersedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "ecusers/" . $id_space);
@@ -306,7 +315,12 @@ class EcusersController extends CoresecureController {
         if ($form->check()) {
 
             if ($id > 0) {
-                $this->userModel->edit($id, $this->request->getParameter("name"), $this->request->getParameter("firstname"), $this->request->getParameter("login"), $this->request->getParameter("email"), $this->request->getParameter("phone"), $this->request->getParameter("unit"), $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), $this->request->getParameter("date_convention"), $this->request->getParameter("date_end_contract"), 1
+                $this->userModel->edit($id, $this->request->getParameter("name"), $this->request->getParameter("firstname"), 
+                        $this->request->getParameter("login"), $this->request->getParameter("email"), 
+                        $this->request->getParameter("phone"), $this->request->getParameter("unit"), 
+                        $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), 
+                        CoreTranslator::dateToEn($this->request->getParameter("date_convention"), $lang) , 
+                        CoreTranslator::dateToEn($this->request->getParameter("date_end_contract"), $lang) , 1
                 );
                 $modelResp = new EcResponsible();
                 $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
@@ -331,7 +345,12 @@ class EcusersController extends CoresecureController {
                     }
 
                     $id = $this->userModel->add(
-                            $this->request->getParameter("name"), $this->request->getParameter("firstname"), $this->request->getParameter("login"), $password, $this->request->getParameter("email"), $this->request->getParameter("phone"), $this->request->getParameter("unit"), $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), $this->request->getParameter("date_convention"), $this->request->getParameter("date_end_contract")
+                            $this->request->getParameter("name"), $this->request->getParameter("firstname"), 
+                            $this->request->getParameter("login"), $password, $this->request->getParameter("email"), 
+                            $this->request->getParameter("phone"), $this->request->getParameter("unit"), 
+                            $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), 
+                            CoreTranslator::dateToEn($this->request->getParameter("date_convention"), $lang), 
+                            CoreTranslator::dateToEn($this->request->getParameter("date_end_contract"), $lang)
                     );
                     $modelResp = new EcResponsible();
                     $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
@@ -342,7 +361,7 @@ class EcusersController extends CoresecureController {
             }
         }
 // set the view
-        $formHtml = $form->getHtml();
+        $formHtml = $form->getHtml($lang);
 // view
         $this->render(array(
             'id_space' => $id_space,

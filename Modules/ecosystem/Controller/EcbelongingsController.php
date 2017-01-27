@@ -41,7 +41,7 @@ class EcbelongingsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // get the user list
-        $belongingsArray = $this->belongingModel->getbelongings("name");
+        $belongingsArray = $this->belongingModel->getbelongings($id_space, "name");
         for ($i = 0; $i < count($belongingsArray); $i++) {
             if ($belongingsArray[$i]["type"] == 1) {
                 $belongingsArray[$i]["type"] = CoreTranslator::Academic($lang);
@@ -101,7 +101,7 @@ class EcbelongingsController extends CoresecureController {
         if ($form->check()) {
             // run the database query
             $model = new EcBelonging();
-            $model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("type"));
+            $model->set($form->getParameter("id"), $id_space, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("type"));
 
             $this->redirect("ecbelongings/".$id_space);
         } else {

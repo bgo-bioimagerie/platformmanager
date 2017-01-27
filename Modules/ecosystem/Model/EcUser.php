@@ -197,7 +197,7 @@ class EcUser extends Model {
     
     public function getActiveUsersInfoLetter($letter, $active) {
         
-        $sql = "SELECT * FROM core_users WHERE is_active=? AND name LIKE '".$letter."%'";
+        $sql = "SELECT * FROM core_users WHERE is_active=? AND name LIKE '".$letter."%' ORDER BY name ASC;";
         $users = $this->runRequest($sql, array($active))->fetchAll();
         $modelUnit = new EcUnit();
         $modelStatus = new CoreStatus();
@@ -227,7 +227,7 @@ class EcUser extends Model {
     }
     
     public function getActiveUsersInfo($active) {        
-        $sql = "SELECT * FROM core_users WHERE is_active=?";
+        $sql = "SELECT * FROM core_users WHERE is_active=? ORDER BY name ASC;";
         $users = $this->runRequest($sql, array($active))->fetchAll();
         $modelUnit = new EcUnit();
         $modelStatus = new CoreStatus();
