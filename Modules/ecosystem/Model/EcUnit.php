@@ -33,6 +33,14 @@ class EcUnit extends Model {
 
         $this->runRequest($sql2);
     }
+    
+    public function copyToMultipleBelonging($id_space){
+        $sql = "SELECT * FROM ec_units";
+        $units = $this->runRequest($sql)->fetchAll();
+        foreach($units as $unit){
+            $this->setBelonging($id_space, $unit["id_belonging"], $unit["id"]);
+        }
+    }
 
     public function getBelonging($id_unit, $id_space) {
         $sql = "SELECT id_belonging FROM ec_j_belonging_units WHERE id_unit=? AND id_space=?";
@@ -46,18 +54,18 @@ class EcUnit extends Model {
     }
 
     public function setBelonging($id_space, $id_belonging, $id_unit) {
-        if ($this->isSetUnit($id_space, $id_belonging)) {
-            $sql = "UPDATE ec_j_belonging_units SET id_unit=? WHERE id_belonging=? AND id_space=?";
-            $this->runRequest($sql, array($id_unit, $id_belonging, $id_space));
+        if ($this->isSetUnit($id_unit, $id_space)) {
+            $sql = "UPDATE ec_j_belonging_units SET id_belonging=? WHERE id_unit=? AND id_space=?";
+            $this->runRequest($sql, array($id_belonging, $id_unit, $id_space));
         } else {
             $sql = "INSERT INTO ec_j_belonging_units (id_unit, id_belonging, id_space) VALUES(?,?,?)";
             $this->runRequest($sql, array($id_unit, $id_belonging, $id_space));
         }
     }
 
-    public function isSetUnit($id_space, $id_belonging) {
-        $sql = "SELECT id_unit FROM ec_j_belonging_units WHERE id_space=? AND id_belonging=?";
-        $req = $this->runRequest($sql, array($id_space, $id_belonging));
+    public function isSetUnit($id_space, $id_unit) {
+        $sql = "SELECT id_unit FROM ec_j_belonging_units WHERE id_space=? AND id_unit=?";
+        $req = $this->runRequest($sql, array($id_space, $id_unit));
         if ($req->rowCount() > 0) {
             return true;
         }
