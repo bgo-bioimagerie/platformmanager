@@ -44,13 +44,21 @@ class CoreupdateController extends CoresecureController {
     private function update() {
 
         try {
+            $modulesInstalled = '';
+            $first = true;
             $modules = Configuration::get('modules');
             for ($i = 0; $i < count($modules); ++$i) {
-
+                
                 $moduleName = ucfirst(strtolower($modules[$i]));
                 $installFile = "Modules/" . $modules[$i] . "/Model/" . $moduleName . "Install.php";
                 if (file_exists($installFile)) {
-
+                    if (!$first){
+                        $modulesInstalled .= ", ";
+                    }
+                    else{
+                        $first = false;
+                    }
+                    $modulesInstalled .= $modules[$i];
                     require_once $installFile;
                     $className = $moduleName . "Install";
                     $object = new $className();
@@ -60,7 +68,7 @@ class CoreupdateController extends CoresecureController {
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return "Success: update done ";
+        return "Success: update done for modules: " . $modulesInstalled;
     }
 
 }

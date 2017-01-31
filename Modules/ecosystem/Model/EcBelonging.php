@@ -25,7 +25,7 @@ class EcBelonging extends Model {
 		PRIMARY KEY (`id`)
 		);";
 
-        $pdo = $this->runRequest($sql);
+        $this->runRequest($sql);
         $this->addColumn('ec_belongings', 'id_space', 'int(11)', 0);
         return 1;
     }

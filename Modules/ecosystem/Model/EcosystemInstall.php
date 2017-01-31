@@ -12,7 +12,7 @@ require_once 'Modules/ecosystem/Model/EcProject.php';
  *
  * @author Sylvain Prigent
  */
-class EcInstall extends Model {
+class EcosystemInstall extends Model {
 
     /**
      * Create the core database
