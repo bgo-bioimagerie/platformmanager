@@ -1298,5 +1298,18 @@ class CoreTranslator {
         return "Inactive";
     }
     
+    public static function Update($lang) {
+        if ($lang == "fr") {
+            return "Mise à jour";
+        }
+        return "Update";
+    }
+ 
+    public static function UpdateComment($lang) {
+        if ($lang == "fr") {
+            return "Mise à jour du cache du routeur et les base de données des modules";
+        }
+        return "This update the rooting cache and the modules database";
+    }
     
 }

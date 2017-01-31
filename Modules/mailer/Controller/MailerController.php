@@ -91,9 +91,13 @@ class MailerController extends CoresecureController {
             }
         }
 
+        // get the space name
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+        
         // send the email
         $mailerModel = new MailerSend();
-        $message = $mailerModel->sendEmail($from, Configuration::get("name"), $toAdress, $subject, $content);
+        $message = $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
 
         $this->render(array(
             'lang' => $this->getLanguage(),

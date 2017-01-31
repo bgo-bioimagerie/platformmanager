@@ -16,9 +16,8 @@ class CoreRouting extends Routing{
         $this->addRoute("corelogout", "corelogout", "coreconnection", "logout");
         // tiles
         $this->addRoute("coretiles", "coretiles", "coretiles", "index");
-        // Modules manager
-        $this->addRoute("coremodulesmanager", "coremodulesmanager", "coremodulesmanager", "index");
-        $this->addRoute("coremodulesmanagerconfig", "coremodulesmanagerconfig", "coremodulesmanager", "config", array("id"), array(""));
+        // Update
+        $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
         
         // Users
         $this->addRoute("coreusers", "coreusers", "coreusers", "index");
