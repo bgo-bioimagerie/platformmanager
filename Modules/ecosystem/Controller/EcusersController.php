@@ -204,7 +204,7 @@ class EcusersController extends CoresecureController {
 
 // units
         $modelUnit = new EcUnit();
-        $units = $modelUnit->getUnits("name");
+        $units = $modelUnit->getUnits($id_space, "name");
         $choicesU = array();
         $choicesidU = array();
         foreach ($units as $unit) {
