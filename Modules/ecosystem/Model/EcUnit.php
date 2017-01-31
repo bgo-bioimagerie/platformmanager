@@ -162,7 +162,7 @@ class EcUnit extends Model {
     public function addUnit($name, $address) {
 
         $sql = "insert into ec_units(name, address)"
-                . " values(?, ?, ?)";
+                . " values(?, ?)";
         $this->runRequest($sql, array($name, $address));
         return $this->getDatabase()->lastInsertId();
     }
