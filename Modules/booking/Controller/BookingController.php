@@ -495,7 +495,7 @@ class BookingController extends BookingabstractController {
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getColorCodes("name");
+        $colorcodes = $modelColor->getColorCodes($id_space, "name");
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
@@ -580,6 +580,7 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
+        
         // save the menu info in the session
         /*
           $_SESSION['id_resource'] = $curentResource;
@@ -612,7 +613,7 @@ class BookingController extends BookingabstractController {
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getColorCodes("name");
+        $colorcodes = $modelColor->getColorCodes($id_space, "name");
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
@@ -693,7 +694,6 @@ class BookingController extends BookingabstractController {
         }
 
         // get the closest monday to curent day
-
         $i = 0;
         //echo "curentDate = " . $curentDate . "<br/>";
         $curentDateE = explode("-", $curentDate);
@@ -705,6 +705,17 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
+        $foundR = false;
+        foreach($menuData["resources"] as $r){
+            if($r["id"] == $curentResource){
+                $foundR = true;
+                break;
+            }
+        }
+        if(!$foundR){
+            $curentResource = $menuData["resources"][0]["id"];
+            $_SESSION['bk_id_resource'] = $curentResource;
+        }
         // save the menu info in the session
         //$_SESSION['id_resource'] = $curentResource;
         //$_SESSION['id_area'] = $curentAreaId;
@@ -735,7 +746,7 @@ class BookingController extends BookingabstractController {
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getColorCodes("name");
+        $colorcodes = $modelColor->getColorCodes($id_space, "name");
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();

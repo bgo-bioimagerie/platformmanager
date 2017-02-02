@@ -16,6 +16,8 @@ class ResourcesRouting extends Routing{
         $this->addRoute("resources", "resources", "resources", "index", array("id_space"), array(""));
         $this->addRoute("resourcesedit", "resourcesedit", "resources", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("resourcesevents", "resourcesevents", "resources", "events", array("id_space","id"), array("", ""));
+        $this->addRoute("resourceseventdelete", "resourceseventdelete", "resources", "deleteevent", array("id_space", "id_resource", "id"), array("", "", ""));
+        
         $this->addRoute("resourceeditevent", "resourceeditevent", "resources", "editevent", array("id_space", "id_resource", "id_event"), array("", "", ""));
         $this->addRoute("resourceediteventfile", "resourceediteventfile", "resources", "editeventfile", array("id_space"), array(""));
         $this->addRoute("resourcesresp", "resourcesresp", "resources", "resps", array("id_space", "id_resource"), array("", ""));

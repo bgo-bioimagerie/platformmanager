@@ -53,17 +53,17 @@ class BkColorCode extends Model {
      * @param string $sortentry Entry that is used to sort the SyColorCodes
      * @return multitype: array
      */
-    public function getColorCodes($sortentry = 'id') {
+    public function getColorCodes($id_space, $sortentry = 'id') {
 
-        $sql = "select * from bk_color_codes order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "select * from bk_color_codes WHERE id_space=? order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
     
-    public function getColorCodesForList($sortentry = 'id') {
+    public function getColorCodesForList($id_space, $sortentry = 'id') {
 
-        $sql = "select * from bk_color_codes order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "select * from bk_color_codes WHERE id_space=? order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         $data = $user->fetchAll();
         $names = array(); $ids = array();
         foreach($data as $d){

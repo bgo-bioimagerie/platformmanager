@@ -144,7 +144,7 @@ class ResourcesController extends CoresecureController {
 
         $table = new TableView();
         $table->addLineEditButton("resourceeditevent/" . $id_space. "/" . $id);
-        $table->addDeleteButton("resourceseventdelete", "id", "date");
+        $table->addDeleteButton("resourceseventdelete/".$id_space."/".$id, "id", "date");
 
         $headers = array(
             "date" => CoreTranslator::Date($lang),
@@ -174,6 +174,14 @@ class ResourcesController extends CoresecureController {
         $this->render(array("id_space" => $id_space,"lang" => $lang, "headerInfo" => $headerInfo, "tableHtml" => $tableHtml, "id_resource" => $id));
     }
 
+    public function deleteeventAction($id_space, $id_resource, $id){
+        
+        $modelEvent = new ReEvent();
+        $modelEvent->delete($id);
+        
+        $this->redirect("resourcesevents/".$id_space."/".$id_resource);
+    }
+    
     public function editEventAction($id_space, $id_resource, $id_event) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
