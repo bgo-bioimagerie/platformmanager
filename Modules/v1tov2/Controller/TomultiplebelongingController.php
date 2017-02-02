@@ -47,6 +47,8 @@ class TomultiplebelongingController extends Controller {
         if (isset($_GET['space'])) {
             $id_space = $_GET['space'];
             echo 'ID space = ' . $id_space . "<br/>";
+            $modelBelonging = new EcBelonging();
+            $modelBelonging->zerosTo(1);
             $model = new EcUnit();
             $model->copyToMultipleBelonging($id_space);
         } else {

@@ -43,6 +43,14 @@ class EcBelonging extends Model {
         }
     }
 
+    public function zerosTo($idx){
+        $sql = "SELECT * FROM ec_belongings WHERE id_space=0";
+        $data = $this->runRequest($sql)->fetchAll();
+        foreach($data as $d){
+            $sql = "update ec_belongings set id_space=? where id=?";
+            $this->runRequest($sql, array($idx, $d['id']));
+        }
+    }
     /**
      * get belongings informations
      * 
