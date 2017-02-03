@@ -261,7 +261,7 @@ class BookingdefaultController extends BookingabstractController {
             $choicesid = array();
             $rID = $this->request->getParameterNoException("recipient_id");
             if ($rID == ""){
-                $rID = $_SESSION["id_user"];
+                $rID = $resaInfo["recipient_id"];
             }
             $resps = $modelResp->getUserResponsibles($rID);
             foreach ($resps as $r) {

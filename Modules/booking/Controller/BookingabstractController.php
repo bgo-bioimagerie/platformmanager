@@ -111,9 +111,6 @@ class BookingabstractController extends CoresecureController {
         if($userSpaceRole > 2){
             return true;
         }
-        
-        $modelSpace = new CoreSpace();
-        $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
 
         // user cannot book in the past
         if ($curentDateUnix < mktime(0, 0, 0, date("m", time()), date("d", time()), date("Y", time())) && $userStatus < 3) {
