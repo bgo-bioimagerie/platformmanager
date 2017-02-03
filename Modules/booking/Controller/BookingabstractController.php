@@ -106,6 +106,11 @@ class BookingabstractController extends CoresecureController {
         if ($userStatus >= 2) {
             return true;
         }
+        $modelSpace = new CoreSpace();
+        $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
+        if($userSpaceRole > 2){
+            return true;
+        }
         
         $modelSpace = new CoreSpace();
         $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
