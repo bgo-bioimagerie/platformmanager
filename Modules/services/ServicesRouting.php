@@ -45,11 +45,11 @@ class ServicesRouting extends Routing{
         $this->addRoute("servicesprojectfollowup", "servicesprojectfollowup", "servicesprojects", "followup", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojecteditentry", "servicesprojecteditentry", "servicesprojects", "editentry", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojecteditentryquery", "servicesprojecteditentryquery", "servicesprojects", "editentryquery", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesprojectdeleteentry", "servicesprojectdeleteentry", "servicesprojects", "deleteentry", array("id_space", "id_project", "id"), array("", "", ""));
         
         
         $this->addRoute("servicesgetprojectentry", "servicesgetprojectentry", "servicesproject", "getprojectentry", array("id"), array(""), true);
                          
-        
         
         // stats
         $this->addRoute("servicesbalance", "servicesbalance", "servicesbalance", "index", array("id_space"), array(""));

@@ -44,6 +44,11 @@ class SeProject extends Model {
         $this->runRequest($sql2);
     }
 
+    public function deleteEntry($id){
+        $sql = "DELETE FROM se_project_service WHERE id=?";
+        $this->runRequest($sql, array($id));
+    }
+    
     protected function extractYears($data){
         if(count($data) > 0){
             $firstDate = $data[0]["date_open"];

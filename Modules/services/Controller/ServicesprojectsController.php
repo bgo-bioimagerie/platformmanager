@@ -216,7 +216,7 @@ class ServicesprojectsController extends CoresecureController {
         
         $table = new TableView();
         $table->addLineEditButton("editentry", "id", true);
-        $table->addDeleteButton("servicesprojectdeleteentry/" . $id_space, "id", "id");
+        $table->addDeleteButton("servicesprojectdeleteentry/" . $id_space . "/" .$id, "id", "id");
 
         $headersArray = array(
             "date" => CoreTranslator::Date($lang),
@@ -276,6 +276,15 @@ class ServicesprojectsController extends CoresecureController {
         
         $modelProject = new SeProject();
         $modelProject->setEntry($id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
+        
+        $this->redirect("servicesprojectfollowup/".$id_space."/".$id_project);
+    }
+    
+    public function deleteentryAction($id_space, $id_project, $id){
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        
+        $modelProject = new SeProject();
+        $modelProject->deleteEntry($id);
         
         $this->redirect("servicesprojectfollowup/".$id_space."/".$id_project);
     }
