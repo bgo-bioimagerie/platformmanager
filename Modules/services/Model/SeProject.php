@@ -44,6 +44,40 @@ class SeProject extends Model {
         $this->runRequest($sql2);
     }
 
+    protected function extractYears($data){
+        if(count($data) > 0){
+            $firstDate = $data[0]["date_open"];
+            $firstDateInfo = explode("-", $firstDate);
+            $firstYear = $firstDateInfo[0];
+            
+            $lastDate = $data[count($data)-1]["date_open"];
+            $lastDateInfo = explode("-", $lastDate);
+            $lastYear = $lastDateInfo[0];
+            
+            $years = array();
+            for($i = $firstYear ; $i <= $lastYear ; $i++){
+                $years[] = $i;
+            }
+            return $years;
+        }
+        return array();
+    }
+    
+    public function closedProjectsYears($id_space){
+        $sql = "SELECT date_open FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ORDER BY date_open ASC";
+        //echo "sql = " . $sql . "</br>";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        //print_r($data);
+        return $this->extractYears($data);
+    }
+    
+    public function allProjectsYears($id_space){
+        $sql = "SELECT date_open from se_project WHERE id_space=? ORDER BY date_open ASC";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        
+        return $this->extractYears($data);
+    }
+    
     public function getProjectsOpenedPeriodResp($beginPeriod, $endPeriod, $id_resp) {
         $sql = "SELECT id FROM se_project WHERE date_close='0000-00-00' AND date_open>=? AND date_open<? AND id_resp=?";
         $req = $this->runRequest($sql, array($beginPeriod, $endPeriod, $id_resp))->fetchAll();
@@ -72,7 +106,8 @@ class SeProject extends Model {
 
     public function getName($id_project) {
         $sql = "SELECT name FROM se_project WHERE id=?";
-        return $this->runRequest($sql, array($id_project))->fetch();
+        $tmp = $this->runRequest($sql, array($id_project))->fetch();
+        return $tmp[0];
     }
 
     public function getNoInvoicesServices($id_project) {
@@ -90,6 +125,22 @@ class SeProject extends Model {
             $names[] = $r["name"];
         }
         return array("ids" => $ids, "names" => $names);
+    }
+    
+    
+    public function setEntry($id_entry, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
+        
+        if ($id_entry > 0) {
+            //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
+            $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=?, id_project=?, id_service=?, date=? WHERE id=?";
+            $this->runRequest($sql, array($quantity, $comment, $id_invoice, $id_project, $id_service, $date, $id_entry));
+            return $id_entry;
+        } else {
+            //echo "add service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
+            $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice) VALUES (?,?,?,?,?,?)";
+            $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice));
+            return $this->getDatabase()->lastInsertId();
+        }
     }
 
     public function setService($id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
@@ -139,6 +190,11 @@ class SeProject extends Model {
         return false;
     }
 
+    public function getProjectServicesDefault($id_project){
+        $sql = "SELECT * FROM se_project_service WHERE id_project=? ORDER BY date ASC";
+        return $this->runRequest($sql, array($id_project))->fetchAll();
+    }
+    
     public function getProjectServices($id_project) {
         $sql = "SELECT * FROM se_project_service WHERE id_project=?";
         $data = $this->runRequest($sql, array($id_project))->fetchAll();
@@ -198,10 +254,15 @@ class SeProject extends Model {
         $this->runRequest($sql, array($id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit, $id));
     }
 
-    public function entries($sortentry = 'id') {
+    public function entries($id_space, $year = "", $sortentry = 'id') {
 
-        $sql = "select * from se_project order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql);
+        $sql = "SELECT * FROM se_project WHERE id_space=? ";
+        if($year != ""){
+            $sql .= "AND date_open >= '" . $year . "-01-01' AND date_open <= '" . $year . "-12-31' ";  
+        }        
+        $sql .= " ORDER BY " . $sortentry . " ASC;";
+        
+        $req = $this->runRequest($sql, array($id_space));
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
 
@@ -212,7 +273,7 @@ class SeProject extends Model {
         return $entries;
     }
 
-    public function openedEntries($sortentry = 'id') {
+    public function openedEntries($id_space, $sortentry = 'id') {
         $sql = "select * from se_project WHERE date_close=? order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array("0000-00-00"));
 
@@ -226,9 +287,13 @@ class SeProject extends Model {
         return $entries;
     }
 
-    public function closedEntries($sortentry = 'id') {
-        $sql = "select * from se_project where date_close!='0000-00-00' order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql);
+    public function closedEntries($id_space, $year = "", $sortentry = 'id') {
+        $sql = "SELECT * FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ";
+        if($year != ""){
+            $sql .= "AND date_open >= '" . $year . "-01-01' AND date_open <= '" . $year . "-12-31' ";  
+        } 
+        $sql .= " order by " . $sortentry . " ASC;";
+        $req = $this->runRequest($sql, array($id_space));
 
         $entries = $req->fetchAll();
 
@@ -256,6 +321,14 @@ class SeProject extends Model {
         return $entry;
     }
 
+    public function getProjectEntry($id){
+        $sql = "select * from se_project_service where id=?";
+        $req = $this->runRequest($sql, array($id));
+        $entry = $req->fetch();
+
+        return $entry;
+    }
+    
     public function getEntry($id) {
         $sql = "select * from se_project where id=?";
         $req = $this->runRequest($sql, array($id));

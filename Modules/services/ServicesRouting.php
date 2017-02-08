@@ -34,13 +34,23 @@ class ServicesRouting extends Routing{
         $this->addRoute("servicesorderdelete", "servicesorderdelete", "servicesorders", "delete", array("id_space", "id"), array("", ""));
         
         // projects
-        $this->addRoute("servicesprojects", "servicesprojects", "servicesprojects", "index", array("id_space"), array(""));
-        $this->addRoute("servicesprojectsopened", "servicesprojectsopened", "servicesprojects", "opened", array("id_space"), array(""));
-        $this->addRoute("servicesprojectsclosed", "servicesprojectsclosed", "servicesprojects", "closed", array("id_space"), array(""));
-        $this->addRoute("servicesprojectsall", "servicesprojectsall", "servicesprojects", "all", array("id_space"), array(""));
+        $this->addRoute("servicesprojects", "servicesprojects", "servicesprojects", "index", array("id_space", "year"), array("", ""));
+        $this->addRoute("servicesprojectsopened", "servicesprojectsopened", "servicesprojects", "opened", array("id_space", "year"), array("", ""));
+        $this->addRoute("servicesprojectsclosed", "servicesprojectsclosed", "servicesprojects", "closed", array("id_space", "year"), array("", ""));
+        $this->addRoute("servicesprojectsall", "servicesprojectsall", "servicesprojects", "all", array("id_space", "year"), array("", ""));
         $this->addRoute("servicesprojectedit", "servicesprojectedit", "servicesprojects", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojectdelete", "servicesprojectdelete", "servicesprojects", "delete", array("id_space", "id"), array("", ""));
      
+        $this->addRoute("servicesprojectsheet", "servicesprojectsheet", "servicesprojects", "sheet", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesprojectfollowup", "servicesprojectfollowup", "servicesprojects", "followup", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesprojecteditentry", "servicesprojecteditentry", "servicesprojects", "editentry", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesprojecteditentryquery", "servicesprojecteditentryquery", "servicesprojects", "editentryquery", array("id_space", "id"), array("", ""));
+        
+        
+        $this->addRoute("servicesgetprojectentry", "servicesgetprojectentry", "servicesproject", "getprojectentry", array("id"), array(""), true);
+                         
+        
+        
         // stats
         $this->addRoute("servicesbalance", "servicesbalance", "servicesbalance", "index", array("id_space"), array(""));
         

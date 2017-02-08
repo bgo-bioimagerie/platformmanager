@@ -31,7 +31,7 @@ class ServicesprojectsController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $status = "") {
+    public function indexAction($id_space, $year="", $status = "") {
 
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -49,18 +49,38 @@ class ServicesprojectsController extends CoresecureController {
                 $status = "all";
             }
         }
-
+        
+        $title = ServicesTranslator::Services_Projects($lang);
+        $years = array();
+        $yearsUrl = "";
         if ($status == "all") {
-            $entriesArray = $modelEntry->entries($sortentry);
+            $title = ServicesTranslator::All_projects($lang);
+            $years = $modelEntry->allProjectsYears($id_space);
+            if($year==""){
+                $year = $years[count($years)-1];
+            }
+            $yearsUrl = "servicesprojectsall";
+            $entriesArray = $modelEntry->entries($id_space, $year, $sortentry);
         } else if ($status == "opened") {
-            $entriesArray = $modelEntry->openedEntries($sortentry);
+            $title = ServicesTranslator::Opened_projects($lang);
+            $entriesArray = $modelEntry->openedEntries($id_space, $sortentry);
         } else if ($status == "closed") {
-            $entriesArray = $modelEntry->closedEntries($sortentry);
+            $years = $modelEntry->closedProjectsYears($id_space);
+            $yearsUrl = "servicesprojectsclosed";
+            if($year==""){
+                $year = $years[count($years)-1];
+            }
+            $title = ServicesTranslator::Closed_projects($lang);
+            $entriesArray = $modelEntry->closedEntries($id_space, $year, $sortentry);
         }
-
+        
+        //echo "year = " . $year . "<br/>"; 
+        //echo "years = ";
+        //print_r($years);
+        
         $table = new TableView();
-        $table->setTitle(ServicesTranslator::Services_Projects($lang), 3);
-        $table->addLineEditButton("servicesprojectedit/" . $id_space);
+        $table->setTitle($title, 3);
+        $table->addLineEditButton("servicesprojectsheet/" . $id_space);
         $table->addDeleteButton("servicesprojectdelete/" . $id_space, "id", "id");
 
         $headersArray = array(
@@ -72,7 +92,6 @@ class ServicesprojectsController extends CoresecureController {
             "time_limit" => ServicesTranslator::Time_limite($lang),
             "date_close" => ServicesTranslator::Closed_date($lang)
         );
-
 
         for ($i = 0; $i < count($entriesArray); $i++) {
            
@@ -91,24 +110,27 @@ class ServicesprojectsController extends CoresecureController {
         $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
-            'tableHtml' => $tableHtml
+            'tableHtml' => $tableHtml,
+            'yearsUrl' => $yearsUrl,
+            'years' => $years,
+            'year' => $year
                 ), "indexAction");
     }
 
-    public function openedAction($id_space) {
+    public function openedAction($id_space, $year="") {
         $_SESSION["project_lastvisited"] = "opened";
-        $this->indexAction($id_space, "opened");
+        $this->indexAction($id_space, $year, "opened");
     }
 
-    public function closedAction($id_space) {
+    public function closedAction($id_space, $year="") {
         $_SESSION["project_lastvisited"] = "closed";
-        $this->indexAction($id_space, "closed");
+        $this->indexAction($id_space, $year, "closed");
     }
 
-    public function AllAction($id_space) {
+    public function AllAction($id_space, $year) {
 
         $_SESSION["project_lastvisited"] = "all";
-        $this->indexAction($id_space, "all");
+        $this->indexAction($id_space, $year, "all");
     }
 
     public function deleteAction($id_space, $id) {
@@ -117,7 +139,147 @@ class ServicesprojectsController extends CoresecureController {
         $this->serviceModel->delete($id);
         $this->redirect("services/" . $id_space);
     }
+    
+    public function sheetAction($id_space, $id){
+        
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
 
+        $form = new Form($this->request, "projectEditForm");
+        //$form->setTitle(ServicesTranslator::Edit_projects($lang), 3);
+
+        $modelProject = new SeProject();
+        $projectName = $modelProject->getName($id);
+
+        if ($id > 0) {
+            $value = $modelProject->getEntry($id);
+            $items = $modelProject->getProjectServices($id);
+        } else {
+            $value = $modelProject->defaultEntryValues();
+            $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
+        }
+
+        $modelUser = new EcUser();
+        $users = $modelUser->getAcivesForSelect("name");
+        $resps = $modelUser->getAcivesRespsForSelect("name");
+
+        //$form->addSeparator(CoreTranslator::Description($lang));
+        $form->addSelect("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
+        $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
+        $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
+        
+        $newIDs = array(1,2,3);
+        $newNames = array(CoreTranslator::no($lang),ServicesTranslator::Academique($lang),ServicesTranslator::Industry($lang));
+        
+        $form->addSelect("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
+        $form->addSelect("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
+        
+        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, CoreTranslator::dateFromEn($value["time_limit"], $lang));
+        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
+        if ($id > 0){
+            $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));
+        }
+        else{
+            $form->addHidden("date_close", $value["date_close"]);
+        }
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
+        $form->setButtonsWidth(2, 10);
+        
+        if ($form->check()) {
+
+            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), 
+                                        $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
+                                        CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), 
+                                        $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            
+            
+            $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
+            $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);
+            return;
+        }
+        
+        $headerInfo["projectId"] = $id;
+        $headerInfo["curentTab"] = "sheet";
+
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang),
+                            "headerInfo" => $headerInfo, "projectName" => $projectName));
+    
+        
+    }
+    
+    public function followupAction($id_space, $id){
+        
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        $modelProject = new SeProject();
+        $projectName = $modelProject->getName($id);
+        
+        $table = new TableView();
+        $table->addLineEditButton("editentry", "id", true);
+        $table->addDeleteButton("servicesprojectdeleteentry/" . $id_space, "id", "id");
+
+        $headersArray = array(
+            "date" => CoreTranslator::Date($lang),
+            "description" => ServicesTranslator::Description($lang),
+            "comment" => ServicesTranslator::Comment($lang)
+        );
+        
+        $modelServices = new SeService();
+        $items = $modelProject->getProjectServicesDefault($id);
+        for($i = 0 ; $i < count($items) ; $i++){
+            $items[$i]["description"] = $items[$i]["quantity"] . " " . $modelServices->getItemName($items[$i]["id_service"]); 
+            $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang); 
+        }
+        $tableHtml = $table->view($items, $headersArray);
+        
+        $formEdit = $this->createEditEntryForm($id_space, $lang);
+        
+        $headerInfo["projectId"] = $id;
+        $headerInfo["curentTab"] = "followup";
+        
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "projectName" => $projectName,
+                            "tableHtml" => $tableHtml, "headerInfo" => $headerInfo,
+                            "formedit" => $formEdit, "projectEntries" => $items, 
+                            "id_project" => $id));
+        
+    }
+    
+    protected function createEditEntryForm($id_space, $lang){
+        $form = new Form($this->request, "editNoteForm", true);
+        
+        $modelServices = new SeService();
+        $services = $modelServices->getForList($id_space);
+        
+        $form->addHidden("formprojectentryid", 0);
+        $form->addHidden("formprojectentryprojectid", 0);
+        $form->addDate("formprojectentrydate", CoreTranslator::Date($lang), true, "");
+        $form->addSelect("formserviceid", ServicesTranslator::service($lang), $services["names"], $services["ids"]);
+        $form->addNumber("formservicequantity", ServicesTranslator::Quantity($lang), true, 0);
+        $form->addTextArea("formservicecomment", ServicesTranslator::Comment($lang), false, "", false);
+        
+        $form->setColumnsWidth(2, 9);
+        $form->setButtonsWidth(2, 10);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojecteditentryquery/".$id_space);
+        return $form->getHtml($lang);
+    }
+    
+    public function editentryqueryAction($id_space){
+        
+        $lang = $this->getLanguage();
+                
+        $id_entry = $this->request->getParameter("formprojectentryid");
+        $id_project = $this->request->getParameter("formprojectentryprojectid");
+        $date = CoreTranslator::dateToEn($this->request->getParameter("formprojectentrydate"), $lang);
+        $id_service = $this->request->getParameter("formserviceid");
+        $quantity = $this->request->getParameter("formservicequantity");
+        $comment = $this->request->getParameter("formservicecomment");
+        
+        $modelProject = new SeProject();
+        $modelProject->setEntry($id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
+        
+        $this->redirect("servicesprojectfollowup/".$id_space."/".$id_project);
+    }
+    
     public function editAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();

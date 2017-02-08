@@ -13,6 +13,7 @@ class TableView {
     private $titleLevel;
     private $editURL;
     private $editIndex;
+    private $editJS;
     private $useSearchVal;
     private $printAction;
     private $isprint;
@@ -81,9 +82,10 @@ class TableView {
      * @param type $editURL
      * @param type $editIndex
      */
-    public function addLineEditButton($editURL, $editIndex = "id") {
+    public function addLineEditButton($editURL, $editIndex = "id", $editJS = false) {
         $this->editURL = $editURL;
         $this->editIndex = $editIndex;
+        $this->editJS = $editJS;
     }
 
     /**
@@ -280,7 +282,12 @@ class TableView {
                     if ($this->editIndex != "") {
                         $idxVal = $dat[$this->editIndex];
                     }
-                    $html .= "<td>" . "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button>" . "</td>";
+                    if($this->editJS){
+                        $html .= "<td>" . "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button>" . "</td>";
+                    }
+                    else{
+                         $html .= "<td>" . "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button>" . "</td>";   
+                    }  
                 }
                 if ($this->deleteURL != "" && !$this->isprint) {
                     $html .= "<td>" . $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]) . "</td>";

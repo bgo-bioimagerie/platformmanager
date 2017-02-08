@@ -43,6 +43,12 @@ class ReVisa extends Model {
                 . " values(?,?,?)";
         $this->runRequest($sql, array(0, 1, 1));
     }
+    
+    public function importVisa($id, $id_cat, $id_instructor, $instructor_status){
+        $sql = "insert into re_visas(id, id_resource_category, id_instructor, instructor_status)"
+                . " values(?,?,?,?)";
+        $this->runRequest($sql, array($id, $id_cat, $id_instructor, $instructor_status));
+    }
 
     public function getSpaceInstructors($id_space){
         $sql = "SELECT DISTINCT id_instructor FROM re_visas WHERE id_resource_category IN (SELECT DISTINCT id FROM re_category WHERE id_space=?)";

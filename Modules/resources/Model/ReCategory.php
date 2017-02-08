@@ -71,6 +71,16 @@ class ReCategory extends Model {
         }
         return "";
     }
+    
+    public function getIdFromName($name){
+        $sql = "select id from re_category where name=?";
+        $unit = $this->runRequest($sql, array($name));
+        if ($unit->rowCount() == 1) {
+            $tmp = $unit->fetch();
+            return $tmp[0];  // get the first line of the result
+        }
+        return "";
+    }
 
     /**
      * Delete a unit

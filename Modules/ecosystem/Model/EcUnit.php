@@ -306,7 +306,10 @@ class EcUnit extends Model {
             $tmp = $unit->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
-            throw new Exception("Cannot find the unit using the given name:" . $name);
+            
+            echo "Cannot find the unit using the given name:" . $name . "<br/>";
+            return 0;
+            //throw new Exception("Cannot find the unit using the given name:" . $name);
         }
     }
 

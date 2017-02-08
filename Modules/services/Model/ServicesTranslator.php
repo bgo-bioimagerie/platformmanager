@@ -545,7 +545,40 @@ class ServicesTranslator {
         return "Sevices details";
     }
 
+    public static function Sheet($lang) {
+        if ($lang == "fr") {
+            return "Fiche";
+        }
+        return "Sheet";
+    }
 
+    public static function FollowUp($lang) {
+        if ($lang == "fr") {
+            return "Suivi";
+        }
+        return "Follow-up";
+    }
 
-
+    public static function projectEdited($lang){
+        if ($lang == "fr") {
+            return "La fiche projet à bien été enregistrée !";
+        }
+        return "Project sheet has been saved !";
+    }
+    
+    public static function Description($lang){
+        if ($lang == "fr") {
+            return "Description";
+        }
+        return "Description";
+    }
+    
+    public static function NewEntry($lang){
+        if ($lang == "fr") {
+            return "Nouveau service";
+        }
+        return "New service";
+    }
+    
+    
 }
