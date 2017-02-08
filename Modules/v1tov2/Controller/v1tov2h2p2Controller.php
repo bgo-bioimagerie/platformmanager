@@ -54,9 +54,9 @@ class v1tov2h2P2Controller extends Controller {
 
         $id_space = 2;
         $importUserSygrrif = false;
-        $importProjects = false;
+        $importProjects = true;
         $importSupplies = false;
-        $importAntibodies = true;
+        $importAntibodies = false;
 
 
         // ---------- IMPORT ----------
