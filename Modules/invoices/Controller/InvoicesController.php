@@ -121,7 +121,7 @@ class InvoicesController extends CoresecureController {
         $modelInvoice = new InInvoice();
         $service = $modelInvoice->get($id);
         
-        $controllerName = $service["controller"] . "Controller";
+        $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/'.$service["module"] . "/Controller/". $controllerName . ".php";
         $object = new $controllerName();
         $object->setRequest($this->request);
