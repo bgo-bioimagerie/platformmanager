@@ -57,7 +57,9 @@ class SeProject extends Model {
             $i = 0;
             while($firstYear == "0000"){
                 $i++;
-                $firstYear = $firstDateInfo[$i];
+                $firstDate = $data[$i]["date_open"];
+                $firstDateInfo = explode("-", $firstDate);
+                $firstYear = $firstDateInfo[0];
             }
             
             $lastDate = $data[count($data)-1]["date_open"];
