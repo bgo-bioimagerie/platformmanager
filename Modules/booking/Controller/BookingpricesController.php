@@ -50,7 +50,7 @@ class BookingpricesController extends CoresecureController {
         $modelPNightWe = new BkNightWE();
         $modelPackage = new BkPackage();
         $resources = $modelResource->getForSpace($id_space);
-        $belongings = $modelBelonging->getBelongings("name");
+        $belongings = $modelBelonging->getBelongings($id_space, "name");
         $prices = array();
         $count = -1;
         for ($i = 0; $i < count($resources); $i++) {

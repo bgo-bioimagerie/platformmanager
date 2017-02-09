@@ -12,7 +12,7 @@
     <script>
         $(document).ready(function () {
             var table = $('#example').DataTable({
-                scrollY: "2000px",
+                scrollY: "300px",
                 scrollX: true,
                 scrollCollapse: true,
                 paging: false,

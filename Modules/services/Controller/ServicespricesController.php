@@ -43,7 +43,7 @@ class ServicespricesController extends CoresecureController {
         $modelBelonging = new EcBelonging();
         $modelPrice = new SePrice();
         $services = $this->serviceModel->getAll($id_space);
-        $belongings = $modelBelonging->getBelongings("name");
+        $belongings = $modelBelonging->getBelongings($id_space, "name");
         $prices = array();
         for($i = 0 ; $i < count($services) ; $i++){
             //$tmp = array();
@@ -66,6 +66,7 @@ class ServicespricesController extends CoresecureController {
         }
         
         $form->setButtonsWidth(2, 10);
+        $formAdd->setButtonsVisible(false);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprices/".$id_space);
         
         $form->setFormAdd($formAdd);

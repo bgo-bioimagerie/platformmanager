@@ -331,11 +331,11 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         foreach ($content as $d) {
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[2], 2, ',', ' ') . " &euro;</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format($d[1], 2, ',', ' ') . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[1] * $d[2], 2, ',', ' ') . " &euro;</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d[2]), 2, ',', ' ') . " &euro;</td>";
+            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format(floatval($d[1]), 2, ',', ' ') . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d[1] * $d[2]), 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
-            $total += $d[1] * $d[2];
+            $total += floatval($d[1]) * floatval($d[2]);
         }
         $table .= "</table>";
 
