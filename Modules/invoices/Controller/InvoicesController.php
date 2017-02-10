@@ -53,6 +53,9 @@ class InvoicesController extends CoresecureController {
         $dates = $this->getInvoicePeriod($id_space, $year);
         $years = $modelInvoices->allYears($id_space);
         if ($year == "") {
+            if(count($years) == 1){
+                $year = $years[0];
+            }
             $year = $years[count($years) - 1];
         }
 
