@@ -10,9 +10,9 @@ class AntibodiesTranslator {
 
     public static function antibodies($lang){
         if ($lang == "fr") {
-            return "antibodies";
+            return "Anticorps";
         }
-        return "antibodies";
+        return "Antibodies";
     }
     
     public static function antibodiesConfigAbstract($lang) {

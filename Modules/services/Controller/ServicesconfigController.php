@@ -56,10 +56,20 @@ class ServicesconfigController extends CoresecureController {
             $this->redirect("servicesconfig/".$id_space);
             return;
         }
+        
+        // period projects
+        $formPerodProject = $this->periodProjectForm($modelCoreConfig, $id_space, $lang);
+        if($formPerodProject->check()){
+            $modelCoreConfig->setParam("projectperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("projectperiodbegin"), $lang) , $id_space);
+            $modelCoreConfig->setParam("projectperiodend", CoreTranslator::dateToEn($this->request->getParameter("projectperiodend"), $lang), $id_space);
+            
+            $this->redirect("servicesconfig/".$id_space);
+            return;
+        }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang), 
-                        );
+                        $formPerodProject->getHtml($lang));
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
@@ -89,6 +99,21 @@ class ServicesconfigController extends CoresecureController {
         $form->addSeparator(CoreTranslator::color($lang));
         $form->addColor("servicesmenucolor", CoreTranslator::menu_color($lang), false, $ecmenucolor);
         $form->addColor("servicesmenucolortxt", CoreTranslator::text_color($lang), false, $ecmenucolortxt);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+        
+        return $form;
+    }
+    
+    public function periodProjectForm($modelCoreConfig, $id_space, $lang){
+        $projectperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("projectperiodbegin", $id_space), $lang);
+        $projectperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("projectperiodend", $id_space), $lang);
+        
+        $form = new Form($this->request, "periodProjectForm");
+        $form->addSeparator(ServicesTranslator::projectperiod($lang));
+        $form->addDate("projectperiodbegin", ServicesTranslator::projectperiodbegin($lang), true, $projectperiodbegin);
+        $form->addDate("projectperiodend", ServicesTranslator::projectperiodend($lang), true, $projectperiodend);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

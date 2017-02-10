@@ -10,7 +10,7 @@ class InvoicesTranslator {
 
     public static function invoices($lang) {
         if ($lang == "fr") {
-            return "Relevés";
+            return "Facturation";
         }
         return "Invoices";
     }
@@ -21,8 +21,7 @@ class InvoicesTranslator {
         }
         return "All invoices";
     }
-    
-    
+
     public static function invoicesConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Invoices permet de générer des factures";
@@ -171,5 +170,26 @@ class InvoicesTranslator {
         }
         return "Owner price";
     }
-    
+
+    public static function invoiceperiodbegin($lang) {
+        if ($lang == "fr") {
+            return "Début periode facturation";
+        }
+        return "Invoices period begin";
+    }
+
+    public static function invoiceperiodend($lang) {
+        if ($lang == "fr") {
+            return "Fin periode facturation";
+        }
+        return "Invoices period end";
+    }
+
+    public static function invoiceperiod($lang) {
+        if ($lang == "fr") {
+            return "Periode facturation";
+        }
+        return "Invoices end";
+    }
+
 }

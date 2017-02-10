@@ -57,9 +57,20 @@ class InvoicesconfigController extends CoresecureController {
             $this->redirect("invoicesconfig/" . $id_space);
             return;
         }
+        
+        // period invoices
+        $formPeriod = $this->periodForm($modelCoreConfig, $id_space, $lang);
+        if($formPeriod->check()){
+            $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang) , $id_space);
+            $modelCoreConfig->setParam("invoiceperiodend", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodend"), $lang), $id_space);
+            
+            $this->redirect("invoicesconfig/".$id_space);
+            return;
+        }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang),
+                       $formPeriod->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -94,6 +105,21 @@ class InvoicesconfigController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
 
+        return $form;
+    }
+    
+    public function periodForm($modelCoreConfig, $id_space, $lang){
+        $invoiceperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space), $lang);
+        $invoiceperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodend", $id_space), $lang);
+        
+        $form = new Form($this->request, "periodProjectForm");
+        $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));
+        $form->addDate("invoiceperiodbegin", InvoicesTranslator::invoiceperiodbegin($lang), true, $invoiceperiodbegin);
+        $form->addDate("invoiceperiodend", InvoicesTranslator::invoiceperiodend($lang), true, $invoiceperiodend);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+        
         return $form;
     }
 

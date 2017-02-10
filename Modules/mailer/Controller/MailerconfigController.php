@@ -39,7 +39,7 @@ class MailerconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-           $modelSpace->setSpaceMenu($id_space, "mailer", "mailer", "glyphicon-user", $this->request->getParameter("usermenustatus"));
+           $modelSpace->setSpaceMenu($id_space, "mailer", "mailer", "glyphicon-envelope", $this->request->getParameter("usermenustatus"));
             
             $this->redirect("mailerconfig/".$id_space);
             return;

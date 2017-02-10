@@ -10,9 +10,9 @@ class StatisticsTranslator {
 
     public static function statistics($lang){
         if ($lang == "fr") {
-            return "statistics";
+            return "Statistiques";
         }
-        return "statistics";
+        return "Statistics";
     }
     
     public static function statisticsConfigAbstract($lang) {

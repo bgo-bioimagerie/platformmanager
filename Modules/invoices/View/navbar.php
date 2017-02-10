@@ -78,7 +78,7 @@ foreach($menus as $menu){
         if($model->count() > 0){
             ?>
             <div class="col-md-12">
-                <p id="separatorp"><?php echo $module ?></p>
+                <p id="separatorp"><?php echo $translator->$module($lang) ?></p>
             <?php
         }
         for ($i = 0 ; $i < $model->count() ; $i++){

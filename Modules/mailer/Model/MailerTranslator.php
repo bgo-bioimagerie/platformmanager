@@ -10,9 +10,9 @@ class MailerTranslator {
 
     public static function mailer($lang) {
         if ($lang == "fr") {
-            return "mailer";
+            return "Couriels";
         }
-        return "mailer";
+        return "Mailer";
     }
 
     public static function mailerConfigAbstract($lang) {

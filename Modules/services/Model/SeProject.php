@@ -50,6 +50,7 @@ class SeProject extends Model {
     }
     
     protected function extractYears($data){
+        
         if(count($data) > 0){
             $firstDate = $data[0]["date_open"];
             $firstDateInfo = explode("-", $firstDate);
@@ -266,11 +267,11 @@ class SeProject extends Model {
         $this->runRequest($sql, array($id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit, $id));
     }
 
-    public function entries($id_space, $year = "", $sortentry = 'id') {
+    public function entries($id_space, $yearBegin = "", $yearEnd = "", $sortentry = 'id') {
 
         $sql = "SELECT * FROM se_project WHERE id_space=? ";
-        if($year != ""){
-            $sql .= "AND date_open >= '" . $year . "-01-01' AND date_open <= '" . $year . "-12-31' ";  
+        if($yearBegin != "" && $yearEnd != ""){
+            $sql .= "AND date_open >= '" . $yearBegin . "' AND date_open <= '" . $yearEnd . "' ";  
         }        
         $sql .= " ORDER BY " . $sortentry . " ASC;";
         
@@ -299,12 +300,15 @@ class SeProject extends Model {
         return $entries;
     }
 
-    public function closedEntries($id_space, $year = "", $sortentry = 'id') {
+    public function closedEntries($id_space, $yearBegin = "", $yearEnd = "", $sortentry = 'id') {
         $sql = "SELECT * FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ";
-        if($year != ""){
-            $sql .= "AND date_open >= '" . $year . "-01-01' AND date_open <= '" . $year . "-12-31' ";  
+        if($yearBegin != "" && $yearEnd != ""){
+            $sql .= "AND date_open >= '" . $yearBegin . "' AND date_open <= '" . $yearEnd . "' "; 
         } 
         $sql .= " order by " . $sortentry . " ASC;";
+        //echo "yearBegin = " . $yearBegin . "<br/>";
+        //echo "yearEnd = " . $yearEnd . "<br/>";
+        //echo "sql = " . $sql . "<br/>";
         $req = $this->runRequest($sql, array($id_space));
 
         $entries = $req->fetchAll();

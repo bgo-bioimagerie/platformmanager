@@ -75,6 +75,16 @@ class InInvoice extends Model {
                 . "ORDER BY " . $sortentry . " DESC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+    
+    public function getByPeriod($id_space, $begin, $end, $sortentry = "number"){
+                $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
+                . "FROM in_invoice "
+                . "INNER JOIN ec_units ON ec_units.id=in_invoice.id_unit "
+                . "INNER JOIN core_users ON core_users.id=in_invoice.id_responsible "
+                . "WHERE in_invoice.id_space=? AND in_invoice.date_generated >=? AND in_invoice.date_generated <=? "        
+                . "ORDER BY " . $sortentry . " DESC;";
+        return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
+    }
 
     public function getNextNumber($previousNumber = "") {
         
@@ -117,6 +127,35 @@ class InInvoice extends Model {
         }
     }
 
+    public function allYears($id_space){
+        
+        $sql = "SELECT date_generated FROM in_invoice WHERE id_space=?";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        
+        if(count($data) > 0){
+            $firstDate = $data[0]["date_generated"];
+            $firstDateInfo = explode("-", $firstDate);
+            $firstYear = $firstDateInfo[0];
+            $i = 0;
+            while($firstYear == "0000"){
+                $i++;
+                $firstDate = $data[$i]["date_generated"];
+                $firstDateInfo = explode("-", $firstDate);
+                $firstYear = $firstDateInfo[0];
+            }
+            
+            $lastDate = $data[count($data)-1]["date_generated"];
+            $lastDateInfo = explode("-", $lastDate);
+            $lastYear = $lastDateInfo[0];
+            
+            $years = array();
+            for($i = $firstYear ; $i <= $lastYear ; $i++){
+                $years[] = $i;
+            }
+            return $years;
+        }
+        return array();
+    }
     
     public function getInvoicesPeriod($controller, $periodStart, $periodEnd){
         $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ? AND controller=?";

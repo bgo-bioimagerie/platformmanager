@@ -24,16 +24,16 @@ class ServicesTranslator {
 
     public static function services($lang) {
         if ($lang == "fr") {
-            return "Services";
+            return "Prestations";
         }
         return "Services";
     }
 
     public static function service($lang) {
         if ($lang == "fr") {
-            return "service";
+            return "Prestation";
         }
-        return "service";
+        return "Service";
     }
 
     public static function servicesprices($lang) {
@@ -580,5 +580,25 @@ class ServicesTranslator {
         return "New service";
     }
     
+    public static function projectperiodbegin($lang){
+        if ($lang == "fr") {
+            return "Début periode projet";
+        }
+        return "Project period begin";
+    }
+    
+    public static function projectperiodend($lang){
+        if ($lang == "fr") {
+            return "Fin periode projet";
+        }
+        return "Project period end";
+    }
+    
+    public static function projectperiod($lang){
+        if ($lang == "fr") {
+            return "Periode projet";
+        }
+        return "Period end";
+    }
     
 }
