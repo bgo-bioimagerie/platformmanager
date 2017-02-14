@@ -50,7 +50,7 @@ class InvoicesController extends CoresecureController {
 
         $modelInvoices = new InInvoice();
 
-        $dates = $this->getInvoicePeriod($id_space, $year);
+        
         $years = $modelInvoices->allYears($id_space);
         if ($year == "") {
             if(count($years) == 1){
@@ -58,7 +58,7 @@ class InvoicesController extends CoresecureController {
             }
             $year = $years[count($years) - 1];
         }
-
+        $dates = $this->getInvoicePeriod($id_space, $year);
         $invoices = $modelInvoices->getByPeriod($id_space, $dates["yearBegin"], $dates["yearEnd"], "number");
         for ($i = 0; $i < count($invoices); $i++) {
             $invoices[$i]["date_generated"] = CoreTranslator::dateFromEn($invoices[$i]["date_generated"], $lang);
