@@ -23,6 +23,8 @@ require_once 'Modules/core/Model/CoreProject.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
+require_once 'Modules/mailer/Model/MailerSend.php';
+
 
 /**
  * 
@@ -388,6 +390,14 @@ class BookingdefaultController extends BookingabstractController {
 
         $userCanEdit = $this->canUserEditReservation($id_space, $_SESSION["id_user"], $resaInfo["id"], $resaInfo["recipient_id"], $resaInfo["start_time"]);
         
+        // create delete form
+        $formDelete = new Form($this->request, "bookingeditreservationdefaultdeleteform");
+        $formDelete->addComment(BookingTranslator::RemoveReservation($lang));
+        $formDelete->addHidden("id_reservation", 0);
+        $formDelete->addSelect("sendmail", BookingTranslator::SendEmailsToUsers($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), 1);
+        $formDelete->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationdefaultdelete/' . $id_space ."/". $resaInfo["id"]);
+        $formDelete->setButtonsWidth(2, 10);
+        
         $this->render(array("id_space" => $id_space, "lang" => $lang, "menuData" => $menuData,
             "form" => $form, "use_packages" => $use_packages,
             "packageChecked" => $packageChecked,
@@ -395,7 +405,8 @@ class BookingdefaultController extends BookingabstractController {
             "id_reservation" => $resaInfo["id"],
             "canEditReservation" => $canEditReservation,
             "formPackage" => $formPackage->getHtml($lang, false),
-            "formEndDate" => $formEndDate->getHtml($lang, false)), "addreservationAction");
+            "formEndDate" => $formEndDate->getHtml($lang, false),
+            "formDelete" => $formDelete->getHtml($lang)), "addreservationAction");
     }
 
     private function canBookForOthers($id_space, $id_user) {
@@ -435,6 +446,41 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id){
+        
+        $sendmail = $this->request->getParameter("sendmail");
+        
+        if( $sendmail == 1){
+            // get the resource
+            $modelCalEntry = new BkCalendarEntry();
+            $entryInfo = $modelCalEntry->getEntry($id);
+            $id_resource = $entryInfo["resource_id"];
+            
+            
+            $resourceModel = new ResourceInfo();
+            $resourceName = $resourceModel->getName($id_resource);
+            
+            // get the space name
+            $modelSpace = new CoreSpace();
+            $space = $modelSpace->getSpace($id_space);
+        
+            // user info
+            $userModel = new EcUser();
+            $user = $userModel->getInfo($_SESSION["id_user"]);
+            
+            // mail content
+            $from = $user["email"];
+            $toAdress = $modelCalEntry->getEmailsBookerResource($id_resource);
+            $subject = $resourceName . " has been freed"; 
+            $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]); 
+            
+            //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
+            
+            // send the email
+            $mailerModel = new MailerSend();
+            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
+
+        }
+        
         $modelCalEntry = new BkCalendarEntry();
         $modelCalEntry->removeEntry($id);
         

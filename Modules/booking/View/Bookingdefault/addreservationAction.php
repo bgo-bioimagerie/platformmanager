@@ -40,7 +40,7 @@
     <?php if ($userCanEdit){ ?>	
         <input type="submit" class="btn btn-primary" value="Save" />
         <?php if ($id_reservation > 0){?>
-        <button type="button" onclick="ConfirmDelete();" class="btn btn-danger"><?php echo CoreTranslator::Delete($lang) ?></button>
+        <button id="deletebookingbutton" type="button" class="btn btn-danger"><?php echo CoreTranslator::Delete($lang) ?></button>
 	<?php }} ?>
 	<button type="button" class="btn btn-default" onclick="location.href='booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
     </div>
@@ -59,7 +59,7 @@ if( $packageChecked > 0){
 ?>
 
 <script>
-    
+    $(document).ready(function () {
     var php_var = "<?php echo $isPackageCheched; ?>";
         if (php_var === 0){
         document.getElementById('resa_time_div').style.display = 'none';
@@ -73,9 +73,23 @@ if( $packageChecked > 0){
     document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
     
     };
+    };
     
 </script>
 
+<!--  *************  -->
+<!--  Popup windows  -->
+<!--  *************  -->
+<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
+<div id="hider" class="col-xs-12"></div> 
+<div id="entriespopup_box" class="pm_popup_box" style="display: none;">
+    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a></div>
+        <?php echo $formDelete ?>
+</div> 
+
+<?php include 'Modules/booking/View/Bookingdefault/deletescript.php';  ?>
+
+<!--
 <script type="text/javascript">
     	function ConfirmDelete()
     	{
@@ -84,5 +98,6 @@ if( $packageChecked > 0){
             }
     	}
 </script> 
+-->
 <?php
 endblock();

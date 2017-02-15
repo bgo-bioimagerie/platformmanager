@@ -1220,5 +1220,19 @@ class BookingTranslator {
         }
         return "Block resources";
     }
+    
+    public static function RemoveReservation($lang){
+        if ($lang == "Fr") {
+            return "Etes vous sure de vouloir supprimer la réservation ?";
+        }
+        return "Are you sure you want to delete this reservation ?";
+    }
+    
+    public static function SendEmailsToUsers($lang){
+        if ($lang == "Fr") {
+            return "Prévenir les autres utilisateurs de la machine que le créneau est libéré:";
+        }
+        return "Inform other users of that the slot is free:";
+    }
 
 }

@@ -100,6 +100,16 @@ class InvoicesController extends CoresecureController {
 
         return;
     }
+    
+    public function createPurcentageDiscountForm($discountValue){
+        
+        $lang = $this->getLanguage();
+        $form = new Form($this->request, "PurcentageDiscountForm");
+        $form->addNumber("discount", InvoicesTranslator::Discount($lang), false, $discountValue);
+        
+        return $form->getHtml($lang);
+        
+    }
 
     public function infoAction($id_space, $id) {
 
