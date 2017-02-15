@@ -326,7 +326,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $details = "";
         foreach ($id_projects as $id_proj) {
             $name = $modelProject->getName($id_proj);
-            $details .= $name[0] . "=" . "servicesprojectedit/" . $id_space . "/" . $id_proj . ";";
+            $details .= $name . "=" . "servicesprojectfollowup/" . $id_space . "/" . $id_proj . ";";
         }
         //echo "set item <br/>";
         // set invoice itmems

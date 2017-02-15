@@ -10,6 +10,7 @@
     <h4> <?php echo ServicesTranslator::Projects($lang) ?> </h4>
     
     <?php 
+        //print_r($details);
         foreach ($details as $d){
             ?>
             <a href="<?php echo $d[1] ?>"><?php echo $d[0] ?></a>, 
