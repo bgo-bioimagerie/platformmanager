@@ -311,7 +311,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
             //ob_clean();
             $statUserModel->authorizedUsersMail($resource_id, $id_space);
         } else {
-            header_remove();
+            //header_remove();
             //ob_clean();
             $statUserModel->authorizedUsers($resource_id, $id_space, $lang);
         }

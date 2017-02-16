@@ -87,7 +87,7 @@ class EcunitsController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $unit["name"]);
         $form->addTextArea("address", CoreTranslator::Address($lang), false, $unit["address"]);
         
-        $id_belonging = $this->unitModel->getBelonging($unit["id"], $id_space);
+        $id_belonging = $this->unitModel->getBelonging($id, $id_space);
         $form->addSelect("id_belonging", CoreTranslator::Belonging($lang), $belongingsList["names"], $belongingsList["ids"], $id_belonging);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "ecunitsedit/" . $id_space . "/" . $id);

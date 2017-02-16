@@ -41,7 +41,7 @@ class EcbelongingsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // get the user list
-        $belongingsArray = $this->belongingModel->getbelongings($id_space, "name");
+        $belongingsArray = $this->belongingModel->getbelongings($id_space, "display_order");
         for ($i = 0; $i < count($belongingsArray); $i++) {
             if ($belongingsArray[$i]["type"] == 1) {
                 $belongingsArray[$i]["type"] = CoreTranslator::Academic($lang);
@@ -75,11 +75,8 @@ class EcbelongingsController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
         
         // get belonging info
-        $belonging = array("id" => 0, "name" => "", "color" => "#ffffff", "type" => 1);
-        if ($id > 0) {
-            $belonging = $this->belongingModel->getInfo($id);
-        }
-
+        $belonging = $this->belongingModel->getInfo($id);
+        
         // lang
         $lang = $this->getLanguage();
 
@@ -90,6 +87,7 @@ class EcbelongingsController extends CoresecureController {
         $form->addHidden("id", $belonging["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $belonging["name"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $belonging["color"]);
+        $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $belonging["display_order"]);
 
         $choices = array(CoreTranslator::Academic($lang), CoreTranslator::Company($lang));
         $choicesid = array(1, 2);
@@ -101,7 +99,10 @@ class EcbelongingsController extends CoresecureController {
         if ($form->check()) {
             // run the database query
             $model = new EcBelonging();
-            $model->set($form->getParameter("id"), $id_space, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("type"));
+            $model->set($form->getParameter("id"), $id_space, $form->getParameter("name"), 
+                    $form->getParameter("color"), $form->getParameter("type"),
+                    $form->getParameter("display_order")
+                    );
 
             $this->redirect("ecbelongings/".$id_space);
         } else {

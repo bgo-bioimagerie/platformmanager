@@ -22,11 +22,13 @@ class EcBelonging extends Model {
 		`color` varchar(7) NOT NULL DEFAULT '#ffffff',
 		`type` int(1) NOT NULL DEFAULT 1,
                 `id_space` int(11) NOT NULL DEFAULT 0,
+                `display_order` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
         $this->addColumn('ec_belongings', 'id_space', 'int(11)', 0);
+        $this->addColumn('ec_belongings', 'display_order', 'int(11)', 0);
         return 1;
     }
 
@@ -37,46 +39,53 @@ class EcBelonging extends Model {
      */
     public function createDefault() {
 
-        if (!$this->exists(1)) {
-            $sql = "INSERT INTO ec_belongings (name) VALUES(?)";
-            $this->runRequest($sql, array("--"));
-        }
+
+        /*
+          if (!$this->exists(1)) {
+          $sql = "INSERT INTO ec_belongings (name) VALUES(?)";
+          $this->runRequest($sql, array("--"));
+          }
+         */
     }
 
-    public function zerosTo($idx){
+    public function zerosTo($idx) {
         $sql = "SELECT * FROM ec_belongings WHERE id_space=0";
         $data = $this->runRequest($sql)->fetchAll();
-        foreach($data as $d){
+        foreach ($data as $d) {
             $sql = "update ec_belongings set id_space=? where id=?";
             $this->runRequest($sql, array($idx, $d['id']));
         }
     }
+
     /**
      * get belongings informations
      * 
      * @param string $sortentry Entry that is used to sort the belongings
      * @return multitype: array
      */
-    public function getBelongings($id_space, $sortentry = 'id') {
+    public function getBelongings($id_space, $sortentry = 'display_order') {
 
         $sql = "SELECT * FROM ec_belongings WHERE id_space=? order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
-    public function getForList($id_space){
+    public function getForList($id_space) {
         $sql = "SELECT * FROM ec_belongings WHERE id_space=? order by id ASC;";
         $user = $this->runRequest($sql, array($id_space));
-        $data =  $user->fetchAll();
-        
+        $data = $user->fetchAll();
+
         $ids = array();
         $names = array();
-        foreach($data as $d){
+        $ids[] = 0;
+        $names[] = "";
+        foreach ($data as $d) {
             $ids[] = $d["id"];
-            $names[] = $d["name"]; 
+            $names[] = $d["name"];
         }
         return array("ids" => $ids, "names" => $names);
     }
+
     /**
      * get the names of all the belongings
      *
@@ -101,7 +110,7 @@ class EcBelonging extends Model {
      */
     public function getAll($id_space) {
 
-        $sql = "select id, name, color, type from ec_belongings WHERE id_space";
+        $sql = "select id, name, color, type, display_order from ec_belongings WHERE id_space";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
@@ -123,11 +132,11 @@ class EcBelonging extends Model {
      *
      * @param string $name name of the belonging
      */
-    public function add($id_space, $name, $color, $type) {
+    public function add($id_space, $name, $color, $type, $display_order) {
 
-        $sql = "insert into ec_belongings(id_space, name, color, type)"
-                . " values(?,?,?,?)";
-        $this->runRequest($sql, array($id_space, $name, $color, $type));
+        $sql = "insert into ec_belongings(id_space, name, color, type, display_order)"
+                . " values(?,?,?,?,?)";
+        $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -137,10 +146,10 @@ class EcBelonging extends Model {
      * @param int $id Id of the belonging to update
      * @param string $name New name of the belonging
      */
-    public function edit($id, $id_space, $name, $color, $type) {
+    public function edit($id, $id_space, $name, $color, $type, $display_order) {
 
-        $sql = "update ec_belongings set id_space=?, name=?, color=?, type=? where id=?";
-        $this->runRequest($sql, array($id_space, $name, $color, $type, $id));
+        $sql = "update ec_belongings set id_space=?, name=?, color=?, type=?, display_order=? where id=?";
+        $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order, $id));
     }
 
     /**
@@ -162,11 +171,11 @@ class EcBelonging extends Model {
      * Set a Belonging (add if not exists)
      * @param string $name Belonging name
      */
-    public function set($id, $id_space, $name, $color, $type) {
+    public function set($id, $id_space, $name, $color, $type, $display_order) {
         if (!$this->exists($id)) {
-            $this->add($id_space, $name, $color, $type);
+            $this->add($id_space, $name, $color, $type, $display_order);
         } else {
-            $this->edit($id, $id_space, $name, $color, $type);
+            $this->edit($id, $id_space, $name, $color, $type, $display_order);
         }
     }
 
@@ -178,12 +187,13 @@ class EcBelonging extends Model {
      * @return mixed array
      */
     public function getInfo($id) {
-        $sql = "select * from ec_belongings where id=?";
-        $req = $this->runRequest($sql, array($id));
-        if ($req->rowCount() == 1) {
-            return $req->fetch();  // get the first line of the result
+
+        if ($id == 0) {
+            return array('id' => 0, "name" => '', 'color' => '#ffffff', 'type' => 1, 'display_order' => 0);
         } else {
-            return array('id' => 0, "name" => 'unknown', 'color' => '#ffffff', 'type' => 1);
+            $sql = "select * from ec_belongings where id=?";
+            $req = $this->runRequest($sql, array($id));
+            return $req->fetch();  // get the first line of the result
         }
     }
 

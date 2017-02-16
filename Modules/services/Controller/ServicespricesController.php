@@ -12,6 +12,7 @@ require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/ecosystem/Model/EcBelonging.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
 /**
  * 
@@ -43,46 +44,60 @@ class ServicespricesController extends CoresecureController {
         $modelBelonging = new EcBelonging();
         $modelPrice = new SePrice();
         $services = $this->serviceModel->getAll($id_space);
-        $belongings = $modelBelonging->getBelongings($id_space, "name");
+        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        
+        $table = new TableView();
+        $table->setTitle(ServicesTranslator::Prices($lang), 3);
+        
+        $headers = array(
+            "service" => ServicesTranslator::Service($lang)
+        );
+        for($i = 0 ; $i < count($belongings) ; $i++){
+            $headers[$belongings[$i]["id"]] = $belongings[$i]["name"];
+        }
+        
         $prices = array();
         for($i = 0 ; $i < count($services) ; $i++){
-            //$tmp = array();
+            $data = array();
             for($b = 0 ; $b < count($belongings) ; $b++){
-                $prices[$b][$i] = $modelPrice->getPrice($services[$i]["id"], $belongings[$b]["id"]);
+                $data[$belongings[$b]["id"]] = $modelPrice->getPrice($services[$i]["id"], $belongings[$b]["id"]);
+                $data['service'] = $services[$i]['name'];
+                $data['id_service'] = $services[$i]['id'];
             }
-            //$prices[$b][$i] = $tmp;
-            $servicesIds[] = $services[$i]["id"];
-            $servicesNames[] = $services[$i]["name"];
+            $prices[] = $data;
         }
+        
+        $table->addLineEditButton('editentry', 'id_service', true);
+        $tableHtml = $table->view($prices, $headers);
         
         $form = new Form($this->request, "servicesPricesForm");
         $form->setTitle(ServicesTranslator::Prices($lang), 3);
-        
-        $formAdd = new FormAdd($this->request, "servicesPricesFormAdd");
-        $formAdd->addHidden("id_service", $servicesIds);
-        $formAdd->addText("name_service", ServicesTranslator::services($lang), $servicesNames);
+        $form->addHidden("service_id");
+        $form->addText("service", ServicesTranslator::service($lang), false, "", false);
         for($b = 0 ; $b < count($belongings) ; $b++){
-            $formAdd->addNumber("bel_".$belongings[$b]["id"], $belongings[$b]["name"], $prices[$b]);
+            $form->addText('bel_'.$belongings[$b]['id'], $belongings[$b]['name'], true, 0);
         }
         
-        $form->setButtonsWidth(2, 10);
-        $formAdd->setButtonsVisible(false);
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprices/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicespriceseditquery/".$id_space);
         
-        $form->setFormAdd($formAdd);
-        if ($form->check()){
-            $id_services = $this->request->getParameter("id_service");
-            for($b = 0 ; $b < count($belongings) ; $b++){
-                $prices = $this->request->getParameter("bel_".$belongings[$b]["id"]);
-                for($i = 0 ; $i < count($id_services) ; $i++){
-                    $modelPrice->setPrice($id_services[$i], $belongings[$b]["id"], $prices[$i]);
-                }
-            }
-            $this->redirect("servicesprices/".$id_space);
-            
-            return;
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml,
+                        'formedit' => $form->getHtml($lang), 'services' => $services,
+                        'belongings' => $belongings));
+    }
+    
+    public function editqueryAction($id_space){
+        
+        $modelBelonging = new EcBelonging();
+        $modelPrice = new SePrice();
+        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        
+        $id_service = $this->request->getParameter('service_id');
+        
+        foreach($belongings as $belonging){
+            $price = $this->request->getParameter('bel_' . $belonging['id']);
+            $modelPrice->setPrice($id_service, $belonging['id'], $price);
         }
-       
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        
+        $this->redirect('servicesprices/' . $id_space);
     }
 }
