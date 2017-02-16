@@ -163,8 +163,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
-        $formAdd->addNumber("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addNumber("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addText("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addText("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
@@ -172,7 +172,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
-        $form->addNumber("total", InvoicesTranslator::Total_HT($lang), false, $total);
+        $form->addText("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
         return $form;
     }
@@ -571,6 +571,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         //print_r($invoice);
         $total = 0;
         foreach ($content as $d) {
+            
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[2], 2, ',', ' ') . " &euro;</td>";

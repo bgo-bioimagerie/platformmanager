@@ -32,9 +32,15 @@ abstract class InvoiceAbstractController extends CoresecureController {
     
 
     public function genreratePDF($number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true) {
+        
+        $adress = nl2br($adress);
+        $date = CoreTranslator::dateFromEn($date, 'fr');
+        
         ob_start();
         include('data/invoices/template_1.php');
         $content = ob_get_clean();
+        
+        
 
         // convert in PDF
         require_once('externals/html2pdf/vendor/autoload.php');

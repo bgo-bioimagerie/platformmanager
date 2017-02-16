@@ -122,5 +122,20 @@ class InvoicesconfigController extends CoresecureController {
         
         return $form;
     }
+    
+    public function projectCommandForm($modelCoreConfig, $id_space, $lang){
+        $servicesuseproject = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("servicesuseproject", $id_space), $lang);
+        $servicesusecommand = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("servicesusecommand", $id_space), $lang);
+        
+        $form = new Form($this->request, "periodCommandForm");
+        $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));
+        $form->addDate("servicesuseproject", InvoicesTranslator::invoiceperiodbegin($lang), true, $servicesuseproject);
+        $form->addDate("servicesusecommand", InvoicesTranslator::invoiceperiodend($lang), true, $servicesusecommand);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+        
+        return $form;
+    }
 
 }
