@@ -32,6 +32,23 @@ class ServicesController extends CoresecureController {
      */
     public function indexAction($id_space) {
 
+        $modelCoreConfig = new CoreConfig();
+        $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        if($servicesuseproject == 1){
+            $this->redirect('servicesprojects/'.$id_space);
+            return;
+        }
+        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+        if($servicesusecommand == 1){
+            $this->redirect('servicesorders/'.$id_space);
+            return;
+        }
+        
+        $this->redirect('serviceslisting/'.$id_space);
+        
+    }
+    
+    public function listingAction($id_space){
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 

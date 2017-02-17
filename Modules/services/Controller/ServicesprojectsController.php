@@ -270,7 +270,7 @@ class ServicesprojectsController extends CoresecureController {
         $form->addHidden("formprojectentryprojectid", 0);
         $form->addDate("formprojectentrydate", CoreTranslator::Date($lang), true, "");
         $form->addSelect("formserviceid", ServicesTranslator::service($lang), $services["names"], $services["ids"]);
-        $form->addNumber("formservicequantity", ServicesTranslator::Quantity($lang), true, 0);
+        $form->addText("formservicequantity", ServicesTranslator::Quantity($lang), true, 0);
         $form->addTextArea("formservicecomment", ServicesTranslator::Comment($lang), false, "", false);
 
         $form->setColumnsWidth(2, 9);

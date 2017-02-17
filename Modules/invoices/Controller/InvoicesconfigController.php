@@ -41,7 +41,10 @@ class InvoicesconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "invoices", "invoices", "glyphicon glyphicon-euro", $this->request->getParameter("invoicesmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "invoices", "invoices", "glyphicon glyphicon-euro", 
+                    $this->request->getParameter("invoicesmenustatus"),
+                    $this->request->getParameter("invoicesmenudisplay")
+                    );
 
             $this->redirect("invoicesconfig/" . $id_space);
 
@@ -67,7 +70,6 @@ class InvoicesconfigController extends CoresecureController {
             $this->redirect("invoicesconfig/".$id_space);
             return;
         }
-
         // view
         $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang),
                        $formPeriod->getHtml($lang)
@@ -79,6 +81,7 @@ class InvoicesconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "invoices");
+        $displayUserMenu = $modelSpace->getSpaceMenusDisplay($id_space, "invoices");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -86,7 +89,8 @@ class InvoicesconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("invoicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-
+        $form->addNumber("invoicesmenudisplay", CoreTranslator::Display_order($lang), false, $displayUserMenu);
+        
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
 
@@ -116,21 +120,6 @@ class InvoicesconfigController extends CoresecureController {
         $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));
         $form->addDate("invoiceperiodbegin", InvoicesTranslator::invoiceperiodbegin($lang), true, $invoiceperiodbegin);
         $form->addDate("invoiceperiodend", InvoicesTranslator::invoiceperiodend($lang), true, $invoiceperiodend);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
-        return $form;
-    }
-    
-    public function projectCommandForm($modelCoreConfig, $id_space, $lang){
-        $servicesuseproject = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("servicesuseproject", $id_space), $lang);
-        $servicesusecommand = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("servicesusecommand", $id_space), $lang);
-        
-        $form = new Form($this->request, "periodCommandForm");
-        $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));
-        $form->addDate("servicesuseproject", InvoicesTranslator::invoiceperiodbegin($lang), true, $servicesuseproject);
-        $form->addDate("servicesusecommand", InvoicesTranslator::invoiceperiodend($lang), true, $servicesusecommand);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

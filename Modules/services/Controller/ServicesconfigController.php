@@ -40,7 +40,9 @@ class ServicesconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "services", "services", "glyphicon glyphicon-plus", $this->request->getParameter("servicesmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "services", "services", "glyphicon glyphicon-plus", 
+                    $this->request->getParameter("servicesmenustatus"),
+                    $this->request->getParameter("displayMenu"));
             
             $this->redirect("servicesconfig/".$id_space);
             
@@ -66,10 +68,21 @@ class ServicesconfigController extends CoresecureController {
             $this->redirect("servicesconfig/".$id_space);
             return;
         }
+        
+        // project command form
+        $formProjectCommand = $this->projectCommandForm($modelCoreConfig, $id_space, $lang);
+        if($formProjectCommand->check()){
+            $modelCoreConfig->setParam("servicesuseproject", $this->request->getParameter("servicesuseproject"), $id_space);
+            $modelCoreConfig->setParam("servicesusecommand", $this->request->getParameter("servicesusecommand"), $id_space);
+            
+            $this->redirect("servicesconfig/".$id_space);
+            return;
+        }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang), 
-                        $formPerodProject->getHtml($lang));
+                        $formPerodProject->getHtml($lang), $formProjectCommand->getHtml($lang)
+                );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
@@ -77,6 +90,8 @@ class ServicesconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "services");
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "services");
+        
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -84,6 +99,7 @@ class ServicesconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("servicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
+        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
@@ -121,4 +137,18 @@ class ServicesconfigController extends CoresecureController {
         return $form;
     }
 
+    public function projectCommandForm($modelCoreConfig, $id_space, $lang){
+        $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+        
+        $form = new Form($this->request, "periodCommandForm");
+        $form->addSeparator(ServicesTranslator::Project($lang) . " & " . ServicesTranslator::Orders($lang) );
+        $form->addSelect("servicesuseproject", ServicesTranslator::UseProject($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $servicesuseproject);
+        $form->addSelect("servicesusecommand", ServicesTranslator::UseCommand($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $servicesusecommand);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+        
+        return $form;
+    }
 }

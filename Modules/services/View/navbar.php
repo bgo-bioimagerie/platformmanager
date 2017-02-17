@@ -50,6 +50,11 @@ if ($ecmenucolortxt == "") {
         <h4 style="text-transform: uppercase;"><?php echo ServicesTranslator::services($lang) ?></h4>
     </div>
     
+    <?php 
+    $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        if($servicesuseproject == 1){
+    ?>
+    
     <div class="col-md-12">
         <p id="separatorp"><?php echo ServicesTranslator::Projects($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
@@ -66,6 +71,14 @@ if ($ecmenucolortxt == "") {
         </div>
     </div>
     
+    <?php
+        }
+        
+        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+        if($servicesusecommand == 1){
+    ?>
+    
+    
     <div class="col-md-12">
         <p id="separatorp"><?php echo ServicesTranslator::Opened_orders($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
@@ -81,6 +94,10 @@ if ($ecmenucolortxt == "") {
             <a href="servicesorderedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_orders($lang) ?></a><br/>
         </div>
     </div>
+    
+    <?php 
+        }
+    ?>
     
     <div class="col-md-12">
         <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
@@ -102,7 +119,7 @@ if ($ecmenucolortxt == "") {
             <a href="servicesedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="services/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a><br/>
+            <a id="menu-button" href="serviceslisting/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a><br/>
         </div>	
     </div>
 </div>

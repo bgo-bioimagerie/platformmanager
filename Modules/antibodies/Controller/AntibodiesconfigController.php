@@ -51,7 +51,10 @@ class AntibodiesconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
             
-            $modelSpace->setSpaceMenu($id_space, "antibodies", "antibodies", "glyphicon-user", $this->request->getParameter("antibodiesmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "antibodies", "antibodies", "glyphicon-user", 
+                    $this->request->getParameter("antibodiesmenustatus"),
+                    $this->request->getParameter("displayMenu")
+                    );
             
             $this->redirect("antibodiesconfig/".$id_space);
             return;
@@ -67,6 +70,7 @@ class AntibodiesconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "antibodies");
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "antibodies");
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -74,6 +78,7 @@ class AntibodiesconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("antibodiesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
+        $form->addNumber('displayMenu', CoreTranslator::Display_order($lang), false, $displayMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "antibodiesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

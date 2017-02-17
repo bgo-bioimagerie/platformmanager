@@ -5,7 +5,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
-require_once 'Modules/ecosystem/Model/EcInstall.php';
+require_once 'Modules/ecosystem/Model/EcosystemInstall.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 /**
@@ -52,7 +52,9 @@ class EcosystemconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
             
-            $modelSpace->setSpaceMenu($id_space, "ecosystem", "ecusers", "glyphicon-user", $this->request->getParameter("usermenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "ecosystem", "ecusers", "glyphicon-user", 
+                    $this->request->getParameter("usermenustatus"),
+                    $this->request->getParameter("displayMenu"));
             
             $this->redirect("ecosystemconfig/".$id_space);
             return;
@@ -68,6 +70,8 @@ class EcosystemconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "ecusers");
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "ecusers");
+        
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -75,6 +79,7 @@ class EcosystemconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
+        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

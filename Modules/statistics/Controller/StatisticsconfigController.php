@@ -39,7 +39,9 @@ class StatisticsconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "statistics", "statistics", "glyphicon-signal", $this->request->getParameter("statisticsmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "statistics", "statistics", "glyphicon-signal", 
+                    $this->request->getParameter("statisticsmenustatus"),
+                    $this->request->getParameter("displayMenu"));
             
             $this->redirect("statisticsconfig/".$id_space);
             return;
@@ -55,6 +57,8 @@ class StatisticsconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "statistics");
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "statistics");
+        
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -62,6 +66,7 @@ class StatisticsconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("statisticsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
+        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

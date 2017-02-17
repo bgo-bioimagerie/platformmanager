@@ -52,7 +52,9 @@ class ResourcesconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "resources", "resources", "glyphicon-registration-mark", $this->request->getParameter("resourcesmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "resources", "resources", "glyphicon-registration-mark", 
+                    $this->request->getParameter("resourcesmenustatus"),
+                    $this->request->getParameter("displayMenu"));
             
             $this->redirect("resourcesconfig/".$id_space);
             return;
@@ -68,6 +70,8 @@ class ResourcesconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "resources");
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "resources");
+        
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -75,6 +79,7 @@ class ResourcesconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("resourcesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
+        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "resourcesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

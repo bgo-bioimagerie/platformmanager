@@ -39,8 +39,15 @@ class BookingconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
             $modelSpace = new CoreSpace();
-            $modelSpace->setSpaceMenu($id_space, "booking", "booking", "glyphicon glyphicon-calendar", $this->request->getParameter("bookingmenustatus"));
-            $modelSpace->setSpaceMenu($id_space, "booking", "bookingsettings", "glyphicon glyphicon-calendar", $this->request->getParameter("bookingsettingsmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "booking", "booking", "glyphicon glyphicon-calendar", 
+                    $this->request->getParameter("bookingmenustatus"),
+                    $this->request->getParameter("displayBookingMenu")
+                    );
+            $modelSpace->setSpaceMenu($id_space, "booking", "bookingsettings", "glyphicon glyphicon-calendar", 
+                    $this->request->getParameter("bookingsettingsmenustatus"),
+                    $this->request->getParameter("displaySettingsMenu")
+                    );
+            
             
             $this->redirect("bookingconfig/".$id_space);
             return;
@@ -152,7 +159,10 @@ class BookingconfigController extends CoresecureController {
 
         $modelMenu = new CoreSpace();
         $statusBookingMenu = $modelMenu->getSpaceMenusRole($id_space, "booking");
+        $displayBookingMenu = $modelMenu->getSpaceMenusDisplay($id_space, "booking");
+
         $statusSettingsMenu = $modelMenu->getSpaceMenusRole($id_space, "bookingsettings");
+        $displaySettingsMenu = $modelMenu->getSpaceMenusDisplay($id_space, "bookingsettings");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -164,8 +174,10 @@ class BookingconfigController extends CoresecureController {
         $status["ids"][] = 0;
 
         $form->addSelect("bookingmenustatus", BookingTranslator::Booking($lang), $status["names"], $status["ids"], $statusBookingMenu);
+        $form->addNumber("displayBookingMenu", CoreTranslator::Display_order($lang), false, $displayBookingMenu);
         $form->addSelect("bookingsettingsmenustatus", BookingTranslator::Booking_settings($lang), $status["names"], $status["ids"], $statusSettingsMenu);
-
+        $form->addNumber("displaySettingsMenu", CoreTranslator::Display_order($lang), false, $displaySettingsMenu);
+        
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 

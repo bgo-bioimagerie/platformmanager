@@ -13,6 +13,7 @@ class ServicesRouting extends Routing{
         
         // add here the module routes
         $this->addRoute("services", "services", "services", "index", array("id_space"), array(""));
+        $this->addRoute("serviceslisting", "serviceslisting", "services", "listing", array("id_space"), array(""));
         $this->addRoute("servicesedit", "servicesedit", "services", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesdelete", "servicesdelete", "services", "delete", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprices", "servicesprices", "servicesprices", "index", array("id_space"), array(""));

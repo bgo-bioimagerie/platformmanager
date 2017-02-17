@@ -39,7 +39,9 @@ class MailerconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-           $modelSpace->setSpaceMenu($id_space, "mailer", "mailer", "glyphicon-envelope", $this->request->getParameter("usermenustatus"));
+           $modelSpace->setSpaceMenu($id_space, "mailer", "mailer", "glyphicon-envelope", 
+                   $this->request->getParameter("usermenustatus"),
+                   $this->request->getParameter("displayMenu"));
             
             $this->redirect("mailerconfig/".$id_space);
             return;
@@ -55,6 +57,8 @@ class MailerconfigController extends CoresecureController {
         
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "mailer");
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "mailer");
+        
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -62,6 +66,7 @@ class MailerconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
+        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

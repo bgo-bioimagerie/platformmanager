@@ -51,7 +51,10 @@ class BulletjournalconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
             
-            $modelSpace->setSpaceMenu($id_space, "bulletjournal", "bulletjournal", "glyphicon glyphicon-book", $this->request->getParameter("bulletjournalmenustatus"));
+            $modelSpace->setSpaceMenu($id_space, "bulletjournal", "bulletjournal", "glyphicon glyphicon-book", 
+                    $this->request->getParameter("bulletjournalmenustatus"),
+                    $this->request->getParameter("displayMenu")
+                    );
             
             $this->redirect("bulletjournalconfig/".$id_space);
             return;
@@ -67,6 +70,8 @@ class BulletjournalconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "bulletjournal");
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "bulletjournal");
+        
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -74,6 +79,7 @@ class BulletjournalconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("bulletjournalmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
+        $form->addNumber("$displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bulletjournalconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

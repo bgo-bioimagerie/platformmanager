@@ -196,7 +196,7 @@ class CoreconfigController extends CoresecureController {
 
         $modelMenu = new CoreMenu();
         $statusUserMenu = $modelMenu->getDataMenusUserType("users");
-
+        
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 

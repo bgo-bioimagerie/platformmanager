@@ -42,30 +42,28 @@ class ServicesTranslator {
         }
         return "Prices";
     }
-    
+
     public static function servicesinvoiceorder($lang) {
         if ($lang == "fr") {
             return "Relever commandes";
         }
         return "Invoice orders";
     }
-    
+
     public static function servicesinvoiceproject($lang) {
         if ($lang == "fr") {
             return "Relever projets";
         }
         return "Invoice projects";
     }
-    
-    
-    
+
     public static function Listing($lang) {
         if ($lang == "fr") {
             return "Listing";
         }
         return "Listing";
     }
-    
+
     public static function UnitPrice($lang) {
         if ($lang == "fr") {
             return "Prix unitaire";
@@ -123,7 +121,7 @@ class ServicesTranslator {
         }
         return "Purchase";
     }
-    
+
     public static function New_Purchase($lang) {
         if ($lang == "fr") {
             return "Nouvel achat";
@@ -319,14 +317,13 @@ class ServicesTranslator {
         }
         return "Services balance";
     }
-    
+
     public static function OrderBalance($lang = "") {
         if ($lang == "fr") {
             return "Bilan commandes";
         }
         return "Orders balance";
     }
-    
 
     public static function Beginning_period($lang = "") {
         if ($lang == "fr") {
@@ -418,7 +415,7 @@ class ServicesTranslator {
         }
         return "Projects balance";
     }
-    
+
     public static function Project_number($lang = "") {
         if ($lang == "fr") {
             return "Projet number";
@@ -559,46 +556,60 @@ class ServicesTranslator {
         return "Follow-up";
     }
 
-    public static function projectEdited($lang){
+    public static function projectEdited($lang) {
         if ($lang == "fr") {
             return "La fiche projet à bien été enregistrée !";
         }
         return "Project sheet has been saved !";
     }
-    
-    public static function Description($lang){
+
+    public static function Description($lang) {
         if ($lang == "fr") {
             return "Description";
         }
         return "Description";
     }
-    
-    public static function NewEntry($lang){
+
+    public static function NewEntry($lang) {
         if ($lang == "fr") {
             return "Nouveau service";
         }
         return "New service";
     }
-    
-    public static function projectperiodbegin($lang){
+
+    public static function projectperiodbegin($lang) {
         if ($lang == "fr") {
             return "Début periode projet";
         }
         return "Project period begin";
     }
-    
-    public static function projectperiodend($lang){
+
+    public static function projectperiodend($lang) {
         if ($lang == "fr") {
             return "Fin periode projet";
         }
         return "Project period end";
     }
-    
-    public static function projectperiod($lang){
+
+    public static function projectperiod($lang) {
         if ($lang == "fr") {
             return "Periode projet";
         }
         return "Period end";
     }
+
+    public static function UseProject($lang) {
+        if ($lang == "fr") {
+            return "Utiliser les projects";
+        }
+        return "Use projects";
+    }
     
+    public static function UseCommand($lang) {
+        if ($lang == "fr") {
+            return "Utiliser les commandes";
+        }
+        return "Use commands";
+    }
+
 }
