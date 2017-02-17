@@ -124,7 +124,7 @@ class SeStats extends Model {
         echo $content;
     }
 
-    public function computeStats($startDate_min, $startDate_max) {
+    public function computeStats($id_space, $startDate_min, $startDate_max) {
 
         // total number of projects 
         $sql = "select * from se_project where date_open >= ? AND date_open <= ?";
@@ -145,7 +145,7 @@ class SeStats extends Model {
             // get the responsible unit
             $id_unit = $modelUser->getUnit($project["id_resp"]);
 
-            $id_pricing = $modelUnit->getBelonging($id_unit);
+            $id_pricing = $modelUnit->getBelonging($id_unit, $id_space);
             $pricingInfo = $modelBelonging->getInfo($id_pricing);
             if ($pricingInfo["type"] == 1) {
 

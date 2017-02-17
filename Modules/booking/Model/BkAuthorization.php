@@ -316,6 +316,55 @@ class BkAuthorization extends Model {
         }
     }
 
+    public function getTotalForPeriod($period_begin, $period_end){
+        $sql = 'SELECT * FROM bk_authorization WHERE date>=? AND date<=?';
+        $req = $this->runRequest($sql, array($period_begin, $period_end));
+        return $req->rowCount();
+    }
+    
+    public function getDistinctUserForPeriod($period_begin, $period_end){
+        $sql = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date>=? AND date<=?';
+        $req = $this->runRequest($sql, array($period_begin, $period_end));
+        return $req->rowCount();
+    }
+    
+    public function getDistinctUnitForPeriod($period_begin, $period_end){
+        $sql = 'SELECT DISTINCT lab_id FROM bk_authorization WHERE date>=? AND date<=?';
+        $req = $this->runRequest($sql, array($period_begin, $period_end));
+        return $req->rowCount();
+    }
+    
+    public function getDistinctVisaForPeriod($period_begin, $period_end){
+        $sql = 'SELECT DISTINCT visa_id FROM bk_authorization WHERE date>=? AND date<=?';
+        $req = $this->runRequest($sql, array($period_begin, $period_end));
+        return $req->rowCount();
+    }
+    
+    public function getDistinctResourceForPeriod($period_begin, $period_end){
+        $sql = 'SELECT DISTINCT resource_id FROM bk_authorization WHERE date>=? AND date<=?';
+        $req = $this->runRequest($sql, array($period_begin, $period_end));
+        return $req->rowCount();
+    }
+    
+    public function getNewPeopleForPeriod($period_begin, $period_end){
+        $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date >=? AND date <=? ORDER BY date';
+        $req = $this->runRequest($sql_search_1, array($period_begin, $period_end));
+        $res_distinct_nf = $req->fetchAll();
+        $new_people = 0;
+        foreach ($res_distinct_nf as $rDN) {
+            $nf = $rDN[0];
+            $q = array('start' => $period_begin, 'user_id' => $nf);
+            $sql = 'SELECT id FROM bk_authorization WHERE user_id=:user_id AND date<:start ORDER BY date';
+            $req = $this->runRequest($sql, $q);
+            $num = $req->rowCount();
+            if ($num == 0) {
+                $new_people++;
+            }
+        }
+        return $new_people;
+    }
+    
+    
     /**
      * Export authorization minimal sttistics
      * @param date $searchDate_start

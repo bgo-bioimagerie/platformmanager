@@ -339,7 +339,7 @@ class BkStatsUser extends Model {
 	 */
 	public function authorizedUsers($resource_id, $id_space, $lang){
 		
-		include_once ("externals/PHPExcel/Classes/PHPExcel.php");
+            	include_once ("externals/PHPExcel/Classes/PHPExcel.php");
 		include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
 		include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
 		
@@ -361,7 +361,6 @@ class BkStatsUser extends Model {
 		$teamName = Configuration::get("name");
 		$footer = "platform-manager/".$teamName."/exportFiles/".$nom;
 		
-		
 		$modelAuthorisation = new BkAuthorization();
 		$res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($resource_id, $lang);
 
@@ -380,7 +379,6 @@ class BkStatsUser extends Model {
 		$objPHPExcel->getProperties()->setTitle("Liste d'utilisateurs autorises");
 		$objPHPExcel->getProperties()->setSubject("Equipement = ".$equipement);
 		$objPHPExcel->getProperties()->setDescription("Fichier genere avec PHPExel depuis la base de donnees");
-		
 		
 		$center=array('alignment'=>array('horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,'vertical'=>PHPExcel_Style_Alignment::VERTICAL_CENTER));
 		$gras=array('font' => array('bold' => true));
@@ -480,8 +478,8 @@ class BkStatsUser extends Model {
 		$objDrawing = new PHPExcel_Worksheet_HeaderFooterDrawing();
 		$objDrawing->setName('PHPExcel logo');
                 
-                $sqlIcon = "SELECT icon FROM core_datamenu WHERE id=?";
-                $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
+                $sqlIcon = "SELECT icon FROM core_datamenu WHERE link=?";
+                $reqIcon = $this->runRequest($sqlIcon, array('corespace/'.$id_space))->fetch();
                 
                 //echo "icon = " . $reqIcon[0] . "<br/>";
 		$objDrawing->setPath($reqIcon[0]);

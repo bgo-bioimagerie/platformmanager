@@ -83,11 +83,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         // get all the priced projects details
         $projectsBalance = $modelProjects->getPeriodeServicesBalances($id_space, $periodStart, $periodEnd);
-        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($periodStart, $periodEnd);
+        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($id_space, $periodStart, $periodEnd);
 
         // get the stats
         $modelStats = new SeStats();
-        $stats = $modelStats->computeStats($periodStart, $periodEnd);
+        $stats = $modelStats->computeStats($id_space, $periodStart, $periodEnd);
 
         // get the bill manager list
         $modelBillManager = new InInvoice();

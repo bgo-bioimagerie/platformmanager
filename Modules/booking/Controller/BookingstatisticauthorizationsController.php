@@ -70,6 +70,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         $modelAuthorizations = new BkAuthorization();
         $countResourcesInstructor = array();
 
+        // by instructor
         foreach ($resources as $resource) {
             foreach ($instructors as $instructor) {
                 $authorizations = $modelAuthorizations->getForResourceInstructorPeriod($resource["id"], $instructor["id_instructor"], $period_begin, $period_end);
@@ -77,6 +78,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
             }
         }
 
+        // by unit
         $modelUnits = new EcUnit();
         $units = $modelUnits->getUnits("name");
         $countResourcesUnit = array();
@@ -87,16 +89,26 @@ class BookingstatisticauthorizationsController extends CoresecureController {
             }
         }
 
-        $this->generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $period_begin, $period_end);
+        // summary
+        $summary["total"] = $modelAuthorizations->getTotalForPeriod($period_begin, $period_end);
+        $summary["distinctuser"] = $modelAuthorizations->getDistinctUserForPeriod($period_begin, $period_end);
+        $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($period_begin, $period_end);
+        $summary["distinctvisa"] = $modelAuthorizations->getDistinctVisaForPeriod($period_begin, $period_end);
+        $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($period_begin, $period_end);
+        $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($period_begin, $period_end);
+          
+        $this->generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
     }
 
-    protected function generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $period_begin, $period_end) {
+    protected function generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end) {
 
+        //echo "generateXls 1 <br/>";
         include_once ("externals/PHPExcel/Classes/PHPExcel.php");
         include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
         include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
         $objPHPExcel = new PHPExcel();
 
+        //echo "generateXls 2 <br/>";
         // Set properties
         $objPHPExcel->getProperties()->setCreator("Platform-Manager");
         $objPHPExcel->getProperties()->setLastModifiedBy("Platform-Manager");
@@ -106,12 +118,12 @@ class BookingstatisticauthorizationsController extends CoresecureController {
 
         $stylesheet = $this->xlsStyleSheet();
 
-        // print period
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:H1');
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', "Authorizations from " . $period_begin . " to " . $period_end);
-        $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($stylesheet["borderedCell"]);
-
         // print by instructors
+        $objPHPExcel->getActiveSheet()->setTitle("Autorisations par formateur");
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:H1');
+        $objPHPExcel->getActiveSheet()->SetCellValue('A1', "Autorisations par formateur du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        
+        
         $curentLine = 3;
         $num = 1;
         foreach ($resources as $resource) {
@@ -127,6 +139,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
 
 
         $modelUser = new EcUser();
+        $instructorsStartLine = $curentLine +1;
         foreach ($instructors as $instructor) {
             $curentLine++;
             $letter = $this->get_col_letter(1);
@@ -139,6 +152,9 @@ class BookingstatisticauthorizationsController extends CoresecureController {
                 $num++;
                 $letter = $this->get_col_letter($num);
                 $val = $countResourcesInstructor[$resource["id"]][$instructor["id_instructor"]];
+                if($val==0){
+                    $val = "";
+                }
                 $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, $val);
                 $objPHPExcel->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
                 $total += $val;
@@ -148,9 +164,24 @@ class BookingstatisticauthorizationsController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, $total);
             $objPHPExcel->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
         }
-
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, 'Total');
+        for ($i = 0 ; $i < count($resources) ; $i++) {
+            $letter = $this->get_col_letter($i+2);
+            $sumEnd = $curentLine-1;
+            $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM('.$letter.$instructorsStartLine.':'.$letter.$sumEnd.')');
+        }
+        $letter = $this->get_col_letter(count($resources)+2);
+        $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM('.$letter.$instructorsStartLine.':'.$letter.$sumEnd.')');
+       
         // by unit
-        $curentLine+=2;
+        $objWorkSheet = $objPHPExcel->createSheet(1);
+        $objWorkSheet->setTitle("Authorisations par unité");
+        $objPHPExcel->setActiveSheetIndex(1);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:H1');
+        $objPHPExcel->getActiveSheet()->SetCellValue('A1', "Autorisations par unité du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        
+        $curentLine=2;
         $num = 1;
         foreach ($resources as $resource) {
             $num++;
@@ -163,7 +194,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, "Total");
         $objPHPExcel->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
 
-
+        $unitsStartLine = $curentLine;
         foreach ($units as $unit) {
             $curentLine++;
             $letter = $this->get_col_letter(1);
@@ -176,6 +207,9 @@ class BookingstatisticauthorizationsController extends CoresecureController {
                 $num++;
                 $letter = $this->get_col_letter($num);
                 $val = $countResourcesUnit[$resource["id"]][$unit["id"]];
+                if($val==0){
+                    $val = "";
+                }
                 $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, $val);
                 $objPHPExcel->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
                 $total += $val;
@@ -185,7 +219,43 @@ class BookingstatisticauthorizationsController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, $total);
             $objPHPExcel->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
         }
-
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, 'Total');
+        for ($i = 0 ; $i < count($resources) ; $i++) {
+            $letter = $this->get_col_letter($i+2);
+            $sumEnd = $curentLine-1;
+            $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM('.$letter.$unitsStartLine.':'.$letter.$sumEnd.')');
+        }
+        $letter = $this->get_col_letter(count($resources)+2);
+        $objPHPExcel->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM('.$letter.$unitsStartLine.':'.$letter.$sumEnd.')');
+       
+        // print summary
+        $objWorkSheet = $objPHPExcel->createSheet(2);
+        $objWorkSheet->setTitle("Authorisations résumé");
+        $objPHPExcel->setActiveSheetIndex(2);
+        
+        $objPHPExcel->getActiveSheet()->setTitle("Autorisations résumé");
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:H1');
+        $objPHPExcel->getActiveSheet()->SetCellValue('A1', "Résumé des autorisations du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('A3', "Nombre de formations");
+        $objPHPExcel->getActiveSheet()->SetCellValue('B3', $summary["total"]);
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('A4', "Nombre d'utilisateurs");
+        $objPHPExcel->getActiveSheet()->SetCellValue('B4', $summary["distinctuser"]);
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('A5', "Nombre d'unités");
+        $objPHPExcel->getActiveSheet()->SetCellValue('B5', $summary["distinctunit"]);
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('A6', "Nombre de Visas");
+        $objPHPExcel->getActiveSheet()->SetCellValue('B6', $summary["distinctvisa"]);
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('A7', "Nombre de ressources");
+        $objPHPExcel->getActiveSheet()->SetCellValue('B7', $summary["distinctresource"]);
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('A8', "Nombre de nouveaux utilisateurs");
+        $objPHPExcel->getActiveSheet()->SetCellValue('B8', $summary["newuser"]);
+        
         // write excel file
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
 

@@ -400,14 +400,14 @@ class SeProject extends Model {
             //$items = $this->getProjectServices($projects[$i]["id"]);
 
             $id_unit = $modelUser->getUnit($projects[$i]["id_resp"]);
-            $LABpricingid = $modelUnit->getBelonging($id_unit);
+            $LABpricingid = $modelUnit->getBelonging($id_unit, $id_space);
             $projects[$i]["total"] = $this->calculateProjectTotal($itemsSummary, $LABpricingid);
         }
 
         return array("items" => $items, "projects" => $projects);
     }
 
-    public function getPeriodeBilledServicesBalances($beginPeriod, $endPeriod) {
+    public function getPeriodeBilledServicesBalances($id_space, $beginPeriod, $endPeriod) {
 
         // get the projects 
         $sql1 = "select * from se_project where id IN (SELECT DISTINCT id_project FROM se_project_service WHERE id_invoice IN(SELECT id FROM in_invoice WHERE date_generated>=? AND date_generated<=?))";
@@ -435,7 +435,7 @@ class SeProject extends Model {
             }
 
             $id_unit = $modelUser->getUnit($projects[$i]["id_resp"]);
-            $LABpricingid = $modelUnit->getBelonging($id_unit);
+            $LABpricingid = $modelUnit->getBelonging($id_unit, $id_space);
             $projects[$i]["total"] = $this->calculateProjectTotal($itemsSummary, $LABpricingid);
         }
 
