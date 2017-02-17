@@ -3,6 +3,7 @@
 require_once 'Framework/Routing.php';
 
 class BookingRouting extends Routing{
+   
     
     public function listRouts(){
         

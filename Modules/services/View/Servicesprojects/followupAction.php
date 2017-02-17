@@ -14,6 +14,10 @@
     <button class="btn btn-primary" id="addentrybutton"><?php echo ServicesTranslator::NewEntry($lang) ?></button>
     
     <?php echo $tableHtml ?>
+    
+    <div class="col-md-12 text-right">
+        <a class="btn btn-primary" href="servicesinvoiceprojectquery/<?php echo $id_space ?>/<?php echo $id_project ?>" > <?php echo ServicesTranslator::InvoiceIt($lang) ?> </a>
+    </div>
 </div>
 
 

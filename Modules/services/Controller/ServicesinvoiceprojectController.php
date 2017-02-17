@@ -54,8 +54,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $modelUser = new EcUser();
             $id_unit = $modelUser->getUnit($id_resp);
             //echo "id unit = " . $id_unit . "<br/>";
-            $this->invoiceProjects($id_space, $id_projects, $id_unit, $id_resp);
-            $this->redirect("invoices/" . $id_space);
+            $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_unit, $id_resp);
+            $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice);
             return;
         }
         $formByPeriod = $this->createByPeriodForm($id_space, $lang);
@@ -147,8 +147,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             if (count($data) == 3) {
                 $contentList[] = array($modelServices->getItemName($data[0]), $data[1], $data[2]);
             }
-            if(count($data) > 3){
-                $contentList[] = array($modelServices->getItemName($data[0]) . " " . $data[3], $data[1], $data[2] );
+            if (count($data) > 3) {
+                $contentList[] = array($modelServices->getItemName($data[0]) . " " . $data[3], $data[1], $data[2]);
             }
         }
         return $contentList;
@@ -256,6 +256,21 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         return $form;
     }
 
+    public function invoiceprojectAction($id_space, $id_project) {
+
+        //echo "id_proj = " . $id_project . "<br/>";
+
+        $modelProject = new SeProject();
+        $id_resp = $modelProject->getResp($id_project);
+        //echo "$id_resp = " . $id_resp . "<br/>";
+        $modelUser = new EcUser();
+        $id_unit = $modelUser->getUnit($id_resp);
+        $id_projects = array();
+        $id_projects[] = $id_project;
+        $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_unit, $id_resp);
+        $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice);
+    }
+
     protected function invoiceProjects($id_space, $id_projects, $id_unit, $id_resp) {
 
         // add invoice
@@ -332,6 +347,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         // set invoice itmems
         $modelInvoiceItem->setItem(0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_invoice, $total_ht);
+
+        return $id_invoice;
     }
 
     protected function getProjectsResp($id_projects) {

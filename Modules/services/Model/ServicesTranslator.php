@@ -612,4 +612,11 @@ class ServicesTranslator {
         return "Use commands";
     }
 
+    public static function InvoiceIt($lang) {
+        if ($lang == "fr") {
+            return "Facturer";
+        }
+        return "Invoice it";
+    }
+    
 }

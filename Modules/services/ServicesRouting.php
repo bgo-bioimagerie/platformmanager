@@ -65,6 +65,9 @@ class ServicesRouting extends Routing{
         $this->addRoute("servicesinvoiceorderedit", "servicesinvoiceorderedit", "servicesinvoiceorder", "edit", array("id_space", "id_invoice", "pdf"), array("", "", ""));
         
         $this->addRoute("servicesinvoiceproject", "servicesinvoiceproject", "servicesinvoiceproject", "index", array("id_space"), array(""));
+        $this->addRoute("servicesinvoiceprojectquery", "servicesinvoiceprojectquery", "servicesinvoiceproject", "invoiceproject", array("id_space", "id_project"), array("",""));
+        
+        
         $this->addRoute("servicesinvoiceprojectedit", "servicesinvoiceprojectedit", "servicesinvoiceproject", "edit", array("id_space", "id_invoice", "pdf"), array("", "", ""));
         
         // statistics

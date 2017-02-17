@@ -129,13 +129,21 @@ class SeProject extends Model {
     }
 
     public function getOpenedProjectForList() {
-        $sql = "SELECT id, name FROM se_project WHERE date_close = '0000-00-00'";
+        $sql = "SELECT se_project.id as id, se_project.name as name, core_users.name as respname, "
+                . " core_users.firstname as respfirstname"
+                . " FROM se_project "
+                . " INNER JOIN core_users ON se_project.id_resp = core_users.id"
+                . " WHERE date_close = '0000-00-00' "
+                . " ORDER BY core_users.name ASC";
         $req = $this->runRequest($sql)->fetchAll();
         $ids = array();
         $names = array();
+        $ids[] = 0;
+        $names[] = "...";
+        
         foreach ($req as $r) {
             $ids[] = $r["id"];
-            $names[] = $r["name"];
+            $names[] = $r['respname'] . " " . $r['respfirstname'] . ": " . $r["name"];
         }
         return array("ids" => $ids, "names" => $names);
     }

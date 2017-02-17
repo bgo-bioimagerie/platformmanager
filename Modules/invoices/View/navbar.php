@@ -74,6 +74,7 @@ foreach($menus as $menu){
         require_once 'Modules/' . $module . "/Model/" . $classTranslator . ".php"; 
         $translator = new $classTranslator();
         $model = new $className();
+        $model->setSpace($id_space);
         $model->listRouts();
         if($model->count() > 0){
             ?>
