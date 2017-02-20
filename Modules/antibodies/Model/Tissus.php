@@ -28,12 +28,13 @@ class Tissus extends Model {
   				`ref_protocol` varchar(11) NOT NULL,
 				`prelevement` int(1) NOT NULL,
 				`comment` text NOT NULL,
-                                `image_url` int(11) NOT NULL,
+                                `image_url` varchar(512) NOT NULL,
   				PRIMARY KEY (`id`)
 				);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        $this->runRequest($sql);
+        
+        $this->addColumn("ac_j_tissu_anticorps", "image_url", "varchar(512)", "");
     }
     
     public function setImageUrl($id, $url){
@@ -86,7 +87,8 @@ class Tissus extends Model {
 				       ac_j_tissu_anticorps.dilution AS dilution,
 				       ac_j_tissu_anticorps.temps_incubation AS temps_incubation,
 					   ac_j_tissu_anticorps.ref_protocol AS ref_protocol,
-					   ac_j_tissu_anticorps.comment AS comment,		
+					   ac_j_tissu_anticorps.comment AS comment,	
+                                           ac_j_tissu_anticorps.image_url AS image_url,
 					   ac_especes.nom AS espece, ac_especes.id AS espece_id,
 					   ac_organes.nom AS organe, ac_organes.id AS organe_id,
 					   ac_prelevements.nom AS prelevement, ac_prelevements.id AS prelevement_id 			

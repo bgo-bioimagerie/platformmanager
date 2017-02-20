@@ -4,7 +4,6 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/AntibodiesTranslator.php';
-//require_once 'Modules/antibodies/Model/AcInstall.php';
 require_once 'Modules/antibodies/Model/Anticorps.php';
 require_once 'Modules/antibodies/Model/Espece.php';
 require_once 'Modules/antibodies/Model/Status.php';
@@ -381,10 +380,10 @@ class AntibodiesController extends CoresecureController {
         // add to the tissus table
         for ($i = 0; $i < count($espece); $i++) {
             $temps_incubation = "";
-            $modelTissus->addTissus($id, $espece[$i], $organe[$i], $valide[$i], $ref_bloc[$i], $dilution[$i], $temps_incubation, $ref_protocol[$i], $prelevement[$i], $comment[$i]);
+            $id_tissus = $modelTissus->addTissus($id, $espece[$i], $organe[$i], $valide[$i], $ref_bloc[$i], $dilution[$i], $temps_incubation, $ref_protocol[$i], $prelevement[$i], $comment[$i]);
         
             // load tissus image
-            $this->uploadTissusImage($id);
+            $this->uploadTissusImage($id_tissus);
         }
             
         // add catalog informations
@@ -405,7 +404,7 @@ class AntibodiesController extends CoresecureController {
         }
 
         // generate view
-        $this->redirect("anticorps/" . $id_space . "/id");
+        $this->redirect("anticorps/" . $id_space);
     }
 
     public function uploadTissusImage($id) {
@@ -432,13 +431,15 @@ class AntibodiesController extends CoresecureController {
                     // if everything is ok, try to upload file
                 } else {
                     if (move_uploaded_file($_FILES["tissusfiles"]["tmp_name"][$i], $target_file)) {
-                        return "The file logo file" . basename($_FILES["tissusfiles"]["name"][$i]) . " has been uploaded.";
+                        //echo "set image URL to antibody " . $id . 
+                        $modelTissus->setImageUrl($id, $_FILES["tissusfiles"]["name"][$i]);
+                        return "The image file" . basename($_FILES["tissusfiles"]["name"][$i]) . " has been uploaded.";
                     } else {
                         return "Error, there was an error uploading your file.";
                     }
                 }
                 
-                $modelTissus->setImageUrl($id, $target_dir . $id . "." . $ext);
+                
             }
         }
     }

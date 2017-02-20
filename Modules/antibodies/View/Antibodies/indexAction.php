@@ -270,6 +270,21 @@ $(document).ready(function() {
                                     <a href="<?php echo $imageFile?>" itemprop="contentUrl" data-size="<?php echo $width?>x<?php echo $height?>">
                                         <img src="<?php echo $imageFile?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
                                     </a>
+                                        <?php
+                                        foreach($anticorps['tissus'] as  $tissus){
+                                            $imageFile = "data/antibodies/" . $tissus["image_url"];
+                                            $printImage = true;
+                                            if (!file_exists($imageFile) || is_dir($imageFile)){
+                                                $printImage = false;
+                                                $imageFile = "Modules/antibodies/Theme/images_icon.png";
+                                            }
+                                            if($printImage){
+                                            ?>
+                                                <img src="<?php echo $imageFile?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
+                                            <?php
+                                            }
+                                        }
+                                        ?>
                                 </td>
 					<?php $anticorpsId = $this->clean ( $anticorps['id'] ); 
                                         $isCatalogue = "";
