@@ -17,14 +17,24 @@ class CoreConfig extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_config` (
-		`id` varchar(30) NOT NULL DEFAULT '',
+                `keyname` varchar(30) NOT NULL DEFAULT '',
 		`value` text NOT NULL DEFAULT '',
-                `id_space` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
+                `id_space` int(11) NOT NULL DEFAULT 0
 		);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        $this->runRequest($sql);
+        
+        $sqlCol = "SHOW COLUMNS FROM `core_config` LIKE 'id';";
+        $reqCol = $this->runRequest($sqlCol);
+       
+        if ($reqCol->rowCount() > 0){
+            $sql2 = "ALTER TABLE core_config CHANGE id `keyname` varchar(30) NOT NULL;";
+            $this->runRequest($sql2);
+            $sql3 = "alter table core_config drop primary key;";
+            $this->runRequest($sql3);
+        }
+        
+        $this->addColumn('core_config', 'id_space', 'int(11)', 0);
     }
 
     /**
@@ -44,9 +54,9 @@ class CoreConfig extends Model {
     /**
      * Check if a config key exists
      */
-    public function isKey($key) {
-        $sql = "select id from core_config where id='" . $key . "'";
-        $unit = $this->runRequest($sql);
+    public function isKey($key, $id_space) {
+        $sql = "SELECT keyname FROM core_config WHERE keyname=? AND id_space=?";
+        $unit = $this->runRequest($sql, array($key, $id_space));
         if ($unit->rowCount() == 1) {
             return true;
         } else {
@@ -60,7 +70,7 @@ class CoreConfig extends Model {
      * @param string $value
      */
     public function addParam($key, $value, $id_space = 0) {
-        $sql = "INSERT INTO core_config (id, value, id_space) VALUES(?,?,?)";
+        $sql = "INSERT INTO core_config (keyname, value, id_space) VALUES(?,?,?)";
         $this->runRequest($sql, array($key, $value, $id_space));
     }
 
@@ -70,7 +80,7 @@ class CoreConfig extends Model {
      * @param string $value
      */
     public function updateParam($key, $value, $id_space = 0) {
-        $sql = "update core_config set value=?, id_space=? where id=?";
+        $sql = "update core_config set value=?  where keyname=? AND id_space=?";
         $this->runRequest($sql, array($value, $id_space, $key));
     }
 
@@ -80,7 +90,7 @@ class CoreConfig extends Model {
      * @return string: value
      */
     public function getParam($key) {
-        $sql = "SELECT value FROM core_config WHERE id=?";
+        $sql = "SELECT value FROM core_config WHERE keyname=?";
         $req = $this->runRequest($sql, array($key));
 
         if ($req->rowCount() == 1) {
@@ -97,7 +107,7 @@ class CoreConfig extends Model {
      * @return string: value
      */
     public function getParamSpace($key, $id_space) {
-        $sql = "SELECT value FROM core_config WHERE id=? AND id_space=?";
+        $sql = "SELECT value FROM core_config WHERE keyname=? AND id_space=?";
         $req = $this->runRequest($sql, array($key, $id_space));
 
         if ($req->rowCount() == 1) {
@@ -114,7 +124,7 @@ class CoreConfig extends Model {
      * @param string $value
      */
     public function setParam($key, $value, $id_space = 0) {
-        if ($this->isKey($key)) {
+        if ($this->isKey($key, $id_space)) {
             $this->updateParam($key, $value, $id_space);
         } else {
             $this->addParam($key, $value, $id_space);

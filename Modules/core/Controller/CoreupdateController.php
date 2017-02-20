@@ -7,16 +7,19 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 
+require_once 'Modules/core/Model/CoreInstall.php';
+
+
 /**
  * 
  * @author sprigent
  * Manage the modules: starting page to install and config each module	
  */
-class CoreupdateController extends CoresecureController {
+class CoreupdateController extends Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->checkAuthorization(CoreStatus::$ADMIN);
+        //$this->checkAuthorization(CoreStatus::$ADMIN);
     }
 
     /**
@@ -33,7 +36,7 @@ class CoreupdateController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Update($lang), 'coreupdate');
 
         if ($form->check()) {
-            $_SESSION['message'] = $this->update();
+            $_SESSION['message'] = $this->updateAction();
             $this->redirect('coreupdate');
         }
 
@@ -41,7 +44,7 @@ class CoreupdateController extends CoresecureController {
         ));
     }
 
-    private function update() {
+    public function updateAction() {
 
         try {
             $modulesInstalled = '';
@@ -69,6 +72,16 @@ class CoreupdateController extends CoresecureController {
             return $e->getMessage();
         }
         return "Success: update done for modules: " . $modulesInstalled;
+    }
+    
+    public function coreupdateAction(){
+        
+        echo "start core update <br />";
+        
+        $modelInstall = new CoreInstall();
+        $modelInstall->createDatabase();
+        
+        echo "core update done";
     }
 
 }
