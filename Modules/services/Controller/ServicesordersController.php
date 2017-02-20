@@ -53,11 +53,11 @@ class ServicesordersController extends CoresecureController {
         }
 
         if ($status == "all") {
-            $entriesArray = $modelEntry->entries($sortentry);
+            $entriesArray = $modelEntry->entries($id_space, $sortentry);
         } else if ($status == "opened") {
-            $entriesArray = $modelEntry->openedEntries($sortentry);
+            $entriesArray = $modelEntry->openedEntries($id_space, $sortentry);
         } else if ($status == "closed") {
-            $entriesArray = $modelEntry->closedEntries($sortentry);
+            $entriesArray = $modelEntry->closedEntries($id_space, $sortentry);
         }
 
         $table = new TableView();

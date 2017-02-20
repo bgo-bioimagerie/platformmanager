@@ -124,10 +124,10 @@ class SeOrder extends Model {
         $this->runRequest($sql, array($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close, $id));
     }
 
-    public function entries($sortentry = 'id') {
+    public function entries($id_space, $sortentry = 'id') {
 
-        $sql = "select * from se_order order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql);
+        $sql = "select * from se_order WHERE id_space=? order by " . $sortentry . " ASC;";
+        $req = $this->runRequest($sql, array($id_space));
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
 
@@ -143,9 +143,9 @@ class SeOrder extends Model {
         return $req->fetchAll();
     }
     
-    public function openedEntries($sortentry = 'id') {
-        $sql = "select * from se_order where id_status=1 order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql);
+    public function openedEntries($id_space, $sortentry = 'id') {
+        $sql = "select * from se_order where id_space=? AND id_status=1 order by " . $sortentry . " ASC;";
+        $req = $this->runRequest($sql, array($id_space));
 
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
@@ -156,9 +156,9 @@ class SeOrder extends Model {
         return $entries;
     }
 
-    public function closedEntries($sortentry = 'id') {
-        $sql = "select * from se_order where id_status=0 order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql);
+    public function closedEntries($id_space, $sortentry = 'id') {
+        $sql = "select * from se_order where id_space=? AND id_status=0 order by " . $sortentry . " ASC;";
+        $req = $this->runRequest($sql, array($id_space));
 
         $entries = $req->fetchAll();
 
