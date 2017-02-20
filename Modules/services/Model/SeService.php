@@ -109,9 +109,9 @@ class SeService extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
-    public function getForList(){
-        $sql = "select * from se_services order by name ASC;";
-        $req = $this->runRequest($sql)->fetchAll();
+    public function getForList($id_space){
+        $sql = "select * from se_services WHERE id_space=? ORDER BY name ASC;";
+        $req = $this->runRequest($sql, array($id_space))->fetchAll();
         $ids = array(); $names = array();
         foreach($req as $r){
             $ids[] = $r["id"];
