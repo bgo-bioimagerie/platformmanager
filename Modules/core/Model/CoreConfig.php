@@ -132,7 +132,7 @@ class CoreConfig extends Model {
     }
 
     public function initParam($key, $value) {
-        if (!$this->isKey($key)) {
+        if (!$this->isKey($key, 0)) {
             $this->addParam($key, $value);
         }
     }
