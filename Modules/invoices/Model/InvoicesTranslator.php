@@ -192,4 +192,11 @@ class InvoicesTranslator {
         return "Invoices end";
     }
 
+    public static function Edited_by($lang) {
+        if ($lang == "fr") {
+            return "Edité par";
+        }
+        return "Edited by";
+    }
+    
 }

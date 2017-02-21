@@ -203,6 +203,13 @@ unset($_SESSION["message"]) ?>
                                         <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?> >
                                             <p>
                                                 <b><?php echo $this->clean($resourcesBase[$i]['name']) ?></b>
+                                                <?php
+            if($resourcesBase[$i]['last_state'] != ""){
+                ?>
+                    <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$i]['id'] ?>" style="background-color:<?php echo $resourcesBase[$i]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+                <?php
+            }
+            ?>
                                             </p>
                                         </div>
                                         <?php

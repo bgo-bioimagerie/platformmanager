@@ -49,7 +49,7 @@ class InvoicesController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelInvoices = new InInvoice();
-
+        $modelUser = new EcUser();
         
         $years = $modelInvoices->allYears($id_space);
         if ($year == "") {
@@ -63,17 +63,21 @@ class InvoicesController extends CoresecureController {
         for ($i = 0; $i < count($invoices); $i++) {
             $invoices[$i]["date_generated"] = CoreTranslator::dateFromEn($invoices[$i]["date_generated"], $lang);
             $invoices[$i]["date_paid"] = CoreTranslator::dateFromEn($invoices[$i]["date_paid"], $lang);
+            $invoices[$i]["edited_by"] = $modelUser->getUserFUllName($invoices[$i]["id_edited_by"]);
         }
 
         $table = new TableView();
         $table->setTitle(InvoicesTranslator::invoices($lang), 3);
 
-        $headers = array("number" => InvoicesTranslator::Number($lang),
+        $headers = array(
+            "number" => InvoicesTranslator::Number($lang),
             "unit" => EcosystemTranslator::Unit($lang),
             "resp" => EcosystemTranslator::Responsible($lang),
             "date_generated" => InvoicesTranslator::Date_generated($lang),
             "date_paid" => InvoicesTranslator::Date_paid($lang),
-            "total_ht" => InvoicesTranslator::Total_HT($lang));
+            "total_ht" => InvoicesTranslator::Total_HT($lang),
+            "edited_by" => InvoicesTranslator::Edited_by($lang)
+            );
 
         $table->addLineEditButton("invoiceedit/" . $id_space);
         $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::Info($lang));

@@ -135,10 +135,49 @@ class ResourcesController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "headerInfo" => $headerInfo, "formHtml" => $form->getHtml()));
     }
 
+    public function eventsroAction($id_space, $id){
+        
+        $lang = $this->getLanguage();
+        
+        $table = new TableView();
+        $table->addLineEditButton("resourceeditevent/" . $id_space. "/" . $id);
+
+        $headers = array(
+            "date" => CoreTranslator::Date($lang),
+            "user" => CoreTranslator::User($lang),
+            "eventtype" => ResourcesTranslator::Event_Type($lang),
+            "state" => ResourcesTranslator::State($lang)
+        );
+        
+        $modelResource = new ResourceInfo();
+        $resourceInfo = $modelResource->get($id);
+
+        $modelEvent = new ReEvent();
+        $modelUser = new EcUser();
+        $modelState = new ReState();
+        $modelEventType = new ReEventType();
+        $events = $modelEvent->getByResource($id);
+
+        for ($i = 0; $i < count($events); $i++) {
+            $events[$i]["user"] = $modelUser->getUserFUllName($events[$i]["id_user"]);
+            $events[$i]["eventtype"] = $modelEventType->getName($events[$i]["id_eventtype"]);
+            $events[$i]["state"] = $modelState->getName($events[$i]["id_state"]);
+            $events[$i]["date"] = CoreTranslator::dateFromEn($events[$i]["date"], $lang);
+        }
+
+        $tableHtml = $table->view($events, $headers);
+        
+        $this->render(array("id_space" => $id_space,"lang" => $lang, "tableHtml" => $tableHtml, "resourceInfo" => $resourceInfo));
+    
+    }
+    
     public function eventsAction($id_space, $id) {
 
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-
+        $is_authorized = $this->checkAuthorizationMenuSpaceNoException("resources", $id_space, $_SESSION["id_user"]);
+        if(!$is_authorized){
+            $this->eventsroAction($id_space, $id);
+            return;
+        }
 
         $lang = $this->getLanguage();
 
@@ -182,9 +221,26 @@ class ResourcesController extends CoresecureController {
         $this->redirect("resourcesevents/".$id_space."/".$id_resource);
     }
     
+    public function editeventroAction($id_space, $id_resource, $id_event){
+        
+        $lang = $this->getLanguage();
+        $formEvent = $this->createEventForm($id_space, $id_resource, $id_event, $lang, false);
+        $filesTable = $this->createFilesTable($id_event, $lang);
+        
+        $modelResource = new ResourceInfo();
+        $resourceInfo = $modelResource->get($id_resource);
+        
+        $this->render(array("id_space"=>$id_space,"lang" => $lang, "formEvent" => $formEvent->getHtml($lang),
+            "filesTable" => $filesTable, "resourceInfo" => $resourceInfo, "id_event" => $id_event));
+    }
+    
     public function editEventAction($id_space, $id_resource, $id_event) {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-
+        $authorized = $this->checkAuthorizationMenuSpaceNoException("resources", $id_space, $_SESSION["id_user"]);
+        if(!$authorized){
+            $this->editeventroAction($id_space, $id_resource, $id_event);
+            return;
+        }
+        
         if ($id_event == 0) {
             $modelEvent = new ReEvent();
             $id_event = $modelEvent->addDefault($id_resource, $_SESSION["id_user"]);
@@ -262,7 +318,7 @@ class ResourcesController extends CoresecureController {
         return $form;
     }
 
-    protected function createEventForm($id_space, $id_resource, $id_event, $lang) {
+    protected function createEventForm($id_space, $id_resource, $id_event, $lang, $editButton = true) {
 
         $modelResources = new ResourceInfo();
 
@@ -315,8 +371,11 @@ class ResourcesController extends CoresecureController {
         $form->addSelect("id_eventtype", ResourcesTranslator::Event_Type($lang), $choicesET, $choicesidET, $data["id_eventtype"]);
         $form->addSelect("id_state", ResourcesTranslator::State($lang), $choicesS, $choicesidS, $data["id_state"]);
         $form->addTextArea("comment", ResourcesTranslator::Description($lang), false, $data["comment"], false);
-        $form->setValidationButton(CoreTranslator::Save($lang), "resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
-        $form->setColumnsWidth(2, 10);
+        
+        if($editButton){
+            $form->setValidationButton(CoreTranslator::Save($lang), "resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
+            $form->setColumnsWidth(2, 10);
+        }
 
         return $form;
     }

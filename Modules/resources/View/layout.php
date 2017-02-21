@@ -3,7 +3,7 @@
 
 <!-- header -->
     <?php startblock('title') ?>
-    Core - Platform-Manager
+    Resource - Platform-Manager
     <?php endblock() ?>
         
     <?php startblock('stylesheet') ?>

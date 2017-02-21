@@ -32,6 +32,15 @@ class ReEvent extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
     
+    public function getLastStateColor($id_resource){
+        $sql = "SELECT re_state.color as color"
+                . " FROM re_event "
+                . " INNER JOIN re_state ON re_event.id_state = re_state.id"
+                . " WHERE id_resource=? ORDER BY date ASC;";
+        $data = $this->runRequest($sql, array($id_resource))->fetch();
+        return $data[0];
+        
+    }
     
     public function getAll($sort = "date") {
         $sql = "SELECT * FROM re_event ORDER BY " . $sort . " ASC";

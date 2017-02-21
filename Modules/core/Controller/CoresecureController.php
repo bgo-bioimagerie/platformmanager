@@ -106,6 +106,22 @@ abstract class CoresecureController extends Controller {
         }
     }
     
+        /**
+     * 
+     * @param type $menuName
+     * @param type $id_space
+     * @param type $id_user
+     * @throws Exception
+     */
+    public function checkAuthorizationMenuSpaceNoException($menuName, $id_space, $id_user){
+        $modelSpace = new CoreSpace();
+        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
+        if ($auth == 0) {
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * 
      * @param type $minimumStatus

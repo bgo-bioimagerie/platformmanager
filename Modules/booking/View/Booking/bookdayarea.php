@@ -194,7 +194,16 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 	<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="colDiv">
 
 	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
-	<p class="text-center"><b><?php echo  $this->clean($resourcesBase[$r]['name']) ?></b><br/><?php echo  $this->clean($resourcesBase[$r]['description']) ?></p>
+	<p class="text-center"><b><?php echo  $this->clean($resourcesBase[$r]['name']) ?>
+            <br/><?php echo  $this->clean($resourcesBase[$r]['description']) ?>
+            <?php
+                if($resourcesBase[$r]['last_state'] != ""){
+                    ?>
+                        <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+                    <?php
+                }
+            ?>
+        </p>
 	</div>
 
 	<?php 

@@ -15,6 +15,7 @@ require_once 'Modules/booking/Controller/BookingdefaultController.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReArea.php';
+require_once 'Modules/resources/Model/ReEvent.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreProject.php';
@@ -262,6 +263,9 @@ class BookingController extends BookingabstractController {
         $resourceBase["accessibility_id"] = $modelAccess->getAccessId($resourceBase["id"]);
         $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
+        // get last state
+        $modelEvent = new ReEvent();
+        $resourceBase["last_state"] = $modelEvent->getLastStateColor($resourceBase["id"]);
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
@@ -337,7 +341,6 @@ class BookingController extends BookingabstractController {
             $curentAreaId = $menuData["areas"][0]["id"];
         }
         
-        
         // save the menu info in the session
         $_SESSION['bk_id_resource'] = $curentResource;
         $_SESSION['bk_id_area'] = $curentAreaId;
@@ -353,6 +356,12 @@ class BookingController extends BookingabstractController {
         $resourcesBase = $modelRes->resourcesForArea($curentAreaId);
         for ($r = 0; $r < count($resourcesBase); $r++) {
             $resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($resourcesBase[$r]["id"]);
+        }
+        
+        // get last state
+        $modelEvent = new ReEvent();
+        for ($r = 0; $r < count($resourcesBase); $r++) {
+            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($resourcesBase[$r]["id"]);
         }
 
         // get the entries for this resource
@@ -502,6 +511,10 @@ class BookingController extends BookingabstractController {
         $resourceBase["accessibility_id"] = $modelAccess->getAccessId($resourceBase["id"]);
         $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
+        // get last state
+        $modelEvent = new ReEvent();
+        $resourceBase["last_state"] = $modelEvent->getLastStateColor($resourceBase["id"]);
+        
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
@@ -594,6 +607,12 @@ class BookingController extends BookingabstractController {
         // get the resource info
         $modelRes = new ResourceInfo();
         $resourcesBase = $modelRes->resourcesForArea($curentAreaId);
+        
+        // get last state
+        $modelEvent = new ReEvent();
+        for ($r = 0; $r < count($resourcesBase); $r++) {
+            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($resourcesBase[$r]["id"]);
+        }
 
         $modelRescal = new ResourceInfo();
         for ($t = 0; $t < count($resourcesBase); $t++) {

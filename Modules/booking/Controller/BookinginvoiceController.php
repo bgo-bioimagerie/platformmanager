@@ -287,7 +287,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $controller = "Bookinginvoice";
         $date_generated = date("Y-m-d", time());
         $invoice_id = $modelInvoice->addInvoice($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_resp, 0, $beginPeriod, $endPeriod);
- 
+        $modelInvoice->setEditedBy($invoice_id, $_SESSION["id_user"]);
+        
         // get all the reservations for each resources
         $content = "";
         $total_ht = 0;
@@ -503,7 +504,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $controller = "servicesinvoiceproject";
         $number = $modelInvoice->getNextNumber();
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $number, date("Y-m-d", time()), $id_unit, $id_resp);
-
+        $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
+        
         // parse content
         //echo "parse content <br/>";
         $modelUnit = new EcUnit();

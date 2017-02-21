@@ -141,6 +141,9 @@ class CoreSpace extends Model {
             } else if ($roles[$i]["status"] == 4) {
                 $roles[$i]["role_name"] = CoreTranslator::Admin($lang);
             }
+            else{
+                $roles[$i]["role_name"] = "unknown";
+            }
         }
         return $roles;
     }

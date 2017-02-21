@@ -177,7 +177,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $module = "services";
         $controller = "servicesinvoiceorder";
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
-
+        $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
+        
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForResp($id_resp);
         $content = $this->parseServicesToContent($services, $modelUnit->getBelonging($id_unit));

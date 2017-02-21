@@ -31,6 +31,7 @@ class InInvoice extends Model {
         $this->setColumnsInfo("is_paid", "int(1)", 0);
         $this->setColumnsInfo("module", "varchar(200)", "");
         $this->setColumnsInfo("controller", "varchar(200)", "");
+        $this->setColumnsInfo("id_edited_by", "int(11)", 0);
         $this->primaryKey = "id";
     }
 
@@ -49,6 +50,11 @@ class InInvoice extends Model {
         //echo "where id = " . $id . "<br/>";
         $sql = "UPDATE in_invoice SET date_paid=? WHERE id=?";
         $this->runRequest($sql, array($date, $id));
+    }
+    
+    public function setEditedBy($id_invoice, $id_user){
+        $sql = "UPDATE in_invoice SET id_edited_by=? WHERE id=?";
+        $this->runRequest($sql, array($id_user, $id_invoice));
     }
     
     public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_responsible, $total_ht = 0, $period_begin = "0000-00-00", $period_end = "0000-00-00", $id_project = 0) {

@@ -196,7 +196,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             }
         }
         $modelServices = new SeService();
-        $services = $modelServices->getForList();
+        $services = $modelServices->getForList($id_space);
 
         $formAdd = new FormAdd($this->request, "editinvoiceprojectformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
@@ -281,7 +281,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $controller = "servicesinvoiceproject";
         $number = $modelInvoice->getNextNumber();
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
-
+        $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
+        
         // parse content
         //echo "parse content <br/>";
         $modelUnit = new EcUnit();
