@@ -619,4 +619,18 @@ class ServicesTranslator {
         return "Invoice it";
     }
     
+    public static function Created_by($lang) {
+        if ($lang == "fr") {
+            return "Créé par";
+        }
+        return "Created by";
+    }
+    
+    public static function Modified_by($lang) {
+        if ($lang == "fr") {
+            return "Modifié par";
+        }
+        return "Modified by";
+    }
+    
 }

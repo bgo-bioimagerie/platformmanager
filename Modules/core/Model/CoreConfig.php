@@ -81,7 +81,7 @@ class CoreConfig extends Model {
      */
     public function updateParam($key, $value, $id_space = 0) {
         $sql = "update core_config set value=?  where keyname=? AND id_space=?";
-        $this->runRequest($sql, array($value, $id_space, $key));
+        $this->runRequest($sql, array($value, $key, $id_space));
     }
 
     /**

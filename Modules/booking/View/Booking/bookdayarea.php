@@ -199,6 +199,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
             <?php
                 if($resourcesBase[$r]['last_state'] != ""){
                     ?>
+                        <br/>
                         <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
                     <?php
                 }

@@ -140,7 +140,7 @@ class ServicesconfigController extends CoresecureController {
     public function projectCommandForm($modelCoreConfig, $id_space, $lang){
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
-        
+       
         $form = new Form($this->request, "periodCommandForm");
         $form->addSeparator(ServicesTranslator::Project($lang) . " & " . ServicesTranslator::Orders($lang) );
         $form->addSelect("servicesuseproject", ServicesTranslator::UseProject($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $servicesuseproject);

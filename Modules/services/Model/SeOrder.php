@@ -23,12 +23,16 @@ class SeOrder extends Model {
 		`date_close` DATE NOT NULL,
                 `no_identification` varchar(150) NOT NULL DEFAULT '',
                 `id_invoice` int(11) NOT NULL DEFAULT 0,
+                `created_by_id` int(11) NOT NULL DEFAULT 0,
+                `modified_by_id` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
         
         $this->addColumn("se_order", "id_resp", "int(11)", 0);
         $this->addColumn("se_order", "id_invoice", "int(11)", 0);
+        $this->addColumn("se_order", "created_by_id", "int(11)", 0);
+        $this->addColumn("se_order", "modified_by_id", "int(11)", 0);
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_order_service` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -39,6 +43,16 @@ class SeOrder extends Model {
 		);";
 
         $this->runRequest($sql2);
+    }
+    
+    public function setCreatedBy($id, $id_user){
+        $sql = "UPDATE se_order SET created_by_id=? WHERE id=?";
+        $this->runRequest($sql, array($id_user, $id));
+    }
+    
+    public function setModifiedBy($id, $id_user){
+        $sql = "UPDATE se_order SET modified_by_id=? WHERE id=?";
+        $this->runRequest($sql, array($id_user, $id));
     }
     
     public function setInvoiceID($id, $id_invoice){
@@ -86,7 +100,7 @@ class SeOrder extends Model {
         return 0;
     }
 
-    public function setOrder($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = ""){
+    public function setOrder($id, $id_space, $id_user, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
         $id_status = 0;
         if ($date_close == "" || $date_close=="0000-00-00"){
             $id_status = 1;
@@ -96,7 +110,9 @@ class SeOrder extends Model {
             return $id;
         }
         else{
-            return $this->addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
+            $idNew = $this->addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
+            $this->setCreatedBy($idNew, $id_creator);
+            return $idNew;
         }
     }
     

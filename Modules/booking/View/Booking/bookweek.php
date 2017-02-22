@@ -204,6 +204,7 @@ else if($size_bloc_resa == 3600){
         <?php
             if($resourceBase['last_state'] != ""){
                 ?>
+                    <br/>
                     <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourceBase['id'] ?>" style="background-color:<?php echo $resourceBase['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
                 <?php
             }

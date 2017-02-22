@@ -148,16 +148,21 @@ class ServicesordersController extends CoresecureController {
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
         $form->addSelect("id_status", CoreTranslator::Status($lang), array(CoreTranslator::Open($lang), CoreTranslator::Close($lang)), array(1, 0), $value["id_status"]);
 
-        $form->addText("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang), false);
-        $form->addText("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang), false);
-        $form->addText("date_last_modified", ServicesTranslator::Last_modified_date($lang), false, CoreTranslator::dateFromEn($value["date_last_modified"], $lang), false);
-
+        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
+        $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));
+        
+        if ($id > 0) {
+            $form->addText("date_last_modified", ServicesTranslator::Last_modified_date($lang), false, CoreTranslator::dateFromEn($value["date_last_modified"], $lang), "disabled");
+            $form->addText("created_by", ServicesTranslator::Created_by($lang), false, $modelUser->getUserFUllName($value["created_by_id"]), "disabled");
+            $form->addText("modified_by_id", ServicesTranslator::Modified_by($lang), false, $modelUser->getUserFUllName($value["modified_by_id"]), "disabled");
+        }
+        
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
 
         $formAdd = new FormAdd($this->request, "orderEditForm");
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
-        $formAdd->addNumber("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
+        $formAdd->addText("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->addSeparator(ServicesTranslator::Services_list($lang));
         $form->setFormAdd($formAdd);
@@ -167,8 +172,14 @@ class ServicesordersController extends CoresecureController {
 
         if ($form->check()) {
 
-            $id_order = $modelOrder->setOrder($id, $id_space, $this->request->getParameter("id_user"), $this->request->getParameter("no_identification"), $this->request->getParameter("id_status"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_last_modified"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang));
-
+            $id_order = $modelOrder->setOrder($id, $id_space, $this->request->getParameter("id_user"), 
+                    $this->request->getParameter("no_identification"), 
+                    $_SESSION["id_user"], 
+                    CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
+                    date("Y-m-d", time()), 
+                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang));
+            $modelOrder->setModifiedBy($id, $_SESSION["id_user"]);
+            
             $servicesIds = $this->request->getParameter("services");
             $servicesQuantities = $this->request->getParameter("quantities");
 

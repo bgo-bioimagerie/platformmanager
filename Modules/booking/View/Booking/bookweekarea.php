@@ -206,6 +206,7 @@ unset($_SESSION["message"]) ?>
                                                 <?php
             if($resourcesBase[$i]['last_state'] != ""){
                 ?>
+                    <br/>                            
                     <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$i]['id'] ?>" style="background-color:<?php echo $resourcesBase[$i]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
                 <?php
             }
