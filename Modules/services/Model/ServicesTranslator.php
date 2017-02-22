@@ -633,4 +633,18 @@ class ServicesTranslator {
         return "Modified by";
     }
     
+    public static function Date_begin($lang) {
+        if ($lang == "fr") {
+            return "Début période";
+        }
+        return "Date begin";
+    }
+    
+    public static function Date_end($lang) {
+        if ($lang == "fr") {
+            return "Fin période";
+        }
+        return "Date end";
+    }
+    
 }

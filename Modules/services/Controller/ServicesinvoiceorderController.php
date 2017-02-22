@@ -12,7 +12,6 @@ require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SePrice.php';
 
-
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 
@@ -50,10 +49,12 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
         $formUnit = $this->createByUnitForm($id_space, $lang);
         if ($formUnit->check()) {
+            $dateBegin = $this->request->getParameterNoException("date_begin");
+            $dateEnd = $this->request->getParameterNoException("date_end");
             $unitId = $this->request->getParameterNoException("id_unit");
             $respId = $this->request->getParameterNoException("id_resp");
             if ($unitId != 0 && $respId != 0) {
-                $this->generateRespBill($unitId, $respId, $id_space);
+                $this->generateRespBill($dateBegin, $dateEnd, $unitId, $respId, $id_space);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
@@ -142,6 +143,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $unitId = $this->request->getParameterNoException("id_unit");
         $respId = $this->request->getParameterNoException("id_resp");
+        $dateBegin = $this->request->getParameterNoException("date_begin");
+        $dateEnd = $this->request->getParameterNoException("date_end");
 
         $modelUnit = new EcUnit();
         $units = $modelUnit->getUnitsForList("name");
@@ -149,6 +152,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelUser = new EcUser();
         $resps = $modelUser->getResponsibleOfUnit($unitId);
 
+        $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
+        $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
         $form->addSelect("id_unit", EcosystemTranslator::Units($lang), $units["names"], $units["ids"], $unitId, true);
         $form->addSelect("id_resp", EcosystemTranslator::Responsible($lang), $resps["names"], $resps["ids"], $respId);
         $form->setButtonsWidth(2, 9);
@@ -157,14 +162,14 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $form;
     }
 
-    private function generateRespBill($id_unit, $id_resp, $id_space) {
+    private function generateRespBill($dateBegin, $dateEnd, $id_unit, $id_resp, $id_space) {
 
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
         $modelUnit = new EcUnit();
         // select all the opened order
-        $orders = $modelOrder->openedForResp($id_resp);
+        $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp);
 
         if (count($orders) == 0) {
             throw new Exception("there are no orders open for this responsible");
@@ -181,7 +186,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForResp($id_resp);
-        $content = $this->parseServicesToContent($services, $modelUnit->getBelonging($id_unit));
+        $content = $this->parseServicesToContent($services, $modelUnit->getBelonging($id_unit, $id_space));
         $details = $this->parseOrdersToDetails($orders, $id_space);
         $total_ht = $this->calculateTotal($services);
 
@@ -274,7 +279,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             }
         }
         $modelServices = new SeService();
-        $services = $modelServices->getForList();
+        $services = $modelServices->getForList($id_space);
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
