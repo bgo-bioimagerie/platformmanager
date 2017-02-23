@@ -131,9 +131,9 @@ abstract class Model {
         // create database if not exists
         $sql = "CREATE TABLE IF NOT EXISTS `" . $this->tableName . "` (";
         for ($i = 0; $i < count($this->columnsNames); $i++) {
-            $sql .= "`" . $this->columnsNames[$i] . "` " . $this->columnsTypes[$i] . " NOT NULL ";
+            $sql .= "`" . $this->columnsNames[$i] . "` " . $this->columnsTypes[$i];
             if ($this->columnsDefaultValue[$i] != "") {
-                $sql .= "DEFAULT '" . $this->columnsDefaultValue[$i] . "' ";
+                $sql .= " NOT NULL DEFAULT '" . $this->columnsDefaultValue[$i] . "' ";
             }
             if ($this->columnsNames[$i] == $this->primaryKey) {
                 $sql .= " AUTO_INCREMENT ";
