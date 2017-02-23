@@ -3,15 +3,21 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10" id="pm-content">
-    <div class="col-md-12" id="pm-table">
-    <div class="col-md-2 col-md-offset-10">
-        <button type="button" onclick="location.href = 'bookingpricesowner/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo InvoicesTranslator::OwnerPrice($lang) ?></button>
-    </div>
-    <div class="col-md-12">
-        <?php echo $formHtml ?>
-    </div>
-    </div>
+<div class="col-md-10" id="pm-form">
+    <?php echo $tableHtml ?>
 </div>
-<?php
-endblock();
+
+
+<!--  *************  -->
+<!--  Popup windows  -->
+<!--  *************  -->
+<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
+<div id="hider" class="col-xs-12"></div> 
+<div id="entriespopup_box" class="pm_popup_box" style="display: none;">
+    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a></div>
+        <?php echo $formedit ?>
+</div> 
+
+<?php include 'Modules/booking/View/Bookingprices/editscript.php';  ?>
+
+<?php endblock();

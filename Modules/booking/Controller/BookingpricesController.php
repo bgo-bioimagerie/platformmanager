@@ -39,7 +39,133 @@ class BookingpricesController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space){
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelBelonging = new EcBelonging();
+        $modelResource = new ResourceInfo();
+        $resources = $modelResource->getBySpace($id_space);
+        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        
+        $table = new TableView();
+        $table->setTitle(BookingTranslator::Prices($lang), 3);
+        
+        $headers = array(
+            "resource" => ResourcesTranslator::Resource($lang)
+        );
+        for($i = 0 ; $i < count($belongings) ; $i++){
+            $headers[$belongings[$i]["id"]] = $belongings[$i]["name"];
+        }
+        
+        $prices = array();
+        $modelPrice = new BkPrice();
+        $modelPNightWe = new BkNightWE();
+        $modelPackage = new BkPackage();
+        $count = 0;
+        $data = array();
+        for ($i = 0; $i < count($resources); $i++) {
+            
+            $count++;
+            // day
+            for ($b = 0; $b < count($belongings); $b++) {
+                $data[$belongings[$b]["id"]] = $modelPrice->getDayPrice($resources[$i]["id"], $belongings[$b]["id"]);
+            }
+            $data['id_resource'] = $resources[$i]["id"] . "-day";
+            $data['resource'] = $resources[$i]["name"];
+            $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
+            $prices[] = $data;
+            // add night we
+            $isNight = $modelPNightWe->isNight($resources[$i]["id"]);
+            if ($isNight) {
+                $count++;
+                for ($b = 0; $b < count($belongings); $b++) {
+                    $data[$belongings[$b]["id"]] = $modelPrice->getNightPrice($resources[$i]["id"], $belongings[$b]["id"]);
+                }
+                $data['id_resource'] = $resources[$i]["id"] . "-night";
+                $data['resource'] = $resources[$i]["name"] . " " . BookingTranslator::night($lang);
+                $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
+                $prices[] = $data;
+            }
+            $isWe = $modelPNightWe->isWe($resources[$i]["id"]);
+            if ($isWe) {
+                $count++;
+                for ($b = 0; $b < count($belongings); $b++) {
+                    $data[$belongings[$b]["id"]] = $modelPrice->getWePrice($resources[$i]["id"], $belongings[$b]["id"]);
+                }
+                $data['id_resource'] = $resources[$i]["id"] . "-we";
+                $data['resource'] = $resources[$i]["name"] . " " . BookingTranslator::WE($lang);
+                $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
+                $prices[] = $data;
+            }
+
+            // add forfaits
+            $packages = $modelPackage->getByResource($resources[$i]["id"]);
+            foreach ($packages as $package) {
+                $count++;
+                for ($b = 0; $b < count($belongings); $b++) {
+                    $data[$belongings[$b]["id"]] = $modelPrice->getPackagePrice($package["id"], $resources[$i]["id"], $belongings[$b]["id"]);
+                }
+                $data['id_resource'] = $resources[$i]["id"] . "-pk-" . $package["id"];
+                $data['resource'] = $resources[$i]["name"] . " " . $package["name"];
+                $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
+                $prices[] = $data;
+            }
+        }
+        
+        $table->addLineEditButton('editentry', 'id_resource', true);
+        $tableHtml = $table->view($prices, $headers);
+        
+        $form = new Form($this->request, "resourcesPricesForm");
+        $form->setTitle(BookingTranslator::Prices($lang), 3);
+        $form->addHidden("resource_id");
+        $form->addText("resource", ResourcesTranslator::resource($lang), false, "", false);
+        for($b = 0 ; $b < count($belongings) ; $b++){
+            $form->addText('bel_'.$belongings[$b]['id'], $belongings[$b]['name'], true, 0);
+        }
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingpriceseditquery/".$id_space);
+        
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml,
+                        'formedit' => $form->getHtml($lang), 'resources' => $ress,
+                        'belongings' => $belongings));
+    }
+    
+    public function editqueryAction($id_space){
+        
+        $modelBelonging = new EcBelonging();
+        $modelPrice = new BkPrice();
+        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        
+        $id_resource = $this->request->getParameter('resource_id');
+        
+        $residArray = explode("-", $id_resource);
+        if ($residArray[1] == "day") {
+            foreach($belongings as $bel){
+                $price = $this->request->getParameter('bel_' . $bel['id']);
+                $modelPrice->setPriceDay($residArray[0], $bel["id"], $price);
+            }
+        } else if ($residArray[1] == "night") {
+            foreach($belongings as $bel){
+                $price = $this->request->getParameter('bel_' . $bel['id']);
+                $modelPrice->setPriceNight($residArray[0], $bel["id"], $price);
+            }
+        } else if ($residArray[1] == "we") {
+            foreach($belongings as $bel){
+                $price = $this->request->getParameter('bel_' . $bel['id']);
+                $modelPrice->setPriceWe($residArray[0], $bel["id"], $price);
+            }
+        } else if ($residArray[1] == "pk") {
+            foreach($belongings as $bel){
+                $price = $this->request->getParameter('bel_' . $bel['id']);
+                $modelPrice->setPricePackage($residArray[0], $bel['id'], $residArray[2], $price);
+            }
+        }
+        
+        $this->redirect('bookingprices/' . $id_space);
+    }
+
+    public function indexoldAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();

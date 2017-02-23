@@ -58,6 +58,9 @@ class BookingRouting extends Routing{
         $this->addRoute("bookinginvoiceedit", "bookinginvoiceedit", "bookinginvoice", "edit", array("id_space", "id_invoice", "pdf"), array("", "", ""));
         $this->addRoute("bookinginvoicedetail", "bookinginvoicedetail", "bookinginvoice", "details", array("id_space", "id_invoice"), array("", ""));
         
+        $this->addRoute("bookinggetprices", "bookinggetprices", "bookingprices", "getprices", array("id_space", "id_resource"), array("", ""), true);
+        $this->addRoute("bookingpriceseditquery", "bookingpriceseditquery", "bookingprices", "editquery", array("id_space"), array(""));
+        
         // statistics
         $this->addRoute("bookingstatisticauthorizations", "bookingstatisticauthorizations", "bookingstatisticauthorizations", "index", array("id_space"), array(""));
         $this->addRoute("bookingauthorizedusers", "bookingauthorizedusers", "bookingstatisticauthorizations", "authorizedusers", array("id_space"), array(""));
