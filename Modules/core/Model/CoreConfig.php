@@ -18,7 +18,7 @@ class CoreConfig extends Model {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_config` (
                 `keyname` varchar(30) NOT NULL DEFAULT '',
-		`value` text NOT NULL DEFAULT '',
+		`value` text NOT NULL,
                 `id_space` int(11) NOT NULL DEFAULT 0
 		);";
 
