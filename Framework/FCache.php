@@ -210,9 +210,10 @@ class FCache extends Model {
 		PRIMARY KEY (`id`)
 		);";
 
+        $this->runRequest($sql);
+        
         $this->addColumn("cache_urls", "isapi", "int(1)", 0);
         
-        $this->runRequest($sql);
 
         $sqlg = "CREATE TABLE IF NOT EXISTS `cache_urls_gets` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
