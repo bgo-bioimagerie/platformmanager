@@ -15,9 +15,9 @@ class CoreUser extends Model {
         $this->setColumnsInfo("status_id", "int(2)", 0);
         $this->setColumnsInfo("source", "varchar(30)", "local");
         $this->setColumnsInfo("is_active", "int(1)", 1);
-        $this->setColumnsInfo("date_created", "date", "CURRENT_TIMESTAMP");
-        $this->setColumnsInfo("date_end_contract", "date", "CURRENT_TIMESTAMP");
-        $this->setColumnsInfo("date_last_login", "date", "CURRENT_TIMESTAMP");
+        $this->setColumnsInfo("date_created", "date", "");
+        $this->setColumnsInfo("date_end_contract", "date", "");
+        $this->setColumnsInfo("date_last_login", "date", "");
         $this->primaryKey = "id";
     }
 
