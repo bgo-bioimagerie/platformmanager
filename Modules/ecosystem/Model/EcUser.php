@@ -22,9 +22,9 @@ class EcUser extends Model {
 		`id` int(11) NOT NULL,
 		`phone` varchar(30) NOT NULL DEFAULT '',
 		`id_unit` int(11) NOT NULL DEFAULT 1,	
-		`date_convention` DATE NOT NULL DEFAULT '0000-00-00',
+		`date_convention` DATE,
                 `is_responsible` INT(1) NOT NULL DEFAULT 0,
-                `convention_url` TEXT(255) NOT NULL DEFAULT '',
+                `convention_url` TEXT(255),
 		PRIMARY KEY (`id`)
 		);";
 
