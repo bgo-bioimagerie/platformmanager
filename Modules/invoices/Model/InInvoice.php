@@ -20,10 +20,10 @@ class InInvoice extends Model {
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("number", "varchar(50)", "");
         $this->setColumnsInfo("id_space", "int(11)", "");
-        $this->setColumnsInfo("period_begin", "date", "0000-00-00");
-        $this->setColumnsInfo("period_end", "date", "0000-00-00");
-        $this->setColumnsInfo("date_generated", "date", "0000-00-00");
-        $this->setColumnsInfo("date_paid", "date", "0000-00-00");
+        $this->setColumnsInfo("period_begin", "date", "");
+        $this->setColumnsInfo("period_end", "date", "");
+        $this->setColumnsInfo("date_generated", "date", "");
+        $this->setColumnsInfo("date_paid", "date", "");
         $this->setColumnsInfo("id_unit", "int(11)", 0);
         $this->setColumnsInfo("id_responsible", "int(11)", 0);
         $this->setColumnsInfo("total_ht", "varchar(50)", "0");

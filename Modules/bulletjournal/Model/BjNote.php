@@ -22,7 +22,7 @@ class BjNote extends Model {
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("type", "int(11)", 0);
         $this->setColumnsInfo("content", "text", 0);
-        $this->setColumnsInfo("date", "date", "0000-00-00");
+        $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("is_month_task", "int(1)", "0");
         $this->primaryKey = "id";
     }

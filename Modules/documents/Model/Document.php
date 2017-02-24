@@ -21,7 +21,7 @@ class Document extends Model {
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("title", "varchar(250)", "");
         $this->setColumnsInfo("id_user", "int(11)", 0);
-        $this->setColumnsInfo("date_modified", "DATE", "0000-00-00");
+        $this->setColumnsInfo("date_modified", "DATE", "");
         $this->setColumnsInfo("url", "TEXT", "");
         $this->primaryKey = "id";
     }

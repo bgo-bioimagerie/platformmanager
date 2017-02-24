@@ -21,7 +21,7 @@ class BjTask extends Model {
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("id_note", "int(11)", 0);
         $this->setColumnsInfo("priority", "int(5)", 0);
-        $this->setColumnsInfo("deadline", "date", "0000-00-00");
+        $this->setColumnsInfo("deadline", "date", "");
         $this->primaryKey = "id";
     }
     
