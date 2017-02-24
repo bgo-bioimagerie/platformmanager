@@ -53,6 +53,15 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
+        $formMenuName = $this->menuNameForm($id_space, $lang);
+        if($formMenuName->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("bookingmenuname", $this->request->getParameter("bookingmenuname"), $id_space);
+        
+            $this->redirect("bookingconfig/".$id_space);
+            return;
+        }
+        
         $formeditReservation = $this->editReservationPlugin($id_space, $lang);
         if ($formeditReservation->check()){
             $modelConfig = new CoreConfig();
@@ -100,8 +109,10 @@ class BookingconfigController extends CoresecureController {
 
         // view
         $forms = array($formMenusactivation->getHtml($lang), 
-            $formSettingsMenu->getHtml($lang), $formBookingOption->getHtml($lang),
-            $formeditReservation->getHtml($lang), $formEditBookingMailing->getHtml($lang));
+            $formMenuName->getHtml($lang),
+            $formSettingsMenu->getHtml($lang), 
+            $formBookingOption->getHtml($lang), $formeditReservation->getHtml($lang), 
+            $formEditBookingMailing->getHtml($lang));
         $this->render(array("id_space" => $id_space, "forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
     }
  
@@ -196,6 +207,21 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect('BkEditBookingMailing', BookingTranslator::Send_emails($lang), array(BookingTranslator::Never($lang), BookingTranslator::When_manager_admin_edit_a_reservation($lang)), array(1,2), $BkEditBookingMailing);
         $form->addSelect('BkBookingMailingAdmins', BookingTranslator::EmailManagers($lang), array(BookingTranslator::Never($lang), BookingTranslator::WhenAUserBook($lang)), array(1,2), $BkBookingMailingAdmins);
   
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+    
+    protected function menuNameForm($id_space, $lang){
+        $modelCoreConfig = new CoreConfig();
+	$bookingmenuname = $modelCoreConfig->getParam("bookingmenuname", $id_space);
+        
+        $form = new Form($this->request, "bookingmenunameForm");
+        $form->addSeparator(CoreTranslator::MenuName($lang));
+        
+        $form->addText("bookingmenuname", CoreTranslator::Name($lang), false, $bookingmenuname);
+        
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 

@@ -1312,4 +1312,10 @@ class CoreTranslator {
         return "This update the rooting cache and the modules database";
     }
     
+    public static function MenuName($lang) {
+        if ($lang == "fr") {
+            return "Nom du menu";
+        }
+        return "Menu name";
+    }
 }

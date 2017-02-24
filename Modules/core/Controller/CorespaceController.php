@@ -275,6 +275,7 @@ class CorespaceController extends CoresecureController {
             $html .= "</li>";
         }
         
+        $configModel = new CoreConfig();
         foreach ($spaceMenuItems as $item) {
             
             $classTranslator = ucfirst($item["module"])."Translator";
@@ -282,7 +283,13 @@ class CorespaceController extends CoresecureController {
             require_once $TranslatorFile;
             $translator = new $classTranslator();
             $url = $item["url"];
-            $name = $translator->$url($lang);
+            $donfigTitle = $configModel->getParamSpace($url."menuname", $id_space);
+            if($donfigTitle!=""){
+                $name = $donfigTitle;
+            }
+            else{
+                $name = $translator->$url($lang);
+            }
             
             $html .= "<li>";
             $html .= "<a href=\"" . $item["url"] . "/" . $space["id"] . "\">";

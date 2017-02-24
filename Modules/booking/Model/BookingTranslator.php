@@ -45,7 +45,7 @@ class BookingTranslator {
 
     public static function bookinginvoice($lang) {
         if ($lang == "fr") {
-            return "Nouveau relevé";
+            return "Relevé";
         }
         return "New invoice";
     }

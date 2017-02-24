@@ -54,6 +54,7 @@ if ($ecmenucolortxt == "") {
  
 <?php 
 $modelSpace = new CoreSpace();
+$configModel = new CoreConfig();
 $menus = $modelSpace->getAllSpaceMenusModules($id_space);
 $urls = array();
 $urlss = array();
@@ -71,14 +72,23 @@ foreach($menus as $menu){
         $model = new $className();
         $model->listRouts();
         if($model->count() > 0){
+            //echo "module = " . $module . "<br/>";
+            $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);
+            //echo "donfigTitle = " . $donfigTitle . "<br/>";
+            if ($donfigTitle != "") {
+                $txt = $donfigTitle;
+            } else {
+                $txt = $module;
+            }
             ?>
             <div class="col-md-12">
-                <p id="separatorp"><?php echo $module ?></p>
+                <p id="separatorp"><?php echo $txt ?></p>
             <?php
         }
         for ($i = 0 ; $i < $model->count() ; $i++){
             $url = $model->getUrl($i);
             $txt = $translator->$url($lang);
+            
             ?>
                 <div  class="btn-block" id="menu-button-div">
                     <a href="<?php echo $url . "/" . $id_space ?>"><?php echo $txt ?></a>      

@@ -49,6 +49,15 @@ class ServicesconfigController extends CoresecureController {
             return;
         }
         
+        $formMenuName = $this->menuNameForm($id_space, $lang);
+        if($formMenuName->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("servicesmenuname", $this->request->getParameter("servicesmenuname"), $id_space);
+        
+            $this->redirect("servicesconfig/".$id_space);
+            return;
+        }
+        
         // color menu form
         $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
         if ($formMenuColor->check()) {
@@ -78,10 +87,22 @@ class ServicesconfigController extends CoresecureController {
             $this->redirect("servicesconfig/".$id_space);
             return;
         }
+        
+        // use stock
+        $formStock = $this->stockForm($modelCoreConfig, $id_space, $lang);
+        if($formStock->check()){
+            $modelCoreConfig->setParam("servicesusestock", $this->request->getParameter("servicesusestock"), $id_space);
+            
+            $this->redirect("servicesconfig/".$id_space);
+            return;
+        }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang), 
-                        $formPerodProject->getHtml($lang), $formProjectCommand->getHtml($lang)
+        $forms = array($formMenusactivation->getHtml($lang), 
+                        $formMenuName->getHtml($lang),
+                        $formMenuColor->getHtml($lang), 
+                        $formPerodProject->getHtml($lang), $formProjectCommand->getHtml($lang),
+                        $formStock->getHtml($lang)
                 );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -91,7 +112,6 @@ class ServicesconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "services");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "services");
-        
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -149,6 +169,34 @@ class ServicesconfigController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
         
+        return $form;
+    }
+    
+    public function stockForm($modelCoreConfig, $id_space, $lang){
+        $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
+        
+        $form = new Form($this->request, "stockForm");
+        $form->addSeparator(ServicesTranslator::Stock($lang) );
+        $form->addSelect("servicesusestock", ServicesTranslator::UseStock($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $servicesusestock);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+        
+        return $form;
+    }
+    
+    protected function menuNameForm($id_space, $lang){
+        $modelCoreConfig = new CoreConfig();
+	$bookingmenuname = $modelCoreConfig->getParam("servicesmenuname", $id_space);
+        
+        $form = new Form($this->request, "servicesmenunameForm");
+        $form->addSeparator(CoreTranslator::MenuName($lang));
+        
+        $form->addText("servicesmenuname", CoreTranslator::Name($lang), false, $bookingmenuname);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+
         return $form;
     }
 }

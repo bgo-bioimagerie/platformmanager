@@ -52,14 +52,14 @@ class ServicesTranslator {
 
     public static function servicesinvoiceproject($lang) {
         if ($lang == "fr") {
-            return "Relever projets";
+            return "Relevé projets";
         }
         return "Invoice projects";
     }
 
     public static function Listing($lang) {
         if ($lang == "fr") {
-            return "Listing";
+            return "Listing prestations";
         }
         return "Listing";
     }
@@ -383,7 +383,7 @@ class ServicesTranslator {
 
     public static function Projects($lang = "") {
         if ($lang == "fr") {
-            return "Projects";
+            return "Projets";
         }
         return "Projects";
     }
@@ -647,4 +647,10 @@ class ServicesTranslator {
         return "Date end";
     }
     
+    public static function UseStock($lang) {
+        if ($lang == "fr") {
+            return "Utiliser la gestion de stock";
+        }
+        return "Use stock";
+    }
 }
