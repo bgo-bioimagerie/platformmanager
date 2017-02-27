@@ -312,6 +312,7 @@
 								</td>
                                                                 <td>
                                                                    <input type="file" name="tissusfiles[]">
+                                                                   <a href="data/antibodies/<?php echo $tissus["image_url"] ?>"><?php echo $tissus["image_url"] ?></a>
                                                                 </td>
 								
 								<!-- 
@@ -591,29 +592,7 @@
 			</div>
 		</div>
 	
-                <!-- Image -->   
-                <div class="form-group">
-                    <label class="control-label col-xs-1">Image</label>
-                    <div class="col-xs-11">
-                        <input type="file" name="image_url" id="image_url">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-xs-1">Image actuelle</label>
-                    <div class="col-xs-11">
-                        <?php echo $anticorps["image_url"] ?>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="control-label col-xs-1">Image description</label>
-                    <div class="col-xs-11">
-                        <textarea class="form-control" name="image_desc" id="image_desc"><?php echo $anticorps["image_desc"] ?></textarea>
-                    </div>
-                </div>
-                
 		<!-- Buttons -->
-		
 		<div class="col-xs-2 col-xs-offset-10" id="button-div">
 		        <input type="submit" class="btn btn-primary" value="Edit" />
 				<button type="button" onclick="location.href='anticorps/<?php echo $id_space ?>'" class="btn btn-default">Annuler</button>

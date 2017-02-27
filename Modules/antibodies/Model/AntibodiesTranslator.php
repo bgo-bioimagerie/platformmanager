@@ -59,4 +59,11 @@ class AntibodiesTranslator {
         return "Export as csv";
     }
     
+    public static function AntibodyInfo($lang) {
+        if ($lang == "fr") {
+            return "Informations anticorps";
+        }
+        return "Antibody informations";
+    }
+    
  }

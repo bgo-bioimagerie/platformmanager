@@ -18,11 +18,14 @@ require_once 'Modules/antibodies/Model/AcProtocol.php';
  */
 class AntibodiesController extends CoresecureController {
 
+    private $antibody;
+    
     /**
      * Constructor
      */
     public function __construct() {
         parent::__construct();
+        $this->antibody = new Anticorps();
         //$this->checkAuthorizationMenu("antibodies");
     }
 
@@ -237,8 +240,91 @@ class AntibodiesController extends CoresecureController {
         echo $data;
         return;
     }
+    
+    public function editAction($id_space, $id){
+        $modelAntibody = new Anticorps();
+        
+        // informations form
+        $form = $this->createEditForm($id_space, $id);
+        if($form->check()){
+            $this->antibody->setAntibody($id, $id_space, 
+                    $form->getParameter("name"), 
+                    $form->getParameter("no_h2p2"), 
+                    $form->getParameter("fournisseur"), 
+                    $form->getParameter("id_source"), 
+                    $form->getParameter("reference"), 
+                    $form->getParameter("clone"), 
+                    $form->getParameter("lot"), 
+                    $form->getParameter("id_isotype"), 
+                    $form->getParameter("stockage")
+                            );
+        }
+        
+        // Tissus table
+        
+        
+        
+        // Owner Table
+    }
+    
+    protected function createTissusTable($id_space, $id){
+        $modelTissus = new Tissus();
+        $tissus = $tissus->getInfoForAntibody($id);
+        
+        $table = new TableView();
+        $headers = array(
+            
+        );
+        
+        $table->view($data, $headers);
+    }
+    
+    protected function createEditForm($id_space, $id){
+        
+        if ($id != 0) {
+            $anticorps = $this->antibody->getAnticorpsFromId($id);
+        } else {
+            $anticorps = $this->antibody->getDefaultAnticorps();
+        }
+        
+        $lang = $this->getLanguage();
+        $form = new Form($this->request, 'antibodyEditForm');
+        $form->setTitle(AntibodiesTranslator::AntibodyInfo($lang));
+        
+        $form->addText("name", CoreTranslator::Name($lang), true, $anticorps["name"]);
+        $form->addText("no_h2p2", AntibodiesTranslator::No($lang), false, $anticorps["no_h2p2"]);
+        $form->addText("fournisseur", AntibodiesTranslator::Provider($lang), false, $anticorps["fournisseur"]);
+        
+        $modelSource = new Source();
+        $sourcesList = $modelSource->getForList($id_space);
+        $form->addSelect("id_source", AntibodiesTranslator::Source($lang), $sourcesList["names"], $sourcesList["ids"], $anticorps["id_source"]);
+        
+        $form->addText("reference", AntibodiesTranslator::Reference($lang), false, $anticorps["fournisseur"]);
+        $form->addText("clone", AntibodiesTranslator::AcClone($lang), false, $anticorps["clone"]);
+        $form->addText("lot", AntibodiesTranslator::Lot($lang), false, $anticorps["lot"]);
+        
+        $modelIsotype = new Isotype();
+        $isotypesList = $modelIsotype->getForList($id_space);
+        $form->addSelect("id_isotype", AntibodiesTranslator::Source($lang), $isotypesList["names"], $isotypesList["ids"], $anticorps["id_isotype"]);
+        
+        $form->addText("stockage", AntibodiesTranslator::Stockage($lang), false, $anticorps["stockage"]);
+        
+        $modelApp = new AcApplication();
+        $applicationsList = $modelApp->getForList($id_space);
+        $form->addSelect("id_application", AntibodiesTranslator::Application($lang), $applicationsList["names"], $applicationsList["ids"], $anticorps["id_application"]);
+        
+        $modelStaining = new AcStaining();
+        $stainingsList = $modelStaining->getForList($id_space);
+        $form->addSelect("id_staining", AntibodiesTranslator::Application($lang), $stainingsList["names"], $stainingsList["ids"], $anticorps["id_staining"]);
+        
+        $form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $anticorps["export_catalog"]);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/'.$id_space."/".$id);
+        return $form;
+        
+    }
 
-    public function editAction($id_space, $id) {
+    public function editActionOld($id_space, $id) {
 
         // Lists for the form	
         // get isotypes list
@@ -343,18 +429,14 @@ class AntibodiesController extends CoresecureController {
         $export_catalog = $this->request->getParameterNoException("export_catalog");
         $id_application = $this->request->getParameter("id_application");
         $id_staining = $this->request->getParameter("id_staining");
-        $image_desc = $this->request->getParameter("image_desc");
-
-
+        $image_desc = ""; //$this->request->getParameter("image_desc");
         //print_r($export_catalog);
         //print_r($image_desc);
-
         $modelAnticorps = new Anticorps();
         $modelTissus = new Tissus();
         if ($id == "") {
             // add anticorps to table 
             $id = $modelAnticorps->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
-        
         } else {
 
             // update antibody
@@ -381,11 +463,11 @@ class AntibodiesController extends CoresecureController {
         for ($i = 0; $i < count($espece); $i++) {
             $temps_incubation = "";
             $id_tissus = $modelTissus->addTissus($id, $espece[$i], $organe[$i], $valide[$i], $ref_bloc[$i], $dilution[$i], $temps_incubation, $ref_protocol[$i], $prelevement[$i], $comment[$i]);
-        
+
             // load tissus image
-            $this->uploadTissusImage($id_tissus);
+            $this->uploadTissusImage($i, $id_tissus);
         }
-            
+
         // add catalog informations
         if ($export_catalog == "on") {
             $export_catalog = 1;
@@ -394,56 +476,55 @@ class AntibodiesController extends CoresecureController {
         }
         $modelAnticorps->setExportCatalog($id, $export_catalog);
         $modelAnticorps->setApplicationStaining($id, $id_staining, $id_application);
-        $modelAnticorps->setImageDesc($id, $image_desc);
-        if ($_FILES["image_url"]["name"] != "") {
-            // download file
-            $this->downloadIllustration();
+        /*
+          $modelAnticorps->setImageDesc($id, $image_desc);
+          if ($_FILES["image_url"]["name"] != "") {
+          // download file
+          $this->downloadIllustration();
 
-            // set filename to database
-            $modelAnticorps->setImageUrl($id, $_FILES["image_url"]["name"]);
-        }
+          // set filename to database
+          $modelAnticorps->setImageUrl($id, $_FILES["image_url"]["name"]);
+          }
+         */
 
         // generate view
         $this->redirect("anticorps/" . $id_space);
     }
 
-    public function uploadTissusImage($id) {
+    public function uploadTissusImage($i, $id) {
         //print_r($_FILES);
-        
+
         $target_dir = "data/antibodies/";
         $filesCount = count($_FILES["tissusfiles"]);
         $modelTissus = new Tissus();
-        for($i = 0 ; $i < count($filesCount) ; $i++){
-            if ($_FILES["tissusfiles"]["name"][$i] != "") {
-                $ext = pathinfo($_FILES["tissusfiles"]["name"][$i], PATHINFO_EXTENSION);
-                
-                $target_file = $target_dir . $_FILES["tissusfiles"]["name"][$i];
-                $uploadOk = 1;
-                // Check file size
-                if ($_FILES["tissusfiles"]["size"][$i] > 500000000) {
-                    return "Error: your file is too large.";
-                    //$uploadOk = 0;
-                }
+        if ($_FILES["tissusfiles"]["name"][$i] != "") {
+            //echo "upload image " . $_FILES["tissusfiles"]["name"][$i] . "<br/>";
+            $ext = pathinfo($_FILES["tissusfiles"]["name"][$i], PATHINFO_EXTENSION);
 
-                // Check if $uploadOk is set to 0 by an error
-                if ($uploadOk == 0) {
-                    return "Error: your file was not uploaded.";
-                    // if everything is ok, try to upload file
+            $target_file = $target_dir . $_FILES["tissusfiles"]["name"][$i];
+            $uploadOk = 1;
+            // Check file size
+            if ($_FILES["tissusfiles"]["size"][$i] > 500000000) {
+                return "Error: your file is too large.";
+                //$uploadOk = 0;
+            }
+
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                return "Error: your file was not uploaded.";
+                // if everything is ok, try to upload file
+            } else {
+                if (move_uploaded_file($_FILES["tissusfiles"]["tmp_name"][$i], $target_file)) {
+                    //echo "set image URL to antibody " . $id . 
+                    $modelTissus->setImageUrl($id, $_FILES["tissusfiles"]["name"][$i]);
+                    return "The image file" . basename($_FILES["tissusfiles"]["name"][$i]) . " has been uploaded.";
                 } else {
-                    if (move_uploaded_file($_FILES["tissusfiles"]["tmp_name"][$i], $target_file)) {
-                        //echo "set image URL to antibody " . $id . 
-                        $modelTissus->setImageUrl($id, $_FILES["tissusfiles"]["name"][$i]);
-                        return "The image file" . basename($_FILES["tissusfiles"]["name"][$i]) . " has been uploaded.";
-                    } else {
-                        return "Error, there was an error uploading your file.";
-                    }
+                    return "Error, there was an error uploading your file.";
                 }
-                
-                
             }
         }
     }
-    
+
     protected function downloadIllustration() {
         $target_dir = "data/antibodies/";
         $target_file = $target_dir . $_FILES["image_url"]["name"];
@@ -577,7 +658,7 @@ class AntibodiesController extends CoresecureController {
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus();
-        
+
         $lang = $this->getLanguage();
 
         $this->render(array(
