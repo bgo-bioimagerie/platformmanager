@@ -71,6 +71,7 @@ class InvoicesController extends CoresecureController {
 
         $headers = array(
             "number" => InvoicesTranslator::Number($lang),
+            "title" => InvoicesTranslator::Title($lang),
             "unit" => EcosystemTranslator::Unit($lang),
             "resp" => EcosystemTranslator::Responsible($lang),
             "date_generated" => InvoicesTranslator::Date_generated($lang),

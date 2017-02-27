@@ -199,4 +199,11 @@ class InvoicesTranslator {
         return "Edited by";
     }
     
+    public static function Title($lang) {
+        if ($lang == "fr") {
+            return "Info";
+        }
+        return "Title";
+    }
+    
 }

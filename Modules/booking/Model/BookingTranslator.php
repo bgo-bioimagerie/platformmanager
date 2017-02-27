@@ -1235,7 +1235,12 @@ class BookingTranslator {
         return "Inform other users of that the slot is free:";
     }
     
-   
+    public static function EmailWhenResaDelete($lang){
+        if ($lang == "fr") {
+            return "Proposer d'envoyer un courriel lors de dé-réservation";
+        }
+        return "Ask to send email when cancel a booking";
+    }
             
             
 

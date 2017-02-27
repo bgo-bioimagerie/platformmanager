@@ -254,6 +254,13 @@ class ServicesTranslator {
         }
         return "Open";
     }
+    
+        public static function OpenedUpper($lang) {
+        if ($lang == "fr") {
+            return "OUVERT";
+        }
+        return "OPEN";
+    }
 
     public static function Closed($lang) {
         if ($lang == "fr") {

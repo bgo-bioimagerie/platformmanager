@@ -340,14 +340,17 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         // get details
         //echo "get details <br/>";
         $details = "";
+        $title = "";
         foreach ($id_projects as $id_proj) {
             $name = $modelProject->getName($id_proj);
             $details .= $name . "=" . "servicesprojectfollowup/" . $id_space . "/" . $id_proj . ";";
+            $title .= $name . " ";
         }
         //echo "set item <br/>";
         // set invoice itmems
         $modelInvoiceItem->setItem(0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_invoice, $total_ht);
+        $modelInvoice->setTitle($id_invoice, $title);
 
         return $id_invoice;
     }

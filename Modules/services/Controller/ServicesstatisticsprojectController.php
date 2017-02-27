@@ -188,7 +188,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
 
 
-        $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::OPENED($lang));
+        $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::OpenedUpper($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('A2', CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->getStyle('A2')->applyFromArray($styleBorderedCell);
 
@@ -296,11 +296,108 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
 
         // ////////////////////////////////////////////////////
+        //                  Bill list
+        // ////////////////////////////////////////////////////
+        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet->setTitle(ServicesTranslator::invoices($lang));
+        $objPHPExcel->setActiveSheetIndex(1);
+        $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
+
+
+        $curentLine = 1;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
+
+        $total = 0;
+        foreach ($invoices as $invoice) {
+            $curentLine++;
+
+            $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
+            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
+            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
+            //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
+            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
+            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["total_ht"]);
+            $total += $invoice["total_ht"];
+        }
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->mergeCells('A' . $curentLine . ':C' . $curentLine);
+        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Total_HT($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $total);
+
+        for ($r = 1; $r <= $curentLine; $r++) {
+            for ($c = 'A'; $c !== 'E'; $c++) {
+                $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+            }
+        }
+        for ($col = 'A'; $col !== 'E'; $col++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
+                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        
+         // ////////////////////////////////////////////////////
+        //                  Stats
+        // ////////////////////////////////////////////////////
+
+        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet->setTitle(ServicesTranslator::StatisticsMaj($lang));
+        $objPHPExcel->setActiveSheetIndex(2);
+
+        $curentLine = 1;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewIndustryTeam($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewIndustryTeam"] . " (" . $stats["purcentageNewIndustryTeam"] . "%)");
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberIndustryProjects($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberIndustryProjects"]);
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyIndustryProjects($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyIndustryProjects"] . " (" . $stats["purcentageloyaltyIndustryProjects"] . "%)");
+        $curentLine++;
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewAccademicTeam($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewAccademicTeam"] . " (" . $stats["purcentageNewAccademicTeam"] . "%)");
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberAccademicProjects($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberAccademicProjects"]);
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyAccademicProjects($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyAccademicProjects"] . " (" . $stats["purcentageloyaltyAccademicProjects"] . "%)");
+        $curentLine++;
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::totalNumberOfProjects($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["totalNumberOfProjects"]);
+
+        for ($r = 1; $r <= $curentLine; $r++) {
+            for ($c = 'A'; $c !== 'C'; $c++) {
+                $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+            }
+        }
+        for ($col = 'A'; $col !== 'C'; $col++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
+                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        
+        
+        
+        // ////////////////////////////////////////////////////
         //                Services billed details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $objPHPExcel->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
-        $objPHPExcel->setActiveSheetIndex(1);
+        $objPHPExcel->setActiveSheetIndex(3);
         $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 1;
@@ -386,100 +483,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
 
-        // ////////////////////////////////////////////////////
-        //                  Bill list
-        // ////////////////////////////////////////////////////
-        $objWorkSheet = $objPHPExcel->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::invoices($lang));
-        $objPHPExcel->setActiveSheetIndex(2);
-        $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
-
-
-        $curentLine = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
-        //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
-
-        $total = 0;
-        foreach ($invoices as $invoice) {
-            $curentLine++;
-
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
-            //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["total_ht"]);
-            $total += $invoice["total_ht"];
-        }
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->mergeCells('A' . $curentLine . ':C' . $curentLine);
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Total_HT($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $total);
-
-        for ($r = 1; $r <= $curentLine; $r++) {
-            for ($c = 'A'; $c !== 'E'; $c++) {
-                $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
-            }
-        }
-        for ($col = 'A'; $col !== 'E'; $col++) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-        }
-
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
-        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
-                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
-        // ////////////////////////////////////////////////////
-        //                  Stats
-        // ////////////////////////////////////////////////////
-
-        $objWorkSheet = $objPHPExcel->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::StatisticsMaj($lang));
-        $objPHPExcel->setActiveSheetIndex(3);
-
-        $curentLine = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewIndustryTeam($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewIndustryTeam"] . " (" . $stats["purcentageNewIndustryTeam"] . "%)");
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberIndustryProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberIndustryProjects"]);
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyIndustryProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyIndustryProjects"] . " (" . $stats["purcentageloyaltyIndustryProjects"] . "%)");
-        $curentLine++;
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewAccademicTeam($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewAccademicTeam"] . " (" . $stats["purcentageNewAccademicTeam"] . "%)");
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberAccademicProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberAccademicProjects"]);
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyAccademicProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyAccademicProjects"] . " (" . $stats["purcentageloyaltyAccademicProjects"] . "%)");
-        $curentLine++;
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::totalNumberOfProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["totalNumberOfProjects"]);
-
-        for ($r = 1; $r <= $curentLine; $r++) {
-            for ($c = 'A'; $c !== 'C'; $c++) {
-                $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
-            }
-        }
-        for ($col = 'A'; $col !== 'C'; $col++) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-        }
-
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
-        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
-                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
-
+        
+       
         // ////////////////////////////////////////////////////
         //                Services details
         // ////////////////////////////////////////////////////

@@ -48,7 +48,6 @@ class BookingconfigController extends CoresecureController {
                     $this->request->getParameter("displaySettingsMenu")
                     );
             
-            
             $this->redirect("bookingconfig/".$id_space);
             return;
         }
@@ -93,6 +92,7 @@ class BookingconfigController extends CoresecureController {
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("BkEditBookingMailing", $this->request->getParameter("BkEditBookingMailing"), $id_space);
             $modelConfig->setParam("BkBookingMailingAdmins", $this->request->getParameter("BkBookingMailingAdmins"), $id_space);
+            $modelConfig->setParam("BkBookingMailingDelete", $this->request->getParameter("BkBookingMailingDelete"), $id_space);
             
             $this->redirect("bookingconfig/".$id_space);
             return;
@@ -200,13 +200,18 @@ class BookingconfigController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
 	$BkEditBookingMailing = $modelCoreConfig->getParam("BkEditBookingMailing", $id_space);
         $BkBookingMailingAdmins = $modelCoreConfig->getParam("BkBookingMailingAdmins", $id_space);
+        $BkBookingMailingDelete = $modelCoreConfig->getParam("BkBookingMailingDelete", $id_space);
+        if ($BkBookingMailingDelete == ""){
+            $BkBookingMailingDelete = 0;
+        }
                 
         $form = new Form($this->request, "editBookingMailingForm");
         $form->addSeparator(BookingTranslator::EditBookingMailing($lang));
         
         $form->addSelect('BkEditBookingMailing', BookingTranslator::Send_emails($lang), array(BookingTranslator::Never($lang), BookingTranslator::When_manager_admin_edit_a_reservation($lang)), array(1,2), $BkEditBookingMailing);
         $form->addSelect('BkBookingMailingAdmins', BookingTranslator::EmailManagers($lang), array(BookingTranslator::Never($lang), BookingTranslator::WhenAUserBook($lang)), array(1,2), $BkBookingMailingAdmins);
-  
+        $form->addSelect('BkBookingMailingDelete', BookingTranslator::EmailWhenResaDelete($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkBookingMailingDelete);
+        
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 

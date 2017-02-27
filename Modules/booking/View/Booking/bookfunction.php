@@ -1,7 +1,6 @@
 <?php 
 
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
-require_once 'Modules/core/Model/CoreProject.php';
 
 function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1){
 	
@@ -12,8 +11,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$resourceID = $_SESSION["bk_id_resource"];
 	}
 	$dateString = date("Y-m-d", $date_unix);
-	$moduleProject = new CoreProject();
-	$ModulesManagerModel = new CoreMenu();
+	//$ModulesManagerModel = new CoreMenu();
 	$modelBookingSupplemetary = new BkCalSupInfo();
 	$isProjectMode = false;
 	if ($isProjectMode > 0){

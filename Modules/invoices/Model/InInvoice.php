@@ -28,6 +28,7 @@ class InInvoice extends Model {
         $this->setColumnsInfo("id_responsible", "int(11)", 0);
         $this->setColumnsInfo("total_ht", "varchar(50)", "0");
         $this->setColumnsInfo("id_project", "int(11)", 0);
+        $this->setColumnsInfo('title', 'varchar(255)', "");
         $this->setColumnsInfo("is_paid", "int(1)", 0);
         $this->setColumnsInfo("module", "varchar(200)", "");
         $this->setColumnsInfo("controller", "varchar(200)", "");
@@ -38,6 +39,11 @@ class InInvoice extends Model {
     public function get($id){
         $sql = "SELECT * FROM in_invoice WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
+    }
+    
+    public function setTitle($id_invoice, $title){
+        $sql = "UPDATE in_invoice SET title=? WHERE id=?";
+        $this->runRequest($sql, array($title, $id_invoice));
     }
     
     public function setTotal($id_invoice, $total){
