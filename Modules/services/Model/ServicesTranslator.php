@@ -17,7 +17,7 @@ class ServicesTranslator {
 
     public static function servicesstatisticsproject($lang) {
         if ($lang == "fr") {
-            return "Services projets";
+            return "Bilan projets";
         }
         return "Services projects";
     }
@@ -59,7 +59,7 @@ class ServicesTranslator {
 
     public static function Listing($lang) {
         if ($lang == "fr") {
-            return "Listing prestations";
+            return "Liste des prestations";
         }
         return "Listing";
     }
@@ -348,7 +348,7 @@ class ServicesTranslator {
 
     public static function Invoice_project($lang = "") {
         if ($lang == "fr") {
-            return "Facturer les projets";
+            return "Relevé projets";
         }
         return "Invoice projects";
     }
@@ -369,7 +369,7 @@ class ServicesTranslator {
 
     public static function Prices($lang = "") {
         if ($lang == "fr") {
-            return "Tarifs";
+            return "Tarifs prestations";
         }
         return "Prices";
     }

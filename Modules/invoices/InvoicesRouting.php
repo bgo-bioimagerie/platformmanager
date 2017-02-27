@@ -10,7 +10,6 @@ class InvoicesRouting extends Routing{
         $this->addRoute("invoicesconfigadmin", "invoicesconfigadmin", "invoicesconfigadmin", "index");
         $this->addRoute("invoicesconfig", "invoicesconfig", "invoicesconfig", "index", array("id_space"), array(""));
 
-        
         // add here the module routes
         $this->addRoute("invoices", "invoices", "invoices", "index", array("id_space", "year"), array("", ""));
         $this->addRoute("invoiceedit", "invoiceedit", "invoices", "edit", array("id_space", "id"), array("", ""));

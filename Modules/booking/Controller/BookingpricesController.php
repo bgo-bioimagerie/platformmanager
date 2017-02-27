@@ -49,7 +49,11 @@ class BookingpricesController extends CoresecureController {
         $belongings = $modelBelonging->getBelongings($id_space, "display_order");
         
         $table = new TableView();
-        $table->setTitle(BookingTranslator::Prices($lang), 3);
+        
+        $modelConfig = new CoreConfig();
+        $bookingmenuname = $modelConfig->getParamSpace("bookingmenuname", $id_space);
+        
+        $table->setTitle(BookingTranslator::Prices($lang) . " " . $bookingmenuname, 3);
         
         $headers = array(
             "resource" => ResourcesTranslator::Resource($lang)

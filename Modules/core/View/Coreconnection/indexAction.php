@@ -3,7 +3,7 @@
 
 <!-- header -->
 <?php startblock('title') ?>
-Install - Platform-Manager
+Platform-Manager
 <?php endblock() ?> 
 <?php startblock('stylesheet') ?>
     <meta charset="utf-8">

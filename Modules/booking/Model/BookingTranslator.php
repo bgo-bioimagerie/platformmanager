@@ -31,16 +31,16 @@ class BookingTranslator {
 
     public static function bookingauthorizedusers($lang) {
         if ($lang == "fr") {
-            return "Listing autorisations";
+            return "Liste des autorisations";
         }
         return "Authorizations lists";
     }
 
     public static function bookingprices($lang) {
         if ($lang == "fr") {
-            return "Tarifs";
+            return "Tarifs ";
         }
-        return "Prices";
+        return "Prices ";
     }
 
     public static function bookinginvoice($lang) {
@@ -479,7 +479,7 @@ class BookingTranslator {
 
     public static function Authorized_users($lang = "") {
         if ($lang == "fr") {
-            return "Listing des autorisations";
+            return "Liste des autorisations";
         }
         return "Authorized users list";
     }
@@ -950,7 +950,7 @@ class BookingTranslator {
 
     public static function Invoice_booking($lang = "") {
         if ($lang == "fr") {
-            return "Facturer les réservations";
+            return "Relevé des réservations";
         }
         return "Invoice booking";
     }

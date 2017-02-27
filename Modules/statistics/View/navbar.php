@@ -70,7 +70,9 @@ foreach($menus as $menu){
         require_once 'Modules/' . $module . "/Model/" . $classTranslator . ".php"; 
         $translator = new $classTranslator();
         $model = new $className();
+        $model->setSpace($id_space);
         $model->listRouts();
+        
         if($model->count() > 0){
             //echo "module = " . $module . "<br/>";
             $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);

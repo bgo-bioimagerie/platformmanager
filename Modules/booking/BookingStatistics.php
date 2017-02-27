@@ -4,6 +4,12 @@ require_once 'Framework/Routing.php';
 
 class BookingStatistics extends Routing{
     
+        private $id_space;
+
+    public function setSpace($id_space) {
+        $this->id_space = $id_space;
+    }
+    
     public function listRouts(){
         
         // statistics

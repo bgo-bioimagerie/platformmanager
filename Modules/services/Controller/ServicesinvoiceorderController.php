@@ -322,8 +322,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
                         <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::UnitPrice($lang) . "</th>
                         <th style=\"width: 14%\">" . InvoicesTranslator::Quantity($lang) . "</th>
+                        <th style=\"width: 17%\">" . InvoicesTranslator::UnitPrice($lang) . "</th>
                         <th style=\"width: 17%\">" . InvoicesTranslator::Price_HT($lang) . "</th>
                     </tr>
                 </table>
@@ -337,8 +337,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         foreach ($content as $d) {
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d[2]), 2, ',', ' ') . " &euro;</td>";
             $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format(floatval($d[1]), 2, ',', ' ') . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d[2]), 2, ',', ' ') . " &euro;</td>";
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d[1] * $d[2]), 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
             $total += floatval($d[1]) * floatval($d[2]);

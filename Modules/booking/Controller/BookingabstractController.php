@@ -17,7 +17,6 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReArea.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
-require_once 'Modules/core/Model/CoreProject.php';
 
 require_once 'Modules/ecosystem/Model/EcUser.php';
 

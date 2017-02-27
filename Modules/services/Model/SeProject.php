@@ -52,18 +52,18 @@ class SeProject extends Model {
     protected function extractYears($data){
         
         if(count($data) > 0){
-            $firstDate = $data[0]["date_open"];
+            $firstDate = $data[0][0];
             $firstDateInfo = explode("-", $firstDate);
             $firstYear = $firstDateInfo[0];
             $i = 0;
             while($firstYear == "0000"){
                 $i++;
-                $firstDate = $data[$i]["date_open"];
+                $firstDate = $data[$i][0];
                 $firstDateInfo = explode("-", $firstDate);
                 $firstYear = $firstDateInfo[0];
             }
             
-            $lastDate = $data[count($data)-1]["date_open"];
+            $lastDate = $data[count($data)-1][0];
             $lastDateInfo = explode("-", $lastDate);
             $lastYear = $lastDateInfo[0];
             
@@ -77,7 +77,7 @@ class SeProject extends Model {
     }
     
     public function closedProjectsYears($id_space){
-        $sql = "SELECT date_open FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ORDER BY date_open ASC";
+        $sql = "SELECT date_close FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ORDER BY date_open ASC";
         //echo "sql = " . $sql . "</br>";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         //print_r($data);

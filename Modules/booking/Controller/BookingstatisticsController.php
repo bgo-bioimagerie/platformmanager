@@ -20,7 +20,6 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
-require_once 'Modules/core/Model/CoreProject.php';
 
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/booking/Model/BkStatsUser.php';
