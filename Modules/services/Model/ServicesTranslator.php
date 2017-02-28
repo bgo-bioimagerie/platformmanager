@@ -660,4 +660,12 @@ class ServicesTranslator {
         }
         return "Use stock";
     }
+    
+    public static function ExportCsv($lang) {
+        if ($lang == "fr") {
+            return "Exporter CSV";
+        }
+        return "Export CSV";
+    }
+    
 }

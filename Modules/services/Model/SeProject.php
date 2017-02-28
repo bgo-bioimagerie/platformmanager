@@ -216,6 +216,12 @@ class SeProject extends Model {
         return $this->runRequest($sql, array($id_project))->fetchAll();
     }
     
+    public function getProjectServicesBase($id_project){
+        $sql = "SELECT * FROM se_project_service WHERE id_project=?";
+        $data = $this->runRequest($sql, array($id_project))->fetchAll();
+        return $data;
+    }
+    
     public function getProjectServices($id_project) {
         $sql = "SELECT * FROM se_project_service WHERE id_project=?";
         $data = $this->runRequest($sql, array($id_project))->fetchAll();

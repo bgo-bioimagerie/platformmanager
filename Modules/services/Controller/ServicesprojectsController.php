@@ -24,6 +24,7 @@ class ServicesprojectsController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+
         //$this->checkAuthorizationMenu("services");
     }
 
@@ -31,13 +32,13 @@ class ServicesprojectsController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
         $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
         $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
-        
+
         $projectperiodbeginArray = explode("-", $projectperiodbegin);
-        $previousYear = $year-1;
+        $previousYear = $year - 1;
         $yearBegin = $previousYear . "-" . $projectperiodbeginArray[1] . "-" . $projectperiodbeginArray[2];
         $projectperiodendArray = explode("-", $projectperiodend);
         $yearEnd = $year . "-" . $projectperiodendArray[1] . "-" . $projectperiodendArray[2];
-        
+
         return array("yearBegin" => $yearBegin, "yearEnd" => $yearEnd);
     }
 
@@ -159,7 +160,8 @@ class ServicesprojectsController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->serviceModel->delete($id);
+        $serviceModel = new SeProject();
+        $serviceModel->delete($id);
         $this->redirect("services/" . $id_space);
     }
 
@@ -401,6 +403,50 @@ class ServicesprojectsController extends CoresecureController {
         }
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+    }
+
+    public function exportAction($id_space, $id) {
+        // get project entries
+        $modelProject = new SeProject();
+        $projectEntries = $modelProject->getProjectServicesBase($id);
+
+        // calculate total sum and price HT
+        $modelUser = new EcUser();
+        $modelUnit = new ECUnit();
+
+        $id_resp = $modelProject->getResp($id);
+        $id_unit = $modelUser->getUnit($id_resp);
+
+        $LABpricingid = $modelUnit->getBelonging($id_unit, $id_space);
+
+        $itemPricing = new SePrice();
+
+
+        $content = "Date ; Commentaire ; Prestation ; Quantité ; Prix ;  Total \r\n";
+        $totalHT = 0;
+        $modelItem = new SeService();
+        //print_r($projectEntries);
+        foreach ($projectEntries as $entry) {
+
+            $content .= $entry["date"] . ";";
+            $content .= str_replace(";", ",", $entry["comment"]) . ";";
+            $content .= $modelItem->getItemName($entry["id_service"]) . ";";
+            $content .= $entry["quantity"] . ";";
+            $unitPrice = $itemPricing->getPrice($entry["id_service"], $LABpricingid);
+            $content .= $unitPrice[0] . ";";
+            $price = (float) $entry["quantity"] * (float) $unitPrice[0];
+            $totalHT += $price;
+            $content .= $price . "\r\n";
+        }
+
+        for ($i = 0; $i <= 4; $i++) {
+            $content .= " ; ";
+        }
+        $content .= $totalHT . "\r\n";
+
+        header("Content-Type: application/csv-tab-delimited-table;charset=UTF-8");
+        header("Content-disposition: filename=projet.csv");
+        echo $content;
     }
 
 }

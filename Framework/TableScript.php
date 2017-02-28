@@ -11,7 +11,7 @@
 
     <script>
         $(document).ready(function () {
-            var table = $('#example').DataTable({
+            var table = $('#tableID').DataTable({
                 scrollY: "300px",
                 scrollX: true,
                 scrollCollapse: true,

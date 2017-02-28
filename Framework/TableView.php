@@ -339,8 +339,9 @@ class TableView {
     }
 
     private function addHeader(){
-        $string =  file_get_contents("Framework/TableScript.php");
-        return str_replace("numFixedCol", $this->numFixedCol, $string);  
+        $js = file_get_contents("Framework/TableScript.php");
+        $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
+        return str_replace("tableID", $this->tableID, $str1);
     }
     
     /**
@@ -352,7 +353,9 @@ class TableView {
     private function addSearchHeader($html, $headerscount) {
 
         $js = file_get_contents("Framework/TableScript.php");
-        return str_replace("numFixedCol", $this->numFixedCol, $js);
+        $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
+        return str_replace("tableID", $this->tableID, $str1);
+         
 
         $html .= "<head>";
 
