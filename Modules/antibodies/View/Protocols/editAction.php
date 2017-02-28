@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="container">
+<div class="col-md-10" id="pm-table">
 	<div class="col-md-6 col-md-offset-3">
 	<form role="form" class="form-horizontal" action="protocolseditquery/<?php echo $id_space ?>"
 		method="post">

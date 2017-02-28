@@ -238,8 +238,8 @@ class TableView {
         }
 
        
-        //$html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
-        $html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";
+        $html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
+        //$html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";
 
         // table header
         $html .= "<thead>";

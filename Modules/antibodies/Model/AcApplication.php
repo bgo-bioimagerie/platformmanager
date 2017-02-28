@@ -24,20 +24,31 @@ class AcApplication extends Model {
 				);";
 
         $this->runRequest($sql);
-        
+
         /*
-        if (!$this->isEntryApp("--")){
-            $this->addApplication("--");
-        }
+          if (!$this->isEntryApp("--")){
+          $this->addApplication("--");
+          }
          */
     }
 
-    public function getBySpace($id_space){
+    public function getBySpace($id_space) {
         $sql = "select * from ac_applications WHERE id_space=?";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
-    
+
+    public function getForList($id_space) {
+        $data = $this->getBySpace($id_space);
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
+            $names[] = $d["name"];
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+
     /**
      * get especes informations
      *
@@ -59,7 +70,7 @@ class AcApplication extends Model {
      * @return mixed array
      */
     public function get($id) {
-        if($id == 0){
+        if ($id == 0) {
             return array("name" => "");
         }
         $sql = "select * from ac_applications where id=?";
@@ -118,7 +129,7 @@ class AcApplication extends Model {
         }
     }
 
-    public function isEntryApp($name){
+    public function isEntryApp($name) {
         $sql = "select id from ac_applications where name=?";
         $req = $this->runRequest($sql, array($name));
         if ($req->rowCount() == 1) {
@@ -127,7 +138,7 @@ class AcApplication extends Model {
             return false;
         }
     }
-    
+
     public function delete($id) {
         $sql = "DELETE FROM ac_applications WHERE id = ?";
         $this->runRequest($sql, array($id));

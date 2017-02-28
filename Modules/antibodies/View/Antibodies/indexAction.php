@@ -97,7 +97,7 @@ $(document).ready(function() {
 </head>
 
 <br>
-<div class="contatiner">
+<div class="col-md-10" id="pm-table">
 
 <div class="col-md-2 col-md-offset-10">
 <br/>
@@ -271,6 +271,7 @@ $(document).ready(function() {
                                         <img src="<?php echo $imageFile?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
                                     </a>
                                         <?php
+                                        
                                         foreach($anticorps['tissus'] as  $tissus){
                                             $imageFile = "data/antibodies/" . $tissus["image_url"];
                                             $printImage = true;

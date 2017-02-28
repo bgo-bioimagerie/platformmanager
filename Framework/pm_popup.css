@@ -4,7 +4,7 @@
     top: 0%;
     left: 0%;
     width:100%;
-    height:100%;
+    height:1000%;
     margin-top: 0px; /*set to a negative number 1/2 of your height*/
     margin-left: 0px; /*set to a negative number 1/2 of your width*/
     /*
@@ -18,17 +18,32 @@
 .pm_popup_box
 {
     
+    position: fixed;
+    top: 70px;
+    left: 20%;
+    height:85%;
+    width: 60%;
+    border: 1px solid #ccc;
+    border:  1px solid #e1e1e1;
+    border-radius: 10px;
+    background-color:#fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index:100;
+    
+    /*
     position:fixed;
     top: 150px;
     left: 20%;
     width:70%;
     height:auto;
-    margin-top: -5em; /*set to a negative number 1/2 of your height*/
-    margin-left: -5em; /*set to a negative number 1/2 of your width*/
+    margin-top: -5em; 
+    margin-left: -5em; 
     border: 1px solid #ccc;
     border:  1px solid #e1e1e1;
     border-radius: 10px;
     background-color:#fff;
     z-index:100;
+    */
     
 }

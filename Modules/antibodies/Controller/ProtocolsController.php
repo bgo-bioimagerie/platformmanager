@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/TableView.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/AcProtocol.php';
 
@@ -25,10 +27,34 @@ class ProtocolsController extends CoresecureController {
         // get the user list
         $protocolesArray = $this->protocolModel->getProtocols2($sortEntry);
 
+        $table = new TableView();
+        $table->setTitle("Protocoles");
+        $headers = array(
+            "anticorps" => "Anticorps",
+            "no_h2p2" => "No H2P2",
+            "kit" => "KIT",
+            "no_proto" => "No Proto",
+            "proto" => "Proto",
+            "fixative" => "Fixative",
+            "option_" => "Option",
+            "enzyme" => "Enzyme",
+            "dem" => "Dém",
+            "acl_inc" => "AcI Inc",
+            "linker" => "Linker",
+            "inc" => "Linker Inc",
+            "acll" => "acII",
+            "inc2" => "acII Inc"
+        );
+        
+        $table->addLineEditButton('protocolsedit/'.$id_space, "id");
+        $table->addDeleteButton("protocolsdelete/".$id_space, "id", "no_proto");
+        $tableView = $table->view($protocolesArray, $headers);
+        
         $this->render(array(
             'id_space' => $id_space,
             'lang' => $this->getLanguage(),
-            'protocols' => $protocolesArray
+            'protocols' => $protocolesArray,
+            'tableHtml' => $tableView
         ));
     }
 

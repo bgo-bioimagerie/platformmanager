@@ -41,6 +41,11 @@ class InInvoice extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
     
+    public function getByNumber($number){
+         $sql = "SELECT * FROM in_invoice WHERE number=?";
+        return $this->runRequest($sql, array($number))->fetch();
+    }
+    
     public function setTitle($id_invoice, $title){
         $sql = "UPDATE in_invoice SET title=? WHERE id=?";
         $this->runRequest($sql, array($title, $id_invoice));

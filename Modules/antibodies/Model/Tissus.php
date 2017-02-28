@@ -37,6 +37,11 @@ class Tissus extends Model {
         $this->addColumn("ac_j_tissu_anticorps", "image_url", "varchar(512)", "");
     }
     
+    public function getTissusById($id){
+        $sql = "SELECT * FROM ac_j_tissu_anticorps WHERE id=?";
+        return $this->runRequest($sql, array($id))->fetch();
+    }
+    
     public function setImageUrl($id, $url){
         $sql = "UPDATE ac_j_tissu_anticorps SET image_url=? WHERE id=?";
         $this->runRequest($sql, array($url, $id));
@@ -66,6 +71,28 @@ class Tissus extends Model {
 
         $sql = "SELECT DISTINCT ac_j_tissu_anticorps.status AS status,
 				    ac_especes.nom AS espece,
+                                    ac_prelevements.nom AS prelevement			
+				FROM ac_j_tissu_anticorps
+				INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
+				INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
+				INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
+				WHERE ac_j_tissu_anticorps.id_anticorps=?";
+
+        //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
+        $res = $this->runRequest($sql, array($id_anticorps));
+        return $res->fetchAll();
+    }
+    
+    public function getInfoForAntibody($id_anticorps){
+                $sql = "SELECT DISTINCT ac_j_tissu_anticorps.status AS status,
+                    ac_j_tissu_anticorps.ref_protocol AS ref_protocol,
+                    ac_j_tissu_anticorps.dilution AS dilution,    
+                    ac_j_tissu_anticorps.comment AS comment, 
+                    ac_j_tissu_anticorps.ref_bloc AS ref_bloc, 
+                    ac_j_tissu_anticorps.image_url AS image_url,
+                    ac_j_tissu_anticorps.id AS id, 
+				    ac_especes.nom AS espece,
+                                    ac_organes.nom AS organe,
                                     ac_prelevements.nom AS prelevement			
 				FROM ac_j_tissu_anticorps
 				INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id

@@ -78,6 +78,17 @@ class AcProtocol extends Model {
         return $user->fetchAll();
     }
 
+    public function getForList($id_space) {
+        $data = $this->getBySpace($id_space);
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
+            $names[] = $d["no_proto"];
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+    
     /**
      * get protocols informations
      *

@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="contatiner">
+<div class="col-md-10" id="pm-table">
 	<?php echo $tableHtml ?>
 </div>
 

@@ -25,6 +25,9 @@
     
     ?> 
     <?php include 'Modules/core/View/spacebar.php'; ?>
-    <div class="col-xs-12" id="pm-content">
+    <div class="col-md-2" id="pm-content">
     <?php include 'Modules/resources/View/navbar.php'; ?>
+
     <?php endblock();
+
+      

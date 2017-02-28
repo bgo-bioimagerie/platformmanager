@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/AntibodiesTranslator.php';
 require_once 'Modules/antibodies/Model/Anticorps.php';
@@ -10,6 +11,10 @@ require_once 'Modules/antibodies/Model/Status.php';
 require_once 'Modules/antibodies/Model/Organe.php';
 require_once 'Modules/antibodies/Model/Prelevement.php';
 require_once 'Modules/antibodies/Model/AcProtocol.php';
+require_once 'Modules/antibodies/Model/AcOwner.php';
+
+require_once 'Modules/antibodies/Form/TissusForm.php';
+require_once 'Modules/antibodies/Form/OwnerForm.php';
 
 /**
  * 
@@ -242,12 +247,13 @@ class AntibodiesController extends CoresecureController {
     }
     
     public function editAction($id_space, $id){
-        $modelAntibody = new Anticorps();
         
+        $lang = $this->getLanguage();
         // informations form
         $form = $this->createEditForm($id_space, $id);
         if($form->check()){
-            $this->antibody->setAntibody($id, $id_space, 
+            
+            $idNew = $this->antibody->setAntibody($id, $id_space, 
                     $form->getParameter("name"), 
                     $form->getParameter("no_h2p2"), 
                     $form->getParameter("fournisseur"), 
@@ -257,26 +263,111 @@ class AntibodiesController extends CoresecureController {
                     $form->getParameter("lot"), 
                     $form->getParameter("id_isotype"), 
                     $form->getParameter("stockage")
-                            );
+            );
+            $this->antibody->setExportCatalog($idNew, 
+                    $form->getParameter("export_catalog")
+                    );
+            $this->antibody->setApplicationStaining($idNew, 
+                    $form->getParameter("id_staining"), 
+                    $form->getParameter("id_application")
+                    );
+            
+            $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+            
+            $this->redirect('anticorpsedit/'.$id_space.'/'.$id);
+            return;
         }
         
         // Tissus table
-        
-        
+        $modelTissus = new Tissus();
+        $tissus = $modelTissus->getInfoForAntibody($id);
+        $tissusTable = $this->createTissusTable($tissus);
         
         // Owner Table
+        $modelOwner = new AcOwner();
+        $owners = $modelOwner->getInfoForAntibody($id);
+        $ownersTable = $this->createOwnerTable($owners);    
+        
+        $tissusFormGenerator = new TissusForm($this->request, "tissusForm", "antibodiesedittissus/".$id_space);
+        $tissusFormGenerator->setSpace($id_space);
+        $tissusFormGenerator->setLang($lang);
+        $tissusFormGenerator->render();
+        
+        $ownerFormGenerator = new OwnerForm($this->request, "ownerForm", "antibodieseditowner/".$id_space);
+        $ownerFormGenerator->setSpace($id_space);
+        $ownerFormGenerator->setLang($lang);
+        $ownerFormGenerator->render();
+        
+        $this->render(array(
+                "id_space" => $id_space, "id" => $id, 
+                "lang" => $this->getLanguage(),
+                "form" => $form->getHtml($lang),
+                "tissus" => $tissus,
+                "owners" => $owners,
+                "tissusTable" => $tissusTable,
+                "ownersTable" => $ownersTable,
+                "formtissus" => $tissusFormGenerator->getHtml()
+                ));        
     }
     
-    protected function createTissusTable($id_space, $id){
-        $modelTissus = new Tissus();
-        $tissus = $tissus->getInfoForAntibody($id);
+    public function edittissusAction($id_space){
         
-        $table = new TableView();
+        $id = $this->request->getParameter("id");
+        $ref_protocol = $this->request->getParameter("ref_protocol");
+        $dilution = $this->request->getParameter("dilution");
+        $comment = $this->request->getParameter("comment");
+        $espece = $this->request->getParameter("espece");
+        $status = $this->request->getParameter("status");
+        $ref_bloc = $this->request->getParameter("ref_bloc");
+        $prelevement = $this->request->getParameter("prelevement");
+        $image_url = $this->request->getParameter("image_url");
+        
+        $modelTissus = new Tissus();
+        $modelTissus->setTissus($id, $ref_protocol, $dilution, $comment, $espece, $status,
+                                $ref_bloc, $prelevement, );
+        
+    }
+    
+    protected function createTissusTable($data){
+        
+        $lang = $this->getLanguage();
+        
+        $table = new TableView("tissusTable");
+        $table->setTitle(AntibodiesTranslator::Tissus($lang));
         $headers = array(
-            
+            "ref_protocol" => AntibodiesTranslator::Ref_protocol($lang),
+            "dilution" => AntibodiesTranslator::Dilution($lang),
+            "comment" => AntibodiesTranslator::Comment($lang),
+            "espece" => AntibodiesTranslator::Espece($lang),
+            "organe" => AntibodiesTranslator::Organe($lang),
+            "status" => AntibodiesTranslator::Valide($lang),
+            "ref_bloc" => AntibodiesTranslator::Ref_bloc($lang),
+            "prelevement" => AntibodiesTranslator::Prelevement($lang),
+            "image_url" => AntibodiesTranslator::Image($lang),
         );
         
-        $table->view($data, $headers);
+        $table->addLineEditButton("edittissus", "id", true);
+        $tableHtml = $table->view($data, $headers);
+        return $tableHtml;
+    }
+    
+    protected function createOwnerTable($data){
+        
+        
+        $lang = $this->getLanguage();
+        
+        $table = new TableView("ownerTable");
+        $table->setTitle(AntibodiesTranslator::Owner($lang));
+        $headers = array(
+            "id_utilisateur" => CoreTranslator::User($lang),
+            "disponible" => AntibodiesTranslator::Disponible($lang),
+            "date_recept" => AntibodiesTranslator::Date_recept($lang),
+            "no_dossier" => AntibodiesTranslator::No_dossier($lang),
+        );
+        
+        $table->addLineEditButton("editowner", "id", true);
+        $tableHtml = $table->view($data, $headers);
+        return $tableHtml;
     }
     
     protected function createEditForm($id_space, $id){
@@ -291,21 +382,21 @@ class AntibodiesController extends CoresecureController {
         $form = new Form($this->request, 'antibodyEditForm');
         $form->setTitle(AntibodiesTranslator::AntibodyInfo($lang));
         
-        $form->addText("name", CoreTranslator::Name($lang), true, $anticorps["name"]);
-        $form->addText("no_h2p2", AntibodiesTranslator::No($lang), false, $anticorps["no_h2p2"]);
+        $form->addText("name", CoreTranslator::Name($lang), true, $anticorps["nom"]);
+        $form->addText("no_h2p2", AntibodiesTranslator::Number($lang), false, $anticorps["no_h2p2"]);
         $form->addText("fournisseur", AntibodiesTranslator::Provider($lang), false, $anticorps["fournisseur"]);
         
         $modelSource = new Source();
         $sourcesList = $modelSource->getForList($id_space);
         $form->addSelect("id_source", AntibodiesTranslator::Source($lang), $sourcesList["names"], $sourcesList["ids"], $anticorps["id_source"]);
         
-        $form->addText("reference", AntibodiesTranslator::Reference($lang), false, $anticorps["fournisseur"]);
+        $form->addText("reference", AntibodiesTranslator::Reference($lang), false, $anticorps["reference"]);
         $form->addText("clone", AntibodiesTranslator::AcClone($lang), false, $anticorps["clone"]);
         $form->addText("lot", AntibodiesTranslator::Lot($lang), false, $anticorps["lot"]);
         
         $modelIsotype = new Isotype();
         $isotypesList = $modelIsotype->getForList($id_space);
-        $form->addSelect("id_isotype", AntibodiesTranslator::Source($lang), $isotypesList["names"], $isotypesList["ids"], $anticorps["id_isotype"]);
+        $form->addSelect("id_isotype", AntibodiesTranslator::Isotype($lang), $isotypesList["names"], $isotypesList["ids"], $anticorps["id_isotype"]);
         
         $form->addText("stockage", AntibodiesTranslator::Stockage($lang), false, $anticorps["stockage"]);
         
@@ -315,11 +406,13 @@ class AntibodiesController extends CoresecureController {
         
         $modelStaining = new AcStaining();
         $stainingsList = $modelStaining->getForList($id_space);
-        $form->addSelect("id_staining", AntibodiesTranslator::Application($lang), $stainingsList["names"], $stainingsList["ids"], $anticorps["id_staining"]);
+        $form->addSelect("id_staining", AntibodiesTranslator::Staining($lang), $stainingsList["names"], $stainingsList["ids"], $anticorps["id_staining"]);
         
         $form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $anticorps["export_catalog"]);
         
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/'.$id_space."/".$id);
+        $form->setColumnsWidth(2, 8);
+        $form->setButtonsWidth(2, 9);
         return $form;
         
     }

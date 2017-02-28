@@ -36,9 +36,13 @@ abstract class InvoiceAbstractController extends CoresecureController {
         $adress = nl2br($adress);
         $date = CoreTranslator::dateFromEn($date, 'fr');
         
+        $modelInvoice = new InInvoice();
+        $invoiceInfo = $modelInvoice->getByNumber($number);
+        
         ob_start();
         include('data/invoices/template_1.php');
         $content = ob_get_clean();
+        
         
         
 

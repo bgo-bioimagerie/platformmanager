@@ -33,6 +33,17 @@ class Organe extends Model {
         return $user->fetchAll();
     }
 
+    public function getForList($id_space) {
+        $data = $this->getBySpace($id_space);
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
+            $names[] = $d["nom"];
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+    
     /**
      * get sources informations
      *

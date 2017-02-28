@@ -24,21 +24,31 @@ class AcStaining extends Model {
 				);";
 
         $this->runRequest($sql);
-        
+
         /*
-        if (!$this->isEntryAcs("--")){
-            $this->addStaining("--");
-        }
+          if (!$this->isEntryAcs("--")){
+          $this->addStaining("--");
+          }
          */
     }
 
-    
-    public function getBySpace($id_space){
+    public function getBySpace($id_space) {
         $sql = "select * from ac_stainings WHERE id_space=?";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
-    
+
+    public function getForList($id_space) {
+        $data = $this->getBySpace($id_space);
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
+            $names[] = $d["name"];
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+
     /**
      * get especes informations
      *
@@ -60,11 +70,11 @@ class AcStaining extends Model {
      * @return mixed array
      */
     public function get($id) {
-        
-        if($id == 0){
+
+        if ($id == 0) {
             return array("name" => "");
         }
-        
+
         $sql = "select * from ac_stainings where id=?";
         $unit = $this->runRequest($sql, array($id));
         if ($unit->rowCount() == 1) {
@@ -121,7 +131,7 @@ class AcStaining extends Model {
         }
     }
 
-    public function isEntryAcs($name){
+    public function isEntryAcs($name) {
         $sql = "select id from ac_stainings where name=?";
         $req = $this->runRequest($sql, array($name));
         if ($req->rowCount() == 1) {
@@ -130,7 +140,7 @@ class AcStaining extends Model {
             return false;
         }
     }
-    
+
     public function delete($id) {
         $sql = "DELETE FROM ac_stainings WHERE id = ?";
         $this->runRequest($sql, array($id));

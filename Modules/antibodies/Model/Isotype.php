@@ -33,6 +33,17 @@ class Isotype extends Model {
         return $user->fetchAll();
     }
 
+    public function getForList($id_space) {
+        $data = $this->getBySpace($id_space);
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
+            $names[] = $d["nom"];
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+
     /**
      * get isotypes informations
      *
@@ -54,10 +65,10 @@ class Isotype extends Model {
      * @return mixed array
      */
     public function get($id) {
-        if( $id == 0 ){
+        if ($id == 0) {
             return array("nom" => "");
         }
-        
+
         $sql = "select * from ac_isotypes where id=?";
         $unit = $this->runRequest($sql, array($id));
         if ($unit->rowCount() == 1) {

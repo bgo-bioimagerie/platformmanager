@@ -148,6 +148,16 @@ class Anticorps extends Model {
 
         return $this->getDatabase()->lastInsertId();
     }
+    
+    public function setAntibody($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage){
+        if($this->isAnticorpsID($id)){
+            $this->updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
+            return $id;
+        }
+        else{
+            return $this->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
+        }
+    }
 
     public function importAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage) {
 

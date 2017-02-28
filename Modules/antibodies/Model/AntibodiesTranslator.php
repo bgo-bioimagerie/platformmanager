@@ -8,13 +8,13 @@
  */
 class AntibodiesTranslator {
 
-    public static function antibodies($lang){
+    public static function antibodies($lang) {
         if ($lang == "fr") {
             return "Anticorps";
         }
         return "Antibodies";
     }
-    
+
     public static function antibodiesConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Antibodies permet de gérer une base de donnée d'anticorps";
@@ -58,12 +58,208 @@ class AntibodiesTranslator {
         }
         return "Export as csv";
     }
-    
+
     public static function AntibodyInfo($lang) {
         if ($lang == "fr") {
             return "Informations anticorps";
         }
         return "Antibody informations";
     }
+
+    public static function Number($lang) {
+        if ($lang == "fr") {
+            return "Numéro";
+        }
+        return "Number";
+    }
+
+    public static function Provider($lang) {
+        if ($lang == "fr") {
+            return "Fournisseur";
+        }
+        return "Provider";
+    }
+
+    public static function Source($lang) {
+        if ($lang == "fr") {
+            return "Source";
+        }
+        return "Source";
+    }
+
+    public static function Reference($lang) {
+        if ($lang == "fr") {
+            return "Reference";
+        }
+        return "Reference";
+    }
+
+    public static function AcClone($lang) {
+        if ($lang == "fr") {
+            return "Clone";
+        }
+        return "Clone";
+    }
+
+    public static function Lot($lang) {
+        if ($lang == "fr") {
+            return "Lot";
+        }
+        return "Lot";
+    }
+
+    public static function Stockage($lang) {
+        if ($lang == "fr") {
+            return "Stockage";
+        }
+        return "Stockage";
+    }
     
- }
+    public static function Application($lang) {
+        if ($lang == "fr") {
+            return "Application";
+        }
+        return "Application";
+    }
+    
+    public static function Export_catalog($lang) {
+        if ($lang == "fr") {
+            return "Exporter au catalogue";
+        }
+        return "Export catalog";
+    }
+    
+    public static function Ref_protocol($lang) {
+        if ($lang == "fr") {
+            return "Ref protocol";
+        }
+        return "Ref protocol";
+    }
+    
+    public static function Dilution($lang) {
+        if ($lang == "fr") {
+            return "Dilution";
+        }
+        return "Dilution";
+    }
+    
+    public static function Comment($lang) {
+        if ($lang == "fr") {
+            return "Commentaire";
+        }
+        return "Comment";
+    }
+ 
+    public static function Espece($lang) {
+        if ($lang == "fr") {
+            return "Espèce";
+        }
+        return "Espece";
+    }
+    
+    public static function Organe($lang) {
+        if ($lang == "fr") {
+            return "Organe";
+        }
+        return "Organe";
+    }    
+    
+    public static function Valide($lang) {
+        if ($lang == "fr") {
+            return "Valide";
+        }
+        return "Valide";
+    }   
+    
+    public static function Ref_bloc($lang) {
+        if ($lang == "fr") {
+            return "Ref bloc";
+        }
+        return "Ref bloc";
+    }    
+    
+    public static function Prelevement($lang) {
+        if ($lang == "fr") {
+            return "Prelevement";
+        }
+        return "Prelevement";
+    }
+    
+    public static function Image($lang) {
+        if ($lang == "fr") {
+            return "Image";
+        }
+        return "Image";
+    }
+    
+    public static function Disponible($lang) {
+        if ($lang == "fr") {
+            return "Disponible";
+        }
+        return "Disponible";
+    }
+    
+    public static function Date_recept($lang) {
+        if ($lang == "fr") {
+            return "Date reception";
+        }
+        return "Date reception";
+    }
+    
+    public static function No_dossier($lang) {
+        if ($lang == "fr") {
+            return "No dossier";
+        }
+        return "No dossier";
+    }
+    
+    public static function Tissus($lang) {
+        if ($lang == "fr") {
+            return "Tissus";
+        }
+        return "Tissus";
+    }
+
+    public static function Owner($lang) {
+        if ($lang == "fr") {
+            return "Propriétaires";
+        }
+        return "Owner";
+    }    
+ 
+    public static function Staining($lang) {
+        if ($lang == "fr") {
+            return "Marquage";
+        }
+        return "Staining";
+    } 
+    
+    public static function Isotype($lang) {
+        if ($lang == "fr") {
+            return "Isotype";
+        }
+        return "Isotype";
+    } 
+    
+    public static function AntibodyInfoHaveBeenSaved($lang) {
+        if ($lang == "fr") {
+            return "L'anticorps à été sauvegardé";
+        }
+        return "Antibody info have been saved";
+    } 
+ 
+    public static function addTissus($lang) {
+        if ($lang == "fr") {
+            return "Ajouter tissus";
+        }
+        return "Add Tissus";
+    } 
+
+    public static function addOwner($lang) {
+        if ($lang == "fr") {
+            return "Ajouter propriétaire";
+        }
+        return "Add owner";
+    }     
+    
+}
