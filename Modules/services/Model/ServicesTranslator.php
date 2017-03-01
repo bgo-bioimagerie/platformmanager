@@ -254,8 +254,8 @@ class ServicesTranslator {
         }
         return "Open";
     }
-    
-        public static function OpenedUpper($lang) {
+
+    public static function OpenedUpper($lang) {
         if ($lang == "fr") {
             return "OUVERT";
         }
@@ -611,7 +611,7 @@ class ServicesTranslator {
         }
         return "Use projects";
     }
-    
+
     public static function UseCommand($lang) {
         if ($lang == "fr") {
             return "Utiliser les commandes";
@@ -625,47 +625,54 @@ class ServicesTranslator {
         }
         return "Invoice it";
     }
-    
+
     public static function Created_by($lang) {
         if ($lang == "fr") {
             return "Créé par";
         }
         return "Created by";
     }
-    
+
     public static function Modified_by($lang) {
         if ($lang == "fr") {
             return "Modifié par";
         }
         return "Modified by";
     }
-    
+
     public static function Date_begin($lang) {
         if ($lang == "fr") {
             return "Début période";
         }
         return "Date begin";
     }
-    
+
     public static function Date_end($lang) {
         if ($lang == "fr") {
             return "Fin période";
         }
         return "Date end";
     }
-    
+
     public static function UseStock($lang) {
         if ($lang == "fr") {
             return "Utiliser la gestion de stock";
         }
         return "Use stock";
     }
-    
+
     public static function ExportCsv($lang) {
         if ($lang == "fr") {
             return "Exporter CSV";
         }
         return "Export CSV";
     }
-    
+
+    public static function Title($lang) {
+        if ($lang == "fr") {
+            return "Intitulé";
+        }
+        return "Title";
+    }
+
 }

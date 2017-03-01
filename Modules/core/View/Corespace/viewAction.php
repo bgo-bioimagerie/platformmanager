@@ -27,8 +27,8 @@
 <?php endblock(); ?>
 <!-- body -->     
 <?php startblock('content') ?>
-
-<div class="container">
+<div class="col-xs-12" style="background-color: #fff; height: 2000px;">
+<div class="container" style="background-color: #fff;">
     <div class="page-header">
         <h2>
             <?php echo CoreTranslator::Tools($lang) ?>
@@ -97,5 +97,6 @@
     ?>
 
 </div> <!-- /container -->
+</div>
 <?php
 endblock();

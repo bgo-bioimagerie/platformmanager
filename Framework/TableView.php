@@ -260,7 +260,14 @@ class TableView {
             }
         }
         foreach ($headers as $key => $value) {
-            $html .= "<th>" . $value . "</th>";
+            $title = "";
+            if(is_array($value)){
+                $title = $value["title"];
+            }
+            else{
+                $title = $value;
+            }
+            $html .= "<th>" . $title . "</th>";
         }
         $html .= "</tr>";
         $html .= "</thead>";
@@ -309,10 +316,24 @@ class TableView {
                     }
                     
                     $val = $dat[$key];
-                    if (count($dat[$key]) && $this->textMaxLength > 0) {
-                        $val = substr($dat[$key], 0, $this->textMaxLength);
+                    if(is_array($value)){
+                        if($value["type"] == "image"){
+                            if($val != ""){
+                                $url = $value["base_url"] . $val;
+                                $html .= '<td style="background-color:"' .$ccolor.';">  <img src="'.$url.'" alt="img" height="42" width="42"></td>';
+                            }
+                            else{
+                                   $html .= '<td style="background-color:"' .$ccolor.';"> </td>';
+                             
+                            }
+                        }
                     }
-                    $html .= "<td style=\"background-color:" .$ccolor.";\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
+                    else{
+                        if (count($dat[$key]) && $this->textMaxLength > 0) {
+                            $val = substr($dat[$key], 0, $this->textMaxLength);
+                        }
+                        $html .= "<td style=\"background-color:" .$ccolor.";\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
+                    }
                 }
                 $html .= "</tr>";
             }

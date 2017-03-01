@@ -46,6 +46,29 @@ class Tissus extends Model {
         $sql = "UPDATE ac_j_tissu_anticorps SET image_url=? WHERE id=?";
         $this->runRequest($sql, array($url, $id));
     }
+    
+    public function setTissus($id, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "") {
+       
+        if($id == 0){
+            $sql = "insert into ac_j_tissu_anticorps(id_anticorps, espece, 
+                                                     organe, status, ref_bloc,
+                                                     dilution, temps_incubation, 
+                                                     ref_protocol, prelevement,
+                                                     comment)"
+                    . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
+            return $this->getDatabase()->lastInsertId();
+        }
+        else{
+            $sql = "UPDATE ac_j_tissu_anticorps SET id_anticorps=?, espece=?, organe=?, status=?, "
+                    . "ref_bloc=?, dilution=?, temps_incubation=?, ref_protocol=?, prelevement=?, "
+                    . "comment=? WHERE id=?";
+            $this->runRequest($sql, array($id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, $id));
+            return $id;
+        }
+    }
+    
+    
 
     public function addTissus($id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "") {
         $sql = "insert into ac_j_tissu_anticorps(id_anticorps, espece, 
@@ -84,7 +107,7 @@ class Tissus extends Model {
     }
     
     public function getInfoForAntibody($id_anticorps){
-                $sql = "SELECT DISTINCT ac_j_tissu_anticorps.status AS status,
+                $sql = "SELECT DISTINCT 
                     ac_j_tissu_anticorps.ref_protocol AS ref_protocol,
                     ac_j_tissu_anticorps.dilution AS dilution,    
                     ac_j_tissu_anticorps.comment AS comment, 
@@ -93,12 +116,14 @@ class Tissus extends Model {
                     ac_j_tissu_anticorps.id AS id, 
 				    ac_especes.nom AS espece,
                                     ac_organes.nom AS organe,
-                                    ac_prelevements.nom AS prelevement			
+                                    ac_prelevements.nom AS prelevement,
+                                    ac_status.nom AS status
 				FROM ac_j_tissu_anticorps
 				INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
 				INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
 				INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
-				WHERE ac_j_tissu_anticorps.id_anticorps=?";
+				INNER JOIN ac_status on ac_j_tissu_anticorps.status = ac_status.id
+                                WHERE ac_j_tissu_anticorps.id_anticorps=?";
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
         $res = $this->runRequest($sql, array($id_anticorps));

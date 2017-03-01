@@ -84,7 +84,7 @@ class AcProtocol extends Model {
         $ids = array();
         foreach ($data as $d) {
             $names[] = $d["no_proto"];
-            $ids[] = $d["id"];
+            $ids[] = $d["no_proto"];
         }
         return array("names" => $names, "ids" => $ids);
     }

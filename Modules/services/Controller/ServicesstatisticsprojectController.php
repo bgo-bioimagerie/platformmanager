@@ -306,10 +306,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         $curentLine = 1;
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
+        
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
-        //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Total_HT($lang));
 
         $total = 0;
         foreach ($invoices as $invoice) {
@@ -318,18 +319,20 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
+            
             //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["total_ht"]);
+            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
+            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
             $total += $invoice["total_ht"];
         }
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->mergeCells('A' . $curentLine . ':C' . $curentLine);
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Total_HT($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $total);
+        $objPHPExcel->getActiveSheet()->mergeCells('A' . $curentLine . ':D' . $curentLine);
+        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $total);
 
         for ($r = 1; $r <= $curentLine; $r++) {
-            for ($c = 'A'; $c !== 'E'; $c++) {
+            for ($c = 'A'; $c !== 'F'; $c++) {
                 $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
             }
         }
