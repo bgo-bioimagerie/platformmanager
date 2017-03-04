@@ -25,6 +25,7 @@ class BookingauthorisationsController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+        $_SESSION["openedNav"] = "bookingsettings";
     }
 
     public function indexAction($id_space, $id) {

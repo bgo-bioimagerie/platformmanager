@@ -1,112 +1,52 @@
+<!doctype html>
+<?php require_once 'Modules/layout.php' ?>
+
+<!-- header -->
+<?php startblock('title') ?>
+Platform-Manager
+<?php endblock() ?>
+
+
+
+<?php startblock('stylesheet') ?>
+<link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
+<link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+<link rel="stylesheet" href="Modules/core/Theme/core.css">
+<link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<link rel='stylesheet' type='text/css' href='Modules/core/Theme/spacemenu.css' />
+<link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
+<?php endblock() ?> 
+
+
+
+<?php startblock('navbar'); 
+require_once 'Modules/core/Controller/CorenavbarController.php';
+$navController = new CorenavbarController();
+echo $navController->navbar();
+ endblock(); ?>
+
+
+<?php startblock('spacenavbar'); ?>
+<div class="col-md-2 pm-space-navbar">
 <?php
-require_once 'Modules/core/Model/CoreConfig.php';
-require_once 'Modules/statistics/Model/StatisticsTranslator.php';
-$modelCoreConfig = new CoreConfig();
-$ecmenucolor = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
-$ecmenucolortxt = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
-if ($ecmenucolor == "") {
-    $ecmenucolor = "#f1f1f1";
-}
-if ($ecmenucolortxt == "") {
-    $ecmenucolortxt = "#000";
-}
+require_once 'Modules/core/Controller/CorespaceController.php';
+$spaceController = new CorespaceController();
+echo $spaceController->navbar($id_space);
 ?>
-
-<head>
-    <style>
-        #menu-button-div a{
-            font: 12px Arial;
-            text-decoration: none;
-            color: #333333;
-            padding-left: 12px;
-            /* padding: 2px 6px 2px 6px; */
-        }
-        
-        #menu-button-div{
-            margin-top: -2px;
-            /* padding: 2px 6px 2px 6px; */
-        }
-        
-        #menu-button-div:hover{
-            font: 12px Arial;
-            text-decoration: none;
-            background-color: #e1e1e1;
-            color: #333333;
-            padding: 2px 2px 2px 2px;
-        }
-        
-        #separatorp{
-            padding-top: 12px;
-            text-transform: uppercase; 
-            font-weight: bold; 
-            font-size: 11px;
-            color: #616161;
-        }
-    </style>
-</head>
+</div> 
+<div class="col-md-10">
+<?php
+endblock(); ?>
 
 
-<div class="col-md-2" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
 
-    <div class="col-md-12" style="margin-top: 0px;">
-        <h4 style="text-transform: uppercase;"><?php echo InvoicesTranslator::invoices($lang) ?></h4>
-    </div>
-    <div class="col-md-12">
-    <div  class="btn-block" id="menu-button-div">
-                    <a href="<?php echo  "invoices/" . $id_space ?>"><?php echo InvoicesTranslator::All_invoices($lang) ?></a>      
-                </div>
-    </div>
- 
-<?php 
-$modelSpace = new CoreSpace();
-$configModel = new CoreConfig();
-$menus = $modelSpace->getAllSpaceMenusModules($id_space);
-$urls = array();
-$urlss = array();
-foreach($menus as $menu){
-    $module = $menu["module"];
-    $rootingFile = "Modules/" . $module . "/" . ucfirst($module) . "Invoices.php";
-    //echo "rooting file = " . $rootingFile . "<br/>";
-    if (file_exists($rootingFile)){
-        //echo $rootingFile . " exists <br/>";
-        require_once $rootingFile;
-        $className = ucfirst($module)."Invoices";
-        $classTranslator = ucfirst($module)."Translator";
-        require_once 'Modules/' . $module . "/Model/" . $classTranslator . ".php"; 
-        $translator = new $classTranslator();
-        $model = new $className();
-        $model->setSpace($id_space);
-        $model->listRouts();
-        if($model->count() > 0){
-            $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);
-            //echo "donfigTitle = " . $donfigTitle . "<br/>";
-            if ($donfigTitle != "") {
-                $txt = $donfigTitle;
-            } else {
-                $txt = $module;
-            }
-            ?>
-            <div class="col-md-12">
-                <p id="separatorp"><?php echo $txt ?></p>
-            <?php
-        }
-        for ($i = 0 ; $i < $model->count() ; $i++){
-            $url = $model->getUrl($i);
-            $txt = $translator->$url($lang);
-            ?>
-                <div  class="btn-block" id="menu-button-div">
-                    <a href="<?php echo $url . "/" . $id_space ?>"><?php echo $txt ?></a>      
-                </div>
-            <?php  
-        }  
-        if($model->count() > 0){
-            ?>
-            </div>
-            <?php    
-        }
-    }
-}
+<?php startblock('content') ?>
+    <?php endblock() ?>
+    
 
-?>
 
+
+<?php startblock('footer') ?>
 </div>
+<?php endblock();
+    

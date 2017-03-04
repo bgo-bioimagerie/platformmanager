@@ -23,6 +23,7 @@ class RecategoriesController extends CoresecureController {
         parent::__construct();
         $this->categoryModel = new ReCategory();
         //$this->checkAuthorizationMenu("resources");
+        $_SESSION["openedNav"] = "resources";
     }
     
     /**

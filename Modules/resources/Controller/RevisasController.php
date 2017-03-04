@@ -27,6 +27,7 @@ class RevisasController extends CoresecureController {
         parent::__construct();
         $this->model = new ReArea();
         //$this->checkAuthorizationMenu("resources");
+        $_SESSION["openedNav"] = "resources";
     }
 
     /**

@@ -27,6 +27,7 @@ class ServicesordersController extends CoresecureController {
         
         $this->serviceModel = new SeOrder();
         //$this->checkAuthorizationMenu("services");
+        $_SESSION["openedNav"] = "services";
     }
 
     /**

@@ -36,6 +36,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         //$this->checkAuthorizationMenu("booking");
+        $_SESSION["openedNav"] = "statistics";
     }
 
     public function indexAction($id_space) {

@@ -10,13 +10,13 @@ require_once 'Modules/invoices/Model/InInvoice.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 
-require_once 'Modules/booking/Controller/BookingController.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkOwnerPrice.php';
 
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
+require_once 'Modules/ecosystem/Model/EcUser.php';
 
 /**
  * 
@@ -30,6 +30,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
      */
     public function __construct() {
         parent::__construct();
+        $_SESSION["openedNav"] = "invoices";
     }
 
     /**
@@ -206,7 +207,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
     protected function createAllForm($id_space, $lang) {
         $form = new Form($this->request, "BookingInvoiceAllForm");
-        $form->addSeparator(BookingTranslator::Invoice_All($lang));
+        $form->addSeparator(InvoicesTranslator::Invoice_All($lang));
 
         $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
         $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
@@ -219,7 +220,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
     protected function createByPeriodForm($id_space, $lang) {
         $form = new Form($this->request, "ByPeriodForm");
-        $form->addSeparator(BookingTranslator::Invoice_Responsible($lang));
+        $form->addSeparator(InvoicesTranslator::Invoice_Responsible($lang));
 
         $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
         $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));

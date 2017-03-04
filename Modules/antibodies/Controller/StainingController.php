@@ -16,6 +16,7 @@ class StainingController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new AcStaining();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

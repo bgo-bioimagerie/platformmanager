@@ -34,9 +34,11 @@ class CoreSpace extends Model {
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(30) NOT NULL DEFAULT '',
                 `status` int(1) NOT NULL DEFAULT 0,
+                `color` varchar(7) NOT NULL DEFAULT '',
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
 		`id_user` int(11) NOT NULL DEFAULT 1,
@@ -59,15 +61,17 @@ class CoreSpace extends Model {
         $this->runRequest($sql3);
 
         $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
+        $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
+        $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
     }
 
-    public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order) {
+    public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu=1, $color="") {
         if ($this->isSpaceMenu($id_space, $url)) {
-            $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=? WHERE id_space=? AND url=?";
-            $this->runRequest($sql, array($module, $icon, $user_role, $display_order, $id_space, $url));
+            $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=? WHERE id_space=? AND url=?";
+            $this->runRequest($sql, array($module, $icon, $user_role, $display_order, $has_sub_menu, $color, $id_space, $url));
         } else {
-            $sql = "INSERT INTO core_space_menus (id_space, module, url, icon, user_role, display_order) VALUES(?,?,?,?,?,?)";
-            $this->runRequest($sql, array($id_space, $module, $url, $icon, $user_role, $display_order));
+            $sql = "INSERT INTO core_space_menus (id_space, module, url, icon, user_role, display_order, has_sub_menu, color) VALUES(?,?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu, $color));
         }
     }
 
@@ -82,6 +86,13 @@ class CoreSpace extends Model {
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         return $req[0];
     }
+    
+    public function getSpaceMenusColor($id_space, $url) {
+        $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
+        $req = $this->runRequest($sql, array($id_space, $url))->fetch();
+        return $req[0];
+    }
+    
 
     public function isSpaceMenu($id_space, $url) {
         $sql = "SELECT id FROM core_space_menus WHERE id_space=? AND url=?";
@@ -203,12 +214,12 @@ class CoreSpace extends Model {
         return $this->runRequest($sql)->fetchAll();
     }
 
-    public function setSpace($id, $name, $status) {
+    public function setSpace($id, $name, $status, $color) {
         if ($this->isSpace($id)) {
-            $this->editSpace($id, $name, $status);
+            $this->editSpace($id, $name, $status, $color);
             return $id;
         } else {
-            $this->addSpace($name, $status);
+            $this->addSpace($name, $status, $color);
             return $this->getDatabase()->lastInsertId();
         }
     }
@@ -232,14 +243,14 @@ class CoreSpace extends Model {
         return $users;
     }
 
-    public function addSpace($name, $status) {
-        $sql = "INSERT INTO core_spaces (name, status) VALUES (?,?)";
-        $this->runRequest($sql, array($name, $status));
+    public function addSpace($name, $status, $color) {
+        $sql = "INSERT INTO core_spaces (name, status, color) VALUES (?,?,?)";
+        $this->runRequest($sql, array($name, $status, $color));
     }
 
-    public function editSpace($id, $name, $status) {
-        $sql = "UPDATE core_spaces SET name=?, status=? WHERE id=?";
-        $this->runRequest($sql, array($name, $status, $id));
+    public function editSpace($id, $name, $status, $color) {
+        $sql = "UPDATE core_spaces SET name=?, status=?, color=? WHERE id=?";
+        $this->runRequest($sql, array($name, $status, $color, $id));
     }
 
     public function setUser($id_user, $id_space, $status) {

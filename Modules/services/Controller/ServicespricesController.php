@@ -30,6 +30,7 @@ class ServicespricesController extends CoresecureController {
         parent::__construct();
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
+        $_SESSION["openedNav"] = "invoices";
     }
 
     /**

@@ -21,6 +21,7 @@ class BookingnightweController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+        $_SESSION["openedNav"] = "bookingsettings";
     }
 
     public function indexAction($id_space){
@@ -31,7 +32,7 @@ class BookingnightweController extends CoresecureController {
         
         // get the core belongings
         $modelBelonging = new EcBelonging();
-        $belongings = $modelBelonging->getAll();
+        $belongings = $modelBelonging->getAll($id_space);
         
         // get the sygrrig pricing
         $modelPricing = new BkNightWE();

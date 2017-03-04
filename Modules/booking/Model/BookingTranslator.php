@@ -954,7 +954,7 @@ class BookingTranslator {
         }
         return "Invoice booking";
     }
-
+    
     public static function Invoice_All($lang = "") {
         if ($lang == "fr") {
             return "Facturer tout";

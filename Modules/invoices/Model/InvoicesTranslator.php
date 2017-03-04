@@ -198,12 +198,26 @@ class InvoicesTranslator {
         }
         return "Edited by";
     }
-    
+
     public static function Title($lang) {
         if ($lang == "fr") {
             return "Info";
         }
         return "Title";
     }
-    
+
+    public static function Invoice_All($lang = "") {
+        if ($lang == "fr") {
+            return "Facturer tout";
+        }
+        return "Invoice all";
+    }
+
+    public static function Invoice_Responsible($lang = "") {
+        if ($lang == "fr") {
+            return "Facturer un responsable";
+        }
+        return "Invoice a person in charge";
+    }
+
 }

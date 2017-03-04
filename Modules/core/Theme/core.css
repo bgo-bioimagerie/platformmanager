@@ -7,33 +7,61 @@ select {
     width: auto;
 }
 
-#pm-content {
+.pm-content {
     background-color: #f1f1f1;
     min-height: 2000px;
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
 }
 
-#pm-form{
-    margin-top: 7px;
-    background-color: #ffffff; 
-    border-radius: 1px; 
-    -moz-box-shadow: 0px 2px 2px 0px #e1e1e1;
-    -webkit-box-shadow: 0px 2px 2px 0px #e1e1e1;
-    -o-box-shadow: 0px 2px 2px 0px #e1e1e1;
-    box-shadow: 0px 2px 2px 0px #e1e1e1;
-    filter:progid:DXImageTransform.Microsoft.Shadow(color=#e1e1e1, Direction=180, Strength=2);
-    padding: 7px;
+.pm-nav{
+    background-color: #f1f1f1;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
 }
 
-#pm-table{
-    margin-top: 7px;
+.pm-form{
     background-color: #ffffff; 
-    border-radius: 1px; 
-    -moz-box-shadow: 0px 2px 2px 0px #e1e1e1;
-    -webkit-box-shadow: 0px 2px 2px 0px #e1e1e1;
-    -o-box-shadow: 0px 2px 2px 0px #e1e1e1;
-    box-shadow: 0px 2px 2px 0px #e1e1e1;
-    filter:progid:DXImageTransform.Microsoft.Shadow(color=#e1e1e1, Direction=180, Strength=2);
-    padding: 7px;
+    border: 7px solid #f1f1f1;
+    min-height: 2000px;
+}
+
+.pm-form-short{
+    background-color: #ffffff; 
+    border: 7px solid #f1f1f1;
+    padding-bottom: 7px;
+}
+
+.pm-table{
+    background-color: #ffffff; 
+    border: 7px solid #f1f1f1;
+    padding-top: 7px;
+    height: 2000px;
+}
+
+.pm-table-short{
+    background-color: #ffffff; 
+    border: 7px solid #f1f1f1;
+    padding-top: 7px;
+}
+
+.bs-glyphicons{margin:0 -10px 20px;overflow:hidden}
+.bs-glyphicons-list{padding-left:0;list-style:none}
+.bs-glyphicons li{float:left;width:25%;height:115px;padding:25px;
+                  font-size:10px;line-height:1.4;text-align:center;background-color:#f9f9f9;border:1px solid #fff}
+
+.bs-glyphicons .glyphicon{margin-top:5px;margin-bottom:10px;font-size:24px}
+.bs-glyphicons .glyphicon-class{display:block;text-align:center;word-wrap:break-word}
+
+.bs-glyphicons li:hover{color:#fff;border:3px solid #fff;}@media (min-width:768px){
+    .bs-glyphicons{margin-right:0;margin-left:0}
+    .bs-glyphicons li{width:12.5%;font-size:12px}
+}
+
+.bs-glyphicons li a{color:#ffffff;}
+.bs-glyphicons li a:hover{color:#ffffff;}
+
+.pm-tile-container{
+    background-color: #ffffff;
+    min-height: 2000px;
 }

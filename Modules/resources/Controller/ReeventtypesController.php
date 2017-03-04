@@ -22,6 +22,7 @@ class ReeventtypesController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new ReEventType();
+        $_SESSION["openedNav"] = "resources";
         //$this->checkAuthorizationMenu("resources");
     }
 

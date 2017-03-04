@@ -42,7 +42,10 @@ class ServicesconfigController extends CoresecureController {
 
             $modelSpace->setSpaceMenu($id_space, "services", "services", "glyphicon glyphicon-plus", 
                     $this->request->getParameter("servicesmenustatus"),
-                    $this->request->getParameter("displayMenu"));
+                    $this->request->getParameter("displayMenu"),
+                    1,
+                    $this->request->getParameter("displayColor")
+                    );
             
             $this->redirect("servicesconfig/".$id_space);
             
@@ -54,16 +57,6 @@ class ServicesconfigController extends CoresecureController {
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("servicesmenuname", $this->request->getParameter("servicesmenuname"), $id_space);
         
-            $this->redirect("servicesconfig/".$id_space);
-            return;
-        }
-        
-        // color menu form
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
-        if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("servicesmenucolor", $this->request->getParameter("servicesmenucolor"), $id_space);
-            $modelCoreConfig->setParam("servicesmenucolortxt", $this->request->getParameter("servicesmenucolortxt"), $id_space);
-            
             $this->redirect("servicesconfig/".$id_space);
             return;
         }
@@ -100,7 +93,6 @@ class ServicesconfigController extends CoresecureController {
         // view
         $forms = array($formMenusactivation->getHtml($lang), 
                         $formMenuName->getHtml($lang),
-                        $formMenuColor->getHtml($lang), 
                         $formPerodProject->getHtml($lang), $formProjectCommand->getHtml($lang),
                         $formStock->getHtml($lang)
                 );
@@ -112,6 +104,7 @@ class ServicesconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "services");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "services");
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "services");
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -120,25 +113,11 @@ class ServicesconfigController extends CoresecureController {
 
         $form->addSelect("servicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 
-        return $form;
-    }
-    
-    public function menuColorForm($modelCoreConfig, $id_space, $lang){
-        $ecmenucolor = $modelCoreConfig->getParamSpace("servicesmenucolor", $id_space);
-        $ecmenucolortxt = $modelCoreConfig->getParamSpace("servicesmenucolortxt", $id_space);
-        
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(CoreTranslator::color($lang));
-        $form->addColor("servicesmenucolor", CoreTranslator::menu_color($lang), false, $ecmenucolor);
-        $form->addColor("servicesmenucolortxt", CoreTranslator::text_color($lang), false, $ecmenucolortxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
         return $form;
     }
     

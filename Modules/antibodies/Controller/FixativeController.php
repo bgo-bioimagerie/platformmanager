@@ -16,6 +16,7 @@ class FixativeController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new Fixative();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

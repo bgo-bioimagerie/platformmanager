@@ -6,7 +6,7 @@
 <div class="col-md-12" id="pm-content">
     
     <div class="col-xs-12 col-md-10 col-md-offset-1">
-        <h1><?php echo BookingTranslator::configuration($lang) ?></h1>
+        <h3><?php echo BookingTranslator::configuration($lang) ?></h3>
     </div>
     
     <?php 

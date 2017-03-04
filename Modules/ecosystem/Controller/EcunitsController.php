@@ -28,6 +28,7 @@ class EcunitsController extends CoresecureController {
         parent::__construct();
         //$this->checkAuthorizationMenu("users/institutions");
         $this->unitModel = new EcUnit ();
+        $_SESSION["openedNav"] = "ecusers";
     }
 
     /**

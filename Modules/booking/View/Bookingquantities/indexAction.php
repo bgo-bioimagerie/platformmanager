@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10" id="pm-table">
+<div class="col-md-12 pm-table">
     
     <?php 
     if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 

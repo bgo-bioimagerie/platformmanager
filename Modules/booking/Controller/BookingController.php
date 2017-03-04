@@ -36,29 +36,50 @@ class BookingController extends BookingabstractController {
         //$this->checkAuthorizationMenu("booking");
     }
 
+    public function navbar($id_space) {
+                $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
+        
+        $lang = $this->getLanguage();
+        $html = str_replace('{{id_space}}', $id_space, $html);
+        $html = str_replace('{{Calendar_View}}', BookingTranslator::Calendar_View($lang), $html);
+        $html = str_replace('{{Scheduling}}', BookingTranslator::Scheduling($lang), $html);
+        $html = str_replace('{{Display}}', BookingTranslator::Display($lang), $html);
+        $html = str_replace('{{Accessibilities}}', BookingTranslator::Accessibilities($lang), $html);
+        $html = str_replace('{{Nightwe}}', BookingTranslator::Nightwe($lang), $html);
+        $html = str_replace('{{Color_codes}}', BookingTranslator::Color_codes($lang), $html);
+        $html = str_replace('{{Additional_info}}', BookingTranslator::Additional_info($lang), $html);
+        $html = str_replace('{{SupplementariesInfo}}', BookingTranslator::SupplementariesInfo($lang), $html);
+        $html = str_replace('{{Packages}}', BookingTranslator::Packages($lang), $html);
+        $html = str_replace('{{Quantities}}', BookingTranslator::Quantities($lang), $html);
+        $html = str_replace('{{booking}}', BookingTranslator::booking($lang), $html);
+        $html = str_replace('{{Block_Resouces}}', BookingTranslator::Block_Resouces($lang), $html);
+        
+        return $html;
+    }
+
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-        
+
         $id_area = $this->request->getParameterNoException("id_area");
         $id_resource = $this->request->getParameterNoException("id_resource");
         $curentDate = $this->request->getParameterNoException("curentDate");
-        
-        if($id_area == ""){
-            if (isset($_SESSION['bk_id_area'])){
+
+        if ($id_area == "") {
+            if (isset($_SESSION['bk_id_area'])) {
                 $id_area = $_SESSION['bk_id_area'];
             }
         }
-        if($id_resource == ""){
-            if (isset($_SESSION['bk_id_resource'])){
+        if ($id_resource == "") {
+            if (isset($_SESSION['bk_id_resource'])) {
                 $id_resource = $_SESSION['bk_id_resource'];
             }
-        } 
-        if($id_resource == ""){
-            if (isset($_SESSION['bk_curentDate'])){
+        }
+        if ($id_resource == "") {
+            if (isset($_SESSION['bk_curentDate'])) {
                 $curentDate = $_SESSION['bk_curentDate'];
             }
-        } 
+        }
         //echo "index: id_area = " . $id_area . ", id_resource = " . "curentDate = " . $curentDate . "<br/>";
         $this->bookingAction($id_space, $id_area, $id_resource, $curentDate);
     }
@@ -70,18 +91,17 @@ class BookingController extends BookingabstractController {
     public function bookingAction($id_space, $id_area, $id_resource) {
 
         $lang = $this->getLanguage();
-        
+
         $curentDate = date("Y-m-d", time());
-        if(isset($_SESSION['bk_curentDate'])){
-            if($this->request->getParameterNoException("curentDate") != ""){
+        if (isset($_SESSION['bk_curentDate'])) {
+            if ($this->request->getParameterNoException("curentDate") != "") {
                 $curentDate = CoreTranslator::dateToEn($this->request->getParameterNoException("curentDate"), $lang);
                 $_SESSION['bk_curentDate'] = $curentDate;
-            }
-            else{
+            } else {
                 $curentDate = $_SESSION['bk_curentDate'];
             }
         }
-        
+
         //echo "curent date booking = " . $curentDate . "<br/>";
         $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
 
@@ -114,7 +134,7 @@ class BookingController extends BookingabstractController {
             $_SESSION['bk_id_area'] = $id_area;
             $_SESSION['bk_curentDate'] = $curentDate;
             //echo "booking: id_area = " . $id_area . ", id_resource = " . "curentDate = " . $curentDate . "<br/>";
-            
+
             if ($id_resource == 0) {
                 $this->render(array(
                     'id_space' => $id_space,
@@ -123,19 +143,16 @@ class BookingController extends BookingabstractController {
                 return;
             }
         }
-        
+
         $calendarDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
         if (isset($_SESSION['lastbookview'])) {
             $lastView = $_SESSION['lastbookview'];
-            $this->redirect($lastView."/".$id_space);
+            $this->redirect($lastView . "/" . $id_space);
+        } else if ($calendarDefaultView == "") {
+            $this->redirect("bookingdayarea/" . $id_space);
+        } else {
+            $this->redirect($calendarDefaultView . "/" . $id_space);
         }
-        else if($calendarDefaultView == ""){
-            $this->redirect("bookingdayarea/".$id_space);
-        }    
-        else{
-            $this->redirect($calendarDefaultView."/".$id_space);
-        }
-        
     }
 
     public function book($id_space, $message) {
@@ -186,7 +203,7 @@ class BookingController extends BookingabstractController {
             $curentDate = $_SESSION['bk_curentDate'];
         }
 
-        
+
         //print_r($_SESSION);
         //echo "curent resource bookday 2 = " . $curentResource . "<br/>";
         //sreturn;
@@ -209,20 +226,20 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         //print_r($menuData);
-        
+
         $foundR = false;
-        foreach($menuData["resources"] as $r){
-            if($r["id"] == $curentResource){
+        foreach ($menuData["resources"] as $r) {
+            if ($r["id"] == $curentResource) {
                 $foundR = true;
                 break;
             }
         }
-        if(!$foundR){
+        if (!$foundR) {
             $curentResource = $menuData["resources"][0]["id"];
             $_SESSION['bk_id_resource'] = $curentResource;
         }
-        
-        
+
+
         // save the menu info in the session
         //$_SESSION['bk_id_resource'] = $curentResource;
         //$_SESSION['bk_id_area'] = $curentAreaId;
@@ -330,16 +347,16 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $foundA = false;
-        foreach($menuData["areas"] as $are){
-            if($curentAreaId == $are["id"]){
+        foreach ($menuData["areas"] as $are) {
+            if ($curentAreaId == $are["id"]) {
                 $foundA = true;
                 break;
             }
         }
-        if(!$foundA){
+        if (!$foundA) {
             $curentAreaId = $menuData["areas"][0]["id"];
         }
-        
+
         // save the menu info in the session
         $_SESSION['bk_id_resource'] = $curentResource;
         $_SESSION['bk_id_area'] = $curentAreaId;
@@ -356,7 +373,7 @@ class BookingController extends BookingabstractController {
         for ($r = 0; $r < count($resourcesBase); $r++) {
             $resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($resourcesBase[$r]["id"]);
         }
-        
+
         // get last state
         $modelEvent = new ReEvent();
         for ($r = 0; $r < count($resourcesBase); $r++) {
@@ -462,13 +479,13 @@ class BookingController extends BookingabstractController {
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
         $foundR = false;
-        foreach($menuData["resources"] as $r){
-            if($r["id"] == $curentResource){
+        foreach ($menuData["resources"] as $r) {
+            if ($r["id"] == $curentResource) {
                 $foundR = true;
                 break;
             }
         }
-        if(!$foundR){
+        if (!$foundR) {
             $curentResource = $menuData["resources"][0]["id"];
             $_SESSION['bk_id_resource'] = $curentResource;
         }
@@ -513,7 +530,7 @@ class BookingController extends BookingabstractController {
         // get last state
         $modelEvent = new ReEvent();
         $resourceBase["last_state"] = $modelEvent->getLastStateColor($resourceBase["id"]);
-        
+
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
@@ -592,7 +609,7 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
-        
+
         // save the menu info in the session
         /*
           $_SESSION['id_resource'] = $curentResource;
@@ -606,7 +623,7 @@ class BookingController extends BookingabstractController {
         // get the resource info
         $modelRes = new ResourceInfo();
         $resourcesBase = $modelRes->resourcesForArea($curentAreaId);
-        
+
         // get last state
         $modelEvent = new ReEvent();
         for ($r = 0; $r < count($resourcesBase); $r++) {
@@ -724,13 +741,13 @@ class BookingController extends BookingabstractController {
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
         $foundR = false;
-        foreach($menuData["resources"] as $r){
-            if($r["id"] == $curentResource){
+        foreach ($menuData["resources"] as $r) {
+            if ($r["id"] == $curentResource) {
                 $foundR = true;
                 break;
             }
         }
-        if(!$foundR){
+        if (!$foundR) {
             $curentResource = $menuData["resources"][0]["id"];
             $_SESSION['bk_id_resource'] = $curentResource;
         }
@@ -773,7 +790,7 @@ class BookingController extends BookingabstractController {
 
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
-        
+
         // view
         $this->render(array(
             'lang' => $lang,

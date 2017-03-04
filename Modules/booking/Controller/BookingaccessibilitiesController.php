@@ -20,6 +20,7 @@ class BookingaccessibilitiesController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         //$this->checkAuthorizationMenu("bookingsettings");
+        $_SESSION["openedNav"] = "bookingsettings";
     }
 
     /**

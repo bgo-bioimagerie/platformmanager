@@ -16,6 +16,7 @@ class IsotypesController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new Isotype();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

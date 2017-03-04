@@ -3,8 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12" id="pm-content">
-    <div class="col-md-12"  id="pm-table">
+    <div class="col-md-12 pm-table">
 
         <div class="col-md-12">
             <h3><?php echo ResourcesTranslator::Suivi($lang) . ": " . $resourceInfo["name"] ?></h3>
@@ -14,6 +13,5 @@
             <?php echo $tableHtml ?>
         </div>
     </div>
-</div>
 <?php
 endblock();

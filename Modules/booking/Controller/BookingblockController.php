@@ -21,6 +21,7 @@ class BookingblockController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         //$this->checkAuthorizationMenu("bookingsettings");
+        $_SESSION["openedNav"] = "bookingsettings";
     }
 
     /**
@@ -35,7 +36,7 @@ class BookingblockController extends CoresecureController {
         $resources = $modelResources->getBySpace($id_space);
 
         $modelColor = new BkColorCode();
-        $colorCodes = $modelColor->getColorCodes();
+        $colorCodes = $modelColor->getColorCodes($id_space);
 
         $errormessage = "";
         $lang = $this->getLanguage();

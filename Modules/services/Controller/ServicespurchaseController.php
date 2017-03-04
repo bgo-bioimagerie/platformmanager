@@ -26,6 +26,7 @@ class ServicespurchaseController extends CoresecureController {
         parent::__construct();
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SePurchase();
+        $_SESSION["openedNav"] = "services";
     }
 
     /**

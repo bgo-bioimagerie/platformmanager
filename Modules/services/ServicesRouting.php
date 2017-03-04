@@ -10,16 +10,13 @@ class ServicesRouting extends Routing{
         $this->addRoute("servicesconfig", "servicesconfig", "servicesconfig", "index", array("id_space"), array(""));
         $this->addRoute("servicesconfigadmin", "servicesconfigadmin", "servicesconfigadmin", "index");
         
-        
         // add here the module routes
         $this->addRoute("services", "services", "services", "index", array("id_space"), array(""));
-        $this->addRoute("serviceslisting", "serviceslisting", "services", "listing", array("id_space"), array(""));
-        $this->addRoute("servicesedit", "servicesedit", "services", "edit", array("id_space", "id"), array("", ""));
-        $this->addRoute("servicesdelete", "servicesdelete", "services", "delete", array("id_space", "id"), array("", ""));
+        $this->addRoute("serviceslisting", "serviceslisting", "serviceslisting", "listing", array("id_space"), array(""));
+        $this->addRoute("servicesedit", "servicesedit", "serviceslisting", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesdelete", "servicesdelete", "serviceslisting", "delete", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprices", "servicesprices", "servicesprices", "index", array("id_space"), array(""));
         $this->addRoute("servicespriceseditquery", "servicespriceseditquery", "servicesprices", "editquery", array("id_space"), array(""));
-        
-        
         
         // stock
         $this->addRoute("servicesstock", "servicesstock", "services", "stock", array("id_space"), array(""));

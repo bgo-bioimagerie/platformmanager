@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
     
-    <div class="col-md-12" id="pm-content">
+    <div class="col-md-12 pm-content">
 
     <div class="col-xs-12"><p></p></div>
     

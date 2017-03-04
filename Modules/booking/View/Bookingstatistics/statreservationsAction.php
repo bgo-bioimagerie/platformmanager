@@ -4,7 +4,7 @@
 <?php startblock('content') ?>
 
 <br>
-<div class="col-md-10" id="pm-form">
+<div class="col-md-12 pm-form">
     <div class="col-md-12">
         <form role="form" class="form-horizontal" action="bookingreservationstatsquery/<?php echo $id_space ?>"
               method="post">

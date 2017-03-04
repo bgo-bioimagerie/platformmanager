@@ -17,6 +17,7 @@ class DemController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->demModel = new Dem();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

@@ -16,6 +16,7 @@ class LinkerController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new Linker();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

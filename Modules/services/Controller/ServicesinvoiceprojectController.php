@@ -35,6 +35,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         parent::__construct();
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
+        $_SESSION["openedNav"] = "invoices";
     }
 
     /**

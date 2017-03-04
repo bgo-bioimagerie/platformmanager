@@ -16,6 +16,7 @@ class EnzymesController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new Enzyme();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

@@ -16,6 +16,7 @@ class OrganesController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->model = new Organe();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

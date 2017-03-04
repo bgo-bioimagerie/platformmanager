@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-8 col-md-offset-1">
+<div class="col-md-12 pm-form">
     <form role="form" action="mailersend/<?php echo $id_space ?>" method="post">
         <div class="page-header"> 
             <h1>

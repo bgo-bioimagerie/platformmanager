@@ -30,6 +30,7 @@ class EcusersController extends CoresecureController {
         parent::__construct();
         //$this->checkAuthorizationMenu("users/institutions");
         $this->userModel = new EcUser ();
+        $_SESSION["openedNav"] = "ecusers";
     }
 
     /**

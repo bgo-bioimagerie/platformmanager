@@ -31,9 +31,13 @@ class CoreMenu extends Model {
 		`link` varchar(150) NOT NULL DEFAULT '',
 		`icon` varchar(300) NOT NULL DEFAULT '',
                 `id_menu` int(11) NOT NULL DEFAULT 1,
+                `color` varchar(7) NOT NULL DEFAULT '#428bca',
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql2);
+        
+        $this->addColumn('core_datamenu', 'color', "varchar(7)", "#428bca");
+        
         
                 
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_menu` (
@@ -218,9 +222,9 @@ class CoreMenu extends Model {
      * @param string $icon Menu icon (bootstrap icon)
      * @return PDOStatement
      */
-    public function addDataMenu($name, $link, $icon) {
-        $sql = "INSERT INTO core_datamenu (name, link, icon) VALUES(?,?,?,?)";
-        $pdo = $this->runRequest($sql, array($name, $link, $icon));
+    public function addDataMenu($name, $link, $icon, $color) {
+        $sql = "INSERT INTO core_datamenu (name, link, icon, color) VALUES(?,?,?,?,?)";
+        $pdo = $this->runRequest($sql, array($name, $link, $icon, $color));
         return $pdo;
     }
 
@@ -257,16 +261,16 @@ class CoreMenu extends Model {
      * @param string $url Url link
      * @param string $id_menu ID of the parent menu
      */
-    public function setDataMenu($id, $name, $url, $id_menu) {
+    public function setDataMenu($id, $name, $url, $id_menu, $color) {
 
         if ($this->isDataMenu($id)){
-            $sql = "UPDATE core_datamenu SET name=?, link=?, id_menu=? WHERE id=?";
-            $this->runRequest($sql, array($name, $url, $id_menu, $id));
+            $sql = "UPDATE core_datamenu SET name=?, link=?, id_menu=?, color=? WHERE id=?";
+            $this->runRequest($sql, array($name, $url, $id_menu, $color, $id));
             return $id;
         }
         else{
-            $sql = "INSERT INTO core_datamenu (name, link, id_menu) VALUES(?,?,?)";
-            $this->runRequest($sql, array($name, $url, $id_menu));
+            $sql = "INSERT INTO core_datamenu (name, link, id_menu, color) VALUES(?,?,?,?)";
+            $this->runRequest($sql, array($name, $url, $id_menu,$color));
             return $this->getDatabase()->lastInsertId();
         }
     }

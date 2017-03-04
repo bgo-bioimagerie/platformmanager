@@ -3,9 +3,11 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<?php include('Modules/core/View/Coremenus/navbar.php'); ?>
+<div class="col-md-2 pm-nav">
+    <?php include('Modules/core/View/Coremenus/navbar.php'); ?>
+</div>    
 
-<div class="container">
+<div class="col-md-10 pm-table">
     
     <?php 
     if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 

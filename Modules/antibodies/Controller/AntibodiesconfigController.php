@@ -19,6 +19,7 @@ class AntibodiesconfigController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+        $_SESSION["openedNav"] = "antibodies";
         
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new Exception("Error 503: Permission denied");
@@ -35,17 +36,6 @@ class AntibodiesconfigController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelSpace = new CoreSpace();
-        // color menu form
-        $modelCoreConfig = new CoreConfig();
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
-        if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("antibodiesmenucolor", $this->request->getParameter("antibodiesmenucolor"), $id_space);
-            $modelCoreConfig->setParam("antibodiesmenucolortxt", $this->request->getParameter("antibodiesmenucolortxt"), $id_space);
-            
-            $this->redirect("antibodiesconfig/".$id_space);
-            return;
-        }
-
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
@@ -53,7 +43,9 @@ class AntibodiesconfigController extends CoresecureController {
             
             $modelSpace->setSpaceMenu($id_space, "antibodies", "antibodies", "glyphicon-user", 
                     $this->request->getParameter("antibodiesmenustatus"),
-                    $this->request->getParameter("displayMenu")
+                    $this->request->getParameter("displayMenu"),
+                    1,
+                    $this->request->getParameter("displayColor")
                     );
             
             $this->redirect("antibodiesconfig/".$id_space);
@@ -61,7 +53,7 @@ class AntibodiesconfigController extends CoresecureController {
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang));
+        $forms = array($formMenusactivation->getHtml($lang));
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -71,6 +63,7 @@ class AntibodiesconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "antibodies");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "antibodies");
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "antibodies");
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -79,6 +72,7 @@ class AntibodiesconfigController extends CoresecureController {
 
         $form->addSelect("antibodiesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber('displayMenu', CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor('displayColor', CoreTranslator::color($lang), false, $displayColor);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "antibodiesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
@@ -86,18 +80,5 @@ class AntibodiesconfigController extends CoresecureController {
         return $form;
     }
 
-    public function menuColorForm($modelCoreConfig, $id_space, $lang){
-        $menucolor = $modelCoreConfig->getParamSpace("antibodiesmenucolor", $id_space);
-        $menucolortxt = $modelCoreConfig->getParamSpace("antibodiesmenucolortxt", $id_space);
-        
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(CoreTranslator::color($lang));
-        $form->addColor("antibodiesmenucolor", CoreTranslator::menu_color($lang), false, $menucolor);
-        $form->addColor("antibodiesmenucolortxt", CoreTranslator::text_color($lang), false, $menucolortxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "antibodiesconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
-        return $form;
-    }
+    
 }

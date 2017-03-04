@@ -37,16 +37,6 @@ class ResourcesconfigController extends CoresecureController {
         //$modelCoreConfig = new CoreConfig();
 
         $modelSpace = new CoreSpace();
-        // color menu form
-        $modelCoreConfig = new CoreConfig();
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
-        if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("resourcesmenucolor", $this->request->getParameter("resourcesmenucolor"), $id_space);
-            $modelCoreConfig->setParam("resourcesmenucolortxt", $this->request->getParameter("resourcesmenucolortxt"), $id_space);
-            
-            $this->redirect("resourcesconfig/".$id_space);
-            return;
-        }
 
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
@@ -54,14 +44,18 @@ class ResourcesconfigController extends CoresecureController {
 
             $modelSpace->setSpaceMenu($id_space, "resources", "resources", "glyphicon-registration-mark", 
                     $this->request->getParameter("resourcesmenustatus"),
-                    $this->request->getParameter("displayMenu"));
+                    $this->request->getParameter("displayMenu"),
+                    1,
+                    $this->request->getParameter("displayColor")
+                    );
             
             $this->redirect("resourcesconfig/".$id_space);
             return;
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang));
+        $forms = array($formMenusactivation->getHtml($lang)
+                );
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -71,7 +65,7 @@ class ResourcesconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "resources");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "resources");
-        
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "resources");
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -80,6 +74,8 @@ class ResourcesconfigController extends CoresecureController {
 
         $form->addSelect("resourcesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
+        
         
         $form->setValidationButton(CoreTranslator::Save($lang), "resourcesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
@@ -87,18 +83,5 @@ class ResourcesconfigController extends CoresecureController {
         return $form;
     }
 
-    public function menuColorForm($modelCoreConfig, $id_space, $lang){
-        $ecmenucolor = $modelCoreConfig->getParamSpace("resourcesmenucolor", $id_space);
-        $ecmenucolortxt = $modelCoreConfig->getParamSpace("resourcesmenucolortxt", $id_space);
-        
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(CoreTranslator::color($lang));
-        $form->addColor("resourcesmenucolor", CoreTranslator::menu_color($lang), false, $ecmenucolor);
-        $form->addColor("resourcesmenucolortxt", CoreTranslator::text_color($lang), false, $ecmenucolortxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "resourcesconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
-        return $form;
-    }
+
 }

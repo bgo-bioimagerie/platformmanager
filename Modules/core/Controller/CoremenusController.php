@@ -163,6 +163,7 @@ class CoremenusController extends CoresecureController {
         $form->addText("url", CoreTranslator::Url($lang), true, $item["link"]);
         $form->addUpload("icon", CoreTranslator::Icon($lang));
         $form->addSelect("id_menu", CoreTranslator::Menu($lang), $choices, $choicesid, $item["id_menu"]);
+        $form->addColor("color", CoreTranslator::color($lang), false, $item["color"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "coremenusitemedit/".$id);
         $form->setButtonsWidth(2, 9);
         
@@ -170,8 +171,9 @@ class CoremenusController extends CoresecureController {
             $name = $this->request->getParameterNoException("name");
             $url = $this->request->getParameterNoException("url");
             $id_menu = $this->request->getParameterNoException("id_menu");
+            $color = $this->request->getParameterNoException("color");
             
-            $id = $modelMenu->setDataMenu($id, $name, $url, $id_menu);
+            $id = $modelMenu->setDataMenu($id, $name, $url, $id_menu, $color);
             
             $target_dir = "data/core/menu/";
             if ($_FILES["icon"]["name"] != "") {

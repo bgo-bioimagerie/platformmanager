@@ -3,9 +3,9 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10" id="pm-content">
+<div class="col-md-12 pm-content">
     
-    <div class="col-md-12" id="pm-form">
+    <div class="col-md-12 pm-form">
         <?php if(isset($_SESSION["message"])){
         ?>
         <div class="alert alert-success" role="alert">
@@ -18,12 +18,12 @@
         
         <?php echo $form ?>
     </div>
-    <div class="col-md-12" id="pm-content">
-        <div class="col-md-12" id="pm-table">
+    <div class="col-md-12 pm-content">
+        <div class="col-md-12 pm-table">
             <?php echo $tissusTable ?>
             <a class="btn btn-primary" id="addtissusbutton"><?php echo AntibodiesTranslator::addTissus($lang) ?></a>
         </div>
-        <div class="col-md-12" id="pm-table">
+        <div class="col-md-12 pm-table">
             <?php echo $ownersTable ?>
             <a class="btn btn-primary" id="addownerbutton"><?php echo AntibodiesTranslator::addOwner($lang) ?></a>
         

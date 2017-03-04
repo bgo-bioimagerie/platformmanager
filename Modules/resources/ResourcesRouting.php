@@ -13,17 +13,17 @@ class ResourcesRouting extends Routing{
         
         
         // add here the module routes
-        $this->addRoute("resources", "resources", "resources", "index", array("id_space"), array(""));
-        $this->addRoute("resourcesedit", "resourcesedit", "resources", "edit", array("id_space", "id"), array("", ""));
-        $this->addRoute("resourcesevents", "resourcesevents", "resources", "events", array("id_space","id"), array("", ""));
-        $this->addRoute("resourceseventsro", "resourceseventsro", "resources", "eventsro", array("id_space","id"), array("", ""));
-        $this->addRoute("resourceseventdelete", "resourceseventdelete", "resources", "deleteevent", array("id_space", "id_resource", "id"), array("", "", ""));
+        $this->addRoute("resources", "resources", "resourcesinfo", "index", array("id_space"), array(""));
+        $this->addRoute("resourcesedit", "resourcesedit", "resourcesinfo", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("resourcesevents", "resourcesevents", "resourcesinfo", "events", array("id_space","id"), array("", ""));
+        $this->addRoute("resourceseventsro", "resourceseventsro", "resourcesinfo", "eventsro", array("id_space","id"), array("", ""));
+        $this->addRoute("resourceseventdelete", "resourceseventdelete", "resourcesinfo", "deleteevent", array("id_space", "id_resource", "id"), array("", "", ""));
         
-        $this->addRoute("resourceeditevent", "resourceeditevent", "resources", "editevent", array("id_space", "id_resource", "id_event"), array("", "", ""));
-        $this->addRoute("resourceediteventro", "resourceediteventro", "resources", "editeventro", array("id_space", "id_resource", "id_event"), array("", "", ""));
-        $this->addRoute("resourceediteventfile", "resourceediteventfile", "resources", "editeventfile", array("id_space"), array(""));
-        $this->addRoute("resourcesresp", "resourcesresp", "resources", "resps", array("id_space", "id_resource"), array("", ""));
-        $this->addRoute("resourcesdelete", "resourcesdelete", "resources", "delete", array("id_space", "id"), array("", ""));
+        $this->addRoute("resourceeditevent", "resourceeditevent", "resourcesinfo", "editevent", array("id_space", "id_resource", "id_event"), array("", "", ""));
+        $this->addRoute("resourceediteventro", "resourceediteventro", "resourcesinfo", "editeventro", array("id_space", "id_resource", "id_event"), array("", "", ""));
+        $this->addRoute("resourceediteventfile", "resourceediteventfile", "resourcesinfo", "editeventfile", array("id_space"), array(""));
+        $this->addRoute("resourcesresp", "resourcesresp", "resourcesinfo", "resps", array("id_space", "id_resource"), array("", ""));
+        $this->addRoute("resourcesdelete", "resourcesdelete", "resourcesinfo", "delete", array("id_space", "id"), array("", ""));
         
         $this->addRoute("reareas", "reareas", "reareas", "index", array("id_space"), array(""));
         $this->addRoute("reareasedit", "reareasedit", "reareas", "edit", array("id_space", "id"), array("", ""));

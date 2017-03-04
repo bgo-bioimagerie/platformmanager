@@ -17,6 +17,7 @@ class ResourceshelpController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         //$this->checkAuthorizationMenu("resources");
+        $_SESSION["openedNav"] = "resources";
     }
 
     /**

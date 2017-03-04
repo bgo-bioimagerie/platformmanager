@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10" id="pm-form">
+<div class="col-md-12 pm-form">
     <form role="form" class="form-horizontal" action="bookinggrrstats/<?php echo $id_space ?>"
           method="post" id="statform">
 

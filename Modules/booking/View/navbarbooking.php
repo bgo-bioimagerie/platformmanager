@@ -1,13 +1,11 @@
 <?php
-require_once 'Modules/core/Model/CoreConfig.php';
-$modelCoreConfig = new CoreConfig();
-$sygrrifmenucolor = $modelCoreConfig->getParamSpace("sygrrifmenucolor", $id_space);
-$sygrrifmenucolortxt = $modelCoreConfig->getParamSpace("sygrrifmenucolortxt", $id_space);
+require_once 'Modules/core/Model/CoreSpace.php';
+$modelMenu = new CoreSpace();
+
+$sygrrifmenucolortxt = "#ffffff";
+$sygrrifmenucolor = $modelMenu->getSpaceMenusColor($id_space, "booking");
 if ($sygrrifmenucolor == "") {
-    $sygrrifmenucolor = "337ab7";
-}
-if ($sygrrifmenucolortxt == "") {
-    $sygrrifmenucolortxt = "ffffff";
+    $sygrrifmenucolor = "#428bca";
 }
 ?>
 
@@ -20,24 +18,24 @@ if ($sygrrifmenucolortxt == "") {
     <style>
         .bs-docs-header {
             position: relative;
-            color: #<?php echo $sygrrifmenucolortxt ?>;
+            color: <?php echo $sygrrifmenucolortxt ?>;
             text-shadow: 0 0px 0 rgba(0, 0, 0, .1);
-            background-color: #<?php echo $sygrrifmenucolor ?>;
-            border:0px solid #<?php echo $sygrrifmenucolor ?>;
+            background-color: <?php echo $sygrrifmenucolor ?>;
+            border:0px solid <?php echo $sygrrifmenucolor ?>;
         }
 
         #navlink {
-            color: #<?php echo $sygrrifmenucolortxt ?>;
+            color: <?php echo $sygrrifmenucolortxt ?>;
             text-shadow: 0 0px 0 rgba(0, 0, 0, .1);
-            border:0px solid #<?php echo $sygrrifmenucolor ?>;
+            border:0px solid <?php echo $sygrrifmenucolor ?>;
         }
 
         #well {
             margin-top:10px;
             padding-bottom:25px;
-            color: #<?php echo $sygrrifmenucolortxt ?>;
-            background-color: #<?php echo $sygrrifmenucolor ?>;
-            border:0px solid #<?php echo $sygrrifmenucolor ?>;
+            color: <?php echo $sygrrifmenucolortxt ?>;
+            background-color: <?php echo $sygrrifmenucolor ?>;
+            border:0px solid <?php echo $sygrrifmenucolor ?>;
             -moz-box-shadow: 0px 0px px #000000;
             -webkit-box-shadow: 0px 0px px #000000;
             -o-box-shadow: 0px 0px 0px #000000;
@@ -45,7 +43,7 @@ if ($sygrrifmenucolortxt == "") {
         }
 
         legend {
-            color: #<?php echo $sygrrifmenucolortxt ?>;
+            color: <?php echo $sygrrifmenucolortxt ?>;
         }
 
         #content{
@@ -142,9 +140,9 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 
                 <div class='col-md-1' id="well">
                     <fieldset>
-                        <legend style="color:#<?php echo $sygrrifmenucolor ?>;">.</legend>
+                        <legend style="color:<?php echo $sygrrifmenucolor ?>;">.</legend>
                         <div >
-                            <input type="submit" class="btn btn-primary" value="ok" />
+                            <input type="submit" class="btn btn-default" value="ok" />
                         </div>
                     </fieldset>
                 </div>   

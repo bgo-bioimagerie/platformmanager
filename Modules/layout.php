@@ -15,14 +15,17 @@
             
 </head>
 <body style="background-color: #f1f1f1;">
-    <?php startblock('menu') ?>
-    <?php endblock() ?>
+
     <?php startblock('navbar') ?>
     <?php endblock() ?>
     
-    <!-- <div class="col-xs-12" id="pm-content"/> -->
+    <?php startblock('spacenavbar') ?>
+    <?php endblock() ?>
+    
     <?php startblock('content') ?>
     <?php endblock() ?>
-    <!-- </div> -->
+    
+    <?php startblock('footer') ?>
+    <?php endblock() ?>
 </body>
 </html>

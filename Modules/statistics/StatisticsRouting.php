@@ -11,7 +11,7 @@ class StatisticsRouting extends Routing{
         $this->addRoute("statisticsconfigadmin", "statisticsconfigadmin", "statisticsconfigadmin", "index");
         
         // add here the module routes
-        $this->addRoute("statistics", "statistics", "statistics", "index", array("id_space"), array(""));
+        $this->addRoute("statistics", "statistics", "statisticslist", "index", array("id_space"), array(""));
         
         // balance
         

@@ -24,7 +24,7 @@ class ServicesprojectsController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
-
+        $_SESSION["openedNav"] = "services";
         //$this->checkAuthorizationMenu("services");
     }
 

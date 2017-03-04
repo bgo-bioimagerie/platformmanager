@@ -26,6 +26,63 @@ class ServicesController extends CoresecureController {
         $this->serviceModel = new SeService();
     }
 
+    public function navbar($id_space) {
+
+        $lang = $this->getLanguage();
+        $html = "";
+
+        $modelCoreConfig = new CoreConfig();
+        $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        if ($servicesuseproject == 1) {
+            $htmlprojet = file_get_contents("Modules/services/View/services/navbarproject.php");
+
+            $htmlprojet = str_replace("{{id_space}}", $id_space, $htmlprojet);
+            $htmlprojet = str_replace("{{Opened_projects}}", ServicesTranslator::Opened_projects($lang), $htmlprojet);
+            $htmlprojet = str_replace("{{Closed_projects}}", ServicesTranslator::Closed_projects($lang), $htmlprojet);
+            $htmlprojet = str_replace("{{New_project}}", ServicesTranslator::New_project($lang), $htmlprojet);
+            $htmlprojet = str_replace("{{Projects}}", ServicesTranslator::Projects($lang), $htmlprojet);
+
+            $html .= $htmlprojet;
+        }
+
+        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+        if ($servicesusecommand == 1) {
+
+            $htmlOrder = file_get_contents("Modules/services/View/services/navbarorder.php");
+
+            $htmlOrder = str_replace("{{id_space}}", $id_space, $htmlOrder);
+            $htmlOrder = str_replace("{{Opened_orders}}", ServicesTranslator::Opened_orders($lang), $htmlOrder);
+            $htmlOrder = str_replace("{{Closed_orders}}", ServicesTranslator::Closed_orders($lang), $htmlOrder);
+            $htmlOrder = str_replace("{{All_orders}}", ServicesTranslator::All_orders($lang), $htmlOrder);
+            $htmlOrder = str_replace("{{New_orders}}", ServicesTranslator::New_orders($lang), $htmlOrder);
+            $htmlOrder = str_replace("{{Orders}}", ServicesTranslator::Orders($lang), $htmlOrder);
+
+            $html .= $htmlOrder;
+        }
+
+        $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
+        if ($servicesusestock == 1) {
+            $htmlStock = file_get_contents("Modules/services/View/services/navbarstock.php");
+
+            $htmlStock = str_replace("{{id_space}}", $id_space, $htmlStock);
+            $htmlStock = str_replace("{{Stock}}", ServicesTranslator::Stock($lang), $htmlStock);
+            $htmlStock = str_replace("{{New_Purchase}}", ServicesTranslator::New_Purchase($lang), $htmlStock);
+            $htmlStock = str_replace("{{Purchase}}", ServicesTranslator::Purchase($lang), $htmlStock);
+
+            $html .= $htmlStock;
+        }
+
+        $htmlListing = file_get_contents("Modules/services/View/services/navbarlisting.php");
+
+        $htmlListing = str_replace("{{id_space}}", $id_space, $htmlListing);
+        $htmlListing = str_replace("{{Listing}}", ServicesTranslator::Listing($lang), $htmlListing);
+        $htmlListing = str_replace("{{services}}", ServicesTranslator::services($lang), $htmlListing);
+
+        $html .= $htmlListing;
+
+        return $html;
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -34,27 +91,26 @@ class ServicesController extends CoresecureController {
 
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
-        if($servicesuseproject == 1){
-            $this->redirect('servicesprojects/'.$id_space);
+        if ($servicesuseproject == 1) {
+            $this->redirect('servicesprojects/' . $id_space);
             return;
         }
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
-        if($servicesusecommand == 1){
-            $this->redirect('servicesorders/'.$id_space);
+        if ($servicesusecommand == 1) {
+            $this->redirect('servicesorders/' . $id_space);
             return;
         }
-        
-        $this->redirect('serviceslisting/'.$id_space);
-        
+
+        $this->redirect('serviceslisting/' . $id_space);
     }
-    
-    public function listingAction($id_space){
+
+    public function listingAction($id_space) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $data = $this->serviceModel->getAll($id_space);
         //print_r($data);
-        
+
         $headers = array(
             "id" => "ID",
             "name" => CoreTranslator::type($lang),
@@ -100,8 +156,8 @@ class ServicesController extends CoresecureController {
         if ($form->check()) {
             $this->serviceModel->setService($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("description"), $this->request->getParameter("display_order"), $this->request->getParameter("type_id")
             );
-            
-            $this->redirect("services/".$id_space);
+
+            $this->redirect("services/" . $id_space);
             return;
         }
 

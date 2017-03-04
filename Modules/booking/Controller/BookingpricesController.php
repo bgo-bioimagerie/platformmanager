@@ -33,6 +33,7 @@ class BookingpricesController extends CoresecureController {
      */
     public function __construct() {
         parent::__construct();
+        $_SESSION["openedNav"] = "invoices";
     }
 
     /**

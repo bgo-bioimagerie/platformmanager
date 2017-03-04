@@ -1,4 +1,4 @@
-<div class="col-md-12" style="background-color: #337ab7;">
+<div class="col-md-12" style="background-color: #428bca;">
     <div class="col-md-2">
         <div class="dropdown">
             <button id="dLabel" type="button" class="btn  btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

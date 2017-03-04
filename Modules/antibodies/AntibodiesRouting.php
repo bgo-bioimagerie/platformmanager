@@ -12,11 +12,11 @@ class AntibodiesRouting extends Routing{
 
         
         // add here the module routes
-        $this->addRoute("antibodies", "antibodies", "antibodies", "index", array("id_space"), array(""));
-        $this->addRoute("apiantibodytissus", "apiantibodytissus", "antibodies", "tissus", array("id_space", "id_tissus"), array("", ""),true);
-        $this->addRoute("apiantibodyowner", "apiantibodyowner", "antibodies", "owner", array("id_space", "id_owner"), array("", ""),true);
-        $this->addRoute("antibodiesedittissus", "antibodiesedittissus", "antibodies", "edittissus", array("id_space"), array(""));
-        $this->addRoute("antibodieseditowner", "antibodieseditowner", "antibodies", "editowner", array("id_space"), array(""));
+        $this->addRoute("antibodies", "antibodies", "antibodieslist", "index", array("id_space"), array(""));
+        $this->addRoute("apiantibodytissus", "apiantibodytissus", "antibodieslist", "tissus", array("id_space", "id_tissus"), array("", ""),true);
+        $this->addRoute("apiantibodyowner", "apiantibodyowner", "antibodieslist", "owner", array("id_space", "id_owner"), array("", ""),true);
+        $this->addRoute("antibodiesedittissus", "antibodiesedittissus", "antibodieslist", "edittissus", array("id_space"), array(""));
+        $this->addRoute("antibodieseditowner", "antibodieseditowner", "antibodieslist", "editowner", array("id_space"), array(""));
         
         
         // acii
@@ -92,9 +92,9 @@ class AntibodiesRouting extends Routing{
         $this->addRoute("statusedit", "statusedit", "status", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("statusdelete", "statusdelete", "status", "delete", array("id_space", "id"), array("", ""));
         // anticorps
-        $this->addRoute("anticorps", "anticorps", "antibodies", "index", array("id_space", "sortentry"), array("", ""));
-        $this->addRoute("anticorpsedit", "anticorpsedit", "antibodies", "edit", array("id_space", "id"), array("", ""));
-        $this->addRoute("anticorpseditquery", "anticorpseditquery", "antibodies", "editquery", array("id_space", "id"), array("", ""));
+        $this->addRoute("anticorps", "anticorps", "antibodieslist", "index", array("id_space", "sortentry"), array("", ""));
+        $this->addRoute("anticorpsedit", "anticorpsedit", "antibodieslist", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("anticorpseditquery", "anticorpseditquery", "antibodieslist", "editquery", array("id_space", "id"), array("", ""));
         // search
         $this->addRoute("anticorpsadvsearchquery", "anticorpsadvsearchquery", "antibodies", "advsearchquery", array("id_space", "source"), array("", ""));
         

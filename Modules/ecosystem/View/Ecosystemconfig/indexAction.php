@@ -6,7 +6,7 @@
 <div class="col-md-12" id="pm-content" >
     
     <div class="col-xs-12 col-md-10 col-md-offset-1">
-        <h1><?php echo EcosystemTranslator::Ec_configuration($lang) ?></h1>
+        <h3><?php echo EcosystemTranslator::Ec_configuration($lang) ?></h3>
     </div>
     
     <?php 
@@ -32,7 +32,7 @@
     <div class="col-xs-12 col-md-10 col-md-offset-1" style="height: 7px;">
         <p></p>
     </div>
-    <div class="col-xs-12 col-md-10 col-md-offset-1" id="pm-form">
+    <div class="col-xs-12 col-md-10 col-md-offset-1 pm-form-short">
         <?php echo $form ?>
     </div>
     <?php } ?>

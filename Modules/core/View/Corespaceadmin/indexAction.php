@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="container"> 
+<div class="col-md-12 pm-form">
 
     <div class="col-md-2 col-lg-offset-10" style="padding-top:7px;">
         <button type="button" class="btn btn-default" onclick="window.location.href = 'spaceadminedit/0'">

@@ -25,6 +25,7 @@ class RerespsstatusController extends CoresecureController {
         parent::__construct();
         $this->model = new ReRespsStatus();
         //$this->checkAuthorizationMenu("resources");
+        $_SESSION["openedNav"] = "resources";
     }
 
     /**

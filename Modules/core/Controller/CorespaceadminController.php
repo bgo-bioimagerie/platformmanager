@@ -67,6 +67,7 @@ class CorespaceadminController extends CoresecureController {
         
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
+        $form->addColor("color", CoreTranslator::color($lang), false, $space["color"]);
         
         $modelUser = new CoreUser();
         $users = $modelUser->getActiveUsers("name");
@@ -90,7 +91,10 @@ class CorespaceadminController extends CoresecureController {
             //echo "status = " . $this->request->getParameter("status") . "<br/>";
             //echo "id = " . $id . "<br/>";
             
-            $id = $modelSpace->setSpace($id, $this->request->getParameter("name"), $this->request->getParameter("status"));
+            $id = $modelSpace->setSpace($id, $this->request->getParameter("name"), 
+                    $this->request->getParameter("status"),
+                    $this->request->getParameter("color")
+                    );
             
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
             

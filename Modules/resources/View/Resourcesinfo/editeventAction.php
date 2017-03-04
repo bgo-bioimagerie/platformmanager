@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
     
-    <div class="col-md-10" id="pm-content">
+    <div class="col-md-12 pm-content">
 
     <?php include "Modules/resources/View/Resources/edittabs.php" ?>
     <div class="col-xs-12"><p></p></div>

@@ -17,6 +17,7 @@ class ApplicationController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         $this->acapplicationModel = new AcApplication();
+        $_SESSION["openedNav"] = "antibodies";
     }
 
     // affiche la liste des Prelevements

@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include 'Modules/core/View/layout.php' ?>
 
 <!-- body -->     
 <?php startblock('content') ?>
@@ -96,7 +96,7 @@
 
 </head>
 
-<div class="col-md-12" id="pm-table">
+<div class="col-md-12 pm-table">
 
     <div class="col-md-12">
         <div class="dropdown">

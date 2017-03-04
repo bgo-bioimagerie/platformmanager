@@ -36,16 +36,6 @@ class EcosystemconfigController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelSpace = new CoreSpace();
-        // color menu form
-        $modelCoreConfig = new CoreConfig();
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
-        if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("ecosystemmenucolor", $this->request->getParameter("ecosystemmenucolor"), $id_space);
-            $modelCoreConfig->setParam("ecosystemmenucolortxt", $this->request->getParameter("ecosystemmenucolortxt"), $id_space);
-            
-            $this->redirect("ecosystemconfig/".$id_space);
-            return;
-        }
 
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
@@ -54,14 +44,17 @@ class EcosystemconfigController extends CoresecureController {
             
             $modelSpace->setSpaceMenu($id_space, "ecosystem", "ecusers", "glyphicon-user", 
                     $this->request->getParameter("usermenustatus"),
-                    $this->request->getParameter("displayMenu"));
+                    $this->request->getParameter("displayMenu"),
+                    1,
+                    $this->request->getParameter("usermenucolor")
+            );
             
             $this->redirect("ecosystemconfig/".$id_space);
             return;
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang));
+        $forms = array($formMenusactivation->getHtml($lang));
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -71,6 +64,7 @@ class EcosystemconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "ecusers");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "ecusers");
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "ecusers");
         
         
         $form = new Form($this->request, "menusactivationForm");
@@ -80,6 +74,7 @@ class EcosystemconfigController extends CoresecureController {
 
         $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor("usermenucolor", CoreTranslator::color($lang), false, $displayColor);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
@@ -87,18 +82,4 @@ class EcosystemconfigController extends CoresecureController {
         return $form;
     }
 
-    public function menuColorForm($modelCoreConfig, $id_space, $lang){
-        $ecmenucolor = $modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
-        $ecmenucolortxt = $modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
-        
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(EcosystemTranslator::color($lang));
-        $form->addColor("ecosystemmenucolor", EcosystemTranslator::menu_color($lang), false, $ecmenucolor);
-        $form->addColor("ecosystemmenucolortxt", EcosystemTranslator::text_color($lang), false, $ecmenucolortxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "ecosystemconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
-        return $form;
-    }
 }

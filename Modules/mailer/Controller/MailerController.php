@@ -14,6 +14,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
 require_once 'Modules/ecosystem/Model/EcUser.php';
+
 /**
  * 
  * @author sprigent
@@ -27,6 +28,11 @@ class MailerController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         //$this->checkAuthorizationMenu("mailer");
+        $_SESSION["openedNav"] = "mailer";
+    }
+
+    public function navbar($id_space) {
+        return "";
     }
 
     /**
@@ -42,7 +48,7 @@ class MailerController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "resources");
-        if ($statusUserMenu>0) {
+        if ($statusUserMenu > 0) {
             $modelArea = new ReArea();
             $areasList = $modelArea->getUnrestrictedAreasIDNameForSite($id_space);
 
@@ -94,7 +100,7 @@ class MailerController extends CoresecureController {
         // get the space name
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
-        
+
         // send the email
         $mailerModel = new MailerSend();
         $message = $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);

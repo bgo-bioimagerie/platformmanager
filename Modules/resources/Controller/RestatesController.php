@@ -24,6 +24,7 @@ class RestatesController extends CoresecureController {
         parent::__construct();
         $this->model = new ReState();
         //$this->checkAuthorizationMenu("resources");
+        $_SESSION["openedNav"] = "resources";
     }
 
     /**

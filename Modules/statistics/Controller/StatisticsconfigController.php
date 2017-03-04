@@ -41,7 +41,10 @@ class StatisticsconfigController extends CoresecureController {
 
             $modelSpace->setSpaceMenu($id_space, "statistics", "statistics", "glyphicon-signal", 
                     $this->request->getParameter("statisticsmenustatus"),
-                    $this->request->getParameter("displayMenu"));
+                    $this->request->getParameter("displayMenu"),
+                    1,
+                    $this->request->getParameter("displayColor")
+                    );
             
             $this->redirect("statisticsconfig/".$id_space);
             return;
@@ -58,6 +61,7 @@ class StatisticsconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "statistics");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "statistics");
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "statistics");
         
         
         $form = new Form($this->request, "menusactivationForm");
@@ -67,6 +71,7 @@ class StatisticsconfigController extends CoresecureController {
 
         $form->addSelect("statisticsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor('displayColor', CoreTranslator::color($lang), false, $displayColor);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
@@ -74,18 +79,4 @@ class StatisticsconfigController extends CoresecureController {
         return $form;
     }
 
-    public function menuColorForm($modelCoreConfig, $id_space, $lang){
-        $ecmenucolor = $modelCoreConfig->getParamSpace("statisticsmenucolor", $id_space);
-        $ecmenucolortxt = $modelCoreConfig->getParamSpace("statisticsmenucolortxt", $id_space);
-        
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(CoreTranslator::color($lang));
-        $form->addColor("statisticsmenucolor", CoreTranslator::menu_color($lang), false, $ecmenucolor);
-        $form->addColor("statisticsmenucolortxt", CoreTranslator::text_color($lang), false, $ecmenucolortxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
-        return $form;
-    }
 }

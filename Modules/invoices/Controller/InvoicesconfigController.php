@@ -43,21 +43,13 @@ class InvoicesconfigController extends CoresecureController {
 
             $modelSpace->setSpaceMenu($id_space, "invoices", "invoices", "glyphicon glyphicon-euro", 
                     $this->request->getParameter("invoicesmenustatus"),
-                    $this->request->getParameter("invoicesmenudisplay")
+                    $this->request->getParameter("invoicesmenudisplay"),
+                    1,
+                    $this->request->getParameter("invoicesmenucolor")
                     );
 
             $this->redirect("invoicesconfig/" . $id_space);
 
-            return;
-        }
-
-        // color menu form
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
-        if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("invoicesmenucolor", $this->request->getParameter("invoicesmenucolor"), $id_space);
-            $modelCoreConfig->setParam("invoicesmenucolortxt", $this->request->getParameter("invoicesmenucolortxt"), $id_space);
-
-            $this->redirect("invoicesconfig/" . $id_space);
             return;
         }
         
@@ -71,7 +63,7 @@ class InvoicesconfigController extends CoresecureController {
             return;
         }
         // view
-        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang),
+        $forms = array($formMenusactivation->getHtml($lang),
                        $formPeriod->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
@@ -82,6 +74,7 @@ class InvoicesconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "invoices");
         $displayUserMenu = $modelSpace->getSpaceMenusDisplay($id_space, "invoices");
+        $invoicesmenucolor = $modelSpace->getSpaceMenusColor($id_space, "invoices");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -90,22 +83,8 @@ class InvoicesconfigController extends CoresecureController {
 
         $form->addSelect("invoicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("invoicesmenudisplay", CoreTranslator::Display_order($lang), false, $displayUserMenu);
+        $form->addColor("invoicesmenucolor", CoreTranslator::color($lang), false, $invoicesmenucolor);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    public function menuColorForm($modelCoreConfig, $id_space, $lang) {
-        $ecmenucolor = $modelCoreConfig->getParamSpace("invoicesmenucolor", $id_space);
-        $ecmenucolortxt = $modelCoreConfig->getParamSpace("invoicesmenucolortxt", $id_space);
-
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(CoreTranslator::color($lang));
-        $form->addColor("invoicesmenucolor", CoreTranslator::menu_color($lang), false, $ecmenucolor);
-        $form->addColor("invoicesmenucolortxt", CoreTranslator::text_color($lang), false, $ecmenucolortxt);
-
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
 

@@ -25,6 +25,6 @@
     
     
     ?>
-    <?php include 'Modules/core/View/spacebar.php'; ?>
+    <?php //include 'Modules/core/View/spacebar.php'; ?>
     <?php include 'Modules/booking/View/navbarbooking.php'; ?>
     <?php endblock();
