@@ -48,7 +48,7 @@
 
                 var strid = this.id;
                 var arrayid = strid.split("_");
-                //alert("add note clicked " + arrayid[1]);
+                alert("add note clicked " + arrayid[1]);
                 showEditTissusForm(<?php echo $id_space ?>, arrayid[1]);
             });
     <?php

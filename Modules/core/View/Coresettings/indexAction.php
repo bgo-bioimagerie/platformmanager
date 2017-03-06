@@ -2,7 +2,7 @@
 
 <?php startblock('content') ?>
 <div class="container">
-    <div class="col-md-10 col-md-offset-1">
+    <div class="col-md-10 col-md-offset-1 pm-form">
         <div class="page-header">
             <h1>
                 <?php echo CoreTranslator::User_Settings($lang) ?>

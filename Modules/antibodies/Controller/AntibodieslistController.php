@@ -271,12 +271,12 @@ class AntibodieslistController extends CoresecureController {
         // Tissus table
         $modelTissus = new Tissus();
         $tissus = $modelTissus->getInfoForAntibody($id);
-        $tissusTable = $this->createTissusTable($tissus);
+        $tissusTable = $this->createTissusTable($id_space, $tissus);
 
         // Owner Table
         $modelOwner = new AcOwner();
         $owners = $modelOwner->getInfoForAntibody($id);
-        $ownersTable = $this->createOwnerTable($owners);
+        $ownersTable = $this->createOwnerTable($id_space, $owners);
 
         $tissusFormGenerator = new TissusForm($this->request, "tissusForm", "antibodiesedittissus/" . $id_space);
         $tissusFormGenerator->setSpace($id_space);
@@ -348,7 +348,7 @@ class AntibodieslistController extends CoresecureController {
         $this->redirect("anticorpsedit/" . $id_space . "/" . $id_antibody);
     }
 
-    protected function createTissusTable($data) {
+    protected function createTissusTable($id_space, $data) {
 
         $lang = $this->getLanguage();
 
@@ -367,11 +367,24 @@ class AntibodieslistController extends CoresecureController {
         );
 
         $table->addLineEditButton("edittissus", "id", true);
+        $table->addDeleteButton("deletetissus/".$id_space, "id", "ref_protocol");
         $tableHtml = $table->view($data, $headers);
         return $tableHtml;
     }
 
-    protected function createOwnerTable($data) {
+    public function deletetissusAction($id_space, $id_tissus){
+        
+        $modelTissus = new Tissus();
+        $tissus = $modelTissus->getTissusById($id_tissus);
+        
+        //echo 'remove tissus ' . $id_tissus . '<br/>';
+        
+        $modelTissus->delete($id_tissus);
+        
+        $this->redirect('anticorpsedit/'.$id_space.'/'.$tissus['id_anticorps']);
+    }
+    
+    protected function createOwnerTable($id_space, $data) {
 
         $lang = $this->getLanguage();
 
@@ -398,8 +411,17 @@ class AntibodieslistController extends CoresecureController {
         }
 
         $table->addLineEditButton("editowner", "id", true);
+        $table->addDeleteButton('deleteowner/'.$id_space, 'id', 'utilisateur');
         $tableHtml = $table->view($data, $headers);
         return $tableHtml;
+    }
+    
+    public function deleteownerAction($id_space, $id_owner){
+        $modelOwner = new AcOwner();
+        $owner = $modelOwner->get($id_owner);
+        $modelOwner->delete($id_owner);
+        
+        $this->redirect('anticorpsedit/'.$id_space.'/'.$owner['id_anticorps']);
     }
 
     protected function createEditForm($id_space, $id) {

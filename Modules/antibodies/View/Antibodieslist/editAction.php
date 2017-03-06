@@ -5,7 +5,7 @@
 
 <div class="col-md-12 pm-content">
     
-    <div class="col-md-12 pm-form">
+    <div class="col-md-12 pm-form-short">
         <?php if(isset($_SESSION["message"])){
         ?>
         <div class="alert alert-success" role="alert">
@@ -19,11 +19,11 @@
         <?php echo $form ?>
     </div>
     <div class="col-md-12 pm-content">
-        <div class="col-md-12 pm-table">
+        <div class="col-md-12 pm-table-short">
             <?php echo $tissusTable ?>
             <a class="btn btn-primary" id="addtissusbutton"><?php echo AntibodiesTranslator::addTissus($lang) ?></a>
         </div>
-        <div class="col-md-12 pm-table">
+        <div class="col-md-12 pm-table-short">
             <?php echo $ownersTable ?>
             <a class="btn btn-primary" id="addownerbutton"><?php echo AntibodiesTranslator::addOwner($lang) ?></a>
         
@@ -46,6 +46,6 @@
         <?php echo $formowner ?>
 </div> 
 
-<?php include 'Modules/antibodies/View/Antibodies/editscript.php';  ?>
+<?php include 'Modules/antibodies/View/Antibodieslist/editscript.php';  ?>
 
 <?php endblock();

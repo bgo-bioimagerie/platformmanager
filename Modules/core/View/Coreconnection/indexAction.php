@@ -23,7 +23,7 @@ Platform-Manager
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="container">
+<div class="col-md-12" style="background-color: #fff; height:100%">
     <div class="row">
         <!-- Title -->
         <div class="col-sm-12">

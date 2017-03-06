@@ -55,4 +55,9 @@ class AcOwner extends Model {
         }
         return $data;
     }
+    
+    public function delete($id){
+        $sql = "DELETE FROM ac_j_user_anticorps WHERE id=?";
+        $this->runRequest($sql, array($id));
+    }
 }
