@@ -4,9 +4,7 @@
 <?php startblock('content') ?>
 
 <div class="col-md-12 pm-table">
-    <div class="col-md-12 col-md-offset-1" id="pm-table">
-        <?php echo $tableHtml ?>
-    </div> 
-</div>
+    <?php echo $tableHtml ?>
+</div> 
 <?php
 endblock();

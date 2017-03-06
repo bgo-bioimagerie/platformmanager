@@ -3,8 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12" id="pm-content">
-<div class="col-md-12" id="pm-form">
+<div class="col-md-12 pm-form">
     
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
@@ -47,7 +46,6 @@
         
     <?php echo $form->htmlClose() ?>
     
-</div>
 </div>
 
 
