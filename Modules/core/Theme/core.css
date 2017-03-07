@@ -1,3 +1,8 @@
+body,html{
+    height: 100%;
+    background-color: #f1f1f1;
+}
+
 select {
     -moz-appearance: none;
     background: rgba(255, 255, 255, 255) url("dropdown.png") no-repeat scroll 100% center / 20px 13px !important;
