@@ -34,7 +34,7 @@ class ServicesController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
         if ($servicesuseproject == 1) {
-            $htmlprojet = file_get_contents("Modules/services/View/services/navbarproject.php");
+            $htmlprojet = file_get_contents("Modules/services/View/Services/navbarproject.php");
 
             $htmlprojet = str_replace("{{id_space}}", $id_space, $htmlprojet);
             $htmlprojet = str_replace("{{Opened_projects}}", ServicesTranslator::Opened_projects($lang), $htmlprojet);
@@ -48,7 +48,7 @@ class ServicesController extends CoresecureController {
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
         if ($servicesusecommand == 1) {
 
-            $htmlOrder = file_get_contents("Modules/services/View/services/navbarorder.php");
+            $htmlOrder = file_get_contents("Modules/services/View/Services/navbarorder.php");
 
             $htmlOrder = str_replace("{{id_space}}", $id_space, $htmlOrder);
             $htmlOrder = str_replace("{{Opened_orders}}", ServicesTranslator::Opened_orders($lang), $htmlOrder);
@@ -62,7 +62,7 @@ class ServicesController extends CoresecureController {
 
         $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
         if ($servicesusestock == 1) {
-            $htmlStock = file_get_contents("Modules/services/View/services/navbarstock.php");
+            $htmlStock = file_get_contents("Modules/services/View/Services/navbarstock.php");
 
             $htmlStock = str_replace("{{id_space}}", $id_space, $htmlStock);
             $htmlStock = str_replace("{{Stock}}", ServicesTranslator::Stock($lang), $htmlStock);
@@ -72,7 +72,7 @@ class ServicesController extends CoresecureController {
             $html .= $htmlStock;
         }
 
-        $htmlListing = file_get_contents("Modules/services/View/services/navbarlisting.php");
+        $htmlListing = file_get_contents("Modules/services/View/Services/navbarlisting.php");
 
         $htmlListing = str_replace("{{id_space}}", $id_space, $htmlListing);
         $htmlListing = str_replace("{{Listing}}", ServicesTranslator::Listing($lang), $htmlListing);

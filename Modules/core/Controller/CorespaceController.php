@@ -345,7 +345,7 @@ class CorespaceController extends CoresecureController {
                 $mainMenu .= '<ul class="dropdown-menu forAnimate" role="menu">';
 
                 $menuController = ucfirst($item["module"]) . 'Controller';
-                $fileMenuController = 'Modules/' . ucfirst($item["module"]) . '/Controller/' . $menuController . '.php';
+                $fileMenuController = 'Modules/' . $item["module"] . '/Controller/' . $menuController . '.php';
                 if (file_exists($fileMenuController)) {
                     require_once $fileMenuController;
                     $controller = new $menuController();
