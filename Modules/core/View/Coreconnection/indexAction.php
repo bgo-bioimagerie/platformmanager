@@ -48,7 +48,7 @@ Platform-Manager
             <div class="col-md-4">
             
             <?php }else{   ?>
-                <div class="col-md-4 col-md-offset-4">
+                <div class="col-xs-12 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
             <?php }   ?>    
                 
                 <div class="col-xs-12" style="height:100px;">
@@ -62,7 +62,7 @@ Platform-Manager
                             </div>
                     <?php endif; ?>
                 </div>
-                <div class="col-xs-12">    
+                <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">    
                     <br></br>
                     
                     <form class="form-signin" action="corelogin" method="post">
@@ -74,8 +74,9 @@ Platform-Manager
 
                 </div>
                 <br/>
-                <a href="mailto:<?php echo  $admin_email ?>" class="text-center new-account"><?php echo  CoreTranslator::Contact_the_administrator($language) ?></a>
-        
+                <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+                    <a href="mailto:<?php echo  $admin_email ?>" class="text-center new-account"><?php echo  CoreTranslator::Contact_the_administrator($language) ?></a>
+                </div>
             </div>
         </div> 
             </div> 
