@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
 <link rel='stylesheet' type='text/css' href='data/core/Theme/navbar-fixed-top.css' />
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/core.css' />
+<link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
 
 <?php endblock(); ?>
 <!-- body -->     
