@@ -18,7 +18,7 @@
         
         <?php echo $form ?>
     </div>
-    <div class="col-md-12 pm-content">
+    <div class="col-md-12">
         <div class="col-md-12 pm-table-short">
             <?php echo $tissusTable ?>
             <a class="btn btn-primary" id="addtissusbutton"><?php echo AntibodiesTranslator::addTissus($lang) ?></a>
@@ -26,7 +26,6 @@
         <div class="col-md-12 pm-table-short">
             <?php echo $ownersTable ?>
             <a class="btn btn-primary" id="addownerbutton"><?php echo AntibodiesTranslator::addOwner($lang) ?></a>
-        
         </div>
     </div>
     

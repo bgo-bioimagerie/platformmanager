@@ -14,7 +14,7 @@
     <?php endblock() ?>
             
 </head>
-<body>
+<body style="background-color: #f1f1f1;">
 
     <?php startblock('navbar') ?>
     <?php endblock() ?>

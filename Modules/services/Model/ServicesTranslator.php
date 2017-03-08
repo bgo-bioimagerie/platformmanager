@@ -674,5 +674,20 @@ class ServicesTranslator {
         }
         return "Title";
     }
+    
+    public static function servicesOrigin($lang) {
+        if ($lang == "fr") {
+            return "Origine";
+        }
+        return "Origin";
+    }
+    
+    public static function Edit_Origin($lang) {
+        if ($lang == "fr") {
+            return "Editer origin";
+        }
+        return "Edit origin";
+    }
+    
 
 }

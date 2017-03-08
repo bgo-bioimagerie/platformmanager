@@ -26,9 +26,11 @@ class SeProject extends Model {
 		`new_team` int(4) NOT NULL DEFAULT 1,
 		`new_project` int(4) NOT NULL DEFAULT 1,
 		`time_limit` varchar(100) NOT NULL DEFAULT '', 
+                `id_origin` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -148,6 +150,10 @@ class SeProject extends Model {
         return array("ids" => $ids, "names" => $names);
     }
     
+    public function setOrigin($id, $id_origin){
+        $sql = "UPDATE se_project SET id_origin=? WHERE id=?";
+        $this->runRequest($sql, array($id_origin, $id));
+    }
     
     public function setEntry($id_entry, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
         

@@ -8,7 +8,10 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
+require_once 'Modules/services/Model/SeOrigin.php';
+
 require_once 'Modules/ecosystem/Model/EcUser.php';
+require_once 'Modules/ecosystem/Model/EcBelonging.php';
 
 /**
  * 
@@ -104,6 +107,8 @@ class ServicesprojectsController extends CoresecureController {
 
         $table = new TableView();
         $table->setTitle($title, 3);
+        $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color"));
+
         $table->addLineEditButton("servicesprojectsheet/" . $id_space);
         $table->addDeleteButton("servicesprojectdelete/" . $id_space, "id", "id");
 
@@ -117,11 +122,34 @@ class ServicesprojectsController extends CoresecureController {
             "date_close" => ServicesTranslator::Closed_date($lang)
         );
 
+        $modelUser = new EcUser();
+        $modelUnit = new EcUnit();
+        $modelBelonging = new EcBelonging();
         for ($i = 0; $i < count($entriesArray); $i++) {
 
             $entriesArray[$i]["date_open"] = CoreTranslator::dateFromEn($entriesArray[$i]["date_open"], $lang);
             $entriesArray[$i]["date_close"] = CoreTranslator::dateFromEn($entriesArray[$i]["date_close"], $lang);
             $entriesArray[$i]["time_limit"] = CoreTranslator::dateFromEn($entriesArray[$i]["time_limit"], $lang);
+
+            // get the pricing color
+            $id_unit = $modelUser->getUnit($entriesArray[$i]["id_resp"]);
+            $id_belonging = $modelUnit->getBelonging($id_unit, $id_space);
+            $pricingInfo = $modelBelonging->getInfo($id_belonging);
+            $entriesArray[$i]["color"] = $pricingInfo["color"];
+
+            $entriesArray[$i]["time_color"] = "#ffffff";
+            if ($entriesArray[$i]["time_limit"] != "") {
+
+                if (strval($entriesArray[$i]["time_limit"]) != "0000-00-00") {
+                    $entriesArray[$i]["time_color"] = "#FFCC00";
+                }
+            }
+
+
+            $entriesArray[$i]["closed_color"] = "#ffffff";
+            if ($entriesArray[$i]["date_close"] != "0000-00-00") {
+                $entriesArray[$i]["closed_color"] = "#99CC00";
+            }
         }
         $tableHtml = $table->view($entriesArray, $headersArray);
 
@@ -199,6 +227,10 @@ class ServicesprojectsController extends CoresecureController {
         $form->addSelect("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
         $form->addSelect("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
 
+        $modelOrigin = new SeOrigin();
+        $origins = $modelOrigin->getForList($id_space);
+        $form->addSelect("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
+
         $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, CoreTranslator::dateFromEn($value["time_limit"], $lang));
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
         if ($id > 0) {
@@ -212,6 +244,7 @@ class ServicesprojectsController extends CoresecureController {
         if ($form->check()) {
 
             $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $modelProject->setOrigin($id, $this->request->getParameter("id_origin"));
 
 
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);

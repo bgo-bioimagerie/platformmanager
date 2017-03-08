@@ -69,8 +69,10 @@ class CoreupdateController extends Controller {
                 }
             }
         } catch (Exception $e) {
+            echo $e->getMessage();
             return $e->getMessage();
         }
+        echo "Success: update done for modules: " . $modulesInstalled;
         return "Success: update done for modules: " . $modulesInstalled;
     }
     
