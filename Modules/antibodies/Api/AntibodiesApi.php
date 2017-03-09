@@ -3,8 +3,8 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
-require_once 'Modules/Antibodies/Model/Tissus.php';
-require_once 'Modules/Antibodies/Model/AcOwner.php';
+require_once 'Modules/antibodies/Model/Tissus.php';
+require_once 'Modules/antibodies/Model/AcOwner.php';
 
 /**
  * 
