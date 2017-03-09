@@ -14,6 +14,8 @@ class StatisticsRouting extends Routing{
         $this->addRoute("statistics", "statistics", "statisticslist", "index", array("id_space"), array(""));
         
         // balance
+        $this->addRoute("statisticsglobal", "statisticsglobal", "statisticsglobal", "index", array("id_space"), array(""));
+        
         
         
     }

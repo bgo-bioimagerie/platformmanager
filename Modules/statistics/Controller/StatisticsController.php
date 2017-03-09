@@ -22,9 +22,12 @@ class StatisticsController extends CoresecureController {
 
     public function navbar($id_space) {
 
-        $html = "";
-
         $lang = $this->getLanguage();
+        $html = '<li>';
+        $html .= '<div class="inline pm-inline-div">';
+        $html .= '<a href="statisticsglobal/'.$id_space.'">' . StatisticsTranslator::StatisticsGlobal($lang) . '</a>';
+        $html .= '</div></li><br/>';
+
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
         $menus = $modelSpace->getAllSpaceMenusModules($id_space);
@@ -32,7 +35,7 @@ class StatisticsController extends CoresecureController {
         $urlss = array();
         $count = -1;
         foreach ($menus as $menu) {
-            
+
             $module = $menu["module"];
             $rootingFile = "Modules/" . $module . "/" . ucfirst($module) . "Statistics.php";
             //echo "rooting file = " . $rootingFile . "<br/>";
@@ -58,7 +61,7 @@ class StatisticsController extends CoresecureController {
                         $txt = $module;
                     }
 
-                    if ($count>0){
+                    if ($count > 0) {
                         $html .= '<br/>';
                     }
                     $html .= '<li>';

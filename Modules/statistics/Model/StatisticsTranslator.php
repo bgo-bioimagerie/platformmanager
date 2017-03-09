@@ -59,4 +59,33 @@ class StatisticsTranslator {
         return "Booking balance";
     }
     
+    public static function StatisticsGlobal($lang = "") {
+        if ($lang == "fr") {
+            return "Bilan global";
+        }
+        return "Global balance";
+    }
+    
+    public static function Period_begining($lang = "") {
+        if ($lang == "fr") {
+            return "Début période";
+        }
+        return "Period begining";
+    }
+    
+    public static function Period_end($lang = "") {
+        if ($lang == "fr") {
+            return "Fin période";
+        }
+        return "Period end";
+    }
+    
+    public static function Exclude_colorcodes($lang = "") {
+        if ($lang == "fr") {
+            return "Exclure les codes couleur";
+        }
+        return "Exclude color codes";
+    }
+    
+    
  }

@@ -53,7 +53,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, "");
         $form->addDate("end_period", ServicesTranslator::End_period($lang), true, "");
 
-        $form->setValidationButton("Ok", "servicesstatisticsproject/".$id_space);
+        $form->setValidationButton("Ok", "servicesstatisticsproject/" . $id_space);
 
         $stats = "";
         if ($form->check()) {
@@ -67,15 +67,18 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $formHtml = $form->getHtml($lang);
         // view
         $this->render(array(
-            "id_space" => $id_space, 
+            "id_space" => $id_space,
             "lang" => $lang,
             'formHtml' => $formHtml,
             'stats' => $stats
         ));
-        
     }
 
-    private function generateBalance($id_space, $periodStart, $periodEnd) {
+    public function getBalance($periodStart, $periodEnd, $id_space) {
+        return $this->generateBalance($id_space, $periodStart, $periodEnd, false);
+    }
+
+    private function generateBalance($id_space, $periodStart, $periodEnd, $render = true) {
 
         //echo "not yet implemented <br/> " . $periodStart . "<br/>" . $periodEnd . "<br/>";
         // get all the opened projects informations
@@ -96,10 +99,10 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
 
 
-        $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats);
+        return $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $render);
     }
 
-    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats) {
+    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $render) {
 
         $modelUser = new EcUser();
         $modelUnit = new EcUnit();
@@ -307,7 +310,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         $curentLine = 1;
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        
+
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
@@ -320,7 +323,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
-            
+
             //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
@@ -346,8 +349,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
-        
-         // ////////////////////////////////////////////////////
+
+        // ////////////////////////////////////////////////////
         //                  Stats
         // ////////////////////////////////////////////////////
 
@@ -393,9 +396,9 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
-        
-        
-        
+
+
+
         // ////////////////////////////////////////////////////
         //                Services billed details
         // ////////////////////////////////////////////////////
@@ -487,8 +490,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
 
-        
-       
+
+
         // ////////////////////////////////////////////////////
         //                Services details
         // ////////////////////////////////////////////////////
@@ -574,7 +577,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 $pos = $this->findItemPos2($items, $entry["id"]);
                 //echo "id = " . $entry["id"] . " pos = " . $pos . "<br/>";
                 if ($pos > 0 && $entry["pos"] > 0) {
-                   
+
                     $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
                     $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
@@ -613,15 +616,19 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
 
+        if ($render) {
 
-        // write excel file
-        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+            // write excel file
+            $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
 
-        //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="platorm-manager-projet-bilan.xlsx"');
-        header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
+            //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="platorm-manager-projet-bilan.xlsx"');
+            header('Cache-Control: max-age=0');
+            $objWriter->save('php://output');
+        } else {
+            return $objPHPExcel;
+        }
     }
 
     private function findItemPos($items, $id) {
@@ -634,7 +641,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         }
         return 0;
     }
-    
+
     private function findItemPos2($items, $id) {
         $c = 0;
         foreach ($items as $item) {

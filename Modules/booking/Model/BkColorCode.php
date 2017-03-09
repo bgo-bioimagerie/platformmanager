@@ -91,6 +91,20 @@ class BkColorCode extends Model {
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
+    
+    public function getForList($id_space) {
+        $sql = "SELECT * FROM bk_color_codes WHERE id_space=?";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $names = array();
+        $ids = array();
+        $names[] = "";
+        $ids[] = 0;
+        foreach($data as $d){
+            $names[] = $d['name'];
+            $ids[] = $d['id'];
+        }
+        return array('names' => $names, 'ids' => $ids);
+    }
 
     /**
      * get the names of all the SyColorCodes

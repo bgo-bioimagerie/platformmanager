@@ -394,4 +394,186 @@ class BookingstatisticsController extends CoresecureController {
         echo $content;
     }
 
+    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+
+        $dateBeginArray = explode("-", $dateBegin);
+        $month_start = $dateBeginArray[1];
+        $year_start = $dateBeginArray[0];
+        $dateEndArray = explode("-", $dateEnd);
+        $month_end = $dateEndArray[1];
+        $year_end = $dateEndArray[0];
+
+        // get data
+        $modelGraph = new BkGraph();
+        $data = $modelGraph->getStatReservationPerMonth($month_start, $year_start, $month_end, $year_end, $id_space, $excludeColorCode);
+
+        $objWorkSheet = $objPHPExcel->createSheet();
+        $lang = $this->getLanguage();
+        $objWorkSheet->setTitle(BookingTranslator::Reservation_counting($lang));
+        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
+
+        $curentLine = 1;
+        $objWorkSheet->SetCellValue('A' . $curentLine, BookingTranslator::Month($lang));
+        $objWorkSheet->SetCellValue('B' . $curentLine, BookingTranslator::Reservation_number($lang));
+        $objWorkSheet->SetCellValue('C' . $curentLine, BookingTranslator::Reservation_time($lang));
+
+        $style = $this->getStylesheet();
+        $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+
+        $dates = $data['dates'];
+        $counting = $data['count'];
+        $time = $data['time'];
+        
+        for ($i = 0; $i < count($data['dates']); $i++) {
+            $curentLine++;
+            $objWorkSheet->SetCellValue('A' . $curentLine, $dates[$i]);
+            $objWorkSheet->SetCellValue('B' . $curentLine, $counting[$i]);
+            $objWorkSheet->SetCellValue('C' . $curentLine, $time[$i]);
+
+            $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        }
+        return $objPHPExcel;
+    }
+
+    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+     
+        $dateBeginArray = explode("-", $dateBegin);
+        $month_start = $dateBeginArray[1];
+        $year_start = $dateBeginArray[0];
+        $dateEndArray = explode("-", $dateEnd);
+        $month_end = $dateEndArray[1];
+        $year_end = $dateEndArray[0];
+
+        // get data
+        $modelGraph = new BkGraph();
+        $data = $modelGraph->getStatReservationPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode);
+
+        $objWorkSheet = $objPHPExcel->createSheet();
+        $lang = $this->getLanguage();
+        $objWorkSheet->setTitle(BookingTranslator::Reservation_counting($lang));
+        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
+
+        $curentLine = 1;
+        $objWorkSheet->SetCellValue('A' . $curentLine, BookingTranslator::Resource($lang));
+        $objWorkSheet->SetCellValue('B' . $curentLine, BookingTranslator::Reservation_number($lang));
+        $objWorkSheet->SetCellValue('C' . $curentLine, BookingTranslator::Reservation_time($lang));
+
+        $style = $this->getStylesheet();
+        $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+
+        $resources = $data['resource'];
+        $counting = $data['count'];
+        $time = $data['time'];
+        
+        for ($i = 0; $i < count($resources); $i++) {
+            $curentLine++;
+            $objWorkSheet->SetCellValue('A' . $curentLine, $resources[$i]);
+            $objWorkSheet->SetCellValue('B' . $curentLine, $counting[$i]);
+            $objWorkSheet->SetCellValue('C' . $curentLine, $time[$i]);
+
+            $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        }
+        return $objPHPExcel;
+        
+    }
+
+    public function statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+        
+    }
+
+    public function statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+        
+    }
+
+    protected function getStylesheet() {
+
+        $styleBorderedCell = array(
+            'font' => array(
+                'name' => 'Times',
+                'size' => 10,
+                'bold' => false,
+                'color' => array(
+                    'rgb' => '000000'
+                ),
+            ),
+            'borders' => array(
+                'outline' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => array(
+                        'rgb' => '000000'),
+                ),
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'startcolor' => array(
+                    'rgb' => 'ffffff',
+                ),
+            ),
+            'alignment' => array(
+                'wrap' => false,
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+            ),
+        );
+
+        $styleBorderedCenteredCell = array(
+            'font' => array(
+                'name' => 'Times',
+                'size' => 10,
+                'bold' => false,
+                'color' => array(
+                    'rgb' => '000000'
+                ),
+            ),
+            'borders' => array(
+                'outline' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => array(
+                        'rgb' => '000000'),
+                ),
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'startcolor' => array(
+                    'rgb' => 'ffffff',
+                ),
+            ),
+            'alignment' => array(
+                'wrap' => false,
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            ),
+        );
+
+        return array('styleBorderedCell' => $styleBorderedCell,
+            'styleBorderedCenteredCell' => $styleBorderedCenteredCell);
+    }
+
+    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+
+        if (!$objPHPExcel) {
+            $objPHPExcel = new PHPExcel();
+
+            // Set properties
+            $objPHPExcel->getProperties()->setCreator("Platform-Manager");
+            $objPHPExcel->getProperties()->setLastModifiedBy("Platform-Manager");
+            $objPHPExcel->getProperties()->setTitle("Booking balance sheet");
+            $objPHPExcel->getProperties()->setSubject("Booking balance sheet");
+            $objPHPExcel->getProperties()->setDescription("");
+        }
+
+        $objPHPExcel = $this->statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        $objPHPExcel = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        //$objPHPExcel = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        //$objPHPExcel = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+
+        return $objPHPExcel;
+    }
+
 }

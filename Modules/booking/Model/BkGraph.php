@@ -10,6 +10,99 @@ require_once 'Modules/booking/Model/BkNightWE.php';
  */
 class BkGraph extends Model {
 
+    public function getStatReservationPerMonth($month_start, $year_start, $month_end, $year_end, $id_space, $exclude_color) {
+
+        $in_color = "";
+        $pass = 0;
+        foreach ($exclude_color as $col) {
+            $in_color .= $col . ",";
+            $pass++;
+        }
+        if ($pass > 0) {
+            $in_color = substr($in_color, 0, -1);
+        }
+
+        $countResa = array();
+        $timeResa = array();
+        for ($y = $year_start; $y <= $year_end; $y++) {
+            // start month
+            $start_month = 1;
+            if ($y == $year_start) {
+                $start_month = $month_start;
+            }
+            // end month
+            $stop_month = 12;
+            if ($y == $year_end) {
+                $stop_month = $month_end;
+            }
+            for ($m = $start_month; $m <= $stop_month; $m++) {
+
+                $dstart = mktime(0, 0, 0, $m, 1, $y); // Le premier jour du mois en cours
+                $dend = mktime(0, 0, 0, $m + 1, 1, $y); // Le 0eme jour du mois suivant == le dernier jour du mois en cour
+
+                $sql = 'SELECT * FROM bk_calendar_entry WHERE resource_id IN (SELECT id FROM re_info WHERE id_space=?) AND start_time >=' . $dstart . ' AND end_time <=' . $dend;
+                if ($in_color != "") {
+                    $sql .= ' AND color_type_id NOT IN (' . $in_color . ')';
+                }
+                //echo 'sql = '.$sql . '<br/>';
+                $req = $this->runRequest($sql, array($id_space));
+                $countResa[] = $req->rowCount();
+                $data = $req->fetchAll();
+                $timeSec = 0;
+                foreach ($data as $resa) {
+                    $timeSec += $resa['end_time'] - $resa['start_time'];
+                }
+                $timeResa[] = round($timeSec / 3600);
+                $dates[] = date('M Y', $dstart);
+            }
+        }
+        return array('count' => $countResa, 'time' => $timeResa, 'dates' => $dates);
+    }
+
+    public function getStatReservationPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode) {
+
+        $in_color = "";
+        $pass = 0;
+        foreach ($excludeColorCode as $col) {
+            $in_color .= $col . ",";
+            $pass++;
+        }
+        if ($pass > 0) {
+            $in_color = substr($in_color, 0, -1);
+        }
+
+        $sql = "SELECT * FROM re_info WHERE id_space=?";
+        $resourcesIds = $this->runRequest($sql, array($id_space))->fetchAll();
+
+        $countResa = array();
+        $timeResa = array();
+        $resourcesNames = array();
+
+        $dateBeginArray = explode('-', $dateBegin);
+        $dateEndArray = explode('-', $dateEnd);
+        $dstart = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]); // Le premier jour du mois en cours
+        $dend = mktime(0, 0, 0, $dateEndArray[1], $dateEndArray[2], $dateEndArray[0]); // Le 0eme jour du mois suivant == le dernier jour du mois en cour
+
+        foreach ($resourcesIds as $res) {
+
+            $sql = 'SELECT * FROM bk_calendar_entry WHERE resource_id=? AND start_time >=' . $dstart . ' AND end_time <=' . $dend;
+            if ($in_color != "") {
+                $sql .= ' AND color_type_id NOT IN (' . $in_color . ')';
+            }
+            //echo 'sql = '.$sql . '<br/>';
+            $req = $this->runRequest($sql, array($res['id']));
+            $countResa[] = $req->rowCount();
+            $data = $req->fetchAll();
+            $timeSec = 0;
+            foreach ($data as $resa) {
+                $timeSec += $resa['end_time'] - $resa['start_time'];
+            }
+            $timeResa[] = round($timeSec / 3600);
+            $resourcesNames[] = $res['name'];
+        }
+        return array('count' => $countResa, 'time' => $timeResa, 'resource' => $resourcesNames);
+    }
+
     /**
      * Generate a graph containing the number of reservation per month
      * @param unknown $year
@@ -237,10 +330,10 @@ class BkGraph extends Model {
             $timeResaNight = 0.0;
             $timeResaWe = 0.0;
             foreach ($resas as $resa) {
-                    $timeResaArray = $this->calculateReservationTime($resa["start_time"], $resa["end_time"], $night_start, $night_end, $we_array);
-                    $timeResa += $timeResaArray[0];
-                    $timeResaNight += $timeResaArray[1];
-                    $timeResaWe += $timeResaArray[2];
+                $timeResaArray = $this->calculateReservationTime($resa["start_time"], $resa["end_time"], $night_start, $night_end, $we_array);
+                $timeResa += $timeResaArray[0];
+                $timeResaNight += $timeResaArray[1];
+                $timeResaWe += $timeResaArray[2];
             }
             $numMachinesFormes[$i][1] = $timeResa;
             $numMachinesFormes[$i][2] = $timeResaNight;

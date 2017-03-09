@@ -1241,7 +1241,19 @@ class BookingTranslator {
         }
         return "Ask to send email when cancel a booking";
     }
-            
-            
-
+           
+    public static function Reservation_counting($lang){
+        if ($lang == "fr") {
+            return "Nombre de réservations";
+        }
+        return "Reservation counting";
+    }
+    
+    public static function Reservation_time($lang){
+        if ($lang == "fr") {
+            return "Temps de réservation (en heures)";
+        }
+        return "Reservation time (hours)";
+    }
+    
 }
