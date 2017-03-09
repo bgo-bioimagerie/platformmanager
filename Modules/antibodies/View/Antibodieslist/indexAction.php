@@ -285,11 +285,13 @@
                                     $printImage = true;
                                     if (!file_exists($imageFile) || is_dir($imageFile)) {
                                         $printImage = false;
-                                        $imageFile = "Modules/antibodies/Theme/images_icon.png";
+                                        //$imageFile = "Modules/antibodies/Theme/images_icon.png";
                                     }
                                     if ($printImage) {
                                         ?>
-                                        <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
+                                        <a href="<?php echo $imageFile?>" itemprop="contentUrl" data-size="<?php echo $width?>x<?php echo $height?>">
+                                            <img src="<?php echo $imageFile?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
+                                        </a>
                                     <?php
                                 }
                             }
