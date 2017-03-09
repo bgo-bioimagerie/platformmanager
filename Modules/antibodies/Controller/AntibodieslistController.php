@@ -68,7 +68,7 @@ class AntibodieslistController extends CoresecureController {
         ));
     }
 
-    public function anticorpscsv() {
+    public function anticorpscsvAction($id_space) {
         // database query
         $anticorpsModel = new Anticorps();
         $anticorpsArray = $anticorpsModel->getAnticorpsInfo("no_h2p2");

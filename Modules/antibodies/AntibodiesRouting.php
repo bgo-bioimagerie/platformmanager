@@ -22,6 +22,8 @@ class AntibodiesRouting extends Routing{
         $this->addRoute("antibodiesedittissus", "antibodiesedittissus", "antibodieslist", "edittissus", array("id_space"), array(""));
         $this->addRoute("antibodieseditowner", "antibodieseditowner", "antibodieslist", "editowner", array("id_space"), array(""));
         
+        $this->addRoute("anticorpscsv", "anticorpscsv", "antibodieslist", "anticorpscsv", array("id_space"), array(""));
+        
         
         // acii
         $this->addRoute("acii", "acii", "acii", "index", array("id_space"), array(""));

@@ -112,7 +112,7 @@
     </div>
     <div class="col-md-2 col-md-offset-10">
         <br/>
-        <button type="button" onclick="location.href = 'anticorps/anticorpscsv'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+        <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
     </div>	
     <div class="col-md-12">
         <div class="page-header" style="margin-top: -20px;">
