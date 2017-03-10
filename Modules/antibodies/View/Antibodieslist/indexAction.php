@@ -3,237 +3,43 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<head>
-
-    <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="externals/fixedHeaderTable/dataTables.bootstrap.css">
-    <link rel="stylesheet" href="externals/fixedHeaderTable/dataTables.fixedHeader.css">
-
-    <script src="externals/jquery-1.11.1.js"></script>
-    <script src="externals/fixedHeaderTable/jquery.dataTables.js"></script>
-    <script src="externals/fixedHeaderTable/dataTables.fixedHeader.min.js"></script>
-    <script src="externals/fixedHeaderTable/dataTables.bootstrap.js"></script>
-
-    <style>
-
-        div.FixedHeader_Cloned table { margin: 0 !important }
-
-        table{
-            white-space: nowrap;
-        }
-
-        thead tr{
-            height: 50px;
-        }
-
-        .bs-docs-header {
-            position: relative;
-            color: #cdbfe3;
-            text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
-            background-color: #337ab7;
-        }
-
-        #navlink {
-            color: #cdbfe3;
-            text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
-        }
-
-        .well {
-            color: #cdbfe3;
-            background-color: #337ab7;
-            border: none;
-            margin-bottom:0px;
-        }
-
-        legend {
-            color: #ffffff;
-        }
-    </style>
-
-    <script>
-        $(document).ready(function () {
-            $('#example').dataTable({
-                "aoColumns": [
-                    {"bSearchable": false},
-                    null,
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false},
-                    {"bSearchable": false}
-                ],
-                "lengthMenu": [[100, 200, 300, -1], [100, 200, 300, "All"]]
-            }
-            );
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            var table = $('#example').DataTable();
-            new $.fn.dataTable.FixedHeader(table, {
-                alwaysCloneTop: true
-            });
-
-        });
-    </script>
-
-
-
-</head>
+<?php
+$js = file_get_contents("Framework/TableScript.php");
+$str1 = str_replace("numFixedCol", 3, $js);
+echo str_replace("tableID", 'example', $str1);
+?>
 
 <div class="col-md-12 pm-table">
 
     <div class="col-md-12">
-        <div class="dropdown">
-            <button id="dLabel" type="button" class="btn  btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <?php echo 'Menu ' . AntibodiesTranslator::antibodies($lang) ?>
-            </button>
-            <div class="dropdown-menu col-md-12" aria-labelledby="dLabel" style="background-color: transparent; border: none; box-shadow:none;">
-                <?php
-                include 'Modules/antibodies/View/navbar.php';
-                ?>
+            
+            <div class="col-md-10">
+                <div class="dropdown">
+                    <button id="dLabel" type="button" class="btn  btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <?php echo 'Menu ' . AntibodiesTranslator::antibodies($lang) ?>
+                    </button>
+                    <div class="dropdown-menu col-md-12" aria-labelledby="dLabel" style="background-color: transparent; border: none; box-shadow:none;">
+                        <?php
+                        include 'Modules/antibodies/View/navbar.php';
+                        ?>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-2">
+                <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
             </div>
         </div>
-    </div>
-    <div class="col-md-2 col-md-offset-10">
-        <br/>
-        <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
-    </div>	
+    <br/>
     <div class="col-md-12">
         <div class="page-header" style="margin-top: -20px;">
             <h1>
                 Anticorps<br> <small></small>
             </h1>
         </div>
+        
 
-        <div class="col-md-12">
-            <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
-                  method="post">
-
-                <?php
-                if (!isset($searchName)) {
-                    $searchName = "";
-                }
-                if (!isset($searchNoH2P2)) {
-                    $searchNoH2P2 = "";
-                }
-                if (!isset($searchSource)) {
-                    $searchSource = "";
-                }
-                if (!isset($searchCible)) {
-                    $searchCible = "";
-                }
-                if (!isset($searchValide)) {
-                    $searchValide = "";
-                }
-                if (!isset($searchResp)) {
-                    $searchResp = "";
-                }
-                if (!isset($searchColumn)) {
-                    $searchColumn = "";
-                }
-                if (!isset($searchCom)) {
-                    $searchCom = "";
-                }
-                ?>
-                <div class="col-md-12">
-                    <label class="control-label col-md-1">Recherche Avancée:</label>
-
-                    <div class="col-md-9">
-                        <label class="control-label col-md-1" style="margin:0px;">Nom:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchName" type="text" name="searchName" value="<?php echo $searchName ?>"
-                                   />
-                        </div>
-
-                        <label for="inputEmail" class="control-label col-md-1">No H2P2:</label>
-                        <div class="col-md-2">
-                            <input class="form-control" id="searchNoH2P2" type="text" name="searchNoH2P2" value="<?php echo $searchNoH2P2 ?>"
-                                   />
-                        </div>
-                        <label for="inputEmail" class="control-label col-md-2">Source:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchSource" type="text" name="searchSource" value="<?php echo $searchSource ?>"
-                                   />
-                        </div>
-                    </div>
-                    <label class="control-label col-md-2"></label>
-                </div>
-
-                <div class="col-md-12">
-                    <label class="control-label col-md-1"></label>
-                    <div class="col-md-9">	
-                        <label for="inputEmail" class="control-label col-md-1">Tissu cible:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
-                                   />
-                        </div>
-
-                        <label for="inputEmail" class="control-label col-md-1">Statut:</label>
-                        <div class="col-md-2">
-                            <select class="form-control" id="searchValide" name="searchValide">
-                                <OPTION value="0" <?php if ($searchColumn == "0") {
-                    echo $selected;
-                } ?> >  </OPTION>
-                                <OPTION value="1" <?php if ($searchValide == "1") {
-                    echo $selected;
-                } ?> > Validé </OPTION>
-                                <OPTION value="2" <?php if ($searchValide == "2") {
-                    echo $selected;
-                } ?> > Non validé </OPTION>
-                                <OPTION value="3" <?php if ($searchValide == "3") {
-                    echo $selected;
-                } ?> > Non testé </OPTION>
-                            </select>
-                        </div>
-
-                        <label for="inputEmail" class="control-label col-md-2">Propriétaire:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchResp" type="text" name="searchResp" value="<?php echo $searchResp ?>"
-                                   />
-                        </div>
-                        <label class="control-label col-md-2"></label>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <label class="control-label col-md-1"></label>
-                    <div class="col-md-9">
-                        <div class="col-md-11">	
-                            <label class="control-label col-md-1">Commentaire:</label>
-                            <div class="col-md-4">
-                                <input class="form-control" id="searchCom" type="text" name="searchCom" value="<?php echo $searchCom ?>"
-                                       />
-                            </div>
-                        </div>	
-                    </div>
-
-                    <div class="col-md-2" id="button-div">
-                        <input type="submit" class="btn btn-primary" value="Rechercher" />
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="col-md-12" style="margin-top: 15px;">
-            <p></p><br/>
-        </div>
-
-        <div class="col-xs-12"  style="margin-left:-30px;">
+        <div class="col-xs-12">
             <table id="example" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
                 <thead>	 
                     <tr>
@@ -274,7 +80,7 @@
                 </thead>
 
                 <tbody>
-                            <?php foreach ($anticorpsArray as $anticorps) : ?> 
+                    <?php foreach ($anticorpsArray as $anticorps) : ?> 
 
                         <tr>
                             <td width="10%" class="text-left">
@@ -286,24 +92,38 @@
                                     if (!file_exists($imageFile) || is_dir($imageFile)) {
                                         $printImage = false;
                                         //$imageFile = "Modules/antibodies/Theme/images_icon.png";
+                                    } else {
+                                        list($width, $height, $type, $attr) = getimagesize($imageFile);
                                     }
                                     if ($printImage) {
                                         ?>
-                                        <a href="<?php echo $imageFile?>" itemprop="contentUrl" data-size="<?php echo $width?>x<?php echo $height?>">
-                                            <img src="<?php echo $imageFile?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
+                                        <a id="imgview_<?php echo $tissus["id"] ?>" >
+                                            <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
                                         </a>
-                                    <?php
+                                        <script>
+                                            $(document).ready(function () {
+                                                $('#imgview_<?php echo $tissus["id"] ?>').on('click', function () {
+
+                                                    var img = "<img src='<?php echo $imageFile ?>' width='100%'  />";
+
+                                                    $('#imagedivcontent').html(img);
+                                                    $('#imagepopup_box').show();
+                                                    $('#hider').show();
+                                                });
+                                            });
+                                        </script>
+                                        <?php
+                                    }
                                 }
+                                ?>
+                            </td>
+                            <?php
+                            $anticorpsId = $this->clean($anticorps['id']);
+                            $isCatalogue = "";
+                            if ($anticorps['export_catalog'] == 1) {
+                                $isCatalogue = " (c)";
                             }
                             ?>
-                            </td>
-    <?php
-    $anticorpsId = $this->clean($anticorps['id']);
-    $isCatalogue = "";
-    if ($anticorps['export_catalog'] == 1) {
-        $isCatalogue = " (c)";
-    }
-    ?>
 
                             <td style="width:1em;" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2'] . $isCatalogue); ?></a></td>
                             <td width="5%" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
@@ -520,7 +340,7 @@
                                 ?>
                             </td>
                         </tr>
-<?php endforeach; ?>
+                    <?php endforeach; ?>
 
                 </tbody>
 
@@ -528,6 +348,33 @@
         </div>
     </div>
 </div>
+
+
+<!--  *************  -->
+<!--  Popup windows  -->
+<!--  *************  -->
+<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
+<div id="hider" class="col-xs-12"></div> 
+<div id="imagepopup_box" class="pm_popup_box_full" style="display: none;">
+    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="tissusbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a></div>
+    <div id="imagedivcontent">
+
+    </div>    
+</div> 
+
+<script>
+    $(document).ready(function () {
+
+        $("#hider").hide();
+        $("#imagepopup_box").hide();
+
+        $("#tissusbuttonclose").click(function () {
+            $("#hider").hide();
+            $('#imagepopup_box').hide();
+        });
+
+    });
+</script>
 
 <?php
 endblock();
