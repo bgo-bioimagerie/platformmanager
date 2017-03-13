@@ -1,0 +1,379 @@
+<?php
+
+require_once 'Framework/Controller.php';
+require_once 'Framework/Form.php';
+require_once 'Framework/TableView.php';
+
+require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/quote/Model/QuoteTranslator.php';
+
+require_once 'Modules/quote/Model/Quote.php';
+require_once 'Modules/quote/Model/QuoteItem.php';
+
+require_once 'Modules/ecosystem/Model/EcBelonging.php';
+require_once 'Modules/ecosystem/Model/EcUser.php';
+require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
+
+require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/booking/Model/BkPrice.php';
+
+require_once 'Modules/services/Model/SeService.php';
+require_once 'Modules/services/Model/SePrice.php';
+
+require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+
+/**
+ * 
+ * @author sprigent
+ * Controller for the home page
+ */
+class QuotelistController extends CoresecureController {
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        parent::__construct();
+        //$this->checkAuthorizationMenu("quote");
+        $_SESSION["openedNav"] = "quote";
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Controller::indexAction()
+     */
+    public function indexAction($id_space) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $model = new Quote();
+        $modelBel = new EcBelonging();
+        $modelUser = new EcUser();
+        $modelUnit = new EcUnit();
+        $data = $model->getAll($id_space);
+        for ($i = 0; $i < count($data); $i++) {
+            if ($data[$i]["id_user"] > 0) {
+                $data[$i]["recipient"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
+                $resps = $modelUser->getUserResponsibles($data[$i]["id_user"]);
+                if (count($resps) > 0) {
+                    $unitID = $modelUser->getUnit($resps[0]['id_resp']);
+                    $data[$i]["address"] = $modelUnit->getAdress($unitID);
+                    $data[$i]["id_belonging"] = $modelUnit->getBelonging($unitID, $id_space);
+                }
+            }
+            $data[$i]["belonging"] = $modelBel->getName($data[$i]["id_belonging"]);
+            $data[$i]["date_open"] = CoreTranslator::dateFromEn($data[$i]["date_open"], $lang);
+            $data[$i]["date_last_modified"] = CoreTranslator::dateFromEn($data[$i]["date_last_modified"], $lang);
+        }
+
+        $table = new TableView();
+        $table->setTitle(QuoteTranslator::Quotes($lang));
+        $table->addLineEditButton("quoteedit/" . $id_space);
+        $table->addDeleteButton("quotedelete/" . $id_space, "id", "id");
+        $tableHtml = $table->view($data, array("id" => "ID",
+            "recipient" => QuoteTranslator::Recipient($lang),
+            "address" => CoreTranslator::Address($lang),
+            "belonging" => CoreTranslator::Belonging($lang),
+            "date_open" => QuoteTranslator::DateCreated($lang),
+            "date_last_modified" => QuoteTranslator::DateLastModified($lang)
+        ));
+
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+    }
+
+    public function editAction($id_space, $id) {
+        $modelQuote = new Quote();
+        $info = $modelQuote->get($id);
+
+        if ($info["id_user"] > 0) {
+            $this->editexistinguserAction($id_space, $id);
+        } else {
+            $this->editnewuserAction($id_space, $id);
+        }
+    }
+
+    public function editexistinguserAction($id_space, $id) {
+
+        $lang = $this->getLanguage();
+
+        // items table
+        if ($id > 0) {
+            $tableHtml = $this->createItemsTable($id);
+        } else {
+            $tableHtml = "";
+        }
+
+        // information form
+        $modelQuote = new Quote();
+        $info = $modelQuote->get($id);
+        $modelQuoteitem = new QuoteItem();
+        $items = $modelQuoteitem->getAll($id);
+
+        $form = new Form($this->request, "editexistinguserForm");
+
+        if ($tableHtml != "") {
+            $form->addSeparator2(QuoteTranslator::Description($lang));
+        }
+
+        $modelUser = new EcUser();
+        $users = $modelUser->getAcivesForSelect("name");
+        $form->addSelect('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
+
+        if ($id > 0) {
+            $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled');
+            $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
+        } else {
+            $form->addHidden('date_open', date('Y-m-d'));
+        }
+
+        $form->setButtonsWidth(2, 10);
+        $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
+
+        if ($form->check()) {
+            $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'), CoreTranslator::dateToEn($form->getParameter('date_open'), $lang)
+            );
+            $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
+            $this->redirect("quoteuser/" . $id_space . "/" . $id);
+            return;
+        }
+
+        $formitemHtml = $this->createItemForm($id_space);
+
+        $this->render(array("id_space" => $id_space, 'id_quote' => $id, "lang" => $lang,
+            "formHtml" => $form->getHtml($lang), "tableHtml" => $tableHtml,
+            'items' => $items, 'formitemHtml' => $formitemHtml), 'editexistinguserAction');
+    }
+
+    protected function createItemForm($id_space) {
+
+        $lang = $this->getLanguage();
+        $form = new Form($this->request, "createItemForm");
+        $form->setTitle(QuoteTranslator::FormItem($lang));
+
+        $form->addHidden("id");
+        $form->addHidden("id_quote");
+
+        $modelItem = new QuoteItem();
+        $itemslist = $modelItem->getList($id_space);
+
+        $form->addSelect('id_item', QuoteTranslator::Presta($lang), $itemslist["names"], $itemslist["ids"]);
+        $form->addText("quantity", QuoteTranslator::Quantity($lang), true);
+        $form->addTextArea("comment", QuoteTranslator::Comment($lang));
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "quoteedititem/" . $id_space);
+        return $form->getHtml($lang);
+    }
+
+    protected function createItemsTable($id_quote) {
+
+        $lang = $this->getLanguage();
+
+        $modelQuoteItem = new QuoteItem();
+        $modelResource = new ResourceInfo();
+        $modelServices = new SeService();
+        $items = $modelQuoteItem->getAll($id_quote);
+        for ($i = 0; $i < count($items); $i++) {
+            if ($items[$i]["module"] == "booking") {
+                $items[$i]["name"] = $modelResource->getName($items[$i]["id_content"]);
+            }
+            if ($items[$i]["module"] == "services") {
+                $items[$i]["name"] = $modelServices->getItemName($items[$i]["id_content"]);
+            }
+        }
+        $headers = array(
+            "name" => CoreTranslator::Name($lang),
+            "quantity" => QuoteTranslator::Quantity($lang),
+            "comment" => QuoteTranslator::Comment($lang),
+        );
+
+
+        $table = new TableView();
+        $table->addLineEditButton("edititem", 'id', true);
+        $table->addDeleteButton("quoteitemdelete");
+        return $table->view($items, $headers);
+    }
+
+    public function editnewuserAction($id_space, $id) {
+
+        $lang = $this->getLanguage();
+
+        // items table
+        if ($id > 0) {
+            $tableHtml = $this->createItemsTable($id);
+        } else {
+            $tableHtml = "";
+        }
+
+        $modelQuote = new Quote();
+        $info = $modelQuote->get($id);
+        $modelQuoteitem = new QuoteItem();
+        $items = $modelQuoteitem->getAll($id);
+
+        $form = new Form($this->request, "editexistinguserForm");
+
+        if ($tableHtml != "") {
+            $form->setTitle(QuoteTranslator::Description($lang));
+        }
+
+        $form->addText("recipient", QuoteTranslator::Recipient($lang), true, $info['recipient']);
+        $form->addTextArea("address", QuoteTranslator::Address($lang), true, $info['address']);
+
+
+        $belModel = new EcBelonging();
+        $bel = $belModel->getForList($id_space);
+        $form->addSelect('id_belonging', EcosystemTranslator::Belonging($lang), $bel["names"], $bel["ids"], $info['id_belonging']);
+        if ($id > 0) {
+            $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled', $info['date_open']);
+            $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
+        } else {
+            $form->addHidden('date_open', date('Y-m-d'));
+        }
+        $form->setButtonsWidth(2, 10);
+        $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
+        if ($form->check()) {
+            $id = $modelQuote->set($id, $id_space, $form->getParameter('recipient'), $form->getParameter('address'), $form->getParameter('id_belonging'), 0, CoreTranslator::dateToEn($form->getParameter('date_open'), $lang)
+            );
+            $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
+            $this->redirect("quotenew/" . $id_space . "/" . $id);
+            return;
+        }
+
+        $formitemHtml = $this->createItemForm($id_space);
+
+        $this->render(array("id_space" => $id_space, 'id_quote' => $id, "lang" => $lang,
+            "formHtml" => $form->getHtml($lang), "tableHtml" => $tableHtml,
+            "formitemHtml" => $formitemHtml,
+            "items" => $items), 'editnewuserAction');
+    }
+
+    public function edititemAction() {
+        $id_quote = $this->request->getParameter("id_quote");
+        $id = $this->request->getParameter("id");
+        $id_contentform = $this->request->getParameter("id_item");
+        $quantity = $this->request->getParameter("quantity");
+        $comment = $this->request->getParameter("comment");
+
+        $id_contentformArray = explode("_", $id_contentform);
+        $module = $id_contentformArray[0];
+        $id_content = $id_contentformArray[1];
+
+
+        $modelItem = new QuoteItem();
+        $modelItem->setItem($id, $id_quote, $id_content, $module, $quantity, $comment);
+
+        $modelQuote = new Quote();
+        $quote = $modelQuote->get($id_quote);
+        if ($quote["id_user"] == 0) {
+            $this->redirect("quotenew/" . $quote["id_space"] . '/' . $quote["id"]);
+        } else {
+            $this->redirect("quoteuser/" . $quote["id_space"] . '/' . $quote["id"]);
+        }
+    }
+
+    public function pdfAction($id_space, $id) {
+        // get the list of items
+        $modelQuote = new Quote();
+        $info = $modelQuote->getAllInfo($id_space, $id);
+
+        $modelQuoteitems = new QuoteItem();
+        $items = $modelQuoteitems->getAll($id);
+        $table = array();
+        $modelBooking = new ResourceInfo();
+        $modelBookingPrices = new BkPrice();
+        $modelServices = new SeService();
+        $modelServicesPrices = new SePrice();
+        $total = 0;
+        foreach ($items as $item) {
+            if ($item['module'] == "booking") {
+                $name = $modelBooking->getName($item['id_content']);
+                $quantity = $item['quantity'];
+                $unitprice = $modelBookingPrices->getPrice($item['id_content'], $info['id_belonging']);
+                $itemtotal = floatval($quantity) * floatval($unitprice);
+            } else if ($item['module'] == "services") {
+                $name = $modelServices->getItemName($item['id_content']);
+                $quantity = $item['quantity'];
+                $unitprice = $modelServicesPrices->getPrice($item['id_content'], $info['id_belonging']);
+                $itemtotal = floatval($quantity) * floatval($unitprice);
+            }
+            $table[] = array('name'=> $name, 'comment'=> $item['comment'], 'quantity'=>$quantity, 'unit_price'=>$unitprice, 'total'=>$itemtotal);
+            $total += $itemtotal;
+        }
+
+        $lang = $this->getLanguage();
+        $table = $this->makePDFTable($table, $lang);
+
+        // generate pdf
+        $adress = nl2br($info["address"]);
+        $resp = $info["recipient"];
+        $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
+        $useTTC = true;
+
+        ob_start();
+        include('data/quote/template_1.php');
+        $content = ob_get_clean();
+
+
+        // convert in PDF
+        require_once('externals/html2pdf/vendor/autoload.php');
+        try {
+            $html2pdf = new HTML2PDF('P', 'A4', 'fr');
+            //$html2pdf->setModeDebug();
+            $html2pdf->setDefaultFont('Arial');
+            //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+            $html2pdf->writeHTML($content);
+            //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
+            $html2pdf->Output(QuoteTranslator::quote($lang) . "_" . $resp . '.pdf');
+            return;
+        } catch (HTML2PDF_exception $e) {
+            echo $e;
+            exit;
+        }
+    }
+
+    private function makePDFTable($tableData, $lang) {
+
+        $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
+                    <tr>
+                        <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
+                        <th style=\"width: 14%\">" . InvoicesTranslator::Quantity($lang) . "</th>
+                        <th style=\"width: 17%\">" . InvoicesTranslator::UnitPrice($lang) . "</th>
+                        <th style=\"width: 17%\">" . InvoicesTranslator::Price_HT($lang) . "</th>
+                    </tr>
+                </table>
+        ";
+
+
+        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
+        
+        //print_r($invoice);
+        $total = 0;
+        foreach ($tableData as $d) {
+           
+            $table .= "<tr>";
+            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d["name"] . " " . $d["comment"] . "</td>";
+            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format($d["quantity"], 2, ',', ' ') . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d['unit_price'], 2, ',', ' ') . " &euro;</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d['unit_price'] * $d['quantity'], 2, ',', ' ') . " &euro;</td>";
+            $table .= "</tr>";
+            $total += $d['total'];
+        }
+        $table .= "</table>";
+        return $table;
+    }
+
+    public function deleteAction($id_space, $id) {
+        $modelQuote = new Quote();
+        $modelQuote->delete($id);
+
+        $this->redirect("quotes/" . $id_space);
+    }
+
+    public function itemdelete($id_space, $id_item) {
+        $modelQuote = new QuoteItem();
+        $info = $modelQuote->get($id_item);
+        $modelQuote->delete($id_item);
+
+        $this->redirect("quotedit/" . $id_space . '/' . $info["id_quote"]);
+    }
+
+}
