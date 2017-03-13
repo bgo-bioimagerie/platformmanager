@@ -21,7 +21,7 @@ require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
-require_once 'Modules/Booking/Model/BookinginvoiceTranslator.php';
+require_once 'Modules/booking/Model/BookinginvoiceTranslator.php';
 
 /**
  * 
