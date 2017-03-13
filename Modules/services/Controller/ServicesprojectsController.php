@@ -467,14 +467,16 @@ class ServicesprojectsController extends CoresecureController {
             if ($modelItem->getItemType($entry["id_service"]) == 4){
             
                 $content .= 1 . ";";
-                $unitPrice[0] = $entry["quantity"];
+                $unitPrice = $entry["quantity"];
+                $entry["quantity"] = 1;
             }
             else{
                 $content .= $entry["quantity"] . ";";
                 $unitPrice = $itemPricing->getPrice($entry["id_service"], $LABpricingid);
+                //echo "price for service " . $entry["id_service"] . " and lab " . $LABpricingid . " = " .$unitPrice. " <br/>";
             }
-            $content .= $unitPrice[0] . ";";
-            $price = (float) $entry["quantity"] * (float) $unitPrice[0];
+            $content .= $unitPrice . ";";
+            $price = (float) $entry["quantity"] * (float) $unitPrice;
             $totalHT += $price;
             $content .= $price . "\r\n";
         }

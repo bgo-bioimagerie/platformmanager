@@ -88,8 +88,14 @@ class Anticorps extends Model {
      * @param string $sortentry column used to sort the users
      * @return multitype:
      */
-    public function getAnticorps($sortentry = 'id') {
-        $sql = "select * from ac_anticorps order by " . $sortentry . " ASC;";
+    public function getAnticorps($letter = 'All', $sortentry = 'id') {
+        $sql = "SELECT * FROM ac_anticorps ";
+        
+        if($letter != 'All' && $letter != ''){
+            $sql .= " WHERE nom LIKE '".$letter."%'";
+        }
+        $sql .= " ORDER BY " . $sortentry . " ASC;";
+        
         $user = $this->runRequest($sql);
         return $user->fetchAll();
     }
@@ -185,8 +191,8 @@ class Anticorps extends Model {
      * @param string $sortentry column used to sort the users
      * @return Ambigous <multitype:, boolean>
      */
-    public function getAnticorpsInfo($sortentry = 'no_h2p2') {
-        $ac = $this->getAnticorps($sortentry);
+    public function getAnticorpsInfo($letter) {
+        $ac = $this->getAnticorps($letter, 'no_h2p2');
 
         return $this->anticorpsInfo($ac);
     }

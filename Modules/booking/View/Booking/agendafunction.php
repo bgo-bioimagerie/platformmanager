@@ -65,7 +65,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 		<?php 
 		$found = false;
 		$modelBookingSetting = new BkBookingSettings();
-		$moduleProject = new CoreProject();
+		//$moduleProject = new CoreProject();
 		$ModulesManagerModel = new CoreMenu();
 		$isProjectMode = false;//$ModulesManagerModel->getDataMenusUserType("projects");
 		if ($isProjectMode > 0){

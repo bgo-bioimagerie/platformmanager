@@ -130,7 +130,9 @@ class QuotelistController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-            $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'), CoreTranslator::dateToEn($form->getParameter('date_open'), $lang)
+            $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'), 
+                    CoreTranslator::dateToEn($form->getParameter('date_open'), 
+                            $lang)
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $this->redirect("quoteuser/" . $id_space . "/" . $id);

@@ -262,4 +262,18 @@ class AntibodiesTranslator {
         return "Add owner";
     }     
     
+    public static function All($lang) {
+        if ($lang == "fr") {
+            return "Tous";
+        }
+        return "All";
+    }  
+    
+    public static function ConfirmDeleteAntibody($lang) {
+        if ($lang == "fr") {
+            return "Etes-vous sûr de vouloir suprimer cet anticorps ?";
+        }
+        return "Are you sure to delete the antibody ?";
+    } 
+    
 }

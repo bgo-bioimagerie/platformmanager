@@ -40,7 +40,7 @@ class AntibodieslistController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $sortentry = "no_h2p2") {
+    public function indexAction($id_space, $letter = "") {
 
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
 
@@ -50,21 +50,19 @@ class AntibodieslistController extends CoresecureController {
             return;
         }
 
-        // get sort action
-        if ($sortentry == "") {
-            $sortentry = "no_h2p2";
-        }
-
         // get the user list
+        if($letter == ""){
+            $letter = "A";
+        }
         $anticorpsModel = new Anticorps();
-        $anticorpsArray = $anticorpsModel->getAnticorpsInfo($sortentry);
+        $anticorpsArray = $anticorpsModel->getAnticorpsInfo($letter);
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus();
 
         $this->render(array(
             'id_space' => $id_space, 'anticorpsArray' => $anticorpsArray,
-            'status' => $status, 'lang' => $this->getLanguage()
+            'status' => $status, 'lang' => $this->getLanguage(), 'letter' => $letter
         ));
     }
 
@@ -655,11 +653,21 @@ class AntibodieslistController extends CoresecureController {
 
     public function deleteAction($id_space, $id) {
 
-        // get source info
+        $lang = $this->getLanguage();
+        
+        $form = new Form($this->request, "antibodiesdeleteform");
+        $form->addComment(AntibodiesTranslator::ConfirmDeleteAntibody($lang));
+        $form->setValidationButton(CoreTranslator::Save($lang), "antibodydeleteconfirmed/".$id_space.'/'.$id);
+        
+        $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
+        
+    }
+    
+    public function deleteconfirmedAction($id_space, $id){
         $anticorpsModel = new Anticorps();
         $anticorpsModel->delete($id);
 
-        $this->redirect("anticorps/" . $id_space . "/id");
+        $this->redirect("anticorps/" . $id_space);
     }
 
 }

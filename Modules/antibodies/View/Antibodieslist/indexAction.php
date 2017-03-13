@@ -3,14 +3,33 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<?php
-$js = file_get_contents("Framework/TableScript.php");
-$str1 = str_replace("numFixedCol", 3, $js);
-echo str_replace("tableID", 'example', $str1);
-?>
+<head>
+
+    <link rel="stylesheet" type="text/css" href="externals/dataTables/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="externals/dataTables/fixedColumns.bootstrap.min.css">
+
+    <script src="externals/dataTables/jquery-1.12.3.js"></script>
+    <script src="externals/dataTables/jquery.dataTables.min.js"></script>
+    <script src="externals/dataTables/dataTables.bootstrap.min.js"></script>
+    <script src="externals/dataTables/dataTables.fixedColumns.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#example').DataTable({
+                scrollY: "500px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                fixedColumns: {
+                    leftColumns: 3
+                }
+            });
+        });
+    </script>
+</head>
 
 <div class="col-md-12 pm-table">
-
     <div class="col-md-12">
             
             <div class="col-md-10">
@@ -30,6 +49,95 @@ echo str_replace("tableID", 'example', $str1);
                 <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
             </div>
         </div>
+        <div class="text-center">
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-default <?php if ($letter == "All") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/All';"><?php echo AntibodiesTranslator::All($lang) ?></button>
+            <button class="btn btn-default <?php if ($letter == "A") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/A';">A</button>
+            <button class="btn btn-default <?php if ($letter == "B") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/B';">B</button>
+            <button class="btn btn-default <?php if ($letter == "C") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/C';">C</button>
+            <button class="btn btn-default <?php if ($letter == "D") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/D';">D</button>
+            <button class="btn btn-default <?php if ($letter == "E") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/E';">E</button>
+            <button class="btn btn-default <?php if ($letter == "F") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/F';">F</button>
+            <button class="btn btn-default <?php if ($letter == "G") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/G';">G</button>
+            <button class="btn btn-default <?php if ($letter == "H") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/H';">H</button>
+            <button class="btn btn-default <?php if ($letter == "I") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/I';">I</button>
+            <button class="btn btn-default <?php if ($letter == "J") {
+    echo "active";
+} ?>" onclick="location.href = 'ecusers/<?php echo $id_space ?>/J';">J</button>
+            <button class="btn btn-default <?php if ($letter == "K") {
+    echo "active";
+} ?>" onclick="location.href = 'ecusers/<?php echo $id_space ?>/K';">K</button>
+            <button class="btn btn-default <?php if ($letter == "L") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/L';">L</button>
+            <button class="btn btn-default <?php if ($letter == "M") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/M';">M</button>
+            <button class="btn btn-default <?php if ($letter == "N") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/N';">N</button>
+            <button class="btn btn-default <?php if ($letter == "O") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/O';">O</button>
+            <button class="btn btn-default <?php if ($letter == "P") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/P';">P</button>
+            <button class="btn btn-default <?php if ($letter == "Q") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Q';">Q</button>
+            <button class="btn btn-default <?php if ($letter == "R") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/R';">R</button>
+            <button class="btn btn-default <?php if ($letter == "S") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/S';">S</button>
+            <button class="btn btn-default <?php if ($letter == "T") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/T';">T</button>
+            <button class="btn btn-default <?php if ($letter == "U") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/U';">U</button>
+            <button class="btn btn-default <?php if ($letter == "V") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/V';">V</button>
+            <button class="btn btn-default <?php if ($letter == "W") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/W';">W</button>
+            <button class="btn btn-default <?php if ($letter == "X") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/X';">X</button>
+            <button class="btn btn-default <?php if ($letter == "Y") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Y';">Y</button>
+            <button class="btn btn-default <?php if ($letter == "Z") {
+    echo "active";
+} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Z';">Z</button>
+        </div>
+
+    </div>
+    <div class="col-md-12" style="height: 7px;">
+    </div>
+    
     <br/>
     <div class="col-md-12">
         <div class="page-header" style="margin-top: -20px;">
@@ -43,38 +151,38 @@ echo str_replace("tableID", 'example', $str1);
             <table id="example" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
                 <thead>	 
                     <tr>
-                        <th class="text-center" colspan="10" style="width:45%; color:#337AB7;">Anticorps</th>
-                        <th class="text-center" colspan="2" style="width:10%; background-color: #ffeeee; color:#337AB7;">Protocole</th>
-                        <th class="text-center" colspan="6" style="width:25%; background-color: #eeffee; color:#337AB7;">Tissus</th>
-                        <th class="text-center" colspan="4" style="width:20%; background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
+                        <th class="text-center" colspan="10" style="color:#337AB7;">Anticorps</th>
+                        <th class="text-center" colspan="2" style="background-color: #ffeeee; color:#337AB7;">Protocole</th>
+                        <th class="text-center" colspan="6" style="background-color: #eeffee; color:#337AB7;">Tissus</th>
+                        <th class="text-center" colspan="4" style="background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
                     </tr>
 
                     <tr>			
                         <th></th>
-                        <th class="text-center" style="width:1em; color:#337AB7;">No</th> 
-                        <th class="text-center" style="width:5%; color:#337AB7;">Nom</th>
-                        <th class="text-center" style="width:2%; color:#337AB7;">St</th>
-                        <th class="text-center" style="width:5%; color:#337AB7;">Fournisseur</th>
-                        <th class="text-center" style="width:5%; color:#337AB7;">Source</th>
-                        <th class="text-center" style="width:5%; color:#337AB7;">Référence</th>
-                        <th class="text-center" style="width:5%; color:#337AB7;">Clone</th>
-                        <th class="text-center" style="width:5%; color:#337AB7;">lot</th>
-                        <th class="text-center" style="width:5%; color:#337AB7;">Isotype</th>
+                        <th class="text-center" style="color:#337AB7;">No</th> 
+                        <th class="text-center" style="color:#337AB7;">Nom</th>
+                        <th class="text-center" style="color:#337AB7;">St</th>
+                        <th class="text-center" style="color:#337AB7;">Fournisseur</th>
+                        <th class="text-center" style="color:#337AB7;">Source</th>
+                        <th class="text-center" style="color:#337AB7;">Référence</th>
+                        <th class="text-center" style="color:#337AB7;">Clone</th>
+                        <th class="text-center" style="color:#337AB7;">lot</th>
+                        <th class="text-center" style="color:#337AB7;">Isotype</th>
 
-                        <th class="text-center" style="width:5%; background-color: #ffeeee; color:#337AB7;">proto</th>
-                        <th class="text-center" style="width:5%; background-color: #ffeeee; color:#337AB7;">AcI dil</th>
+                        <th class="text-center" style="background-color: #ffeeee; color:#337AB7;">proto</th>
+                        <th class="text-center" style="background-color: #ffeeee; color:#337AB7;">AcI dil</th>
 
-                        <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;">commentaire</th>
-                        <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;">espèce</th>
-                        <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;">organe</th>
-                        <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;">statut</th>
-                        <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;">ref. bloc</th>
-                        <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;">prélèvement</th>	
+                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">commentaire</th>
+                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">espèce</th>
+                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">organe</th>
+                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">statut</th>
+                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">ref. bloc</th>
+                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">prélèvement</th>	
 
-                        <th class="text-center" style="width:5em; background-color: #eeeeff; color:#337AB7;">Nom</th>
-                        <th class="text-center" style="width:5%; background-color: #eeeeff; color:#337AB7;">disponibilité</th>
-                        <th class="text-center" style="width:5%; background-color: #eeeeff; color:#337AB7;">Date réception</th>
-                        <th class="text-center" style="width:5%; background-color: #eeeeff; color:#337AB7;">No Dossier</th>
+                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">Nom</th>
+                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">disponibilité</th>
+                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">Date réception</th>
+                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">No Dossier</th>
 
                     </tr>
                 </thead>
@@ -104,7 +212,7 @@ echo str_replace("tableID", 'example', $str1);
                                             $(document).ready(function () {
                                                 $('#imgview_<?php echo $tissus["id"] ?>').on('click', function () {
 
-                                                    var img = "<img src='<?php echo $imageFile ?>' width='100%'  />";
+                                                    var img = "<p><?php echo $tissus["image_url"] ?></p><img src='<?php echo $imageFile ?>' width='100%'  />";
 
                                                     $('#imagedivcontent').html(img);
                                                     $('#imagepopup_box').show();
@@ -125,7 +233,7 @@ echo str_replace("tableID", 'example', $str1);
                             }
                             ?>
 
-                            <td style="width:1em;" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2'] . $isCatalogue); ?></a></td>
+                            <td style="width:1em;" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2']); ?></a></td>
                             <td width="5%" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
                             <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['stockage']); ?></td>
                             <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['fournisseur']); ?></td>

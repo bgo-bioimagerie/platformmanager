@@ -165,7 +165,7 @@ unset($_SESSION["message"]) ?>
                     <?php
                     $resourceCount = - 1;
                     $modelBookingSetting = new BkBookingSettings ();
-                    $moduleProject = new CoreProject ();
+                    //$moduleProject = new CoreProject ();
                     $ModulesManagerModel = new CoreMenu ();
                     $isProjectMode = false; //$ModulesManagerModel->getDataMenusUserType("projects");
 

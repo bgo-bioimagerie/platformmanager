@@ -323,7 +323,7 @@ class SeProject extends Model {
     public function closedEntries($id_space, $yearBegin = "", $yearEnd = "", $sortentry = 'id') {
         $sql = "SELECT * FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ";
         if($yearBegin != "" && $yearEnd != ""){
-            $sql .= "AND date_open >= '" . $yearBegin . "' AND date_open <= '" . $yearEnd . "' "; 
+            $sql .= "AND date_close >= '" . $yearBegin . "' AND date_close <= '" . $yearEnd . "' "; 
         } 
         $sql .= " order by " . $sortentry . " ASC;";
         //echo "yearBegin = " . $yearBegin . "<br/>";

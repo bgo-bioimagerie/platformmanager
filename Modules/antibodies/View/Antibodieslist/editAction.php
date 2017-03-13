@@ -17,6 +17,7 @@
         
         
         <?php echo $form ?>
+        <a class="btn btn-danger" href="antibodydelete/<?php echo $id_space ?>/<?php echo $id ?>"><?php echo CoreTranslator::Delete($lang) ?></a>
     </div>
     <div class="col-md-12">
         <div class="col-md-12 pm-table-short">

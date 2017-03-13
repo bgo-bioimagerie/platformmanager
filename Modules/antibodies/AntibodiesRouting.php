@@ -12,10 +12,13 @@ class AntibodiesRouting extends Routing{
 
         
         // add here the module routes
-        $this->addRoute("antibodies", "antibodies", "antibodieslist", "index", array("id_space"), array(""));
+        $this->addRoute("antibodies", "antibodies", "antibodieslist", "index", array("id_space", "letter"), array("", ""));
         $this->addRoute("apiantibodytissus", "apiantibodytissus", "antibodies", "tissus", array("id_space", "id_tissus"), array("", ""),true);
         $this->addRoute("deletetissus", 'deletetissus', 'antibodieslist', "deletetissus", array('id_space', 'id_tissus'), array("", ""));
         $this->addRoute("deleteowner", 'deleteowner', 'antibodieslist', "deleteowner", array('id_space', 'id_owner'), array("", ""));
+        
+        $this->addRoute("antibodydeleteconfirmed", "antibodydeleteconfirmed", 'antibodieslist', 'deleteconfirmed', array('id_space', 'id'), array("", ""));
+        $this->addRoute("antibodydelete", "antibodydelete", 'antibodieslist', 'delete', array('id_space', 'id'), array("", ""));
         
         
         $this->addRoute("apiantibodyowner", "apiantibodyowner", "antibodies", "owner", array("id_space", "id_owner"), array("", ""),true);
