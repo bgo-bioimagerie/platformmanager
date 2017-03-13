@@ -194,9 +194,9 @@ class ServicesTranslator {
 
     public static function Quantity($lang) {
         if ($lang == "fr") {
-            return "Quantité";
+            return "Quantité/Temps/Prix";
         }
-        return "Quantity";
+        return "Quantity/Time/Price";
     }
 
     public static function Services_Orders($lang) {

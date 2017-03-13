@@ -136,28 +136,28 @@ class CorespaceController extends CoresecureController {
      * @return type
      */
     protected function configModulesTable($lang, $id_space) {
-
-        $modelInstalledMod = new CoreInstalledModules();
-        $modules = $modelInstalledMod->getModules();
-
+        
+        $modules = Configuration::get("modules");
+        //echo "modules = " ;print_r($modules);
+        //return;
         $mods = array();
         $count = -1;
         for ($i = 0; $i < count($modules); ++$i) {
 
-            $moduleName = ucfirst(strtolower($modules[$i]["name"]));
+            $moduleName = ucfirst(strtolower($modules[$i]));
             $abstractMethod = $moduleName . "ConfigAbstract";
-            $configFile = "Modules/" . $modules[$i]["name"] . "/Controller/" . $moduleName . "configController.php";
+            $configFile = "Modules/" . strtolower($modules[$i]) . "/Controller/" . $moduleName . "configController.php";
             if (file_exists($configFile)) {
                 $count++;
                 // name
-                $mods[$count]['name'] = $modules[$i]["name"];
-                if ($modules[$i]["name"] != "core") {
-                    require_once "Modules/" . $modules[$i]["name"] . "/Model/" . $moduleName . "Translator.php";
+                $mods[$count]['name'] = strtolower($modules[$i]);
+                if ($modules[$i] != "core") {
+                    require_once "Modules/" . strtolower($modules[$i]) . "/Model/" . $moduleName . "Translator.php";
                 }
                 // get abstract html text
                 $mods[$count]['abstract'] = forward_static_call(array($moduleName . "Translator", $abstractMethod), $lang);
                 // construct action
-                $action = $modules[$i]["name"] . "config";
+                $action = strtolower($modules[$i]) . "config";
                 $mods[$count]['action'] = $action;
                 $mods[$count]['id'] = $i;
             }

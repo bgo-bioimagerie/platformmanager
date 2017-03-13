@@ -25,6 +25,12 @@ class SeService extends Model {
         $this->runRequest($sql);
     }
 
+    public function getItemType($id){
+        $sql = "SELECT type_id FROM se_services WHERE id=?";
+        $data = $this->runRequest($sql, array($id))->fetch();
+        return $data[0];
+    }
+    
     public function setQuantity($id, $quantity){
         $sql = "UPDATE se_services SET quantity=? WHERE id=?";
         $this->runRequest($sql, array($quantity, $id));

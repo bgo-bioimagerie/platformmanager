@@ -24,6 +24,7 @@ class EcosystemController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         //$this->checkAuthorizationMenu("users/institutions");
+        
     }
 
     public function navbar($id_space){
