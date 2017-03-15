@@ -54,10 +54,18 @@ class EcUnit extends Model {
     }
 
     public function setBelonging($id_space, $id_belonging, $id_unit) {
-        if ($this->isSetUnit($id_unit, $id_space)) {
+        
+        $sql = "DELETE FROM ec_j_belonging_units WHERE id_unit=? AND id_space=?";
+        $this->runRequest($sql, array($id_unit, $id_space));
+        
+        //echo "set belonging: " . $id_space . " " . $id_belonging . " " . $id_unit . "<br/>"; 
+        
+        if ($this->isSetUnit($id_space, $id_unit)) {
+            //echo "update belonging <br>";
             $sql = "UPDATE ec_j_belonging_units SET id_belonging=? WHERE id_unit=? AND id_space=?";
             $this->runRequest($sql, array($id_belonging, $id_unit, $id_space));
         } else {
+            //echo "insert belonging: $id_space <br>";
             $sql = "INSERT INTO ec_j_belonging_units (id_unit, id_belonging, id_space) VALUES(?,?,?)";
             $this->runRequest($sql, array($id_unit, $id_belonging, $id_space));
         }
@@ -66,6 +74,7 @@ class EcUnit extends Model {
     public function isSetUnit($id_space, $id_unit) {
         $sql = "SELECT id_unit FROM ec_j_belonging_units WHERE id_space=? AND id_unit=?";
         $req = $this->runRequest($sql, array($id_space, $id_unit));
+        //echo "num bel = " . $req->rowCount() . "<br/>";
         if ($req->rowCount() > 0) {
             return true;
         }

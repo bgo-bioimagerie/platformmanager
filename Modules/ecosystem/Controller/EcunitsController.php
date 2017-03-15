@@ -98,6 +98,8 @@ class EcunitsController extends CoresecureController {
             // run the database query
             $model = new EcUnit();
             $unit_id = $model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("address"));
+            //echo "unit id = " . $unit_id . " <br/>";
+            //echo "id_belonging = " . $form->getParameter("id_belonging") . "<br/>";
             $model->setBelonging($id_space, $form->getParameter("id_belonging"), $unit_id);    
             
             $this->redirect("ecunits/" . $id_space);
