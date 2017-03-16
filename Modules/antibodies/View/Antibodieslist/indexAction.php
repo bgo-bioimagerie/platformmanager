@@ -17,12 +17,12 @@
     <script>
         $(document).ready(function () {
             var table = $('#example').DataTable({
-                scrollY: "500px",
+                scrollY: "700px",
                 scrollX: true,
                 scrollCollapse: true,
                 paging: false,
                 fixedColumns: {
-                    leftColumns: 3
+                    leftColumns: 0
                 }
             });
         });
@@ -31,113 +31,167 @@
 
 <div class="col-md-12 pm-table">
     <div class="col-md-12">
-            
-            <div class="col-md-10">
-                <div class="dropdown">
-                    <button id="dLabel" type="button" class="btn  btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <?php echo 'Menu ' . AntibodiesTranslator::antibodies($lang) ?>
-                    </button>
-                    <div class="dropdown-menu col-md-12" aria-labelledby="dLabel" style="background-color: transparent; border: none; box-shadow:none;">
-                        <?php
-                        include 'Modules/antibodies/View/navbar.php';
-                        ?>
-                    </div>
+
+        <div class="col-md-10">
+            <div class="dropdown">
+                <button id="dLabel" type="button" class="btn  btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <?php echo 'Menu ' . AntibodiesTranslator::antibodies($lang) ?>
+                </button>
+                <div class="dropdown-menu col-md-12" aria-labelledby="dLabel" style="background-color: transparent; border: none; box-shadow:none;">
+                    <?php
+                    include 'Modules/antibodies/View/navbar.php';
+                    ?>
                 </div>
             </div>
-            
-            <div class="col-md-2">
-                <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
-            </div>
         </div>
-        <div class="text-center">
+
+        <div class="col-md-2">
+            <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+        </div>
+    </div>
+    <div class="text-center">
         <div class="btn-group btn-group-sm">
-            <button class="btn btn-default <?php if ($letter == "All") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/All';"><?php echo AntibodiesTranslator::All($lang) ?></button>
-            <button class="btn btn-default <?php if ($letter == "A") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/A';">A</button>
-            <button class="btn btn-default <?php if ($letter == "B") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/B';">B</button>
-            <button class="btn btn-default <?php if ($letter == "C") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/C';">C</button>
-            <button class="btn btn-default <?php if ($letter == "D") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/D';">D</button>
-            <button class="btn btn-default <?php if ($letter == "E") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/E';">E</button>
-            <button class="btn btn-default <?php if ($letter == "F") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/F';">F</button>
-            <button class="btn btn-default <?php if ($letter == "G") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/G';">G</button>
-            <button class="btn btn-default <?php if ($letter == "H") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/H';">H</button>
-            <button class="btn btn-default <?php if ($letter == "I") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/I';">I</button>
-            <button class="btn btn-default <?php if ($letter == "J") {
-    echo "active";
-} ?>" onclick="location.href = 'ecusers/<?php echo $id_space ?>/J';">J</button>
-            <button class="btn btn-default <?php if ($letter == "K") {
-    echo "active";
-} ?>" onclick="location.href = 'ecusers/<?php echo $id_space ?>/K';">K</button>
-            <button class="btn btn-default <?php if ($letter == "L") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/L';">L</button>
-            <button class="btn btn-default <?php if ($letter == "M") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/M';">M</button>
-            <button class="btn btn-default <?php if ($letter == "N") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/N';">N</button>
-            <button class="btn btn-default <?php if ($letter == "O") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/O';">O</button>
-            <button class="btn btn-default <?php if ($letter == "P") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/P';">P</button>
-            <button class="btn btn-default <?php if ($letter == "Q") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Q';">Q</button>
-            <button class="btn btn-default <?php if ($letter == "R") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/R';">R</button>
-            <button class="btn btn-default <?php if ($letter == "S") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/S';">S</button>
-            <button class="btn btn-default <?php if ($letter == "T") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/T';">T</button>
-            <button class="btn btn-default <?php if ($letter == "U") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/U';">U</button>
-            <button class="btn btn-default <?php if ($letter == "V") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/V';">V</button>
-            <button class="btn btn-default <?php if ($letter == "W") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/W';">W</button>
-            <button class="btn btn-default <?php if ($letter == "X") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/X';">X</button>
-            <button class="btn btn-default <?php if ($letter == "Y") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Y';">Y</button>
-            <button class="btn btn-default <?php if ($letter == "Z") {
-    echo "active";
-} ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Z';">Z</button>
+            <button class="btn btn-default <?php
+            if ($letter == "All") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/All';"><?php echo AntibodiesTranslator::All($lang) ?></button>
+            <button class="btn btn-default <?php
+            if ($letter == "A") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/A';">A</button>
+            <button class="btn btn-default <?php
+                    if ($letter == "B") {
+                        echo "active";
+                    }
+                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/B';">B</button>
+            <button class="btn btn-default <?php
+            if ($letter == "C") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/C';">C</button>
+            <button class="btn btn-default <?php
+            if ($letter == "D") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/D';">D</button>
+            <button class="btn btn-default <?php
+                    if ($letter == "E") {
+                        echo "active";
+                    }
+                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/E';">E</button>
+            <button class="btn btn-default <?php
+            if ($letter == "F") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/F';">F</button>
+            <button class="btn btn-default <?php
+            if ($letter == "G") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/G';">G</button>
+            <button class="btn btn-default <?php
+                    if ($letter == "H") {
+                        echo "active";
+                    }
+                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/H';">H</button>
+            <button class="btn btn-default <?php
+            if ($letter == "I") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/I';">I</button>
+            <button class="btn btn-default <?php
+            if ($letter == "J") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/J';">J</button>
+            <button class="btn btn-default <?php
+                    if ($letter == "K") {
+                        echo "active";
+                    }
+                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/K';">K</button>
+            <button class="btn btn-default <?php
+            if ($letter == "L") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/L';">L</button>
+            <button class="btn btn-default <?php
+            if ($letter == "M") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/M';">M</button>
+            <button class="btn btn-default <?php
+                    if ($letter == "N") {
+                        echo "active";
+                    }
+                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/N';">N</button>
+            <button class="btn btn-default <?php
+            if ($letter == "O") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/O';">O</button>
+            <button class="btn btn-default <?php
+            if ($letter == "P") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/P';">P</button>
+            <button class="btn btn-default <?php
+            if ($letter == "Q") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Q';">Q</button>
+            <button class="btn btn-default <?php
+            if ($letter == "R") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/R';">R</button>
+            <button class="btn btn-default <?php
+            if ($letter == "S") {
+                echo "active";
+            }
+            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/S';">S</button>
+            <button class="btn btn-default <?php
+                if ($letter == "T") {
+                    echo "active";
+                }
+                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/T';">T</button>
+            <button class="btn btn-default <?php
+                if ($letter == "U") {
+                    echo "active";
+                }
+                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/U';">U</button>
+            <button class="btn btn-default <?php
+                if ($letter == "V") {
+                    echo "active";
+                }
+                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/V';">V</button>
+            <button class="btn btn-default <?php
+                if ($letter == "W") {
+                    echo "active";
+                }
+                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/W';">W</button>
+            <button class="btn btn-default <?php
+                if ($letter == "X") {
+                    echo "active";
+                }
+                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/X';">X</button>
+            <button class="btn btn-default <?php
+                if ($letter == "Y") {
+                    echo "active";
+                }
+                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Y';">Y</button>
+            <button class="btn btn-default <?php
+                if ($letter == "Z") {
+                    echo "active";
+                }
+                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Z';">Z</button>
         </div>
 
     </div>
     <div class="col-md-12" style="height: 7px;">
     </div>
-    
+
     <br/>
     <div class="col-md-12">
         <div class="page-header" style="margin-top: -20px;">
@@ -145,7 +199,122 @@
                 Anticorps<br> <small></small>
             </h1>
         </div>
-        
+
+        <div class="col-md-12">
+            <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
+                  method="post">
+
+<?php
+if (!isset($searchName)) {
+    $searchName = "";
+}
+if (!isset($searchNoH2P2)) {
+    $searchNoH2P2 = "";
+}
+if (!isset($searchSource)) {
+    $searchSource = "";
+}
+if (!isset($searchCible)) {
+    $searchCible = "";
+}
+if (!isset($searchValide)) {
+    $searchValide = "";
+}
+if (!isset($searchResp)) {
+    $searchResp = "";
+}
+if (!isset($searchColumn)) {
+    $searchColumn = "";
+}
+if (!isset($searchCom)) {
+    $searchCom = "";
+}
+?>
+                <div class="col-md-12">
+                    <label class="control-label col-md-1">Recherche Avancée:</label>
+
+                    <div class="col-md-9">
+                        <label class="control-label col-md-1" style="margin:0px;">Nom:</label>
+                        <div class="col-md-3">
+                            <input class="form-control" id="searchName" type="text" name="searchName" value="<?php echo $searchName ?>"
+                                   />
+                        </div>
+
+                        <label for="inputEmail" class="control-label col-md-1">No H2P2:</label>
+                        <div class="col-md-2">
+                            <input class="form-control" id="searchNoH2P2" type="text" name="searchNoH2P2" value="<?php echo $searchNoH2P2 ?>"
+                                   />
+                        </div>
+                        <label for="inputEmail" class="control-label col-md-2">Source:</label>
+                        <div class="col-md-3">
+                            <input class="form-control" id="searchSource" type="text" name="searchSource" value="<?php echo $searchSource ?>"
+                                   />
+                        </div>
+                    </div>
+                    <label class="control-label col-md-2"></label>
+                </div>
+
+                <div class="col-md-12">
+                    <label class="control-label col-md-1"></label>
+                    <div class="col-md-9">	
+                        <label for="inputEmail" class="control-label col-md-1">Tissu cible:</label>
+                        <div class="col-md-3">
+                            <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
+                                   />
+                        </div>
+
+                        <label for="inputEmail" class="control-label col-md-1">Statut:</label>
+                        <div class="col-md-2">
+                            <select class="form-control" id="searchValide" name="searchValide">
+                                <OPTION value="0" <?php
+                                if ($searchColumn == "0") {
+                                    echo $selected;
+                                }
+?> >  </OPTION>
+                                <OPTION value="1" <?php
+                                if ($searchValide == "1") {
+                                    echo $selected;
+                                }
+?> > Validé </OPTION>
+                                <OPTION value="2" <?php
+                                if ($searchValide == "2") {
+                                    echo $selected;
+                                }
+?> > Non validé </OPTION>
+                                <OPTION value="3" <?php
+                                if ($searchValide == "3") {
+                                    echo $selected;
+                                }
+?> > Non testé </OPTION>
+                            </select>
+                        </div>
+
+                        <label for="inputEmail" class="control-label col-md-2">Propriétaire:</label>
+                        <div class="col-md-3">
+                            <input class="form-control" id="searchResp" type="text" name="searchResp" value="<?php echo $searchResp ?>"
+                                   />
+                        </div>
+                        <label class="control-label col-md-2"></label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label class="control-label col-md-1"></label>
+                    <div class="col-md-9">
+                        <div class="col-md-11">	
+                            <label class="control-label col-md-1">Commentaire:</label>
+                            <div class="col-md-4">
+                                <input class="form-control" id="searchCom" type="text" name="searchCom" value="<?php echo $searchCom ?>"
+                                       />
+                            </div>
+                        </div>	
+                    </div>
+
+                    <div class="col-md-2" id="button-div">
+                        <input type="submit" class="btn btn-primary" value="Rechercher" />
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <div class="col-xs-12">
             <table id="example" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
@@ -188,7 +357,7 @@
                 </thead>
 
                 <tbody>
-                    <?php foreach ($anticorpsArray as $anticorps) : ?> 
+<?php foreach ($anticorpsArray as $anticorps) : ?> 
 
                         <tr>
                             <td width="10%" class="text-left">
@@ -220,18 +389,18 @@
                                                 });
                                             });
                                         </script>
-                                        <?php
-                                    }
+            <?php
+        }
+    }
+    ?>
+                            </td>
+                                <?php
+                                $anticorpsId = $this->clean($anticorps['id']);
+                                $isCatalogue = "";
+                                if ($anticorps['export_catalog'] == 1) {
+                                    $isCatalogue = " (c)";
                                 }
                                 ?>
-                            </td>
-                            <?php
-                            $anticorpsId = $this->clean($anticorps['id']);
-                            $isCatalogue = "";
-                            if ($anticorps['export_catalog'] == 1) {
-                                $isCatalogue = " (c)";
-                            }
-                            ?>
 
                             <td style="width:1em;" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2']); ?></a></td>
                             <td width="5%" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
@@ -297,14 +466,14 @@
                                 ?></td>
 
                             <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>"
-                                            . $tissus[$i]['organe']
-                                            . "</p>";
-                                }
-                                echo $val;
+                            $tissus = $anticorps ['tissus'];
+                            $val = "";
+                            for ($i = 0; $i < count($tissus); ++$i) {
+                                $val = $val . "<p>"
+                                        . $tissus[$i]['organe']
+                                        . "</p>";
+                            }
+                            echo $val;
                                 ?></td>
 
                             <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
@@ -448,7 +617,7 @@
                                 ?>
                             </td>
                         </tr>
-                    <?php endforeach; ?>
+<?php endforeach; ?>
 
                 </tbody>
 

@@ -486,7 +486,7 @@ class Anticorps extends Model {
 
     public function searchAdv($searchName, $searchNoH2P2, $searchSource, $searchCible, $searchValide, $searchResp) {
 
-        $acs = $this->getAnticorpsInfo();
+        $acs = $this->getAnticorpsInfo("");
 
         if ($searchName != "") {
             $anticorps = array();
