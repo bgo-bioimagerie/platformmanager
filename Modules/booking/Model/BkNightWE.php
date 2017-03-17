@@ -59,9 +59,9 @@ class BkNightWE extends Model {
      * @throws Exception
      * @return mixed
      */
-    public function getPricing($id) {
-        $sql = "select * from bk_nightwe where id_belonging=?;";
-        $data = $this->runRequest($sql, array($id));
+    public function getPricing($id, $id_space) {
+        $sql = "select * from bk_nightwe where id_belonging=? AND id_space=?";
+        $data = $this->runRequest($sql, array($id, $id_space));
         if ($data->rowCount() == 1) {
             return $data->fetch();  // get the first line of the result
         } else {

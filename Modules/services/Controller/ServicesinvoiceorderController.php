@@ -133,7 +133,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         
         // re-open orders and remove invoice number
         foreach ($details as $detail) {
-            $modelOrder->setEntryCloded($detail[0]);
+            $modelOrder->reopenEntry($detail[0]);
             $modelOrder->setInvoiceID($detail[0], 0);
         }
     }
@@ -177,6 +177,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             //echo "there are no orders open for this responsible";
             //return;
         }
+        
+        $lang = $this->getLanguage();
 
         // get the bill number
         $number = $modelInvoice->getNextNumber();
@@ -184,15 +186,19 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $controller = "servicesinvoiceorder";
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
         $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
+        $modelInvoice->setTitle($id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
         
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForResp($id_resp);
-        $content = $this->parseServicesToContent($services, $modelUnit->getBelonging($id_unit, $id_space));
+        $belonging = $modelUnit->getBelonging($id_unit, $id_space);
+        $content = $this->parseServicesToContent($services, $belonging);
         $details = $this->parseOrdersToDetails($orders, $id_space);
-        $total_ht = $this->calculateTotal($services);
+        
+        $total_ht = $this->calculateTotal($services, $belonging);
 
         $modelInvoiceItem->setItem(0, $id_invoice, $module, $controller, $content, $details, $total_ht);
-
+        $modelInvoice->setTotal($id_invoice, $total_ht);
+        
         // close orders
         foreach ($orders as $order) {
             $modelOrder->setEntryCloded($order["id"]);
@@ -230,11 +236,12 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $content;
     }
 
-    protected function calculateTotal($services) {
+    protected function calculateTotal($services, $id_belongings) {
         $total_HT = 0;
-        /// todo add price multiplication
+        $modelPrice = new SePrice();
         foreach ($services as $service) {
-            $total_HT += $service["quantity"];
+            $price = $modelPrice->getPrice($service["id_service"], $id_belongings);
+            $total_HT += floatval($service["quantity"]) *  floatval($price);
         }
         return $total_HT;
     }

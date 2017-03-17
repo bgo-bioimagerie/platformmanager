@@ -300,7 +300,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         //echo "LABpricingid = " . $LABpricingid . "<br/>";
         // get the pricing
-        $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid, $id_unit);
+        $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid, $id_unit, $id_space);
         //echo "pass 1<br/>";
         $packagesPrices = $this->getUnitPackagePricesForEachResource($resources, $LABpricingid, $id_unit);
         //echo "pass 2<br/>";
@@ -411,11 +411,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $packagesPrices;
     }
 
-    protected function getUnitTimePricesForEachResource($resources, $LABpricingid, $id_unit) {
+    protected function getUnitTimePricesForEachResource($resources, $LABpricingid, $id_unit, $id_space) {
 
         // get the pricing informations
         $pricingModel = new BkNightWE();
-        $pricingInfo = $pricingModel->getPricing($LABpricingid);
+        $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
         //echo "getUnitTimePricesForEachResource 1 <br>";
         //$tarif_name = $pricingInfo['tarif_name'];
         $tarif_unique = $pricingInfo['tarif_unique'];

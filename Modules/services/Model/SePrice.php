@@ -19,6 +19,7 @@ class SePrice extends Model {
 		);";
 
         $this->runRequest($sql);
+        
     }
     
     public function getPrice($id_service, $id_belongings){

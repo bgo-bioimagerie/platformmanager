@@ -222,6 +222,12 @@ class SeOrder extends Model {
 		        where id=?";
         $this->runRequest($sql, array(date("Y-m-d", time()), $id));
     }
+    
+    public function reopenEntry($id){
+        $sql = "update se_order set id_status=1, date_close=?
+		        where id=?";
+        $this->runRequest($sql, array("0000-00-00", $id));
+    }
 
     public function openedItemsForResp($id_resp){
         
