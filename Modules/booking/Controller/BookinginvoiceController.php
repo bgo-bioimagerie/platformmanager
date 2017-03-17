@@ -287,6 +287,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
     protected function invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $id_resp, $number = "") {
 
+        $lang = $this->getLanguage();
+        
         require_once 'Modules/booking/Model/BkPackage.php';
         require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
@@ -312,6 +314,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $date_generated = date("Y-m-d", time());
         $invoice_id = $modelInvoice->addInvoice($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_resp, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($invoice_id, $_SESSION["id_user"]);
+        $modelInvoice->setTitle($invoice_id, "Période du " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " au " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
         // get all the reservations for each resources
         $content = "";
@@ -372,8 +375,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
 
         // details
-        $lang = $this->getLanguage();
-
         $details = BookinginvoiceTranslator::Details($lang) . "=" . "bookinginvoicedetail/" . $id_space . "/" . $invoice_id;
 
         // add the invoice content
