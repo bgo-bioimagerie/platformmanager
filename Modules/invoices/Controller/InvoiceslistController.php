@@ -10,6 +10,7 @@ require_once 'Modules/ecosystem/Model/EcUnit.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
 
 require_once 'Modules/invoices/Model/InInvoice.php';
+require_once 'Modules/invoices/Model/InInvoiceItem.php';
 
 /**
  * 
@@ -98,7 +99,12 @@ class InvoiceslistController extends CoresecureController {
         $modelInvoice = new InInvoice();
         $service = $modelInvoice->get($id);
 
+        //print_r($service);
+        
         $controllerName = ucfirst($service["controller"]) . "Controller";
+        //echo "<br/> $controllerName";
+        //echo '<br/> Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
+        //return;
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName();
         $object->setRequest($this->request);
@@ -166,8 +172,11 @@ class InvoiceslistController extends CoresecureController {
         $object = new $controllerName();
         $object->setRequest($this->request);
         $object->runAction($service["module"], "delete", array($id_space, $id));
-
+        
         // delete invoice
+        $modelInvoiceItem = new InInvoiceItem();
+        $modelInvoiceItem->deleteForInvoice($id);
+        
         $modelInvoice->delete($id);
 
         // redirect

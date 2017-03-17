@@ -60,5 +60,10 @@ class InInvoiceItem extends Model {
         }
         return false;
     }
+    
+    public function deleteForInvoice($id_invoice){
+        $sql = "DELETE FROM in_invoice_item WHERE id_invoice=?";
+        $this->runRequest($sql, array($id_invoice));
+    }
 
 }

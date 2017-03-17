@@ -113,7 +113,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         // create edit form
         $idItem = 0;
-        if(count($id_items) > 0){
+        if (count($id_items) > 0) {
             $idItem = $id_items[0]["id"];
         }
         $form = $this->editForm($idItem, $id_space, $id_invoice, $lang);
@@ -203,7 +203,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $names = array();
         foreach ($resources as $r) {
             $ids[] = $r["id"] . "_day";
-            $names[] = $r["name"] . " " . BookinginvoiceTranslator::Day($lang);
+            if (!$modelNightWe->isNight($r["id"]) && !$modelNightWe->isWe($r["id"])) {
+                $names[] = $r["name"];
+            } else {
+                $names[] = $r["name"] . " " . BookinginvoiceTranslator::Day($lang);
+            }
             if ($modelNightWe->isNight($r["id"])) {
                 $ids[] = $r["id"] . "_night";
                 $names[] = $r["name"] . " " . BookinginvoiceTranslator::night($lang);
@@ -324,11 +328,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
             $userTime = array();
             //print_r($reservations);
+            $userTime["nb_hours_day"] = 0;
+            $userTime["nb_hours_night"] = 0;
+            $userTime["nb_hours_we"] = 0;
             foreach ($reservations as $reservation) {
-
-                $userTime["nb_hours_day"] = 0;
-                $userTime["nb_hours_night"] = 0;
-                $userTime["nb_hours_we"] = 0;
 
                 // count: day night we, packages
                 if ($reservation["package_id"] > 0) {
@@ -343,6 +346,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
             // fill content
             if (count($reservations) > 0) {
+                //echo "<br/> user time day = " . $userTime["nb_hours_day"] . "<br/>";
+
                 if ($userTime["nb_hours_day"] > 0) {
                     $content .= $res["id"] . "_day=" . $userTime["nb_hours_day"] . "=" . $timePrices[$res["id"]]["price_day"] . ";";
                     $total_ht += floatval($userTime["nb_hours_day"]) * floatval($timePrices[$res["id"]]["price_day"]);
@@ -362,6 +367,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     }
                 }
             }
+            //echo "<br/> content: $content <br/>";
         }
 
 
@@ -505,6 +511,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resaDayNightWe["nb_hours_night"] = round($nb_hours_night / 3600, 1);
         $resaDayNightWe["nb_hours_we"] = round($nb_hours_we / 3600, 1);
 
+        //print_r($resaDayNightWe);
+        //echo "<br/>";
         return $resaDayNightWe;
     }
 
@@ -652,12 +660,14 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelCalEntry = new BkCalendarEntry();
         $modelInvoice = new InInvoice();
         $modelPackage = new BkPackage();
+        $modelResource = new ResourceInfo();
         $invoiceInfo = $modelInvoice->get($id_invoice);
 
         $entries = $modelCalEntry->getInvoiceEntries($id_invoice);
         $modelUser = new EcUser();
         for ($i = 0; $i < count($entries); $i++) {
             $entries[$i]["recipient"] = $modelUser->getUserFUllName($entries[$i]["recipient_id"]);
+            $entries[$i]["resource"] = $modelResource->getName($entries[$i]["resource_id"]);
             $entries[$i]["date_begin"] = date("Y-m-d H:i", $entries[$i]["start_time"]);
             $entries[$i]["date_end"] = date("Y-m-d H:i", $entries[$i]["end_time"]);
             $entries[$i]["package"] = $modelPackage->getName("package_id");
@@ -668,6 +678,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $headers = array("id" => BookinginvoiceTranslator::Number($lang),
             "recipient" => BookinginvoiceTranslator::Recipient($lang),
+            "resource" => BookinginvoiceTranslator::Resource($lang),
             "date_begin" => BookinginvoiceTranslator::Date_Begin($lang),
             "date_end" => BookinginvoiceTranslator::Date_End($lang),
             "package" => BookinginvoiceTranslator::Package($lang)
