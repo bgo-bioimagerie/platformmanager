@@ -10,7 +10,6 @@ class AntibodiesRouting extends Routing{
         $this->addRoute("antibodiesconfigadmin", "antibodiesconfigadmin", "antibodiesconfigadmin", "index");
         $this->addRoute("antibodiesconfig", "antibodiesconfig", "antibodiesconfig", "index", array("id_space"), array(""));
 
-        
         // add here the module routes
         $this->addRoute("antibodies", "antibodies", "antibodieslist", "index", array("id_space", "letter"), array("", ""));
         $this->addRoute("apiantibodytissus", "apiantibodytissus", "antibodies", "tissus", array("id_space", "id_tissus"), array("", ""),true);

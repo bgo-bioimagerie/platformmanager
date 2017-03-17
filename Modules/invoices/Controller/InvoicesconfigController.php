@@ -69,6 +69,13 @@ class InvoicesconfigController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
+    /*
+    public function pdftemplateAction($id_space){
+        
+        $formUpload = new Form($this->request, "formUploadTemplate")
+    }
+    */
+    
     protected function menusactivationForm($id_space, $lang) {
 
         $modelSpace = new CoreSpace();

@@ -36,6 +36,23 @@ class AntibodieslistController extends CoresecureController {
         
     }
 
+    protected function isAdvSearch(){
+        
+        if (isset($_SESSION["ac_advSearch"])){
+            $s = $_SESSION["ac_advSearch"];
+            if( $s['searchName'] == "" &&  $s['searchNoH2P2'] == "" 
+                    && $s['searchSource'] == "" && $s['searchCible'] == "" 
+                    && $s['searchValide'] == 0 && $s['searchResp'] == ""){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+        return false;
+                
+    }
+    
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -44,12 +61,16 @@ class AntibodieslistController extends CoresecureController {
 
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
 
-        if (isset($_SESSION["ac_advSearch"])) {
+        //echo 'session =' . $_SESSION["ac_advSearch"] . "<br/>";
+        //print_r($_SESSION["ac_advSearch"]);
+        
+        if ($this->isAdvSearch()) {
             $this->advsearchqueryAction($id_space, "index");
             //echo "go to adv search";
             return;
         }
 
+        //echo "letter = " . $letter . "<br/>";
         // get the user list
         if($letter == ""){
             $letter = "A";

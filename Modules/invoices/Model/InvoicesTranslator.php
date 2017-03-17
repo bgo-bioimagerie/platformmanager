@@ -220,4 +220,11 @@ class InvoicesTranslator {
         return "Invoice a person in charge";
     }
 
+    public static function PDFTemplate($lang = "") {
+        if ($lang == "fr") {
+            return "Modèle de facture HTML - PDF";
+        }
+        return "HTML - PDF Template";
+    }
+    
 }
