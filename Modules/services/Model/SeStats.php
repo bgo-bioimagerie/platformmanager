@@ -124,6 +124,31 @@ class SeStats extends Model {
         echo $content;
     }
 
+    public function computeOriginStats($id_space, $periodStart, $periodEnd){
+    
+        $academique = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 1);
+        $private = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 2);
+        
+        return array("academique" => $academique, "private" => $private);
+    }
+    
+    public function computeSingleOriginStats($id_space, $periodStart, $periodEnd, $academic_private){
+        
+        $stats = array();
+        
+        $sql = "SELECT * FROM se_origin WHERE id_space = ? ORDER BY display_order ASC;";
+        $origins = $this->runRequest($sql, array($id_space))->fetchAll();
+        
+        foreach ($origins as $origin){
+            $sql = "SELECT * FROM se_project WHERE date_open >= ? AND date_open <= ? AND id_space=? AND new_project=? AND id_origin=?";
+            $req = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space, $academic_private, $origin["id"]));
+            
+            $stats[] = array("id_origin" => $origin["id"], "origin" => $origin["name"], "count" => $req->rowCount());
+        }
+        return $stats;
+        
+    }
+    
     public function computeStats($id_space, $startDate_min, $startDate_max) {
 
         // total number of projects 

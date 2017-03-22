@@ -128,11 +128,12 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $modelInvoice->setTotal($id_invoice, $total_ht);
             $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
         }
+        
 
         // render
         $this->render(array("id_space" => $id_space, "lang" => $lang, "invoice" => $invoice, "details" => $detailsData, "htmlForm" => $form->getHtml($lang)));
     }
-
+    
     protected function unparseContent($id_item) {
 
         $modelServices = new SeService();

@@ -69,12 +69,39 @@ class InvoicesconfigController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    /*
     public function pdftemplateAction($id_space){
         
-        $formUpload = new Form($this->request, "formUploadTemplate")
+        $lang = $this->getLanguage();
+        $formUpload = new Form($this->request, "formUploadTemplate");
+        $formUpload->setTitle(InvoicesTranslator::uploadTemplate($lang));
+        $formUpload->addUpload("template", InvoicesTranslator::Upload($lang));
+        $formUpload->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate");
+        if($formUpload->check()){
+            
+        }
+        
+        $formUploadImages = new Form($this->request, "formUploadImages");
+        $formUploadImages->setTitle(InvoicesTranslator::UploadImages($lang));
+        $formUploadImages->addUpload("image", InvoicesTranslator::Upload($lang));
+        $formUploadImages->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate");
+        if($formUploadImages->check()){
+            
+        }
+        
+        $dataTable = new TableView();
+        $dataTable->setTitle(InvoicesTranslator::Images($lang));
+        /// todo: get the list of file in data/invoice/id_space
+        
+        $headers = array(
+            "name" => InvoicesTranslator::Name($lang)
+        );
+        
+        $dataTable->view($data, $headers);
+       
+        $this->render(array("id_space" => $id_space, 
+            "formUpload" => $formUpload, $formUpload, "lang" => $lang));
+        
     }
-    */
     
     protected function menusactivationForm($id_space, $lang) {
 

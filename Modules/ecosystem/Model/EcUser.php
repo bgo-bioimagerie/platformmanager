@@ -30,6 +30,15 @@ class EcUser extends Model {
 
         $this->runRequest($sql);
     }
+    
+    public function getResponsibles(){
+        $sql = "SELECT ec_users.id as id, core_users.name as name, core_users.firstname as firstname "
+                . "FROM ec_users "
+                . "INNER JOIN core_users ON ec_users.id = core_users.id "
+                . "WHERE ec_users.is_responsible=1 "
+                . "ORDER BY core_users.name ASC";
+        return $this->runRequest($sql)->fetchAll();
+    }
 
     public function getUnit($id_user){
         $sql = "SELECT id_unit FROM ec_users WHERE id=?";

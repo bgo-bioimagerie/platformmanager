@@ -1256,4 +1256,48 @@ class BookingTranslator {
         return "Reservation time (hours)";
     }
     
+    public static function Reservation_per_resource($lang){
+        if ($lang == "fr") {
+            return "Réservations par ressource";
+        }
+        return "Reservation per resource";
+    }
+    
+    public static function Reservation_per_unit($lang){
+        if ($lang == "fr") {
+            return "Réservations par unités";
+        }
+        return "Reservation unit";
+    }
+    
+    public static function Reservation_per_responsible($lang){
+        if ($lang == "fr") {
+            return "Réservations par responsable";
+        }
+        return "Reservation per person in charge";
+    }
+    
+    
+    
+    public static function NumberResaPerUnitFrom($lang){
+        if ($lang == "fr") {
+            return "Nombre de réservations par unités sur la période du ";
+        }
+        return "Number reservations per unit from ";
+    }
+    
+    public static function TimeResaPerUnitFrom($lang){
+        if ($lang == "fr") {
+            return "Durée de réservations par unités sur la période du ";
+        }
+        return "Time reservations per unit from ";
+    }
+    
+        public static function To($lang){
+        if ($lang == "fr") {
+            return " au ";
+        }
+        return " to ";
+    }
+    
 }

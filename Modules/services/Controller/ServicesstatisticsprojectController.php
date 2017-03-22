@@ -92,6 +92,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         // get the stats
         $modelStats = new SeStats();
         $stats = $modelStats->computeStats($id_space, $periodStart, $periodEnd);
+        $statsOrigins = $modelStats->computeOriginStats($id_space, $periodStart, $periodEnd);
 
         // get the bill manager list
         $modelBillManager = new InInvoice();
@@ -99,10 +100,10 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
 
 
-        return $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $render);
+        return $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render);
     }
 
-    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $render) {
+    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render) {
 
         $modelUser = new EcUser();
         $modelUnit = new EcUnit();
@@ -397,6 +398,38 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
 
+        // ////////////////////////////////////////////////////
+        //                  Origin
+        // ////////////////////////////////////////////////////
+        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet->setTitle(ServicesTranslator::OriginsMaj($lang));
+        $objPHPExcel->setActiveSheetIndex(3);
+        
+        $curentLine = 1;
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, ServicesTranslator::Academique($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Industry($lang));
+        
+        $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+        $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+        
+        $acc = $statsOrigins['academique'];
+        $private = $statsOrigins['private'];
+        for($i = 0 ; $i < count($acc) ; $i++){
+            $curentLine++;
+            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $acc[$i]['origin']);
+            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $acc[$i]['count']);
+            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $private[$i]['count']);
+        
+            $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+            $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+            $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+        }
+        
+        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $text = ServicesTranslator::OriginsFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
+                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
 
 
         // ////////////////////////////////////////////////////
@@ -404,7 +437,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         // ////////////////////////////////////////////////////
         $objWorkSheet = $objPHPExcel->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
-        $objPHPExcel->setActiveSheetIndex(3);
+        $objPHPExcel->setActiveSheetIndex(4);
         $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 1;
@@ -497,7 +530,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         // ////////////////////////////////////////////////////
         $objWorkSheet = $objPHPExcel->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
-        $objPHPExcel->setActiveSheetIndex(4);
+        $objPHPExcel->setActiveSheetIndex(5);
         $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 1;

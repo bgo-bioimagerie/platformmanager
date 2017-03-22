@@ -26,6 +26,9 @@ require_once 'Modules/booking/Model/BkStatsUser.php';
 require_once 'Modules/booking/Model/BkGraph.php';
 require_once 'Modules/booking/Model/BkReport.php';
 
+require_once 'Modules/statistics/Model/StatisticsTranslator.php';
+
+
 /**
  * 
  * @author sprigent
@@ -49,9 +52,46 @@ class BookingstatisticsController extends CoresecureController {
 
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
 
+        $lang = $this->getLanguage();
+        $form = new Form($this->request, "statreservationsForm");
+        $form->setTitle(BookingTranslator::bookingreservationstats($lang));
+        $form->addDate("date_begin", BookingTranslator::PeriodBegining($lang), true, $this->request->getParameterNoException("date_begin"));
+        $form->addDate("date_end", BookingTranslator::PeriodEnd($lang), true, $this->request->getParameterNoException("date_end"));
+
+        $modelColorCode = new BkColorCode();
+        $colorCodes = $modelColorCode->getForList($id_space);
+        $formAdd = new FormAdd($this->request, 'statreservationsFormAdd');
+        $values = $this->request->getParameterNoException("exclude_color");
+        if ($values == "") {
+            $values = array();
+        }
+        $formAdd->addSelect("exclude_color", "", $colorCodes["names"], $colorCodes["ids"], $values);
+        $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
+
+        $form->setFormAdd($formAdd, StatisticsTranslator::Exclude_colorcodes($lang));
+        $form->setValidationButton(CoreTranslator::Ok($lang), 'bookingreservationstats/' . $id_space);
+        $form->setButtonsWidth(2, 8);
+
+        if ($form->check()) {
+            $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);
+            $dateEnd = CoreTranslator::dateToEn($form->getParameter("date_end"), $lang);
+            $excludeColorCode = $this->request->getParameter("exclude_color");
+
+            require_once 'externals/PHPExcel/Classes/PHPExcel.php';
+            $objPHPExcel = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, null);
+            // write excel file
+            $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
+            header('Cache-Control: max-age=0');
+            $objWriter->save('php://output');
+            return;
+        }
+
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space
+            'id_space' => $id_space,
+            'formHtml' => $form->getHtml($lang)
         ));
     }
 
@@ -425,7 +465,7 @@ class BookingstatisticsController extends CoresecureController {
         $dates = $data['dates'];
         $counting = $data['count'];
         $time = $data['time'];
-        
+
         for ($i = 0; $i < count($data['dates']); $i++) {
             $curentLine++;
             $objWorkSheet->SetCellValue('A' . $curentLine, $dates[$i]);
@@ -440,7 +480,7 @@ class BookingstatisticsController extends CoresecureController {
     }
 
     public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
-     
+
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
         $year_start = $dateBeginArray[0];
@@ -454,7 +494,7 @@ class BookingstatisticsController extends CoresecureController {
 
         $objWorkSheet = $objPHPExcel->createSheet();
         $lang = $this->getLanguage();
-        $objWorkSheet->setTitle(BookingTranslator::Reservation_counting($lang));
+        $objWorkSheet->setTitle(BookingTranslator::Reservation_per_resource($lang));
         $objWorkSheet->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 1;
@@ -470,7 +510,7 @@ class BookingstatisticsController extends CoresecureController {
         $resources = $data['resource'];
         $counting = $data['count'];
         $time = $data['time'];
-        
+
         for ($i = 0; $i < count($resources); $i++) {
             $curentLine++;
             $objWorkSheet->SetCellValue('A' . $curentLine, $resources[$i]);
@@ -482,15 +522,123 @@ class BookingstatisticsController extends CoresecureController {
             $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
         }
         return $objPHPExcel;
-        
     }
 
     public function statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
-        
+
+        // get data
+        $modelGraph = new BkGraph();
+        $modelUnit = new EcUnit();
+        $units = $modelUnit->getUnits($id_space);
+        $data = $modelGraph->getStatReservationPerUnit($dateBegin, $dateEnd, $id_space, $units, $excludeColorCode);
+
+        $objWorkSheet = $objPHPExcel->createSheet();
+        $lang = $this->getLanguage();
+        $objWorkSheet->setTitle(BookingTranslator::Reservation_per_unit($lang));
+        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
+
+        $curentLine = -1;
+        for ($catstat = 0; $catstat <= 1; $catstat++) { // number reservation = 0, time reservation = 1
+            $curentLine+=2;
+            if ($catstat == 0) {
+                $title = BookingTranslator::NumberResaPerUnitFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
+                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
+            } else {
+                $title = BookingTranslator::TimeResaPerUnitFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
+                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
+            }
+            $objWorkSheet->SetCellValue('A' . $curentLine, $title);
+
+
+            $curentLine++;
+            $curentCol = 1;
+            $style = $this->getStylesheet();
+            foreach ($units as $unit) {
+                $curentCol++;
+                $colLetter = $this->get_col_letter($curentCol);
+                $objWorkSheet->SetCellValue($colLetter . $curentLine, $unit['name']);
+                $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            }
+
+            for ($i = 0; $i < count($data); $i++) {
+                $curentLine++;
+
+                $resource = $data[$i]['resource'];
+                $objWorkSheet->SetCellValue('A' . $curentLine, $resource);
+                $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+
+                $curentCol = 1;
+                foreach ($units as $unit) {
+                    $curentCol++;
+                    $colLetter = $this->get_col_letter($curentCol);
+                    $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["unit_" . $unit['id']][$catstat]);
+                    $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+                }
+            }
+        }
+        return $objPHPExcel;
     }
 
     public function statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
-        
+
+        $dateBeginArray = explode("-", $dateBegin);
+        $month_start = $dateBeginArray[1];
+        $year_start = $dateBeginArray[0];
+        $dateEndArray = explode("-", $dateEnd);
+        $month_end = $dateEndArray[1];
+        $year_end = $dateEndArray[0];
+
+        // get data
+        $modelGraph = new BkGraph();
+        $modelUser = new EcUser();
+        $resps = $modelUser->getResponsibles($id_space);
+        $data = $modelGraph->getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode);
+
+        $objWorkSheet = $objPHPExcel->createSheet();
+        $lang = $this->getLanguage();
+        $objWorkSheet->setTitle(BookingTranslator::Reservation_per_responsible($lang));
+        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
+
+        $curentLine = -1;
+        for ($catstat = 0; $catstat <= 1; $catstat++) { // number reservation = 0, time reservation = 1
+            $curentLine+=2;
+            if ($catstat == 0) {
+                $title = BookingTranslator::NumberResaPerUnitFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
+                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
+            } else {
+                $title = BookingTranslator::TimeResaPerUnitFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
+                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
+            }
+            $objWorkSheet->SetCellValue('A' . $curentLine, $title);
+
+
+            $curentLine++;
+            $curentCol = 1;
+            $style = $this->getStylesheet();
+            foreach ($resps as $unit) {
+                $curentCol++;
+                $colLetter = $this->get_col_letter($curentCol);
+                $objWorkSheet->SetCellValue($colLetter . $curentLine, $unit['name']);
+                $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            }
+
+            for ($i = 0; $i < count($data); $i++) {
+                $curentLine++;
+
+                $resource = $data[$i]['resource'];
+                $objWorkSheet->SetCellValue('A' . $curentLine, $resource);
+                $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+
+                $curentCol = 1;
+                foreach ($resps as $unit) {
+                    $curentCol++;
+                    $colLetter = $this->get_col_letter($curentCol);
+                    $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["resp_" . $unit['id']][$catstat]);
+                    $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+                }
+            }
+        }
+        return $objPHPExcel;
     }
 
     protected function getStylesheet() {
@@ -570,10 +718,32 @@ class BookingstatisticsController extends CoresecureController {
 
         $objPHPExcel = $this->statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
         $objPHPExcel = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-        //$objPHPExcel = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-        //$objPHPExcel = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        $objPHPExcel = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        $objPHPExcel = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
 
         return $objPHPExcel;
+    }
+
+    function get_col_letter($num) {
+        $comp = 0;
+        $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+        //if the number is greater than 26, calculate to get the next letters
+        if ($num > 26) {
+            //divide the number by 26 and get rid of the decimal
+            $comp = floor($num / 26);
+
+            //add the letter to the end of the result and return it
+            if ($comp != 0) {
+                // don't subtract 1 if the comparative variable is greater than 0
+                return $this->get_col_letter($comp) . $letters[($num - $comp * 26)];
+            } else {
+                return $this->get_col_letter($comp) . $letters[($num - $comp * 26) - 1];
+            }
+        } else {
+            //return the letter
+            return $letters[($num - 1)];
+        }
     }
 
 }

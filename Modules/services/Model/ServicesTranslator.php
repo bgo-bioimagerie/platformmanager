@@ -674,20 +674,41 @@ class ServicesTranslator {
         }
         return "Title";
     }
-    
+
     public static function servicesOrigin($lang) {
         if ($lang == "fr") {
             return "Origine";
         }
         return "Origin";
     }
-    
+
     public static function Edit_Origin($lang) {
         if ($lang == "fr") {
             return "Editer origin";
         }
         return "Edit origin";
     }
-    
 
+    public static function OriginsFrom($lang) {
+        if ($lang == "fr") {
+            return "Décompte des origines sur le période du ";
+        }
+        return "Origins counting from ";
+    }
+
+    public static function Dates_are_not_correct($lang) {
+        if ($lang == "fr") {
+            return "Les dates ne sont pas correctes ";
+        }
+        return "Dates are not correct ";
+    }
+
+    public static function OriginsMaj($lang) {
+        if ($lang == "fr") {
+            return "ORIGINES";
+        }
+        return "ORIGINS";
+    }
+    
+    
 }
