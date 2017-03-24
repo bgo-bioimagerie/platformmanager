@@ -710,5 +710,12 @@ class ServicesTranslator {
         return "ORIGINS";
     }
     
+    public static function Discount($lang) {
+        if ($lang == "fr") {
+            return "Pourcentage de remise";
+        }
+        return "Discount";
+    }
+    
     
 }

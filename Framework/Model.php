@@ -38,6 +38,7 @@ abstract class Model {
             //echo "class = " . get_class($this) . "<br/>";
             $result->execute($params);
         }
+        //print_r( $result->errorInfo() );
         return $result;
     }
 

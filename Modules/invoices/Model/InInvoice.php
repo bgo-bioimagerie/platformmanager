@@ -33,9 +33,21 @@ class InInvoice extends Model {
         $this->setColumnsInfo("module", "varchar(200)", "");
         $this->setColumnsInfo("controller", "varchar(200)", "");
         $this->setColumnsInfo("id_edited_by", "int(11)", 0);
+        $this->setColumnsInfo("discount", "varchar(100)", 0);
         $this->primaryKey = "id";
     }
 
+    public function setDiscount($id, $discount){
+        $sql = "UPDATE in_invoice SET discount=? WHERE id=?";
+        $this->runRequest($sql, array($discount, $id));
+    }
+    
+    public function getDiscount($id){
+        $sql = "SELECT discount FROM in_invoice WHERE id=?";
+        $d = $this->runRequest($sql, array($id))->fetch();
+        return $d[0];
+    }
+    
     public function get($id){
         $sql = "SELECT * FROM in_invoice WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();

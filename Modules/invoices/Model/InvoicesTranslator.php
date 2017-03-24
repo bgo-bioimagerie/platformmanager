@@ -262,4 +262,12 @@ class InvoicesTranslator {
         return "Name";
     }
     
+    public static function Discount($lang) {
+        if ($lang == "fr") {
+            return "Remise";
+        }
+        return "Discount";
+    }
+    
+    
 }

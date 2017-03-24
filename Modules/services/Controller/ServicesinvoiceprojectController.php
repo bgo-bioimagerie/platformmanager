@@ -124,9 +124,19 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 $content .= $id_services[$i] . "=" . $quantity[$i] . "=" . $unit_price[$i] . "=" . $comment[$i] . ";";
                 $total_ht += $quantity[$i] * $unit_price[$i];
             }
+            // apply discount
+            $discount = $form->getParameter("discount");
+            
+            //echo "total before = $total_ht <br/>";
+            $total_ht = (1-floatval($discount)/100)*$total_ht;
+            //echo "total after = $total_ht <br/>";
+            
+            
             $modelInvoiceItem->editItemContent($id_items[0]["id"], $content, $total_ht);
             $modelInvoice->setTotal($id_invoice, $total_ht);
+            $modelInvoice->setDiscount($id_invoice, $discount);
             $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
+            return;
         }
         
 
@@ -209,9 +219,17 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceprojectform");
         $form->setButtonsWidth(2, 9);
+        
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
+        
+        $modelInvoice = new InInvoice();
+        $discount = $modelInvoice->getDiscount($id_invoice);
+        $form->addText("discount", ServicesTranslator::Discount($lang), false, $discount);
+        
+        
+        $total = (1-floatval($discount)/100)*$total;
         $form->addNumber("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
         return $form;
@@ -400,6 +418,16 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[1] * $d[2], 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
             $total += $d[1] * $d[2];
+        }
+        
+        $discount = floatval($invoice["discount"]);
+        if($discount>0){
+            $table .= "<tr>";
+            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
+            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . 1 . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
+            $table .= "</tr>";
         }
         $table .= "</table>";
 
