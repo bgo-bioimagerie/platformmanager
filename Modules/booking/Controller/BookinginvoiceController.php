@@ -49,7 +49,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
         $formByProjects = $this->createAllForm($id_space, $lang);
         if ($formByProjects->check()) {
-            //echo "coucou <br/>";
+            
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
 
@@ -130,8 +130,15 @@ class BookinginvoiceController extends InvoiceAbstractController {
             if (count($id_items) > 0) {
                 $modelInvoiceItem->editItemContent($id_items[0]["id"], $content, $total_ht);
             }
+            // apply discount
+            $discount = $form->getParameter("discount");
+            $total_ht = (1-floatval($discount)/100)*$total_ht;
+            
             $modelInvoice->setTotal($id_invoice, $total_ht);
+            $modelInvoice->setDiscount($id_invoice, $discount);
+            
             $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O");
+            return;
         }
 
         // render
@@ -188,6 +195,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
+        
+        $modelInvoice = new InInvoice();
+        $discount = $modelInvoice->getDiscount($id_invoice);
+        $form->addText("discount", BookinginvoiceTranslator::Discount($lang), false, $discount);
+        
+        
+        $total = (1-floatval($discount)/100)*$total;
         $form->addText("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
         return $form;
@@ -602,6 +616,16 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[1] * $d[2], 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
             $total += $d[1] * $d[2];
+        }
+        $discount = floatval($invoice["discount"]);
+        if($discount>0){
+            $total = (1-$discount/100)*$total;
+            $table .= "<tr>";
+            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
+            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . 1 . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
+            $table .= "</tr>";
         }
         $table .= "</table>";
 

@@ -1242,6 +1242,11 @@ class BookinginvoiceTranslator {
         return "Ask to send email when cancel a booking";
     }
             
-            
+    public static function Discount($lang){
+        if ($lang == "fr") {
+            return "Pourcentage de remise";
+        }
+        return "Discount";
+    }        
 
 }

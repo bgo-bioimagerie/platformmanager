@@ -1293,11 +1293,12 @@ class BookingTranslator {
         return "Time reservations per unit from ";
     }
     
-        public static function To($lang){
+    public static function To($lang){
         if ($lang == "fr") {
             return " au ";
         }
         return " to ";
     }
+   
     
 }

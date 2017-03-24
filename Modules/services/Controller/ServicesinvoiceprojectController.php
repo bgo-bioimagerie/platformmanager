@@ -422,6 +422,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         
         $discount = floatval($invoice["discount"]);
         if($discount>0){
+            $total = (1-$discount/100)*$total;
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
             $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . 1 . "</td>";
