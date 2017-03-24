@@ -408,7 +408,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $adress = $modelUnit->getAdress($invoice["id_unit"]);
         $modelUser = new EcUser();
         $resp = $modelUser->getUserFUllName($invoice["id_responsible"]);
-        $this->genreratePDF($invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
+        $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
     }
 
 }

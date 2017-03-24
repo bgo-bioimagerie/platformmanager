@@ -227,4 +227,39 @@ class InvoicesTranslator {
         return "HTML - PDF Template";
     }
     
+    public static function uploadTemplate($lang) {
+        if ($lang == "fr") {
+            return "Téléverser modèle";
+        }
+        return "Upload template";
+    }
+    
+    public static function Upload($lang) {
+        if ($lang == "fr") {
+            return "Téléverser";
+        }
+        return "Upload";
+    }
+    
+    public static function UploadImages($lang) {
+        if ($lang == "fr") {
+            return "Téléverser images";
+        }
+        return "Upload images";
+    }
+    
+    public static function Images($lang) {
+        if ($lang == "fr") {
+            return "Images";
+        }
+        return "Images";
+    }
+    
+    public static function Name($lang) {
+        if ($lang == "fr") {
+            return "Name";
+        }
+        return "Name";
+    }
+    
 }

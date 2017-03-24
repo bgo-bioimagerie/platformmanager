@@ -2,6 +2,9 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/TableView.php';
+require_once 'Framework/FileUpload.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/invoices/Model/InvoicesInstall.php';
@@ -74,33 +77,58 @@ class InvoicesconfigController extends CoresecureController {
         $lang = $this->getLanguage();
         $formUpload = new Form($this->request, "formUploadTemplate");
         $formUpload->setTitle(InvoicesTranslator::uploadTemplate($lang));
-        $formUpload->addUpload("template", InvoicesTranslator::Upload($lang));
-        $formUpload->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate");
+        $formUpload->addUpload("template", "");
+        $formUpload->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/".$id_space);
+        $formUpload->setColumnsWidth(0, 12);
+        $formUpload->setButtonsWidth(2, 10);
         if($formUpload->check()){
-            
+            FileUpload::uploadFile('data/invoices/'.$id_space.'/', 'template', 'template.php');
+            $this->redirect('invoicepdftemplate/'.$id_space);
+            return;
         }
         
         $formUploadImages = new Form($this->request, "formUploadImages");
         $formUploadImages->setTitle(InvoicesTranslator::UploadImages($lang));
-        $formUploadImages->addUpload("image", InvoicesTranslator::Upload($lang));
-        $formUploadImages->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate");
+        $formUploadImages->addUpload("image", "");
+        $formUploadImages->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/".$id_space);
+        $formUploadImages->setButtonsWidth(2, 10);
+        $formUploadImages->setColumnsWidth(0, 12);
         if($formUploadImages->check()){
-            
+            FileUpload::uploadFile('data/invoices/'.$id_space.'/', 'image', $_FILES["image"]["name"]);
+            $this->redirect('invoicepdftemplate/'.$id_space);
+            return;
         }
         
         $dataTable = new TableView();
         $dataTable->setTitle(InvoicesTranslator::Images($lang));
-        /// todo: get the list of file in data/invoice/id_space
+        $dataTable->addDeleteButton("invoicepdftemplatedelete/".$id_space);
+        
+        $files = scandir('data/invoices/'.$id_space);
+        $data = array();
+        foreach($files as $file){
+            if( strpos ( $file, ".") > 0 && $file != "template.php"){
+                $data[] = array('name' => $file, 'id' => str_replace ( '.' , "__pm__", $file));
+            }
+        }
         
         $headers = array(
             "name" => InvoicesTranslator::Name($lang)
         );
         
-        $dataTable->view($data, $headers);
+        $tableHtml = $dataTable->view($data, $headers);
        
         $this->render(array("id_space" => $id_space, 
-            "formUpload" => $formUpload, $formUpload, "lang" => $lang));
+            "formUpload" => $formUpload->getHtml($lang), "tableHtml" => $tableHtml, 
+            "formUploadImages" => $formUploadImages->getHtml($lang),
+            "lang" => $lang));
         
+    }
+    
+    public function pdftemplatedeleteAction($id_space, $name){
+        
+        $namefile = str_replace ( "__pm__", '.' , $name);
+        unlink('data/invoices/'.$id_space.'/'.$namefile);
+        $this->redirect('invoicepdftemplate/'.$id_space);
     }
     
     protected function menusactivationForm($id_space, $lang) {
