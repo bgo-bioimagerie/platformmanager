@@ -31,7 +31,7 @@ abstract class InvoiceAbstractController extends CoresecureController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true) {
+    public function genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true, $details = "") {
         
         $adress = nl2br($adress);
         $date = CoreTranslator::dateFromEn($date, 'fr');
@@ -43,9 +43,6 @@ abstract class InvoiceAbstractController extends CoresecureController {
         include('data/invoices/'.$id_space.'/template.php');
         $content = ob_get_clean();
         
-        
-        
-
         // convert in PDF
         require_once('externals/html2pdf/vendor/autoload.php');
         try {

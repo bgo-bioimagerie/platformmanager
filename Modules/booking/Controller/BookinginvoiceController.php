@@ -49,7 +49,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
         $formByProjects = $this->createAllForm($id_space, $lang);
         if ($formByProjects->check()) {
-            
+
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
 
@@ -95,6 +95,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
             return;
         }
+        if ($pdf == 2) {
+            $this->generatePDFInvoiceDetails($id_space, $invoice, $id_items[0]["id"], $lang);
+            return;
+        }
 
         //print_r($id_items);
         // unparse details
@@ -132,11 +136,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
             // apply discount
             $discount = $form->getParameter("discount");
-            $total_ht = (1-floatval($discount)/100)*$total_ht;
-            
+            $total_ht = (1 - floatval($discount) / 100) * $total_ht;
+
             $modelInvoice->setTotal($id_invoice, $total_ht);
             $modelInvoice->setDiscount($id_invoice, $discount);
-            
+
             $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O");
             return;
         }
@@ -194,14 +198,16 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
+        $form->addExternalButton(InvoicesTranslator::GeneratePdfDetails($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/2", "danger", true);
+        $form->setButtonsWidth(4, 8);
         $form->setFormAdd($formAdd);
-        
+
         $modelInvoice = new InInvoice();
         $discount = $modelInvoice->getDiscount($id_invoice);
         $form->addText("discount", BookinginvoiceTranslator::Discount($lang), false, $discount);
-        
-        
-        $total = (1-floatval($discount)/100)*$total;
+
+
+        $total = (1 - floatval($discount) / 100) * $total;
         $form->addText("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
         return $form;
@@ -302,7 +308,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
     protected function invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $id_resp, $number = "") {
 
         $lang = $this->getLanguage();
-        
+
         require_once 'Modules/booking/Model/BkPackage.php';
         require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
@@ -591,8 +597,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoice->setTotal($id_invoice, $total_ht);
     }
 
-    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
-
+    protected function invoiceTable($invoice, $id_item, $lang) {
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
                         <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
@@ -602,7 +607,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     </tr>
                 </table>
         ";
-
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
         $content = $this->unparseContent($id_item, $lang);
@@ -618,8 +622,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $total += $d[1] * $d[2];
         }
         $discount = floatval($invoice["discount"]);
-        if($discount>0){
-            $total = (1-$discount/100)*$total;
+        if ($discount > 0) {
+            $total = (1 - $discount / 100) * $total;
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
             $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . 1 . "</td>";
@@ -628,6 +632,32 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $table .= "</tr>";
         }
         $table .= "</table>";
+
+        return array("table" => $table, "total" => $total);
+    }
+
+    protected function generatePDFInvoiceDetails($id_space, $invoice, $id_item, $lang) {
+
+        $tabledata = $this->invoiceTable($invoice, $id_item, $lang);
+        $table = $tabledata["table"];
+        $total = $tabledata["total"];
+        $details = $this->detailsTable($invoice["id"], $lang);
+
+        $modelUnit = new EcUnit();
+        $unit = $modelUnit->getUnitName($invoice["id_unit"]);
+        $adress = $modelUnit->getAdress($invoice["id_unit"]);
+        $modelUser = new EcUser();
+        $resp = $modelUser->getUserFUllName($invoice["id_responsible"]);
+        $useTTC = true;
+
+        $this->genreratePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details);
+    }
+
+    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
+
+        $tabledata = $this->invoiceTable($invoice, $id_item, $lang);
+        $table = $tabledata["table"];
+        $total = $tabledata["total"];
 
         $modelUnit = new EcUnit();
         $unit = $modelUnit->getUnitName($invoice["id_unit"]);
@@ -675,44 +705,71 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $contentList;
     }
 
-    public function detailsData($id_invoice){
+    protected function detailsTable($id_invoice, $lang) {
+        $data = $this->detailsData($id_invoice);
+
+        $table = BookinginvoiceTranslator::Details($lang) . "<br/>";
+        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
+                    <tr>
+                        <th style=\"width: 30%\">" . BookinginvoiceTranslator::Resource($lang) . "</th>
+                        <th style=\"width: 50%\">" . BookinginvoiceTranslator::Recipient($lang) . "</th>
+                        <th style=\"width: 20%\">" . InvoicesTranslator::Quantity($lang) . "</th>
+                    </tr>
+                </table>
+        ";
+
+        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
+        
+        foreach ($data as $d) {
+            $table .= "<tr>";
+            $table .= "<td style=\"width: 30%; text-align: left; border: solid 1px black;\">" . $d['resource'] . "</td>";
+            $table .= "<td style=\"width: 50%; border: solid 1px black;\">" . $d['user'] . "</td>";
+            $table .= "<td style=\"width: 20%; text-align: right; border: solid 1px black;\">" . $d['time'] . "</td>";
+            $table .= "</tr>";
+        }
+        
+        $table .= "</table>";
+        return $table;
+    }
+
+    public function detailsData($id_invoice) {
         require_once 'Modules/booking/Model/BkCalendarEntry.php';
         require_once 'Modules/booking/Model/BkPackage.php';
-        
+
         $modelCalEntry = new BkCalendarEntry();
         $modelInvoice = new InInvoice();
         $modelPackage = new BkPackage();
         $modelResource = new ResourceInfo();
         $modelUser = new EcUser();
-        
-        
+
+
         $resources = $modelCalEntry->getResourcesForInvoice($id_invoice);
         $data = array();
-        foreach($resources as $r){
+        foreach ($resources as $r) {
             //print_r($r);
             $users = $modelCalEntry->getResourcesUsersForInvoice($r['resource_id'], $id_invoice);
-            foreach($users as $user){
+            foreach ($users as $user) {
                 //print_r($user);
                 $resas = $modelCalEntry->getResourcesUserResaForInvoice($r['resource_id'], $user['recipient_id'], $id_invoice);
                 $time = 0;
-                for($i = 0 ; $i < count($resas) ; $i++){
-                    
+                for ($i = 0; $i < count($resas); $i++) {
+
                     $time += floatval($resas[$i]['end_time']) - floatval($resas[$i]['start_time']);
                 }
-                $data[] = array('resource' => $modelResource->getName($r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']),'time' => round($time/3600,1));
+                $data[] = array('resource' => $modelResource->getName($r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 1));
             }
         }
         return $data;
     }
-    
+
     public function detailsAction($id_space, $id_invoice) {
-        
+
         $data = $this->detailsData($id_invoice);
         $lang = $this->getLanguage();
-        
+
         $modelInvoice = new InInvoice();
         $invoiceInfo = $modelInvoice->get($id_invoice);
-        
+
         $table = new TableView();
         $table->setTitle(BookinginvoiceTranslator::Details($lang) . ": " . $invoiceInfo["number"], 3);
 
@@ -723,10 +780,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $tableHtml = $table->view($data, $headers);
         $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml));
-        
     }
 
-    
     public function detailsActionOld($id_space, $id_invoice) {
 
         require_once 'Modules/booking/Model/BkCalendarEntry.php';

@@ -107,6 +107,14 @@ class InvoicesTranslator {
         }
         return "PDF";
     }
+    
+    public static function GeneratePdfDetails($lang = "") {
+        if ($lang == "fr") {
+            return "PDF avec détails";
+        }
+        return "PDF with details";
+    }
+    
 
     public static function Designation($lang) {
         if ($lang == "fr") {
