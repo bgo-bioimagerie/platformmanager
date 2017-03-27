@@ -55,6 +55,21 @@ class BkCalendarEntry extends Model {
         $sql = "SELECT * FROM bk_calendar_entry WHERE invoice_id=?";
         return $this->runRequest($sql, array($id_invoice))->fetchAll();
     }
+    
+    public function getResourcesForInvoice($id_invoice){
+        $sql = "SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE invoice_id=?";
+        return $this->runRequest($sql, array($id_invoice))->fetchAll();
+    }
+    
+    public function getResourcesUsersForInvoice($id_resource, $id_invoice){
+        $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE resource_id=? AND invoice_id=?";
+        return $this->runRequest($sql, array($id_resource, $id_invoice))->fetchAll();
+    }
+    
+    public function getResourcesUserResaForInvoice($id_resource, $id_user, $id_invoice){
+        $sql = "SELECT * FROM bk_calendar_entry WHERE recipient_id=? AND resource_id=? AND invoice_id=?";
+        return $this->runRequest($sql, array($id_user, $id_resource, $id_invoice))->fetchAll();
+    }
 
     public function getDefault($start_time, $end_time, $resource_id, $id_user) {
         

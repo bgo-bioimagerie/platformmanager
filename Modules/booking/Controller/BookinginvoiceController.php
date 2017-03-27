@@ -675,7 +675,59 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $contentList;
     }
 
+    public function detailsData($id_invoice){
+        require_once 'Modules/booking/Model/BkCalendarEntry.php';
+        require_once 'Modules/booking/Model/BkPackage.php';
+        
+        $modelCalEntry = new BkCalendarEntry();
+        $modelInvoice = new InInvoice();
+        $modelPackage = new BkPackage();
+        $modelResource = new ResourceInfo();
+        $modelUser = new EcUser();
+        
+        
+        $resources = $modelCalEntry->getResourcesForInvoice($id_invoice);
+        $data = array();
+        foreach($resources as $r){
+            //print_r($r);
+            $users = $modelCalEntry->getResourcesUsersForInvoice($r['resource_id'], $id_invoice);
+            foreach($users as $user){
+                //print_r($user);
+                $resas = $modelCalEntry->getResourcesUserResaForInvoice($r['resource_id'], $user['recipient_id'], $id_invoice);
+                $time = 0;
+                for($i = 0 ; $i < count($resas) ; $i++){
+                    
+                    $time += floatval($resas[$i]['end_time']) - floatval($resas[$i]['start_time']);
+                }
+                $data[] = array('resource' => $modelResource->getName($r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']),'time' => round($time/3600,1));
+            }
+        }
+        return $data;
+    }
+    
     public function detailsAction($id_space, $id_invoice) {
+        
+        $data = $this->detailsData($id_invoice);
+        $lang = $this->getLanguage();
+        
+        $modelInvoice = new InInvoice();
+        $invoiceInfo = $modelInvoice->get($id_invoice);
+        
+        $table = new TableView();
+        $table->setTitle(BookinginvoiceTranslator::Details($lang) . ": " . $invoiceInfo["number"], 3);
+
+        $headers = array("resource" => BookinginvoiceTranslator::Resource($lang),
+            "user" => BookinginvoiceTranslator::Recipient($lang),
+            "time" => BookinginvoiceTranslator::Duration($lang)
+        );
+
+        $tableHtml = $table->view($data, $headers);
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml));
+        
+    }
+
+    
+    public function detailsActionOld($id_space, $id_invoice) {
 
         require_once 'Modules/booking/Model/BkCalendarEntry.php';
         require_once 'Modules/booking/Model/BkPackage.php';
