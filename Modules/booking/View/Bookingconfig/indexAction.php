@@ -37,7 +37,7 @@
     </div>
     <?php } ?>
     
-    <?php include('Modules/Booking/View/Bookingconfig/summaryForm.php'); ?>
+    <?php include('Modules/booking/View/Bookingconfig/summaryForm.php'); ?>
 </div>
 
 <?php endblock();
