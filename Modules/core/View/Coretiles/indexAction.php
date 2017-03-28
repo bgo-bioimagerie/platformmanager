@@ -32,7 +32,7 @@
                         ?>
                         <li style="background-color:<?php echo $color ?>">
                             <a href="<?php echo $item["link"] ?>">
-                                <span aria-hidden="true"><img src="<?php echo $item["icon"] ?>" height="50px" alt="" /></span>
+                                <span aria-hidden="true"><img src="<?php echo $item["icon"] ?>" width="90px" alt="" /></span>
                                 <span class="glyphicon-class"><?php echo $item["name"] ?></span>
                             </a>
                         </li>
