@@ -41,12 +41,12 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 require_once 'Modules/antibodies/Model/Anticorps.php';
 
-class v1tov2temController extends Controller {
+class v1tov2spectroController extends Controller {
 
     public function indexAction() {
 
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_spectro;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_spectroscopies;charset=utf8';
         $login_old = "root";
         $pwd_old = "root";
 
@@ -56,7 +56,7 @@ class v1tov2temController extends Controller {
 
         // ---------- IMPORT ----------
         // Rennes MRic
-        $this->importUsers(); // onicolle -> doriann
+        $this->importUsers($pdo_old, $id_space); // onicolle -> doriann
         // resources
         echo "import resources <br/>";
         echo "fn 1 <br/>";
@@ -72,23 +72,66 @@ class v1tov2temController extends Controller {
         echo "fn 1 <br/>";
         $this->importBookingSettings($pdo_old, $id_space);
         echo "fn 3 <br/>";
-        $this->importBookingCss($pdo_old, $areasMap);
+        //$this->importBookingCss($pdo_old, $areasMap);
         echo "fn 4 <br/>";
-        $this->importCalQuantities($pdo_old, $resourcesMap);
+        //$this->importCalQuantities($pdo_old, $resourcesMap);
         echo "fn 5 <br/>";
         $colorMap = $this->importColorCode($pdo_old, $id_space);
         echo "fn 6 <br/>";
         $this->importCalendarEntry($pdo_old, $resourcesMap, $colorMap);
     }
+    
+    protected function importUsers($pdo_old, $id_space) {
+        $sql = "SELECT * FROM core_users";
+        $result = $pdo_old->query($sql);
+        $users_old = $result->fetchAll();
 
-    public function importUsers(){
-        
-        $modelUser = new EcUser();
-        $modelUser->add("Lavault", "MThé", 
-                "angot", "", "marie-therese.lavault@univ-rennes1.fr",
-                "4744", 1, 1, 
-                "1", "", 
-                "");
+        $modelSpace = new CoreSpace();
+        $modelCoreUser = new CoreUser();
+        $modelEcUser = new EcUser();
+        $userMap = array();
+        foreach ($users_old as $uo) {
+            $sqlR = "SELECT * FROM core_responsibles WHERE id_users=" . $uo["id"];
+            $result2 = $pdo_old->query($sqlR);
+            $is_responsible = 0;
+            if ($result2->rowCount() == 1) {
+                $is_responsible = 1;
+            }
+
+            $login = $uo["login"];
+            $pwd = $uo["pwd"];
+            $name = $uo["name"];
+            $firstname = $uo["firstname"];
+            $email = $uo["email"];
+            $status_id = 1;
+            if ($uo["id_status"] > 3) {
+                $status_id = 2;
+            }
+            $date_end_contract = $uo["date_end_contract"];
+            $is_active = $uo["is_active"];
+            $source = "local";//$uo["source"];
+            
+            if(!$modelCoreUser->isLogin($login)){
+            
+                $userNewID = $modelCoreUser->importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source);
+                $userMap[$uo["id"]] = $userNewID;
+
+                //echo "imported id = " . $userNewID . "<br/>";
+                $phone = $uo["tel"];
+                $unit = 1;
+                if (isset($unitsMap[$uo["id_unit"]])) {
+                    $unit = $unitsMap[$uo["id_unit"]];
+                }
+
+                $date_convention = $uo["date_convention"];
+                $convention_url = ""; //$uo["convention_url"];
+                $modelEcUser->import2($userNewID, $phone, $unit, $date_convention, $is_responsible, $convention_url);
+                $modelSpace->setUser($userNewID, $id_space, 2);
+                //echo "done <br/>";
+            }
+        }
+
+        return $userMap;
         
     }
     
@@ -143,7 +186,7 @@ class v1tov2temController extends Controller {
             if (isset($areasMap[$ro["area_id"]])) {
                 $id_area = $areasMap[$ro["area_id"]];
             }
-            $display_order = $ro["display_order"];
+            $display_order = 1;//$ro["display_order"];
             $newID = $modelResources->set(0, $name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order);
             $resourcesMap[$ro["id"]] = $newID;
         }
@@ -238,15 +281,15 @@ class v1tov2temController extends Controller {
 
             $booked_by_id = $this->getUserID($pdo_old, $d["booked_by_id"]);
             $recipient_id = $this->getUserID($pdo_old, $d["recipient_id"]);
-            $responsible_id = $this->getUserID($pdo_old, $d["responsible_id"]);
+            $responsible_id = 0;//$this->getUserID($pdo_old, $d["responsible_id"]);
 
             //$package_id = 0;
             //if(isset($usersMap[$d["responsible_id"]])){
-            $package_id = $d["package_id"];
+            $package_id = 0;//$d["package_id"];
             //}
 
-            $supplementaries = $d["supplementary"];
-            $quantities = $d["quantity"];
+            $supplementaries = "";//$d["supplementary"];
+            $quantities = "";//$d["quantity"];
 
             $last_update = $d["last_update"];
             $color_type_id = 1;

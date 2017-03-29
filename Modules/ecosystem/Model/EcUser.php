@@ -65,6 +65,11 @@ class EcUser extends Model {
         }
     }
     
+    public function getActiveManagersEmails($id_space){
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE status>2 AND id_space=?)";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+    
     public function getActiveUsers($sortentry){
         $modelUser = new CoreUser();
         return $modelUser->getActiveUsers($sortentry);
