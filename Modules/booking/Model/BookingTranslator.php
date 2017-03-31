@@ -1300,5 +1300,11 @@ class BookingTranslator {
         return " to ";
     }
    
+    public static function WhoCanUse($lang){
+        if ($lang == "fr") {
+            return "Utilisable par";
+        }
+        return "Who can use";
+    }
     
 }

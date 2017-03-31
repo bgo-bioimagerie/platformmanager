@@ -37,6 +37,9 @@ class BookingcolorcodesController extends CoresecureController {
         // get the user list
         $colorModel = new BkColorCode();
         $colorTable = $colorModel->getForSpace($id_space);
+        for($i = 0 ; $i < count($colorTable) ; $i++){
+            $colorTable[$i]["who_can_use"] = CoreTranslator::Translate_status_from_id($lang, $colorTable[$i]["who_can_use"]);
+        }
 
         $table = new TableView ();
 
@@ -48,7 +51,8 @@ class BookingcolorcodesController extends CoresecureController {
         $tableContent = array(
             "id" => "ID",
             "name" => CoreTranslator::Name($lang),
-            "color" => CoreTranslator::Color($lang)
+            "color" => CoreTranslator::Color($lang),
+            "who_can_use" => BookingTranslator::WhoCanUse($lang)
         );
 
         $tableHtml = $table->view($colorTable, $tableContent);
@@ -73,6 +77,8 @@ class BookingcolorcodesController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), false, $data["name"]);
         $form->addColor("color", BookingTranslator::Color($lang), false, $data["color"]);
         $form->addColor("text", BookingTranslator::Text($lang), false, $data["text"]);
+        $roles = CoreSpace::roles($lang);
+        $form->addSelect("who_can_use", BookingTranslator::WhoCanUse($lang), $roles["names"], $roles["ids"], $data["display_order"]);
         $form->addNumber("display_order", BookingTranslator::Display_order($lang), false, $data["display_order"]);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingcolorcodeedit/".$id_space."/".$id);
@@ -81,7 +87,8 @@ class BookingcolorcodesController extends CoresecureController {
         
         if ($form->check()){
             
-            $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
+            $newID = $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
+            $model->setColorWhoCanUse($newID, $form->getParameter("who_can_use"));
             $this->redirect("bookingcolorcodes/".$id_space);
         }
         $formHtml = $form->getHtml($lang);

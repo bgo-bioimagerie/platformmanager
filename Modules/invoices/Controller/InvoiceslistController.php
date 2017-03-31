@@ -55,10 +55,15 @@ class InvoiceslistController extends CoresecureController {
 
         $years = $modelInvoices->allYears($id_space);
         if ($year == "") {
-            if (count($years) == 1) {
+            if(count($years) == 0){
+                $year = date('Y');
+            }
+            else if (count($years) == 1) {
                 $year = $years[0];
             }
-            $year = $years[count($years) - 1];
+            else{
+                $year = $years[count($years) - 1];
+            }
         }
         $dates = $this->getInvoicePeriod($id_space, $year);
         $invoices = $modelInvoices->getByPeriod($id_space, $dates["yearBegin"], $dates["yearEnd"], "number");

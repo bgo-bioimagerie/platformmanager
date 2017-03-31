@@ -284,6 +284,9 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
     protected function invoiceAll($id_space, $beginPeriod, $endPeriod) {
 
+        require_once 'Modules/booking/Model/BkPackage.php';
+        require_once 'Modules/booking/Model/BkCalendarEntry.php';
+
         $modelCal = new BkCalendarEntry();
         $modelResp = new EcResponsible();
         $modelUser = new EcUser();
@@ -296,7 +299,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
             //echo "billIt = " . $billIt . "<br/>";
             if ($billIt) {
                 $id_unit = $modelUser->getUnit($resp["id"]);
-                //echo "unit got<br>";
+                //echo "space = $id_space <br/>";
+                //echo "unit got = $id_unit <br>";
                 $number = $modelInvoice->getNextNumber($number);
                 //echo "invoice num got ".$number."<br>";
                 $this->invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $resp["id"], $number);
@@ -719,7 +723,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         ";
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        
+
         foreach ($data as $d) {
             $table .= "<tr>";
             $table .= "<td style=\"width: 30%; text-align: left; border: solid 1px black;\">" . $d['resource'] . "</td>";
@@ -727,7 +731,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $table .= "<td style=\"width: 20%; text-align: right; border: solid 1px black;\">" . $d['time'] . "</td>";
             $table .= "</tr>";
         }
-        
+
         $table .= "</table>";
         return $table;
     }

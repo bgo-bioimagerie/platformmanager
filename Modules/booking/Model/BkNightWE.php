@@ -65,7 +65,8 @@ class BkNightWE extends Model {
         if ($data->rowCount() == 1) {
             return $data->fetch();  // get the first line of the result
         } else {
-            throw new Exception("Cannot find the pricing using the given id:" . $id);
+            return array();
+            //throw new Exception("Cannot find the pricing using the given id:" . $id);
         }
     }
 

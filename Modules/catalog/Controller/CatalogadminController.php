@@ -25,6 +25,10 @@ class CatalogadminController extends CoresecureController {
         //$this->checkAuthorizationMenu("catalog");
         $_SESSION["openedNav"] = "catalogsettings";
     }
+    
+    public function indexAction($id_space){
+        $this->redirect("catalogcategories/".$id_space);
+    }
 
     /**
      * (non-PHPdoc)

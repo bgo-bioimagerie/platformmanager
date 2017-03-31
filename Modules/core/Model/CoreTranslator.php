@@ -828,6 +828,34 @@ class CoreTranslator {
         }
         return $status;
     }
+    
+    public static function Translate_status_from_id($lang, $id_status) {
+        if ($lang == "fr") {
+            if ($id_status == 1) {
+                return "visiteur";
+            } else if ($id_status == 2) {
+                return "utilisateur";
+            } else if ($id_status == 3) {
+                return "gestionnaire";
+            } else if ($id_status == 4) {
+                return "administrateur";
+            }
+            return "rôle introuvable";
+        }
+        else if ($lang == "fr") {
+            if ($id_status == 1) {
+                return "visitor";
+            } else if ($id_status == 2) {
+                return "user";
+            } else if ($id_status == 3) {
+                return "manager";
+            } else if ($id_status == 4) {
+                return "administrator";
+            }
+            return "cannot find the role";
+        }
+        return $id_status;
+    }
 
     public static function LdapConfig($lang) {
         if ($lang == "fr") {

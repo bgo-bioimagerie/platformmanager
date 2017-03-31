@@ -24,14 +24,18 @@ class BkColorCode extends Model {
 		`text` varchar(7) NOT NULL DEFAULT '',		
 		`display_order` int(11) NOT NULL DEFAULT 0,
                 `id_space` int(11) NOT NULL DEFAULT 1,
+                `who_can_use` int(11) NOT NULL DEFAULT 1,
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
+
+        $this->addColumn("bk_color_codes", "who_can_use", "int(11)", 1);
     }
 
     public function getDefault() {
-        return array("id" => 0, "name" => "", "color" => "#ffffff", "text" => "#000000", "display_order" => 0, "id_space" => 1);
+        return array("id" => 0, "name" => "", "color" => "#ffffff", "text" => "#000000",
+            "display_order" => 0, "id_space" => 1, "who_can_use" => 1);
     }
 
     /**
@@ -59,20 +63,33 @@ class BkColorCode extends Model {
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
-    
-    public function getColorCodesForList($id_space, $sortentry = 'id') {
 
-        $sql = "select * from bk_color_codes WHERE id_space=? order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($id_space));
+    public function getColorCodesForListUser($id_space, $userSPaceRole, $sortentry = 'id') {
+        $sql = "select * from bk_color_codes WHERE id_space=? AND who_can_use<=? order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space, $userSPaceRole));
         $data = $user->fetchAll();
-        $names = array(); $ids = array();
-        foreach($data as $d){
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
             $names[] = $d["name"];
             $ids[] = $d["id"];
         }
         return array("names" => $names, "ids" => $ids);
     }
-    
+
+    public function getColorCodesForList($id_space, $sortentry = 'id') {
+
+        $sql = "select * from bk_color_codes WHERE id_space=? order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
+        $data = $user->fetchAll();
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
+            $names[] = $d["name"];
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
 
     /**
      * Get color code info from ID
@@ -91,7 +108,7 @@ class BkColorCode extends Model {
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
-    
+
     public function getForList($id_space) {
         $sql = "SELECT * FROM bk_color_codes WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
@@ -99,7 +116,7 @@ class BkColorCode extends Model {
         $ids = array();
         $names[] = "";
         $ids[] = 0;
-        foreach($data as $d){
+        foreach ($data as $d) {
             $names[] = $d['name'];
             $ids[] = $d['id'];
         }
@@ -144,6 +161,11 @@ class BkColorCode extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
+    public function setColorWhoCanUse($id, $who_can_use) {
+        $sql = "UPDATE bk_color_codes SET who_can_use=? WHERE id=?";
+        $this->runRequest($sql, array($who_can_use, $id));
+    }
+
     /**
      * update the information of a SyColorCode
      *
@@ -160,8 +182,9 @@ class BkColorCode extends Model {
     public function editColorCode($id, $name, $color, $text_color, $id_space, $display_order) {
         if ($this->isColorCodeId($id)) {
             $this->updateColorCode($id, $name, $color, $text_color, $id_space, $display_order);
+            return $id;
         } else {
-            $this->addColorCode($name, $color, $text_color, $id_space, $display_order);
+            return $this->addColorCode($name, $color, $text_color, $id_space, $display_order);
         }
     }
 

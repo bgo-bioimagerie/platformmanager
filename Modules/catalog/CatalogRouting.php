@@ -12,6 +12,8 @@ class CatalogRouting extends Routing{
 
         
         // add here the module routes
+        $this->addRoute("catalogsettings", "catalogsettings", "catalogadmin", "index", array("id_space"), array(""));
+        
         $this->addRoute("catalog", "catalog", "catalogview", "index", array("id_space", "idCategory"), array("", ""));
         
         $this->addRoute("catalogcategories", "catalogcategories", "catalogadmin", "categories", array("id_space"), array(""));

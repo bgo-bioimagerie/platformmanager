@@ -354,7 +354,9 @@ class ServicesprojectsController extends CoresecureController {
             $items = $modelProject->getProjectServices($id);
         } else {
             $value = $modelProject->defaultEntryValues();
-            $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
+            $items = array("dates" => array(), "services" => array(), "quantities" => array(), 
+                "comment" => array(),
+                "id_origin" => 0);
         }
 
         $modelUser = new EcUser();
@@ -371,6 +373,10 @@ class ServicesprojectsController extends CoresecureController {
 
         $form->addSelect("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
         $form->addSelect("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
+
+        $modelOrigin = new SeOrigin();
+        $origins = $modelOrigin->getForList($id_space);
+        $form->addSelect("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
 
         $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, CoreTranslator::dateFromEn($value["time_limit"], $lang));
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));

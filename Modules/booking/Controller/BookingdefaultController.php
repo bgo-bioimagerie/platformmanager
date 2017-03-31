@@ -324,7 +324,10 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $modelColors = new BkColorCode();
-        $colors = $modelColors->getColorCodesForList($id_space, "display_order");
+        
+        $modelUserSpace = new CoreSpace();
+        $userSPaceRole = $modelUserSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
+        $colors = $modelColors->getColorCodesForListUser($id_space, $userSPaceRole, "display_order");
         $form->addSelect("color_type_id", BookingTranslator::color_code($lang), $colors["names"], $colors["ids"], $resaInfo["color_type_id"]);
 
         // quantities
