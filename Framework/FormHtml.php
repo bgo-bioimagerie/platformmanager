@@ -299,7 +299,7 @@ class FormHtml {
         $html .= "</div><div class=\"col-md-1\">";
         $html .= ":";
         $html .= "</div><div class=\"col-md-5\">";
-        $html .= "<input class=\"form-control\" type=\"number\" id=\"" . $name . "m" . "\" name=\"" . $name . "m" . "\"" . " value=\"" . $value[1] . "\"" . "/>";
+        $html .= "<input class=\"form-control\" type=\"number\" min=\"0\" max=\"59\" id=\"" . $name . "m" . "\" name=\"" . $name . "m" . "\"" . " value=\"" . $value[1] . "\"" . "/>";
         $html .= "</div>";
         $html .= "</div>";
         $html .= "</div>";
