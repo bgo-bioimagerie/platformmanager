@@ -35,7 +35,8 @@ class CoretilesController extends CoresecureController {
         $navcolortxt = $modelConfig->getParam("navbar_text_highlight");
 
         $lang = $this->getLanguage();
-        $this->render(array('toolMenu' => $toolMenu, 'toolAdmin' => $toolAdmin, "lang" => $lang, "navcolor" => $navcolor, "navcolortxt" => $navcolortxt));
+        $this->render(array('toolMenu' => $toolMenu, 'toolAdmin' => $toolAdmin, 
+            "lang" => $lang, "navcolor" => $navcolor, "navcolortxt" => $navcolortxt));
         
     }
 

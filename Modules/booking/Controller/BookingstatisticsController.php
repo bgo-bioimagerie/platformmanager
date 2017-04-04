@@ -57,7 +57,10 @@ class BookingstatisticsController extends CoresecureController {
         $form->setTitle(BookingTranslator::bookingreservationstats($lang));
         $form->addDate("date_begin", BookingTranslator::PeriodBegining($lang), true, $this->request->getParameterNoException("date_begin"));
         $form->addDate("date_end", BookingTranslator::PeriodEnd($lang), true, $this->request->getParameterNoException("date_end"));
-
+        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), 
+                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), 
+                array(1,0), $this->request->getParameterNoException("generateunitstats"));
+        
         $modelColorCode = new BkColorCode();
         $colorCodes = $modelColorCode->getForList($id_space);
         $formAdd = new FormAdd($this->request, 'statreservationsFormAdd');
@@ -76,9 +79,10 @@ class BookingstatisticsController extends CoresecureController {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);
             $dateEnd = CoreTranslator::dateToEn($form->getParameter("date_end"), $lang);
             $excludeColorCode = $this->request->getParameter("exclude_color");
+            $generateunitstats = $this->request->getParameter("generateunitstats");
 
             require_once 'externals/PHPExcel/Classes/PHPExcel.php';
-            $objPHPExcel = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, null);
+            $objPHPExcel = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, null);
             // write excel file
             $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -703,7 +707,7 @@ class BookingstatisticsController extends CoresecureController {
             'styleBorderedCenteredCell' => $styleBorderedCenteredCell);
     }
 
-    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel) {
 
         if (!$objPHPExcel) {
             $objPHPExcel = new PHPExcel();
@@ -718,9 +722,10 @@ class BookingstatisticsController extends CoresecureController {
 
         $objPHPExcel = $this->statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
         $objPHPExcel = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-        $objPHPExcel = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-        $objPHPExcel = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-
+        if($generateunitstats == 1){
+            $objPHPExcel = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+            $objPHPExcel = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        }    
         return $objPHPExcel;
     }
 

@@ -35,7 +35,9 @@ class StatisticsglobalController extends CoresecureController {
         $form->setTitle(StatisticsTranslator::StatisticsGlobal($lang));
         $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, $this->request->getParameterNoException("date_begin"));
         $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, $this->request->getParameterNoException("date_end"));
-
+        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), 
+                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), 
+                array(1,0), $this->request->getParameterNoException("generateunitstats"));
 
         $modelColorCode = new BkColorCode();
         $colorCodes = $modelColorCode->getForList($id_space);
@@ -54,6 +56,7 @@ class StatisticsglobalController extends CoresecureController {
         if ($form->check()) {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);
             $dateEnd = CoreTranslator::dateToEn($form->getParameter("date_end"), $lang);
+            $generateunitstats = $this->request->getParameter("generateunitstats");
 
             if ($dateBegin != "" && $dateEnd != "" && $dateBegin > $dateEnd) {
                 $_SESSION['message'] = ServicesTranslator::Dates_are_not_correct($lang);
@@ -63,19 +66,19 @@ class StatisticsglobalController extends CoresecureController {
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
             
-            $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $id_space);
+            $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space);
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
     }
 
-    protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $id_space) {
+    protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space) {
 
         $controllerServices = new ServicesstatisticsprojectController();
         $objPHPExcel = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space);
 
         $controllerBooking = new BookingstatisticsController();
-        $objPHPExcel = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        $objPHPExcel = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel);
 
         // write excel file
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);

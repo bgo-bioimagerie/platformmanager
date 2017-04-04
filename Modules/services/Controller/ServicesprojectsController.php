@@ -345,7 +345,7 @@ class ServicesprojectsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $form = new Form($this->request, "projectEditForm");
-        $form->setTitle(ServicesTranslator::Edit_projects($lang), 3);
+        $form->setTitle(ServicesTranslator::Add_projects($lang), 3);
 
         $modelProject = new SeProject();
 
@@ -355,15 +355,14 @@ class ServicesprojectsController extends CoresecureController {
         } else {
             $value = $modelProject->defaultEntryValues();
             $items = array("dates" => array(), "services" => array(), "quantities" => array(), 
-                "comment" => array(),
-                "id_origin" => 0);
+                "comment" => array());
         }
 
         $modelUser = new EcUser();
         $users = $modelUser->getAcivesForSelect("name");
         $resps = $modelUser->getAcivesRespsForSelect("name");
 
-        $form->addSeparator(CoreTranslator::Description($lang));
+        //$form->addSeparator(CoreTranslator::Description($lang));
         $form->addSelect("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
         $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
@@ -411,9 +410,9 @@ class ServicesprojectsController extends CoresecureController {
 
         if ($form->check()) {
 
-            $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
 
-
+            /*
             if ($id > 0) {
                 $servicesDates = $this->request->getParameter("date");
                 $servicesIds = $this->request->getParameter("services");
@@ -437,7 +436,8 @@ class ServicesprojectsController extends CoresecureController {
                 }
                 $modelProject->removeUnsetServices($id, $servicesIds, $servicesDates);
             }
-            $this->redirect("servicesprojects/" . $id_space);
+            */
+            $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
             return;
         }
 

@@ -11,6 +11,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 <div class="col-xs-12 pm-tile-container">
+    
     <div class="container">
         <?php
         for ($i = 0; $i < count($toolMenu); $i++) {

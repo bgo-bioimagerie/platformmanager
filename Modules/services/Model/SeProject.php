@@ -354,6 +354,7 @@ class SeProject extends Model {
         $entry["new_team"] = "";
         $entry["new_project"] = "";
         $entry["time_limit"] = "";
+        $entry["id_origin"] = "";
         return $entry;
     }
 

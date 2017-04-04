@@ -182,13 +182,13 @@ class EcUnit extends Model {
         $this->runRequest($sql, array($id, $name, $address, $id_belonging));
     }
 
-    public function importUnit2($name, $address, $id_belonging) {
+    public function importUnit2($name, $address) {
         $sql = "SELECT name FROM ec_units WHERE name=?";
         $req = $this->runRequest($sql, array("name"));
         if ($req->rowCount() == 0) {
-            $sql = "insert into ec_units(name, address, id_belonging)"
-                    . " values(?, ?, ?)";
-            $this->runRequest($sql, array($name, $address, $id_belonging));
+            $sql = "insert into ec_units(name, address)"
+                    . " values(?, ?)";
+            $this->runRequest($sql, array($name, $address));
             return $this->getDatabase()->lastInsertId();
         } else {
             $u = $req->fetch();

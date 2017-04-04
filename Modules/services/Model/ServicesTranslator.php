@@ -283,6 +283,12 @@ class ServicesTranslator {
         return "Edit project";
     }
 
+    public static function Add_projects($lang) {
+        if ($lang == "fr") {
+            return "Ajouter projet";
+        }
+        return "Add project";
+    }
     public static function New_team($lang) {
         if ($lang == "fr") {
             return "Nouvelle equipe";

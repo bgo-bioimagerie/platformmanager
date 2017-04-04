@@ -1307,4 +1307,12 @@ class BookingTranslator {
         return "Who can use";
     }
     
+    
+    public static function GenerateStatsPerUnit($lang){
+        if ($lang == "fr") {
+            return "Générer les statistiques par unité ?";
+        }
+        return "Generate stats per unit ?";
+    }
+    
 }

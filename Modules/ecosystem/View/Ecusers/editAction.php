@@ -2,14 +2,14 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="col-md-12 pm-form">
+<div class="col-md-12 pm-form-short">
     <?php echo $formHtml ?>
 </div>
 <?php echo $script ?>
 
 <?php if ($id > 0) { ?>
     <br>
-    <div class="col-md-12" id="pm-form">
+    <div class="col-md-12 pm-form-short">
         <div class="page-header">
             <h1>
                 <?php echo CoreTranslator::Change_password($lang) ?>
