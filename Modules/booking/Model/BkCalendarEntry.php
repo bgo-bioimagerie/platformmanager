@@ -486,7 +486,7 @@ class BkCalendarEntry extends Model {
         $sql = "SELECT DISTINCT user.email AS email
 				FROM core_users AS user
 				INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
-				WHERE bk_calendar_entry.resource_id IN (select id from re_resources where area_id=?) 
+				WHERE bk_calendar_entry.resource_id IN (SELECT id FROM re_info WHERE id_area=?) 
 				AND user.is_active = 1  
 				;";
         $req = $this->runRequest($sql, array($area_id));

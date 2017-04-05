@@ -96,7 +96,7 @@ class MailerController extends CoresecureController {
                 $toAdress = $modelCalEntry->getEmailsBookerResource($toEx[1]);
             }
         }
-
+        
         // get the space name
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
