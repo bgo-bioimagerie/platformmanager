@@ -1199,6 +1199,14 @@ class CoreTranslator {
         }
         return "Menus";
     }
+    
+    public static function Edit_menu($lang) {
+        if ($lang == "fr") {
+            return "Editer menu";
+        }
+        return "Edit menu";
+    }
+    
 
     public static function Menus_saved($lang) {
         if ($lang == "fr") {

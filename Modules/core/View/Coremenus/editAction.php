@@ -8,6 +8,6 @@
 </div>    
 
 <div class="col-md-10 pm-table"> 
-    <?php echo $tableHtml ?>
+    <?php echo $formHtml ?>
 </div>
 <?php endblock();

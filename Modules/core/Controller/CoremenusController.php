@@ -28,11 +28,66 @@ class CoremenusController extends CoresecureController {
         }
     }
 
+    public function indexAction(){
+        $lang = $this->getLanguage();
+        
+        $modelMenu = new CoreMenu();
+        $menus = $modelMenu->getMenus("display_order");
+        
+        $table = new TableView();
+        $table->setTitle(CoreTranslator::Menus($lang));
+        $table->addLineEditButton("coremenusedit");
+        $table->addDeleteButton("coremenusdelete");
+        
+        $headers = array(
+            "name" => CoreTranslator::Name($lang), 
+            "display_order" => CoreTranslator::Display_order($lang),
+            "url" => CoreTranslator::Url($lang),
+            );
+        $tableHtml = $table->view($menus, $headers);
+        
+        $this->render( array('lang' => $lang, "tableHtml" => $tableHtml) );
+        
+    }
+    
+    public function deleteAction($id){
+        $modelMenu = new CoreMenu();
+        $modelMenu->deleteMenu($id);
+        
+        $this->redirect("coremenus");
+    }
+    
+    public function editAction($id){
+        
+        $modelMenu = new CoreMenu();
+        $menu = $modelMenu->getMenu($id);
+        
+        $lang = $this->getLanguage();
+        $form = new Form($this->request, "editmenuform");
+        $form->setTitle(CoreTranslator::Edit_menu($lang));
+        
+        $form->addText("name", CoreTranslator::Name($lang), false, $menu["name"]);
+        $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $menu["display_order"]);
+        $form->addText("url", CoreTranslator::Url($lang), false, $menu["url"]);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "coremenusedit/".$id);
+        
+        if($form->check()){
+            $modelMenu = new CoreMenu();
+            $modelMenu->setMenu($id, $this->request->getParameter("name"), 
+                    $this->request->getParameter("display_order"), 
+                    $this->request->getParameter("url")
+                    );
+        }
+        
+        $this->render(array("lang" => $lang ,"id" => $id, "formHtml" => $form->getHtml($lang)));
+    }
+    
     /**
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction() {
+    public function indexActionOld() {
 
         $lang = $this->getLanguage();
 

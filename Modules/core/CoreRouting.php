@@ -51,6 +51,9 @@ class CoreRouting extends Routing{
         
         // menus
         $this->addRoute("coremenus", "coremenus", "coremenus", "index");
+        $this->addRoute("coremenusedit", "coremenusedit", "coremenus", "edit", array("id"), array(""));
+        $this->addRoute("coremenusdelete", "coremenusdelete", "coremenus", "delete", array("id"), array(""));
+        
         $this->addRoute("coremenusitems", "coremenusitems", "coremenus", "items");
         $this->addRoute("coremenusitemedit", "coremenusitemedit", "coremenus", "itemedit", array("id"), array(""));
         $this->addRoute("coremenusitemdelete", "coremenusitemdelete", "coremenus", "itemdelete", array("id"), array(""));
