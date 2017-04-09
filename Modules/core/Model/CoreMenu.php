@@ -45,11 +45,13 @@ class CoreMenu extends Model {
 		`name` varchar(100) NOT NULL DEFAULT '',
                 `display_order` int(11) NOT NULL DEFAULT 0,
                 `url` varchar(255) NOT NULL DEFAULT '',
+                `newtab` int(1) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql3);
 
         $this->addColumn('core_menu', 'url', "varchar(255)", "");
+        $this->addColumn('core_menu', 'newtab', "int(1)", 0);
     }
 
     public function getItemsFormMenu($id_menu) {
@@ -85,14 +87,14 @@ class CoreMenu extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
-    public function setMenu($id, $name, $displayOrder, $url) {
+    public function setMenu($id, $name, $displayOrder, $url, $newtab) {
         if ($this->isMenu($id)) {
-            $sql = "UPDATE core_menu SET name=?, display_order=?, url=? WHERE id=?";
-            $this->runRequest($sql, array($name, $displayOrder, $url, $id));
+            $sql = "UPDATE core_menu SET name=?, display_order=?, url=?, newtab=? WHERE id=?";
+            $this->runRequest($sql, array($name, $displayOrder, $url, $newtab, $id));
             return $id;
         } else {
-            $sql = "INSERT INTO core_menu (name, display_order, url) VALUES(?,?,?)";
-            $this->runRequest($sql, array($name, $displayOrder, $url));
+            $sql = "INSERT INTO core_menu (name, display_order, url, newtab) VALUES(?,?,?,?)";
+            $this->runRequest($sql, array($name, $displayOrder, $url, $newtab));
             return $this->getDatabase()->lastInsertId();
         }
     }

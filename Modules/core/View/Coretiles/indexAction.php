@@ -15,6 +15,8 @@
     <div class="container">
         <?php
         for ($i = 0; $i < count($toolMenu); $i++) {
+            if (count($toolMenu[$i]["items"]) > 0) {
+            
             ?>
             <div class="page-header">
                 <h2>
@@ -43,6 +45,7 @@
                     <ul/>
             </div>
             <?php
+            }
         }
         ?>
 

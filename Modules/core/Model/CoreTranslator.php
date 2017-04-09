@@ -27,10 +27,10 @@ class CoreTranslator {
     }
 
     public static function dateFromEn($date, $lang) {
-        if($date == "0000-00-00"){
+        if ($date == "0000-00-00") {
             return "";
         }
-        
+
         if ($lang == "fr") {
             $dateArray = explode("-", $date);
             if (count($dateArray) == 3) {
@@ -828,7 +828,7 @@ class CoreTranslator {
         }
         return $status;
     }
-    
+
     public static function Translate_status_from_id($lang, $id_status) {
         if ($lang == "fr") {
             if ($id_status == 1) {
@@ -841,8 +841,7 @@ class CoreTranslator {
                 return "administrateur";
             }
             return "rôle introuvable";
-        }
-        else if ($lang == "fr") {
+        } else if ($lang == "fr") {
             if ($id_status == 1) {
                 return "visitor";
             } else if ($id_status == 2) {
@@ -1199,14 +1198,13 @@ class CoreTranslator {
         }
         return "Menus";
     }
-    
+
     public static function Edit_menu($lang) {
         if ($lang == "fr") {
             return "Editer menu";
         }
         return "Edit menu";
     }
-    
 
     public static function Menus_saved($lang) {
         if ($lang == "fr") {
@@ -1249,109 +1247,117 @@ class CoreTranslator {
         }
         return "Menu";
     }
-    
+
     public static function Spaces($lang) {
         if ($lang == "fr") {
             return "Espaces";
         }
         return "Spaces";
     }
-    
+
     public static function Add_Space($lang) {
         if ($lang == "fr") {
             return "Ajouter espace";
         }
         return "Add space";
     }
-    
+
     public static function Edit_space($lang) {
         if ($lang == "fr") {
             return "Modifier espace";
         }
         return "Edit space";
     }
-    
+
     public static function PrivateA($lang) {
         if ($lang == "fr") {
             return "Privé";
         }
         return "Private";
     }
-    
+
     public static function PublicA($lang) {
         if ($lang == "fr") {
             return "Publique";
         }
         return "Public";
     }
-    
+
     public static function Visitor($lang) {
         if ($lang == "fr") {
             return "Visiteur";
         }
         return "Visitor";
     }
-    
+
     public static function Manager($lang) {
         if ($lang == "fr") {
             return "Gestionnaire";
         }
         return "Manager";
     }
-    
+
     public static function Role($lang) {
         if ($lang == "fr") {
             return "Rôle";
         }
         return "Role";
     }
-    
+
     public static function Access($lang) {
         if ($lang == "fr") {
             return "Accès";
         }
         return "Access";
     }
-    
+
     public static function View_Menu($lang) {
         if ($lang == "fr") {
             return "Menu espace";
         }
         return "View menu";
     }
-    
+
     public static function Neww($lang) {
         if ($lang == "fr") {
             return "Nouveau";
         }
         return "New";
     }
- 
+
     public static function Inactive($lang) {
         if ($lang == "fr") {
             return "Inactif";
         }
         return "Inactive";
     }
-    
+
     public static function Update($lang) {
         if ($lang == "fr") {
             return "Mise à jour";
         }
         return "Update";
     }
- 
+
     public static function UpdateComment($lang) {
         if ($lang == "fr") {
             return "Mise à jour du cache du routeur et les base de données des modules";
         }
         return "This update the rooting cache and the modules database";
     }
-    
+
     public static function MenuName($lang) {
         if ($lang == "fr") {
             return "Nom du menu";
         }
         return "Menu name";
     }
+
+    public static function NewTab($lang) {
+        if ($lang == "fr") {
+            return "Ouvrir dans un nouvel onglet ";
+        }
+        return "Open in a new tab ";
+    }
+
 }

@@ -25,8 +25,12 @@ if ($menuUrl != "") {
                 for ($i = 0; $i < count($toolMenu); $i++) {
 
                     if (count($toolMenu[$i]["items"]) == 0) {
+                        $blank = "";
+                        if($toolMenu[$i]["newtab"] == 1){
+                            $blank = "target=\"_blank\"";
+                        }
                         ?>
-                        <li><a href="<?php echo $toolMenu[$i]["url"] ?>"><span><?php echo $toolMenu[$i]["name"] ?></span></a></li>
+                        <li><a <?php echo $blank ?> href="<?php echo $toolMenu[$i]["url"] ?>"><span><?php echo $toolMenu[$i]["name"] ?></span></a></li>
                         <?php
                     } else {
                         ?>

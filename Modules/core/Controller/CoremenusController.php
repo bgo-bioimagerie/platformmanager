@@ -69,6 +69,7 @@ class CoremenusController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), false, $menu["name"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $menu["display_order"]);
         $form->addText("url", CoreTranslator::Url($lang), false, $menu["url"]);
+        $form->addSelect("newtab", CoreTranslator::NewTab($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $menu["newtab"]);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "coremenusedit/".$id);
         
@@ -76,7 +77,8 @@ class CoremenusController extends CoresecureController {
             $modelMenu = new CoreMenu();
             $modelMenu->setMenu($id, $this->request->getParameter("name"), 
                     $this->request->getParameter("display_order"), 
-                    $this->request->getParameter("url")
+                    $this->request->getParameter("url"),
+                    $this->request->getParameter("newtab")
                     );
         }
         

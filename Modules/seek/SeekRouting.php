@@ -9,7 +9,6 @@ class SeekRouting extends Routing{
         // config
         $this->addRoute("seekconfig", "seekconfig", "seekconfig", "index", array("id_space"), array(""));
 
-        
         // add here the module routes
         $this->addRoute("seek", "seek", "seek", "index", array("id_space"), array(""));
         
