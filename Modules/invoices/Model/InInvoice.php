@@ -37,49 +37,49 @@ class InInvoice extends Model {
         $this->primaryKey = "id";
     }
 
-    public function setDiscount($id, $discount){
+    public function setDiscount($id, $discount) {
         $sql = "UPDATE in_invoice SET discount=? WHERE id=?";
         $this->runRequest($sql, array($discount, $id));
     }
-    
-    public function getDiscount($id){
+
+    public function getDiscount($id) {
         $sql = "SELECT discount FROM in_invoice WHERE id=?";
         $d = $this->runRequest($sql, array($id))->fetch();
         return $d[0];
     }
-    
-    public function get($id){
+
+    public function get($id) {
         $sql = "SELECT * FROM in_invoice WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
-    
-    public function getByNumber($number){
-         $sql = "SELECT * FROM in_invoice WHERE number=?";
+
+    public function getByNumber($number) {
+        $sql = "SELECT * FROM in_invoice WHERE number=?";
         return $this->runRequest($sql, array($number))->fetch();
     }
-    
-    public function setTitle($id_invoice, $title){
+
+    public function setTitle($id_invoice, $title) {
         $sql = "UPDATE in_invoice SET title=? WHERE id=?";
         $this->runRequest($sql, array($title, $id_invoice));
     }
-    
-    public function setTotal($id_invoice, $total){
+
+    public function setTotal($id_invoice, $total) {
         $sql = "UPDATE in_invoice SET total_ht=? WHERE id=?";
         $this->runRequest($sql, array($total, $id_invoice));
     }
-    
-    public function setDatePaid($id, $date){
+
+    public function setDatePaid($id, $date) {
         //echo "set date = " . $date . "<br/>";
         //echo "where id = " . $id . "<br/>";
         $sql = "UPDATE in_invoice SET date_paid=? WHERE id=?";
         $this->runRequest($sql, array($date, $id));
     }
-    
-    public function setEditedBy($id_invoice, $id_user){
+
+    public function setEditedBy($id_invoice, $id_user) {
         $sql = "UPDATE in_invoice SET id_edited_by=? WHERE id=?";
         $this->runRequest($sql, array($id_user, $id_invoice));
     }
-    
+
     public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_responsible, $total_ht = 0, $period_begin = "0000-00-00", $period_end = "0000-00-00", $id_project = 0) {
         $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
@@ -94,30 +94,30 @@ class InInvoice extends Model {
                 . "ORDER BY " . $sortentry . " DESC;";
         return $this->runRequest($sql)->fetchAll();
     }
-    
-    public function getBySpace($id_space, $sortentry = "number"){
-                $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
+
+    public function getBySpace($id_space, $sortentry = "number") {
+        $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
                 . "FROM in_invoice "
                 . "INNER JOIN ec_units ON ec_units.id=in_invoice.id_unit "
                 . "INNER JOIN core_users ON core_users.id=in_invoice.id_responsible "
-                . "WHERE in_invoice.id_space=?"        
+                . "WHERE in_invoice.id_space=?"
                 . "ORDER BY " . $sortentry . " DESC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
-    
-    public function getByPeriod($id_space, $begin, $end, $sortentry = "number"){
-                $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
+
+    public function getByPeriod($id_space, $begin, $end, $sortentry = "number") {
+        $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
                 . "FROM in_invoice "
                 . "INNER JOIN ec_units ON ec_units.id=in_invoice.id_unit "
                 . "INNER JOIN core_users ON core_users.id=in_invoice.id_responsible "
-                . "WHERE in_invoice.id_space=? AND in_invoice.date_generated >=? AND in_invoice.date_generated <=? "        
+                . "WHERE in_invoice.id_space=? AND in_invoice.date_generated >=? AND in_invoice.date_generated <=? "
                 . "ORDER BY " . $sortentry . " DESC;";
         return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
     }
 
     public function getNextNumber($previousNumber = "") {
-        
-        if ($previousNumber == ""){
+
+        if ($previousNumber == "") {
             $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
             $req = $this->runRequest($sql);
 
@@ -126,9 +126,8 @@ class InInvoice extends Model {
                 $bill = $req->fetch();
                 $lastNumber = $bill["number"];
             }
-        }
-        else{
-            $lastNumber = $previousNumber; 
+        } else {
+            $lastNumber = $previousNumber;
         }
         if ($lastNumber != "") {
             //echo "lastNumber = " . $lastNumber . "<br/>";
@@ -138,8 +137,7 @@ class InInvoice extends Model {
 
             if ($lastNumberY == date("Y", time())) {
                 $lastNumberN = (int) $lastNumberN + 1;
-            }
-            else{
+            } else {
                 return date("Y", time()) . "-0001";
             }
             $num = "";
@@ -156,54 +154,61 @@ class InInvoice extends Model {
         }
     }
 
-    public function allYears($id_space){
-        
+    public function allYears($id_space) {
+
         $sql = "SELECT date_generated FROM in_invoice WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        
-        if(count($data) > 0){
+
+        if (count($data) > 0) {
             $firstDate = $data[0]["date_generated"];
             $firstDateInfo = explode("-", $firstDate);
             $firstYear = $firstDateInfo[0];
             $i = 0;
-            while($firstYear == "0000"){
+            while ($firstYear == "0000") {
                 $i++;
                 $firstDate = $data[$i]["date_generated"];
                 $firstDateInfo = explode("-", $firstDate);
                 $firstYear = $firstDateInfo[0];
             }
-            
-            $lastDate = $data[count($data)-1]["date_generated"];
+
+            $lastDate = $data[count($data) - 1]["date_generated"];
             $lastDateInfo = explode("-", $lastDate);
             $lastYear = $lastDateInfo[0];
-            
+
             $years = array();
-            for($i = $firstYear ; $i <= $lastYear ; $i++){
+            for ($i = $firstYear; $i <= $lastYear; $i++) {
                 $years[] = $i;
             }
             return $years;
         }
         return array();
     }
-    
-    public function getInvoicesPeriod($controller, $periodStart, $periodEnd){
+
+    public function getAllInvoicesPeriod($periodStart, $periodEnd) {
+        $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ?";
+        $user = $this->runRequest($sql, array($periodStart, $periodEnd));
+        return $user->fetchAll();
+    }
+
+    public function getInvoicesPeriod($controller, $periodStart, $periodEnd) {
         $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ? AND controller=?";
         $user = $this->runRequest($sql, array($periodStart, $periodEnd, $controller));
         return $user->fetchAll();
     }
-            
-    public function getInvoiceNumber($id_invoice){
+
+    public function getInvoiceNumber($id_invoice) {
         $sql = "SELECT number FROM in_invoice WHERE id=?";
         $req = $this->runRequest($sql, array($id_invoice));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
         }
         return "";
     }
-            
-    public function delete($id){
+
+    public function delete($id) {
         $sql = "DELETE FROM in_invoice WHERE id=?";
         $this->runRequest($sql, array($id));
     }
+
 }

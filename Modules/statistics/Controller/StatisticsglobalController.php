@@ -75,7 +75,7 @@ class StatisticsglobalController extends CoresecureController {
     protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space) {
 
         $controllerServices = new ServicesstatisticsprojectController();
-        $objPHPExcel = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space);
+        $objPHPExcel = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
 
         $controllerBooking = new BookingstatisticsController();
         $objPHPExcel = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel);

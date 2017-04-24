@@ -74,11 +74,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
         ));
     }
 
-    public function getBalance($periodStart, $periodEnd, $id_space) {
-        return $this->generateBalance($id_space, $periodStart, $periodEnd, false);
+    public function getBalance($periodStart, $periodEnd, $id_space, $isglobal = false) {
+        return $this->generateBalance($id_space, $periodStart, $periodEnd, false, $isglobal);
     }
 
-    private function generateBalance($id_space, $periodStart, $periodEnd, $render = true) {
+    private function generateBalance($id_space, $periodStart, $periodEnd, $render = true, $isglobal = false) {
 
         //echo "not yet implemented <br/> " . $periodStart . "<br/>" . $periodEnd . "<br/>";
         // get all the opened projects informations
@@ -96,9 +96,12 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         // get the bill manager list
         $modelBillManager = new InInvoice();
-        $controller = "servicesinvoiceproject";
-        $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
-
+        if ($isglobal) {
+            $invoices = $modelBillManager->getAllInvoicesPeriod($periodStart, $periodEnd);
+        } else {
+            $controller = "servicesinvoiceproject";
+            $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
+        }
 
         return $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render);
     }
@@ -404,27 +407,27 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objWorkSheet = $objPHPExcel->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::OriginsMaj($lang));
         $objPHPExcel->setActiveSheetIndex(3);
-        
+
         $curentLine = 1;
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, ServicesTranslator::Academique($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Industry($lang));
-        
+
         $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
         $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
-        
+
         $acc = $statsOrigins['academique'];
         $private = $statsOrigins['private'];
-        for($i = 0 ; $i < count($acc) ; $i++){
+        for ($i = 0; $i < count($acc); $i++) {
             $curentLine++;
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $acc[$i]['origin']);
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $acc[$i]['count']);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $private[$i]['count']);
-        
+
             $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
         }
-        
+
         $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
         $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
         $text = ServicesTranslator::OriginsFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)

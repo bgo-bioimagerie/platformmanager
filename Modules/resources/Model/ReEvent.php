@@ -36,7 +36,7 @@ class ReEvent extends Model {
         $sql = "SELECT re_state.color as color"
                 . " FROM re_event "
                 . " INNER JOIN re_state ON re_event.id_state = re_state.id"
-                . " WHERE id_resource=? ORDER BY date ASC;";
+                . " WHERE id_resource=? ORDER BY date DESC;";
         $data = $this->runRequest($sql, array($id_resource))->fetch();
         return $data[0];
         
