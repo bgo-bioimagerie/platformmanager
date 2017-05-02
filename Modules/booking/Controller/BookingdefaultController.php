@@ -349,7 +349,7 @@ class BookingdefaultController extends BookingabstractController {
                 $name .= "*";
             }
             $key = array_search($q["id"], $qDataId);
-            $value = 0;
+            $value = "";
             if ($key !== false) {
                 $value = $qDataValue[$key];
             }
