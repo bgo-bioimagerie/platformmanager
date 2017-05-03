@@ -42,7 +42,9 @@ class ServicesController extends CoresecureController {
             $htmlprojet = str_replace("{{New_project}}", ServicesTranslator::New_project($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Projects}}", ServicesTranslator::Projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{origins}}", ServicesTranslator::servicesOrigin($lang), $htmlprojet);
+            $htmlprojet = str_replace("{{visas}}", ServicesTranslator::servicesVisas($lang), $htmlprojet);
 
+            
             $html .= $htmlprojet;
         }
 

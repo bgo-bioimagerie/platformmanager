@@ -1346,4 +1346,12 @@ class CoreTranslator {
         }
         return "Menu name";
     }
+    
+    public static function ExportAll($lang) {
+        if ($lang == "fr") {
+            return "Exporter tous";
+        }
+        return "Export all users";
+    }
+    
 }

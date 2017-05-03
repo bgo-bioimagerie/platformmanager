@@ -9,6 +9,7 @@ require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
+require_once 'Modules/services/Model/SeVisa.php';
 
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcBelonging.php';
@@ -235,17 +236,28 @@ class ServicesprojectsController extends CoresecureController {
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
         if ($id > 0) {
             $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));
+            
+            $modelVisa = new SeVisa();
+            $visas = $modelVisa->getForList($id_space);
+            $form->addSelect("closed_by", ServicesTranslator::Closed_by($lang), $visas["names"], $visas["ids"], $value["closed_by"]);
+            
         } else {
             $form->addHidden("date_close", $value["date_close"]);
+            $form->addHidden("closed_by", $value["closed_by"]);
         }
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
 
-            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), 
+                    $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), 
+                    CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
+                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), 
+                    $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), 
+                    CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
             $modelProject->setOrigin($id, $this->request->getParameter("id_origin"));
-
+            $modelProject->setClosedBy($id, $this->request->getParameter("closed_by"));
 
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
             $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);

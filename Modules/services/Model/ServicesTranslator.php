@@ -222,7 +222,7 @@ class ServicesTranslator {
 
     public static function Closed_date($lang) {
         if ($lang == "fr") {
-            return "Date de fermeture";
+            return "Date de libération produit";
         }
         return "Closed date";
     }
@@ -585,7 +585,7 @@ class ServicesTranslator {
 
     public static function NewEntry($lang) {
         if ($lang == "fr") {
-            return "Nouveau service";
+            return "Nouveau produit";
         }
         return "New service";
     }
@@ -721,6 +721,27 @@ class ServicesTranslator {
             return "Pourcentage de remise";
         }
         return "Discount";
+    }
+    
+    public static function Visa($lang) {
+        if ($lang == "fr") {
+            return "Visa";
+        }
+        return "Visa";
+    }
+    
+    public static function servicesVisas($lang) {
+        if ($lang == "fr") {
+            return "Visas";
+        }
+        return "Visas";
+    }
+    
+    public static function Closed_by($lang) {
+        if ($lang == "fr") {
+            return "Visas";
+        }
+        return "Closed by";
     }
     
     

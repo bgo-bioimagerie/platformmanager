@@ -39,6 +39,8 @@ class EcosystemController extends CoresecureController {
         $html = str_replace('{{Unactive}}', CoreTranslator::Unactive($lang), $html);
         $html = str_replace('{{Export}}', CoreTranslator::Export($lang), $html);
         $html = str_replace('{{Responsible}}', CoreTranslator::Responsible($lang), $html);
+        $html = str_replace('{{ExportAll}}', CoreTranslator::ExportAll($lang), $html);
+        
         return $html;
 
     }

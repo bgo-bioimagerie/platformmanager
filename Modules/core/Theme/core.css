@@ -3,7 +3,7 @@ body,html{
     background-color: #f1f1f1;
 }
 
-select {
+.select {
     -moz-appearance: none;
     background: rgba(255, 255, 255, 255) url("dropdown.png") no-repeat scroll 100% center / 20px 13px !important;
     border: 1px solid #ccc;

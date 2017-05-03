@@ -37,6 +37,10 @@
     <div class="pm-inline-div">
         <a href="ecexportresponsible/{{id_space}}">{{Responsible}}</a>    
     </div>
+    <div class="pm-inline-div">
+        <a href="ecexportall/{{id_space}}">{{ExportAll}}</a>    
+    </div>
+    
 </li>
 
 

@@ -9,6 +9,7 @@ require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/services/Model/SeOrigin.php';
+require_once 'Modules/services/Model/SeVisa.php';
 
 /**
  * Class defining methods to install and initialize the core database
@@ -48,6 +49,10 @@ class ServicesInstall extends Model {
         
         $modelOrigin = new SeOrigin();
         $modelOrigin->createTable();
+       
+        $modelVisa = new SeVisa();
+        $modelVisa->createTable();
+        
 
         if (!file_exists('data/services/')) {
             mkdir('data/services/', 0777, true);

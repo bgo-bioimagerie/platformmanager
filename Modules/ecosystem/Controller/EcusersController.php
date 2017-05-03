@@ -460,5 +460,9 @@ class EcusersController extends CoresecureController {
 
         $this->render(array("lang" => $lang, "id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
     }
+    
+    public function exportallAction($id_space){
+        $this->userModel->exportAll($id_space);
+    }
 
 }

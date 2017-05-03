@@ -126,8 +126,8 @@ class SeStats extends Model {
 
     public function computeOriginStats($id_space, $periodStart, $periodEnd){
     
-        $academique = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 1);
-        $private = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 2);
+        $academique = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 2);
+        $private = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 3);
         
         return array("academique" => $academique, "private" => $private);
     }

@@ -518,7 +518,7 @@ class FormHtml {
         if ($submitOnchange != "") {
             $submit = "onchange=\"updateResponsibe(this);\"";
         }
-        $html = "<select class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " >";
+        $html = "<select class=\"form-control select\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " >";
         for ($v = 0; $v < count($choices); $v++) {
             $selected = "";
             if ($value == $choicesid[$v]) {

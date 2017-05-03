@@ -5,62 +5,28 @@
 
 <head>
 
-    <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="externals/dataTables/dataTables.bootstrap.css">
-    <link rel="stylesheet" href="externals/dataTables/dataTables.fixedHeader.css">
+    <link rel="stylesheet" type="text/css" href="externals/dataTables/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="externals/dataTables/fixedColumns.bootstrap.min.css">
 
-    <script src="externals/jquery-1.11.1.js"></script>
-    <script src="externals/dataTables/jquery.dataTables.js"></script>
-    <script src="externals/dataTables/dataTables.fixedHeader.min.js"></script>
-    <script src="externals/dataTables/dataTables.bootstrap.js"></script>
-
-    <style>
-        body { font-size: 120%; padding: 1em; margin-top:30px; margin-left: -15px;}
-        div.FixedHeader_Cloned table { margin: 0 !important }
-
-        table{
-            white-space: nowrap;
-        }
-
-        thead tr{
-            height: 50px;
-        }
-
-    </style>
+    <script src="externals/dataTables/jquery-1.12.3.js"></script>
+    <script src="externals/dataTables/jquery.dataTables.min.js"></script>
+    <script src="externals/dataTables/dataTables.bootstrap.min.js"></script>
+    <script src="externals/dataTables/dataTables.fixedColumns.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            $('#example').dataTable({
-                "aoColumns": [
-                    {"bSearchable": true},
-                    null,
-                    {"bSearchable": true},
-                    {"bSearchable": true},
-                    {"bSearchable": true},
-                    {"bSearchable": true},
-                    {"bSearchable": true},
-                    {"bSearchable": true},
-                    {"bSearchable": true},
-                    {"bSearchable": true},
-                    {"bSearchable": true}
-                ],
-                "lengthMenu": [[100, 200, 300, -1], [100, 200, 300, "All"]]
-            }
-            );
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            var table = $('#example').DataTable();
-            new $.fn.dataTable.FixedHeader(table, {
-                alwaysCloneTop: true
+            var table = $('#example').DataTable({
+                scrollY: "700px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                fixedColumns: {
+                    leftColumns: 0
+                }
             });
-
         });
     </script>
-
-
 
 </head>
 
@@ -71,7 +37,7 @@
 
 <div class="col-md-12" style="background-color: #ffffff;">
 
-    <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="example" class="table table-bordered table-striped" cellspacing="0" width="100%">
         <thead>
 
             <tr>

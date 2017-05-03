@@ -31,6 +31,7 @@ class EcosystemRouting extends Routing{
         
         // export
         $this->addRoute("ecexportresponsible", "ecexportresponsible", "ecusers", "exportresp", array("id_space"), array(""));
+        $this->addRoute("ecexportall", "ecexportall", "ecusers", "exportall", array("id_space"), array(""));
         
     }
 }

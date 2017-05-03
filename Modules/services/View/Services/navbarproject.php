@@ -20,3 +20,7 @@
     <a id="menu-button" href="servicesorigins/{{id_space}}">{{origins}}</a>
     <a id="menu-button" href="serviceoriginedit/{{id_space}}">+</a>
 </div>
+<div class="inline pm-inline-div">
+    <a id="menu-button" href="servicesvisas/{{id_space}}">{{visas}}</a>
+    <a id="menu-button" href="servicesvisaedit/{{id_space}}">+</a>
+</div>

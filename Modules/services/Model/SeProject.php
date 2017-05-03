@@ -27,10 +27,13 @@ class SeProject extends Model {
 		`new_project` int(4) NOT NULL DEFAULT 1,
 		`time_limit` varchar(100) NOT NULL DEFAULT '', 
                 `id_origin` int(11) NOT NULL DEFAULT 0,
+                `closed_by` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
         $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
+        $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
+        
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -46,53 +49,53 @@ class SeProject extends Model {
         $this->runRequest($sql2);
     }
 
-    public function deleteEntry($id){
+    public function deleteEntry($id) {
         $sql = "DELETE FROM se_project_service WHERE id=?";
         $this->runRequest($sql, array($id));
     }
-    
-    protected function extractYears($data){
-        
-        if(count($data) > 0){
+
+    protected function extractYears($data) {
+
+        if (count($data) > 0) {
             $firstDate = $data[0][0];
             $firstDateInfo = explode("-", $firstDate);
             $firstYear = $firstDateInfo[0];
             $i = 0;
-            while($firstYear == "0000"){
+            while ($firstYear == "0000") {
                 $i++;
                 $firstDate = $data[$i][0];
                 $firstDateInfo = explode("-", $firstDate);
                 $firstYear = $firstDateInfo[0];
             }
-            
-            $lastDate = $data[count($data)-1][0];
+
+            $lastDate = $data[count($data) - 1][0];
             $lastDateInfo = explode("-", $lastDate);
             $lastYear = $lastDateInfo[0];
-            
+
             $years = array();
-            for($i = $firstYear ; $i <= $lastYear ; $i++){
+            for ($i = $firstYear; $i <= $lastYear; $i++) {
                 $years[] = $i;
             }
             return $years;
         }
         return array();
     }
-    
-    public function closedProjectsYears($id_space){
+
+    public function closedProjectsYears($id_space) {
         $sql = "SELECT date_close FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ORDER BY date_open ASC";
         //echo "sql = " . $sql . "</br>";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         //print_r($data);
         return $this->extractYears($data);
     }
-    
-    public function allProjectsYears($id_space){
+
+    public function allProjectsYears($id_space) {
         $sql = "SELECT date_open from se_project WHERE id_space=? ORDER BY date_open ASC";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        
+
         return $this->extractYears($data);
     }
-    
+
     public function getProjectsOpenedPeriodResp($beginPeriod, $endPeriod, $id_resp) {
         $sql = "SELECT id FROM se_project WHERE date_close='0000-00-00' AND date_open>=? AND date_open<? AND id_resp=?";
         $req = $this->runRequest($sql, array($beginPeriod, $endPeriod, $id_resp))->fetchAll();
@@ -142,21 +145,26 @@ class SeProject extends Model {
         $names = array();
         $ids[] = 0;
         $names[] = "...";
-        
+
         foreach ($req as $r) {
             $ids[] = $r["id"];
             $names[] = $r['respname'] . " " . $r['respfirstname'] . ": " . $r["name"];
         }
         return array("ids" => $ids, "names" => $names);
     }
-    
-    public function setOrigin($id, $id_origin){
+
+    public function setOrigin($id, $id_origin) {
         $sql = "UPDATE se_project SET id_origin=? WHERE id=?";
         $this->runRequest($sql, array($id_origin, $id));
     }
-    
+
+    public function setClosedBy($id, $idClose) {
+        $sql = "UPDATE se_project SET closed_by=? WHERE id=?";
+        $this->runRequest($sql, array($idClose, $id));
+    }
+
     public function setEntry($id_entry, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
-        
+
         if ($id_entry > 0) {
             //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
             $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=?, id_project=?, id_service=?, date=? WHERE id=?";
@@ -171,7 +179,7 @@ class SeProject extends Model {
     }
 
     public function setService($id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
-        
+
         if ($this->isProjectService($id_project, $id_service, $date)) {
             //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
             $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=? WHERE id_project=? AND id_service=? AND date=?";
@@ -187,20 +195,20 @@ class SeProject extends Model {
         $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice) VALUES (?,?,?,?,?,?)";
         $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice));
     }
-    
-    public function removeUnsetServices($id_project, $servicesIds, $servicesDates){
-        
+
+    public function removeUnsetServices($id_project, $servicesIds, $servicesDates) {
+
         $sql = "SELECT * FROM se_project_service WHERE id_project=?";
         $data = $this->runRequest($sql, array($id_project))->fetchAll();
-        foreach($data as $d){
+        foreach ($data as $d) {
             $found = false;
-            for($i = 0 ; $i < count($servicesIds) ; $i++){
-                if ($servicesIds[$i] == $d["id_service"] && $servicesDates[$i] == $d["date"]){
+            for ($i = 0; $i < count($servicesIds); $i++) {
+                if ($servicesIds[$i] == $d["id_service"] && $servicesDates[$i] == $d["date"]) {
                     $found = true;
                     break;
                 }
             }
-            if(!$found){
+            if (!$found) {
                 //echo "delete service id: " . $d["id_service"] . ", date: " . $d["date"] . "<br/>";
                 $sql = "DELETE FROM se_project_service WHERE id_project=? AND id_service=? AND date=?";
                 $this->runRequest($sql, array($id_project, $d["id_service"], $d["date"]));
@@ -217,17 +225,17 @@ class SeProject extends Model {
         return false;
     }
 
-    public function getProjectServicesDefault($id_project){
+    public function getProjectServicesDefault($id_project) {
         $sql = "SELECT * FROM se_project_service WHERE id_project=? ORDER BY date ASC";
         return $this->runRequest($sql, array($id_project))->fetchAll();
     }
-    
-    public function getProjectServicesBase($id_project){
+
+    public function getProjectServicesBase($id_project) {
         $sql = "SELECT * FROM se_project_service WHERE id_project=?";
         $data = $this->runRequest($sql, array($id_project))->fetchAll();
         return $data;
     }
-    
+
     public function getProjectServices($id_project) {
         $sql = "SELECT * FROM se_project_service WHERE id_project=?";
         $data = $this->runRequest($sql, array($id_project))->fetchAll();
@@ -290,11 +298,11 @@ class SeProject extends Model {
     public function entries($id_space, $yearBegin = "", $yearEnd = "", $sortentry = 'id') {
 
         $sql = "SELECT * FROM se_project WHERE id_space=? ";
-        if($yearBegin != "" && $yearEnd != ""){
-            $sql .= "AND date_open >= '" . $yearBegin . "' AND date_open <= '" . $yearEnd . "' ";  
-        }        
+        if ($yearBegin != "" && $yearEnd != "") {
+            $sql .= "AND date_open >= '" . $yearBegin . "' AND date_open <= '" . $yearEnd . "' ";
+        }
         $sql .= " ORDER BY " . $sortentry . " ASC;";
-        
+
         $req = $this->runRequest($sql, array($id_space));
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
@@ -322,9 +330,9 @@ class SeProject extends Model {
 
     public function closedEntries($id_space, $yearBegin = "", $yearEnd = "", $sortentry = 'id') {
         $sql = "SELECT * FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ";
-        if($yearBegin != "" && $yearEnd != ""){
-            $sql .= "AND date_close >= '" . $yearBegin . "' AND date_close <= '" . $yearEnd . "' "; 
-        } 
+        if ($yearBegin != "" && $yearEnd != "") {
+            $sql .= "AND date_close >= '" . $yearBegin . "' AND date_close <= '" . $yearEnd . "' ";
+        }
         $sql .= " order by " . $sortentry . " ASC;";
         //echo "yearBegin = " . $yearBegin . "<br/>";
         //echo "yearEnd = " . $yearEnd . "<br/>";
@@ -358,14 +366,14 @@ class SeProject extends Model {
         return $entry;
     }
 
-    public function getProjectEntry($id){
+    public function getProjectEntry($id) {
         $sql = "select * from se_project_service where id=?";
         $req = $this->runRequest($sql, array($id));
         $entry = $req->fetch();
 
         return $entry;
     }
-    
+
     public function getEntry($id) {
         $sql = "select * from se_project where id=?";
         $req = $this->runRequest($sql, array($id));

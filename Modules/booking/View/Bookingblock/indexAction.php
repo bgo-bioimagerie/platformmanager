@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo ResourcesTranslator::Resources($lang) ?></label>
+            <label class="control-label col-xs-4"><?php echo ResourcesTranslator::Resources($lang) ?></label>
             <div class="col-xs-8">
                 <select class="form-control" name="resources[]" size="10" multiple="multiple">
                     <?php
