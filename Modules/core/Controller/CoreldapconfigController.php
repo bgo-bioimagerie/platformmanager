@@ -51,7 +51,7 @@ class CoreldapconfigController extends CoresecureController {
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "coreldapconfig");
-        $form->setTitle(CoreTranslator::LdapConfig($lang));
+        //$form->setTitle(CoreTranslator::LdapConfig($lang));
         
         $form->addSeparator(CoreTranslator::LdapConfig($lang));
         $form->addSelect("useLdap", CoreTranslator::UseLdap($lang), 
@@ -67,7 +67,7 @@ class CoreldapconfigController extends CoresecureController {
         $form->addText("ldapAdress", CoreTranslator::ldapAdress($lang), false, $ldapConnect["ldapAdress"]);
         $form->addText("ldapPort", CoreTranslator::ldapPort($lang), false, $ldapConnect["ldapPort"]);
         $form->addText("ldapId", CoreTranslator::ldapId($lang), false, $ldapConnect["ldapId"]);
-        $form->addPassword("ldapPwd", CoreTranslator::ldapPwd($lang));
+        $form->addPassword("ldapPwd", CoreTranslator::ldapPwd($lang), false);
         $form->addText("ldapBaseDN", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldapBaseDN"]);
         
         $form->setButtonsWidth(2, 9);

@@ -4,7 +4,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="container">
+<div class="container pm-form-short">
     <?php echo $formHtml ?>
 </div>
 <?php
