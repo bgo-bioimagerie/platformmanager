@@ -159,6 +159,12 @@ class CoreMenu extends Model {
             $this->runRequest($sql, array("Spaces", "spaceadmin", "glyphicon-briefcase"));
         }
         
+        if (!$this->isAdminMenu("Core")) {
+            $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
+            $this->runRequest($sql, array("Core", "coreconfigadmin", "glyphicon glyphicon-cog"));
+        }
+        
+        
     }
 
     // Admin menu methods

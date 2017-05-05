@@ -55,6 +55,8 @@ class CoreRouting extends Routing{
         $this->addRoute("coremenusitemedit", "coremenusitemedit", "coremenus", "itemedit", array("id"), array(""));
         $this->addRoute("coremenusitemdelete", "coremenusitemdelete", "coremenus", "itemdelete", array("id"), array(""));
         
+        // api
+        $this->addRoute("apinavbar", "apinavbar", "corenavbar", "navbar", array(), array(), true);
         
     }
 }

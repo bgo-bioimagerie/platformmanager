@@ -3,7 +3,14 @@
 <?php startblock('stylesheet') ?>
 
 <link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
-<link rel='stylesheet' type='text/css' href='data/core/theme/navbar-fixed-top.css' />
+<?php
+$headless = Configuration::get("headless");
+if (!$headless) {
+    ?>
+    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <?php
+}
+?>
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/core.css' />
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
 
@@ -11,7 +18,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 <div class="col-xs-12 pm-tile-container">
-    
+
     <div class="container">
         <?php
         for ($i = 0; $i < count($toolMenu); $i++) {

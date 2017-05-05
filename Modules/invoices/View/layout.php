@@ -10,7 +10,14 @@ Platform-Manager
 
 <?php startblock('stylesheet') ?>
 <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
-<link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+<?php
+$headless = Configuration::get("headless");
+if (!$headless) {
+    ?>
+    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <?php
+}
+?>
 <link rel="stylesheet" href="Modules/core/Theme/core.css">
 <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/spacemenu.css' />
@@ -20,9 +27,11 @@ Platform-Manager
 
 
 <?php startblock('navbar'); 
-require_once 'Modules/core/Controller/CorenavbarController.php';
-$navController = new CorenavbarController();
-echo $navController->navbar();
+if(!$headless){
+    require_once 'Modules/core/Controller/CorenavbarController.php';
+    $navController = new CorenavbarController();
+    echo $navController->navbar();
+ }
  endblock(); ?>
 
 

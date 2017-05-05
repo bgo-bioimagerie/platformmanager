@@ -8,7 +8,14 @@
         
     <?php startblock('stylesheet') ?>
     <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
+    <?php
+$headless = Configuration::get("headless");
+if (!$headless) {
+    ?>
     <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <?php
+}
+?>
     <link rel="stylesheet" href="Modules/core/Theme/core.css">
     <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
     
