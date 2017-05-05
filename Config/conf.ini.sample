@@ -9,6 +9,9 @@ dsn = 'mysql:host=localhost;dbname=platformmanager;charset=utf8'
 login = root
 pwd = "root"
 
+[Menu]
+headless = true
+
 [Modules]
 modules[] = "core"
 modules[] = "ecosystem"

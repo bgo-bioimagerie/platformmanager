@@ -239,6 +239,7 @@ class ServicesprojectsController extends CoresecureController {
             
             $modelVisa = new SeVisa();
             $visas = $modelVisa->getForList($id_space);
+            
             $form->addSelect("closed_by", ServicesTranslator::Closed_by($lang), $visas["names"], $visas["ids"], $value["closed_by"]);
             
         } else {

@@ -11,7 +11,7 @@ require_once 'Modules/core/Model/CoreBackupDatabase.php';
  * @author sprigent
  * Controller for the home page
  */
-class CoreconfigController extends CoresecureController {
+class CoreconfigadminController extends CoresecureController {
 
     /**
      * Constructor
@@ -19,7 +19,7 @@ class CoreconfigController extends CoresecureController {
     public function __construct() {
         parent::__construct();
         
-        if (!$this->isUserAuthorized(CoreStatus::$SUPERADMIN)) {
+        if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new Exception("Error 503: Permission denied");
         }
     }
@@ -32,29 +32,17 @@ class CoreconfigController extends CoresecureController {
 
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
-
+        
         // maintenance form
         $formMaintenance = $this->maintenanceForm($modelCoreConfig, $lang);
         if ($formMaintenance->check()) {
             $modelCoreConfig->setParam("is_maintenance", $this->request->getParameter("is_maintenance"));
             $modelCoreConfig->setParam("maintenance_message", $this->request->getParameter("maintenance_message"));
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
-        // install form
-        $formInstall = $this->installForm($lang);
-        if ($formInstall->check()) {
-            $message = "<b>Success:</b> the database have been successfully installed";
-            try {
-                $installModel = new CoreInstall();
-                $installModel->createDatabase();
-            } catch (Exception $e) {
-                $message = "<b>Error:</b>" . $e->getMessage();
-            }
-            $_SESSION["message"] = $message;
-            $this->redirect("coreconfig");
-            return;
-        }
+        
+        
         /*
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang);
@@ -63,11 +51,12 @@ class CoreconfigController extends CoresecureController {
             $modelMenu = new CoreMenu();
             $modelMenu->setDataMenu("users", "coreusers", $this->request->getParameter("usermenustatus"), "glyphicon-user");
 
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
          
          */
+        
         // maintenance form
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
@@ -75,13 +64,15 @@ class CoreconfigController extends CoresecureController {
             $this->redirect("coreldapconfig");
             return;
         }
+        
         // homePageForm
         $formHomePage = $this->homePageForm($modelCoreConfig, $lang);
         if ($formHomePage->check()) {
             $modelCoreConfig->setParam("default_home_path", $this->request->getParameter("default_home_path"));
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
+        
         // formConnectionPage
         $formConnectionPage = $this->connectionPageForm($modelCoreConfig, $lang);
         if ($formConnectionPage->check()) {
@@ -96,25 +87,28 @@ class CoreconfigController extends CoresecureController {
                     $modelCoreConfig->setParam("connection_carousel" . strval($i), $target_dir . $_FILES["image_url" . $i]["name"]);
                 }
             }
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
+        
         // desactivateUserForm
         $formDesactivateUser = $this->desactivateUserForm($modelCoreConfig, $lang);
         if ($formDesactivateUser->check()){
             $modelCoreConfig->setParam("user_desactivate", $this->request->getParameter("user_desactivate"));
         
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
+        
         // email form
         $formEmail = $this->emailForm($modelCoreConfig, $lang);
         if ($formEmail->check()){
             $modelCoreConfig->setParam("admin_email", $this->request->getParameter("admin_email"));
         
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
+        
         $formNavbar = $this->navbarColorForm($modelCoreConfig, $lang);
         if($formNavbar->check()){
             
@@ -131,23 +125,25 @@ class CoreconfigController extends CoresecureController {
 
             file_put_contents("data/core/theme/navbar-fixed-top.css", $css);
         
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
+        
         // backup form
         $formBackup = $this->backupForm($lang);
         if ($formBackup->check()){
             $modelBackup = new CoreBackupDatabase();
             $modelBackup->run();
-            $this->redirect("coreconfig");
+            $this->redirect("coreconfigadmin");
             return;
         }
         // view
-        $forms = array($formMaintenance->getHtml($lang), $formInstall->getHtml($lang), 
+        $forms = array($formMaintenance->getHtml($lang), 
             $formDesactivateUser->getHtml($lang), 
             $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang), 
             $formEmail->getHtml($lang), $formNavbar->getHtml($lang), $formBackup->getHtml($lang));
+        
         $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
@@ -165,7 +161,7 @@ class CoreconfigController extends CoresecureController {
         $formMaintenance->addSeparator(CoreTranslator::Maintenance_Mode($lang));
         $formMaintenance->addSelect("is_maintenance", CoreTranslator::InMaintenance($lang), array(CoreTranslator::No($lang), CoreTranslator::Yes($lang)), array(0, 1), $is_maintenance);
         $formMaintenance->addTextArea("maintenance_message", CoreTranslator::MaintenanceMessage($lang), false, $maintenance_message, false);
-        $formMaintenance->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $formMaintenance->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         $formMaintenance->setButtonsWidth(2, 9);
 
         return $formMaintenance;
@@ -181,7 +177,7 @@ class CoreconfigController extends CoresecureController {
         $form = new Form($this->request, "installForm");
         $form->addSeparator(CoreTranslator::Install_Repair_database($lang));
         $form->addComment(CoreTranslator::Install_Txt($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         $form->setButtonsWidth(2, 9);
 
         return $form;
@@ -213,7 +209,7 @@ class CoreconfigController extends CoresecureController {
         }
 
         $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $choices, $choicesid, $statusUserMenu);
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         $form->setButtonsWidth(2, 9);
 
         return $form;
@@ -230,7 +226,7 @@ class CoreconfigController extends CoresecureController {
         $form->addSeparator(CoreTranslator::LdapConfig($lang));
         
         $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Config($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Config($lang), "coreconfigadmin");
         return $form;
     }
     
@@ -247,7 +243,7 @@ class CoreconfigController extends CoresecureController {
         $form->addText("default_home_path", CoreTranslator::Home_page($lang), true, $modelCoreConfig->getParam("default_home_path"));
         
         $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
     
@@ -274,7 +270,7 @@ class CoreconfigController extends CoresecureController {
             $form->addUpload("image_url" . strval($i), CoreTranslator::Image_Url($lang));
         }
         $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
     
@@ -302,7 +298,7 @@ class CoreconfigController extends CoresecureController {
                 $choices, $choicesid, $value);
         
         $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
 
@@ -320,7 +316,7 @@ class CoreconfigController extends CoresecureController {
         $form->addText("admin_email", CoreTranslator::Email($lang), false, $value);
         
         $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
     
@@ -335,7 +331,7 @@ class CoreconfigController extends CoresecureController {
         $form->addSeparator(CoreTranslator::Backup($lang));
         
         $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Run_backup($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Run_backup($lang), "coreconfigadmin");
         return $form;
     }
     
@@ -359,7 +355,7 @@ class CoreconfigController extends CoresecureController {
         $form->addColor("navbar_text_highlight", CoreTranslator::Text_highlight($lang), false, $navbar_text_highlight);
         
         $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfig");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
 }

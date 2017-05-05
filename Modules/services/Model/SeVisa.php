@@ -55,6 +55,7 @@ class SeVisa extends Model {
     public function getForList($id_space){
         $sql = "SELECT * FROM se_visa WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        
         $ids = array();
         $names = array();
         $ids[] = 0;
@@ -62,7 +63,7 @@ class SeVisa extends Model {
         $modelUser = new CoreUser();
         foreach($data as $dat){
             $ids[] = $dat['id'];
-            $names[] = $modelUser->getUserFUllName($dat['id']);
+            $names[] = $modelUser->getUserFUllName($dat['id_user']);
         }
         return array('ids' => $ids, 'names' => $names);
     }
