@@ -68,7 +68,7 @@ class InvoicesTranslator {
 
     public static function Date_generated($lang) {
         if ($lang == "fr") {
-            return "Date d'émission";
+            return "Date de libération produit";
         }
         return "Date generated";
     }
@@ -275,6 +275,34 @@ class InvoicesTranslator {
             return "Remise";
         }
         return "Discount";
+    }
+    
+    public static function Visas($lang) {
+        if ($lang == "fr") {
+            return "Visas";
+        }
+        return "Visas";
+    }
+    
+    public static function Visa($lang) {
+        if ($lang == "fr") {
+            return "Visa";
+        }
+        return "Visa";
+    }
+    
+    public static function Date_send($lang) {
+        if ($lang == "fr") {
+            return "Date d’envoi";
+        }
+        return "Date send";
+    }
+    
+    public static function Visa_send($lang) {
+        if ($lang == "fr") {
+            return "Visa d’envoi";
+        }
+        return "Visa to send";
     }
     
     

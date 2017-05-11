@@ -23,6 +23,8 @@ class InInvoice extends Model {
         $this->setColumnsInfo("period_begin", "date", "");
         $this->setColumnsInfo("period_end", "date", "");
         $this->setColumnsInfo("date_generated", "date", "");
+        $this->setColumnsInfo("date_send", "date", "0000-00-00");
+        $this->setColumnsInfo("visa_send", "int(11)", 0);
         $this->setColumnsInfo("date_paid", "date", "");
         $this->setColumnsInfo("id_unit", "int(11)", 0);
         $this->setColumnsInfo("id_responsible", "int(11)", 0);
@@ -37,6 +39,11 @@ class InInvoice extends Model {
         $this->primaryKey = "id";
     }
 
+    public function setSend($id, $date, $visa){
+        $sql = "UPDATE in_invoice SET date_send=?, visa_send=? WHERE id=?";
+        $this->runRequest($sql, array($date, $visa, $id));
+    }
+    
     public function setDiscount($id, $discount) {
         $sql = "UPDATE in_invoice SET discount=? WHERE id=?";
         $this->runRequest($sql, array($discount, $id));

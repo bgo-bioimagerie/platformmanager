@@ -72,6 +72,7 @@ class CoreconnectionController extends Controller {
             }
 
             $connect = $this->connect($login, $pwd);
+            //print_r($connect);
             if ($connect == "allowed") {
 
                 // open the session
@@ -95,7 +96,7 @@ class CoreconnectionController extends Controller {
                 $redirectPath = $this->getRedirectPath();
                 $this->redirect($redirectPath);
             } else {
-                $this->indexAction($connect);
+                //$this->indexAction($connect);
             }
         } else {
             throw new Exception("Action not allowed : login or passeword undefined");

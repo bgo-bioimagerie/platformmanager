@@ -323,9 +323,11 @@ class BookingController extends BookingabstractController {
         }
 
         if ($curentAreaId == "") {
-            $curentResource = $_SESSION['bk_id_resource'];
-            $curentAreaId = $_SESSION['bk_id_area'];
-            $curentDate = $_SESSION['bk_curentDate'];
+            if (isset($_SESSION['bk_id_resource'])){
+                $curentResource = $_SESSION['bk_id_resource'];
+                $curentAreaId = $_SESSION['bk_id_area'];
+                $curentDate = $_SESSION['bk_curentDate'];
+            }
         }
 
         // change input if action

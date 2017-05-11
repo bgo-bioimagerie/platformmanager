@@ -57,7 +57,7 @@ class CoreldapconfigController extends CoresecureController {
         $form->addSelect("useLdap", CoreTranslator::UseLdap($lang), 
                 array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $ldapConfig["useLdap"]);
         $form->addSelect("ldapDefaultStatus", CoreTranslator::userDefaultStatus($lang), 
-                array(CoreTranslator::Translate_status($lang, "visitor"), CoreTranslator::Translate_status($lang, "user")), array(1,2), $ldapConfig["useLdap"]);
+                array(CoreTranslator::Translate_status($lang, "visitor"), CoreTranslator::Translate_status($lang, "user")), array(1,2), $ldapConfig["ldapDefaultStatus"]);
         $form->addText("ldapSearchAtt", CoreTranslator::ldapSearch($lang), false, $ldapConfig["ldapSearchAtt"]);
         $form->addText("ldapNameAtt", CoreTranslator::ldapName($lang), false, $ldapConfig["ldapNameAtt"]);
         $form->addText("ldapFirstnameAtt", CoreTranslator::ldapFirstname($lang), false, $ldapConfig["ldapFirstnameAtt"]);

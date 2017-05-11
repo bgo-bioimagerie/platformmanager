@@ -11,6 +11,7 @@ require_once 'Modules/ecosystem/Model/EcUser.php';
 
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
+require_once 'Modules/invoices/Model/InVisa.php';
 
 /**
  * 
@@ -147,6 +148,11 @@ class InvoiceslistController extends CoresecureController {
         $form->addText("unit", EcosystemTranslator::Units($lang), false, $modelUnit->getUnitName($invoice["id_unit"]), false);
         $form->addText("resp", EcosystemTranslator::Responsible($lang), false, $modelUser->getUserFUllName($invoice["id_responsible"]), false);
         $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, CoreTranslator::dateFromEn($invoice["date_generated"], $lang));
+        $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
+        
+        $modelVisa = new InVisa();
+        $visasList = $modelVisa->getForList($id_space);
+        $form->addSelect("visa_send", InvoicesTranslator::Visa_send($lang), $visasList['names'], $visasList['ids'], $invoice["visa_send"]);
         $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, CoreTranslator::dateFromEn($invoice["date_paid"], $lang));
 
         $form->setButtonsWidth(3, 8);
@@ -157,6 +163,9 @@ class InvoiceslistController extends CoresecureController {
             $datePaid = CoreTranslator::dateToEn($this->request->getParameter("date_paid"), $lang);
             //echo "date paid = " . $datePaid . "<br/>";
             $modelInvoice->setDatePaid($id, $datePaid);
+            $modelInvoice->setSend($id, 
+                    CoreTranslator::dateToEn($this->request->getParameter("date_send"), $lang), 
+                    $this->request->getParameter("visa_send"));
             $this->redirect("invoices/" . $id_space);
             return;
         }

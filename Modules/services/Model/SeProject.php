@@ -388,10 +388,33 @@ class SeProject extends Model {
         $this->runRequest($sql, array($date_close, $id));
     }
 
-    public function getProjectsOpenedPeriod($beginPeriod, $endPeriod) {
+    public function getProjectsOpenedPeriod($beginPeriod, $endPeriod, $id_space) {
         $sql = "select * from se_project where date_open>=? AND date_open<=?";
-        $req = $this->runRequest($sql, array($beginPeriod, $endPeriod));
-        return $req->fetchAll();
+        $projects = $this->runRequest($sql, array($beginPeriod, $endPeriod))->fetchAll();
+        
+        $modelUser = new EcUser();
+        for($i = 0 ; $i < count($projects) ; $i++){
+            $sql = "SELECT id_user FROM se_visa WHERE id=? AND id_space=?";
+            $id_user = $this->runRequest($sql, array($projects[$i]['closed_by'], $id_space))->fetch();
+            $projects[$i]['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
+            
+        }
+        
+        /*
+        for($i = 0 ; $i < count($projects) ; $i++){
+            $sql = "SELECT id_invoice FROM in_invoice_item WHERE details LIKE '%".$projects[$i]["name"]."%'";
+            $req = $this->runRequest($sql);
+            if ($req->rowCount() > 0){
+                $id_invoice = $req->fetch();
+                
+                $sql = "SELECT * FROM in_invoice WHERE id=?";
+                $data = $this->runRequest($sql, array($id_invoice[0]));
+                $projects[$i]['invoice'] = $data->fetch();
+            }
+        }
+        */
+        
+        return $projects;
     }
 
     public function getPeriodeServicesBalances($id_space, $beginPeriod, $endPeriod) {
