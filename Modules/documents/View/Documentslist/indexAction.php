@@ -2,7 +2,7 @@
 
 <!-- body --> 
 <?php startblock('content') ?>
-<div class="container"> 
+<div class="col-md-12 pm-table"> 
 
     <?php if($userSpaceStatus){ ?> 
     <div class="col-md-2" style="padding-top:7px;">

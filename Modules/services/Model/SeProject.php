@@ -387,6 +387,19 @@ class SeProject extends Model {
 		        where id=?";
         $this->runRequest($sql, array($date_close, $id));
     }
+    
+    public function getInfoFromInvoice($id_invoice){
+        /*
+        $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=?";
+        $invoiceItem = $this->runRequest($sql, array($id_invoice));
+        $details = explode(";", $invoiceItem["details"]);
+        $proj = explode("=", $details);
+        $projName = $proj[0];
+        
+        $sqlp = "SELECT * FROM se_project WHERE name=?";
+        $this->runRequest($sqlp, )
+         */
+    }
 
     public function getProjectsOpenedPeriod($beginPeriod, $endPeriod, $id_space) {
         $sql = "select * from se_project where date_open>=? AND date_open<=?";

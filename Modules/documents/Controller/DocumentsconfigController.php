@@ -36,6 +36,7 @@ class DocumentsconfigController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         // color menu form
+        /*
         $modelCoreConfig = new CoreConfig();
         $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
         if ($formMenuColor->check()) {
@@ -45,6 +46,7 @@ class DocumentsconfigController extends CoresecureController {
             $this->redirect("documentsconfig/".$id_space);
             return;
         }
+         */
 
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
@@ -53,7 +55,9 @@ class DocumentsconfigController extends CoresecureController {
             
             $modelSpace->setSpaceMenu($id_space, "documents", "documents", "glyphicon-user", 
                     $this->request->getParameter("documentsmenustatus"),
-                    $this->request->getParameter("displayMenu")
+                    $this->request->getParameter("displayMenu"),
+                    0,
+                    $this->request->getParameter("colorMenu")
                     );
             
             $this->redirect("documentsconfig/".$id_space);
@@ -61,7 +65,7 @@ class DocumentsconfigController extends CoresecureController {
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang));
+        $forms = array($formMenusactivation->getHtml($lang));
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -71,7 +75,8 @@ class DocumentsconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "documents");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "documents");
-        
+        $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "documents");
+
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
@@ -79,6 +84,8 @@ class DocumentsconfigController extends CoresecureController {
 
         $form->addSelect("documentsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
+        
         $form->setValidationButton(CoreTranslator::Save($lang), "documentsconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 

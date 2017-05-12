@@ -110,9 +110,10 @@ class CoreLdap {
             reset($atts);
             while (list (, $att ) = each($atts)) {
                 $dn = $this->grr_ldap_search_user($ds, $ldap_base, $att, $login_search, $ldap_filter);
-                // echo "grr_ldap_search_user, dn = " . $dn . "<br/>";
-                if (($dn == "error_1") or ( $dn == "error_2") or ( $dn == "error_3"))
+                echo "grr_ldap_search_user, dn = " . $dn . "<br/>";
+                if (($dn == "error_1") or ( $dn == "error_2") or ( $dn == "error_3")){
                     return $dn;
+                }
                 else if ($dn) {
                     // on a le dn
                     if (@ldap_bind($ds, $dn, $_password)) {
@@ -182,10 +183,13 @@ class CoreLdap {
                 // Accès anonyme
                 $b = @ldap_bind($ds);
             }
-            //echo "b = " . $b . "<br/>";
+            
+            
             if ($b) {
+                echo "bind ok = <br/>";
                 return $ds;
             } else {
+                echo "bind fail = <br/>";
                 if ($msg_error != "no")
                     return "error_3";
                 //echo 'return false 1 <br/>';
@@ -221,13 +225,16 @@ class CoreLdap {
             $filter = "(& " . $filter . $filtre_sup . ")";
         }
 
-        // echo "base dn = " . $basedn . "<br/>";
-        // echo "login_attr = " . $login_attr . "<br/>";
+        echo "base dn = " . $basedn . "<br/>";
+        echo "login_attr = " . $login_attr . "<br/>";
         $res = @ldap_search($ds, $basedn, $filter, array(
                     "dn",
                     $login_attr
                         ), 0, 0);
         
+        echo "res ldap search = ";
+        print_r($res);
+        echo "res ldap search end<br/>";
         if ($res) {
 
             $info = @ldap_get_entries($ds, $res);

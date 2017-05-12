@@ -325,8 +325,20 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Total_HT($lang));
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, ServicesTranslator::Academique($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, ServicesTranslator::Industry($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, ServicesTranslator::Academique($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $curentLine, ServicesTranslator::Industry($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, ServicesTranslator::Opened_date($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, ServicesTranslator::Time_limite($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, ServicesTranslator::Closed_date($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('M' . $curentLine, ServicesTranslator::Visa($lang));
+        
+        
 
         $total = 0;
+        $modelProject = new SeProject();
         foreach ($invoices as $invoice) {
             $curentLine++;
 
@@ -338,6 +350,13 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
+            
+            /*
+            if( $invoice["controller"] == "servicesinvoiceproject" ){
+                $modelProject->getInfoFromInvoice($invoice['id']);
+            }
+             */
+            
             $total += $invoice["total_ht"];
         }
         $curentLine++;

@@ -287,6 +287,7 @@ class CorespaceController extends CoresecureController {
         // replace admin
         $adminMenu = "";
         if ($showAdmMenu) {
+            /*
             $colorConfig = "";
             $colorConfigUser = "";
             if (isset($_SESSION["openedNav"]) && $_SESSION["openedNav"] == "config") {
@@ -295,6 +296,9 @@ class CorespaceController extends CoresecureController {
             if (isset($_SESSION["openedNav"]) && $_SESSION["openedNav"] == "configusers") {
                 $colorConfigUser = 'style="background-color:'.$spaceColor.'; color: #fff;"';
             }
+            */
+            $colorConfig = 'style="background-color:'.$spaceColor.'; color: #fff;"';
+            $colorConfigUser = 'style="background-color:'.$spaceColor.'; color: #fff;"';
             $adminMenu .= '<li>';
             $adminMenu .= '<a  '.$colorConfig.' href="spaceconfig/' . $space["id"] . '">' . CoreTranslator::Configuration($lang) . '<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>';
             $adminMenu .= "</li>";
@@ -332,6 +336,7 @@ class CorespaceController extends CoresecureController {
                     $colorMenu = 'style="background-color:#428bca; color: #fff;"';
                 }
             }
+            $colorMenu = 'style="background-color:'.$item["color"].'; color: #fff;"';
 
             if ($item['has_sub_menu'] == 0) {
                 
