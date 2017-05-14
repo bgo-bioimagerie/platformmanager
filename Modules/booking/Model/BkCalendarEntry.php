@@ -102,6 +102,7 @@ class BkCalendarEntry extends Model {
             $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
                 $last_update, $color_type_id, $short_description, $full_description, $quantities,
                 $supplementaries, $package_id, $responsible_id));
+            return $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE bk_calendar_entry SET start_time=?, end_time=?, resource_id=?, booked_by_id=?, recipient_id=?, 
                     last_update=?, color_type_id=?, short_description=?, full_description=?, quantities=?, 
@@ -109,6 +110,7 @@ class BkCalendarEntry extends Model {
             $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
                 $last_update, $color_type_id, $short_description, $full_description, $quantities,
                 $supplementaries, $package_id, $responsible_id, $id));
+            return $id;
         }
     }
 

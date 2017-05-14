@@ -388,17 +388,26 @@ class SeProject extends Model {
         $this->runRequest($sql, array($date_close, $id));
     }
     
-    public function getInfoFromInvoice($id_invoice){
-        /*
+    public function getInfoFromInvoice($id_invoice, $id_space){
+       
         $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=?";
-        $invoiceItem = $this->runRequest($sql, array($id_invoice));
+        $invoiceItem = $this->runRequest($sql, array($id_invoice))->fetch();
+        //print_r($invoiceItem["details"]);
         $details = explode(";", $invoiceItem["details"]);
-        $proj = explode("=", $details);
+        //echo "details = " . $invoiceItem["details"] . "<br/>";
+        //echo 'count details = ' . count($details) . "<br/>";
+        $proj = explode("=", $details[count($details)-2]);
         $projName = $proj[0];
         
         $sqlp = "SELECT * FROM se_project WHERE name=?";
-        $this->runRequest($sqlp, )
-         */
+        $info = $this->runRequest($sqlp, array($projName))->fetch();
+        
+        $modelUser = new EcUser();
+        $sql2 = "SELECT id_user FROM se_visa WHERE id=? AND id_space=?";
+        $id_user = $this->runRequest($sql2, array($info['closed_by'], $id_space))->fetch();
+        $info['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
+        
+        return $info;
     }
 
     public function getProjectsOpenedPeriod($beginPeriod, $endPeriod, $id_space) {

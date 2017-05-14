@@ -103,10 +103,10 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
         }
 
-        return $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render);
+        return $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render);
     }
 
-    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render) {
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render) {
 
         $modelUser = new EcUser();
         $modelUnit = new EcUnit();
@@ -239,7 +239,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         $objPHPExcel->getActiveSheet()->SetCellValue('K2', ServicesTranslator::Closed_date($lang));
         $objPHPExcel->getActiveSheet()->getStyle('K2')->applyFromArray($styleBorderedCell);
-        
+
         $objPHPExcel->getActiveSheet()->SetCellValue('L2', ServicesTranslator::Visa($lang));
         $objPHPExcel->getActiveSheet()->getStyle('L2')->applyFromArray($styleBorderedCell);
 
@@ -317,15 +317,22 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->setActiveSheetIndex(1);
         $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
-
         $curentLine = 1;
+        $objPHPExcel->getActiveSheet()->mergeCells('A' . $curentLine . ":" . 'E' . $curentLine);
+        $objPHPExcel->getActiveSheet()->mergeCells('F' . $curentLine . ":" . 'G' . $curentLine);
+        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, ServicesTranslator::New_team($lang));
+        $objPHPExcel->getActiveSheet()->mergeCells('H' . $curentLine . ":" . 'I' . $curentLine);
+        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, ServicesTranslator::New_project($lang));
+
+
+        $curentLine = 2;
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
 
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Total_HT($lang));
-        
+
         $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, ServicesTranslator::Academique($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, ServicesTranslator::Industry($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, ServicesTranslator::Academique($lang));
@@ -334,8 +341,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, ServicesTranslator::Time_limite($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, ServicesTranslator::Closed_date($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('M' . $curentLine, ServicesTranslator::Visa($lang));
-        
-        
+
+
 
         $total = 0;
         $modelProject = new SeProject();
@@ -350,13 +357,51 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
-            
-            /*
-            if( $invoice["controller"] == "servicesinvoiceproject" ){
-                $modelProject->getInfoFromInvoice($invoice['id']);
+
+            //echo "invoice controller = " . $invoice["controller"] . '<br/>';
+            if ($invoice["controller"] == "servicesinvoiceproject") {
+                $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
+                //print_r($proj);
+                //echo "<br/>";
+                
+                if(isset($proj["new_team"])){
+                
+                    if ($proj["new_team"] == 2) {
+                        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, 1);
+                    } 
+                    else if ($proj["new_team"] == 3) {
+                        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, 1);
+                    }
+                    $objPHPExcel->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+                    $objPHPExcel->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+
+
+                    if ($proj["new_project"] == 2) {
+                        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, 1);
+                    } 
+                    else if ($proj["new_project"] == 3) {
+                        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $curentLine, 1);
+                    }
+                    $objPHPExcel->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+                    $objPHPExcel->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+
+                    $dateClosed = "";
+                    $visaClosed = "";
+                    if ($proj["date_close"] != "0000-00-00") {
+                        $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
+                        $visaClosed = $proj["closed_by"];
+                    }
+                    $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
+                    $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
+                    $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, $dateClosed);
+                    $objPHPExcel->getActiveSheet()->SetCellValue('M' . $curentLine, $visaClosed);
+                    $objPHPExcel->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $objPHPExcel->getActiveSheet()->getStyle('K' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $objPHPExcel->getActiveSheet()->getStyle('L' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $objPHPExcel->getActiveSheet()->getStyle('M' . $curentLine)->applyFromArray($styleBorderedCell);
+                }
             }
-             */
-            
+
             $total += $invoice["total_ht"];
         }
         $curentLine++;
@@ -365,11 +410,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $total);
 
         for ($r = 1; $r <= $curentLine; $r++) {
-            for ($c = 'A'; $c !== 'F'; $c++) {
+            for ($c = 'A'; $c !== 'N'; $c++) {
                 $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
             }
         }
-        for ($col = 'A'; $col !== 'E'; $col++) {
+        for ($col = 'A'; $col !== 'M'; $col++) {
             $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 

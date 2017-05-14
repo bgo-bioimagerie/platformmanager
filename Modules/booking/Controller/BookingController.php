@@ -37,8 +37,8 @@ class BookingController extends BookingabstractController {
     }
 
     public function navbar($id_space) {
-                $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
-        
+        $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
+
         $lang = $this->getLanguage();
         $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Calendar_View}}', BookingTranslator::Calendar_View($lang), $html);
@@ -53,7 +53,7 @@ class BookingController extends BookingabstractController {
         $html = str_replace('{{Quantities}}', BookingTranslator::Quantities($lang), $html);
         $html = str_replace('{{booking}}', BookingTranslator::booking($lang), $html);
         $html = str_replace('{{Block_Resouces}}', BookingTranslator::Block_Resouces($lang), $html);
-        
+
         return $html;
     }
 
@@ -323,7 +323,7 @@ class BookingController extends BookingabstractController {
         }
 
         if ($curentAreaId == "") {
-            if (isset($_SESSION['bk_id_resource'])){
+            if (isset($_SESSION['bk_id_resource'])) {
                 $curentResource = $_SESSION['bk_id_resource'];
                 $curentAreaId = $_SESSION['bk_id_area'];
                 $curentDate = $_SESSION['bk_curentDate'];
@@ -825,11 +825,59 @@ class BookingController extends BookingabstractController {
             $modelDefault->editreservationdefault($id_space, $param);
             return;
         } else {
+
             /// todo run plugin
-            //if ($controllerFound == false) {
-            throw new Exception("Booking plugin " . $editResaFunction . " not found");
-            //}
+            $modelCache = new FCache();
+            $pathInfo = $modelCache->getURLInfos($editResaFunction);
+            //print_r($pathInfo);
+            $path = $this->request->getParameter('path');
+            //echo "path = " . $path . "<br/>";
+            $pathData = explode("/", $path);
+        
+            $urlInfo = array("pathData" => $pathData, "pathInfo" => $pathInfo);
+
+            //print_r($urlInfo);
+            $controllerName = $urlInfo["pathInfo"]["controller"];
+            $classController = ucfirst(strtolower($controllerName)) . "Controller";
+            $module = $urlInfo["pathInfo"]["module"];
+            $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
+            if (file_exists($fileController)) {
+                // Instantiate controler
+                require_once ($fileController);
+                $controller = new $classController ();
+                $controller->setRequest($this->request);
+
+                $action = $urlInfo["pathInfo"]["action"];
+                //echo "action = " . $action . "<br/>";
+                //echo 'url info = ';
+                //print_r($urlInfo);
+                //echo '<br/>';
+                $args = $this->getArgs($urlInfo);
+                //echo "args = "; print_r($args); echo "<br/>";
+
+                $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
+                return;
+            } else {
+                throw new Exception("Unable to find the controller file '$fileController' ");
+            }
         }
+    }
+
+    private function getArgs($urlInfo) {
+
+        $args = $urlInfo["pathInfo"]["gets"];
+        $argsValues = array();
+
+        for ($i = 0; $i < count($args); $i++) {
+            if (isset($urlInfo["pathData"][$i + 1])) {
+                $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
+            } else {
+                $argsValues[$args[$i]["name"]] = "";
+            }
+        }
+
+
+        return $argsValues;
     }
 
 }
