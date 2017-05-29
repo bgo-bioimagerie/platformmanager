@@ -153,8 +153,14 @@ class InvoiceslistController extends CoresecureController {
         $modelVisa = new InVisa();
         $visasList = $modelVisa->getForList($id_space);
         $form->addSelect("visa_send", InvoicesTranslator::Visa_send($lang), $visasList['names'], $visasList['ids'], $invoice["visa_send"]);
-        $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, CoreTranslator::dateFromEn($invoice["date_paid"], $lang));
-
+        
+        $modelConfig = new CoreConfig();
+        if($modelConfig->getParamSpace("useInvoiceDatePaid", $id_space) == 1){
+            $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, CoreTranslator::dateFromEn($invoice["date_paid"], $lang));
+        }
+        else{
+            $form->addHidden("date_paid", "0000-00-00");
+        }
         $form->setButtonsWidth(3, 8);
         $form->setValidationButton(CoreTranslator::Save($lang), "invoiceinfo/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "invoices/" . $id_space);

@@ -54,6 +54,9 @@ class BookingauthorisationsController extends CoresecureController {
         foreach ($resources as $res) {
             $resourceVisas[$res["id"]] = $modelVisa->getVisasDesc($res["id"], $lang);
         }
+        
+        $modelConfig = new CoreConfig();
+        $BkAuthorisationUseVisa = $modelConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
 
         $this->render(array(
             "lang" => $lang,
@@ -63,7 +66,8 @@ class BookingauthorisationsController extends CoresecureController {
             'userID' => $id,
             'unit_id' => $unit_id,
             'userName' => $userName,
-            'visas' => $resourceVisas
+            'visas' => $resourceVisas,
+            'BkAuthorisationUseVisa' => $BkAuthorisationUseVisa
         ));
     }
 
@@ -74,13 +78,30 @@ class BookingauthorisationsController extends CoresecureController {
 
         $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+        
+        $modelConfig = new CoreConfig();
+        $BkAuthorisationUseVisa = $modelConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
 
+        //echo "BkAuthorisationUseVisa = " . $BkAuthorisationUseVisa . "<br/>";
+        
         $user_id = $this->request->getParameter("user_id");
         $unit_id = $this->request->getParameter("unit_id");
         $resource_id = $this->request->getParameter("resource_id");
         $is_active = $this->request->getParameter("is_active");
-        $date = $this->request->getParameter("date");
-        $visa_id = $this->request->getParameter("visa_id");
+        
+        if($BkAuthorisationUseVisa == 1){
+            $date = $this->request->getParameter("date");
+            $visa_id = $this->request->getParameter("visa_id");
+        }
+        else{
+            $date = array();
+            $visa_id = array();
+            for( $i = 0 ; $i < count($resource_id) ; $i++ ){
+                $date[] = "";
+                $visa_id = 0;
+            }
+            
+        }
 
         //print_r($resource_id);
         //print_r($is_active);
@@ -93,6 +114,19 @@ class BookingauthorisationsController extends CoresecureController {
             $cdate = CoreTranslator::dateToEn($date[$i], $lang);
             //echo "date = " . $date[$i] . "<br/>";
             //echo "cdate = " . $cdate . "<br/>";
+            
+            if($is_active[$i] > 0 && $BkAuthorisationUseVisa == 1){
+                //echo 'test active <br>';
+                //echo 'date = ' . $cdate[$i] . "<br>";
+                //echo '$visa_id = ' . $visa_id[$i] . "<br>";
+                if($cdate[$i] == "" || $cdate[$i] == 0 || $visa_id[$i] < 1){
+                    $message = BookingTranslator::FieldsDateAndVisaAreMandatory($lang);
+                    $_SESSION["message"] = $message;
+                    $this->redirect("bookingauthorisations/".$id_space."/".$user_id);
+                    return;
+                }
+            }
+            
             if ($authorizationID > 0) {
                 $modelAuthorization->editAuthorization($authorizationID, $cdate, $user_id, $unit_id, $visa_id[$i], $resource_id[$i], $is_active[$i]);
             } else {

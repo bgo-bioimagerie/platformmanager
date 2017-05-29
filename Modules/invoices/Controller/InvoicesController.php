@@ -38,7 +38,7 @@ class InvoicesController extends CoresecureController {
         $html .= "<li>";
         $html .= '<div class="inline pm-inline-div">';
         $html .= '<a href="invoicesvisas/' . $id_space . '">' . InvoicesTranslator::Visas($lang) . '</a>';
-        $html .= '<a href="sinvoicesvisaedit/' . $id_space . '/0"> + </a>';
+        $html .= '<a href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
         $html .= '</div>';
         $html .= '</li><br/>';
 

@@ -17,6 +17,8 @@ require_once 'Modules/services/Model/SeStats.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
 
+require_once 'Modules/invoices/Model/InVisa.php';
+
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
 /**
@@ -92,6 +94,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         // get the stats
         $modelStats = new SeStats();
         $stats = $modelStats->computeStats($id_space, $periodStart, $periodEnd);
+        $delayStats = $modelStats->computeDelayStats($id_space, $periodStart, $periodEnd);
         $statsOrigins = $modelStats->computeOriginStats($id_space, $periodStart, $periodEnd);
 
         // get the bill manager list
@@ -103,10 +106,10 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
         }
 
-        return $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render);
+        return $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $render);
     }
 
-    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $statsOrigins, $render) {
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $render) {
 
         $modelUser = new EcUser();
         $modelUnit = new EcUnit();
@@ -341,11 +344,14 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, ServicesTranslator::Time_limite($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, ServicesTranslator::Closed_date($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('M' . $curentLine, ServicesTranslator::Visa($lang));
-
+        $objPHPExcel->getActiveSheet()->SetCellValue('N' . $curentLine, ServicesTranslator::Date_Send_Invoice($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, ServicesTranslator::Visa_Send_Invoice($lang));
+    
 
 
         $total = 0;
         $modelProject = new SeProject();
+        $modelInvoiceVisa = new InVisa();
         foreach ($invoices as $invoice) {
             $curentLine++;
 
@@ -357,7 +363,9 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
-
+            $objPHPExcel->getActiveSheet()->SetCellValue('N' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
+            $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, $modelInvoiceVisa->getVisaName($invoice["visa_send"]));
+    
             //echo "invoice controller = " . $invoice["controller"] . '<br/>';
             if ($invoice["controller"] == "servicesinvoiceproject") {
                 $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
@@ -410,11 +418,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $total);
 
         for ($r = 1; $r <= $curentLine; $r++) {
-            for ($c = 'A'; $c !== 'N'; $c++) {
+            for ($c = 'A'; $c !== 'P'; $c++) {
                 $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
             }
         }
-        for ($col = 'A'; $col !== 'M'; $col++) {
+        for ($col = 'A'; $col !== 'P'; $col++) {
             $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 
@@ -456,6 +464,24 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::totalNumberOfProjects($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["totalNumberOfProjects"]);
 
+        
+        //print_r($delayStats);
+        
+        $curentLine++; $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectInDelay($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberIndustryProjectInDelay"] . " (" . round($delayStats["percentageIndustryProjectInDelay"]) . "%)");
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectOutDelay($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberIndustryProjectOutDelay"] . " (" . round($delayStats["percentageIndustryProjectOutDelay"]) . "%)");
+        $curentLine++;
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::academicProjectInDelay($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectInDelay"] . " (" . round($delayStats["percentageAcademicProjectInDelay"]) . "%)");
+        $curentLine++;
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectOutDelay($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectOutDelay"] . " (" . round($delayStats["percentageAcademicProjectOutDelay"]) . "%)");
+        
+        
         for ($r = 1; $r <= $curentLine; $r++) {
             for ($c = 'A'; $c !== 'C'; $c++) {
                 $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);

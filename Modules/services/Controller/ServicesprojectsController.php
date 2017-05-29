@@ -120,14 +120,46 @@ class ServicesprojectsController extends CoresecureController {
             "user_name" => CoreTranslator::User($lang),
             "date_open" => ServicesTranslator::Opened_date($lang),
             "time_limit" => ServicesTranslator::Time_limite($lang),
-            "date_close" => ServicesTranslator::Closed_date($lang)
+            "date_close" => ServicesTranslator::Closed_date($lang),
+            "close_icon" => array("title" => "", "type" => "glyphicon"),
         );
 
         $modelUser = new EcUser();
         $modelUnit = new EcUnit();
         $modelBelonging = new EcBelonging();
+        
+        $modelConfig = new CoreConfig();
+        $warning = $modelConfig->getParamSpace("SeProjectDelayWarning", $id_space);
+        
         for ($i = 0; $i < count($entriesArray); $i++) {
 
+            $entriesArray[$i]["close_icon"] = "";
+            
+            //echo "date clode = " . $entriesArray[$i]["date_close"] . "<br/>";
+            if ($entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00"){
+                
+                if($entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00"){
+                    
+                }
+                else{
+                
+                    $limiteArray = explode('-',$entriesArray[$i]["time_limit"]);
+                    $limitD = mktime(0,0,0,$limiteArray[1], $limiteArray[2], $limiteArray[0]);
+
+                    $today = time();
+
+                    //echo "limite time = " . $entriesArray[$i]["time_limit"] . "<br/>";
+
+                    $delay = $limitD - $today;
+                    //echo "delay = " . $delay . "<br/>";
+
+                    //$warning = 30;
+                    if( $delay < 0 || $delay < $warning*3600){
+                        $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
+                    }
+                }
+            }
+            
             $entriesArray[$i]["date_open"] = CoreTranslator::dateFromEn($entriesArray[$i]["date_open"], $lang);
             $entriesArray[$i]["date_close"] = CoreTranslator::dateFromEn($entriesArray[$i]["date_close"], $lang);
             $entriesArray[$i]["time_limit"] = CoreTranslator::dateFromEn($entriesArray[$i]["time_limit"], $lang);
@@ -153,11 +185,6 @@ class ServicesprojectsController extends CoresecureController {
             }
         }
         $tableHtml = $table->view($entriesArray, $headersArray);
-
-        if ($table->isPrint()) {
-            echo $tableHtml;
-            return;
-        }
 
         // 
         $this->render(array(

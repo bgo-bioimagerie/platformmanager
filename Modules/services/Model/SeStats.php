@@ -20,7 +20,7 @@ class SeStats extends Model {
     public function computeStatsProjects($startDate_min, $startDate_max) {
 
         // total number of projects 
-        $sql = "select * from se_projects where date_open >= ? AND date_open <= ?";
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ?";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
@@ -49,25 +49,25 @@ class SeStats extends Model {
         }
 
         // number of new academic projects
-        $sql = "select * from se_projects where date_open >= ? AND date_open <= ? AND new_project=?";
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2));
         $numberNewAccademicProject = $req->rowCount();
 
         //echo "numberNewAccademicProject = " . $numberNewAccademicProject . "<br/>";
         // number of new academic team
-        $sql = "select * from se_projects where date_open >= ? AND date_open <= ? AND new_team=?";
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2));
         $numberNewAccademicTeam = $req->rowCount();
 
         //echo "numberNewAccademicTeam = " . $numberNewAccademicTeam . "<br/>";
         // number of new industry projects
-        $sql = "select * from se_projects where date_open >= ? AND date_open <= ? AND new_project=?";
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3));
         $numberNewIndustryProject = $req->rowCount();
 
         //echo "numberNewIndustryProject = " . $numberNewIndustryProject . "<br/>";
         // number of new industry team
-        $sql = "select * from se_projects where date_open >= ? AND date_open <= ? AND new_team=?";
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3));
         $numberNewIndustryTeam = $req->rowCount();
 
@@ -101,9 +101,75 @@ class SeStats extends Model {
         );
         return $output;
     }
+    
+    public function computeDelayStats($id_space, $periodStart, $periodEnd){
+        // total number of projects 
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ?";
+        $req = $this->runRequest($sql, array($periodStart, $periodEnd));
+        $totalNumberOfProjects = $req->rowCount();
+        $projects = $req->fetchAll();
+
+        // number of accademic and industry projects
+        $numberIndustryProjectInDelay = 0;
+        $numberIndustryProjectOutDelay = 0;
+        $numberAcademicProjectInDelay = 0;
+        $numberAcademicProjectOutDelay = 0;
+        
+        $modelUser = new ecUser();
+        $modelUnit = new ecUnit();
+        $modelBelonging = new ecBelonging();
+
+        foreach ($projects as $project) {
+            
+            // get the responsible unit
+            $id_unit = $modelUser->getUnit($project["id_resp"]);
+
+            $id_pricing = $modelUnit->getBelonging($id_unit, $id_space);
+            $pricingInfo = $modelBelonging->getInfo($id_pricing);
+            $onTime = false;
+            
+            if( $project["date_close"] == "0000-00-00" ){
+                $project["date_close"] = date("Y-m-d", time());
+            }
+            if( $project["time_limit"] == "0000-00-00" || $project["time_limit"] >= $project["date_close"]  ){
+                $onTime = true;
+            }
+            
+            
+            if ($pricingInfo["type"] == 1) {
+                
+                if($onTime){
+                    $numberIndustryProjectInDelay++;
+                }
+                else{
+                    $numberIndustryProjectOutDelay++;
+                }
+                
+            } else {
+                
+                if($onTime){
+                    $numberAcademicProjectInDelay++;
+                }
+                else{
+                    $numberAcademicProjectOutDelay++;
+                }
+            }
+            
+        }
+        
+        return array( "numberIndustryProjectInDelay" => $numberIndustryProjectInDelay,
+                      "percentageIndustryProjectInDelay" => 100*($numberIndustryProjectInDelay / $totalNumberOfProjects),  
+                      "numberIndustryProjectOutDelay" => $numberIndustryProjectOutDelay,
+                      "percentageIndustryProjectOutDelay" => 100*($numberIndustryProjectOutDelay / $totalNumberOfProjects),
+                      "numberAcademicProjectInDelay" => $numberAcademicProjectInDelay,
+                      "percentageAcademicProjectInDelay" => 100*($numberAcademicProjectInDelay / $totalNumberOfProjects),  
+                      "numberAcademicProjectOutDelay" => $numberAcademicProjectOutDelay,
+                      "percentageAcademicProjectOutDelay" => 100*($numberAcademicProjectOutDelay / $totalNumberOfProjects),  
+            );
+    }
 
     public function getResponsiblesCsv($startDate_min, $startDate_max, $lang) {
-        $sql = "select distinct id_resp from se_projects where date_open >= ? AND date_open <= ?";
+        $sql = "select distinct id_resp from se_project where date_open >= ? AND date_open <= ?";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();

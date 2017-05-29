@@ -20,11 +20,20 @@
 
     <?php
     if (isset($_SESSION["message"])) {
-        ?>
-        <div class="alert alert-success text-center">
-            <?php echo $_SESSION["message"] ?>
-        </div>
-        <?php
+        if(substr( $_SESSION["message"], 0, 3 ) === "Err"){
+            ?>
+            <div class="alert alert-danger text-center">
+                <?php echo $_SESSION["message"] ?>
+            </div>
+            <?php
+        }
+        else{
+            ?>
+            <div class="alert alert-success text-center">
+                <?php echo $_SESSION["message"] ?>
+            </div>
+            <?php
+        }
     }
     unset($_SESSION["message"]);
     ?>
@@ -46,8 +55,16 @@
                 <tr>
                     <th width="50%"> <?php echo ResourcesTranslator::Resource($lang) ?> </th>
                     <th width="10%"> <?php echo BookingTranslator::Active_Authorizations($lang) ?> </th>
-                    <th width="20%"> <?php echo CoreTranslator::Date($lang) ?> </th>
-                    <th width="20%"> <?php echo ResourcesTranslator::Visa($lang) ?> </th>
+                    <?php 
+                        if($BkAuthorisationUseVisa==1){
+                    ?>
+                        <th width="20%"> <?php echo CoreTranslator::Date($lang) ?> </th>
+                        <th width="20%"> <?php echo ResourcesTranslator::Visa($lang) ?> </th>
+                    <?php
+                    }
+                    ?>
+                    
+                    
                 </tr>
             </thead>
             <tbody>
@@ -104,6 +121,11 @@
                             } ?>> <?php echo CoreTranslator::No($lang) ?> </OPTION>
                                 </select>
                             </td>
+                            
+                            <?php 
+                            if($BkAuthorisationUseVisa == 1){
+                            
+                            ?>
                             <td> 
                                 <div class='input-group date form_date_<?php echo $lang ?>' >
                                     <input type='text' class="form-control" name="date[]"
@@ -133,6 +155,9 @@
                                 </select>
 
                             </td>
+                            <?php 
+                            }
+                            ?>
 
                             <?php
                         } else {
@@ -143,6 +168,11 @@
                                     <OPTION value="0" selected="selected"> <?php echo CoreTranslator::No($lang) ?> </OPTION>
                                 </select>
                             </td>
+                            <?php 
+                            if($BkAuthorisationUseVisa==1){
+                                
+                            ?>
+                            
                             <td> 
                                 <div class='input-group date form_date_<?php echo $lang ?>' >
                                     <input type='text' class="form-control" name="date[]"
@@ -165,6 +195,7 @@
                                 </select>
                             </td>
                             <?php
+                            }
                         }
                         ?>
                     </tr>

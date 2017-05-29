@@ -65,6 +65,15 @@ class InvoicesconfigController extends CoresecureController {
             $this->redirect("invoicesconfig/".$id_space);
             return;
         }
+        
+        // options
+        $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($id_space, $lang);
+        if($formUseInvoiceDatePaid){
+            $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $id_space);
+            $this->redirect("invoicesconfig/".$id_space);
+            return;
+        }
+        
         // view
         $forms = array($formMenusactivation->getHtml($lang),
                        $formPeriod->getHtml($lang)
@@ -129,6 +138,22 @@ class InvoicesconfigController extends CoresecureController {
         $namefile = str_replace ( "__pm__", '.' , $name);
         unlink('data/invoices/'.$id_space.'/'.$namefile);
         $this->redirect('invoicepdftemplate/'.$id_space);
+    }
+    
+    protected function useInvoiceDatePaidForm($id_space, $lang){
+        
+        $modelConfig = new CoreConfig();
+        $useDatePaid = $modelConfig->getParamSpace("useInvoiceDatePaid", $id_space);
+        
+        $form = new Form($this->request, "menusactivationForm");
+        $form->addSeparator(InvoicesTranslator::useInvoiceDatePaid($lang));
+        
+        $form->addSelect("useInvoiceDatePaid", InvoicesTranslator::useInvoiceDatePaid($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $useDatePaid);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
     }
     
     protected function menusactivationForm($id_space, $lang) {

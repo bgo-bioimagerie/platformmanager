@@ -293,17 +293,23 @@ class InvoicesTranslator {
     
     public static function Date_send($lang) {
         if ($lang == "fr") {
-            return "Date d’envoi";
+            return "Date d’envoi facture";
         }
         return "Date send";
     }
     
     public static function Visa_send($lang) {
         if ($lang == "fr") {
-            return "Visa d’envoi";
+            return "Visa d’envoi facture";
         }
         return "Visa to send";
     }
     
+    public static function useInvoiceDatePaid($lang) {
+        if ($lang == "fr") {
+            return "Utiliser l'information date de paiement";
+        }
+        return "Use invoice date paid";
+    }
     
 }

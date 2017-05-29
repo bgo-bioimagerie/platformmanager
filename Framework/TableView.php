@@ -324,8 +324,10 @@ class TableView {
                             }
                             else{
                                    $html .= '<td style="background-color:"' .$ccolor.';"> </td>';
-                             
                             }
+                        }
+                        if($value["type"] == "glyphicon"){
+                            $html .= '<td><span class="'.$val.'" aria-hidden="true"></span></td>';
                         }
                     }
                     else{

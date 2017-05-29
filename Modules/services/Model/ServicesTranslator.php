@@ -744,5 +744,53 @@ class ServicesTranslator {
         return "Closed by";
     }
     
+    public static function Date_Send_Invoice($lang) {
+        if ($lang == "fr") {
+            return "Date d'envoi facture";
+        }
+        return "Date send invoice";
+    }
+    
+    public static function Visa_Send_Invoice($lang) {
+        if ($lang == "fr") {
+            return "Visa d'envoi facture";
+        }
+        return "Visa send invoice";
+    }
+    
+    public static function DelayWarningInDays($lang) {
+        if ($lang == "fr") {
+            return "Temps signal avertissement projets (en jours)";
+        }
+        return "Projects delay warning (in days)";
+    }
+    
+    public static function industryProjectInDelay($lang) {
+        if ($lang == "fr") {
+            return "Projets industriels en délai";
+        }
+        return "Industry project in time";
+    }
+    
+    public static function industryProjectOutDelay($lang) {
+        if ($lang == "fr") {
+            return "Projets industriels hors délai";
+        }
+        return "Industry project out time";
+    }
+    
+    public static function academicProjectInDelay($lang) {
+        if ($lang == "fr") {
+            return "Projets académique en délai";
+        }
+        return "Academic project in time";
+    }
+    
+    public static function academicProjectOutDelay($lang) {
+        if ($lang == "fr") {
+            return "Projets académique hors délai";
+        }
+        return "Academic project out time";
+    }
     
 }

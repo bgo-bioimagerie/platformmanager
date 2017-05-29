@@ -954,7 +954,7 @@ class BookingTranslator {
         }
         return "Invoice booking";
     }
-    
+
     public static function Invoice_All($lang = "") {
         if ($lang == "fr") {
             return "Facturer tout";
@@ -1220,99 +1220,110 @@ class BookingTranslator {
         }
         return "Block resources";
     }
-    
-    public static function RemoveReservation($lang){
+
+    public static function RemoveReservation($lang) {
         if ($lang == "fr") {
             return "Etes vous sure de vouloir supprimer la réservation ?";
         }
         return "Are you sure you want to delete this reservation ?";
     }
-    
-    public static function SendEmailsToUsers($lang){
+
+    public static function SendEmailsToUsers($lang) {
         if ($lang == "fr") {
             return "Prévenir les autres utilisateurs de la machine que le créneau est libéré:";
         }
         return "Inform other users of that the slot is free:";
     }
-    
-    public static function EmailWhenResaDelete($lang){
+
+    public static function EmailWhenResaDelete($lang) {
         if ($lang == "fr") {
             return "Proposer d'envoyer un courriel lors de dé-réservation";
         }
         return "Ask to send email when cancel a booking";
     }
-           
-    public static function Reservation_counting($lang){
+
+    public static function Reservation_counting($lang) {
         if ($lang == "fr") {
             return "Nombre de réservations";
         }
         return "Reservation counting";
     }
-    
-    public static function Reservation_time($lang){
+
+    public static function Reservation_time($lang) {
         if ($lang == "fr") {
             return "Temps de réservation (en heures)";
         }
         return "Reservation time (hours)";
     }
-    
-    public static function Reservation_per_resource($lang){
+
+    public static function Reservation_per_resource($lang) {
         if ($lang == "fr") {
             return "Réservations par ressource";
         }
         return "Reservation per resource";
     }
-    
-    public static function Reservation_per_unit($lang){
+
+    public static function Reservation_per_unit($lang) {
         if ($lang == "fr") {
             return "Réservations par unités";
         }
         return "Reservation unit";
     }
-    
-    public static function Reservation_per_responsible($lang){
+
+    public static function Reservation_per_responsible($lang) {
         if ($lang == "fr") {
             return "Réservations par responsable";
         }
         return "Reservation per person in charge";
     }
-    
-    
-    
-    public static function NumberResaPerUnitFrom($lang){
+
+    public static function NumberResaPerUnitFrom($lang) {
         if ($lang == "fr") {
             return "Nombre de réservations par unités sur la période du ";
         }
         return "Number reservations per unit from ";
     }
-    
-    public static function TimeResaPerUnitFrom($lang){
+
+    public static function TimeResaPerUnitFrom($lang) {
         if ($lang == "fr") {
             return "Durée de réservations par unités sur la période du ";
         }
         return "Time reservations per unit from ";
     }
-    
-    public static function To($lang){
+
+    public static function To($lang) {
         if ($lang == "fr") {
             return " au ";
         }
         return " to ";
     }
-   
-    public static function WhoCanUse($lang){
+
+    public static function WhoCanUse($lang) {
         if ($lang == "fr") {
             return "Utilisable par";
         }
         return "Who can use";
     }
-    
-    
-    public static function GenerateStatsPerUnit($lang){
+
+    public static function GenerateStatsPerUnit($lang) {
         if ($lang == "fr") {
             return "Générer les statistiques par unité ?";
         }
         return "Generate stats per unit ?";
+    }
+
+    public static function Use_Auth_Visa($lang) {
+        if ($lang == "fr") {
+            return "Utiliser les visas d'authorisations";
+        }
+        return "Use authorisation visa";
+    }
+
+    public static function FieldsDateAndVisaAreMandatory($lang) {
+        if ($lang == "fr") {
+            return "Erreur: les champs date et visa sont obligatoires";
+        }
+        return "Error: fields date and visa are mandatory";
     }
     
 }

@@ -56,6 +56,15 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
+        $formAuth = $this->bookingAuthorisationUseVisa($id_space, $lang);
+        if($formAuth->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("BkAuthorisationUseVisa", $this->request->getParameter("BkAuthorisationUseVisa"), $id_space);
+        
+            $this->redirect("bookingconfig/".$id_space);
+            return;
+        }
+        
         $formMenuName = $this->menuNameForm($id_space, $lang);
         if($formMenuName->check()){
             $modelConfig = new CoreConfig();
@@ -103,12 +112,28 @@ class BookingconfigController extends CoresecureController {
 
         // view
         $forms = array($formMenusactivation->getHtml($lang), 
+            $formAuth->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formBookingOption->getHtml($lang), $formeditReservation->getHtml($lang), 
             $formEditBookingMailing->getHtml($lang));
         $this->render(array("id_space" => $id_space, "forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
     }
  
+    protected function bookingAuthorisationUseVisa($id_space, $lang){
+        $modelCoreConfig = new CoreConfig();
+        $BkAuthorisationUseVisa = $modelCoreConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
+        
+        $form = new Form($this->request, "BkAuthorisationUseVisaForm");
+        $form->addSeparator(BookingTranslator::Use_Auth_Visa($lang));
+        
+        $form->addSelect("BkAuthorisationUseVisa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkAuthorisationUseVisa);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+    
     protected function bookingOptionForm($id_space, $lang) {
 
         $modelCoreConfig = new CoreConfig();
