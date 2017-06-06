@@ -327,7 +327,7 @@ class TableView {
                             }
                         }
                         if($value["type"] == "glyphicon"){
-                            $html .= '<td><span class="'.$val.'" aria-hidden="true"></span></td>';
+                            $html .= '<td><span class="'.$val.'" aria-hidden="true" style="color:'.$value["color"].'"></span></td>';
                         }
                     }
                     else{

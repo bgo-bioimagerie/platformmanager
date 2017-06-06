@@ -117,11 +117,12 @@ class BookingauthorisationsController extends CoresecureController {
             
             if($is_active[$i] > 0 && $BkAuthorisationUseVisa == 1){
                 //echo 'test active <br>';
-                //echo 'date = ' . $cdate[$i] . "<br>";
-                //echo '$visa_id = ' . $visa_id[$i] . "<br>";
-                if($cdate[$i] == "" || $cdate[$i] == 0 || $visa_id[$i] < 1){
-                    $message = BookingTranslator::FieldsDateAndVisaAreMandatory($lang);
+                //echo 'date = ' . $cdate . "<br>";
+                //echo 'visa_id = ' . $visa_id[$i] . "<br>";
+                if($cdate == "" || $cdate == 0 || $visa_id[$i] < 1){
+                    $message = BookingTranslator::FieldsDateAndVisaAreMandatory($lang) . " " . $i ;
                     $_SESSION["message"] = $message;
+                    //echo $message . "<br>";
                     $this->redirect("bookingauthorisations/".$id_space."/".$user_id);
                     return;
                 }

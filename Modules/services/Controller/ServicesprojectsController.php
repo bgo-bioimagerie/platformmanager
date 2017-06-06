@@ -121,7 +121,7 @@ class ServicesprojectsController extends CoresecureController {
             "date_open" => ServicesTranslator::Opened_date($lang),
             "time_limit" => ServicesTranslator::Time_limite($lang),
             "date_close" => ServicesTranslator::Closed_date($lang),
-            "close_icon" => array("title" => "", "type" => "glyphicon"),
+            "close_icon" => array("title" => "", "type" => "glyphicon", "color" => "red"),
         );
 
         $modelUser = new EcUser();
@@ -154,7 +154,7 @@ class ServicesprojectsController extends CoresecureController {
                     //echo "delay = " . $delay . "<br/>";
 
                     //$warning = 30;
-                    if( $delay < 0 || $delay < $warning*3600){
+                    if( $delay < 0 || $delay < $warning*24*3600){
                         $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
                     }
                 }
@@ -277,13 +277,21 @@ class ServicesprojectsController extends CoresecureController {
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
-
+            
+            if($this->request->getParameter("date_close") != "" && $this->request->getParameter("closed_by") == 0){
+                $message = ServicesTranslator::TheFieldVisaIsMandatoryWithClosed($lang);
+                $_SESSION["message"] = $message;
+                $this->redirect("servicesprojectsheet/".$id_space."/".$id);
+                return;
+            }
+            
             $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), 
                     $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), 
                     CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
                     CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), 
                     $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), 
                     CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            
             $modelProject->setOrigin($id, $this->request->getParameter("id_origin"));
             $modelProject->setClosedBy($id, $this->request->getParameter("closed_by"));
 

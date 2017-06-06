@@ -137,7 +137,7 @@
                             </td>
                             <td>
                                 <select class="form-control" name="visa_id[]" autocomplete="off">
-                                    <OPTION value="1"> -- </OPTION>
+                                    <OPTION value="0">  </OPTION>
                                     <?php
                                     $authVisaId = $this->clean($userAuthorizations[$idx]['visa_id']);
                                     foreach ($visas[$resource["id"]] as $visa):
@@ -184,7 +184,7 @@
                             </td>
                             <td>
                                 <select class="form-control" name="visa_id[]">
-                                    <OPTION value="1"> -- </OPTION>
+                                    <OPTION value="0">  </OPTION>
                                     <?php
                                     foreach ($visas[$resource["id"]] as $visa):
                                         $visaname = $this->clean($visa['desc']);

@@ -121,6 +121,26 @@ class InInvoice extends Model {
                 . "ORDER BY " . $sortentry . " DESC;";
         return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
     }
+    
+    public function getSentByPeriod($id_space, $sent, $begin, $end, $sortentry = "number"){
+        
+        $dateSendCondition = "";
+        if($sent == 0){
+            $dateSendCondition = "AND date_send = '0000-00-00' ";
+        }
+        else{
+            $dateSendCondition = "AND date_send != '0000-00-00' ";
+        }
+        
+        $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
+                . "FROM in_invoice "
+                . "INNER JOIN ec_units ON ec_units.id=in_invoice.id_unit "
+                . "INNER JOIN core_users ON core_users.id=in_invoice.id_responsible "
+                . "WHERE in_invoice.id_space=? AND in_invoice.date_generated >=? AND in_invoice.date_generated <=? "
+                . $dateSendCondition
+                . "ORDER BY " . $sortentry . " DESC;";
+        return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
+    }
 
     public function getNextNumber($previousNumber = "") {
 

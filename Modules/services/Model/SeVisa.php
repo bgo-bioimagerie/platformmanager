@@ -63,7 +63,7 @@ class SeVisa extends Model {
         $modelUser = new CoreUser();
         foreach($data as $dat){
             $ids[] = $dat['id'];
-            $names[] = $modelUser->getUserFUllName($dat['id_user']);
+            $names[] = $modelUser->getUserInitiales($dat['id_user']);
         }
         return array('ids' => $ids, 'names' => $names);
     }

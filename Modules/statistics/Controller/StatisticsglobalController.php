@@ -80,6 +80,8 @@ class StatisticsglobalController extends CoresecureController {
         $controllerBooking = new BookingstatisticsController();
         $objPHPExcel = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel);
 
+        $objPHPExcel->setActiveSheetIndex(1);
+        
         // write excel file
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
 

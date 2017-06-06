@@ -793,4 +793,11 @@ class ServicesTranslator {
         return "Academic project out time";
     }
     
+    public static function TheFieldVisaIsMandatoryWithClosed($lang) {
+        if ($lang == "fr") {
+            return "Erreur: le champ visa est obligatoire pour clore un projet";
+        }
+        return "Error: the field visa is mandatory for a closed project";
+    }
+    
 }

@@ -22,6 +22,20 @@ class InvoicesTranslator {
         return "All invoices";
     }
 
+    public static function To_Send_invoices($lang) {
+        if ($lang == "fr") {
+            return "Relevés à envoyer";
+        }
+        return "To send invoices";
+    }
+
+    public static function Sent_invoices($lang) {
+        if ($lang == "fr") {
+            return "Relevés envoyés";
+        }
+        return "Sent invoices";
+    }
+
     public static function invoicesConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Invoices permet de générer des factures";
@@ -107,14 +121,13 @@ class InvoicesTranslator {
         }
         return "PDF";
     }
-    
+
     public static function GeneratePdfDetails($lang = "") {
         if ($lang == "fr") {
             return "PDF avec détails";
         }
         return "PDF with details";
     }
-    
 
     public static function Designation($lang) {
         if ($lang == "fr") {
@@ -234,82 +247,96 @@ class InvoicesTranslator {
         }
         return "HTML - PDF Template";
     }
-    
+
     public static function uploadTemplate($lang) {
         if ($lang == "fr") {
             return "Téléverser modèle";
         }
         return "Upload template";
     }
-    
+
     public static function Upload($lang) {
         if ($lang == "fr") {
             return "Téléverser";
         }
         return "Upload";
     }
-    
+
     public static function UploadImages($lang) {
         if ($lang == "fr") {
             return "Téléverser images";
         }
         return "Upload images";
     }
-    
+
     public static function Images($lang) {
         if ($lang == "fr") {
             return "Images";
         }
         return "Images";
     }
-    
+
     public static function Name($lang) {
         if ($lang == "fr") {
             return "Name";
         }
         return "Name";
     }
-    
+
     public static function Discount($lang) {
         if ($lang == "fr") {
             return "Remise";
         }
         return "Discount";
     }
-    
+
     public static function Visas($lang) {
         if ($lang == "fr") {
             return "Visas";
         }
         return "Visas";
     }
-    
+
     public static function Visa($lang) {
         if ($lang == "fr") {
             return "Visa";
         }
         return "Visa";
     }
-    
+
     public static function Date_send($lang) {
         if ($lang == "fr") {
             return "Date d’envoi facture";
         }
         return "Date send";
     }
-    
+
     public static function Visa_send($lang) {
         if ($lang == "fr") {
             return "Visa d’envoi facture";
         }
         return "Visa to send";
     }
-    
+
     public static function useInvoiceDatePaid($lang) {
         if ($lang == "fr") {
             return "Utiliser l'information date de paiement";
         }
         return "Use invoice date paid";
+    }
+
+    public static function TheFieldVisaIsMandatoryWithSend($lang) {
+        if ($lang == "fr") {
+            return "Erreur: le champ visa est obligatoire pour envoyer un relevé";
+        }
+        return "Error: the field visa is mandatory for a send an invoice";
+    }
+
+    public static function InvoiceHasBeenSaved($lang) {
+        if ($lang == "fr") {
+            return "Les informations du relevé ont bien été enregistrées";
+        }
+        return "Invoice informations have been saved";
     }
     
 }

@@ -28,7 +28,7 @@ class InvoiceslistController extends CoresecureController {
         //$this->checkAuthorizationMenu("invoices");
         $_SESSION["openedNav"] = "invoices";
     }
-
+    
     protected function getInvoicePeriod($id_space, $year) {
         $modelCoreConfig = new CoreConfig();
         $projectperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space);
@@ -47,7 +47,7 @@ class InvoiceslistController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $year = "") {
+    public function indexAction($id_space, $sent, $year = "") {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -67,7 +67,7 @@ class InvoiceslistController extends CoresecureController {
             }
         }
         $dates = $this->getInvoicePeriod($id_space, $year);
-        $invoices = $modelInvoices->getByPeriod($id_space, $dates["yearBegin"], $dates["yearEnd"], "number");
+        $invoices = $modelInvoices->getSentByPeriod($id_space, $sent, $dates["yearBegin"], $dates["yearEnd"], "number");
         for ($i = 0; $i < count($invoices); $i++) {
             $invoices[$i]["date_generated"] = CoreTranslator::dateFromEn($invoices[$i]["date_generated"], $lang);
             $invoices[$i]["date_paid"] = CoreTranslator::dateFromEn($invoices[$i]["date_paid"], $lang);
@@ -75,7 +75,13 @@ class InvoiceslistController extends CoresecureController {
         }
 
         $table = new TableView();
-        $table->setTitle(InvoicesTranslator::invoices($lang), 3);
+        
+        if($sent == 1){
+            $table->setTitle(InvoicesTranslator::Sent_invoices($lang), 3);
+        }
+        else{
+            $table->setTitle(InvoicesTranslator::To_Send_invoices($lang), 3);
+        }
 
         $headers = array(
             "number" => InvoicesTranslator::Number($lang),
@@ -96,6 +102,14 @@ class InvoiceslistController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableView,
             "year" => $year, "years" => $years
         ));
+    }
+    
+    public function sentAction($id_space, $year = ""){
+        $this->redirect("invoices/".$id_space."/1/".$year);
+    }
+    
+    public function tosendAction($id_space, $year = ""){
+        $this->redirect("invoices/".$id_space."/0/".$year);
     }
 
     public function editAction($id_space, $id) {
@@ -166,13 +180,23 @@ class InvoiceslistController extends CoresecureController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "invoices/" . $id_space);
 
         if ($form->check()) {
+            
+            if($this->request->getParameter("date_send") != "" && $this->request->getParameter("visa_send") == 0){
+                $message = InvoicesTranslator::TheFieldVisaIsMandatoryWithSend($lang);
+                $_SESSION["message"] = $message;
+                $this->redirect("invoiceinfo/".$id_space."/".$id);
+                return;
+            }
+            
             $datePaid = CoreTranslator::dateToEn($this->request->getParameter("date_paid"), $lang);
             //echo "date paid = " . $datePaid . "<br/>";
             $modelInvoice->setDatePaid($id, $datePaid);
             $modelInvoice->setSend($id, 
                     CoreTranslator::dateToEn($this->request->getParameter("date_send"), $lang), 
                     $this->request->getParameter("visa_send"));
-            $this->redirect("invoices/" . $id_space);
+            
+            $_SESSION["message"] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $this->redirect("invoiceinfo/" . $id_space . "/" . $id);
             return;
         }
 

@@ -31,7 +31,12 @@ class InvoicesController extends CoresecureController {
         $lang = $this->getLanguage();
         $html = "<li>";
         $html .= '<div class="inline pm-inline-div">';
-        $html .= '<a href="invoices/' . $id_space . '">' . InvoicesTranslator::All_invoices($lang) . '</a>';
+        $html .= '<a href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
+        $html .= '</div>';
+        $html .= '</li>';
+        $html .= "<li>";
+        $html .= '<div class="inline pm-inline-div">';
+        $html .= '<a href="invoicessent/' . $id_space . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
         $html .= '</div>';
         $html .= '</li>';
         
