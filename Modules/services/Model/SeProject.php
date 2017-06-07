@@ -28,11 +28,13 @@ class SeProject extends Model {
 		`time_limit` varchar(100) NOT NULL DEFAULT '', 
                 `id_origin` int(11) NOT NULL DEFAULT 0,
                 `closed_by` int(11) NOT NULL DEFAULT 0,
+                `in_charge` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
         $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
         $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
+        $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
         
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
@@ -49,6 +51,18 @@ class SeProject extends Model {
         $this->runRequest($sql2);
     }
 
+    public function allOpenedProjects($id_space){
+        $sql = "SELECT * FROM se_project WHERE id_space=? AND date_close=0000-00-00 ORDER BY date_open ASC;";
+        $projects = $this->runRequest($sql, array($id_space))->fetchAll();
+        return $projects;
+    }
+    
+    public function allOpenedProjectsByInCharge($id_space, $id_incharge){
+        $sql = "SELECT * FROM se_project WHERE id_space=? AND in_charge=? ORDER BY date_open ASC;";
+        $projects = $this->runRequest($sql, array($id_space, $id_incharge))->fetchAll();
+        return $projects;
+    }
+    
     public function deleteEntry($id) {
         $sql = "DELETE FROM se_project_service WHERE id=?";
         $this->runRequest($sql, array($id));
@@ -161,6 +175,11 @@ class SeProject extends Model {
     public function setClosedBy($id, $idClose) {
         $sql = "UPDATE se_project SET closed_by=? WHERE id=?";
         $this->runRequest($sql, array($idClose, $id));
+    }
+    
+    public function setInCharge($id, $id_visa){
+        $sql = "UPDATE se_project SET in_charge=? WHERE id=?";
+        $this->runRequest($sql, array($id_visa, $id));
     }
 
     public function setEntry($id_entry, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {

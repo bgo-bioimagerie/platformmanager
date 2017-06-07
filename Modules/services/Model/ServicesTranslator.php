@@ -800,4 +800,17 @@ class ServicesTranslator {
         return "Error: the field visa is mandatory for a closed project";
     }
     
+    public static function Gantt($lang) {
+        if ($lang == "fr") {
+            return "Gantt";
+        }
+        return "Gantt";
+    }
+    
+    public static function InCharge($lang){
+        if ($lang == "fr") {
+            return "Personne en charge du projet";
+        }
+        return "Manager in charge";
+    }
 }

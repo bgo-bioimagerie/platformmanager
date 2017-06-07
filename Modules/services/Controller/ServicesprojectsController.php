@@ -243,8 +243,13 @@ class ServicesprojectsController extends CoresecureController {
         $modelUser = new EcUser();
         $users = $modelUser->getAcivesForSelect("name");
         $resps = $modelUser->getAcivesRespsForSelect("name");
+        
+        $modelVisa = new SeVisa();
+        $inChargeList = $modelVisa->getForList($id_space);
 
         //$form->addSeparator(CoreTranslator::Description($lang));
+        
+        $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
         $form->addSelect("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
         $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
@@ -294,6 +299,7 @@ class ServicesprojectsController extends CoresecureController {
             
             $modelProject->setOrigin($id, $this->request->getParameter("id_origin"));
             $modelProject->setClosedBy($id, $this->request->getParameter("closed_by"));
+            $modelProject->setInCharge($id, $this->request->getParameter("in_charge"));
 
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
             $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);

@@ -3,6 +3,11 @@
 </li>
 <li>
     <div class="inline pm-inline-div">
+        <a id="menu-button" href="servicesprojectgantt/{{id_space}}">{{gantt}}</a>
+    </div>
+</li>
+<li>
+    <div class="inline pm-inline-div">
         <a id="menu-button" href="servicesprojectsopened/{{id_space}}">{{Opened_projects}}</a>
     </div>
 </li>
