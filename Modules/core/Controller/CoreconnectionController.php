@@ -7,6 +7,7 @@ require_once 'Modules/core/Model/CoreMenu.php';
 require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * Controler managing the user connection 
