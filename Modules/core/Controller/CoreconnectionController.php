@@ -179,6 +179,15 @@ class CoreconnectionController extends Controller {
                     // update the user infos
                     $status = $modelCoreConfig->getParam("ldapDefaultStatus");
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], $status);
+                    
+                    $userInfo = $this->user->getUserByLogin($login);
+                    
+                    $modelSpace = new CoreSpace();
+                    $spacesToActivate = $modelSpace->getSpaces('id');
+                    foreach ($spacesToActivate as $spa){
+                        $modelSpace->setUser($userInfo['id'], $spa['id'], $status);
+                    }
+                    
                     return $this->user->isActive($login);
                 }
             }
