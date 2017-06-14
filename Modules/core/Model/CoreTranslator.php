@@ -1354,4 +1354,12 @@ class CoreTranslator {
         return "Export all users";
     }
     
+    public static function UseTLS($lang) {
+        if ($lang == "fr") {
+            return "Chiffrage TLS";
+        }
+        return "Use TLS";
+    }
+    
+    
 }

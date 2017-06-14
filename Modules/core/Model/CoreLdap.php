@@ -87,7 +87,7 @@ class CoreLdap {
         $ldap_login = CoreLdapConfiguration::get("ldapId");
         $ldap_pwd = CoreLdapConfiguration::get("ldapPwd");
         $ldap_base = CoreLdapConfiguration::get("ldapBaseDN");
-        $use_tls = FALSE;
+        $use_tls = CoreLdapConfiguration::get("ldapUseTls");
         $ldap_filter = "";
 
         $ds = $this->grr_connect_ldap($ldap_adresse, $ldap_port, $ldap_login, $ldap_pwd, $use_tls);
@@ -280,7 +280,7 @@ class CoreLdap {
         $ldap_port = CoreLdapConfiguration::get("ldapPort");
         $ldap_login = CoreLdapConfiguration::get("ldapId");
         $ldap_pwd = CoreLdapConfiguration::get("ldapPwd");
-        $use_tls = FALSE;
+        $use_tls = CoreLdapConfiguration::get("ldapUseTls");
 
         // Lire les infos sur l'utilisateur depuis LDAP
         // Connexion à l'annuaire

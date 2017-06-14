@@ -9,6 +9,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
+
 /**
  * Controler managing the user connection 
  * 
@@ -182,16 +183,13 @@ class CoreconnectionController extends Controller {
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
                     
                     $userInfo = $this->user->getUserByLogin($login);
+					print_r($userInfo);
                     
                     $modelSpace = new CoreSpace();
                     $spacesToActivate = $modelSpace->getSpaces('id');
                     foreach ($spacesToActivate as $spa){
-                        $modelSpace->setUser($userInfo['id'], $spa['id'], $status);
+                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
                     }
-                    
-                    $modelEcUser = new EcUser();
-                    $modelEcUser->setResponsible($userInfo['id'], 1);
-                    
                     
                     return $this->user->isActive($login);
                 }

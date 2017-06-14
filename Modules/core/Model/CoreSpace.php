@@ -260,6 +260,13 @@ class CoreSpace extends Model {
         $this->runRequest($sql, array($name, $status, $color, $id));
     }
 
+    public function setUserIfNotExist($id_user, $id_space, $status) {
+        if (!$this->isUser($id_user, $id_space)) {
+            $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
+            $this->runRequest($sql, array($id_user, $id_space, $status));
+        }
+    }
+    
     public function setUser($id_user, $id_space, $status) {
         if ($this->isUser($id_user, $id_space)) {
             $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";

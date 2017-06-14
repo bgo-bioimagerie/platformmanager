@@ -47,7 +47,7 @@ class CoreldapconfigController extends CoresecureController {
         $ldapConnect["ldapId"] = CoreLdapConfiguration::get("ldapId", "");
         $ldapConnect["ldapPwd"] = CoreLdapConfiguration::get("ldapPwd", "");
         $ldapConnect["ldapBaseDN"] = CoreLdapConfiguration::get("ldapBaseDN", "");
-
+        $ldapConnect["ldapUseTls"] = CoreLdapConfiguration::get("ldapUseTls", "");
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "coreldapconfig");
@@ -69,6 +69,9 @@ class CoreldapconfigController extends CoresecureController {
         $form->addText("ldapId", CoreTranslator::ldapId($lang), false, $ldapConnect["ldapId"]);
         $form->addPassword("ldapPwd", CoreTranslator::ldapPwd($lang), false);
         $form->addText("ldapBaseDN", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldapBaseDN"]);
+        $form->addSelect("ldapUseTls", CoreTranslator::UseTLS($lang), 
+                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array("TRUE","FALSE"), $ldapConnect["ldapUseTls"]);
+        
         
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreldapconfig");
@@ -95,12 +98,15 @@ class CoreldapconfigController extends CoresecureController {
         $ldapConfig["ldapNameAtt"] = $this->request->getParameter("ldapNameAtt");
         $ldapConfig["ldapFirstnameAtt"] = $this->request->getParameter("ldapFirstnameAtt");
         $ldapConfig["ldapMailAtt"] = $this->request->getParameter("ldapMailAtt");
-
+        
+        
         $ldapConnect["ldapAdress"] = $this->request->getParameter("ldapAdress", "");
         $ldapConnect["ldapPort"] = $this->request->getParameter("ldapPort", "");
         $ldapConnect["ldapId"] = $this->request->getParameter("ldapId", "");
         $ldapConnect["ldapPwd"] = $this->request->getParameter("ldapPwd", "");
         $ldapConnect["ldapBaseDN"] = $this->request->getParameter("ldapBaseDN", "");
+        $ldapConnect["ldapUseTls"] = $this->request->getParameter("ldapUseTls");
+        
 
         // update the database
         $modelSettings = new CoreConfig();
@@ -110,7 +116,7 @@ class CoreldapconfigController extends CoresecureController {
         $modelSettings->setParam("ldapNameAtt", $ldapConfig["ldapNameAtt"]);
         $modelSettings->setParam("ldapFirstnameAtt", $ldapConfig["ldapFirstnameAtt"]);
         $modelSettings->setParam("ldapMailAtt", $ldapConfig["ldapMailAtt"]);
-
+        
         // update the config file
 
         $fileContent = "; Configuration for ldap" . "\n"
@@ -118,7 +124,8 @@ class CoreldapconfigController extends CoresecureController {
                 . "ldapPort = \"" . $ldapConnect["ldapPort"] . "\"" . "\n"
                 . "ldapId = \"" . $ldapConnect["ldapId"] . "\"" . "\n"
                 . "ldapPwd = \"" . $ldapConnect["ldapPwd"] . "\"" . "\n"
-                . "ldapBaseDN = \"" . $ldapConnect["ldapBaseDN"] . "\"" . "\n";
+                . "ldapBaseDN = \"" . $ldapConnect["ldapBaseDN"] . "\"" . "\n"
+                . "ldapUseTls = \"" . $ldapConnect["ldapUseTls"] . "\"" . "\n";
         file_put_contents("Config/ldap.ini", $fileContent);
 
         $this->redirect("coreconfig");

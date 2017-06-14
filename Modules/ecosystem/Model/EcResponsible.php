@@ -156,6 +156,14 @@ class EcResponsible extends Model {
         $pdo = $this->runRequest($sql, array($idUser, $idResp));
         return $pdo;
     }
+	
+	public function setResponsible($idUser, $idResp){
+		$sql = "SELECT * FROM ec_j_user_responsible WHERE id_user=? AND id_resp=?";
+        $req = $this->runRequest($sql, array($idUser, $idResp));
+		if( $req->rowCount() == 0 ){
+			$this->addUserRespJoin($idUser, $idResp);
+        }
+	}
 
     /**
      * Remove all the user/responsible join af a given user

@@ -31,6 +31,17 @@ class EcUser extends Model {
         $this->runRequest($sql);
     }
 
+    public function exists($id){
+        $sql = "SELECT * FROM ec_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id));
+        if ($req->rowCount() > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    
     public function getResponsibles() {
         $sql = "SELECT ec_users.id as id, core_users.name as name, core_users.firstname as firstname "
                 . "FROM ec_users "
@@ -150,6 +161,11 @@ class EcUser extends Model {
         $sql = "INSERT INTO ec_users (id, phone, id_unit, is_responsible, date_convention) VALUES (?,?,?,?,?)";
         $this->runRequest($sql, array($id, $phone, $unit, $is_responsible, $date_convention));
         return $id;
+    }
+    
+    public function initialize($id){
+        $sql = "INSERT INTO ec_users (id, phone, id_unit, is_responsible, date_convention) VALUES (?,?,?,?,?)";
+        $this->runRequest($sql, array($id, "", 1, 0, "0000-00-00"));
     }
 
     public function edit($id, $name, $firstname, $login, $email, $phone, $unit, $is_responsible, $id_status, $date_convention, $date_end_contract, $is_active) {
