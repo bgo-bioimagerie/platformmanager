@@ -416,7 +416,11 @@ class ServicesprojectsController extends CoresecureController {
         $users = $modelUser->getAcivesForSelect("name");
         $resps = $modelUser->getAcivesRespsForSelect("name");
 
+        $modelVisa = new SeVisa();
+        $inChargeList = $modelVisa->getForList($id_space);
+        
         //$form->addSeparator(CoreTranslator::Description($lang));
+        $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
         $form->addSelect("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
         $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
@@ -464,33 +468,16 @@ class ServicesprojectsController extends CoresecureController {
 
         if ($form->check()) {
 
+            if($this->request->getParameter("in_charge") == 0){
+                $message = ServicesTranslator::PersonInChargeIsMandatory($lang);
+                
+            }
+            
+            
+            
             $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
 
-            /*
-            if ($id > 0) {
-                $servicesDates = $this->request->getParameter("date");
-                $servicesIds = $this->request->getParameter("services");
-                $servicesQuantities = $this->request->getParameter("quantities");
-                $servicesComments = $this->request->getParameter("comment");
-
-                for ($i = 0; $i < count($servicesDates); $i++) {
-                    $servicesDates[$i] = CoreTranslator::dateToEn($servicesDates[$i], $lang);
-                }
-
-
-                for ($i = 0; $i < count($servicesQuantities); $i++) {
-                    if ($id == 0) {
-                        $qOld = 0;
-                    } else {
-                        $qOld = $modelProject->getProjectServiceQuantity($id, $servicesIds[$i]);
-                    }
-                    $qDelta = $servicesQuantities[$i] - $qOld[0];
-                    $modelServices->editquantity($servicesIds[$i], $qDelta, "subtract");
-                    $modelProject->setService($id, $servicesIds[$i], $servicesDates[$i], $servicesQuantities[$i], $servicesComments[$i]);
-                }
-                $modelProject->removeUnsetServices($id, $servicesIds, $servicesDates);
-            }
-            */
+            
             $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
             return;
         }

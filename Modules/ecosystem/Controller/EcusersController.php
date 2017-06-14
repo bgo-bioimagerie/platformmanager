@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/TableView.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/FileUpload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
@@ -388,7 +389,7 @@ class EcusersController extends CoresecureController {
         $target_dir = "data/ecosystem/convention/";
         if ($_FILES["convention_url"]["name"] != "") {
             $ext = pathinfo($_FILES["convention_url"]["name"], PATHINFO_EXTENSION);
-            Upload::uploadFile($target_dir, "convention_url", $id . "." . $ext);
+            FileUpload::uploadFile($target_dir, "convention_url", $id . "." . $ext);
             $this->userModel->setConventionUrl($id, $target_dir . $id . "." . $ext);
         }
     }

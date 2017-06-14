@@ -160,6 +160,19 @@ class EcUser extends Model {
         $sql = "UPDATE ec_users SET phone=?, id_unit=?, is_responsible=?, date_convention=? WHERE id=?";
         $this->runRequest($sql, array($phone, $unit, $is_responsible, $date_convention, $id));
     }
+    
+    public function setResponsible($id_user, $id_resp){
+        $sql = "SELECT * FROM ec_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id_user));
+        if( $req->rowCount() > 0 ){
+            $sql = "UPDATE ec_users SET is_responsible=? WHERE id=?";
+            $this->runRequest($sql, array($id_resp, $id_user));
+        }
+        else{
+            $sql = "INSERT INTO ec_users (id, is_responsible) VALUES (?,?)";
+            $this->runRequest($sql, array($id_user, $id_resp));
+        }
+    }
 
     public function import2($id, $phone, $id_unit, $date_convention, $is_responsible, $convention_url) {
 

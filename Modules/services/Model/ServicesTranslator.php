@@ -813,4 +813,14 @@ class ServicesTranslator {
         }
         return "Manager in charge";
     }
+    
+    public static function PersonInChargeIsMandatory($lang){
+        if ($lang == "fr") {
+            return "Personne en charge du projet est un champ obligatoire";
+        }
+        return "Person in charge is mandatory";
+    }
+    
+    
 }
+

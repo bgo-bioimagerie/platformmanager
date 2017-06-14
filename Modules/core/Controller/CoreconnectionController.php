@@ -179,7 +179,7 @@ class CoreconnectionController extends Controller {
                 } else {
                     // update the user infos
                     $status = $modelCoreConfig->getParam("ldapDefaultStatus");
-                    $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], $status);
+                    $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
                     
                     $userInfo = $this->user->getUserByLogin($login);
                     
@@ -188,6 +188,10 @@ class CoreconnectionController extends Controller {
                     foreach ($spacesToActivate as $spa){
                         $modelSpace->setUser($userInfo['id'], $spa['id'], $status);
                     }
+                    
+                    $modelEcUser = new EcUser();
+                    $modelEcUser->setResponsible($userInfo['id'], 1);
+                    
                     
                     return $this->user->isActive($login);
                 }
