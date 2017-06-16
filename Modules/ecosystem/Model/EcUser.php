@@ -760,7 +760,7 @@ class EcUser extends Model {
         $titre = "Liste des utilisateurs";
 
         // file name
-        $nom = date('Y-m-d-H-i') . "_" . "responsables" . ".xlsx";
+        $nom = date('Y-m-d-H-i') . "_" . "utilisateurs" . ".xlsx";
         $teamName = Configuration::get("name");
         $footer = "platformmanager/" . $teamName . "/exportFiles/" . $nom;
 
@@ -874,6 +874,9 @@ class EcUser extends Model {
             )
         );
 
+        // models
+        $modelResp = new EcResponsible();
+        
         // Nommage de la feuille
         $objPHPExcel->setActiveSheetIndex(0);
         $sheet = $objPHPExcel->getActiveSheet();
@@ -944,22 +947,35 @@ class EcUser extends Model {
           $sheet->getStyle ( 'A' . $ligne )->applyFromArray ( $center );
          */
         $ligne = 2;
-        $sheet->SetCellValue('A' . $ligne, "Laboratoire");
+        $sheet->SetCellValue('A' . $ligne, "Nom Prénom");
         $sheet->getStyle('A' . $ligne)->applyFromArray($border);
         $sheet->getStyle('A' . $ligne)->applyFromArray($center);
         $sheet->getStyle('A' . $ligne)->applyFromArray($gras);
-        $sheet->SetCellValue('B' . $ligne, "Nom Prénom");
+        $sheet->SetCellValue('B' . $ligne, "Couriel");
         $sheet->getStyle('B' . $ligne)->applyFromArray($border);
         $sheet->getStyle('B' . $ligne)->applyFromArray($center);
         $sheet->getStyle('B' . $ligne)->applyFromArray($gras);
-        $sheet->SetCellValue('C' . $ligne, "email");
+        $sheet->SetCellValue('C' . $ligne, "Téléphone");
         $sheet->getStyle('C' . $ligne)->applyFromArray($border);
         $sheet->getStyle('C' . $ligne)->applyFromArray($center);
         $sheet->getStyle('C' . $ligne)->applyFromArray($gras);
+        $sheet->SetCellValue('D' . $ligne, "Unité");
+        $sheet->getStyle('D' . $ligne)->applyFromArray($border);
+        $sheet->getStyle('D' . $ligne)->applyFromArray($center);
+        $sheet->getStyle('D' . $ligne)->applyFromArray($gras);
+        $sheet->SetCellValue('E' . $ligne, "Responsables");
+        $sheet->getStyle('E' . $ligne)->applyFromArray($border);
+        $sheet->getStyle('E' . $ligne)->applyFromArray($center);
+        $sheet->getStyle('E' . $ligne)->applyFromArray($gras);
+        $sheet->SetCellValue('F' . $ligne, "Est responsable");
+        $sheet->getStyle('F' . $ligne)->applyFromArray($border);
+        $sheet->getStyle('F' . $ligne)->applyFromArray($center);
+        $sheet->getStyle('F' . $ligne)->applyFromArray($gras);
 
         $ligne = 3;
-        foreach ($resps as $r) {
-
+        
+        //print_r($resps);
+        foreach ($resps as $r) {  
             if ($r["id"] > 1) {
 
                 $colonne = 'A';
@@ -970,11 +986,7 @@ class EcUser extends Model {
                 $unitReq = $this->runRequest($sql, array($r ["id_unit"]));
                 $unitName = $unitReq->fetch();
 
-                $sheet->SetCellValue($colonne . $ligne, $unitName[0]); // unit name
-                $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
-                $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
-                $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
-                $colonne ++;
+                
                 $sheet->SetCellValue($colonne . $ligne, $r ["name"] . " " . $r ["firstname"]); // user name
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
@@ -986,7 +998,42 @@ class EcUser extends Model {
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
                 $colonne ++;
+                $sheet->SetCellValue($colonne . $ligne, $r ["phone"]); // phone
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
+                $colonne ++;
+                $sheet->SetCellValue($colonne . $ligne, $unitName[0]); // unit name
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
+                $colonne ++;
+                
+                // responsibles
+                $resps = $modelResp->getUserResponsibles($r["id"]);
+                $respNames = "";
+                foreach($resps as $re){
+                    $respNames .= $modelResp->getUserFUllName($re["id"]);
+                }
+                $sheet->SetCellValue($colonne . $ligne, $respNames); // Resps
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
+                $colonne ++;
+                
+                // is responsible
+                $id_resp = "Non";
+                if($r["is_responsible"]){
+                    $id_resp = "Oui";
+                }
+                
+                $sheet->SetCellValue($colonne . $ligne, $id_resp); // Resps
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
+                $colonne ++;
 
+                /*
                 if (!($ligne % 55)) {
                     $sheet->getStyle('A' . $ligne)->applyFromArray($borderLRB);
                     $sheet->getStyle('B' . $ligne)->applyFromArray($borderLRB);
@@ -1020,13 +1067,16 @@ class EcUser extends Model {
                     $sheet->getStyle('C' . $ligne)->applyFromArray($gras);
                 }
                 $ligne ++;
+                */
             }
         }
         $ligne --;
         $sheet->getStyle('A' . $ligne)->applyFromArray($borderLRB);
         $sheet->getStyle('B' . $ligne)->applyFromArray($borderLRB);
         $sheet->getStyle('C' . $ligne)->applyFromArray($borderLRB);
-        //$sheet->getStyle('D' . $ligne)->applyFromArray($borderLRB);
+        $sheet->getStyle('D' . $ligne)->applyFromArray($borderLRB);
+        $sheet->getStyle('E' . $ligne)->applyFromArray($borderLRB);
+        $sheet->getStyle('F' . $ligne)->applyFromArray($borderLRB);
         // Footer
         $sheet->getHeaderFooter()->setOddFooter('&L ' . $footer . '&R Page &P / &N');
         $sheet->getHeaderFooter()->setEvenFooter('&L ' . $footer . '&R Page &P / &N');

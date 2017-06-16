@@ -481,7 +481,7 @@ class AntibodieslistController extends CoresecureController {
         $stainingsList = $modelStaining->getForList($id_space);
         $form->addSelect("id_staining", AntibodiesTranslator::Staining($lang), $stainingsList["names"], $stainingsList["ids"], $anticorps["id_staining"]);
 
-        $form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $anticorps["export_catalog"]);
+        $form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . "/" . $id);
         $form->setColumnsWidth(2, 8);

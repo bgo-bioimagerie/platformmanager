@@ -411,10 +411,22 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         //print_r($invoice);
         $total = 0;
         foreach ($content as $d) {
+            
+            $quantity = $d[1];
+            $unitPrice = $d[2];
+            if($quantity == 1){
+                $quantity = "";
+                $unitPrice = "";
+            }
+            else{
+                $quantity = number_format($d[1], 2, ',', ' ');
+                $unitPrice = number_format($d[2], 2, ',', ' ') . "&euro;";
+            }
+            
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format($d[1], 2, ',', ' ') . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[2], 2, ',', ' ') . " &euro;</td>";
+            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . $quantity . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $unitPrice . " </td>";
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[1] * $d[2], 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
             $total += $d[1] * $d[2];

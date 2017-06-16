@@ -48,7 +48,7 @@ class ServicesprojectganttController extends CoresecureController {
         if ($incharge == "") {
             $projects = $modelProject->allOpenedProjects($id_space);
         } else {
-            
+
             //$visa = $modelVisa->get($incharge);
             $projects = $modelProject->allOpenedProjectsByInCharge($id_space, $incharge);
         }
@@ -57,19 +57,27 @@ class ServicesprojectganttController extends CoresecureController {
         $modelUser = new CoreUser();
         $projectsjson = "[";
         $first = true;
+        $modelEcUser = new EcUser();
+        $modelEcBel = new EcBelonging();
+        $modelEcUnit = new EcUnit();
         foreach ($projects as $proj) {
+
+            $belonging = $modelEcUnit->getBelonging($modelEcUser->getUnit($proj["id_resp"]), $id_space);
+            $belInfo = $modelEcBel->getInfo($belonging);
+            $bkColor = 'col' . $belInfo["name"];
+
             if (!$first) {
                 $projectsjson .= ",";
             }
             $first = false;
             $projectsjson .= "{";
-            
+
             $visa = $modelVisa->get($proj["in_charge"]);
             $projectsjson .= "name: \"" . $modelUser->getUserInitiales($visa["id_user"]) . "\",";
             $projectsjson .= "desc: \"" . $proj["name"] . "\",";
             $projectsjson .= "values: [{";
-            $projectsjson .= "from: \"/Date(" . 1000*strtotime($proj["date_open"]) . ")/\",";
-            
+            $projectsjson .= "from: \"/Date(" . 1000 * strtotime($proj["date_open"]) . ")/\",";
+
             $dateEnd = time();
             if ($proj["date_close"] != "0000-00-00" && $proj["date_close"] != "") {
                 $dateEnd = strtotime($proj["date_close"]);
@@ -79,25 +87,35 @@ class ServicesprojectganttController extends CoresecureController {
             //echo "dateEnd = " . $dateEnd . "<br/>";
             //echo "dateEnd back = " . date("Y-m-d", $dateEnd ) . "<br/>";
 
-            $projectsjson .= "to: \"/Date(" . 1000*$dateEnd . ")/\",";
+            $projectsjson .= "to: \"/Date(" . 1000 * $dateEnd . ")/\",";
             $projectsjson .= "label: \"" . $proj["name"] . "\",";
-            $projectsjson .= "customClass: \"ganttRed\"";
+            $projectsjson .= "customClass: \"" . $bkColor . "\"";
             $projectsjson .= "}]";
             $projectsjson .= "}";
         }
         $projectsjson .= "]";
 
+
+        $bels = $modelEcBel->getAll($id_space);
+        $css = "";
+        foreach ($bels as $bel) {
+
+            $css .= ".fn-gantt ."."col" . $belInfo["name"]. " {";
+            $css .= "background-color: ".$bel["color"].";";
+            $css .= "}";
+        }
+
+
         $personInCharge = $modelVisa->getAll($id_space);
         //print_r($personInCharge);
-        
-
         // render 
         $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'projectsjson' => $projectsjson,
             'personInCharge' => $personInCharge,
-            'activeGantt' => $incharge
+            'activeGantt' => $incharge,
+            'css' => $css
                 ), "indexAction");
     }
 

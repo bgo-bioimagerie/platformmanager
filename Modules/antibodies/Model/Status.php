@@ -20,16 +20,18 @@ class Status extends Model {
 				`id` int(11) NOT NULL AUTO_INCREMENT,
 				`nom` varchar(30) NOT NULL,
 				`color` varchar(7) NOT NULL,
+                                `display_order` INT(11) NOT NULL,
                                 `id_space` INT(11) NOT NULL,
 				PRIMARY KEY (`id`)
 				);";
 
         $pdo = $this->runRequest($sql);
+        $this->addColumn("ac_status", "display_order", "INT(11)", 0);
         return $pdo;
     }
 
     public function getBySpace($id_space) {
-        $sql = "select * from ac_status WHERE id_space=?";
+        $sql = "select * from ac_status WHERE id_space=? ORDER BY display_order ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
@@ -85,11 +87,11 @@ class Status extends Model {
      * @param string $name name of the Status
      * 
      */
-    public function add($name, $color, $id_space) {
+    public function add($name, $color, $display_order, $id_space) {
 
-        $sql = "insert into ac_status(nom, color, id_space)"
-                . " values(?,?,?)";
-        $this->runRequest($sql, array($name, $color, $id_space));
+        $sql = "insert into ac_status(nom, color, display_order, id_space)"
+                . " values(?,?,?,?)";
+        $this->runRequest($sql, array($name, $color, $display_order, $id_space));
     }
 
     public function importStatus($id, $name, $color, $id_space) {
@@ -105,10 +107,10 @@ class Status extends Model {
      * @param int $id Id of the  to update
      * @param string $name New name of the 
      */
-    public function edit($id, $name, $color, $id_space) {
+    public function edit($id, $name, $color, $display_order, $id_space) {
 
-        $sql = "update ac_status set nom=?, color=?, id_space=? where id=?";
-        $this->runRequest($sql, array("" . $name . "", $color, $id_space, $id));
+        $sql = "update ac_status set nom=?, color=?, display_order=?, id_space=? where id=?";
+        $this->runRequest($sql, array("" . $name . "", $color, $display_order, $id_space, $id));
     }
 
     public function getIdFromName($name) {

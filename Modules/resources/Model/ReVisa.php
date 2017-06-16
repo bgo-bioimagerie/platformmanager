@@ -26,13 +26,21 @@ class ReVisa extends Model {
 		`id_resource_category` int(11) NOT NULL,
 		`id_instructor` int(11) NOT NULL,
 		`instructor_status` int(11) NOT NULL,
+                `is_active` int(0) NOT NULL,
 		PRIMARY KEY (`id`)
 		);";
 
         $pdo = $this->runRequest($sql);
+        $this->addColumn('re_visas', 'is_active', 'int(0)', 1);
         return $pdo;
     }
 
+    
+    public function setActive($id, $active){
+        $sql = "UPDATE re_visas SET is_active=? WHERE id=?";
+        $this->runRequest($sql, array($active, $id));
+    }
+    
     /**
      * Create the default empty Visa
      * 
@@ -78,6 +86,12 @@ class ReVisa extends Model {
     public function getVisasBySpace($id_space, $sortentry = 'id') {
     
         $sql = "SELECT * FROM re_visas WHERE id_resource_category IN (SELECT id FROM re_category WHERE id_space=?) order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
+        return $user->fetchAll();
+    }
+    
+    public function getActiveBySpace($id_space, $sortentry = 'id'){
+        $sql = "SELECT * FROM re_visas WHERE id_resource_category IN (SELECT id FROM re_category WHERE id_space=?) AND is_active=1 order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }

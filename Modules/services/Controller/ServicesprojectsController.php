@@ -470,14 +470,20 @@ class ServicesprojectsController extends CoresecureController {
 
             if($this->request->getParameter("in_charge") == 0){
                 $message = ServicesTranslator::PersonInChargeIsMandatory($lang);
-                
+                $_SESSION["message"] = $message;
+                $this->redirect("servicesprojectedit/".$id_space."/0");
+                return;
             }
             
-            
-            
-            $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), 
+                    $this->request->getParameter("id_resp"), 
+                    $this->request->getParameter("id_user"), 
+                    CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
+                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), 
+                    $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), 
+                    CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $modelProject->setInCharge($id_project, $this->request->getParameter("in_charge"));
 
-            
             $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
             return;
         }

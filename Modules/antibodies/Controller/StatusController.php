@@ -30,7 +30,7 @@ class StatusController extends CoresecureController {
         $table->addLineEditButton("statusedit/".$id_space."/");
         $table->addDeleteButton("statusdelete/".$id_space."/", "id", "nom");
         
-        $headers = array("id" => "ID", "nom" => "Nom");
+        $headers = array("id" => "ID", "nom" => "Nom", "display_order" => "Ordre d'affichage");
         $tableHtml = $table->view($statussArray, $headers);
         
         $this->render(array(
@@ -50,16 +50,18 @@ class StatusController extends CoresecureController {
         $form->setTitle("Modifier status");
         $form->addText("nom", "nom", true, $status["nom"]);
         $form->addColor("color", "couleur", false, $status["color"]);
+        $form->addNumber("display_order", "Ordre d'affichage", false, $status["display_order"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "statusedit/".$id_space.'/'.$id);
         
         if($form->check()){
             $name = $this->request->getParameter("nom");
             $color = $this->request->getParameter("color");
+            $display_order = $this->request->getParameter("display_order");
             if ($id == 0){
-                $this->model->add($name, $color, $id_space);
+                $this->model->add($name, $color, $display_order, $id_space);
             }
             else{
-                $this->model->edit($id, $name, $color, $id_space);
+                $this->model->edit($id, $name, $color, $display_order, $id_space);
             }
             
             $this->redirect("status/".$id_space);

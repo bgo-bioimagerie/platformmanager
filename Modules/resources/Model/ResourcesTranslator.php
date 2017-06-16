@@ -360,4 +360,11 @@ class ResourcesTranslator {
         return "Is restricted";
     }
     
+    public static function IsActive($lang = "") {
+        if ($lang == "fr") {
+            return "Est actif";
+        }
+        return "Is active";
+    }
+    
 }

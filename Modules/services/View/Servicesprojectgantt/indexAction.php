@@ -38,6 +38,10 @@ if (!$headless) {
     table th:first-child {
         width: 150px;
     }
+    
+    <?php 
+      echo $css;
+    ?>
 </style>
 
 <?php endblock(); ?>

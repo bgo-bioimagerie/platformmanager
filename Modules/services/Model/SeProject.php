@@ -382,6 +382,7 @@ class SeProject extends Model {
         $entry["new_project"] = "";
         $entry["time_limit"] = "";
         $entry["id_origin"] = "";
+        $entry["in_charge"] = 0;
         return $entry;
     }
 

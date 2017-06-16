@@ -54,7 +54,6 @@ class RevisasController extends CoresecureController {
         $modelUser = new CoreUser();
         for ($i = 0; $i < count($visaTable); $i++) {
 
-
             $visaTable[$i]["id_resource_category"] = $modelResourceCategory->getName($visaTable[$i]["id_resource_category"]);
             $visaTable[$i]["id_instructor"] = $modelUser->getUserFUllName($visaTable[$i]["id_instructor"]);
             if ($visaTable[$i]["instructor_status"] == 1) {
@@ -87,11 +86,12 @@ class RevisasController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $visaInfo = array("id" => 0, "id_resource_category" => 0, "id_instructor" => 0, "instructor_status" => 1);
+        $visaInfo = array("id" => 0, "is_active" => 1, "id_resource_category" => 0, "id_instructor" => 0, "instructor_status" => 1);
         if ($id > 0) {
             $modelVisa = new ReVisa();
             $visaInfo = $modelVisa->getVisa($id);
         }
+        //print_r($visaInfo);
 
         // build the form
         $form = new Form($this->request, "formeditVisa");
@@ -111,6 +111,9 @@ class RevisasController extends CoresecureController {
         $users = $modelUser->getAcivesForSelect("name");
         $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
 
+        
+        $form->addSelect("is_active", ResourcesTranslator::IsActive($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $visaInfo["is_active"]);
+        
         $ischoicesid = array(1, 2);
         $ischoices = array(ResourcesTranslator::Instructor($lang), CoreTranslator::Responsible($lang));
         $form->addSelect("instructor_status", ResourcesTranslator::Instructor_status($lang), $ischoices, $ischoicesid, $visaInfo["instructor_status"]);
@@ -123,8 +126,9 @@ class RevisasController extends CoresecureController {
             if ($id > 0) {
                 $modelVisa->editVisa($id, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             } else {
-                $modelVisa->addVisa($form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
+                $id = $modelVisa->addVisa($form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             }
+            $modelVisa->setActive($id, $form->getParameter("is_active"));
             $this->redirect("resourcesvisa/" . $id_space);
         } else {
             // set the view

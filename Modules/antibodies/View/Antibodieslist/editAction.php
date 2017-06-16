@@ -15,7 +15,6 @@
             unset($_SESSION["message"]);
         } ?>
         
-        
         <?php echo $form ?>
         <a class="btn btn-danger" href="antibodydelete/<?php echo $id_space ?>/<?php echo $id ?>"><?php echo CoreTranslator::Delete($lang) ?></a>
     </div>
