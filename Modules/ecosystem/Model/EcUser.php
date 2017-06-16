@@ -976,8 +976,10 @@ class EcUser extends Model {
         
         //print_r($resps);
         foreach ($resps as $r) {  
+            
             if ($r["id"] > 1) {
 
+                //echo "id = " . $r["id"] . "<br/>";
                 $colonne = 'A';
                 $sheet->getRowDimension($ligne)->setRowHeight(13);
 
@@ -1068,6 +1070,7 @@ class EcUser extends Model {
                 }
                 $ligne ++;
                 */
+                $ligne++;
             }
         }
         $ligne --;
