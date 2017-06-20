@@ -39,6 +39,8 @@ class SeServiceType extends Model {
         $this->add("Time minutes", "Temps en minutes");
         $this->add("Time hours", "Temps en heures");
         $this->add("Price", "Prix");
+        $this->add("Half day", "Demi journée");
+        $this->add("Journée", "Journée");
     }
 
     public function getAll() {

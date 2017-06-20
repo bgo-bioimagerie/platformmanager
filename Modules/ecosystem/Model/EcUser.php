@@ -971,7 +971,28 @@ class EcUser extends Model {
         $sheet->getStyle('F' . $ligne)->applyFromArray($border);
         $sheet->getStyle('F' . $ligne)->applyFromArray($center);
         $sheet->getStyle('F' . $ligne)->applyFromArray($gras);
-
+        
+        
+        if(file_exists('Modules/resources/Model/ReCategory.php')){
+            
+            require_once 'Modules/resources/Model/ReCategory.php';
+            require_once 'Modules/booking/Model/BkAuthorization.php';
+            
+            $resourcesCatModel = new ReCategory();
+            $modelAuth = new BkAuthorization();
+            $resourcesCat = $resourcesCatModel->getBySpace($id_space);
+            $colonne = 'F';
+            foreach($resourcesCat as $resCat){
+                
+                //print_r($resCat);
+                
+                $colonne++;
+                $sheet->SetCellValue($colonne . $ligne, $resCat["name"]);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($border);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
+                $sheet->getStyle($colonne . $ligne)->applyFromArray($gras);
+            }
+        }
         $ligne = 3;
         
         //print_r($resps);
@@ -1034,6 +1055,29 @@ class EcUser extends Model {
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
                 $colonne ++;
+                
+                if(file_exists('Modules/resources/Model/ReCategory.php')){
+            
+                    require_once 'Modules/resources/Model/ReCategory.php';
+                    require_once 'Modules/resources/Model/ReVisa.php';
+        
+                    foreach($resourcesCat as $resCat){
+                
+                        $modelVisa = new ReVisa();
+                        $authInfo = $modelAuth->getAuthorisationInfo($resCat["id"], $r ["id"]); 
+                    
+                        if($authInfo != 0){
+                            $txt = CoreTranslator::dateFromEn($authInfo["date"], "fr") . " " . $modelVisa->getVisaShortDescription($authInfo["visa_id"], "fr") ;
+
+                            $sheet->SetCellValue($colonne . $ligne, $txt);
+                            $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
+                            $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
+                            $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
+                            
+                        }
+                        $colonne++;
+                    }
+                }
 
                 /*
                 if (!($ligne % 55)) {

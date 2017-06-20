@@ -108,17 +108,19 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space, $user_role))->fetchAll();
     }
 
-    /*
-    public function getAllSpaceMenusModules($id_space) {
+    
+    public function getDistinctSpaceMenusModules($id_space) {
         $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
-     */
+    
+    
     
     public function getAllSpaceMenusModules($id_space) {
         $sql = "SELECT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+    
 
     public function getAllSpaceMenus($id_space) {
         $sql = "SELECT * FROM core_space_menus WHERE id_space=?";

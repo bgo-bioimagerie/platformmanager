@@ -84,7 +84,7 @@ class BookingnightweController extends CoresecureController {
         $lang = $this->getLanguage();
         
         $modelPricing = new BkNightWE();
-        $pricing = $modelPricing->getPricing($id);
+        $pricing = $modelPricing->getPricing($id, $id_space);
 
         $modelBelonging = new EcBelonging();
         $pricing["name"] = $modelBelonging->getName($id);

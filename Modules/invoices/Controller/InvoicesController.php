@@ -50,9 +50,13 @@ class InvoicesController extends CoresecureController {
         
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
-        $menus = $modelSpace->getAllSpaceMenusModules($id_space);
+        $menus = $modelSpace->getDistinctSpaceMenusModules($id_space);
+        
+        //print_r($menus);
+        
         $count = -1;
         foreach ($menus as $menu) {
+            //echo "curent menu " . $menu["module"] . "<br/>";
             $module = $menu["module"];
             $rootingFile = "Modules/" . $module . "/" . ucfirst($module) . "Invoices.php";
             //echo "rooting file = " . $rootingFile . "<br/>";

@@ -68,7 +68,7 @@ class InvoicesconfigController extends CoresecureController {
         
         // options
         $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($id_space, $lang);
-        if($formUseInvoiceDatePaid){
+        if($formUseInvoiceDatePaid->check()){
             $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $id_space);
             $this->redirect("invoicesconfig/".$id_space);
             return;

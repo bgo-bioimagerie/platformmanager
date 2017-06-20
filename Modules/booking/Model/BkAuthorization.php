@@ -315,6 +315,17 @@ class BkAuthorization extends Model {
             return 0;
         }
     }
+    
+    public function getAuthorisationInfo($id_resource, $id_user) {
+        $sql = "SELECT * from bk_authorization where user_id=? AND resource_id=? AND is_active=1";
+        $data = $this->runRequest($sql, array($id_user, $id_resource));
+        if ($data->rowCount() >= 1) {
+            $d = $data->fetch();
+            return $d;  // get the first line of the result
+        } else {
+            return 0;
+        }
+    }
 
     public function getTotalForPeriod($period_begin, $period_end){
         $sql = 'SELECT * FROM bk_authorization WHERE date>=? AND date<=?';

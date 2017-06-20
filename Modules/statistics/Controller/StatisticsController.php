@@ -30,7 +30,7 @@ class StatisticsController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
-        $menus = $modelSpace->getAllSpaceMenusModules($id_space);
+        $menus = $modelSpace->getDistinctSpaceMenusModules($id_space);
         $urls = array();
         $urlss = array();
         $count = -1;
