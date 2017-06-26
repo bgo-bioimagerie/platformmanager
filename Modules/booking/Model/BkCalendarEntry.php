@@ -333,6 +333,40 @@ class BkCalendarEntry extends Model {
      */
     public function isConflict($start_time, $end_time, $resource_id, $reservation_id = "") {
         $sql = "SELECT id FROM bk_calendar_entry WHERE
+			  ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
+                           (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
+                           (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
+                           (start_time <=:start AND end_time >= :end) 
+                           ) 
+			AND resource_id = :res;";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id);
+        $req = $this->runRequest($sql, $q);
+        if ($req->rowCount() > 0) {
+            if ($reservation_id != "" && $req->rowCount() == 1) {
+                $tmp = $req->fetch();
+                $id = $tmp[0];
+                if ($id == $reservation_id) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            return true;
+        } else{
+            return false;
+        }
+    }
+    
+       /**
+     * Check if a new entry is in conflic with an existing entries
+     * @param unknown $start_time
+     * @param unknown $end_time
+     * @param unknown $resource_id
+     * @param string $reservation_id
+     * @return boolean
+     */
+    public function isConflictOld($start_time, $end_time, $resource_id, $reservation_id = "") {
+        $sql = "SELECT id FROM bk_calendar_entry WHERE
 			  ((start_time >=:start AND start_time < :end) OR	
 			  (end_time >:start AND end_time <= :end)) 
 			AND resource_id = :res;";
@@ -349,8 +383,9 @@ class BkCalendarEntry extends Model {
                 }
             }
             return true;
-        } else
+        } else{
             return false;
+        }
     }
 
     /**

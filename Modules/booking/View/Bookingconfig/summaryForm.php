@@ -8,7 +8,7 @@
     <?php
     if (isset($bookingSettings) && $bookingSettings != "") {
         ?>
-        <form role="form" class="form-horizontal" action="bookingconfig"
+        <form role="form" class="form-horizontal" action="bookingconfig/<?php echo $id_space ?>"
               method="post">
 
             <div class="col-xs-10">

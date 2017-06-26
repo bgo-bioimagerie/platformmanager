@@ -104,6 +104,9 @@ class BookingconfigController extends CoresecureController {
         $setbookingoptionsquery = $this->request->getParameterNoException("setbookingoptionsquery");
         if ($setbookingoptionsquery == "yes") {
             $bookingSettings = $this->optionsQuery($id_space);
+            
+            $this->redirect("bookingconfig/".$id_space);
+            return;
         }
         else{
             $modelBookingSettings = new BkBookingSettings();
@@ -270,7 +273,7 @@ class BookingconfigController extends CoresecureController {
 
         //$bookingOptionMessage = "Changes have been saved";
         $modelBookingSettings = new BkBookingSettings();
-        $bookingSettings = $modelBookingSettings->entries();
+        $bookingSettings = $modelBookingSettings->entries($id_space);
         return $bookingSettings;
     }
 
