@@ -101,12 +101,30 @@ for ($p = 0 ; $p < count($day_position) ; $p++){
 
 <div class="col-md-6 text-right">
     <div class="btn-group" role="group" aria-label="...">
+        <div class="btn btn-default active" type="button">
+        <a style="color:#333;" href="bookingday/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day($lang) ?></a>
+        </div>
+        <div class="btn btn-default" type="button">
+            <a style="color:#333;" href="bookingdayarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day_Area($lang) ?></a>
+        </div>
+        <div class="btn btn-default" type="button">
+            <a style="color:#333;" href="bookingweek/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week($lang) ?></a>
+        </div>
+        <div class="btn btn-default" type="button">
+            <a style="color:#333;" href="bookingweekarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week_Area($lang) ?></a>
+        </div>
+        <div class="btn btn-default" type="button">
+            <a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Month($lang) ?></a>
+        </div>
+        
+        <!--
         <button type="button" class="btn btn-default active" ><?php echo  BookingTranslator::Day($lang) ?></button>
         <button type="button" onclick="location.href='bookingdayarea/<?php echo $id_space ?>'"class="btn btn-default"><?php echo  BookingTranslator::Day_Area($lang) ?></button>
         <button type="button" onclick="location.href='bookingweek/<?php echo $id_space ?>'" class="btn btn-default "><?php echo  BookingTranslator::Week($lang) ?></button>
         <button type="button" onclick="location.href='bookingweekarea/<?php echo $id_space ?>'" class="btn btn-default "><?php echo  BookingTranslator::Week_Area($lang) ?></button>
         <button type="button" onclick="location.href='bookingmonth/<?php echo $id_space ?>'" class="btn btn-default"><?php echo  BookingTranslator::Month($lang) ?></button>
-    </div>
+        -->
+        </div>
     </div>
 </div>
 

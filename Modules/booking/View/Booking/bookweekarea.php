@@ -76,7 +76,8 @@ $dayWidth = 100 / 8;
                 $message = $_SESSION["message"];
             }
             ?>
-            <?php if ($message != ""):
+            <?php
+            if ($message != ""):
                 if (strpos($message, "Err") === false) {
                     ?>
                     <div class="alert alert-success text-center">	
@@ -89,8 +90,9 @@ $dayWidth = 100 / 8;
                         ?>
                         <p><?php echo $message ?></p>
                     </div>
-<?php endif;
-unset($_SESSION["message"]) ?>
+                <?php endif;
+                unset($_SESSION["message"])
+                ?>
             </div>
 
             <div class="col-md-12"  style="background-color: #ffffff; padding-bottom: 12px;">
@@ -129,11 +131,22 @@ unset($_SESSION["message"]) ?>
 
                 <div class="col-md-6 text-right">
                     <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" onclick="location.href = 'bookingday/<?php echo $id_space ?>'" class="btn btn-default" ><?php echo BookingTranslator::Day($lang) ?></button>
-                        <button type="button" onclick="location.href = 'bookingdayarea/<?php echo $id_space ?>'"class="btn btn-default"><?php echo BookingTranslator::Day_Area($lang) ?></button>
-                        <button type="button" onclick="location.href = 'bookingweek/<?php echo $id_space ?>'" class="btn btn-default"><?php echo BookingTranslator::Week($lang) ?></button>
-                        <button type="button" class="btn btn-default active"><?php echo BookingTranslator::Week_Area($lang) ?></button>
-                        <button type="button" onclick="location.href = 'bookingmonth/<?php echo $id_space ?>'" class="btn btn-default"><?php echo BookingTranslator::Month($lang) ?></button>
+
+                        <div class="btn btn-default" type="button">
+                            <a style="color:#333;" href="bookingday/<?php echo $id_space ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
+                        </div>
+                        <div class="btn btn-default " type="button">
+                            <a style="color:#333;" href="bookingdayarea/<?php echo $id_space ?>" ><?php echo BookingTranslator::Day_Area($lang) ?></a>
+                        </div>
+                        <div class="btn btn-default" type="button">
+                            <a style="color:#333;" href="bookingweek/<?php echo $id_space ?>" ><?php echo BookingTranslator::Week($lang) ?></a>
+                        </div>
+                        <div class="btn btn-default active" type="button">
+                            <a style="color:#333;" href="bookingweekarea/<?php echo $id_space ?>" ><?php echo BookingTranslator::Week_Area($lang) ?></a>
+                        </div>
+                        <div class="btn btn-default" type="button">
+                            <a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo BookingTranslator::Month($lang) ?></a>
+                        </div>
                     </div>
                 </div>
             </div> 
@@ -204,13 +217,13 @@ unset($_SESSION["message"]) ?>
                                             <p>
                                                 <b><?php echo $this->clean($resourcesBase[$i]['name']) ?></b>
                                                 <?php
-            if($resourcesBase[$i]['last_state'] != ""){
-                ?>
-                    <br/>                            
-                    <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$i]['id'] ?>" style="background-color:<?php echo $resourcesBase[$i]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
-                <?php
-            }
-            ?>
+                                                if ($resourcesBase[$i]['last_state'] != "") {
+                                                    ?>
+                                                    <br/>                            
+                                                    <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$i]['id'] ?>" style="background-color:<?php echo $resourcesBase[$i]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+                                                    <?php
+                                                }
+                                                ?>
                                             </p>
                                         </div>
                                         <?php
