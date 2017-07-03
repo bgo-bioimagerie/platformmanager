@@ -88,6 +88,12 @@ class CoreLdap {
         $ldap_pwd = CoreLdapConfiguration::get("ldapPwd");
         $ldap_base = CoreLdapConfiguration::get("ldapBaseDN");
         $use_tls = CoreLdapConfiguration::get("ldapUseTls");
+        if($use_tls == "TRUE"){
+            $use_tls = true;
+        }
+        else{
+            $use_tls = false;
+        }
         $ldap_filter = "";
 
         $ds = $this->grr_connect_ldap($ldap_adresse, $ldap_port, $ldap_login, $ldap_pwd, $use_tls);
@@ -281,6 +287,22 @@ class CoreLdap {
         $ldap_login = CoreLdapConfiguration::get("ldapId");
         $ldap_pwd = CoreLdapConfiguration::get("ldapPwd");
         $use_tls = CoreLdapConfiguration::get("ldapUseTls");
+        
+        if($use_tls == "TRUE"){
+            $use_tls = true;
+        }
+        else{
+            $use_tls = false;
+        }
+        
+        /*
+        if($use_tls){
+            echo "use tls = true";
+        }
+        else{
+            echo "use tls = false";
+        }
+         */
 
         // Lire les infos sur l'utilisateur depuis LDAP
         // Connexion à l'annuaire
