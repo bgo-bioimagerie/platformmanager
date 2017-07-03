@@ -19,9 +19,9 @@ class CoreLdap {
     public function getUser($_login, $_password) {
 
         $user_dn = $this->grr_opensession($_login, $_password);
-        echo "grr_opensession user dn = " . $user_dn . "<br/>";
+        //echo "grr_opensession user dn = " . $user_dn . "<br/>";
         $user_info = $this->grr_getinfo_ldap($user_dn, $_login, $_password);
-        print_r($user_info);
+        //print_r($user_info);
         return $user_info;
     }
 
@@ -53,8 +53,8 @@ class CoreLdap {
                 return "6";
             }
             $user_dn = $this->grr_verif_ldap($_login, $_password);
-            echo 'user_dn = ' . $user_dn . '<br/>';
-            print_r($user_dn);
+            //echo 'user_dn = ' . $user_dn . '<br/>';
+            //print_r($user_dn);
             if ($user_dn == "error_1")
                 return "7";
             else if ($user_dn == "error_2")
@@ -91,8 +91,8 @@ class CoreLdap {
         $ldap_filter = "";
 
         $ds = $this->grr_connect_ldap($ldap_adresse, $ldap_port, $ldap_login, $ldap_pwd, $use_tls);
-        echo 'grr_verif_ldap ds = ' . $ds . '<br/>';
-        print_r($ds);
+        //echo 'grr_verif_ldap ds = ' . $ds . '<br/>';
+        //print_r($ds);
         
         // Test with login and password of the user
         if (!$ds) {
@@ -110,7 +110,7 @@ class CoreLdap {
             reset($atts);
             while (list (, $att ) = each($atts)) {
                 $dn = $this->grr_ldap_search_user($ds, $ldap_base, $att, $login_search, $ldap_filter);
-                echo "grr_ldap_search_user, dn = " . $dn . "<br/>";
+                //echo "grr_ldap_search_user, dn = " . $dn . "<br/>";
                 if (($dn == "error_1") or ( $dn == "error_2") or ( $dn == "error_3")){
                     return $dn;
                 }
@@ -154,7 +154,7 @@ class CoreLdap {
         //echo "use tls = " . $use_tls . "<br/>";
         //echo "l_adresse = " . $l_adresse . "<br/>";
         $ds = @ldap_connect($l_adresse, $l_port);
-        echo "grr_connect_ldap ds="; print_r($ds); echo "<br/>";
+        //echo "grr_connect_ldap ds="; print_r($ds); echo "<br/>";
         if ($ds) {
             
             // On dit qu'on utilise LDAP V3, sinon la V2 par défaut est utilisé et le bind ne passe pas.
@@ -186,10 +186,10 @@ class CoreLdap {
             
             
             if ($b) {
-                echo "bind ok = <br/>";
+                //echo "bind ok = <br/>";
                 return $ds;
             } else {
-                echo "bind fail = <br/>";
+                //echo "bind fail = <br/>";
                 if ($msg_error != "no")
                     return "error_3";
                 //echo 'return false 1 <br/>';
@@ -225,16 +225,16 @@ class CoreLdap {
             $filter = "(& " . $filter . $filtre_sup . ")";
         }
 
-        echo "base dn = " . $basedn . "<br/>";
-        echo "login_attr = " . $login_attr . "<br/>";
+        //echo "base dn = " . $basedn . "<br/>";
+        //echo "login_attr = " . $login_attr . "<br/>";
         $res = @ldap_search($ds, $basedn, $filter, array(
                     "dn",
                     $login_attr
                         ), 0, 0);
         
-        echo "res ldap search = ";
-        print_r($res);
-        echo "res ldap search end<br/>";
+        //echo "res ldap search = ";
+        //print_r($res);
+        //echo "res ldap search end<br/>";
         if ($res) {
 
             $info = @ldap_get_entries($ds, $res);

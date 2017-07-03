@@ -183,7 +183,7 @@ class CoreconnectionController extends Controller {
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
                     
                     $userInfo = $this->user->getUserByLogin($login);
-					print_r($userInfo);
+					//print_r($userInfo);
                     
                     $modelSpace = new CoreSpace();
                     $spacesToActivate = $modelSpace->getSpaces('id');
