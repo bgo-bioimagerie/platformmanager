@@ -1094,4 +1094,12 @@ class EcosystemTranslator {
         }
         return "You need to be manager of at least one site to edit this page";
     }
+    
+    public static function UserHasBeenSaved($lang) {
+        if ($lang == "fr") {
+            return "La fiche utilisateur à bien été enregistrée";
+        }
+        return "User has been saved";
+    }
+    
 }

@@ -327,14 +327,17 @@ class ServicesprojectsController extends CoresecureController {
         $headersArray = array(
             "date" => CoreTranslator::Date($lang),
             "description" => ServicesTranslator::Description($lang),
-            "comment" => ServicesTranslator::Comment($lang)
+            "comment" => ServicesTranslator::Comment($lang),
+            "invoice" => ServicesTranslator::Invoice($lang)
         );
 
         $modelServices = new SeService();
+        $modelInvoice = new InInvoice();
         $items = $modelProject->getProjectServicesDefault($id);
         for ($i = 0; $i < count($items); $i++) {
             $items[$i]["description"] = $items[$i]["quantity"] . " " . $modelServices->getItemName($items[$i]["id_service"]);
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
+            $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($items[$i]["id_invoice"]);
         }
         $tableHtml = $table->view($items, $headersArray);
 

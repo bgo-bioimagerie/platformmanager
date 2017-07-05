@@ -751,6 +751,13 @@ class ServicesTranslator {
         return "Date send invoice";
     }
     
+    public static function Invoice($lang) {
+        if ($lang == "fr") {
+            return "Relevé";
+        }
+        return "Invoice";
+    }
+    
     public static function Visa_Send_Invoice($lang) {
         if ($lang == "fr") {
             return "Visa d'envoi facture";

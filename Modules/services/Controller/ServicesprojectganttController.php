@@ -76,7 +76,13 @@ class ServicesprojectganttController extends CoresecureController {
             $projectsjson .= "name: \"" . $modelUser->getUserInitiales($visa["id_user"]) . "\",";
             $projectsjson .= "desc: \"" . $proj["name"] . "\",";
             $projectsjson .= "values: [{";
-            $projectsjson .= "from: \"/Date(" . 1000 * strtotime($proj["date_open"]) . ")/\",";
+            
+            $startTime = time();
+            if($proj["date_open"] != "0000-00-00"){
+                $startTime = strtotime($proj["date_open"]);
+            }
+            
+            $projectsjson .= "from: \"/Date(" . 1000 * $startTime . ")/\",";
 
             $dateEnd = time();
             if ($proj["date_close"] != "0000-00-00" && $proj["date_close"] != "") {
@@ -84,8 +90,13 @@ class ServicesprojectganttController extends CoresecureController {
             } else if ($proj["time_limit"] != "0000-00-00" && $proj["time_limit"] != "") {
                 $dateEnd = strtotime($proj["time_limit"]);
             }
-            //echo "dateEnd = " . $dateEnd . "<br/>";
-            //echo "dateEnd back = " . date("Y-m-d", $dateEnd ) . "<br/>";
+            
+            /*
+            echo "project name: " . $proj["name"] . "<br/>";
+            echo "dateOpen = " . $proj["date_open"] . "<br/>";
+            echo "dateEnd = " . $dateEnd . "<br/>";
+            echo "dateEnd back = " . date("Y-m-d", $dateEnd ) . "<br/>";
+            */
 
             $projectsjson .= "to: \"/Date(" . 1000 * $dateEnd . ")/\",";
             $projectsjson .= "label: \"" . $proj["name"] . "\",";

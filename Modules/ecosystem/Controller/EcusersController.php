@@ -328,7 +328,8 @@ class EcusersController extends CoresecureController {
                 $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                 $this->uploadConvention($id);
                 $modelSpace->setUser($id, $id_space, $this->request->getParameter("space_status"));
-                $this->redirect("ecusers/" . $id_space);
+                $_SESSION["message"] = EcosystemTranslator::UserHasBeenSaved($lang);
+                $this->redirect("ecusersedit/" . $id_space . "/".$id);
             } else {
                 $modelUser = new CoreUser();
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
@@ -358,7 +359,8 @@ class EcusersController extends CoresecureController {
                     $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
                     $this->uploadConvention($id);
                     $modelSpace->setUser($id, $id_space, $this->request->getParameter("space_status"));
-                    $this->redirect("ecusers/" . $id_space);
+                    $_SESSION["message"] = EcosystemTranslator::UserHasBeenSaved($lang);
+                    $this->redirect("ecusersedit/" . $id_space . "/" . $id);
                 }
             }
         }

@@ -164,6 +164,13 @@ class InvoicesTranslator {
         return "Info";
     }
 
+    public static function SendStatus($lang) {
+        if ($lang == "fr") {
+            return "Envoi";
+        }
+        return "Info";
+    }
+
     public static function InvoiceInfo($lang) {
         if ($lang == "fr") {
             return "Informations facture";
@@ -338,5 +345,5 @@ class InvoicesTranslator {
         }
         return "Invoice informations have been saved";
     }
-    
+
 }

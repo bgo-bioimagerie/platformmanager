@@ -80,6 +80,7 @@ if (!$headless) {
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
 <script>
+    
     $(function () {
 
         "use strict";
@@ -102,6 +103,7 @@ if (!$headless) {
         });
         prettyPrint();
     });
+    
 </script>
 
 <?php

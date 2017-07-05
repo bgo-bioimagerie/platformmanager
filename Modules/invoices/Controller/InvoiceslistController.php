@@ -95,7 +95,7 @@ class InvoiceslistController extends CoresecureController {
         );
 
         $table->addLineEditButton("invoiceedit/" . $id_space);
-        $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::Info($lang));
+        $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::SendStatus($lang));
         $table->addDeleteButton("invoicedelete/" . $id_space, "id", "number");
         $tableView = $table->view($invoices, $headers);
 
