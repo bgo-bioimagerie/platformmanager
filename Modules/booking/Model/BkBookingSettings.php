@@ -58,10 +58,10 @@ class BkBookingSettings extends Model {
             }
             else{
                 
-                echo "---------------------------- <br>";
-                echo " reininitlize the booking settings <br/>"; 
-                echo "---------------------------- <br>";
-                
+                //echo "---------------------------- <br>";
+                //echo " reininitlize the booking settings <br/>"; 
+                //echo "---------------------------- <br>";
+                /*
                 $this->setEntry("User", 1, 1, 1, "normal", $id_space);
                 $this->setEntry("Phone", 1, 1, 2, "normal", $id_space);
                 $this->setEntry("Short desc", 1, 1, 3, "normal", $id_space);
@@ -70,6 +70,8 @@ class BkBookingSettings extends Model {
                 $sql = "select * from bk_booking_settings WHERE id_space=? order by " . $sortEntry;
                 $req = $this->runRequest($sql, array($id_space));
                 return $req->fetchAll();
+                 */
+                return array();
             }
         } 
         catch (Exception $e) {
