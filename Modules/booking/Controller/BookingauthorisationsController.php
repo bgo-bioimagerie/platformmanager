@@ -98,7 +98,7 @@ class BookingauthorisationsController extends CoresecureController {
             $visa_id = array();
             for( $i = 0 ; $i < count($resource_id) ; $i++ ){
                 $date[] = "";
-                $visa_id = 0;
+                $visa_id[] = 0;
             }
             
         }

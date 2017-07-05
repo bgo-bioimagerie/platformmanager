@@ -296,7 +296,7 @@ $dayWidth = 100 / 8;
                                                         }
 
                                                         $text = "00:00" . " - " . $txtEndTime . "<br />";
-                                                        $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
+                                                        $text .= $modelBookingSetting->getSummary($id_space, $entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
                                                         ?>
                                                         <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
                                                             <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">
@@ -320,7 +320,7 @@ $dayWidth = 100 / 8;
                                                         }
 
                                                         $text = date("H:i", $entry ["start_time"]) . " - " . $txtEndTime . "<br />";
-                                                        $text .= $modelBookingSetting->getSummary($entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
+                                                        $text .= $modelBookingSetting->getSummary($id_space, $entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
                                                         ?>
                                                         <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>; "> 
                                                             <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px;" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">

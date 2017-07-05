@@ -48,7 +48,7 @@ class BkBookingSettings extends Model {
      * @param string $sortEntry
      * @return array List of the entries
      */
-    public function entries($id_space, $sortEntry = "id") {
+    public function entries($id_space, $sortEntry) {
 
         try {
             $sql = "select * from bk_booking_settings WHERE id_space=? order by " . $sortEntry;
@@ -57,6 +57,11 @@ class BkBookingSettings extends Model {
                 return $req->fetchAll();
             }
             else{
+                
+                echo "---------------------------- <br>";
+                echo " reininitlize the booking settings <br/>"; 
+                echo "---------------------------- <br>";
+                
                 $this->setEntry("User", 1, 1, 1, "normal", $id_space);
                 $this->setEntry("Phone", 1, 1, 2, "normal", $id_space);
                 $this->setEntry("Short desc", 1, 1, 3, "normal", $id_space);

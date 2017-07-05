@@ -110,7 +110,7 @@ class BookingconfigController extends CoresecureController {
         }
         else{
             $modelBookingSettings = new BkBookingSettings();
-            $bookingSettings = $modelBookingSettings->entries($id_space);
+            $bookingSettings = $modelBookingSettings->entries($id_space, "display_order");
         }
 
         // view
@@ -273,7 +273,7 @@ class BookingconfigController extends CoresecureController {
 
         //$bookingOptionMessage = "Changes have been saved";
         $modelBookingSettings = new BkBookingSettings();
-        $bookingSettings = $modelBookingSettings->entries($id_space);
+        $bookingSettings = $modelBookingSettings->entries($id_space, "display_order");
         return $bookingSettings;
     }
 
