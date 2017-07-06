@@ -102,10 +102,10 @@ class BkBookingSettings extends Model {
      * @param string $tag_name
      * @return boolean
      */
-    public function isEntry1($tag_name) {
-        $sql = "select id from bk_booking_settings where tag_name=?";
+    public function isEntry1($tag_name, $id_space) {
+        $sql = "select id from bk_booking_settings where tag_name=? and id_space=?";
         $data = $this->runRequest($sql, array(
-            $tag_name
+            $tag_name, $id_space
                 ));
         if ($data->rowCount() == 1) {
             return true;
@@ -123,10 +123,10 @@ class BkBookingSettings extends Model {
      * @param string $font
      */
     public function setEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space) {
-        if (!$this->isEntry1($tag_name)) {
+        if (!$this->isEntry1($tag_name, $id_space)) {
             $this->addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space);
         } else {
-            $id = $this->getEntryID($tag_name);
+            $id = $this->getEntryID($tag_name, $id_space);
             $this->updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space);
         }
     }
@@ -136,9 +136,9 @@ class BkBookingSettings extends Model {
      * @param string $tag_name
      * @return number
      */
-    public function getEntryID($tag_name) {
-        $sql = "select id from bk_booking_settings where tag_name=?";
-        $req = $this->runRequest($sql, array($tag_name));
+    public function getEntryID($tag_name, $id_space) {
+        $sql = "select id from bk_booking_settings where tag_name=? and id_space=?";
+        $req = $this->runRequest($sql, array($tag_name, $id_space));
         $tmp = $req->fetch();
         return $tmp[0];
     }
