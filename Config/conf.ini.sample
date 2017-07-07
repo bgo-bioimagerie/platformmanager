@@ -10,7 +10,7 @@ login = root
 pwd = "root"
 
 [Menu]
-headless = true
+headless = false
 
 [Modules]
 modules[] = "core"
