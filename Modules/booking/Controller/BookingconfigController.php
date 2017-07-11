@@ -83,6 +83,16 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
+        
+        $formbookingUseRecurentBooking = $this->bookingUseRecurentBooking($id_space, $lang);
+        if ($formbookingUseRecurentBooking->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("BkUseRecurentBooking", $this->request->getParameter("BkUseRecurentBooking"), $id_space);
+        
+            $this->redirect("bookingconfig/".$id_space);
+            return;
+        }
+        
         $formBookingOption = $this->bookingOptionForm($id_space, $lang);
         if ($formBookingOption->check()){
             $editBookingDescriptionSettings = $this->request->getParameterNoException ( "BkDescriptionFields" );
@@ -117,7 +127,9 @@ class BookingconfigController extends CoresecureController {
         $forms = array($formMenusactivation->getHtml($lang), 
             $formAuth->getHtml($lang),
             $formMenuName->getHtml($lang),
-            $formBookingOption->getHtml($lang), $formeditReservation->getHtml($lang), 
+            $formbookingUseRecurentBooking->getHtml($lang),
+            $formBookingOption->getHtml($lang), 
+            $formeditReservation->getHtml($lang), 
             $formEditBookingMailing->getHtml($lang));
         $this->render(array("id_space" => $id_space, "forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
     }
@@ -130,6 +142,21 @@ class BookingconfigController extends CoresecureController {
         $form->addSeparator(BookingTranslator::Use_Auth_Visa($lang));
         
         $form->addSelect("BkAuthorisationUseVisa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkAuthorisationUseVisa);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+    
+    protected function bookingUseRecurentBooking($id_space, $lang){
+        $modelCoreConfig = new CoreConfig();
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
+        
+        $form = new Form($this->request, "BkUseRecurentBookingForm");
+        $form->addSeparator(BookingTranslator::Use_recurent_booking($lang));
+        
+        $form->addSelect("BkUseRecurentBooking", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkUseRecurentBooking);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

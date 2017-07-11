@@ -5,6 +5,12 @@
 
 <div class="col-md-12 pm-form">
     
+    <?php
+    if ($usePeriodicBooking == 1){
+        include 'Modules/booking/View/Bookingdefault/periodictab.php';
+    }
+    ?>
+    
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
 
@@ -87,15 +93,5 @@ if( $packageChecked > 0){
 
 <?php include 'Modules/booking/View/Bookingdefault/deletescript.php';  ?>
 
-<!--
-<script type="text/javascript">
-    	function ConfirmDelete()
-    	{
-            if (confirm("Are you sure you want to Delete this reseration ?")){
-                location.href='bookingeditreservationdefaultdelete/<?php echo $id_space ?>/<?php echo $id_reservation ?>';
-            }
-    	}
-</script> 
--->
 <?php
 endblock();

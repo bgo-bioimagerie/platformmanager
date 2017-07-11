@@ -51,10 +51,10 @@ class BookingdefaultController extends BookingabstractController {
 
         if ($this->isNew($param)) {
             $resaInfo = $this->addreservation($param);
-            $this->editReservation($id_space, $resaInfo);
+            $this->editReservation($id_space, $resaInfo, $param);
         } else {
             $resaInfo = $this->editReservationInfo($param);
-            $this->editReservation($id_space, $resaInfo);
+            $this->editReservation($id_space, $resaInfo, $param);
         }
     }
 
@@ -226,7 +226,7 @@ class BookingdefaultController extends BookingabstractController {
         $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
     }
 
-    private function editreservation($id_space, $resaInfo) {
+    private function editreservation($id_space, $resaInfo, $param) {
 
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
@@ -407,6 +407,9 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationdefaultdelete/' . $id_space ."/". $resaInfo["id"]);
         $formDelete->setButtonsWidth(2, 10);
         
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
+        
+        
         $this->render(array("id_space" => $id_space, "lang" => $lang, "menuData" => $menuData,
             "form" => $form, "use_packages" => $use_packages,
             "packageChecked" => $packageChecked,
@@ -415,6 +418,9 @@ class BookingdefaultController extends BookingabstractController {
             "canEditReservation" => $canEditReservation,
             "formPackage" => $formPackage->getHtml($lang, false),
             "formEndDate" => $formEndDate->getHtml($lang, false),
+            "usePeriodicBooking" => $BkUseRecurentBooking,
+            "bookingType" => "single",
+            "args" => $param,
             "formDelete" => $formDelete->getHtml($lang)), "addreservationAction");
     }
 

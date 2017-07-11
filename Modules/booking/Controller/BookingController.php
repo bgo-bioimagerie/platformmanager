@@ -820,8 +820,8 @@ class BookingController extends BookingabstractController {
         $editResaFunction = $modelSettings->getParam("bkReservationPlugin", $id_space);
         
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
-            $modelDefault = new BookingdefaultController();
-            $modelDefault->setRequest($this->request);
+            $modelDefault = new BookingdefaultController($this->request);
+            //$modelDefault->setRequest($this->request);
             $modelDefault->editreservationdefault($id_space, $param);
             return;
         } else {

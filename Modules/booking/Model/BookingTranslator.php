@@ -1326,4 +1326,24 @@ class BookingTranslator {
         return "Error: fields date and visa are mandatory";
     }
     
+    public static function Use_recurent_booking($lang){
+        if ($lang == "fr") {
+            return "Utiliser les réservation périodiques";
+        }
+        return "Use recurent booking";
+    }
+    
+    public static function Single($lang){
+        if ($lang == "fr") {
+            return "Simple";
+        }
+        return "Single";
+    }
+    
+    public static function Periodic($lang){
+        if ($lang == "fr") {
+            return "Périodique";
+        }
+        return "Periodic";
+    }
 }
