@@ -17,7 +17,7 @@
     <?php startblock('navbar') ?>
     <?php
     require_once 'Modules/core/Controller/CorenavbarController.php';
-    $navController = new CorenavbarController();
+    $navController = new CorenavbarController(new Request(array(), false));
     echo $navController->navbar();
     
     ?> 

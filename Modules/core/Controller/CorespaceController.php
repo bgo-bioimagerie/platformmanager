@@ -21,8 +21,8 @@ class CorespaceController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new Exception("Error 503: Permission denied");
@@ -353,7 +353,7 @@ class CorespaceController extends CoresecureController {
                 $fileMenuController = 'Modules/' . $item["module"] . '/Controller/' . $menuController . '.php';
                 if (file_exists($fileMenuController)) {
                     require_once $fileMenuController;
-                    $controller = new $menuController();
+                    $controller = new $menuController(new Request(array(), false));
                     $mainMenu .= $controller->navbar($id_space);
                 }
                 $mainMenu .= '</ul>';

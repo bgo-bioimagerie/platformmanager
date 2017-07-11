@@ -29,7 +29,8 @@ Platform-Manager
 <?php startblock('navbar'); 
     if(!$headless){
         require_once 'Modules/core/Controller/CorenavbarController.php';
-        $navController = new CorenavbarController();
+        $nullrequest = new Request(array(), false);
+        $navController = new CorenavbarController($nullrequest);
         echo $navController->navbar();
     }
  endblock(); ?>
@@ -39,7 +40,7 @@ Platform-Manager
 <div class="col-md-2 pm-space-navbar">
 <?php
 require_once 'Modules/core/Controller/CorespaceController.php';
-$spaceController = new CorespaceController();
+$spaceController = new CorespaceController($nullrequest);
 echo $spaceController->navbar($id_space);
 ?>
 </div> 

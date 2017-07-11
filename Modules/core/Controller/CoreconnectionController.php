@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Modules/core/Controller/CorecookiesecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreMenu.php';
@@ -15,15 +16,15 @@ require_once 'Modules/core/Model/CoreSpace.php';
  * 
  * @author Sylvain Prigent
  */
-class CoreconnectionController extends Controller {
+class CoreconnectionController extends CorecookiesecureController {
 
     private $user;
 
     /**
      * Connstructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $this->user = new CoreUser();
     }
 
@@ -77,26 +78,26 @@ class CoreconnectionController extends Controller {
             //print_r($connect);
             if ($connect == "allowed") {
 
-                // open the session
-                session_unset();
-                $user = $this->user->getUserByLogin($login);
-                $this->request->getSession()->setAttribut("id_user", $user['idUser']);
-                $this->request->getSession()->setAttribut("login", $user['login']);
-                $this->request->getSession()->setAttribut("company", Configuration::get("name"));
-                $this->request->getSession()->setAttribut("user_status", $user['status_id']);
-
-                // add the user settings to the session
-                $modelUserSettings = new CoreUserSettings();
-                $settings = $modelUserSettings->getUserSettings($user['idUser']);
-                $this->request->getSession()->setAttribut("user_settings", $settings);
-
-                // update the user last connection
-                $this->user->updateLastConnection($user['idUser']);
-
-                // update user active base if the user is manager or admin
-                $this->runModuleConnectionActions();
+                $user = $this->initSession($login);
+                
+                // generate the remember me cookie
+                if ($this->request->isparameter("remember")){
+                    //throw new Exception("Set cookie <br/>");
+                    $key = sha1($this->generateRandomKey());
+                    //echo "set cookie with id = " . $key . "<br/>";
+                    $cookieSet = setcookie("auth", $user['idUser'] . "-" . $key, time() + 3600*24*3 );
+                    if (!$cookieSet){
+                        //die("die failed to set cookie with key " . $key . "<br/>");
+                        throw new Exception("failed to set cookie with key " . $key . "<br/>");
+                    }
+                    $modelUser = new CoreUser();
+                    $modelUser->setRememberKey($user['idUser'], $key);
+                }
+                
+                // redirect
                 $redirectPath = $this->getRedirectPath();
-                $this->redirect($redirectPath);
+                $this->redirectNoRemoveHeader($redirectPath);
+                
             } else {
                 $this->indexAction($connect);
             }
@@ -104,7 +105,7 @@ class CoreconnectionController extends Controller {
             throw new Exception("Action not allowed : login or passeword undefined");
         }
     }
-
+    
     /**
      * 
      * @return type
@@ -125,32 +126,16 @@ class CoreconnectionController extends Controller {
         return $redirectController;
     }
 
-    /**
-     * 
-     */
-    public function runModuleConnectionActions() {
-        $modules = Configuration::get("modules");
-        foreach ($modules as $module) {
-            $controllerName = $module."connectscript";
-            $classController = ucfirst(strtolower($controllerName)) . "Controller";
-            $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
-            //echo "controller file = " . $fileController . "<br/>";
-            if (file_exists($fileController)) {
-                // Instantiate controler
-                require ($fileController);
-                $controller = new $classController ();
-                $controller->setRequest($this->request);
-                $controller->runAction($module, "index");
-            }
-        }
-    }
-
+    
     /**
      * Logout (delete the session)
      */
     public function logoutAction() {
+        
+        setcookie('auth', '', -1);
+        
         $this->request->getSession()->destroy();
-        $this->redirect("coretiles");
+        $this->redirectNoRemoveHeader("coretiles");
     }
 
     /**

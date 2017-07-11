@@ -18,7 +18,33 @@ class CoreUser extends Model {
         $this->setColumnsInfo("date_created", "date", "");
         $this->setColumnsInfo("date_end_contract", "date", "");
         $this->setColumnsInfo("date_last_login", "date", "");
+        $this->setColumnsInfo("remember_key", "varchar(255)", "");
         $this->primaryKey = "id";
+    }
+    
+    public function getRemeberKey($id){
+        $sql = "SELECT remember_key FROM core_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id));
+        $data = $req->fetch();
+        return $data[0];
+    }
+    
+    public function setRememberKey($id, $key){
+        $sql = "UPDATE core_users SET remember_key=? WHERE id=?";
+        $this->runRequest($sql,array($key, $id));
+    }
+    
+    public function getUserLogin($id){
+        $sql = "select login from core_users where id=?";
+        $user = $this->runRequest($sql, array(
+            $id
+        ));
+        if ($user->rowCount() == 1) {
+            $userf = $user->fetch();
+            return $userf[0];
+        } else {
+            return "";
+        }
     }
 
     public function getUserInitiales($id) {
@@ -83,6 +109,15 @@ class CoreUser extends Model {
 
         $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+    }
+    
+    public function isUserId($id){
+        $sql = "SELECT * FROM core_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id));
+        if($req->rowCount() > 0 ){
+            return true;
+        }
+        return false;
     }
 
     public function importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source) {

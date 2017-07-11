@@ -16,8 +16,8 @@ class BjnotesController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         //$this->checkAuthorizationMenu("bulletjournal");
     }
     

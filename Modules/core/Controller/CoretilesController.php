@@ -15,8 +15,8 @@ class CoretilesController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $this->checkAuthorization(CoreStatus::$USER);
     }
 
@@ -26,7 +26,7 @@ class CoretilesController extends CoresecureController {
      */
     public function indexAction() {
 
-        $navController = new CorenavbarController();
+        $navController = new CorenavbarController($this->request);
         $toolMenu = $navController->getMenu();
         $toolAdmin = $navController->getAdminMenu();
         

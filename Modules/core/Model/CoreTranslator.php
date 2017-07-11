@@ -1361,5 +1361,10 @@ class CoreTranslator {
         return "Use TLS";
     }
     
-    
+    public static function RememberMe($lang){
+        if ($lang == "fr") {
+            return "Se souvenir de moi";
+        }
+        return "Remember me";
+    }
 }

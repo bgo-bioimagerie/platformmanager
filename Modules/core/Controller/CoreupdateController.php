@@ -17,8 +17,8 @@ require_once 'Modules/core/Model/CoreInstall.php';
  */
 class CoreupdateController extends Controller {
 
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         //$this->checkAuthorization(CoreStatus::$ADMIN);
     }
 

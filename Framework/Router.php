@@ -173,8 +173,8 @@ class router {
         if (file_exists($fileController)) {
             // Instantiate controler
             require ($fileController);
-            $controller = new $classController ();
-            $controller->setRequest($request);
+            $controller = new $classController ($request);
+            //$controller->setRequest($request);
             return $controller;
         } else {
             throw new Exception("Unable to find the controller file '$fileController' ");

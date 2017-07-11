@@ -18,8 +18,8 @@ class CoreinstallController extends Controller {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $this->installModel = new CoreInstall();
     }
 

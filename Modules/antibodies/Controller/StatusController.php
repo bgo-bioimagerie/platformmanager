@@ -13,8 +13,8 @@ class StatusController extends CoresecureController {
      */
     private $model;
 
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $this->model = new Status();
         $_SESSION["openedNav"] = "antibodies";
     }

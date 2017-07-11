@@ -18,8 +18,8 @@ class EcosystemconfigController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new Exception("Error 503: Permission denied");

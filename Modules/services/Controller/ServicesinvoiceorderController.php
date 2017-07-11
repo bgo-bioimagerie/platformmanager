@@ -34,8 +34,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $_SESSION["openedNav"] = "invoices";
     }
 

@@ -28,8 +28,8 @@ class AntibodieslistController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $this->antibody = new Anticorps();
         $_SESSION["openedNav"] = "antibodies";
         //$this->checkAuthorizationMenu("antibodies");

@@ -18,8 +18,8 @@ class BookingcolorcodesController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         //$this->checkAuthorizationMenu("bookingsettings");
         $_SESSION["openedNav"] = "bookingsettings";
     }

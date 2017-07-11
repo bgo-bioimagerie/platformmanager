@@ -13,8 +13,8 @@ class ProtocolsController extends CoresecureController {
      */
     private $protocolModel;
 
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $this->protocolModel = new AcProtocol();
         $_SESSION["openedNav"] = "antibodies";
     }

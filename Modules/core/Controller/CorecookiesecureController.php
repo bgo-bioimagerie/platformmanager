@@ -1,117 +1,83 @@
 <?php
 
 require_once 'Framework/Controller.php';
-require_once 'Modules/core/Controller/CorecookiesecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+
+require_once 'Modules/core/Model/CoreUserSettings.php';
 
 /**
  * Mother class for controller using secure connection
  * 
  * @author Sylvain Prigent
  */
-abstract class CoresecureController extends CorecookiesecureController {
+abstract class CorecookiesecureController extends Controller {
 
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $this->checkRememberMeCookie();
+    function initSession($login) {
+        
+        // open the session
+        session_unset();
+        $modelUser = new CoreUser();
+        $sessuser = $modelUser->getUserByLogin($login);
+        
+        /*
+        $_SESSION["id_user"] = $sessuser['idUser'];
+        $_SESSION["login"] = $sessuser['login'];
+        $_SESSION["company"] = Configuration::get("name");
+        $_SESSION["user_status"] = $sessuser['status_id'];
+        */
+        
+        $this->request->getSession()->setAttribut("id_user", $sessuser['idUser']);
+        $this->request->getSession()->setAttribut("login", $sessuser['login']);
+        $this->request->getSession()->setAttribut("company", Configuration::get("name"));
+        $this->request->getSession()->setAttribut("user_status", $sessuser['status_id']);
+        
+
+        // add the user settings to the session
+        $modelUserSettings = new CoreUserSettings();
+        $settings = $modelUserSettings->getUserSettings($sessuser['idUser']);
+        //$_SESSION["user_settings"] = $settings;
+        $this->request->getSession()->setAttribut("user_settings", $settings);
+
+        // update the user last connection
+        $modelUser->updateLastConnection($sessuser['idUser']);
+
+        // update user active base if the user is manager or admin
+        $this->runModuleConnectionActions();
+        return $sessuser;
     }
-
-    protected function checkRememberMeCookie() {
-        // check if use a remember me
-
-        if (!isset($_SESSION["id_user"])) {
-            //echo "check the cookie <br/>";
-            if (isset($_COOKIE['auth'])) {
-                $auth = $_COOKIE['auth'];
-                //echo "cookie auth = " . $auth . "<br/>";
-                $authArray = explode('-', $auth);
-                //print_r($authArray);
-                $modelUser = new CoreUser();
-                if (!$modelUser->isUserId($authArray[0])) {
-                    //echo "user not found <br/>";
-                    $this->redirect("coreconnection");
-                    return 1;
-                }
-
-                $key = $modelUser->getRemeberKey($authArray[0]);
-                //echo "database key = " . $key . "<br/>"; 
-                if ($key == $authArray[1]) {
-                    //echo "cookie good<br/>";
-                    // update the cookie
-                    $key = sha1($this->generateRandomKey());
-                    $cookieSet = setcookie("auth", $authArray[0] . "-" . $key, time() + 3600 * 24 * 3);
-                    if (!$cookieSet) {
-                        throw new Exception('cannot set the cookie in coresecure <br>');
-                    }
-                    $modelUser->setRememberKey($authArray[0], $key);
-
-                    $this->initSession($modelUser->getUserLogin($authArray[0]));
-
-                    // redirect
-                    return 2;
-                } else {
-
-                    setcookie('auth', '', time() - 3600);
-                    //echo "cookie not good <br/>";
-                    $this->redirectNoRemoveHeader("coreconnection");
-                    return 0;
-                }
-            } else {
-                //echo "cookie not found";
-                return 0;
-            }
-        }
-        return 0;
-        //echo "check cookie <br/>";
-    }
-
+    
     /**
-     * (non-PHPdoc)
-     * @see Controller::runAction()
+     * 
      */
-    public function runAction($module, $action, $args = array()) {
-
-        $modelConfig = new CoreConfig();
-        if ($modelConfig->getParam("is_maintenance")) {
-            if ($this->request->getSession()->getAttribut("user_status") < 4) {
-                throw new Exception($modelConfig->getParam("maintenance_message"));
+    public function runModuleConnectionActions() {
+        $modules = Configuration::get("modules");
+        foreach ($modules as $module) {
+            $controllerName = $module."connectscript";
+            $classController = ucfirst(strtolower($controllerName)) . "Controller";
+            $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
+            //echo "controller file = " . $fileController . "<br/>";
+            if (file_exists($fileController)) {
+                // Instantiate controler
+                require ($fileController);
+                $controller = new $classController ($this->request);
+                //$controller->setRequest($this->request);
+                $controller->runAction($module, "index");
             }
         }
+    }
 
-        $cookieCheck = $this->checkRememberMeCookie();
-        if ($cookieCheck == 2) {
-            parent::runAction($module, $action, $args);
-            return;
-        } else if ($cookieCheck == 1) {
-            return;
+    function generateRandomKey() {
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
         }
-
-        // check if there is a session    
-        if ($this->request->getSession()->isAttribut("id_user")) {
-
-            $login = $this->request->getSession()->getAttribut("login");
-            $company = $this->request->getSession()->getAttribut("company");
-
-            $modelUser = new CoreUser();
-
-            //$connect = $modelUser->connect2($login, $pwd);
-            //echo "connect = " . $connect . "</br>";
-            if ($modelUser->isUser($login) && Configuration::get("name") == $company) {
-                parent::runAction($module, $action, $args);
-                return;
-            } else {
-                //$this->callAction("connection");
-                $this->redirect("coreconnection");
-                return;
-            }
-        } else {
-            $this->redirect("coreconnection");
-            //$this->callAction("connection");
-            return;
-        }
+        return implode($pass); //turn the array into a string
     }
 
     /**

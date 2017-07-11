@@ -38,7 +38,7 @@ if ($space['color'] == "") {
 
         <?php
         require_once 'Modules/com/Controller/ComtileController.php';
-        $navController = new ComtileController();
+        $navController = new ComtileController(new Request(array(), false));
         echo $navController->indexAction($id_space);
         ?>
 

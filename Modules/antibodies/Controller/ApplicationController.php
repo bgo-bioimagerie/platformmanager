@@ -14,8 +14,8 @@ class ApplicationController extends CoresecureController {
      */
     private $acapplicationModel;
 
-    public function __construct() {
-        parent::__construct();
+    public function __construct(Request $request) {
+        parent::__construct($request);
         $this->acapplicationModel = new AcApplication();
         $_SESSION["openedNav"] = "antibodies";
     }

@@ -27,7 +27,8 @@ if (!$headless) {
 <?php
 if (!$headless) {
     require_once 'Modules/core/Controller/CorenavbarController.php';
-    $navController = new CorenavbarController();
+    $nullrequest = new Request(array(), false);
+    $navController = new CorenavbarController($nullrequest);
     echo $navController->navbar();
 }
 ?>
