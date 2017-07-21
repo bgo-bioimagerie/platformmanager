@@ -1227,6 +1227,14 @@ class BookingTranslator {
         }
         return "Are you sure you want to delete this reservation ?";
     }
+    
+    public static function RemoveReservationPeriodic($lang) {
+        if ($lang == "fr") {
+            return "Etes vous sure de vouloir supprimer toutes les réservations de la periodicité ?";
+        }
+        return "Are you sure you want to delete all the reservation of the periodicity ?";
+    }
+    
 
     public static function SendEmailsToUsers($lang) {
         if ($lang == "fr") {
@@ -1346,4 +1354,96 @@ class BookingTranslator {
         }
         return "Periodic";
     }
+    
+    public static function None($lang){
+        if ($lang == "fr") {
+            return "Aucune";
+        }
+        return "None";
+    }
+    
+    public static function EveryDay($lang){
+        if ($lang == "fr") {
+            return "Chaque jour";
+        }
+        return "Every day";
+    }
+    
+    public static function EveryWeek($lang){
+        if ($lang == "fr") {
+            return "Chaque semaine";
+        }
+        return "Every week";
+    }
+    
+    public static function Every2Week($lang){
+        if ($lang == "fr") {
+            return "Une semaine sur 2";
+        }
+        return "Every 2 week";
+    }
+    
+    public static function Every3Week($lang){
+        if ($lang == "fr") {
+            return "Une semaine sur 3";
+        }
+        return "Every 3 week";
+    }
+    
+    public static function Every4Week($lang){
+        if ($lang == "fr") {
+            return "Une semaine sur 4";
+        }
+        return "Every 4 week";
+    }
+    
+    public static function Every5Week($lang){
+        if ($lang == "fr") {
+            return "Une semaine sur 5";
+        }
+        return "Every 5 week";
+    }
+    
+    public static function EveryMonthSameDate($lang){
+        if ($lang == "fr") {
+            return "Chaque mois, même date";
+        }
+        return "Every month, same date";
+    }
+    
+    public static function EveryMonthSameDay($lang){
+        if ($lang == "fr") {
+            return "Chaque mois, même jour de la semaine";
+        }
+        return "Every month, same day";
+    }
+    
+    public static function EveryYearSameDate($lang){
+        if ($lang == "fr") {
+            return "Chaque mois, même date";
+        }
+        return "Every year, same date";
+    }
+    
+    public static function PeriodicityType($lang){
+        if ($lang == "fr") {
+            return "Type de periodicité";
+        }
+        return "Periodicity type";
+    }
+    
+    public static function DateEndPeriodicity($lang){
+        if ($lang == "fr") {
+            return "Date de fin de périodicité";
+        }
+        return "Date end periodicity";
+    }
+    
+    public static function DeletePeriod($lang){
+        if ($lang == "fr") {
+            return "Suprimé périodicité";
+        }
+        return "Delete periodicity";
+    }
+    
 }

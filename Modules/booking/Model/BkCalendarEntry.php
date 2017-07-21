@@ -35,10 +35,24 @@ class BkCalendarEntry extends Model {
 		`package_id` int(11) NOT NULL DEFAULT 0,
 		`responsible_id` int(11) NOT NULL DEFAULT 0,
                 `invoice_id` int(11) NOT NULL DEFAULT 0,
+                `period_id` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
+        
+        $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
+    }
+    
+    public function getPeriod($id){
+        $sql = "SELECT period_id FROM bk_calendar_entry WHERE id=?";
+        $tmp = $this->runRequest($sql, array($id))->fetch();
+        return $tmp[0];
+    }
+    
+    public function setPeriod($id, $period_id){
+        $sql = "UPDATE bk_calendar_entry SET period_id=? WHERE id=?";
+        $this->runRequest($sql, array($period_id, $id));
     }
     
     public function cleanBadResa(){
@@ -323,6 +337,33 @@ class BkCalendarEntry extends Model {
         return $data;
     }
 
+    public function isConflictP($start_time, $end_time, $resource_id, $id_period){
+        $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
+			  ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
+                           (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
+                           (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
+                           (start_time <=:start AND end_time >= :end) 
+                           ) 
+			AND resource_id = :res;";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id);
+        $req = $this->runRequest($sql, $q);
+        if ($req->rowCount() > 0) {
+            if ($id_period > 0 && $req->rowCount() == 1) {
+                $tmp = $req->fetch();
+                $period_id = $tmp['period_id'];
+                //echo 'found a conflict with ' . $tmp['period_id'] . ' for '.$id_period.'<br>'; 
+                if ($period_id == $id_period) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            return true;
+        } else{
+            return false;
+        }
+    }
+    
     /**
      * Check if a new entry is in conflic with an existing entries
      * @param unknown $start_time
@@ -403,7 +444,7 @@ class BkCalendarEntry extends Model {
      */
     public function removeEntriesFromSeriesID($series_id) {
         $sql = "DELETE FROM bk_calendar_entry WHERE repeat_id = ?";
-        $req = $this->runRequest($sql, array($series_id));
+        $this->runRequest($sql, array($series_id));
     }
 
     /**

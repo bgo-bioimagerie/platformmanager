@@ -30,7 +30,7 @@ if (!$headless) {
 startblock('navbar');
 if (!$headless) {
     require_once 'Modules/core/Controller/CorenavbarController.php';
-    $navController = new CorenavbarController();
+    $navController = new CorenavbarController(new Request(array(), false));
     echo $navController->navbar();
 }
 endblock();
@@ -41,7 +41,7 @@ endblock();
 <div class="col-md-2 pm-space-navbar">
     <?php
     require_once 'Modules/core/Controller/CorespaceController.php';
-    $spaceController = new CorespaceController();
+    $spaceController = new CorespaceController(new Request(array(), false));
     echo $spaceController->navbar($id_space);
     ?>
 </div> 
