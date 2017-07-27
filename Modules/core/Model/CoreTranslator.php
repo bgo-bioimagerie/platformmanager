@@ -674,6 +674,14 @@ class CoreTranslator {
         }
         return "contract ends";
     }
+    
+    public static function contract_ends_or_does_not_login_for_1_year($lang = "") {
+        if ($lang == "fr") {
+            return "fin de contrat ou ne s'est pas connecté depuis 1 années";
+        }
+        return "contract ends or did not connect since 1 years ";
+    }
+    
 
     public static function does_not_login_for_n_year($n, $lang = "") {
         if ($lang == "fr") {

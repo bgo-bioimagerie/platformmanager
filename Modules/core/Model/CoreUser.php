@@ -22,6 +22,30 @@ class CoreUser extends Model {
         $this->primaryKey = "id";
     }
     
+    public function disableUsers($desactivateSetting){
+        
+        
+        $date = date('Y-m-d', time());
+        $oneyearago = date('Y-m-d', strtotime($date . ' -1 year'));
+       
+        
+        if($desactivateSetting == 6){
+            $sql = "SELECT * FROM core_users WHERE (date_last_login!=? "
+                    . "AND date_last_login<? ) "
+                    . "OR (date_end_contract!=? AND date_end_contract < ?)";
+            
+            $req = $this->runRequest($sql, array('0000-00-00', $oneyearago, '0000-00-00', $date))->fetchAll();
+            
+            foreach ($req as $r){
+                $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
+                $this->runRequest($sql, array($r['id']));
+            }
+            
+        }
+        /// \todo implement other cases
+        
+    }
+    
     public function getRemeberKey($id){
         $sql = "SELECT remember_key FROM core_users WHERE id=?";
         $req = $this->runRequest($sql, array($id));

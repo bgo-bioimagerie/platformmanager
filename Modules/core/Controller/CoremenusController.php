@@ -10,6 +10,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 //require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreMenu.php';
 
 /**
  * 

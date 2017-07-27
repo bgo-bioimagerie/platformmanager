@@ -65,6 +65,15 @@ class CoreSpace extends Model {
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
     }
 
+    public function doesManageSpace($id_user){
+        $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > 2";
+        $req = $this->runRequest($sql, array($id_user));
+        if($req->rowCount() > 0){
+            return true;
+        }
+        return false;
+    }
+    
     public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu=1, $color="") {
         if ($this->isSpaceMenu($id_space, $url)) {
             $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=? WHERE id_space=? AND url=?";

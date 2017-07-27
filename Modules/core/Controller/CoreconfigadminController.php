@@ -291,6 +291,7 @@ class CoreconfigadminController extends CoresecureController {
         $choicesid[] = 3; $choices[] = CoreTranslator::does_not_login_for_n_year(1, $lang);
         $choicesid[] = 4; $choices[] = CoreTranslator::does_not_login_for_n_year(2, $lang);
         $choicesid[] = 5; $choices[] = CoreTranslator::does_not_login_for_n_year(3, $lang);
+        $choicesid[] = 6; $choices[] = CoreTranslator::contract_ends_or_does_not_login_for_1_year($lang);
         
         $form = new Form($this->request, "desactivateUserForm");
         $form->addSeparator(CoreTranslator::non_active_users($lang));
