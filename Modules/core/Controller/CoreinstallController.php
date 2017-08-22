@@ -5,7 +5,6 @@ require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreInstall.php';
-require_once 'Modules/core/Model/CoreInstall.php';
 
 /**
  * 

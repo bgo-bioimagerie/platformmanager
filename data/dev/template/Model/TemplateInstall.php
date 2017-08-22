@@ -1,23 +1,23 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/template/Model/Provider.php';
 
 /**
- * Class defining methods to install and initialize the core database
+ * Class defining methods to install and initialize the Template database
  *
  * @author Sylvain Prigent
  */
 class TemplateInstall extends Model {
 
     /**
-     * Create the core database
-     *
-     * @return boolean True if the base is created successfully
+     * Create the Template database
      */
     public function createDatabase() {        
 
-        if (!file_exists('data/template/')) {
-            mkdir('data/template/', 0777, true);
-        }
+        // initialise the Provider table
+        $model = new Provider(); 
+        $model->createTable();
+   
     }
 }

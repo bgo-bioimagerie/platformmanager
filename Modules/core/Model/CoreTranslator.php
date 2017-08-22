@@ -54,9 +54,10 @@ class CoreTranslator {
 
     public static function this_will_edit_the_configuration_file($lang) {
         if ($lang == "fr") {
-            return "Cela va modifier le fichier de configuration (vérifier que www-data peut écrire dans ce fichier)";
+            return "Cela va modifier le fichier de configuration Config/conf.ini (vérifier "
+            . "que www-data peut écrire dans ce fichier avant de valider)";
         }
-        return "This will edit the configuration file (make sure the file is writable by www-data)";
+        return "This will edit the configuration file Config/conf.ini (make sure the file is writable by www-data)";
     }
 
     public static function sql_host($lang) {

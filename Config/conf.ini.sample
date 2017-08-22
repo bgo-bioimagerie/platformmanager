@@ -1,13 +1,12 @@
 ; Configuration
 
 [Installation]
-rootWeb = /platformmanager/
-saveImages = disable
+rootWeb = /
 
 [BD]
-dsn = 'mysql:host=localhost;dbname=platformmanager;charset=utf8'
-login = root
-pwd = "root"
+dsn = 
+login = 
+pwd = 
 
 [Menu]
 headless = false
@@ -15,8 +14,6 @@ headless = false
 [Modules]
 modules[] = "core"
 modules[] = "ecosystem"
-modules[] = "dev"
-modules[] = "database"
 modules[] = "resources"
 modules[] = "services"
 modules[] = "booking"

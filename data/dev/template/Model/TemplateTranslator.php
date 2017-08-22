@@ -8,13 +8,13 @@
  */
 class TemplateTranslator {
 
-    public static function template($lang){
+    public static function template($lang) {
         if ($lang == "fr") {
             return "template";
         }
         return "template";
     }
-    
+
     public static function templateConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Template permet de ...";
@@ -52,4 +52,25 @@ class TemplateTranslator {
         return "Activate/deactivate menus";
     }
 
- }
+    public static function Providers($lang) {
+        if ($lang == "fr") {
+            return "Fournisseurs";
+        }
+        return "Providers";
+    }
+    
+    public static function NewProvider($lang) {
+        if ($lang == "fr") {
+            return "Nouveau";
+        }
+        return "New provider";
+    }
+
+    public static function Edit_Provider($lang) {
+        if ($lang == "fr") {
+            return "Edition d'un fournisseur";
+        }
+        return "Edit provider";
+    }
+    
+}

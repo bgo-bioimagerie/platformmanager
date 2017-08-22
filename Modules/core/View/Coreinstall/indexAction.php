@@ -17,7 +17,7 @@ Install - Platform-Manager
 </div> 
 <?php } ?>
 
-<div class="container">
+<div class="container pm-form-short">
     <?php echo $formHtml ?> 
 </div>
 <?php endblock();

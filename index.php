@@ -6,12 +6,9 @@ error_reporting(E_ALL);
 //error_reporting(0);
 
 $sessionPath = dirname(__FILE__).'/tmp/';
-//echo "session path :" . $sessionPath . "<br/>";
 session_save_path( $sessionPath );
 
 require 'Framework/Router.php';
 
 $router = new Router();
 $router->routerRequest();
-
-
