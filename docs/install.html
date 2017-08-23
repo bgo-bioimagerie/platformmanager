@@ -47,7 +47,7 @@
             <ul>
                 <li><a id="nav_link" href="install.html#quesquePM"> Prerequisites </a></li>
                 <li><a id="nav_link" href="install.html#copySourcesPM"> Copy of sources </a></li>
-                <li><a id="nav_link" href="install.html#initdatabasePM"> Initialisation of the database </a></li>
+                <li><a id="nav_link" href="install.html#initdatabasePM"> Initialization of the database </a></li>
                 <li><a id="nav_link" href="install.html#firstconnectPM"> First connection </a></li>
                 <li><a id="nav_link" href="install.html#configurationPM"> Configuration </a></li>
 
@@ -60,7 +60,7 @@
             <p>
                 This section describes step-by-step how to installation new 
                 instance of Platform-Manager on a server. The configuration of a server
-                is not descibed in this tutorial. So please refere to Google if you 
+                is not described in this tutorial. So please Google it if you 
                 don't know how to install and setup tools like apache for php/mysql server.
             </p>
 
@@ -74,7 +74,7 @@
                     file system (FTP, SSH ...) and an access to the MySQL database 
                     (MySQL server address, login, password) </li>
                 <li> It is necessary that the web server authorizes the use of 
-                    .htaccess files (protection of the source files and url rewrite) 
+                    .htaccess files (protection of the source files and URL rewrite) 
                 </li>
                 <li>
                     The php <i>RewriteEngine</i> module has to be installed and activated    
@@ -127,7 +127,7 @@
 
 
                     <ul>
-                        <li> If you install Platform-Manager at <i>http://your_url.com/platformmanager</i> for exemple instead of <i>www.your_url.com</i>,
+                        <li> If you install Platform-Manager at <i>http://your_url.com/platformmanager</i> for example instead of <i>www.your_url.com</i>,
                             you need to change <i>rootWeb = /</i> to <i>rootWeb = /platformmanager/</i> at line 4
                         </li>
                         <li>
@@ -152,16 +152,16 @@
             </ul>
 
 
-            <h2 id="initdatabasePM">Initialisation of the database</h2>
+            <h2 id="initdatabasePM">Initialization of the database</h2>
             <p>
-                Create a new mysql database on your server usiing phpmyadmin or mysql 
+                Create a new mysql database on your server using phpmyadmin or mysql 
                 command <i>CREATE DATABASE nameOfYourDatabase</i>. 
             </p>
 
             <h2 id="firstconnectPM">First connection</h2>
             <p>
                 In this paragraph, we will connect to the Platform-Manager web 
-                interface to initialise the database
+                interface to initialize the database
             </p>    
             <ul>
                 <li>
@@ -170,23 +170,23 @@
                     <img alt="screenshot1" src="resources/install/install1.png" style="width: 100%;">
                 </li>    
                 <li>
-                    Fill the form with your mysql server informations:
+                    Fill the form with your mysql server information:
                     <ul>
-                        <li> In most of the case sql adress should be <i>localhost</i> or <i>127.0.0.1</i> </li>
-                        <li> Login to the sql database with read and write authorisations </li>
+                        <li> In most of the case sql address should be <i>localhost</i> or <i>127.0.0.1</i> </li>
+                        <li> Login to the sql database with read and write authorizations </li>
                         <li> Password </li>
-                        <li> Name of the database you created in the section <a href="install.html#initdatabasePM">Initialisation of the database</a> </li>
+                        <li> Name of the database you created in the section <a href="install.html#initdatabasePM">Initialization of the database</a> </li>
                     </ul>    
                 </li>
                 <li>
-                    If everithing goes correctly you will be directed to the default login page of platform-manager.
-                    If not, make sure that the php rewrite engine is on, the .htaccess is on (see section <a href="install.html#quesquePM">Prerequisites</a> ) and that the file system authorisations are correct (see section <a href="install.html#copySourcesPM">Copy of sources</a>)
+                    If everything goes correctly you will be directed to the default login page of platform-manager.
+                    If not, make sure that the php rewrite engine is on, the .htaccess is on (see section <a href="install.html#quesquePM">Prerequisites</a> ) and that the file system authorizations are correct (see section <a href="install.html#copySourcesPM">Copy of sources</a>)
                     <br/>
                     <img alt="screenshot1" src="resources/install/install2.png" style="width: 100%;">
                 </li>   
                 <li>
                     To finish the installation, go to the URL <i> http://your_url.com/update </i>.<br/>
-                    This will initialise the database for all the modules listed in the config file: <i>Config/Config.ini</i>
+                    This will initialize the database for all the modules listed in the config file: <i>Config/Config.ini</i>
                 </li>
             </ul>
 
@@ -196,18 +196,18 @@
                 The goal of this section is to explain the basic configuration of Platform-Manager that
                 the administrator can do.
             </p>
-            <h3>First: change the admin password !</h3>
+            <h3>First: change the admin password!</h3>
             <ul>
                 <li>
                     go to the root URL of your Platform-Manager <i> http://your_url.com </i>
                 </li>
                 <li>
                     Connect to your new instance of Platform-Manager using the <b>login:</b><i>admin</i>
-                    and the <b>password:</b><i>adim</i> 
+                    and the <b>password:</b><i>admim</i> 
                     <img alt="screenshot1" src="resources/install/install3.png" style="width: 100%;">
                 </li>
                 <li>
-                    Clic on the menu <i>admin > My account</i> and fill the form with a new password.
+                    Click on the menu <i>admin > My account</i> and fill the form with a new password.
                     <img alt="screenshot1" src="resources/install/install4.png" style="width: 100%;">
                 </li>
             </ul>
@@ -220,7 +220,7 @@
             <h5>Create the space</h5>
             <ul>
                 <li>
-                    Clic on the menu <i> Administration > Spaces </i>, and then clic on the button <i>Add space</i>.
+                    Click on the menu <i> Administration > Spaces </i>, and then click on the button <i>Add space</i>.
                     <img alt="screenshot1" src="resources/install/install5.png" style="width: 100%;">
                 </li>
                 <li>
@@ -229,7 +229,7 @@
                         <li>Give your space a name</li>
                         <li>Your space can be public or private. Public means 
                             that any user of the application can access the space.
-                            When a space is public, you can still have pulic and 
+                            When a space is public, you can still have public and 
                             private content in the space (see next session). 
                         </li>
                         <li>
@@ -243,10 +243,10 @@
                 </li>  
                 <li>
                     <img alt="screenshot1" src="resources/install/install6.png" style="width: 100%;">
-                    When your space is create, you can see it URL. In the tutorial, we have the url <i>corespace/1</i>. Actually 1 is the
+                    When your space is created, you can see it URL. In the tutorial, we have the URL <i>corespace/1</i>. Actually 1 is the
                     id of the space in the database.<br/>
                     To access the space, go to the URL: <i>http://your_url.com/corespace/1</i>. We will see in section <a href="install.html#createmenu">Create a new Menu</a> how to set this
-                    url in a menu.
+                    URL in a menu.
                     <img alt="screenshot1" src="resources/install/install7.png" style="width: 100%;">
                 </li>   
             </ul>
@@ -260,7 +260,7 @@
                    <img alt="screenshot1" src="resources/install/install8.png" style="width: 100%;">
                </li> 
                <li>
-                   Let's activate the user database tool from the ecosystem module. Clic on the <i>edit</i> button 
+                   Let activate the user database tool from the ecosystem module. Click on the <i>edit</i> button 
                    of the ecosystem item in the table:
                    <img alt="screenshot1" src="resources/install/install9.png" style="width: 100%;">
                    <ul>
@@ -289,18 +289,24 @@
             <ul>
                 <li>
                     <b>Visitor:</b> for people who can only see content
+                </li>
+                <li>
                     <b>User:</b> for people who can edit basic content (for example add a reservation in a booking calendar)
-                    <b>Manager:</b> for people who can edit advanced content (for example add a new resource, or a generate invoices or statistics )
+                </li>
+                <li>
+                    <b>Manager:</b> for people who can edit advanced content (for example add a new resource, or a generate invoices or statistics)
+                </li>
+                <li>
                     <b>Administrator</b> for people who can edit everything in the space (including configuration and access)
                 </li>
             </ul>
             <img alt="screenshot1" src="resources/install/install11.png" style="width: 100%;">
             
             <p>
-            Each tools provided by modules are note designed for a specific category of people (visitor, user, manager, admin). 
-            It's the job of the space administrator to specify which cathegory of people can accès which tools. For 
+            Each tool provided by modules are note designed for a specific category of people (visitor, user, manager, admin). 
+            It's the job of the space administrator to specify which category of people can access which tools. For 
             example in the section <a href="install.html#configmodules"> Configure modules </a> we activated the user management tool for the space 
-            managers only. Actually the space manager could have select "administrator" to allow only administrator to 
+            managers only. Actually, the space manager could have select "administrator" to allow only administrator to 
             add and modify users accounts. 
             </p>
 
@@ -312,8 +318,8 @@
             </p>
             <h5>Create the menu</h5>
             <p>
-                Go to the home page of your Platform-Manager installation:  <i>http://your_url.com/</i>, and 
-                clic on the <i>Menus</i> icon. You can also access menu maker tool using "Administration > Menus".
+                Go to the home page of your Platform-Manager installation: <i>http://your_url.com/</i>, and 
+                click on the <i>Menus</i> icon. You can also access menu maker tool using "Administration > Menus".
             </p>
             <img alt="screenshot1" src="resources/install/install12.png" style="width: 100%;">
             
@@ -322,9 +328,9 @@
                 core facilities. So, let's call it "Facilities".
             </p>
             <p>
-                When you validate the form, you can see your new menu apearing in main navigation bar. The display 
+                When you validate the form, you can see your new menu showing in main navigation bar. The display 
                 order specified in the menus form correspond to the position of the menu in the navigation bar. The administration
-                menu is managed by the Platform-Manager core. Thus you cannot change it, and it will always display at the last position
+                menu is managed by the Platform-Manager core. Thus, you cannot change it and it will always display at the last position
                 in the right.
             </p>
             <img alt="screenshot1" src="resources/install/install13.png" style="width: 100%;">
@@ -333,11 +339,11 @@
                 Let's now fill the menu we created with items:
             </p>
             <ul>
-                <li>Clic on the + button near the "item" link</li>
+                <li>Click on the + button near the "item" link</li>
                 <li>Fill the form:
                     <ul>
                         <li> <b>Name</b> is the name that will be used to display the item</li>
-                        <li> <b>Url</b> is the url of your space (ex: corespace/1). You can set here any URL. For example
+                        <li> <b>Url</b> is the URL of your space (ex: corespace/1). You can set here any URL. For example,
                         you can set the address of a specific module of the space instead of the home page of the space </li> 
                         <li><b>Icon</b> is the icon that will be displayed in the Platform-Manager menu home page</li>
                         <li><b>Menu</b> is the menu the item belongs to. "Facilities" in our example</li>
