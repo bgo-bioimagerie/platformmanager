@@ -12,22 +12,23 @@ require_once 'Modules/template/Model/TemplateTranslator.php';
  */
 class TemplateController extends CoresecureController {
 
-    /**
+     /**
      * Constructor
      */
-    public function __construct() {
-        parent::__construct();
-        //$this->checkAuthorizationMenu("template");
+    public function __construct(Request $request) {
+        parent::__construct($request);
     }
-    
-    /**
-     * (non-PHPdoc)
-     * @see Controller::indexAction()
-     */
-    public function indexAction($id_space) {
-        $this->checkAuthorizationMenuSpace("template", $id_space, $_SESSION["id_user"]);
 
+    public function navbar($id_space){
+        
         $lang = $this->getLanguage();
-        $this->render(array("id_space" => $id_space, "lang" => $lang));
+        
+        $html = file_get_contents('Modules/template/View/Template/navbar.php');
+        
+        $html = str_replace('{{id_space}}', $id_space, $html);
+        $html = str_replace('{{Providers}}', TemplateTranslator::Providers($lang), $html);
+        $html = str_replace('{{NewProvider}}', TemplateTranslator::NewProvider($lang), $html);
+        
+        return $html;
     }
 }

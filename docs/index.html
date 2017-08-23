@@ -16,10 +16,12 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
         <script src="resources/caroussel/ie-emulation-modes-warning.js"></script>
+        <script src="https://www.w3schools.com/lib/w3.js"></script>
         <link href="resources/caroussel/carousel.css" rel="stylesheet">
     </head>
 
     <body>
+        <div w3-include-html="navbar.html"></div> 
 
         <!-- Carousel
          ================================================== -->
@@ -35,9 +37,9 @@
                     <img class="first-slide" src="./resources/caroussel/carousel1.png" alt="First slide">
                     <div class="container">
                         <div class="carousel-caption col-xs-4 col-xs-offset-4">
-                            <h1>Gestion d'utilisateurs</h1>
-                            <p>Gestion d'une base de données d'utilisateurs en fonction de leur appartenance, et de la charte de la plateforme.</p>
-                            <p><a class="btn btn-lg btn-primary" href="introduction" role="button">Voir</a></p>
+                            <h1>Users management</h1>
+                            <p>Database to management users according to their membership and convention...</p>
+                            <p><a class="btn btn-lg btn-primary" href="modules/ecosystem/index.html" role="button">See</a></p>
                         </div>
                     </div>
                 </div>
@@ -45,9 +47,9 @@
                     <img class="second-slide" src="./resources/caroussel/carousel2.png" alt="Second slide">
                     <div class="container">
                         <div class="carousel-caption col-xs-4 col-xs-offset-4">
-                            <h1>Gestion de ressources</h1>
-                            <p>Gestion et réservation de ressources incluant la facturation.</p>
-                            <p><a class="btn btn-lg btn-primary" href="introduction" role="button">Voir</a></p>
+                            <h1>Resources management</h1>
+                            <p>Management and booking of resources including invoicing.</p>
+                            <p><a class="btn btn-lg btn-primary" href="modules/booking/index.html" role="button">See</a></p>
                         </div>
                     </div>
                 </div>
@@ -55,9 +57,9 @@
                     <img class="third-slide" src="./resources/caroussel/carousel3.png" alt="Third slide">
                     <div class="container">
                         <div class="carousel-caption col-xs-4 col-xs-offset-4">
-                            <h1>Statistiques</h1>
-                            <p>Export de statistiques par équipes, utilisateurs, ressources...</p>
-                            <p><a class="btn btn-lg btn-primary" href="introduction" role="button">Voir</a></p>
+                            <h1>Statistics</h1>
+                            <p>Export de statistiques about utilisateurs, resources, booking, invoices...</p>
+                            <p><a class="btn btn-lg btn-primary" href="modules/statistics/index.html" role="button">See</a></p>
                         </div>
                     </div>
                 </div>
@@ -83,22 +85,22 @@
             <div class="row">
                 <div class="col-lg-4">
                     <img src="./resources/index/database.png" alt="Generic placeholder image" width="100" height="100">
-                    <h2>Gérer</h2>
-                    <p>Platform-Manager, un outil unique regroupant tous les outils de gestion de données d'une plateforme technologique</p>
-                    <p><a class="btn btn-default" href="introduction" role="button">Voir</a></p>
+                    <h2>Manage</h2>
+                    <p>Platform-Manager is a unique tool bringing together all the data management tools dedicated to research facilities</p>
+                    <p><a class="btn btn-default" href="presentation.html" role="button">See</a></p>
                 </div><!-- /.col-lg-4 -->
                 <div class="col-lg-4">
                     <img src="./resources/index/people.png" alt="Generic placeholder image" width="155" height="100">
-                    <h2>Echanger</h2>
-                    <p>Platform-Manager est un outil web permettant un accès multi utilisateur sécurisé aux données </p>
+                    <h2>Exchange</h2>
+                    <p>Platform-Manager is a web-based application for secure multi-user access to data </p>
                     <br/>
-                    <p><a class="btn btn-default" href="introduction" role="button">Voir</a></p>
+                    <p><a class="btn btn-default" href="presentation.html#fonctionementPM" role="button">See</a></p>
                 </div><!-- /.col-lg-4 -->
                 <div class="col-lg-4">
                     <img src="./resources/index/settings.png" alt="Generic placeholder image" width="100" height="100">
-                    <h2>Adapter</h2>
-                    <p>Platform-Manager est un outil libre en constante évolution. Ajoutez des modules pour en faire un outil dédié à votre plateforme</p>
-                    <p><a class="btn btn-default" href="introduction" role="button">Voir</a></p>
+                    <h2>Adapt</h2>
+                    <p>Platform-Manager is a free and open-source tool. Add your own modules to make it dedicated to your facility</p>
+                    <p><a class="btn btn-default" href="developper.html" role="button">See</a></p>
                 </div><!-- /.col-lg-4 -->
             </div><!-- /.row -->
 
@@ -109,9 +111,9 @@
 
             <div class="row featurette">
                 <div class="col-md-7">
-                    <h2 class="featurette-heading">Installer Platform-Manager <span class="text-muted"></span></h2>
-                    <p class="lead">sur votre propre serveur en suivant les instructions disponibles
-                        <a>ici</a></p>
+                    <h2 class="featurette-heading">Install Platform-Manager <span class="text-muted"></span></h2>
+                    <p class="lead">On you own server following the tutorial available 
+                        <a href="install.html">here</a></p>
                 </div>
                 <div class="col-md-5">
                     <img src="./resources/caroussel/carousel4.png" width="300" height="300" alt="Generic placeholder image">
@@ -122,8 +124,8 @@
 
             <div class="row featurette">
                 <div class="col-md-7 col-md-push-5">
-                    <h2 class="featurette-heading">Configurer Platform-Manager <span class="text-muted"></span></h2>
-                    <p class="lead">en fonction de votre activité grâce à l'ensemble des <a>modules</a> disponibles.</p>
+                    <h2 class="featurette-heading">Configure Platform-Manager <span class="text-muted"></span></h2>
+                    <p class="lead">depending on your needs using only the <a href="modules.html">modules</a> you need.</p>
                 </div>
                 <div class="col-md-5 col-md-pull-7">
                     <img src="./resources/caroussel/carousel4.png" width="300" height="300" alt="Generic placeholder image">
@@ -134,8 +136,8 @@
 
             <div class="row featurette">
                 <div class="col-md-7">
-                    <h2 class="featurette-heading">Développer et partager. <span class="text-muted"></span></h2>
-                    <p class="lead">Vous ne trouvez pas de module dédié à votre activité ? <a>Créez un nouveau module</a> et <a>partagez le</a>.</p>
+                    <h2 class="featurette-heading">Dévelop et share. <span class="text-muted"></span></h2>
+                    <p class="lead">You can't find any module dedicated to your activity ? <a href="developper.html">Create a new module</a> and <a href="developper.html#sharePM">share it</a>.</p>
                 </div>
                 <div class="col-md-5">
                     <img src="./resources/caroussel/carousel4.png" width="300" height="300" alt="Generic placeholder image">
@@ -150,7 +152,7 @@
             <!-- FOOTER -->
             <footer>
                 <p class="pull-right"><a href="#">Haut de page</a></p>
-                <p>2015 Bio-Imagerie <a href="http://www.biogenouest.org">Biogenouest</a>.</p>
+                <p>2017 Bio-Imagerie <a href="http://www.biogenouest.org">Biogenouest</a>.</p>
             </footer>
 
         </div><!-- /.container -->
@@ -166,5 +168,8 @@
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="./resources/caroussel/ie10-viewport-bug-workaround.js"></script>
 
-
+        <script>
+            w3.includeHTML();
+        </script>
+        
     </body>

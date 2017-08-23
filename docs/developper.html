@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Bootstrap core CSS -->
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+        <script src="resources/caroussel/ie-emulation-modes-warning.js"></script>
+        <script src="https://www.w3schools.com/lib/w3.js"></script>
+        <style>
+
+
+            #keylink{
+                color:#000000;
+            }
+
+            h1{
+                color:#337ab7; /* color:#018181; */
+                font-size: 150%;
+                text-transform:uppercase;
+                border-bottom: 1px solid #337ab7;
+            }
+
+            h2{
+                color:#337ab7;
+                font-size: 115%;
+                border-bottom: 1px solid #337ab7;
+            }
+
+            h3{
+                color:#337ab7;
+                font-size: 100%;
+                border-bottom: 1px solid #337ab7;
+                margin-left: 15px;
+            }
+
+            h5{
+                color:#337ab7;
+                font-size: 100%;
+                border-bottom: 1px solid #337ab7;
+                margin-left: 20px;
+            }
+
+            p,h3{
+                margin-left: 15px;
+            }
+
+            #nav_title{
+                color:#337ab7;
+                font-size: 150%;
+                /*text-transform:uppercase;*/
+                border-bottom: 1px solid #337ab7;
+            }
+
+            #nav_link{
+                color:#313131;
+            }
+
+            p{
+                text-indent: 50px;
+                text-align: justify;
+            }
+        </style>
+    </head>
+    <body>
+        <div w3-include-html="navbar.html"></div> 
+        <!-- TITLE -->
+        <div class="col-lg-12" style="background-color: #f1f1f1; border-bottom: 0px solid #e1e1e1;">
+            <div class="col-lg-offset-1">
+                <h4>Developper</h4>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <br/>
+        </div>
+
+        <!-- MENU -->
+        <div class="col-md-2 col-md-offset-1" style="margin-top:25px; background-color:#f1f1f1;">
+
+            <h5 id="nav_title">
+                Developper
+            </h5>
+            <ul>
+                <li><a id="nav_link" href="developper.html#createmodulePM"> Create a module </a></li>
+                <li><a id="nav_link" href="developper.html#frameworkutilitiesPM"> Framework utilities </a></li>
+                <li><a id="nav_link" href="developper.html#sharePM"> Share </a></li>
+
+            </ul>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="col-md-8" style="margin-top:25px;">
+
+            <p>
+                This section describes step-by-step how to create a Platform-Manager module, and introduce
+                developement tools available in the Platform-Manager php framework.
+            </p>
+
+            <h2 id="createmodulePM">Create a module</h2>
+            <p>
+                To create a new module you need the sources of Platform-Manager.
+                Sources are available on <a href="https://github.com/bgo-bioimagerie/platformmanager">Git hub</a>. 
+                Clone the sources on your dev computer and follow the <a href="install.html">install tutorial</a> 
+                to configure you dev instance of plateform manager.
+            </p>
+            
+                Platform-Manager is made of a php MVC framework and core module 
+                that contains a basic user database and a space management tool.
+                If you open the sources directory of Platform-Manager, you should
+                find the following directories:
+               
+            <div class="highlight"><pre class="prettyprint"><code>
+                    <span class="c"> Config/</span>
+                    <span class="c"> Framework/ </span>
+                    <span class="c"> Modules/ </span>
+                    <span class="c"> data/ </span>   
+                    <span class="c"> docs/ </span>   
+                    <span class="c"> externals/ </span> 
+                    <span class="c"> index.php </span> 
+                    <span class="c"> .htaccess </span> 
+                </code></pre></div>
+
+            <ul>
+                <li><b>Config:</b> this directory contains all the configuration files. 
+                    It contains the main config file and a LDap config file. If you 
+                    need a config file for your module, it must be saved in this directory  </li>
+                <li><b>Framework:</b> this directory contains the php framework 
+                    in which the Platform-Manager code is based. The framework is
+                    based on the MVC (Model View Controller) design patern. Basically, 
+                    when you request an URL the php URL rewrite engine redirect the request 
+                    to <i>index.php</i>. Then, the Platform-Manager rooter will redirect
+                    the request to the dedicated controller of the dedicated module. The routing is explained 
+                    in more details in section <a href="developper.html#mvcframework">MVC Framework</a>
+                    The Pramework also contains utilities to help the developper easily implement 
+                    forms and table view. See section <a href="developper.html#frameworkutilitiesPM">Framework utilities</a>
+                </li>
+                <li><b>Modules:</b>this directory contains the code of all the modules. It's in this directory
+                    that you will add you modules. In this derictory there is one directory per module, and each
+                    module contains three directories <i>Model, View</i> and <i>Controller</i> due to the MVC framework.
+                </li>
+                <li><b>data:</b>this directory contains the data that are manipulated by the Platform-Manager users
+                    through the modules. In data, there is one directory for each module.
+                </li>
+                <li><b>docs:</b>this directry contains the Platform-Manager documentation. It's written in HTML
+                    and it is the web site you are reading now. See the section <a href="developper.html#documentationPM">Documentation</a> 
+                    to learn how to add the documentation of your module in this main documentation
+                </li>
+                <li><b>externals:</b> this directory contains all the external open-source libraries needed by Platform-Manager
+                    and it's modules.
+                </li>
+                <li><b>index.php</b>: is the entry point to Platform-Manager Routing system.
+                </li>
+                <li><b>.htaccess</b>: contains the URL rewrite rule for request rooting.
+                </li>
+            </ul>    
+
+            <h3>Générate the template code</h3>
+            <p>
+                In this section we are going to use the <i><b>dev</b></i> module that allows to 
+                generate the code template for a new module.
+            </p>  
+            
+                First you need to activate this module in your dev install:
+               
+            <ul> 
+                <li>
+                    edit the <b>Config/Config.ini</b> file, and add the line <i>modules[] = "dev"</i>
+                    in the module section:
+
+                    <div class="highlight"><pre class="prettyprint"><code>
+<span class="c"> ; Configuration</span>
+
+<span class="c"> [Installation] </span>
+<span class="c"> rootWeb = / </span>
+
+<span class="c"> [BD]</span>
+<span class="c"> dsn = </span>
+<span class="c"> login = </span>
+<span class="c"> pwd = </span>
+
+<span class="c"> [Menu] </span>
+<span class="c"> headless = false </span>
+
+<span class="c"> [Modules]</span>
+<span class="c"> modules[] = "core"</span>
+<span class="c"> modules[] = "ecosystem"</span>
+<span class="c"> modules[] = "resources"</span>
+<span class="c"> modules[] = "services"</span>
+<span class="c"> modules[] = "booking"</span>
+<span class="c"> modules[] = "catalog"</span>
+<span class="c"> modules[] = "invoices"</span>
+<span class="c"> modules[] = "statistics"</span>
+<span class="c"> modules[] = "mailer"</span>
+<span class="c"> modules[] = "documents"</span>
+<span class="c"> modules[] = "antibodies"</span>
+<span class="c"> modules[] = "quote"</span>
+<span class="c"> modules[] = "bulletjournal"</span>
+<span class="c"> modules[] = "com"</span>
+<span class="c"> modules[] = "dev"</span>
+
+<span class="c"> [Company]</span>
+<span class="c"> name = "Platform-Manager" </span>
+</code></pre></div>
+
+                </li>
+                <li>
+                    Go to the URL <i>http://your_url.com/caches</i>. This will 
+                    update the Platform-Manager cache, so that your instance 
+                    of Platform-Manager add the routes of the dev module in the 
+                    cache.
+                </li>
+                <li>
+                    Go to the URL <i>http://your_url.com/update</i>. This will 
+                    update the Platform-Manager install, so that your instance 
+                    of Platform-Manager add the dev link in the administration module.
+                </li>
+                <li>Then go back to the home page of you Platform-Manager instance.
+                    Now you have the dev module available.
+                    <img alt="screenshot1" src="resources/developper/dev1.png" style="width: 100%;">
+                    <br/><br/>
+                </li>
+            </ul>
+
+                Clic on the <i>dev</i> icon in the <i>administration</i> menu and fill the form
+                with the name of your module. The module name should not contain space, special
+                characters or capital letters:
+                <img alt="screenshot1" src="resources/developper/dev2.png" style="width: 100%;">
+            <br/><br/>
+                When you validate the form, it generate the code for a new module with the name
+                you gave. The code is a template code that creates a ready to use module.
+           <br/><br/>
+                For your dev instance to be able to use your new module, you need to initialize it using the
+                same procedure than the <i>dev</i> module:
+            
+            <ul>
+                <li>
+                    Add the line <i>modules[] = "mynewmodule"</i>
+                    to the <i>Modules</i> section of the config file
+                </li>
+                <li>
+                    Go to the URL <i>http://your_url.com/caches</i>
+                </li> 
+                <li>
+                    Go to the URL <i>http://your_url.com/update</i>
+                </li> 
+            </ul>
+            <br/><br/>
+                The generated module contains some sample code. To activate the module tools, select a space, and go to 
+                the <i>Configuration</i> menu of the space, and clic the "edit" button coresponding
+                of your menu. Then activate the menu. (Same procedure than in the <a href="install.html#configmodules">install tutorial</a>)
+                <img alt="screenshot1" src="resources/developper/dev3.png" style="width: 100%;">
+            <br/><br/>  
+                In the following of this tutorial, we will browse the code générated in the new module
+                to introduce the functionalities available in the Platform-Manager framework
+            
+            <h3 id="mvcframework">MVC Framework</h3>
+            <p>
+                As we mentioned in introduction, Platform-Manager modules are build
+                on an MVC framework. As MVC design patern is well known in 
+                programation, it is not explained in detail. In this section, we 
+                describe briefly how the router work to connect the requests to 
+                controller, then introduce the models and the view. 
+            </p>
+            <h5>Rooting</h5>
+            <p>
+            To explain how the rooting of request using the MVC framework works, 
+            let's take the example of the default page created in the new module we just generated.
+            The home page url is <i>http://your_url.com/mynewmodule/1</i>. When you
+            enter this request, it is the <i>index.php</i> file that is called due
+            to the URL rewrite rule coded in the ".htaccess file":
+            </p>
+            <div class="highlight"><pre class="prettyprint"><code>
+<span class="c">Options +FollowSymLinks -MultiViews</span>
+<span class="c"></span>
+<span class="c">RewriteEngine On</span>
+<span class="c">RewriteCond %{REQUEST_FILENAME} !-d</span>
+<span class="c">RewriteCond %{REQUEST_FILENAME} !-f</span>
+<span class="c">RewriteCond %{REQUEST_URI} !^.*\.(css|jpe?g|gif|png|js|ico)$ [NC]</span>
+<span class="c">RewriteRule ^(.*)$ index.php?path=$1 [QSA,L]</span>
+            </code></pre></div>
+            <br/><br/>
+                Thus, when we call the URL <i>http://your_url.com/mynewmodule/1</i>, 
+                the <i>index.php</i> file is called with the parameter <i>path=mynewmodule/1</i>.
+                If we look at the code in <i>index.php</i>, we can see that it calls
+                the Platform-Manager router.
+            
+<div class="highlight"><pre class="prettyprint"><code>
+<span class="c">require 'Framework/Router.php';</span>
+<span class="c">    </span>
+<span class="c">$router = new Router();</span>
+<span class="c">$router->routerRequest();</span>
+</code></pre></div>
+            <br/><br/>
+                The <i>Router</i> job is to instanciate the controller coresponding
+                to the request <i>mynewmodule</i> and call the controller method 
+                that corresponds to the request <i>mynewmodule</i> with the parameter <i>1</i>. 
+                To do this, the router needs a map of all the requests and there corresponding
+                controller and controller method.
+                This map is defined by each module in the file <i>ModulenameRounting.php</i>. 
+                The file is located in each module directory. In our example, the <i>mynewmodule/1</i>
+                request is defined in the module we called <i>Mynewmodule</i>. Thus, when we open the <i>Modules/Mynewmodule/MynewmoduleRouting.php</i>
+                we can find a php class called <i>MynewmoduleRouting</i>, than contains only one method <i>listRouts</i>.
+                It's in this <i>listRouts</i> that we declare all the routes available in the module.
+                For example, we have the line:
+              
+<div class="highlight"><pre class="prettyprint"><code>
+<span class="c">$this->addRoute("mynewmodule", "mynewmodule", "providers", "index", array("id_space"), array(""));</span>
+</code></pre></div>
+            <br/><br/>
+                that declare the route corresponding to our request <i>mynewmodule/1</i>. The method <i>addRoute</i> have 6 
+                aruments:
+            <ul>
+                <li><b>mynewmodule</b> the name of the request </li>
+                <li><b>mynewmodule</b> an alias for the request (deprecated)</li>
+                <li><b>providers</b> the name of the controller to instanciate</li>
+                <li><b>index</b> the name of the controller method to call</li>
+                <li><b>array("id_space")</b> an array of parameter to set to the controller method</li>
+                <li><b>array("")</b> an array regular expressions to check if type of parameter in the path correspond type of the controller method inputs</li>
+            </ul>
+            <br/><br/>
+                Thus, this addRoute line tell us that with the URL <i>http://your_url.com/mynewmodule/1</i>, the router
+                will instanciate the controller providers and call the method index with the parameter <i>id_space=1</i>.
+                Actually, in the Platform-Manager framework, there is a convention that controller names must end with
+                <i>Controller</i>, and that the method corresponding to a request must end with <i>Action</i>. So, basically
+                in our example, the router will do:
+               
+            <div class="highlight"><pre class="prettyprint"><code>
+            <span class="c">$controller = new ProvidersController()</span>
+            <span class="c">$controller->indexAction(1);    </span>
+            </code></pre></div>
+            <br/><br/>
+                In other words, if we want to implement the provider fonctionnality, we need to create a controller with a name 
+                ending with <i>Controller</i>, and a method ending with <i>Action</i>, and to declare it in the routing class
+                with the method <i>addRoute</i>.
+            
+            <h5>Controller</h5>
+            <p>
+                Let's open the controller <i>ProvidersController</i>. By convention 
+                in Platform-Manager framework, Controller are in a sub-directory named <i>Controller</i>.
+                Thus, the providers controller is located in <i>Modules/mynewmodule/Controller/ProvidersController.php</i>
+            </p>
+            <br/><br/>
+                The providers controller is a class named ProvidersController and that extends <i>CoresecureController</i>. Actually,
+                the framework provide a basic controller names <i>Controller</i>, but most of the time, we will use
+                the <i>CoresecureController</i> which extend <i>Controller</i> adding method to chech the user
+                authorisation to request url or not.
+            <br/><br/>
+                The code bellow is the <i>indexAction</i> method of the <i>ProvidersController</i>:
+            
+            <div class="highlight"><pre class="prettyprint"><code>
+            
+<span class="c">public function indexAction($id_space) {</span>
+<span class="c"></span>
+<span class="c">// security</span>
+<span class="c">$this->checkAuthorizationMenuSpace("mynewmodule", $id_space, $_SESSION["id_user"]);</span>
+<span class="c">// lang</span>
+<span class="c">$lang = $this->getLanguage();</span>
+<span class="c"></span>
+<span class="c">// Query to the database</span>
+<span class="c">$providersArray = $this->providerModel->getAll($id_space);</span>
+<span class="c"></span>
+<span class="c">$table = new TableView();</span>
+<span class="c">$table->setTitle(MynewmoduleTranslator::Providers($lang), 3);</span>
+<span class="c">$table->addLineEditButton("provideredit/" . $id_space);</span>
+<span class="c">$table->addDeleteButton("providerdelete/" . $id_space);</span>
+<span class="c">$tableHtml = $table->view($providersArray, array("name" => CoreTranslator::Name($lang), "address" => CoreTranslator::Address($lang), "phone" => CoreTranslator::Phone($lang)));</span>
+<span class="c"></span>
+<span class="c">// render the View</span>
+<span class="c">$this->render(array(</span>
+<span class="c">    'id_space' => $id_space,</span>
+<span class="c">    'lang' => $lang,</span>
+<span class="c">    'tableHtml' => $tableHtml</span>
+<span class="c">));</span>
+<span class="c">}</span>
+</code></pre></div>
+            <ul>
+                <li>
+                    The first par of the code is a security check. The method <i>checkAuthorizationMenuSpace</i> provided 
+                    by the <i>CoresecureController</i> check if the logged user <i>$_SESSION["id_user"]</i> is allowed
+                    to get the page <i>mynewmodule</i> of the space <i>$id_space</i>. If you need other security
+                    methods, please open the <i>Modules/core/Controller/CoresecureController.php</i> to read it documentation
+                </li>
+                <li>
+                    The <i>getLanguage</i> method allow to get the logged user language for translation purpose.
+                    You can refere to the section <a href="developper.html#translationPM">translation</a> to see
+                    in details how the translation works in Platform-Manager
+                </li>
+                <li>
+                    Then we interact with the database using the <i>$this->providerModel</i>. The next section <a href="developper#modelPM">Model</a>
+                    descibe how to create a model to interact with the database
+                </li> 
+                <li>
+                    The block <i>$table</i> generate the html code to display a table. <i>TableView</i> is
+                    an utility provided with the Platform-Manager ramework to make it easier to display
+                    tables. This utility is descibed in section <a id="developper.html#tablePM">Table</a>
+                </li>    
+                <li>
+                    Finally we call the <i>render</i> method to generate the view. The render method takes an array
+                    in parameter. This array contains all the parameters that the controller send to the view.
+                    The second parameter is the name of the view. This parameter is optionnal since by default it 
+                    render the view with the same name as the controller. In our example, the view 
+                    <i>Modules/mynewmodule/View/Providers/indexAction.php</i> will be instancied.
+                    As you can see, by convention in Platform-Manager framework, views are all stored in 
+                    the <i>View</i> directory of the module. And, each view is called as the controller method
+                    name and stored in a sub-directory names as the controller.
+                </li>    
+            </ul>   
+            
+            
+            <h5>View</h5>
+            <p>
+                In Platform-Manager, views are html file that contains prints of php variables.
+                To make the code easy to maintain, views are build with layouts in 3 level.
+                The first layout, is defined in <i>Modules/layout</i> and it descibes the 
+                4 blocs displaying content in a Platform-Manager page:
+            </p>
+            <ul>
+                <li><b>navbar:</b> The bloc that contains the main navigation bar (on the top of the page)</li>
+                <li><b>spacenavbar:</b> The bloc that cotains the space navigation bar (on the left of the page)</li>
+                <li><b>content:</b>It's in this bloc that you display the tools you develop</li>
+                <li><b>footer:</b>The page footer</li>
+            </ul>
+            <br/><br/>
+                They are to other blocs:
+            <ul>
+                <li><b>title</b> To display a page title in the navigator tab</li>
+                <li><b>stylesheet</b> to include css files dedicated to you view</li>
+            </ul>
+           <br/><br/>
+               The second layout is the Module layout. Thus our new module have the auto-generated
+               default layout <i>Modules/mynewmodule/View/layout.php</i>.
+               When you open this layout, you can see that it extends the main 
+               layout with the line <i><?php require_once 'Modules/layout.php' ?></i>
+               and it define the content of each bloc:
+            <br/><br/>   
+            <ul>
+                <li><b>navbar:</b> is initialized with the <i>CorenavbarController</i> that build the main navigation bar</li>
+                <li><b>spacenavbar:</b> is initialized with the <i>CorespaceController</i> that build the space navigation bar</li>
+                <li><b>content:</b>Is empty, since it will be filled by the view</li>
+                <li><b>footer:</b>Is not used in this version of Platform-Manager</li>
+            </ul>    
+            <br/><br/>
+                The third layout level are the views themselves. In most of the cases,
+                view only implements the <i>content</i> bloc. If you open the view
+                of our example <i>Modules/mynewmodule/View/Providers/indexAction.php</i>
+                you can see that it extends the mynewmodule layout (<i><?php include 'Modules/mynewmodule/View/layout.php' ?></i>)
+                and display the table we generated in the controller (<i><?php echo $tableHtml ?></i>) in the bloc <i>content</i>
+            <br/><br/>
+                As you may noticed, the main layouts of Platform-Manager are build using
+                the <a href="http://getbootstrap.com/">Boostrap</a> library. To make you new module look
+                as the other, you may use Boostrap too.
+                
+            <h5 id="modelPM">Model</h5>
+                
+            <p>
+                Models are classes instanciate in controller to query the database (add, edit, remove data).
+                In the Pltform-Manager framework, a class <i>Framewor/Model.php</i> gives 
+                utilities to ease the interaction with the database (connection to database, basic queries...).
+            </p>
+            <br/><br/>
+                By convention, in Platform-Manager modules, models are stores in the <i>Model</i>
+                directory of each module.
+                Let open the Model we used in our controller. The model is called Provider so by 
+                convention it is in the file <i>Modules/mynewmodule/Model/Provider.php</i>
+            
+            <div class="highlight"><pre class="prettyprint"><code>
+            
+<span class="c">class Provider extends Model {</span>
+<span class="c"></span>
+<span class="c">    public function __construct() {</span>
+<span class="c">        $this->tableName = "tuto_providers";</span>
+<span class="c">        $this->setColumnsInfo("id", "int(11)", 0);</span>
+<span class="c">        $this->setColumnsInfo("id_space", "int(11)", 0);</span>
+<span class="c">        $this->setColumnsInfo("name", "varchar(100)", "");</span>
+<span class="c">        $this->setColumnsInfo("address", "text", "");</span>
+<span class="c">        $this->setColumnsInfo("phone", "varchar(20)", "");</span>
+<span class="c">       $this->primaryKey = "id";</span>
+<span class="c">    }</span>
+<span class="c"></span>
+<span class="c">    public function getAll($id_space) {</span>
+<span class="c">        $sql = "SELECT * FROM providers WHERE id_space=?";</span>
+<span class="c">        return $this->runRequest($sql, array($id_space))->fetchAll();</span>
+<span class="c">    }</span>
+<span class="c">    </span>
+<span class="c">    ...</span>
+
+ </code></pre></div>
+            
+            <ul>
+                <li>
+                    It extends the <i>Frameork/Model</i> to get the connection to the 
+                    database we setup during the Platform-Managerinstall
+                </li>
+                <li>
+                    In the class contructor, we declare the informations of the table linked to
+                    the model.
+                    <ul>
+                        <li> <b>$this->tableName</b> to set the table name. By convention in Platform-Manager
+                            a model name in singular and the table name in plural. Also, to make the database
+                            easy to read, a prefix has to be added before the table name. In out example
+                            the prefix is <i>tuto_</i>, for core module it is <i>core_</i>, <i>bk_</i> for booking..
+                            Thus if you open the database with phpmyadmin, you quickly identify what table 
+                            belongs to what module.
+                        </li>    
+                        <li>
+                            <b>$this->setColumnsInfo</b> allows to declare a colomn for the table.
+                            The three parameters are: the name of the column, the type of the column, and the default value
+                        </li>   
+                        <li>
+                            <b>$this->primaryKey</b> allows to declare a primary key
+                        </li>    
+                    </ul> 
+                    It is not mandatory to use those methods (tableName, setColumnsInfo...), to build the 
+                    database but it is convenient to use the <a href="developper.php#installMachPM">install/update mechanisms</a>
+                </li>    
+                <li>
+                    Then, you can implement all the methods you need to query the database.
+                    The <i>Framework/Model</i> class implements some basic queries. Please 
+                    read the documentation in the <i>Framework/Model.php</i> to get all of them
+                </li>    
+            </ul>    
+            
+            <h2>Modules mechanisms</h2>
+            
+            <h3 id="installMachPM">install/update mechanisms</h3>
+            <p>
+                At the begining of the tutorial, we call the <b>caches</b> and <b>update</b>
+                URLs to initialize the module we created.
+            </p>    
+            <ul>
+                <li>
+                    The <b>caches</b> URL reads the routing files of each modules and
+                    create/update the routes map that is stored in the database 
+                    with the two tables <i>cache_urls</i> and <i>cache_urls_gets</i>
+                </li>
+                <li>
+                    The <b>update</b> URL get the install Model of each modules
+                    and call their <i>createDatabase</i> method. In fact, our
+                    new module has the class <i>Modules/mynewmodule/Model/mynewmoduleInstall.php</i>.
+                    This class is a Model that have a method called <i>createDatabase()</i> where
+                    you implement all the code needed to install or update the database of your module.
+                    If you implemented the constructor of your models as descibed section 
+                    <a href="developper.php#modelPM">Model</a> the install model consist only 
+                    to instanciate the models and call their <i>createtable()</i> method.
+                    
+<div class="highlight"><pre class="prettyprint"><code>
+<span class="c">...</span>
+<span class="c">$model = new Provider(); </span>
+<span class="c">$model->createTable();</span>
+<span class="c">...</span>
+
+ </code></pre></div>
+                </li>    
+            </ul>    
+            
+            <h3 id="configmechPM">Config mechanisms</h3>
+            <p>
+                When we initialized our module, we clicked on the <b>Configuration</b>
+                menu of any space and then on the <b>edit</b> button coresponding to the menu.
+                In this section, we will see how to implement the page displayed when we clic on 
+                the <b>edit</b> button.
+            </p>  
+            <br/><br/>
+                The configuration page of a module is managed by the controller named "configController" and
+                prefixed by the module name. Thus in our new module, the configuration controller
+                is located in <i>Modules/mynewmodule/Controller/MynewmoduleconfigController.php</i>.
+                A config controller must implement the <b>indexAction()</b> method that is called by
+                the <b>edit</b> button.
+            <br/><br/>
+                By default in the controller MynewmoduleconfigController, there is a form
+                implemented to create a space menu. This is descibed in the 
+                <a href="developper.html#spacemenumechPM">Space menu mechanisms</a> section
+            <br/><br/>
+                In your module configuration code, you may need to setup and store some setting parameters.
+                The <b>core</b> module provides a <b>CoreConfig</b> model located in the
+                file <i>Modules/core/Model/CoreConfig.php</i> and provides three main method
+            <br/><br/>   
+            <ul>
+                <li><b>setParam($key, $value, $id_space = 0)</b> to set a parameter with key <i>$key</i>
+                and value <i>value</i>. The <i>$id_space</i> is an optional input and is used to specify
+                that a parameter is specific to one space. Thus several space can use the same parameter key but with different value</li>
+                <li><b>getParam($key)</b> return the value of the parameter with with key <i>$key</i></li>
+                <li><b>getParamSpace($key, $id_space)</b> return the value of the parameter with with key <i>$key</i>, for the space 
+                with the id <i>$id_space</i> </li>
+            </ul>    
+            
+            
+            <h3 id="spacemenumechPM">Space menu mechanisms</h3>
+            <p>
+                The space menu located in the left side of the screen of spaces 
+                pages is generated by the <b>CorespaceController</b> with
+                the <b>navbar()</b> method. This method call the navbar method
+                of each activated module located in the controller name <b>ModulenameController</b>.
+            </p>   
+            <br/><br/>
+                In our new module, there is a default navbar() method created in 
+                the controller: <i>Modules/mynewmodule/Controller/mynewmoduleController.php</i>.
+                This method must return some HTML code of the module menu content. In the default
+                code the html code is read from the view <i>Modules/mynewmodule/View/mynewmodule/navbar.php</i>.
+                You can generate the HTML code hase you want. The only contrant is that this code
+                must be a list of items like the one in the file <i>Modules/mynewmodule/View/mynewmodule/navbar.php</i>
+            <br/><br/> 
+
+            <h2 id="frameworkutilitiesPM">Framework utilities</h2>
+            Modules of Platform-Manager share common needs like editing forms, print tables, multi-language,
+            or AJAX interaction. In this section we introduce utilities that tend to facilitate module programing.
+            
+            <h3>Form</h3>
+            The class <i>Framework/Form.php</i> define a php object that allows to
+            build an HTML form without writing HTML tedious form code. A basic example 
+            can be found in the <b>editAction()</b> method of the controller <i>Modules/mynewmodule/Controller/ProvidersController.php</i>
+            
+<div class="highlight"><pre class="prettyprint"><code>
+<span class="c">$form = new Form($this->request, "provider/edit");</span>
+<span class="c">$form->setTitle(MynewmoduleTranslator::Edit_Provider($lang), 3);</span>
+<span class="c">$form->addHidden("id", $provider["id"]);</span>
+<span class="c">$form->addText("name", CoreTranslator::Name($lang), true, $provider["name"]);</span>
+<span class="c">$form->addTextArea("address", CoreTranslator::Address($lang), false, $provider["address"]);</span>
+<span class="c">$form->addText("phone", CoreTranslator::Phone($lang), false, $provider["phone"]);</span>
+<span class="c">        </span>
+<span class="c">$form->setValidationButton(CoreTranslator::Ok($lang), "provideredit/" . $id_space . "/" . $id);</span>
+<span class="c">$form->setCancelButton(CoreTranslator::Cancel($lang), "providers/" . $id_space);</span>
+<span class="c"></span>
+<span class="c">// Check if the form has been validated</span>
+<span class="c">if ($form->check()) {</span>
+<span class="c">    // get the form content</span>
+<span class="c">    $name = $form->getParameter("name"); </span>
+<span class="c">    $adress = $form->getParameter("address");</span>
+<span class="c">    $phone = $form->getParameter("phone"));</span>
+<span class="c"></span>
+<span class="c">    // set data to database or other use</span>
+<span class="c">    ...</span>
+<span class="c">}</span>
+
+ </code></pre></div>
+            
+            The form is instancite with the request ($this->request) accesible from the controller, and the ID sting ("provider/edit"). 
+            Then, you can build the form with set and add methods provided by the Form class. In the example, we use
+            <b>setTitle()</b> to set a title to the form. The parameter 3 indicates that the title is an HTML h3 tag title.
+            We added 2 text fields one for the provider name and one for the provider phone, an hidden field for the provider ID
+            and a text area for the provider address. Each of these methods take at least 4 input parameters:
+            <ul>
+                <li>
+                    <b>id:</b> name of the field in the html form
+                </li>
+                <li>
+                    <b>name:</b> label of the field in the html form
+                </li>
+                <li>
+                    <b>mandatory:</b> true if the field is mandatory
+                </li>
+                <li>
+                    <b>default:</b> default value
+                </li>
+            </ul>    
+            In our example, we can edit a provider, thus we set the default value with the $provider array that content
+            the provider data.
+            <br/><br/>
+            The <b>setValidationButton()</b> method allows to add a validation button to the form. The first parameter
+            is the text printed in the button, and the second parameter is the URL of the request made when the validation button is clicked.
+            <br/><br/>
+            The <b>setCancelButton()</b> allows to add a other button next to the validation button when the user whant
+            to cancel the form edition. The first parameter
+            is the text printed in the button, and the second parameter is the URL of the request made when the validation button is clicked.
+            <br/><br/>
+            In our example, the <b>setValidationButton()</b> method set the validation to the same URL as the Form.
+            Thus, when the validation button is clicked, the rooter call once again the same <b>editAction()</b> method of the controller <i>Modules/mynewmodule/Controller/ProvidersController.php</i>.
+            In this case, the method <b>$form->check()</b> returns true, and in the <i>if</i> statement, you can
+            get the content of the form with the method <b>$form->getParameter</b> and do whatever you need with these data.
+            <br/><br/>
+            If you open the complete code of the <b>editAction()</b> method of the controller <i>Modules/mynewmodule/Controller/ProvidersController.php</i>,
+            you can see that we update the database with the edited <i>Provider</i>, and redirect to the page that lists all the providers
+            
+            
+            <h3 id="tablePM">Table</h3>
+            
+            The class <b>Framework/TableView.php</b> define a php object that allows 
+            to build an HTML form without writing HTML tedious form code. A basic 
+            example can be found in the indexAction() method of the controller 
+            <i>Modules/mynewmodule/Controller/ProvidersController.php</i>
+            
+            <div class="highlight"><pre class="prettyprint"><code>
+            
+<span class="c">$table = new TableView();</span>
+<span class="c">$table->setTitle(MynewmoduleTranslator::Providers($lang), 3);</span>
+<span class="c">$table->addLineEditButton("provideredit/" . $id_space);</span>
+<span class="c">$table->addDeleteButton("providerdelete/" . $id_space);</span>
+<span class="c">$tableHtml = $table->view($providersArray, array("name" => CoreTranslator::Name($lang), </span>
+<span class="c">        "address" => CoreTranslator::Address($lang), </span>
+<span class="c">        "phone" => CoreTranslator::Phone($lang)));</span>
+<span class="c"></span>
+
+ </code></pre></div>
+            Let explain the code above:
+            <ul>
+                <li>
+                    <b>$table</b> is an instnace of the TableView class
+                </li>
+                <li>
+                    We can add a title with the <b>setTitle</b> method. First parameter is the title text and second parameter
+                    is the title level. 3 means html h3 title.
+                </li>   
+                <li>
+                    Buttond can be added to the table. This is convenient for editing or deleted a line.
+                    <b>addLineEditButton()</b> allows to add an edit button. The input parameter is the URL called whan the button is pressed.
+                    <b>addDeleteButton()</b> allows to add a delete button. The input parameter is the URL called whan the button is pressed. 
+                    If you edit the <i>Framework/TableView</i>, you can see in it documentation that you can also add any button.
+                </li>    
+                <li>
+                    The method <b>view()</b> generate the table HTML code with the data contained in the first parameter array, and the header with
+                    the header with the data of the second parameter array.
+                </li>    
+            </ul>
+            The HTML code generated by the TableView class use <a href="http://getbootstrap.com/">Boostrap</a> rendering and the <a href="https://datatables.net/">datatables</a> library to have searchable
+            and editable tables.
+            
+            <h3 id="translationPM"> Translation </h3>
+            Platform-Manager framework manage multi-language. In a controller you can access the user browser language
+            using the method <b>getLanguage()</b>. With this variable you can the display text in the apropriate language.
+            As a convention in Platform-Manager modules, we create a model class calles <i>ModulenameTranslator</i>.
+            In our tutoriel, the Mynewmodule has by default a translator in <i>Modules/mynewmodule/Model/MynewModuleTranslator.php</i>
+            This transalot is a class of static methods. Each method is a text to print in a view and have the language as input parameter. 
+            So, all the text you display in a view should be static functions of your module translator.
+            <br/><br/>
+            <div class="highlight"><pre class="prettyprint"><code>
+            
+<span class="c">class MynewmoduleTranslator {</span>
+<span class="c"></span>
+<span class="c">...</span>
+<span class="c"></span>
+<span class="c">    public static function Providers($lang) {</span>
+<span class="c">        if ($lang == "fr") {</span>
+<span class="c">            return "Fournisseurs";</span>
+<span class="c">        }</span>
+<span class="c">        return "Providers";</span>
+<span class="c">    }</span>
+<span class="c">...</span>
+            </code></pre></div>
+            
+            
+            <h3> API</h3>
+
+            The Platform-Manager framework provide functions to help adding a restAPI 
+            to your module. 
+            <br/><br/>
+            Basically, in Platform-Manager, API is managed with controllers that
+            instead of rendering view return data in json format.
+            <br/><br/>
+            By convention, in a Platform-Manager module, API controller are stored
+            in a folder called Api.
+            <br/><br/>
+            Thus, to create a API, you just need to create "normal" controllers
+            that you store in the Api directory of your Module and replace the
+            <i>render()</i> method at the end of the controller method by an 
+            <i>echo json_encode($data)</i>. The module <i>Bulletjournal</i> use 
+            the API functionnalities with JQuery AJAX to have interactive views. Please
+            refere to this module code if you need to know more about developping API
+            with Platform-Manager
+            <br/><br/>
+            The <b>important</b> point using API is when you declare the routes to the router.
+            In fact, the add <b>addRoute()</b> method of the routing class have a last optional 
+            parameter called <b>$isAPI</b>. Set it to true when you declare a API controller route.
+            Here is the example of the addRoute declaration of the bjgetnote API URL of the bulletjournal module.
+            bjgetnote return a json file with the content of the note with ID "id".
+            <br/><br/>
+<div class="highlight"><pre class="prettyprint"><code>
+<span class="c">$this->addRoute("bjgetnote", "bjgetnote", "bjnotes", "getnote", array("id"), array(""), true);</span>
+</code></pre></div>
+            
+            <h2 id="documentationPM">Documentation</h2> 
+            In the root directory of Platform-Manager, there is a <b>docs/</b> directory.
+            This directory contains html pages documenting Platform-Manager and it's modules.
+            This page you are reading is one of this documentation page. 
+            <br/><br/>
+            To document a module create a directory in <b>docs/modules</b> and set the html documentation inside.
+            For our tutorial module, we create the directory <i>docs/modules/mynewmodule</i>.
+            In this directory there are two mandatory html files to create. A file called <b>summary.html</b> that
+            should contains the summary of the module for the page <a href="http://bgo-bioimagerie.github.io/platformmanager/modules.html">http://bgo-bioimagerie.github.io/platformmanager/modules.html</a>
+            
+            and a file called <b>index.html</b> that is the entry point of your module documenation. 
+            <br/><br/>
+            The easier way to start a documentation is to copy & paste the summary and index file of an existing module
+            and then to edit it.
+            
+            <h2 id="sharePM">Share</h2>
+            The Platform-Manager project is open-source. Any contribution is welcome.
+            Since the code is shared on <a href="https://github.com/bgo-bioimagerie/platformmanager/">github</a> the best way
+            to share your contribution is to use the classical procedure.
+            <ul>
+                <li>Fork the Platform-Manager code in you own github account</li>
+                <li>Create a new git branch</li>
+                <li>Commit and push your changes and new code to your branch</li>
+                <li>Send a pull request of your branch to the master of <a href="https://github.com/bgo-bioimagerie">bgo-bioimagerie</a></li>
+            </ul>  
+        </div>
+
+        <script>
+            w3.includeHTML();
+        </script>
+    </body>
+</html>

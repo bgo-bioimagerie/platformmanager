@@ -20,7 +20,7 @@ class DocumentslistController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        //$this->checkAuthorizationMenu("documents");
+        $this->checkAuthorizationMenu("documents");
     }
     
     /**
