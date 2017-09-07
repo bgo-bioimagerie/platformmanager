@@ -37,6 +37,16 @@ class BkColorCode extends Model {
         return array("id" => 0, "name" => "", "color" => "#ffffff", "text" => "#000000",
             "display_order" => 0, "id_space" => 1, "who_can_use" => 1);
     }
+    
+    public function getIdByNameSpace($name, $id_space){
+        $sql = "SELECT id FROM bk_color_codes WHERE name=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
+        if($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
 
     /**
      * Create the default empty SyColorCode
@@ -279,9 +289,9 @@ class BkColorCode extends Model {
      * @throws Exception if the SyColorCode connot be found
      * @return mixed array
      */
-    public function getColorCodeId($name) {
-        $sql = "select id from bk_color_codes where name=?";
-        $SyColorCode = $this->runRequest($sql, array($name));
+    public function getColorCodeId($name, $id_space) {
+        $sql = "select id from bk_color_codes where name=? and id_space=?";
+        $SyColorCode = $this->runRequest($sql, array($name, $id_space));
         if ($SyColorCode->rowCount() == 1) {
             $tmp = $SyColorCode->fetch();
             return $tmp[0];  // get the first line of the result

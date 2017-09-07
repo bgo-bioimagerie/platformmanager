@@ -38,6 +38,16 @@ class InInvoice extends Model {
         $this->setColumnsInfo("discount", "varchar(100)", 0);
         $this->primaryKey = "id";
     }
+    
+    public function getIdFromName($name, $id_space){
+        $sql = "SELECT id FROM in_invoice WHERE number=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
+        if ($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
 
     public function setSend($id, $date, $visa){
         $sql = "UPDATE in_invoice SET date_send=?, visa_send=? WHERE id=?";
@@ -80,6 +90,9 @@ class InInvoice extends Model {
         //echo "where id = " . $id . "<br/>";
         $sql = "UPDATE in_invoice SET date_paid=? WHERE id=?";
         $this->runRequest($sql, array($date, $id));
+        
+        $sql2 = "UPDATE in_invoice SET is_paid=1 WHERE id=?";
+        $this->runRequest($sql2, array($id));
     }
 
     public function setEditedBy($id_invoice, $id_user) {

@@ -149,11 +149,17 @@ class Tissus extends Model {
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
         $res = $this->runRequest($sql, array($id_anticorps));
-        $tissus = $res->fetchAll();
+        $tissuss = $res->fetchAll();
+        $modelProtocol = new AcProtocol();
+
+        for ($i = 0 ; $i < count($tissuss) ; $i++) {
+            $proto = $modelProtocol->getProtocolsByRef($tissuss[$i]["ref_protocol"]);
+            $tissuss[$i]["id_protocol"] = $proto[0]["id"];
+        }
 
         if ($catalog) {
             $tissuscp = array();
-            foreach ($tissus as $tissus) {
+            foreach ($tissuss as $tissus) {
 
                 // try to find the redondance
                 $found = false;
@@ -169,7 +175,7 @@ class Tissus extends Model {
             }
             return $tissuscp;
         }
-        return $tissus;
+        return $tissuss;
     }
 
     public function removeTissus($id) {

@@ -43,6 +43,16 @@ class SeServiceType extends Model {
         $this->add("Journée", "Journée");
     }
 
+    public function getIdFromName($name){
+        $sql = "SELECT id FROM se_service_types WHERE name=?";
+        $req = $this->runRequest($sql, array($name));
+        if($req->rowCount() > 0){
+            $temp = $req->fetch();
+            return $temp[0];
+        }
+        return 0;
+    }
+    
     public function getAll() {
         $sql = "SELECT * FROM se_service_types ORDER BY local_name ASC;";
         $req = $this->runRequest($sql);

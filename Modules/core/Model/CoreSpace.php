@@ -264,6 +264,7 @@ class CoreSpace extends Model {
     public function addSpace($name, $status, $color) {
         $sql = "INSERT INTO core_spaces (name, status, color) VALUES (?,?,?)";
         $this->runRequest($sql, array($name, $status, $color));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function editSpace($id, $name, $status, $color) {

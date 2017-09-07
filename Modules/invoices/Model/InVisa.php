@@ -36,6 +36,16 @@ class InVisa extends Model {
         }
     }
 
+    public function getIdFromUser($id_user, $id_space){
+        $sql = "SELECT id FROM in_visa WHERE id_user=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id_user, $id_space));
+        if($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     public function getAll($id_space) {
         $sql = "SELECT * FROM in_visa WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();

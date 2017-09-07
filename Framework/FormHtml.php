@@ -508,8 +508,13 @@ class FormHtml {
      * @param type $submitOnchange
      * @return string
      */
-    static public function inlineSelect($name, $choices, $choicesid, $value, $vect = false, $submitOnchange = "") {
+    static public function inlineSelect($name, $choices, $choicesid, $value, $isMandatory, $vect = false, $submitOnchange = "") {
 
+        $required = "";
+        if ($isMandatory){
+            $required = "required";
+        }
+        
         $vectv = "";
         if ($vect) {
             $vectv = "[]";
@@ -518,7 +523,7 @@ class FormHtml {
         if ($submitOnchange != "") {
             $submit = "onchange=\"updateResponsibe(this);\"";
         }
-        $html = "<select class=\"form-control select\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " >";
+        $html = "<select ".$required." class=\"form-control select\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " >";
         for ($v = 0; $v < count($choices); $v++) {
             $selected = "";
             if ($value == $choicesid[$v]) {
@@ -549,12 +554,17 @@ class FormHtml {
      * @param type $submitOnChange
      * @return string
      */
-    static public function select($label, $name, $choices, $choicesid, $value, $labelWidth = 2, $inputWidth = 9, $submitOnChange = "") {
+    static public function select($label, $name, $choices, $choicesid, $value, $isMandatory, $labelWidth = 2, $inputWidth = 9, $submitOnChange = "") {
 
+        $star = "";
+        if ($isMandatory){
+            $star = "*";
+        }
+        
         $html = "<div class=\"form-group\">";
-        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $star ."</label>";
         $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value, false, $submitOnChange);
+        $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value, $isMandatory, false, $submitOnChange);
         $html .= "</div>";
         $html .= "</div>";
         return $html;

@@ -32,11 +32,13 @@ class CoreMenu extends Model {
 		`icon` varchar(300) NOT NULL DEFAULT '',
                 `id_menu` int(11) NOT NULL DEFAULT 1,
                 `color` varchar(7) NOT NULL DEFAULT '#428bca',
+                `display_order` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql2);
         
         $this->addColumn('core_datamenu', 'color', "varchar(7)", "#428bca");
+        $this->addColumn('core_datamenu', 'display_order', "int(11)", 0);
         
         
                 
@@ -50,7 +52,7 @@ class CoreMenu extends Model {
     }
 
     public function getItemsFormMenu($id_menu){
-        $sql = "SELECT * FROM core_datamenu WHERE id_menu=?";
+        $sql = "SELECT * FROM core_datamenu WHERE id_menu=? ORDER BY display_order ASC;";
         $req = $this->runRequest($sql, array($id_menu))->fetchAll();
         return $req;
     }
@@ -267,16 +269,16 @@ class CoreMenu extends Model {
      * @param string $url Url link
      * @param string $id_menu ID of the parent menu
      */
-    public function setDataMenu($id, $name, $url, $id_menu, $color) {
+    public function setDataMenu($id, $name, $url, $id_menu, $color, $display_order) {
 
         if ($this->isDataMenu($id)){
-            $sql = "UPDATE core_datamenu SET name=?, link=?, id_menu=?, color=? WHERE id=?";
-            $this->runRequest($sql, array($name, $url, $id_menu, $color, $id));
+            $sql = "UPDATE core_datamenu SET name=?, link=?, id_menu=?, color=?, display_order=? WHERE id=?";
+            $this->runRequest($sql, array($name, $url, $id_menu, $color, $display_order, $id));
             return $id;
         }
         else{
-            $sql = "INSERT INTO core_datamenu (name, link, id_menu, color) VALUES(?,?,?,?)";
-            $this->runRequest($sql, array($name, $url, $id_menu,$color));
+            $sql = "INSERT INTO core_datamenu (name, link, id_menu, color, display_order) VALUES(?,?,?,?,?)";
+            $this->runRequest($sql, array($name, $url, $id_menu,$color,$display_order));
             return $this->getDatabase()->lastInsertId();
         }
     }

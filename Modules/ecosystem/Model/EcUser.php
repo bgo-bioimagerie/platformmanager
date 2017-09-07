@@ -91,6 +91,8 @@ class EcUser extends Model {
         $users = $modelUser->getActiveUsers($sortentry);
         $names = array();
         $ids = array();
+        $names[] = "";
+        $ids[] = "";
         foreach ($users as $res) {
             $names[] = $res["name"] . " " . $res["firstname"];
             $ids[] = $res["id"];
@@ -107,6 +109,8 @@ class EcUser extends Model {
         $data = $this->runRequest($sql)->fetchAll();
         $names = array();
         $ids = array();
+        $names[] = "";
+        $ids[] = "";
         foreach ($data as $res) {
             $names[] = $res["name"] . " " . $res["firstname"];
             $ids[] = $res["id"];
@@ -154,9 +158,11 @@ class EcUser extends Model {
         }
     }
 
-    public function add($name, $firstname, $login, $pwd, $email, $phone, $unit, $is_responsible, $status_id, $date_convention, $date_end_contract) {
+    public function add($name, $firstname, $login, $pwd, $email, $phone, 
+            $unit, $is_responsible, $status_id, $date_convention, 
+            $date_end_contract, $encrypte = true) {
         $model = new CoreUser();
-        $id = $model->add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, 1);
+        $id = $model->add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, 1, $encrypte);
 
         $sql = "INSERT INTO ec_users (id, phone, id_unit, is_responsible, date_convention) VALUES (?,?,?,?,?)";
         $this->runRequest($sql, array($id, $phone, $unit, $is_responsible, $date_convention));

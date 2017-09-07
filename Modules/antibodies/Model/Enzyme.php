@@ -94,9 +94,9 @@ class Enzyme extends Model {
         $this->runRequest($sql, array("" . $name . "", $id_space, $id));
     }
 
-    public function getIdFromName($name) {
-        $sql = "select id from ac_enzymes where nom=?";
-        $unit = $this->runRequest($sql, array($name));
+    public function getIdFromName($name, $id_space) {
+        $sql = "select id from ac_enzymes where nom=? AND id_space=?";
+        $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];

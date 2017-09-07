@@ -13,7 +13,9 @@ class Session {
      * Start or restor the session
      */
     public function __construct() {
-        session_start();
+        if(!isset($_SESSION)){
+            session_start();
+        }
     }
 
     /**

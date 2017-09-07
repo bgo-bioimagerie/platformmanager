@@ -480,6 +480,29 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = $submitOnChange;
     }
+    
+        /**
+     * Add select input to the form
+     * @param string $name Input name
+     * @param string $label Input label
+     * @param unknown $choices List of options names
+     * @param unknown $choicesid List of options ids
+     * @param string $value Input default value
+     */
+    public function addSelectMandatory($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
+        $this->types[] = "select";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($name, $value);
+        $this->isMandatory[] = true;
+        $this->choices[] = $choices;
+        $this->choicesid[] = $choicesid;
+        $this->validated[] = true;
+        $this->enabled[] = "";
+        $this->useJavascript[] = false;
+        $this->submitOnChange[] = $submitOnChange;
+    }
+    
 
     /**
      * Add textarea input to the form
@@ -642,7 +665,7 @@ class Form {
                 if ($this->submitOnChange[$i]) {
                     $sub = $this->id;
                 }
-                $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth, $sub);
+                $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth, $sub);
             }
             if ($this->types[$i] == "formAdd") {
                 $html .= $this->formAdd->getHtml($lang, $this->labels[$i], $this->labelWidth, $this->inputWidth);

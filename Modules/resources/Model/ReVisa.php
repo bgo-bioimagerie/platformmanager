@@ -35,6 +35,15 @@ class ReVisa extends Model {
         return $pdo;
     }
 
+    public function getIdFromInfo($id_resource_category, $id_instructor){
+        $sql = "SELECT id FROM re_visas WHERE id_resource_category=? AND id_instructor=?";
+        $req = $this->runRequest($sql, array($id_resource_category, $id_instructor));
+        if ($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
     
     public function setActive($id, $active){
         $sql = "UPDATE re_visas SET is_active=? WHERE id=?";

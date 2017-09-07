@@ -110,9 +110,9 @@ class Source extends Model {
         $this->runRequest($sql, array("" . $name . "", $id_space, $id));
     }
 
-    public function getIdFromName($name) {
-        $sql = "select id from ac_sources where nom=?";
-        $req = $this->runRequest($sql, array($name));
+    public function getIdFromName($name, $id_space) {
+        $sql = "select id from ac_sources where nom=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];

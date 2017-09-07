@@ -122,10 +122,15 @@ class CoreUser extends Model {
         }
     }
 
-    public function add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+    public function add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $encrypte = true) {
 
+        $pwde = $pwd;
+        if($encrypte){
+            $pwde = md5($pwd);
+        }
+        
         $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active) VALUES(?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, $status_id, $date_end_contract, $is_active));
+        $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -247,6 +252,36 @@ class CoreUser extends Model {
             throw new Exception("Cannot find the user using the given parameters");
         }
     }
+    
+    public function getUserIDByLogin($login) {
+        $sql = "select id from core_users where login=?";
+        $user = $this->runRequest($sql, array(
+            $login
+        ));
+        if ($user->rowCount() > 0) {
+            return $user->fetch()[0]; // get the first line of the result
+        } else {
+            return 0;
+        }
+    }
+    
+    /**
+     * 
+     * @param type $login
+     * @return int
+     */
+    public function getIdByLogin($login){
+        $sql = "SELECT id FROM core_users WHERE login=?";
+        $user = $this->runRequest($sql, array(
+            $login
+        ));
+        if ($user->rowCount() == 1) {
+            $data =  $user->fetch(); 
+            return $data[0];
+        } else {
+            return 0;
+        }
+    }
 
     /**
      * Verify that a user is in the database
@@ -279,6 +314,19 @@ class CoreUser extends Model {
             "" . date("Y-m-d") . "",
             $userId
         ));
+    }
+    
+    public function setLastConnection($userId, $time) {
+        $sql = "update core_users set date_last_login=? where id=?";
+        $this->runRequest($sql, array(
+            $time, $userId
+        ));
+    }
+    
+    public function getLastConnection($userId){
+        $sql ="SELECT date_last_login FROM core_users WHERE id=?";
+        $req = $this->runRequest($sql, array($userId))->fetch();
+        return $req[0];
     }
 
     /**

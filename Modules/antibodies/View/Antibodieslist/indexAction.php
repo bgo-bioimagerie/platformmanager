@@ -423,7 +423,7 @@ if (!isset($searchCom)) {
                                     if ($tissus[$i]['ref_protocol'] == "0") {
                                         $val .= "<p>Manuel</p>";
                                     } else {
-                                        $val .= "<p><a href=\"protocols/protoref/" . $anticorps ['id'] . "\">"
+                                        $val .= "<p><a href=\"protocolsedit/".$id_space. "/". $tissus[$i]['id_protocol'] . "\">"
                                                 . $tissus[$i]['ref_protocol'] . "</a></p>";
                                     }
                                 }

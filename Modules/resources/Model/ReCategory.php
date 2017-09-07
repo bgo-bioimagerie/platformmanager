@@ -32,6 +32,16 @@ class ReCategory extends Model {
         $sql = "SELECT * FROM re_category WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+    
+    public function getIdFromNameSpace($name, $id_space){
+        $sql = "SELECT id FROM re_category WHERE name=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
+        if($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
 
     public function set($id, $name, $id_space) {
         if ($this->exists($id)) {
