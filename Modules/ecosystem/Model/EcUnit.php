@@ -34,6 +34,16 @@ class EcUnit extends Model {
         $this->runRequest($sql2);
     }
     
+    public function getIdFromName($name){
+        $sql = "SELECT id FROM ec_units WHERE name=?";
+        $data= $this->runRequest($sql, array($name));
+        if ($data->rowCount() > 0){
+            $tmp = $data->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     public function copyToMultipleBelonging($id_space){
         $sql = "SELECT * FROM ec_units";
         $units = $this->runRequest($sql)->fetchAll();

@@ -94,9 +94,15 @@ class InvoiceslistController extends CoresecureController {
             "edited_by" => InvoicesTranslator::Edited_by($lang)
         );
 
+        
         $table->addLineEditButton("invoiceedit/" . $id_space);
-        $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::SendStatus($lang));
+        if($sent == 0){
+            $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::SendStatus($lang));
+        }
         $table->addDeleteButton("invoicedelete/" . $id_space, "id", "number");
+        if($sent == 1){
+            $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::Info($lang));
+        }
         $tableView = $table->view($invoices, $headers);
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableView,
@@ -126,7 +132,7 @@ class InvoiceslistController extends CoresecureController {
         //echo '<br/> Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         //return;
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
-        $object = new $controllerName();
+        $object = new $controllerName(new Request(array(), false));
         $object->setRequest($this->request);
         $object->runAction($service["module"], "edit", array($id_space, $id));
 
@@ -142,10 +148,7 @@ class InvoiceslistController extends CoresecureController {
         return $form->getHtml($lang);
     }
 
-    public function infoAction($id_space, $id) {
-
-        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
-
+    protected function infoForm($id_space, $id){
         $lang = $this->getLanguage();
         $modelUnit = new EcUnit();
         $modelUser = new EcUser();
@@ -199,8 +202,19 @@ class InvoiceslistController extends CoresecureController {
             $this->redirect("invoiceinfo/" . $id_space . "/" . $id);
             return;
         }
+        else{
+            return $form->getHtml($lang);
+        }
+    }
+    
+    public function infoAction($id_space, $id) {
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        
+        $formHtml = $this->infoForm($id_space, $id);
+
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $formHtml));
     }
 
     public function deleteAction($id_space, $id) {
@@ -213,7 +227,7 @@ class InvoiceslistController extends CoresecureController {
 
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
-        $object = new $controllerName();
+        $object = new $controllerName(new Request(), false);
         $object->setRequest($this->request);
         $object->runAction($service["module"], "delete", array($id_space, $id));
         

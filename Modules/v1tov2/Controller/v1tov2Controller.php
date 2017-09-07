@@ -45,15 +45,15 @@ class v1tov2Controller extends Controller {
     public function indexAction() {
 
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_h2p2;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_impaccell;charset=utf8';
         $login_old = "root";
         $pwd_old = "root";
 
         $pdo_old = new PDO($dsn_old, $login_old, $pwd_old, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
-        $id_space = 2;
+        $id_space = 1;
         $importUserSygrrif = true;
-        $importProjects = true;
+        $importProjects = false;
         $importSupplies = false;
 
 
@@ -68,7 +68,7 @@ class v1tov2Controller extends Controller {
          */
 
         // Nantes
-        $belongingMap = $this->importBelongings($pdo_old);
+        $belongingMap = $this->importBelongings($pdo_old, $id_space);
         //print_r($belongingMap);
 
         if ($importUserSygrrif) {
@@ -80,7 +80,7 @@ class v1tov2Controller extends Controller {
             echo "   import users <br/>";
             $usersMap = $this->importUsers($pdo_old, $unitsMap, $id_space);
             echo "   import responsibles <br/>";
-            $this->importResponsibles($pdo_old, $usersMap);
+            //$this->importResponsibles($pdo_old, $usersMap);
 
             // resources
             echo "import resources <br/>";
@@ -152,18 +152,21 @@ class v1tov2Controller extends Controller {
         echo "end <br/>";
     }
 
-    protected function importBelongings($pdo_old) {
+    protected function importBelongings($pdo_old, $id_space) {
         $sql = "SELECT * FROM core_belongings";
         $result = $pdo_old->query($sql);
         $bel_old = $result->fetchAll();
 
         $model = new EcBelonging();
         $unitMap = array();
+        
+        $display_order = 0;
         foreach ($bel_old as $uo) {
             $name = $uo["name"];
             $color = $uo["color"];
             $type = $uo["type"];
-            $newID = $model->add($name, $color, $type);
+            $display_order++;
+            $newID = $model->add($id_space, $name, $color, $type, $display_order);
             $unitMap[$uo["id"]] = $newID;
         }
 
@@ -180,7 +183,11 @@ class v1tov2Controller extends Controller {
         foreach ($units_old as $uo) {
             $name = $uo["name"];
             $address = $uo["address"];
-            $id_belonging = $belongingMap[$uo["id_belonging"]];
+            $id_belonging = 1;
+            if(isset($belongingMap[$uo["id_belonging"]])){
+                $id_belonging = $belongingMap[$uo["id_belonging"]];
+            }
+            
             $newID = $modelUnit->importUnit2($this->unitNameMapping($name), $address, $id_belonging);
             $unitMap[$uo["id"]] = $newID;
         }
@@ -305,7 +312,12 @@ class v1tov2Controller extends Controller {
             $type = 0;
             $description = $ro["description"];
             $long_description = "";
-            $id_category = $resourcesCategoriesMap[$ro["category_id"]];
+            
+            $id_category = 1;
+            if(isset($resourcesCategoriesMap[$ro["category_id"]])){
+                $id_category = $resourcesCategoriesMap[$ro["category_id"]];
+            }
+            
             //print_r($areasMap);
             //echo ' re name = ' . $ro["name"] . "<br/>";
             //echo ' re area = ' . $ro["area_id"] . "<br/>";
@@ -468,8 +480,10 @@ class v1tov2Controller extends Controller {
                 $recipient_id = $usersMap[$d["recipient_id"]];
             }
             $responsible_id = 0;
-            if (isset($usersMap[$d["responsible_id"]])) {
-                $responsible_id = $usersMap[$d["responsible_id"]];
+            if(isset($d["responsible_id"])){
+                if (isset($usersMap[$d["responsible_id"]])) {
+                    $responsible_id = $usersMap[$d["responsible_id"]];
+                }
             }
 
             //$package_id = 0;
@@ -499,6 +513,11 @@ class v1tov2Controller extends Controller {
 
         $model = new BkNightWE();
         foreach ($pricing_old as $d) {
+            
+            $pric = 1;
+            if(isset($belongingMap[$d["id"]])){
+                $pric = $belongingMap[$d["id"]];
+            }
 
             $model->setPricing($belongingMap[$d["id"]], $id_space, $d["tarif_unique"], $d["tarif_night"], $d["night_start"], $d["night_end"], $d["tarif_we"], $d["choice_we"]);
         }
@@ -519,8 +538,13 @@ class v1tov2Controller extends Controller {
                 $idResource = $resourcesMap[$d["id_resource"]];
             }
 
-            $model->setPackage($d["id_package"], $idResource, $d["name"], $d["duration"]);
-            $packagesMap[$d["id_package"]] = $d["id_package"];
+            $id_package = 0;
+            if(isset($d["id_package"])){
+                $id_package = $d["id_package"];
+            
+                $model->setPackage($d["id_package"], $idResource, $d["name"], $d["duration"]);
+                $packagesMap[$d["id_package"]] = $d["id_package"];
+            }
         }
         return $packagesMap;
     }

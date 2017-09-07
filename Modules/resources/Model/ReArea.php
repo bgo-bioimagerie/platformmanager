@@ -29,6 +29,16 @@ class ReArea extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
+    public function getIdFromNameSpace($name, $id_space) {
+        $sql = "SELECT id FROM re_area WHERE name=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
+        if ($req->rowCount() > 0) {
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+
     public function getForSpace($id_space) {
         $sql = "SELECT * FROM re_area WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
@@ -37,6 +47,12 @@ class ReArea extends Model {
     public function getName($id) {
         $sql = "SELECT name FROM re_area WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
+        return $tmp[0];
+    }
+
+    public function getIdFromName($name) {
+        $sql = "SELECT id FROM re_area WHERE name=?";
+        $tmp = $this->runRequest($sql, array($name))->fetch();
         return $tmp[0];
     }
 

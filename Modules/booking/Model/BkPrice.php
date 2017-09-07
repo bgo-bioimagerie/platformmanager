@@ -84,6 +84,12 @@ class BkPrice extends Model {
         }
     }
     
+    public function import($id_resource, $id_package, $day_night_we, 
+                    $id_belonging, $price){
+        $sql = "INSERT INTO bk_prices (id_resource, id_package, id_belonging, price, day_night_we) VALUES (?,?,?,?,?)";
+            $this->runRequest($sql, array($id_resource, $id_package, $id_belonging, $price, $day_night_we));
+    }
+    
     public function setPriceNight($id_resource, $id_belongings, $price){
         if ($this->isPriceDay($id_resource, $id_belongings, "night")){
             $sql = "UPDATE bk_prices SET price=? WHERE id_resource=? AND id_belonging=? AND day_night_we=?";

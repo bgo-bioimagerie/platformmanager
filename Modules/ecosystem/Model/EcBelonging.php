@@ -215,6 +215,17 @@ class EcBelonging extends Model {
         }
     }
 
+    public function getIdByNameSpace($name, $id_space) {
+        $sql = "select id from ec_belongings where name=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            return $tmp[0];  // get the first line of the result
+        } else {
+            return "";
+        }
+    }
+
     /**
      * get the id of a belonging from it's name
      * 

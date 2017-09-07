@@ -85,6 +85,18 @@ class ResourceInfo extends Model {
         $sql = "SELECT * FROM re_info WHERE id_space=?";
         return $this->runRequest($sql, array($id))->fetchAll();
     }
+    
+    public function getIdByName($name){
+        $sql = "SELECT id FROM re_info WHERE name=?";
+        $tmp = $this->runRequest($sql, array($name))->fetch();
+        return $tmp[0];
+    }
+    
+    public function getIdByNameSpace($name, $id_space){
+        $sql = "SELECT id FROM re_info WHERE name=? AND id_space=?";
+        $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
+        return $tmp[0];
+    }
 
     public function getAreaID($id){
         $sql = "SELECT id_area FROM re_info WHERE id=?";

@@ -56,6 +56,16 @@ class Anticorps extends Model {
         $this->addColumn("ac_anticorps", "id_space", "INT(11)", 0);
     }
 
+    public function getIdFromNoH2P2($no_h2p2, $id_space){
+        $sql = "SELECT id FROM ac_anticorps WHERE no_h2p2=? AND id_space=?";
+        $req = $this->runRequest($sql, array($no_h2p2, $id_space));
+        if($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     public function setExportCatalog($id, $exportCatalog) {
         $sql = "UPDATE ac_anticorps SET export_catalog=? WHERE id=?";
         $this->runRequest($sql, array($exportCatalog, $id));

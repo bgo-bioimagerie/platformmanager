@@ -21,7 +21,7 @@ class BkCalQuantities extends Model {
                 `id_quantity` int(11) NOT NULL,
                 `id_resource` int(11) NOT NULL,
                 `name` varchar(30) NOT NULL DEFAULT '',
-		`mandatory` int(1) NOT NULL,			
+		`mandatory` int(1) NOT NULL,
 		PRIMARY KEY (`id`)
 		);";
 
@@ -49,11 +49,12 @@ class BkCalQuantities extends Model {
         $sql = "select * from bk_calquantities";
         return $this->runRequest($sql)->fetchAll();
     }
-    
+
     public function getForSpace($id_space, $sort) {
-        $sql = "select * from bk_calquantities WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY ".$sort." ASC;";
+        $sql = "select * from bk_calquantities WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY " . $sort . " ASC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+
     /**
      * get a supplementary info from it ID
      * @param unknown $id
@@ -84,6 +85,17 @@ class BkCalQuantities extends Model {
             return $tmp[0];
         } else {
             return "not found";
+        }
+    }
+
+    public function getIdByName($name) {
+        $sql = "select id from bk_calquantities where name=?;";
+        $data = $this->runRequest($sql, array($name));
+        if ($data->rowCount() == 1) {
+            $tmp = $data->fetch();
+            return $tmp[0];
+        } else {
+            return 0;
         }
     }
 

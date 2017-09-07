@@ -127,7 +127,11 @@ class CoremenusController extends CoresecureController {
             $data[$i]["menu"] = $modelMenu->menuName($data[$i]["id_menu"]);
         }
         
-        $headers = array("id" => "ID", "name" => CoreTranslator::Name($lang), "menu" => CoreTranslator::Menu($lang));
+        $headers = array(
+            "name" => CoreTranslator::Name($lang), 
+            "menu" => CoreTranslator::Menu($lang),
+            "display_order" => CoreTranslator::Display_order($lang)
+            );
         
         $table->addLineEditButton("coremenusitemedit");
         $table->addDeleteButton("coremenusitemdelete");
@@ -165,6 +169,7 @@ class CoremenusController extends CoresecureController {
         $form->addUpload("icon", CoreTranslator::Icon($lang));
         $form->addSelect("id_menu", CoreTranslator::Menu($lang), $choices, $choicesid, $item["id_menu"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $item["color"]);
+        $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $item["display_order"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "coremenusitemedit/".$id);
         $form->setButtonsWidth(2, 9);
         
@@ -173,8 +178,9 @@ class CoremenusController extends CoresecureController {
             $url = $this->request->getParameterNoException("url");
             $id_menu = $this->request->getParameterNoException("id_menu");
             $color = $this->request->getParameterNoException("color");
+            $display_order = $this->request->getParameterNoException("display_order");
             
-            $id = $modelMenu->setDataMenu($id, $name, $url, $id_menu, $color);
+            $id = $modelMenu->setDataMenu($id, $name, $url, $id_menu, $color, $display_order);
             
             $target_dir = "data/core/menu/";
             if ($_FILES["icon"]["name"] != "") {

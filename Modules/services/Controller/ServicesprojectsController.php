@@ -423,20 +423,20 @@ class ServicesprojectsController extends CoresecureController {
         $inChargeList = $modelVisa->getForList($id_space);
         
         //$form->addSeparator(CoreTranslator::Description($lang));
-        $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
-        $form->addSelect("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
-        $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
-        $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
+        $form->addSelectMandatory("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
+        $form->addSelectMandatory("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
+        $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
+        $form->addSelectMandatory("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
 
-        $newIDs = array(1, 2, 3);
-        $newNames = array(CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
+        $newIDs = array("", 1, 2, 3);
+        $newNames = array("", CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
 
-        $form->addSelect("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
-        $form->addSelect("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
+        $form->addSelectMandatory("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
+        $form->addSelectMandatory("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
 
         $modelOrigin = new SeOrigin();
         $origins = $modelOrigin->getForList($id_space);
-        $form->addSelect("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
+        $form->addSelectMandatory("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
 
         $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, CoreTranslator::dateFromEn($value["time_limit"], $lang));
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
@@ -470,13 +470,6 @@ class ServicesprojectsController extends CoresecureController {
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
-
-            if($this->request->getParameter("in_charge") == 0){
-                $message = ServicesTranslator::PersonInChargeIsMandatory($lang);
-                $_SESSION["message"] = $message;
-                $this->redirect("servicesprojectedit/".$id_space."/0");
-                return;
-            }
             
             $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), 
                     $this->request->getParameter("id_resp"), 

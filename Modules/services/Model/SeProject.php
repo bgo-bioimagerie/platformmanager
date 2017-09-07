@@ -51,6 +51,16 @@ class SeProject extends Model {
         $this->runRequest($sql2);
     }
 
+    public function getIdFromName($name, $id_space){
+        $sql = "SELECT id FROM se_project WHERE name=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
+        if ($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     public function allOpenedProjects($id_space){
         $sql = "SELECT * FROM se_project WHERE id_space=? AND date_close=0000-00-00 ORDER BY date_open ASC;";
         $projects = $this->runRequest($sql, array($id_space))->fetchAll();
@@ -254,6 +264,12 @@ class SeProject extends Model {
         $data = $this->runRequest($sql, array($id_project))->fetchAll();
         return $data;
     }
+    
+    public function getAllServices(){
+        $sql = "SELECT * FROM se_project_service";
+        $req = $this->runRequest($sql);
+        return $req->fetchAll();
+    }
 
     public function getProjectServices($id_project) {
         $sql = "SELECT * FROM se_project_service WHERE id_project=?";
@@ -359,7 +375,6 @@ class SeProject extends Model {
         $req = $this->runRequest($sql, array($id_space));
 
         $entries = $req->fetchAll();
-
         $modelUser = new CoreUser();
 
         for ($i = 0; $i < count($entries); $i++) {
@@ -376,11 +391,11 @@ class SeProject extends Model {
         $entry["name"] = "";
         $entry["id_resp"] = "";
         $entry["id_user"] = "";
-        $entry["date_open"] = "";
+        $entry["date_open"] = date("Y-m-d");
         $entry["date_close"] = "";
         $entry["new_team"] = "";
         $entry["new_project"] = "";
-        $entry["time_limit"] = "";
+        $entry["time_limit"] = date("Y-m-d");
         $entry["id_origin"] = "";
         $entry["in_charge"] = 0;
         return $entry;

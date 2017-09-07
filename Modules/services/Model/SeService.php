@@ -25,6 +25,16 @@ class SeService extends Model {
         $this->runRequest($sql);
     }
 
+    public function getIdFromName($name, $id_sapce){
+        $sql = "SELECT id FROM se_services WHERE name=? AND id_space=?";
+        $data = $this->runRequest($sql, array($name, $id_sapce));
+        if($data->rowCount() > 0){
+            $tmp = $data->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     public function getItemType($id){
         $sql = "SELECT type_id FROM se_services WHERE id=?";
         $data = $this->runRequest($sql, array($id))->fetch();

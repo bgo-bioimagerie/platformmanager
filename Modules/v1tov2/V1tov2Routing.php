@@ -7,10 +7,10 @@ class V1tov2Routing extends Routing{
     public function listRouts(){
         
         $this->addRoute("v1tov2", "v1tov2", "v1tov2", "index", array(), array());
-        $this->addRoute("v1tov2h2p2", "v1tov2h2p2", "v1tov2h2p2", "index", array(), array());
-        $this->addRoute("v1tov2tem", "v1tov2tem", "v1tov2tem", "index", array(), array());
-        $this->addRoute("v1tov2spectro", "v1tov2spectro", "v1tov2spectro", "index", array(), array());
-        $this->addRoute("v1tov2apex", "v1tov2apex", "v1tov2apex", "index", array(), array());
+        
+        $this->addRoute("importgrr", "importgrr", "importgrr", "index", array(), array());
+        $this->addRoute("importbiosit", "importbiosit", "importbiosit", "index", array(), array());
+        
         
         $this->addRoute("tomultiplebelonging", "tomultiplebelonging", "tomultiplebelonging", "index", array(), array());
         $this->addRoute("importauthorizations", "importauthorizations", "importauthorizations", "index", array(), array());

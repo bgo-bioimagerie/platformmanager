@@ -23,6 +23,16 @@ class SeOrigin extends Model {
         $this->addColumn('se_origin', 'display_order', 'int(11)', 0);
     }
 
+    public function getIdFromName($name, $id_space){
+        $sql = "SELECT id FROM se_origin WHERE name=? AND id_space=?";
+        $req = $this->runRequest($sql, array($name, $id_space));
+        if ($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     /**
      * 
      * @param type $id
@@ -53,6 +63,8 @@ class SeOrigin extends Model {
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $ids = array();
         $names = array();
+        $ids[] = "";
+        $names[] = "";
         foreach($data as $dat){
             $ids[] = $dat['id'];
             $names[] = $dat['name'];

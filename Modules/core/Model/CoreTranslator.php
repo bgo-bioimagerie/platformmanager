@@ -1043,7 +1043,7 @@ class CoreTranslator {
 
     public static function Display_order($lang) {
         if ($lang == "fr") {
-            return "Order d'afichage";
+            return "Ordre d'affichage";
         }
         return "Display order";
     }

@@ -21,7 +21,18 @@ class SeVisa extends Model {
         $this->runRequest($sql);
     }
 
+    public function getIdFromUser($id_user, $id_space){
+        $sql = "SELECT id FROM se_visa WHERE id_user=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id_user, $id_space));
+        if($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+    
     /**
+     * 
      * 
      * @param type $id
      * @param type $name
@@ -58,7 +69,7 @@ class SeVisa extends Model {
         
         $ids = array();
         $names = array();
-        $ids[] = 0;
+        $ids[] = "";
         $names[] = "";
         $modelUser = new CoreUser();
         foreach($data as $dat){
