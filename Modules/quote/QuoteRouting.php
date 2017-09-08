@@ -12,7 +12,7 @@ class QuoteRouting extends Routing{
 
         
         // add here the module routes
-        $this->addRoute("quotes", "quotes", "quotelist", "index", array("id_space"), array(""));
+        $this->addRoute("quote", "quote", "quotelist", "index", array("id_space"), array(""));
         $this->addRoute("quoteedit", "quoteedit", "quotelist", "edit", array("id_space", "id"), array("", ""));
         
         $this->addRoute("quoteuser", "quoteuser", "quotelist", "editexistinguser", array("id_space", "id"), array("", ""));

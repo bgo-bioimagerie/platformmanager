@@ -40,7 +40,7 @@ class QuoteconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "quotes", "quotes", "glyphicon-user", 
+            $modelSpace->setSpaceMenu($id_space, "quote", "quote", "glyphicon-user", 
                     $this->request->getParameter("quotemenustatus"),
                     $this->request->getParameter("quotemenusdisplay"),
                     1,

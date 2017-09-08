@@ -367,7 +367,7 @@ class QuotelistController extends CoresecureController {
         $modelQuote = new Quote();
         $modelQuote->delete($id);
 
-        $this->redirect("quotes/" . $id_space);
+        $this->redirect("quote/" . $id_space);
     }
 
     public function itemdelete($id_space, $id_item) {

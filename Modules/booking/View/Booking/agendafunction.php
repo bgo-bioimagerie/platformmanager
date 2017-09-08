@@ -106,7 +106,6 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                                         else{
                                             $printEnd = "23:59";
                                         }
-                                        
                                     ?>
                                     <?php echo $printStart . " - " . $printEnd ?></p>
                                     <?php $text = $modelBookingSetting->getSummary($id_space, $entry["recipient_fullname"], $entry['phone'], $shortDescription, $entry['full_description'], true); ?>

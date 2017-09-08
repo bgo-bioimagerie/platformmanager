@@ -1,6 +1,6 @@
 <li>
     <div class="inline pm-inline-div">
-    <a id="menu-button" href="quotes/{{id_space}}">{{Quotes}}</a> 
+    <a id="menu-button" href="quote/{{id_space}}">{{Quotes}}</a> 
     </div>
 </li>
 
