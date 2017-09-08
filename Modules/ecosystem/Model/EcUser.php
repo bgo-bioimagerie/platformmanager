@@ -380,6 +380,13 @@ class EcUser extends Model {
         $user = $this->runRequest($sql);
         return $user->fetchAll();
     }
+    
+    public function getAllSpaceActifEmails($id_space){
+        $sql = "SELECT email FROM core_users WHERE id IN "
+                . "(SELECT id_user FROM core_j_spaces_user WHERE status>0 AND id_space=?)";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
 
     /**
      * Export Responsible lists to file

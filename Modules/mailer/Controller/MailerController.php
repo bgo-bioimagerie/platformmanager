@@ -80,7 +80,7 @@ class MailerController extends CoresecureController {
         $toAdress = array();
         if ($to == "all") {
             $modelUser = new EcUser();
-            $toAdress = $modelUser->getAllActifEmails();
+            $toAdress = $modelUser->getAllSpaceActifEmails($id_space);
         } elseif ($to == "managers") {
             $modelUser = new EcUser();
             $toAdress = $modelUser->getActiveManagersEmails($id_space);
