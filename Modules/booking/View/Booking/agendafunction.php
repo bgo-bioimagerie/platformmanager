@@ -82,7 +82,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                         $isProjectMode = false;
                     }
                     foreach ($entries as $entry) {
-                        if (date("d", $entry["start_time"]) == $i) {
+                        if (date("d", $entry["start_time"]) <= $i && date("d", $entry["end_time"]) >= $i) {
                             $found = true;
                             $shortDescription = $entry['short_description'];
                             if ($isProjectMode) {
@@ -93,8 +93,23 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 
                             <div style="background-color: <?php echo $entry['color_bg'] ?>; max-width:200px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;" >
                                 <p style="border-bottom: thin solid #e1e1e1; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px; color:<?php echo $entry['color_text'] ?>;" >
-                <?php echo date("H:i", $entry["start_time"]) . " - " . date("H:i", $entry["end_time"]) ?></p>
-                <?php $text = $modelBookingSetting->getSummary($id_space, $entry["recipient_fullname"], $entry['phone'], $shortDescription, $entry['full_description'], true); ?>
+                                    <?php 
+                                        if(date("d", $entry["start_time"]) == $i){
+                                            $printStart = date("H:i", $entry["start_time"]);
+                                        }
+                                        else{
+                                            $printStart = "00:00";
+                                        }
+                                        if(date("d", $entry["end_time"]) == $i){
+                                            $printEnd = date("H:i", $entry["end_time"]);
+                                        }
+                                        else{
+                                            $printEnd = "23:59";
+                                        }
+                                        
+                                    ?>
+                                    <?php echo $printStart . " - " . $printEnd ?></p>
+                                    <?php $text = $modelBookingSetting->getSummary($id_space, $entry["recipient_fullname"], $entry['phone'], $shortDescription, $entry['full_description'], true); ?>
                                 <p style="font-size:<?php echo $agendaStyle["resa_font_size"] ?>px; color:<?php echo $entry['color_text'] ?>;"><?php echo $text ?></p>
                             </div>
                         </a>
