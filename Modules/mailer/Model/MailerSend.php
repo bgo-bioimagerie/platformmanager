@@ -11,7 +11,14 @@ require("externals/PHPMailer/class.phpmailer.php");
  */
 class MailerSend extends Model {
 
-	
+	public function sendEmailSimulate($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true){
+            echo "send email from " .$fromName. "(" . $from . ") to ";
+            print_r($toAdress);
+            echo " subject = " . $subject . " content = " . $content. "<br/>";
+            if($sentCopyToFrom){
+                echo " use copy to from <br/>";
+            }
+        }
 	
 	public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true ){
 		

@@ -74,6 +74,12 @@ class CoreSpace extends Model {
         return false;
     }
     
+    public function getEmailsSpaceManagers($id_space){
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>2)";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+    
     public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu=1, $color="") {
         if ($this->isSpaceMenu($id_space, $url)) {
             $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=? WHERE id_space=? AND url=?";

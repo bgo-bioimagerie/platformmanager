@@ -5,6 +5,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/booking/Controller/BookingabstractController.php';
 
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
+require_once 'Modules/resources/Model/ResourceInfo.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkBookingTableCSS.php';
@@ -456,14 +457,40 @@ class BookingdefaultController extends BookingabstractController {
                 }
             }
         }
+        
+        $emailSpaceAdmins = $modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
+        if($emailSpaceAdmins == 2){
+            $modelSpace = new CoreSpace();
+            $space = $modelSpace->getSpace($id_space);
+
+            // user info
+            $userModel = new EcUser();
+            $user = $userModel->getInfo($_SESSION["id_user"]);
+            
+            // get resource name
+            $modelResource = new ResourceInfo();
+            $resourceName = $modelResource->getName($id_resource);
+
+            // mail content
+            $from = $user["email"];
+            $toAdress = $modelSpace->getEmailsSpaceManagers($id_space);
+            $subject = $resourceName . " has been booked";
+            $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
+            if( !$BkUseRecurentBooking || $periodic_option == 1 ){
+                $content .= " with periodicity";
+            }
+            
+            //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
+            // send the email
+            $mailerModel = new MailerSend();
+            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
+        }
 
         //echo 'message = ' . $_SESSION["message"] . '<br/';
         //echo "redirect <br/>";
         $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
     }
     
-    
-
     private function editreservation($id_space, $resaInfo, $param) {
 
         //echo 'start edit reservation <br/>';
