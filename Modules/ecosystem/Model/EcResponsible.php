@@ -176,6 +176,8 @@ class EcResponsible extends Model {
     
     public function setResponsibles($id_user, $responsibles){
         $this->removeAllUserRespJoin($id_user);
+        
+        //print_r($responsibles);
         foreach($responsibles as $resp){
             $this->addUserRespJoin($id_user, $resp);
         }
