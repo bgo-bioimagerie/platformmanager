@@ -259,7 +259,8 @@ class CoreUser extends Model {
             $login
         ));
         if ($user->rowCount() > 0) {
-            return $user->fetch()[0]; // get the first line of the result
+            $tmp = $user->fetch();
+            return $tmp[0]; // get the first line of the result
         } else {
             return 0;
         }

@@ -1376,4 +1376,20 @@ class CoreTranslator {
         }
         return "Remember me";
     }
+    
+    public static function Who_can_delete_users($lang){
+        if ($lang == "fr") {
+            return "Qui peut supprimer des utilisateurs";
+        }
+        return "Who can delete users";
+    }
+    
+    public static function Select($lang){
+        if ($lang == "fr") {
+            return "Choix";
+        }
+        return "Select";
+    }
+    
 }
+
