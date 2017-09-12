@@ -14,6 +14,7 @@ class V1tov2Routing extends Routing{
         
         $this->addRoute("tomultiplebelonging", "tomultiplebelonging", "tomultiplebelonging", "index", array(), array());
         $this->addRoute("importauthorizations", "importauthorizations", "importauthorizations", "index", array(), array());
+        $this->addRoute("importspaceauth", "importspaceauth", "importspaceauth", "index", array(), array());
         
         $this->addRoute("activateusers", "activateusers", "activateusers", "index", array(), array());
         $this->addRoute("cleanresa", "cleanresa", "cleanresa", "index", array(), array());
