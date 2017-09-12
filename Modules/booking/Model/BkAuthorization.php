@@ -80,6 +80,20 @@ class BkAuthorization extends Model {
             ));
         }
     }
+    
+    public function insertAuth($date, $user_id, $lab_id, $visa_id, $resource_id){
+        $is_active = 1;
+        $sql = "insert into bk_authorization(date, user_id, lab_id, visa_id, resource_id, is_active)" .
+                    " values(?,?,?,?,?,?)";
+            $this->runRequest($sql, array(
+                $date,
+                $user_id,
+                $lab_id,
+                $visa_id,
+                $resource_id,
+                $is_active
+            ));
+    }
 
     /**
      * Check if an authorization exists

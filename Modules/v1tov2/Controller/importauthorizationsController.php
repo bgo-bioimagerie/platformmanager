@@ -44,18 +44,18 @@ class ImportauthorizationsController extends Controller {
     public function indexAction() {
 
         // ---------- SETTINGS ----------
-        $dsn_old = 'mysql:host=localhost;dbname=sygrrif2_h2p2;charset=utf8';
+        $dsn_old = 'mysql:host=localhost;dbname=pm_h2p2;charset=utf8';
         $login_old = "root";
         $pwd_old = "root";
 
         $pdo_old = new PDO($dsn_old, $login_old, $pwd_old, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
-        $id_space = 2;
+        $id_space = 8;
 
-        echo "import importVisas <br/>";
-        $visasMap = $this->importVisas($pdo_old);
+        //echo "import importVisas <br/>";
+        //$visasMap = $this->importVisas($pdo_old);
         echo "import importAuthorizations <br/>";
-        $this->importAuthorizations($pdo_old);
+        $this->importAuthorizations($pdo_old, $id_space);
 
         echo "end <br/>";
     }
