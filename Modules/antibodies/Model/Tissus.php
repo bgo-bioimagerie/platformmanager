@@ -104,6 +104,9 @@ class Tissus extends Model {
     }
 
     public function getInfoForAntibody($id_anticorps) {
+        if($id_anticorps == 0){
+            return array();
+        }
         $sql = "SELECT DISTINCT 
                     ac_j_tissu_anticorps.ref_protocol AS ref_protocol,
                     ac_j_tissu_anticorps.dilution AS dilution,    
@@ -154,7 +157,12 @@ class Tissus extends Model {
 
         for ($i = 0 ; $i < count($tissuss) ; $i++) {
             $proto = $modelProtocol->getProtocolsByRef($tissuss[$i]["ref_protocol"]);
-            $tissuss[$i]["id_protocol"] = $proto[0]["id"];
+            if(isset($proto[0])){
+                $tissuss[$i]["id_protocol"] = $proto[0]["id"];
+            }
+            else{
+                $tissuss[$i]["id_protocol"] = "";
+            }
         }
 
         if ($catalog) {
