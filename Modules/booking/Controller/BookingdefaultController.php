@@ -103,7 +103,14 @@ class BookingdefaultController extends BookingabstractController {
             if ($start_date > time()) {
                 return true;
             }
+            $modelConfig = new CoreConfig();
+            $canEdit = $modelConfig->getParamSpace("BkCanUserEditStartedResa", $id_space);
+            if($canEdit == 1){
+                return true;
+            }
         }
+        
+        
         return false;
     }
 

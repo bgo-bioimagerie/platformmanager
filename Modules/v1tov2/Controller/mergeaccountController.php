@@ -65,6 +65,6 @@ class mergeaccountController extends CoresecureController {
         
         $form = new Form("mergeaccountform", $this->request);
         $formAdd = new FormAdd("mergeaccountformadd", $this->request);
-        $formAdd->addSelect("user", CoreTranslator::User(), $choices, $choicesid);
+        $formAdd->addSelect("user", CoreTranslator::User(), $users["names"], $choicesid);
     }
 }

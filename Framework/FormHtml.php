@@ -223,14 +223,19 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function date($validated, $label, $name, $value, $lang, $labelWidth = 2, $inputWidth = 9) {
+    static public function date($validated, $label, $name, $value, $lang, $required, $labelWidth = 2, $inputWidth = 9) {
 
+        $star = "";
+        if($required != ""){
+            $star = "*";
+        }
+        
         $html = "<div class=\"form-group" . $validated . "\">";
-        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label .$star. "</label>";
 
         $html .= "<div class='col-xs-" . $inputWidth . "'>";
         $html .= "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-        $html .= "<input type='text' class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
+        $html .= "<input type='text' ".$required." class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
         $html .= "          <span class=\"input-group-addon\">";
         $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
         $html .= "          </span>";
