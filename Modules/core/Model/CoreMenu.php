@@ -33,14 +33,14 @@ class CoreMenu extends Model {
                 `id_menu` int(11) NOT NULL DEFAULT 1,
                 `color` varchar(7) NOT NULL DEFAULT '#428bca',
                 `display_order` int(11) NOT NULL DEFAULT 0,
+                `description` text NOT NULL DEFAULT '',
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql2);
         
         $this->addColumn('core_datamenu', 'color', "varchar(7)", "#428bca");
         $this->addColumn('core_datamenu', 'display_order', "int(11)", 0);
-        
-        
+        $this->addColumn('core_datamenu', 'description', "text", "");        
                 
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_menu` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -230,9 +230,9 @@ class CoreMenu extends Model {
      * @param string $icon Menu icon (bootstrap icon)
      * @return PDOStatement
      */
-    public function addDataMenu($name, $link, $icon, $color) {
-        $sql = "INSERT INTO core_datamenu (name, link, icon, color) VALUES(?,?,?,?,?)";
-        $pdo = $this->runRequest($sql, array($name, $link, $icon, $color));
+    public function addDataMenu($name, $link, $icon, $color, $description) {
+        $sql = "INSERT INTO core_datamenu (name, link, icon, color, description) VALUES(?,?,?,?,?,?)";
+        $pdo = $this->runRequest($sql, array($name, $link, $icon, $color, $description));
         return $pdo;
     }
 
@@ -269,16 +269,16 @@ class CoreMenu extends Model {
      * @param string $url Url link
      * @param string $id_menu ID of the parent menu
      */
-    public function setDataMenu($id, $name, $url, $id_menu, $color, $display_order) {
+    public function setDataMenu($id, $name, $url, $id_menu, $color, $display_order, $description) {
 
         if ($this->isDataMenu($id)){
-            $sql = "UPDATE core_datamenu SET name=?, link=?, id_menu=?, color=?, display_order=? WHERE id=?";
-            $this->runRequest($sql, array($name, $url, $id_menu, $color, $display_order, $id));
+            $sql = "UPDATE core_datamenu SET name=?, link=?, id_menu=?, color=?, display_order=?, description=? WHERE id=?";
+            $this->runRequest($sql, array($name, $url, $id_menu, $color, $display_order, $description, $id));
             return $id;
         }
         else{
-            $sql = "INSERT INTO core_datamenu (name, link, id_menu, color, display_order) VALUES(?,?,?,?,?)";
-            $this->runRequest($sql, array($name, $url, $id_menu,$color,$display_order));
+            $sql = "INSERT INTO core_datamenu (name, link, id_menu, color, display_order, description) VALUES(?,?,?,?,?,?)";
+            $this->runRequest($sql, array($name, $url, $id_menu,$color,$display_order, $description));
             return $this->getDatabase()->lastInsertId();
         }
     }

@@ -167,6 +167,7 @@ class CoremenusController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $item["name"]);
         $form->addText("url", CoreTranslator::Url($lang), true, $item["link"]);
         $form->addUpload("icon", CoreTranslator::Icon($lang));
+        $form->addTextArea("description", CoreTranslator::Description($lang), false, $item["description"]);
         $form->addSelect("id_menu", CoreTranslator::Menu($lang), $choices, $choicesid, $item["id_menu"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $item["color"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $item["display_order"]);
@@ -179,8 +180,9 @@ class CoremenusController extends CoresecureController {
             $id_menu = $this->request->getParameterNoException("id_menu");
             $color = $this->request->getParameterNoException("color");
             $display_order = $this->request->getParameterNoException("display_order");
+            $description = $this->request->getParameterNoException("description");
             
-            $id = $modelMenu->setDataMenu($id, $name, $url, $id_menu, $color, $display_order);
+            $id = $modelMenu->setDataMenu($id, $name, $url, $id_menu, $color, $display_order, $description);
             
             $target_dir = "data/core/menu/";
             if ($_FILES["icon"]["name"] != "") {

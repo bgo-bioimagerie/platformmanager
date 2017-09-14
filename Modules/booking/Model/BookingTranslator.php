@@ -1446,4 +1446,12 @@ class BookingTranslator {
         return "Delete periodicity";
     }
     
+    public static function CanUserEditStartedResa($lang){
+        if ($lang == "fr") {
+            return "Un utilisateur peut-il modifier une réservation débutée ?";
+        }
+        return "Can user edit started reservation ?";
+    }
+    
+    
 }

@@ -438,7 +438,7 @@ class ServicesprojectsController extends CoresecureController {
         $origins = $modelOrigin->getForList($id_space);
         $form->addSelectMandatory("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
 
-        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, CoreTranslator::dateFromEn($value["time_limit"], $lang));
+        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), true, CoreTranslator::dateFromEn($value["time_limit"], $lang));
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
         if ($id > 0) {
             $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));

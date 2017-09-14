@@ -93,6 +93,16 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
+        $formBookingCanUserEditStartedResa = $this->bookingCanUserEditStartedResa($id_space, $lang);
+        if ($formBookingCanUserEditStartedResa->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("BkCanUserEditStartedResa", $this->request->getParameter("BkCanUserEditStartedResa"), $id_space);
+        
+            $this->redirect("bookingconfig/".$id_space);
+            return;
+        }
+        
+        
         $formBookingOption = $this->bookingOptionForm($id_space, $lang);
         if ($formBookingOption->check()){
             $editBookingDescriptionSettings = $this->request->getParameterNoException ( "BkDescriptionFields" );
@@ -128,6 +138,7 @@ class BookingconfigController extends CoresecureController {
             $formAuth->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formbookingUseRecurentBooking->getHtml($lang),
+            $formBookingCanUserEditStartedResa->getHtml($lang),
             $formBookingOption->getHtml($lang), 
             $formeditReservation->getHtml($lang), 
             $formEditBookingMailing->getHtml($lang));
@@ -146,6 +157,21 @@ class BookingconfigController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);
 
+        return $form;
+    }
+    
+    protected function bookingCanUserEditStartedResa($id_space, $lang){
+        $modelCoreConfig = new CoreConfig();
+        $BkCanUserEditStartedResa = $modelCoreConfig->getParamSpace("BkCanUserEditStartedResa", $id_space);
+        
+        $form = new Form($this->request, "bookingCanUserEditStartedResaForm");
+        $form->addSeparator(BookingTranslator::CanUserEditStartedResa($lang));
+        
+        $form->addSelect("BkCanUserEditStartedResa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkCanUserEditStartedResa);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+        
         return $form;
     }
     
