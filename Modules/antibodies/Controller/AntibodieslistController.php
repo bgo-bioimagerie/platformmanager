@@ -295,13 +295,18 @@ class AntibodieslistController extends CoresecureController {
         // Owner Table
         $modelOwner = new AcOwner();
         $owners = $modelOwner->getInfoForAntibody($id);
+        
+        //echo "owners = <br/>";
+        //print_r($owners);
+        //echo "<br/>";
+        
         $ownersTable = $this->createOwnerTable($id_space, $owners);
 
         $tissusFormGenerator = new TissusForm($this->request, "tissusForm", "antibodiesedittissus/" . $id_space);
         $tissusFormGenerator->setSpace($id_space);
         $tissusFormGenerator->setLang($lang);
         $tissusFormGenerator->render();
-
+        
         $ownerFormGenerator = new OwnerForm($this->request, "ownerForm", "antibodieseditowner/" . $id_space);
         $ownerFormGenerator->setSpace($id_space);
         $ownerFormGenerator->setLang($lang);
@@ -369,6 +374,9 @@ class AntibodieslistController extends CoresecureController {
 
     protected function createTissusTable($id_space, $data) {
 
+        //print_r($data);
+        //echo "data[0]['id'] = " . $data[0]['id'] . "<br/>";
+        
         $lang = $this->getLanguage();
 
         $table = new TableView("tissusTable");

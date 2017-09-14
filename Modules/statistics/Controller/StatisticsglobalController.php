@@ -28,13 +28,34 @@ class StatisticsglobalController extends CoresecureController {
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
-
-
         $lang = $this->getLanguage();
+
+        $modelCoreConfig = new CoreConfig();
+        $date_begin = $this->request->getParameterNoException("date_begin");
+        if($date_begin == ""){
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $dateArray = explode("-", $date_begin);
+            $y = date("Y") - 1;
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            
+        }
+        $date_end = $this->request->getParameterNoException("date_end");
+        if($date_end == ""){
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $dateArray = explode("-", $date_end);
+            $y = date("Y");
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        }
+        
+        
         $form = new Form($this->request, "generateGlobalStatForm");
         $form->setTitle(StatisticsTranslator::StatisticsGlobal($lang));
-        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, $this->request->getParameterNoException("date_begin"));
-        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, $this->request->getParameterNoException("date_end"));
+        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, $date_begin);
+        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, $date_end);
         $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), 
                 array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), 
                 array(1,0), $this->request->getParameterNoException("generateunitstats"));
@@ -74,10 +95,10 @@ class StatisticsglobalController extends CoresecureController {
 
     protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space) {
 
-        $controllerServices = new ServicesstatisticsprojectController();
+        $controllerServices = new ServicesstatisticsprojectController($this->request);
         $objPHPExcel = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
 
-        $controllerBooking = new BookingstatisticsController();
+        $controllerBooking = new BookingstatisticsController($this->request);
         $objPHPExcel = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel);
 
         $objPHPExcel->setActiveSheetIndex(1);

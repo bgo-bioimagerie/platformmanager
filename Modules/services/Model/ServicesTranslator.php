@@ -501,14 +501,14 @@ class ServicesTranslator {
 
     public static function numberIndustryProjects($lang) {
         if ($lang == "fr") {
-            return "Nb de projets avec les Privé";
+            return "Nb de projets avec les privés";
         }
         return "Number of industry projects";
     }
 
     public static function loyaltyIndustryProjects($lang) {
         if ($lang == "fr") {
-            return "Fidélisation des Privé";
+            return "Fidélisation des privés";
         }
         return "Loyalty of industry projects";
     }
@@ -774,14 +774,14 @@ class ServicesTranslator {
     
     public static function industryProjectInDelay($lang) {
         if ($lang == "fr") {
-            return "Projets industriels en délai";
+            return "Projets privés en délai";
         }
         return "Industry project in time";
     }
     
     public static function industryProjectOutDelay($lang) {
         if ($lang == "fr") {
-            return "Projets industriels hors délai";
+            return "Projets privés hors délai";
         }
         return "Industry project out time";
     }

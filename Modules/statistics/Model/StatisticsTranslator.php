@@ -8,13 +8,13 @@
  */
 class StatisticsTranslator {
 
-    public static function statistics($lang){
+    public static function statistics($lang) {
         if ($lang == "fr") {
             return "Statistiques";
         }
         return "Statistics";
     }
-    
+
     public static function statisticsConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Statistics permet de calculer des statistiques utilisant les données de plusieurs modules (resources, booking, services...)";
@@ -51,41 +51,61 @@ class StatisticsTranslator {
         }
         return "Activate/deactivate menus";
     }
-    
+
     public static function BookingBalance($lang = "") {
         if ($lang == "fr") {
             return "Bilan réservations";
         }
         return "Booking balance";
     }
-    
+
     public static function StatisticsGlobal($lang = "") {
         if ($lang == "fr") {
             return "Bilan global";
         }
         return "Global balance";
     }
-    
+
     public static function Period_begining($lang = "") {
         if ($lang == "fr") {
             return "Début période";
         }
         return "Period begining";
     }
-    
+
     public static function Period_end($lang = "") {
         if ($lang == "fr") {
             return "Fin période";
         }
         return "Period end";
     }
-    
+
     public static function Exclude_colorcodes($lang = "") {
         if ($lang == "fr") {
             return "Exclure les codes couleur";
         }
         return "Exclude color codes";
     }
+
+    public static function Statisticsperiod($lang) {
+        if ($lang == "fr") {
+            return "Période par défaut";
+        }
+        return "Default period";
+    }
+
+    public static function statisticsperiodbegin($lang) {
+        if ($lang == "fr") {
+            return "Début de période";
+        }
+        return "Period begin";
+    }
     
-    
- }
+    public static function statisticsperiodend($lang) {
+        if ($lang == "fr") {
+            return "Fin de période";
+        }
+        return "Period end";
+    }
+
+}

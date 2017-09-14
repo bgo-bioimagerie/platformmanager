@@ -19,12 +19,12 @@ class StatisticsconfigController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        
+
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new Exception("Error 503: Permission denied");
         }
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -34,25 +34,33 @@ class StatisticsconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        
+
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "statistics", "statistics", "glyphicon-signal", 
-                    $this->request->getParameter("statisticsmenustatus"),
-                    $this->request->getParameter("displayMenu"),
-                    1,
-                    $this->request->getParameter("displayColor")
-                    );
-            
-            $this->redirect("statisticsconfig/".$id_space);
+            $modelSpace->setSpaceMenu($id_space, "statistics", "statistics", "glyphicon-signal", $this->request->getParameter("statisticsmenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("displayColor")
+            );
+
+            $this->redirect("statisticsconfig/" . $id_space);
+            return;
+        }
+
+        // period projects
+        $modelCoreConfig = new CoreConfig();
+        $formPerodProject = $this->periodProjectForm($modelCoreConfig, $id_space, $lang);
+        if ($formPerodProject->check()) {
+            $modelCoreConfig->setParam("statisticsperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("statisticsperiodbegin"), $lang), $id_space);
+            $modelCoreConfig->setParam("statisticsperiodend", CoreTranslator::dateToEn($this->request->getParameter("statisticsperiodend"), $lang), $id_space);
+
+            $this->redirect("statisticsconfig/" . $id_space);
             return;
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang)
-                        );
+        $forms = array($formMenusactivation->getHtml($lang),
+            $formPerodProject->getHtml($lang)
+        );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
@@ -62,8 +70,8 @@ class StatisticsconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "statistics");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "statistics");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "statistics");
-        
-        
+
+
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
@@ -72,8 +80,23 @@ class StatisticsconfigController extends CoresecureController {
         $form->addSelect("statisticsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor('displayColor', CoreTranslator::color($lang), false, $displayColor);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/".$id_space);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+
+    public function periodProjectForm($modelCoreConfig, $id_space, $lang) {
+        $projectperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space), $lang);
+        $projectperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("statisticsperiodend", $id_space), $lang);
+
+        $form = new Form($this->request, "periodProjectForm");
+        $form->addSeparator(StatisticsTranslator::Statisticsperiod($lang));
+        $form->addDate("statisticsperiodbegin", StatisticsTranslator::statisticsperiodbegin($lang), true, $projectperiodbegin);
+        $form->addDate("statisticsperiodend", StatisticsTranslator::statisticsperiodend($lang), true, $projectperiodend);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;

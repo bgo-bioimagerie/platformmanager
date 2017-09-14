@@ -471,5 +471,5 @@ class EcusersController extends CoresecureController {
     public function exportallAction($id_space){
         $this->userModel->exportAll($id_space);
     }
-
+    
 }
