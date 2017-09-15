@@ -828,6 +828,20 @@ class ServicesTranslator {
         return "Person in charge is mandatory";
     }
     
+    public static function GanttOpened($lang){
+        if ($lang == "fr") {
+            return "Gantt en cours";
+        }
+        return "Gantt opened";
+    }
+    
+    public static function GanttPeriod($lang){
+        if ($lang == "fr") {
+            return "Gantt période";
+        }
+        return "Gantt period";
+    }
+    
     
 }
 

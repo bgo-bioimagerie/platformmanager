@@ -36,7 +36,7 @@ class ServicesprojectganttController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $incharge = "") {
+    public function indexAction($id_space, $allPeriod = 0, $incharge = "") {
 
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -45,12 +45,35 @@ class ServicesprojectganttController extends CoresecureController {
         $modelProject = new SeProject();
         $modelVisa = new SeVisa();
 
-        if ($incharge == "") {
-            $projects = $modelProject->allOpenedProjects($id_space);
-        } else {
-
-            //$visa = $modelVisa->get($incharge);
-            $projects = $modelProject->allOpenedProjectsByInCharge($id_space, $incharge);
+        if($allPeriod == 1){
+            $modelConfig = new CoreConfig();
+            $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
+            $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
+            
+            $projectperiodbeginArray = explode("-", $projectperiodbegin);
+            $projectperiodendArray = explode("-", $projectperiodend);
+            if( $projectperiodbeginArray[1] <= date("m", time()) ){
+                $year = date("Y", time());
+            }
+            else{
+                $year = date("Y", time()) - 1;
+            }
+            $yearp = $year + 1;
+            $periodStart = $year . "-" . $projectperiodbeginArray[1] . "-" . $projectperiodbeginArray[2];
+            $periodEnd = $yearp . "-" . $projectperiodendArray[1] . "-" . $projectperiodendArray[2] . "<br/>";
+                    
+            if ($incharge == "") {
+                $projects = $modelProject->allPeriodProjects($id_space, $periodStart, $periodEnd);
+            } else {
+                $projects = $modelProject->allPeriodProjectsByInCharge($id_space, $incharge, $periodStart, $periodEnd);
+            }
+        }
+        else{
+            if ($incharge == "") {
+                $projects = $modelProject->allOpenedProjects($id_space);
+            } else {
+                $projects = $modelProject->allOpenedProjectsByInCharge($id_space, $incharge);
+            }
         }
 
         // format into json
@@ -76,32 +99,43 @@ class ServicesprojectganttController extends CoresecureController {
             $projectsjson .= "name: \"" . $modelUser->getUserInitiales($visa["id_user"]) . "\",";
             $projectsjson .= "desc: \"" . $proj["name"] . "\",";
             $projectsjson .= "values: [{";
-            
+
             $startTime = time();
-            if($proj["date_open"] != "0000-00-00"){
+            if ($proj["date_open"] != "0000-00-00") {
                 $startTime = strtotime($proj["date_open"]);
             }
-            
+
             $projectsjson .= "from: \"/Date(" . 1000 * $startTime . ")/\",";
 
             $dateEnd = time();
-            if ($proj["date_close"] != "0000-00-00" && $proj["date_close"] != "") {
-                $dateEnd = strtotime($proj["date_close"]);
-            } else if ($proj["time_limit"] != "0000-00-00" && $proj["time_limit"] != "") {
+            if ($proj["time_limit"] != "0000-00-00" && $proj["time_limit"] != "") {
                 $dateEnd = strtotime($proj["time_limit"]);
             }
-            
-            /*
-            echo "project name: " . $proj["name"] . "<br/>";
-            echo "dateOpen = " . $proj["date_open"] . "<br/>";
-            echo "dateEnd = " . $dateEnd . "<br/>";
-            echo "dateEnd back = " . date("Y-m-d", $dateEnd ) . "<br/>";
-            */
+
+
 
             $projectsjson .= "to: \"/Date(" . 1000 * $dateEnd . ")/\",";
             $projectsjson .= "label: \"" . $proj["name"] . "\",";
             $projectsjson .= "customClass: \"" . $bkColor . "\"";
-            $projectsjson .= "}]";
+            $projectsjson .= "}";
+
+            $closeTime = 0;
+            if ($proj["date_close"] != "0000-00-00" && $proj["date_close"] != "") {
+                $closeTime = strtotime($proj["date_close"]);
+            }
+            if ($closeTime == 0) {
+                $closeTime = time();
+            }
+            if ($closeTime > $dateEnd) {
+                $projectsjson .= ",{";
+                $projectsjson .= "from: \"/Date(" . 1000 * $dateEnd . ")/\",";
+                $projectsjson .= "to: \"/Date(" . 1000 * $closeTime . ")/\",";
+                $projectsjson .= "label: \"" . "\",";
+                $projectsjson .= "customClass: \"colTimeOver\"";
+                $projectsjson .= "}";
+            }
+
+            $projectsjson .= "]";
             $projectsjson .= "}";
         }
         $projectsjson .= "]";
@@ -111,10 +145,13 @@ class ServicesprojectganttController extends CoresecureController {
         $css = "";
         foreach ($bels as $bel) {
 
-            $css .= ".fn-gantt ."."col" . $belInfo["name"]. " {";
-            $css .= "background-color: ".$bel["color"].";";
+            $css .= ".fn-gantt ." . "col" . $bel["name"] . " {";
+            $css .= "background-color: " . $bel["color"] . ";";
             $css .= "}";
         }
+        $css .= ".fn-gantt ." . "colTimeOver" ." {";
+        $css .= "background-color: #DFAF2C;";
+        $css .= "}";
 
 
         $personInCharge = $modelVisa->getAll($id_space);
@@ -126,7 +163,8 @@ class ServicesprojectganttController extends CoresecureController {
             'projectsjson' => $projectsjson,
             'personInCharge' => $personInCharge,
             'activeGantt' => $incharge,
-            'css' => $css
+            'css' => $css,
+            'allPeriod' => $allPeriod
                 ), "indexAction");
     }
 
