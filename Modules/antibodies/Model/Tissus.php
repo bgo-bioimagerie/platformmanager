@@ -150,6 +150,10 @@ class Tissus extends Model {
 				INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
 				INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
 				WHERE ac_j_tissu_anticorps.id_anticorps=?";
+        
+        if($catalog){
+            $sql .= " AND ac_j_tissu_anticorps.status=1";
+        }
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
         $res = $this->runRequest($sql, array($id_anticorps));

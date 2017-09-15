@@ -67,9 +67,21 @@ class SeProject extends Model {
         return $projects;
     }
     
+    public function allPeriodProjects($id_space, $periodStart, $periodEnd){
+        $sql = "SELECT * FROM se_project WHERE id_space=? AND date_open<=? AND (date_close=0000-00-00 OR date_close>=?) ORDER BY date_open ASC;";
+        $projects = $this->runRequest($sql, array($id_space, $periodEnd, $periodStart))->fetchAll();
+        return $projects;
+    }
+    
     public function allOpenedProjectsByInCharge($id_space, $id_incharge){
-        $sql = "SELECT * FROM se_project WHERE id_space=? AND in_charge=? ORDER BY date_open ASC;";
+        $sql = "SELECT * FROM se_project WHERE id_space=? AND in_charge=? AND date_close=0000-00-00 ORDER BY date_open ASC;";
         $projects = $this->runRequest($sql, array($id_space, $id_incharge))->fetchAll();
+        return $projects;
+    }
+    
+    public function allPeriodProjectsByInCharge($id_space, $id_incharge, $periodStart, $periodEnd){
+        $sql = "SELECT * FROM se_project WHERE id_space=? AND in_charge=? AND date_open<=? AND (date_close=0000-00-00 OR date_close>=?) ORDER BY date_open ASC;";
+        $projects = $this->runRequest($sql, array($id_space, $id_incharge, $periodEnd, $periodStart))->fetchAll();
         return $projects;
     }
     

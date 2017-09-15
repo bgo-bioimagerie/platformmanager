@@ -3,11 +3,13 @@
 </li>
 <li>
     <div class="inline pm-inline-div">
-        <a id="menu-button" href="servicesprojectgantt/{{id_space}}">{{gantt}}</a>
+        <a id="menu-button" href="servicesprojectgantt/{{id_space}}/0">{{ganttopened}}</a><br/>
+        <a id="menu-button" href="servicesprojectgantt/{{id_space}}/1">{{ganttperiod}}</a>
     </div>
 </li>
 <li>
     <div class="inline pm-inline-div">
+        <br/>
         <a id="menu-button" href="servicesprojectsopened/{{id_space}}">{{Opened_projects}}</a>
     </div>
 </li>
@@ -22,10 +24,12 @@
     </div>
 </li>
 <div class="inline pm-inline-div">
+    <br/>
     <a id="menu-button" href="servicesorigins/{{id_space}}">{{origins}}</a>
     <a id="menu-button" href="serviceoriginedit/{{id_space}}">+</a>
 </div>
 <div class="inline pm-inline-div">
+    <br/>
     <a id="menu-button" href="servicesvisas/{{id_space}}">{{visas}}</a>
     <a id="menu-button" href="servicesvisaedit/{{id_space}}">+</a>
 </div>

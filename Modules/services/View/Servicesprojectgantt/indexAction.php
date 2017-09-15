@@ -51,6 +51,16 @@ if (!$headless) {
 <div class="col-md-12 pm-table">
     
     <div class="col-md-12">
+        <?php 
+        if($allPeriod == 1){
+            echo "<h3>" . ServicesTranslator::GanttPeriod($lang) . "<h3/>";
+        }
+        else{
+            echo "<h3>" . ServicesTranslator::GanttOpened($lang) . "<h3/>";
+        }
+        ?>
+    </div>    
+    <div class="col-md-12">
         <div class="text-center">
             <div class="btn-group btn-group-sm">
                 
@@ -59,7 +69,7 @@ if (!$headless) {
                 <?php 
                 foreach( $personInCharge as $pic ){
                     ?>
-                    <button class="btn btn-default <?php if ($activeGantt == $pic["id"]) {echo "active";} ?>" onclick="location.href = 'servicesprojectgantt/<?php echo $id_space ?>/<?php echo $pic["id"] ?>';"><?php echo $pic["user_name"] ?></button>
+                    <button class="btn btn-default <?php if ($activeGantt == $pic["id"]) {echo "active";} ?>" onclick="location.href = 'servicesprojectgantt/<?php echo $id_space ?>/<?php echo $allPeriod ?>/<?php echo $pic["id"] ?>';"><?php echo $pic["user_name"] ?></button>
                 <?php
                 }
                 ?>

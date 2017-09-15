@@ -83,7 +83,11 @@ class CatalogpublicController extends Controller {
 
         $statusModel = new Status();
         $status = $statusModel->getStatus();
-        //print_r();
+        
+        $modelCoreConfig = new CoreConfig();
+        $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);
+        $pageLogo = $modelCoreConfig->getParamSpace("CaPublicPageLogo", $id_space);
+        
         // view
         $this->render(array(
             'id_space' => $id_space,
@@ -91,7 +95,9 @@ class CatalogpublicController extends Controller {
             'entries' => $entries,
             'lang' => $lang,
             'activeCategory' => -12,
-            'status' => $status
+            'status' => $status,
+            'pageTitle' => $pageTitle,
+            'pageLogo' => $pageLogo
                 ), "antibodies");
     }
 
