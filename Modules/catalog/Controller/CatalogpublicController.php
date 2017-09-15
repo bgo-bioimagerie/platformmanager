@@ -16,14 +16,14 @@ require_once 'Modules/antibodies/Model/Anticorps.php';
  * @author sprigent
  * Controller for the home page
  */
-class CatalogviewController extends CoresecureController {
+class CatalogpublicController extends Controller {
 
     /**
      * Constructor
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        //$this->checkAuthorizationMenu("catalog");
+        
     }
 
     /**
@@ -31,7 +31,6 @@ class CatalogviewController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space, $idCategory = 0) {
-        $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -60,12 +59,19 @@ class CatalogviewController extends CoresecureController {
             $this->antibodiesAction($id_space, $categories);
             return;
         }
+        // header
+        $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);
+        $pageLogo = $modelCoreConfig->getParamSpace("CaPublicPageLogo", $id_space);
+        
         // view
         $this->render(array("id_space" => $id_space, "lang" => $lang,
             'categories' => $categories,
             'entries' => $entries,
             'lang' => $this->getLanguage(),
-            'activeCategory' => $idCategory));
+            'activeCategory' => $idCategory,
+            'pageTitle' => $pageTitle,    
+            'pageLogo' => $pageLogo
+         ));
     }
 
     public function antibodiesAction($id_space, $categories) {

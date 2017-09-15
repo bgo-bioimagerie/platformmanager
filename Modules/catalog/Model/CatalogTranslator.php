@@ -261,5 +261,21 @@ class CatalogTranslator {
         }
         return "Source";
     }
+    
+    public static function Logo($lang) {
+        if ($lang == "fr") {
+            return "Logo";
+        }
+        return "Logo";
+    }
+    
+    public static function PublicPageHeader($lang) {
+        if ($lang == "fr") {
+            return "Entête de la page publique";
+        }
+        return "Public page header";
+    }
+    
+    
 
 }

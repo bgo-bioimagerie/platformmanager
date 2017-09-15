@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/antibodies/Model/AcProtocol.php';
 
 /**
  * Class defining the Tissus model
