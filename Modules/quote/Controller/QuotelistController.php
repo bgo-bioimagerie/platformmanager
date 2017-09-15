@@ -276,7 +276,7 @@ class QuotelistController extends CoresecureController {
         // get the list of items
         $modelQuote = new Quote();
         $info = $modelQuote->getAllInfo($id_space, $id);
-
+        
         $modelQuoteitems = new QuoteItem();
         $items = $modelQuoteitems->getAll($id);
         $table = array();
@@ -310,8 +310,12 @@ class QuotelistController extends CoresecureController {
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
 
+        $details = "";
+        $invoiceInfo["title"] = "";
+        $number = "";
+        $unit = "";
         ob_start();
-        include('data/quote/template_1.php');
+        include('data/invoices/'.$id_space.'/template.php');
         $content = ob_get_clean();
 
 
