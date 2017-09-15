@@ -1,6 +1,6 @@
-<?php include 'Modules/core/View/layout.php' ?>
+<?php include 'Modules/catalog/View/publiclayout.php' ?>
 
-<?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
+<?php include('Modules/catalog/View/Catalogpublic/toolbar.php') ?>
 
 
 <head>

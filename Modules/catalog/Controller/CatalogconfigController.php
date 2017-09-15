@@ -2,6 +2,8 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/FileUpload.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/catalog/Model/CatalogInstall.php';
@@ -64,10 +66,24 @@ class CatalogconfigController extends CoresecureController {
             $modelConfig->setParam("ca_use_antibodies", $antibody_pluginR, $id_space);
         }
 
+        $formPublicPageHeader = $this->publicPageHeaderForm($id_space, $lang);
+        if ($formPublicPageHeader->check()) {
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("CaPublicPageTitle", $this->request->getParameter("CaPublicPageTitle"), $id_space);
+
+            $target_dir = "data/catalog/logos/";
+            if ($_FILES["CaPublicPageLogo"]["name"] != "") {
+                $ext = pathinfo($_FILES["CaPublicPageLogo"]["name"], PATHINFO_EXTENSION);
+                FileUpload::uploadFile($target_dir, "CaPublicPageLogo", $id_space . "." . $ext);
+                $modelConfig->setParam("CaPublicPageLogo", $target_dir . $id_space . "." . $ext, $id_space);
+            }  
+        }
+
         // view
         $forms = array($formMenusactivation->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formUseAntibodies->getHtml($lang),
+            $formPublicPageHeader->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -121,19 +137,36 @@ class CatalogconfigController extends CoresecureController {
         return $form;
     }
 
-    protected function antibodiesForm($id_space, $lang){
+    protected function antibodiesForm($id_space, $lang) {
         $modelCoreConfig = new CoreConfig();
         $ca_use_antibodies = $modelCoreConfig->getParam("ca_use_antibodies", $id_space);
 
         $form = new Form($this->request, "ca_use_antibodiesForm");
         $form->addSeparator(CatalogTranslator::Antibody($lang));
 
-        $form->addSelect("ca_use_antibodies", CatalogTranslator::Antibody_plugin($lang),
-                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $ca_use_antibodies);
+        $form->addSelect("ca_use_antibodies", CatalogTranslator::Antibody_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_antibodies);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;
     }
+
+    protected function publicPageHeaderForm($id_space, $lang) {
+
+        $modelCoreConfig = new CoreConfig();
+        $CaPublicPageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);
+
+        $form = new Form($this->request, "publicPageHeaderForm");
+        $form->addSeparator(CatalogTranslator::PublicPageHeader($lang));
+
+        $form->addText("CaPublicPageTitle", CatalogTranslator::Title($lang), false, $CaPublicPageTitle);
+        $form->addUpload("CaPublicPageLogo", CatalogTranslator::Logo($lang));
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+
 }
