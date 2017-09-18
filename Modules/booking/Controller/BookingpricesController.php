@@ -81,7 +81,7 @@ class BookingpricesController extends CoresecureController {
             $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
             $prices[] = $data;
             // add night we
-            $isNight = $modelPNightWe->isNight($resources[$i]["id"]);
+            $isNight = $modelPNightWe->isNight($belongings[0]["id"]);
             if ($isNight) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
@@ -92,7 +92,7 @@ class BookingpricesController extends CoresecureController {
                 $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
                 $prices[] = $data;
             }
-            $isWe = $modelPNightWe->isWe($resources[$i]["id"]);
+            $isWe = $modelPNightWe->isWe($belongings[0]["id"]);
             if ($isWe) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
@@ -130,7 +130,7 @@ class BookingpricesController extends CoresecureController {
         }
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingpriceseditquery/".$id_space);
-        
+       
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml,
                         'formedit' => $form->getHtml($lang), 'resources' => $ress,
                         'belongings' => $belongings));
@@ -193,7 +193,7 @@ class BookingpricesController extends CoresecureController {
             $resourcesIds[$count] = $resources[$i]["id"] . "_day";
             $resourcesNames[$count] = $resources[$i]["name"];
             // add night we
-            $isNight = $modelPNightWe->isNight($resources[$i]["id"]);
+            $isNight = $modelPNightWe->isNight($belongings[0]["id"]);
             if ($isNight) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
@@ -202,7 +202,7 @@ class BookingpricesController extends CoresecureController {
                 $resourcesIds[$count] = $resources[$i]["id"] . "_night";
                 $resourcesNames[$count] = $resources[$i]["name"] . " " . BookingTranslator::night($lang);
             }
-            $isWe = $modelPNightWe->isWe($resources[$i]["id"]);
+            $isWe = $modelPNightWe->isWe($belongings[0]["id"]);
             if ($isWe) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
@@ -338,6 +338,8 @@ class BookingpricesController extends CoresecureController {
         $resources = $modelResource->getForSpace($id_space);
         $modelPNightWe = new BkNightWE();
         $modelPackage = new BkPackage();
+        $modelBelonging = new EcBelonging();
+        $belongings = $modelBelonging->getBelongings($id_space, "name");
         $count = -1;
         for ($i = 0; $i < count($resources); $i++) {
             $count++;
@@ -345,13 +347,13 @@ class BookingpricesController extends CoresecureController {
             $resourcesIds[$count] = $resources[$i]["id"] . "_day";
             $resourcesNames[$count] = $resources[$i]["name"];
             // add night we
-            $isNight = $modelPNightWe->isNight($resources[$i]["id"]);
+            $isNight = $modelPNightWe->isNight($belongings[0]["id"]);
             if ($isNight) {
                 $count++;
                 $resourcesIds[$count] = $resources[$i]["id"] . "_night";
                 $resourcesNames[$count] = $resources[$i]["name"] . " " . BookingTranslator::night($lang);
             }
-            $isWe = $modelPNightWe->isWe($resources[$i]["id"]);
+            $isWe = $modelPNightWe->isWe($belongings[0]["id"]);
             if ($isWe) {
                 $count++;
                 $resourcesIds[$count] = $resources[$i]["id"] . "_we";

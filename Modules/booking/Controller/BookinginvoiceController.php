@@ -106,6 +106,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         if (count($id_items) > 0) {
             $item = $modelInvoiceItem->getItem($id_items[0]["id"]);
             $details = $item["details"];
+            
             $detailsArray = explode(";", $details);
             foreach ($detailsArray as $de) {
                 $d = explode("=", $de);
@@ -169,10 +170,18 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $itemQuantities = array();
         $itemPrices = array();
         $modelInvoiceItem = new InInvoiceItem();
+        $modelInvoice = new InInvoice();
+        $modelUser = new EcUser();
+        $modelUnit = new EcUnit();
+        
 
         //print_r($id_item);
+        $invoiceInfo = $modelInvoice->get($id_invoice);
+        $id_belonging = $modelUnit->getBelonging($modelUser->getUnit($invoiceInfo["id_responsible"]), $id_space);
+        
         $item = $modelInvoiceItem->getItem($id_item);
-
+        
+        
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         foreach ($contentArray as $content) {
@@ -186,7 +195,9 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
         }
 
-        $listResources = $this->getResourcesList($id_space, $lang);
+        $listResources = $this->getResourcesList($id_space, $id_belonging, $lang);
+        //echo "id_belonging = " . $id_belonging . "<br/>";
+        //print_r($listResources);
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
@@ -202,7 +213,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form->setButtonsWidth(4, 8);
         $form->setFormAdd($formAdd);
 
-        $modelInvoice = new InInvoice();
         $discount = $modelInvoice->getDiscount($id_invoice);
         $form->addText("discount", BookinginvoiceTranslator::Discount($lang), false, $discount);
 
@@ -213,7 +223,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $form;
     }
 
-    protected function getResourcesList($id_space, $lang) {
+    protected function getResourcesList($id_space, $id_belonging, $lang) {
         $modelResource = new ResourceInfo();
         $modelNightWe = new BkNightWE();
 
@@ -223,16 +233,16 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $names = array();
         foreach ($resources as $r) {
             $ids[] = $r["id"] . "_day";
-            if (!$modelNightWe->isNight($r["id"]) && !$modelNightWe->isWe($r["id"])) {
+            if (!$modelNightWe->isNight($id_belonging) && !$modelNightWe->isWe($id_belonging)) {
                 $names[] = $r["name"];
             } else {
                 $names[] = $r["name"] . " " . BookinginvoiceTranslator::Day($lang);
             }
-            if ($modelNightWe->isNight($r["id"])) {
+            if ($modelNightWe->isNight($id_belonging)) {
                 $ids[] = $r["id"] . "_night";
                 $names[] = $r["name"] . " " . BookinginvoiceTranslator::night($lang);
             }
-            if ($modelNightWe->isWe($r["id"])) {
+            if ($modelNightWe->isWe($id_belonging)) {
                 $ids[] = $r["id"] . "_we";
                 $names[] = $r["name"] . " " . BookinginvoiceTranslator::WE($lang);
             }
@@ -385,7 +395,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     $total_ht += floatval($userTime["nb_hours_night"]) * floatval($timePrices[$res["id"]]["price_night"]);
                 }
                 if ($userTime["nb_hours_we"] > 0) {
-                    $content .= $res["id"] . "_day=" . $userTime["nb_hours_we"] . "=" . $timePrices[$res["id"]]["price_we"] . ";";
+                    $content .= $res["id"] . "_we=" . $userTime["nb_hours_we"] . "=" . $timePrices[$res["id"]]["price_we"] . ";";
                     $total_ht += floatval($userTime["nb_hours_we"]) * floatval($timePrices[$res["id"]]["price_we"]);
                 }
                 foreach ($packagesPrices[$res["id"]] as $p) {

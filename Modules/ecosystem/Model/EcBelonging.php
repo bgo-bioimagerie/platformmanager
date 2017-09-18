@@ -110,7 +110,7 @@ class EcBelonging extends Model {
      */
     public function getAll($id_space) {
 
-        $sql = "select id, name, color, type, display_order from ec_belongings WHERE id_space";
+        $sql = "select id, name, color, type, display_order from ec_belongings WHERE id_space=?";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }

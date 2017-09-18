@@ -9,6 +9,7 @@ require_once 'Modules/ecosystem/Model/EcBelonging.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPackage.php';
+require_once 'Modules/booking/Model/BookingTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 
