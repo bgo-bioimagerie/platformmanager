@@ -369,6 +369,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
                     $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
                 }
+                
                 $modelCal->setReservationInvoice($reservation["id"], $invoice_id);
             }
             // fill content

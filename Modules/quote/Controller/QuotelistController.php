@@ -318,7 +318,6 @@ class QuotelistController extends CoresecureController {
         include('data/invoices/'.$id_space.'/template.php');
         $content = ob_get_clean();
 
-
         // convert in PDF
         require_once('externals/html2pdf/vendor/autoload.php');
         try {

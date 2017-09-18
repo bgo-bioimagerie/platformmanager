@@ -227,7 +227,7 @@ class InvoiceslistController extends CoresecureController {
 
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
-        $object = new $controllerName(new Request(), false);
+        $object = new $controllerName(new Request(array(), false));
         $object->setRequest($this->request);
         $object->runAction($service["module"], "delete", array($id_space, $id));
         
