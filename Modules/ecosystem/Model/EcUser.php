@@ -30,6 +30,13 @@ class EcUser extends Model {
 
         $this->runRequest($sql);
     }
+    
+    public function mergeUnits($units){
+        for($i = 1 ; $i < count($units) ; $i++){
+            $sql = "UPDATE ec_users SET id_unit=? WHERE id_unit=?";
+            $this->runRequest($sql, array($units[0], $units[$i]));
+        }
+    }
 
     public function exists($id){
         $sql = "SELECT * FROM ec_users WHERE id=?";

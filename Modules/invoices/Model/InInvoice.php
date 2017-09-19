@@ -251,4 +251,11 @@ class InInvoice extends Model {
         $this->runRequest($sql, array($id));
     }
 
+    public function mergeUnits($units){
+        
+        for( $i = 1 ; $i<count($units) ; $i++){
+            $sql = "UPDATE in_invoice SET id_unit=? WHERE id_unit=?";
+            $this->runRequest($sql, array($units[0], $units[$i]));
+        }
+    }
 }

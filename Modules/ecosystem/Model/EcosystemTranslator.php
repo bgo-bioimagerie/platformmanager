@@ -1102,4 +1102,25 @@ class EcosystemTranslator {
         return "User has been saved";
     }
     
+    public static function mergeUnits($lang) {
+        if ($lang == "fr") {
+            return "Fisionner des unités";
+        }
+        return "Merge units ";
+    }
+    
+    public static function mergeUsers($lang) {
+        if ($lang == "fr") {
+            return "Fisionner des utilisateurs";
+        }
+        return "Merge units ";
+    }
+    
+    public static function ItIsTheFirstTakenIntoAccount($lang) {
+        if ($lang == "fr") {
+            return "Le premier item selectionné est utlisé comme référence";
+        }
+        return "The first selected is the one taken as the reference";
+    }
+    
 }

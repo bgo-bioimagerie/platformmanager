@@ -34,6 +34,22 @@ class EcUnit extends Model {
         $this->runRequest($sql2);
     }
     
+    public function mergeUnits($units){
+        
+        // remove useless belongings joint
+        for($i = 1 ; $i<count($units) ; $i++){
+            $sql = "DELETE FROM ec_j_belonging_units WHERE id_unit=?";
+            $this->runRequest($sql, array($units[$i]));
+        }
+        
+        // remove units
+        for($i = 1 ; $i<count($units) ; $i++){
+            $sql = "DELETE FROM ec_units WHERE id=?";
+            $this->runRequest($sql, array($units[$i]));
+        }
+
+    }
+    
     public function getIdFromName($name){
         $sql = "SELECT id FROM ec_units WHERE name=?";
         $data= $this->runRequest($sql, array($name));
