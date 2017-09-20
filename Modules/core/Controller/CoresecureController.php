@@ -6,6 +6,8 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreMenu.php';
+
 
 /**
  * Mother class for controller using secure connection
