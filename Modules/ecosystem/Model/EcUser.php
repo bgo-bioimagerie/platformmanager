@@ -30,25 +30,31 @@ class EcUser extends Model {
 
         $this->runRequest($sql);
     }
-    
-    public function mergeUnits($units){
-        for($i = 1 ; $i < count($units) ; $i++){
+
+    public function mergeUsers($users) {
+        for ($i = 1; $i < count($users); $i++) {
+            $sql = "DELETE FROM ec_users WHERE id=?";
+            $this->runRequest($sql, array($users[$i]));
+        }
+    }
+
+    public function mergeUnits($units) {
+        for ($i = 1; $i < count($units); $i++) {
             $sql = "UPDATE ec_users SET id_unit=? WHERE id_unit=?";
             $this->runRequest($sql, array($units[0], $units[$i]));
         }
     }
 
-    public function exists($id){
+    public function exists($id) {
         $sql = "SELECT * FROM ec_users WHERE id=?";
         $req = $this->runRequest($sql, array($id));
-        if ($req->rowCount() > 0){
+        if ($req->rowCount() > 0) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
-    
+
     public function getResponsibles() {
         $sql = "SELECT ec_users.id as id, core_users.name as name, core_users.firstname as firstname "
                 . "FROM ec_users "
@@ -165,9 +171,7 @@ class EcUser extends Model {
         }
     }
 
-    public function add($name, $firstname, $login, $pwd, $email, $phone, 
-            $unit, $is_responsible, $status_id, $date_convention, 
-            $date_end_contract, $encrypte = true) {
+    public function add($name, $firstname, $login, $pwd, $email, $phone, $unit, $is_responsible, $status_id, $date_convention, $date_end_contract, $encrypte = true) {
         $model = new CoreUser();
         $id = $model->add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, 1, $encrypte);
 
@@ -175,8 +179,8 @@ class EcUser extends Model {
         $this->runRequest($sql, array($id, $phone, $unit, $is_responsible, $date_convention));
         return $id;
     }
-    
-    public function initialize($id){
+
+    public function initialize($id) {
         $sql = "INSERT INTO ec_users (id, phone, id_unit, is_responsible, date_convention) VALUES (?,?,?,?,?)";
         $this->runRequest($sql, array($id, "", 1, 0, "0000-00-00"));
     }
@@ -189,15 +193,14 @@ class EcUser extends Model {
         $sql = "UPDATE ec_users SET phone=?, id_unit=?, is_responsible=?, date_convention=? WHERE id=?";
         $this->runRequest($sql, array($phone, $unit, $is_responsible, $date_convention, $id));
     }
-    
-    public function setResponsible($id_user, $id_resp){
+
+    public function setResponsible($id_user, $id_resp) {
         $sql = "SELECT * FROM ec_users WHERE id=?";
         $req = $this->runRequest($sql, array($id_user));
-        if( $req->rowCount() > 0 ){
+        if ($req->rowCount() > 0) {
             $sql = "UPDATE ec_users SET is_responsible=? WHERE id=?";
             $this->runRequest($sql, array($id_resp, $id_user));
-        }
-        else{
+        } else {
             $sql = "INSERT INTO ec_users (id, is_responsible) VALUES (?,?)";
             $this->runRequest($sql, array($id_user, $id_resp));
         }
@@ -387,8 +390,8 @@ class EcUser extends Model {
         $user = $this->runRequest($sql);
         return $user->fetchAll();
     }
-    
-    public function getAllSpaceActifEmails($id_space){
+
+    public function getAllSpaceActifEmails($id_space) {
         $sql = "SELECT email FROM core_users WHERE id IN "
                 . "(SELECT id_user FROM core_j_spaces_user WHERE status>0 AND id_space=?)";
         $req = $this->runRequest($sql, array($id_space));
@@ -896,7 +899,7 @@ class EcUser extends Model {
 
         // models
         $modelResp = new EcResponsible();
-        
+
         // Nommage de la feuille
         $objPHPExcel->setActiveSheetIndex(0);
         $sheet = $objPHPExcel->getActiveSheet();
@@ -991,21 +994,21 @@ class EcUser extends Model {
         $sheet->getStyle('F' . $ligne)->applyFromArray($border);
         $sheet->getStyle('F' . $ligne)->applyFromArray($center);
         $sheet->getStyle('F' . $ligne)->applyFromArray($gras);
-        
-        
-        if(file_exists('Modules/resources/Model/ReCategory.php')){
-            
+
+
+        if (file_exists('Modules/resources/Model/ReCategory.php')) {
+
             require_once 'Modules/resources/Model/ReCategory.php';
             require_once 'Modules/booking/Model/BkAuthorization.php';
-            
+
             $resourcesCatModel = new ReCategory();
             $modelAuth = new BkAuthorization();
             $resourcesCat = $resourcesCatModel->getBySpace($id_space);
             $colonne = 'F';
-            foreach($resourcesCat as $resCat){
-                
+            foreach ($resourcesCat as $resCat) {
+
                 //print_r($resCat);
-                
+
                 $colonne++;
                 $sheet->SetCellValue($colonne . $ligne, $resCat["name"]);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($border);
@@ -1014,10 +1017,10 @@ class EcUser extends Model {
             }
         }
         $ligne = 3;
-        
+
         //print_r($resps);
-        foreach ($resps as $r) {  
-            
+        foreach ($resps as $r) {
+
             if ($r["id"] > 1) {
 
                 //echo "id = " . $r["id"] . "<br/>";
@@ -1029,7 +1032,7 @@ class EcUser extends Model {
                 $unitReq = $this->runRequest($sql, array($r ["id_unit"]));
                 $unitName = $unitReq->fetch();
 
-                
+
                 $sheet->SetCellValue($colonne . $ligne, $r ["name"] . " " . $r ["firstname"]); // user name
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
@@ -1051,11 +1054,11 @@ class EcUser extends Model {
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
                 $colonne ++;
-                
+
                 // responsibles
                 $resps = $modelResp->getUserResponsibles($r["id"]);
                 $respNames = "";
-                foreach($resps as $re){
+                foreach ($resps as $re) {
                     $respNames .= $modelResp->getUserFUllName($re["id"]);
                 }
                 $sheet->SetCellValue($colonne . $ligne, $respNames); // Resps
@@ -1063,77 +1066,76 @@ class EcUser extends Model {
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
                 $colonne ++;
-                
+
                 // is responsible
                 $id_resp = "Non";
-                if($r["is_responsible"]){
+                if ($r["is_responsible"]) {
                     $id_resp = "Oui";
                 }
-                
+
                 $sheet->SetCellValue($colonne . $ligne, $id_resp); // Resps
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
                 $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
                 $colonne ++;
-                
-                if(file_exists('Modules/resources/Model/ReCategory.php')){
-            
+
+                if (file_exists('Modules/resources/Model/ReCategory.php')) {
+
                     require_once 'Modules/resources/Model/ReCategory.php';
                     require_once 'Modules/resources/Model/ReVisa.php';
-        
-                    foreach($resourcesCat as $resCat){
-                
+
+                    foreach ($resourcesCat as $resCat) {
+
                         $modelVisa = new ReVisa();
-                        $authInfo = $modelAuth->getAuthorisationInfo($resCat["id"], $r ["id"]); 
-                    
-                        if($authInfo != 0){
-                            $txt = CoreTranslator::dateFromEn($authInfo["date"], "fr") . " " . $modelVisa->getVisaShortDescription($authInfo["visa_id"], "fr") ;
+                        $authInfo = $modelAuth->getAuthorisationInfo($resCat["id"], $r ["id"]);
+
+                        if ($authInfo != 0) {
+                            $txt = CoreTranslator::dateFromEn($authInfo["date"], "fr") . " " . $modelVisa->getVisaShortDescription($authInfo["visa_id"], "fr");
 
                             $sheet->SetCellValue($colonne . $ligne, $txt);
                             $sheet->getStyle($colonne . $ligne)->applyFromArray($style2);
                             $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
                             $sheet->getStyle($colonne . $ligne)->applyFromArray($borderLR);
-                            
                         }
                         $colonne++;
                     }
                 }
 
                 /*
-                if (!($ligne % 55)) {
-                    $sheet->getStyle('A' . $ligne)->applyFromArray($borderLRB);
-                    $sheet->getStyle('B' . $ligne)->applyFromArray($borderLRB);
-                    $sheet->getStyle('C' . $ligne)->applyFromArray($borderLRB);
-                    //$sheet->getStyle('D' . $ligne)->applyFromArray($borderLRB);
-                    $ligne ++;
-                    // Titre
-                    $colonne = 'A';
-                    $sheet->getRowDimension($ligne)->setRowHeight(30);
-                    $sheet->SetCellValue($colonne . $ligne, $titre);
-                    $sheet->getStyle($colonne . $ligne)->applyFromArray($style);
-                    $sheet->getStyle($colonne . $ligne)->applyFromArray($gras);
-                    $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
-                    $sheet->getStyle($colonne . $ligne)->getAlignment()->setWrapText(true);
-                    $sheet->mergeCells($colonne . $ligne . ':D' . $ligne);
+                  if (!($ligne % 55)) {
+                  $sheet->getStyle('A' . $ligne)->applyFromArray($borderLRB);
+                  $sheet->getStyle('B' . $ligne)->applyFromArray($borderLRB);
+                  $sheet->getStyle('C' . $ligne)->applyFromArray($borderLRB);
+                  //$sheet->getStyle('D' . $ligne)->applyFromArray($borderLRB);
+                  $ligne ++;
+                  // Titre
+                  $colonne = 'A';
+                  $sheet->getRowDimension($ligne)->setRowHeight(30);
+                  $sheet->SetCellValue($colonne . $ligne, $titre);
+                  $sheet->getStyle($colonne . $ligne)->applyFromArray($style);
+                  $sheet->getStyle($colonne . $ligne)->applyFromArray($gras);
+                  $sheet->getStyle($colonne . $ligne)->applyFromArray($center);
+                  $sheet->getStyle($colonne . $ligne)->getAlignment()->setWrapText(true);
+                  $sheet->mergeCells($colonne . $ligne . ':D' . $ligne);
 
-                    
-                    // Noms des colonnes
-                    $ligne += 2;
-                    $sheet->SetCellValue('A' . $ligne, "Laboratoire");
-                    $sheet->getStyle('A' . $ligne)->applyFromArray($border);
-                    $sheet->getStyle('A' . $ligne)->applyFromArray($center);
-                    $sheet->getStyle('A' . $ligne)->applyFromArray($gras);
-                    $sheet->SetCellValue('B' . $ligne, "NOM Prénom");
-                    $sheet->getStyle('B' . $ligne)->applyFromArray($border);
-                    $sheet->getStyle('B' . $ligne)->applyFromArray($center);
-                    $sheet->getStyle('B' . $ligne)->applyFromArray($gras);
-                    $sheet->SetCellValue('C' . $ligne, "Email");
-                    $sheet->getStyle('C' . $ligne)->applyFromArray($border);
-                    $sheet->getStyle('C' . $ligne)->applyFromArray($center);
-                    $sheet->getStyle('C' . $ligne)->applyFromArray($gras);
-                }
-                $ligne ++;
-                */
+
+                  // Noms des colonnes
+                  $ligne += 2;
+                  $sheet->SetCellValue('A' . $ligne, "Laboratoire");
+                  $sheet->getStyle('A' . $ligne)->applyFromArray($border);
+                  $sheet->getStyle('A' . $ligne)->applyFromArray($center);
+                  $sheet->getStyle('A' . $ligne)->applyFromArray($gras);
+                  $sheet->SetCellValue('B' . $ligne, "NOM Prénom");
+                  $sheet->getStyle('B' . $ligne)->applyFromArray($border);
+                  $sheet->getStyle('B' . $ligne)->applyFromArray($center);
+                  $sheet->getStyle('B' . $ligne)->applyFromArray($gras);
+                  $sheet->SetCellValue('C' . $ligne, "Email");
+                  $sheet->getStyle('C' . $ligne)->applyFromArray($border);
+                  $sheet->getStyle('C' . $ligne)->applyFromArray($center);
+                  $sheet->getStyle('C' . $ligne)->applyFromArray($gras);
+                  }
+                  $ligne ++;
+                 */
                 $ligne++;
             }
         }

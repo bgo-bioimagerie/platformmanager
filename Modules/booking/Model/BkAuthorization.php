@@ -32,6 +32,13 @@ class BkAuthorization extends Model {
         $pdo = $this->runRequest($sql);
         return $pdo;
     }
+    
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE bk_authorization SET user_id=? WHERE user_id=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
 
     /**
      * Add an authorization

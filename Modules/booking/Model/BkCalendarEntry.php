@@ -44,6 +44,19 @@ class BkCalendarEntry extends Model {
         $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
     }
     
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE bk_calendar_entry SET recipient_id=? WHERE recipient_id=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+            
+            $sql2 = "UPDATE bk_calendar_entry SET booked_by_id=? WHERE booked_by_id=?";
+            $this->runRequest($sql2, array($users[0], $users[$i]));
+            
+            $sql3 = "UPDATE bk_calendar_entry SET responsible_id=? WHERE responsible_id=?";
+            $this->runRequest($sql3, array($users[0], $users[$i]));
+        }
+    }
+    
     public function getPeriod($id){
         $sql = "SELECT period_id FROM bk_calendar_entry WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();

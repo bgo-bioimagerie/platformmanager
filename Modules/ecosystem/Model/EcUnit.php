@@ -150,7 +150,7 @@ class EcUnit extends Model {
         return $units;
     }
 
-    public function getUnitsForList($sortentry = 'id') {
+    public function getUnitsForList($sortentry = 'name') {
         $sql = "SELECT id, name FROM ec_units ORDER BY " . $sortentry . " ASC;";
         $req = $this->runRequest($sql)->fetchAll();
         $ids = array();

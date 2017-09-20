@@ -39,6 +39,14 @@ class InInvoice extends Model {
         $this->primaryKey = "id";
     }
     
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE in_invoice SET id_responsible=? WHERE id_responsible=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
+
+
     public function getIdFromName($name, $id_space){
         $sql = "SELECT id FROM in_invoice WHERE number=? AND id_space=?";
         $req = $this->runRequest($sql, array($name, $id_space));

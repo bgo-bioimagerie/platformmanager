@@ -23,6 +23,14 @@ class ReResps extends Model {
         $this->setColumnsInfo("id_status", "int(11)", 0);
         $this->primaryKey = "id";
     }
+    
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE re_resps SET id_user=? WHERE id_user=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
+    
     public function getResps($id_resource){
         $sql = "SELECT * FROM re_resps WHERE id_resource=?";
         return $this->runRequest($sql, array($id_resource))->fetchAll();

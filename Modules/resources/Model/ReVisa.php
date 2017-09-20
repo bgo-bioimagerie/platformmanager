@@ -35,6 +35,13 @@ class ReVisa extends Model {
         return $pdo;
     }
 
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE re_visas SET id_instructor=? WHERE id_instructor=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
+    
     public function getIdFromInfo($id_resource_category, $id_instructor){
         $sql = "SELECT id FROM re_visas WHERE id_resource_category=? AND id_instructor=?";
         $req = $this->runRequest($sql, array($id_resource_category, $id_instructor));
