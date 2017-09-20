@@ -64,6 +64,16 @@ class CoreSpace extends Model {
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
     }
+    
+    public function mergeUsers($users) {
+        for ($i = 1; $i < count($users); $i++) {
+            $sql = "UPDATE core_j_spaces_user SET id_user=? WHERE id_user=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+        
+        $sql = "DELETE FROM core_j_spaces_user WHERE status=0";
+        $this->runRequest($sql);
+    }
 
     public function doesManageSpace($id_user){
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > 2";

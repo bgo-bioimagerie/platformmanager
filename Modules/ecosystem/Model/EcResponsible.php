@@ -25,8 +25,14 @@ class EcResponsible extends Model {
         $this->runRequest($sql1);
     }
 
-    
-        /**
+    public function mergeUsers($users) {
+        for ($i = 1; $i < count($users); $i++) {
+            $sql = "UPDATE ec_j_user_responsible SET id_user=? WHERE id_user=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
+
+    /**
      * GEt the responsible of a given user
      * @param number $id User id
      * @return number Responsible ID
@@ -43,8 +49,8 @@ class EcResponsible extends Model {
         }
         return $userr;
     }
-    
-        /**
+
+    /**
      * get the firstname and name of a user from it's id
      *
      * @param int $id
@@ -56,7 +62,7 @@ class EcResponsible extends Model {
         $sql = "select firstname, name from core_users where id=?";
         $user = $this->runRequest($sql, array(
             $id
-                ));
+        ));
 
         if ($user->rowCount() == 1) {
             $userf = $user->fetch();
@@ -65,7 +71,7 @@ class EcResponsible extends Model {
             return "";
         }
     }
-    
+
     /**
      * Get the names and firstname of the responsible users 
      * 
@@ -129,9 +135,9 @@ class EcResponsible extends Model {
         }
         return true;
     }
-    
-    public function import($idUser, $idResp){
-        if(!$this->isUserRespJoin($idUser, $idResp)){
+
+    public function import($idUser, $idResp) {
+        if (!$this->isUserRespJoin($idUser, $idResp)) {
             $this->addUserRespJoin($idUser, $idResp);
         }
     }
@@ -156,14 +162,14 @@ class EcResponsible extends Model {
         $pdo = $this->runRequest($sql, array($idUser, $idResp));
         return $pdo;
     }
-	
-	public function setResponsible($idUser, $idResp){
-		$sql = "SELECT * FROM ec_j_user_responsible WHERE id_user=? AND id_resp=?";
+
+    public function setResponsible($idUser, $idResp) {
+        $sql = "SELECT * FROM ec_j_user_responsible WHERE id_user=? AND id_resp=?";
         $req = $this->runRequest($sql, array($idUser, $idResp));
-		if( $req->rowCount() == 0 ){
-			$this->addUserRespJoin($idUser, $idResp);
+        if ($req->rowCount() == 0) {
+            $this->addUserRespJoin($idUser, $idResp);
         }
-	}
+    }
 
     /**
      * Remove all the user/responsible join af a given user
@@ -173,12 +179,12 @@ class EcResponsible extends Model {
         $sql = "DELETE FROM ec_j_user_responsible WHERE id_user = ?";
         $this->runRequest($sql, array($idUser));
     }
-    
-    public function setResponsibles($id_user, $responsibles){
+
+    public function setResponsibles($id_user, $responsibles) {
         $this->removeAllUserRespJoin($id_user);
-        
+
         //print_r($responsibles);
-        foreach($responsibles as $resp){
+        foreach ($responsibles as $resp) {
             $this->addUserRespJoin($id_user, $resp);
         }
     }

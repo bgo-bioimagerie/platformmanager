@@ -21,6 +21,13 @@ class InVisa extends Model {
         $this->runRequest($sql);
     }
 
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE in_visa SET id_user=? WHERE id_user=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
+    
     /**
      * 
      * @param type $id

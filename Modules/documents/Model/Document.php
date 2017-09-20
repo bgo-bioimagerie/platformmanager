@@ -26,6 +26,13 @@ class Document extends Model {
         $this->primaryKey = "id";
     }
     
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE dc_documents SET id_user=? WHERE id_user=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
+    
     public function getForSpace($id_space){
         $sql = "SELECT * FROM dc_documents WHERE id_space=?";
         $req = $this->runRequest($sql, array($id_space));

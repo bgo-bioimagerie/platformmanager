@@ -11,8 +11,9 @@
 
     <script>
         $(document).ready(function () {
+            var tableHeight = window.innerHeight - 200;
             var table = $('#tableID').DataTable({
-                scrollY: "300px",
+                scrollY: tableHeight,
                 scrollX: true,
                 scrollCollapse: true,
                 paging: false,

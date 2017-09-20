@@ -22,6 +22,13 @@ class CoreUser extends Model {
         $this->primaryKey = "id";
     }
     
+    public function mergeUsers($users) {
+        for ($i = 1; $i < count($users); $i++) {
+            $sql = "DELETE FROM core_users WHERE id=?";
+            $this->runRequest($sql, array($users[$i]));
+        }
+    }
+    
     public function disableUsers($desactivateSetting){
         
         

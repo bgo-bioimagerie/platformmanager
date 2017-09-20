@@ -50,6 +50,17 @@ class SeProject extends Model {
 
         $this->runRequest($sql2);
     }
+    
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE se_project SET id_resp=? WHERE id_resp=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+            
+            $sql2 = "UPDATE se_project SET id_user=? WHERE id_user=?";
+            $this->runRequest($sql2, array($users[0], $users[$i]));
+            
+        }
+    }
 
     public function getIdFromName($name, $id_space){
         $sql = "SELECT id FROM se_project WHERE name=? AND id_space=?";

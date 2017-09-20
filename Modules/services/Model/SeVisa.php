@@ -21,16 +21,23 @@ class SeVisa extends Model {
         $this->runRequest($sql);
     }
 
-    public function getIdFromUser($id_user, $id_space){
+    public function mergeUsers($users) {
+        for ($i = 1; $i < count($users); $i++) {
+            $sql = "UPDATE se_visa SET id_user=? WHERE id_user=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    }
+
+    public function getIdFromUser($id_user, $id_space) {
         $sql = "SELECT id FROM se_visa WHERE id_user=? AND id_space=?";
         $req = $this->runRequest($sql, array($id_user, $id_space));
-        if($req->rowCount() > 0){
+        if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
         }
         return 0;
     }
-    
+
     /**
      * 
      * 
@@ -50,9 +57,9 @@ class SeVisa extends Model {
     public function getAll($id_space) {
         $sql = "SELECT * FROM se_visa WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        
+
         $modelUser = new CoreUser();
-        for($i = 0 ; $i < count($data) ; $i++){
+        for ($i = 0; $i < count($data); $i++) {
             $data[$i]["user_name"] = $modelUser->getUserFUllName($data[$i]['id_user']);
         }
         return $data;
@@ -62,17 +69,17 @@ class SeVisa extends Model {
         $sql = "SELECT * FROM se_visa WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
-    
-    public function getForList($id_space){
+
+    public function getForList($id_space) {
         $sql = "SELECT * FROM se_visa WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        
+
         $ids = array();
         $names = array();
         $ids[] = "";
         $names[] = "";
         $modelUser = new CoreUser();
-        foreach($data as $dat){
+        foreach ($data as $dat) {
             $ids[] = $dat['id'];
             $names[] = $modelUser->getUserInitiales($dat['id_user']);
         }

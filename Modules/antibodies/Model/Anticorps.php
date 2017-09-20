@@ -56,6 +56,13 @@ class Anticorps extends Model {
         $this->addColumn("ac_anticorps", "id_space", "INT(11)", 0);
     }
 
+    public function mergeUsers($users){
+        for($i = 1 ; $i < count($users) ; $i++){
+            $sql = "UPDATE ac_j_user_anticorps SET id_utilisateur=? WHERE id_utilisateur=?";
+            $this->runRequest($sql, array($users[0], $users[$i]));
+        }
+    } 
+    
     public function getIdFromNoH2P2($no_h2p2, $id_space){
         $sql = "SELECT id FROM ac_anticorps WHERE no_h2p2=? AND id_space=?";
         $req = $this->runRequest($sql, array($no_h2p2, $id_space));
