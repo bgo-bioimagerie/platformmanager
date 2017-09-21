@@ -188,5 +188,14 @@ class EcResponsible extends Model {
             $this->addUserRespJoin($id_user, $resp);
         }
     }
+    
+    public function hasResponsible($idUser){
+        $sql = "SELECT * FROM ec_j_user_responsible WHERE id_user=?";
+        $req = $this->runRequest($sql, array($idUser));
+        if($req->rowCount() > 0){
+            return true;
+        }
+        return false;
+    }
 
 }
