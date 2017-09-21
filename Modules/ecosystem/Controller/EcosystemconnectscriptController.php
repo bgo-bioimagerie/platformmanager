@@ -19,7 +19,9 @@ class EcosystemconnectscriptController extends Controller {
     public function indexAction() {
         
         $modelEcResp = new EcResponsible();
-        $modelEcResp->setResponsible($_SESSION['id_user'], 1);
+        if( !$modelEcResp->hasResponsible($_SESSION['id_user']) ){
+            $modelEcResp->setResponsible($_SESSION['id_user'], 1);
+        }
         
         // set ec_user info if not exists
         $modelEcUser = new EcUser();
