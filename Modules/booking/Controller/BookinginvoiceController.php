@@ -38,6 +38,16 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $_SESSION["openedNav"] = "invoices";
     }
 
+    
+    public function updateResaResponsiblesAction(){
+        
+        require_once 'Modules/booking/Model/BkCalendarEntry.php';
+        $modelCalentry = new BkCalendarEntry();
+        $modelCalentry->updateNullResponsibles();
+        echo "done";
+        
+    }
+    
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
