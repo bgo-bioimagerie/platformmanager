@@ -75,6 +75,10 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingreservationstatsquery", "bookingreservationstatsquery", "bookingstatistics", "statreservationsquery", array("id_space"), array(""));
         $this->addRoute("bookinggrrstats", "bookinggrrstats", "bookingstatistics", "grr", array("id_space"), array(""));
     
+        // update user resp in booking
+        $this->addRoute("updateresaresps", "updateresaresps", "bookinginvoice", "updateresaresponsibles", array(), array());
+    
+        
         
         
     }

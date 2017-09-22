@@ -34,7 +34,7 @@ class BookingnightweController extends CoresecureController {
         $modelBelonging = new EcBelonging();
         $belongings = $modelBelonging->getAll($id_space);
         
-        print_r($belongings);
+        //print_r($belongings);
         
         // get the sygrrig pricing
         $modelPricing = new BkNightWE();

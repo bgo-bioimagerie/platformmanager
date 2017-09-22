@@ -44,6 +44,24 @@ class BkCalendarEntry extends Model {
         $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
     }
     
+    public function updateNullResponsibles(){
+        
+        $sql = "SELECT * FROM bk_calendar_entry WHERE responsible_id<=1";
+        $data = $this->runRequest($sql)->fetchAll();
+        $modelResponsible = new EcResponsible();
+        foreach($data as $d){
+            $resps = $modelResponsible->getUserResponsibles($d["recipient_id"]);
+            
+            //print_r($resps); echo "<br/>";
+            //echo "id = " . $d["id"] . "<br/>"; 
+            
+            if(count($resps) > 0){
+                $sql = "UPDATE bk_calendar_entry SET responsible_id=? WHERE id=?";
+                $this->runRequest($sql, array($resps[0]["id_resp"], $d["id"]));
+            }
+        }
+    }
+    
     public function mergeUsers($users){
         for($i = 1 ; $i < count($users) ; $i++){
             $sql = "UPDATE bk_calendar_entry SET recipient_id=? WHERE recipient_id=?";
