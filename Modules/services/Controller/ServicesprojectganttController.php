@@ -87,8 +87,9 @@ class ServicesprojectganttController extends CoresecureController {
 
             $belonging = $modelEcUnit->getBelonging($modelEcUser->getUnit($proj["id_resp"]), $id_space);
             $belInfo = $modelEcBel->getInfo($belonging);
-            $bkColor = 'col' . $belInfo["name"];
-
+            
+            $bkColor = 'col' . $belInfo["id"];
+            
             if (!$first) {
                 $projectsjson .= ",";
             }
@@ -111,8 +112,6 @@ class ServicesprojectganttController extends CoresecureController {
             if ($proj["time_limit"] != "0000-00-00" && $proj["time_limit"] != "") {
                 $dateEnd = strtotime($proj["time_limit"]);
             }
-
-
 
             $projectsjson .= "to: \"/Date(" . 1000 * $dateEnd . ")/\",";
             $projectsjson .= "label: \"" . $proj["name"] . "\",";
@@ -145,7 +144,7 @@ class ServicesprojectganttController extends CoresecureController {
         $css = "";
         foreach ($bels as $bel) {
 
-            $css .= ".fn-gantt ." . "col" . $bel["name"] . " {";
+            $css .= ".fn-gantt ." . "col" . $bel["id"] . " {";
             $css .= "background-color: " . $bel["color"] . ";";
             $css .= "}";
         }
