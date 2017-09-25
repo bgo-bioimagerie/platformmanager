@@ -276,6 +276,11 @@ class CatalogTranslator {
         return "Public page header";
     }
     
-    
+    public static function Image($lang) {
+        if ($lang == "fr") {
+            return "Image";
+        }
+        return "Image";
+    }
 
 }

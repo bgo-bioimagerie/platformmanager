@@ -466,7 +466,7 @@ class Anticorps extends Model {
 
         $anticorps['id_staining'] = 1;
         $anticorps['id_application'] = 1;
-        $anticorps['export_catalog'] = 1;
+        $anticorps['export_catalog'] = 0;
         $anticorps['image_url'] = "";
         $anticorps['image_desc'] = "";
 

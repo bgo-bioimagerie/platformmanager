@@ -41,17 +41,17 @@
         <thead>
 
             <tr>
-                <th class="text-center" colspan="3" style="width:50%; color:#337AB7;">Anticorps</th>
+                <th class="text-center" colspan="2" style="width:50%; color:#337AB7;">Anticorps</th>
                 <th class="text-center" colspan="3" style="width:50%; background-color: #eeffee; color:#337AB7;">Tissus</th>
             </tr>
 
             <tr>
-                <th class="text-center" style="width:5%; color:#337AB7;"></th>
                 <th class="text-center" style="width:5%; color:#337AB7;">No</th>
                 <th class="text-center" style="width:5%; color:#337AB7;"><?php echo CatalogTranslator::Name($lang) ?></th>              
                 <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Spices($lang) ?></th>
                 <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Sample($lang) ?></th>
-                <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Status($lang) ?></th>
+                <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Image($lang) ?></th>
+            
             </tr>    
 
         </thead>
@@ -59,29 +59,12 @@
         <tbody>
             <?php foreach ($entries as $entry) : ?> 
                 <tr>
-                    <td width="10%" class="text-left">
-                        <?php
-                        $imageFile = "data/antibodies/" . $entry["image_url"];
-                        if (!file_exists($imageFile) || is_dir($imageFile)) {
-                            ?>
-                            <div style="height:25px;"></div>
-                            <?php
-                        } else {
-                            list($width, $height, $type, $attr) = getimagesize($imageFile);
-                            ?>
-                            <a href="<?php echo $imageFile ?>" itemprop="contentUrl" data-size="<?php echo $width ?>x<?php echo $height ?>">
-                                <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
-                            </a>
-                            <?php
-                        }
-                        ?>
-                    </td>
-                    <td width="10%" class="text-left"><?php echo $this->clean($entry ['no_h2p2']); ?></td>
-                    <td width="10%" class="text-left"><?php echo $this->clean($entry ['nom']); ?></td> 
-                    
+                    <td  class="text-left"><?php echo $this->clean($entry ['no_h2p2']); ?></td>
+                    <td  class="text-left"><?php echo $this->clean($entry ['nom']); ?></td> 
+
                     <!-- Tissus -->
 
-                    <td width="10%" class="text-left" style="background-color: #eeffee;">
+                    <td  class="text-left" style="background-color: #eeffee;">
                         <?php
                         $tissus = $entry ['tissus'];
                         $val = "";
@@ -93,7 +76,7 @@
                         ?>
                     </td>
 
-                    <td width="10%" class="text-left" style="background-color: #eeffee;"><?php
+                    <td  class="text-left" style="background-color: #eeffee;"><?php
                         $tissus = $entry ['tissus'];
                         $val = "";
                         for ($i = 0; $i < count($tissus); ++$i) {
@@ -103,29 +86,29 @@
                         }
                         echo $val;
                         ?>
-                    </td>
-
-                    <td width="10%;" class="text-left" style="background-color: #eeffee;">
+                    </td >
+                    <td  class="text-left" style="background-color: #eeffee;">
                         <?php
                         $tissus = $entry ['tissus'];
                         $val = "";
                         for ($i = 0; $i < count($tissus); ++$i) {
-
-                            $statusTxt = "";
-                            $background = "#ffffff";
-                            foreach ($status as $stat) {
-                                if ($tissus[$i]['status'] == $stat["id"]) {
-                                    $statusTxt = $stat['nom'];
-                                    $background = $stat["color"];
-                                }
+                            $imageFile = "data/antibodies/" . $tissus[$i]["image_url"];
+                            if (!file_exists($imageFile) || is_dir($imageFile)) {
+                                ?>
+                                <div style="height:25px;"></div>
+                                <?php
+                            } else {
+                                list($width, $height, $type, $attr) = getimagesize($imageFile);
+                                ?>
+                                <a href="<?php echo $imageFile ?>" itemprop="contentUrl" data-size="<?php echo $width ?>x<?php echo $height ?>">
+                                    <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
+                                </a>
+                                <?php
                             }
-                            $val = $val . "<p style=\"background-color: #" . $background . "\">"
-                                    . $statusTxt
-                                    . "</p>";
                         }
-                        echo $val;
                         ?>
                     </td>
+
 
                 </tr>
             <?php endforeach; ?>
