@@ -49,9 +49,19 @@ class MailerconfigController extends CoresecureController {
             $this->redirect("mailerconfig/".$id_space);
             return;
         }
+        
+        $MailerSetCopyToFrom = $this->MailerSetCopyToFromForm($lang, $id_space);
+        if($MailerSetCopyToFrom->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("MailerSetCopyToFrom", $this->request->getParameter('MailerSetCopyToFrom'), $id_space);
+            
+            $this->redirect("mailerconfig/".$id_space);
+            return;
+        }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang)
+        $forms = array($formMenusactivation->getHtml($lang),
+                       $MailerSetCopyToFrom->getHtml($lang) 
                         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -71,6 +81,21 @@ class MailerconfigController extends CoresecureController {
         $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+    
+    protected function MailerSetCopyToFromForm($lang, $id_space){
+        $modelConfig = new CoreConfig();
+        $MailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space);
+        
+        $form = new Form($this->request, "MailerSetCopyToFromForm");
+        $form->addSeparator(MailerTranslator::SendCopyToSender($lang));
+
+        $form->addSelect("MailerSetCopyToFrom", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $MailerSetCopyToFrom);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

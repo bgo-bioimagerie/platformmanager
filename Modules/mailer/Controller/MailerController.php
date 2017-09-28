@@ -102,8 +102,15 @@ class MailerController extends CoresecureController {
         $space = $modelSpace->getSpace($id_space);
 
         // send the email
+        $modelConfig = new CoreConfig();
+        $MailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space);
+        $MailerSetCopyToFromBool = false;
+        if($MailerSetCopyToFrom == 1){
+            $MailerSetCopyToFromBool = true;
+        }
+        
         $mailerModel = new MailerSend();
-        $message = $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
+        $message = $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content, $MailerSetCopyToFromBool);
 
         $this->render(array(
             'lang' => $this->getLanguage(),

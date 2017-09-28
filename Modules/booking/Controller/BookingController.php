@@ -817,7 +817,9 @@ class BookingController extends BookingabstractController {
     public function editreservationAction($id_space, $param) {
 
         $modelSettings = new CoreConfig();
-        $editResaFunction = $modelSettings->getParam("bkReservationPlugin", $id_space);
+        $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $id_space);
+        
+        //echo "editResaFunction = " . $editResaFunction . "<br/>";
         
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
             $modelDefault = new BookingdefaultController($this->request);
@@ -844,8 +846,8 @@ class BookingController extends BookingabstractController {
             if (file_exists($fileController)) {
                 // Instantiate controler
                 require_once ($fileController);
-                $controller = new $classController ();
-                $controller->setRequest($this->request);
+                $controller = new $classController ($this->request);
+                //$controller->setRequest($this->request);
 
                 $action = $urlInfo["pathInfo"]["action"];
                 //echo "action = " . $action . "<br/>";

@@ -11,7 +11,7 @@ require_once 'Modules/booking/Model/BkNightWE.php';
 class BkGraph extends Model {
 
     public function getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode) {
-        
+
         $dateBeginArray = explode("-", $dateBegin);
         $day_start = $dateBeginArray[2];
         $month_start = $dateBeginArray[1];
@@ -165,6 +165,24 @@ class BkGraph extends Model {
         return array('count' => $countResa, 'time' => $timeResa, 'dates' => $dates);
     }
 
+    public function getReservationPerResourceColor($dateBegin, $dateEnd, $idResource, $idColorCode) {
+        $dateBeginArray = explode('-', $dateBegin);
+        $dateEndArray = explode('-', $dateEnd);
+        $dstart = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]); // Le premier jour du mois en cours
+        $dend = mktime(0, 0, 0, $dateEndArray[1], $dateEndArray[2], $dateEndArray[0]); // Le 0eme jour du mois suivant == le dernier jour du mois en cour
+
+        $sql = 'SELECT * FROM bk_calendar_entry WHERE resource_id=? AND start_time >=' . $dstart . ' AND end_time <=' . $dend;
+        $sql .= ' AND color_type_id =?';
+        $req = $this->runRequest($sql, array($idResource, $idColorCode));
+        $data = $req->fetchAll();
+        $timeSec = 0;
+        foreach ($data as $resa) {
+            $timeSec += $resa['end_time'] - $resa['start_time'];
+        }
+        $timeResa = round($timeSec / 3600);
+        return $timeResa;
+    }
+
     public function getStatReservationPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode) {
 
         $in_color = "";
@@ -183,6 +201,7 @@ class BkGraph extends Model {
         $countResa = array();
         $timeResa = array();
         $resourcesNames = array();
+        $resourcesIdsOut = array();
 
         $dateBeginArray = explode('-', $dateBegin);
         $dateEndArray = explode('-', $dateEnd);
@@ -205,8 +224,10 @@ class BkGraph extends Model {
             }
             $timeResa[] = round($timeSec / 3600);
             $resourcesNames[] = $res['name'];
+            $resourcesIdsOut[] = $res['id'];
         }
-        return array('count' => $countResa, 'time' => $timeResa, 'resource' => $resourcesNames);
+        return array('count' => $countResa, 'time' => $timeResa, 'resource' => $resourcesNames,
+            'resourcesids' => $resourcesIdsOut);
     }
 
     /**

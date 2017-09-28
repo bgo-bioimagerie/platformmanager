@@ -164,6 +164,13 @@ class ServicesTranslator {
         return "Opened projects";
     }
 
+    public static function Period_projects($lang) {
+        if ($lang == "fr") {
+            return "Projets période";
+        }
+        return "Period projects";
+    }
+    
     public static function Closed_projects($lang) {
         if ($lang == "fr") {
             return "Projets clos";
@@ -840,6 +847,20 @@ class ServicesTranslator {
             return "Gantt période";
         }
         return "Gantt period";
+    }
+    
+    public static function SampleReturn($lang){
+        if ($lang == "fr") {
+            return "Restitution des échantillons";
+        }
+        return "Sample return";
+    }
+    
+    public static function Origin($lang){
+        if ($lang == "fr") {
+            return "Origine";
+        }
+        return "Origin";
     }
     
     

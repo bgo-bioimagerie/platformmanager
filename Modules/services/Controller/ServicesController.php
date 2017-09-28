@@ -39,6 +39,9 @@ class ServicesController extends CoresecureController {
             $htmlprojet = str_replace("{{id_space}}", $id_space, $htmlprojet);
             $htmlprojet = str_replace("{{Opened_projects}}", ServicesTranslator::Opened_projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Closed_projects}}", ServicesTranslator::Closed_projects($lang), $htmlprojet);
+            $htmlprojet = str_replace("{{Period_projects}}", ServicesTranslator::Period_projects($lang), $htmlprojet);
+            
+            
             $htmlprojet = str_replace("{{New_project}}", ServicesTranslator::New_project($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Projects}}", ServicesTranslator::Projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{origins}}", ServicesTranslator::servicesOrigin($lang), $htmlprojet);
@@ -96,7 +99,7 @@ class ServicesController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
         if ($servicesuseproject == 1) {
-            $this->redirect('servicesprojects/' . $id_space);
+            $this->redirect('servicesprojectsopened/' . $id_space);
             return;
         }
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);

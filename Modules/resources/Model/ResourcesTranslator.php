@@ -24,7 +24,7 @@ class ResourcesTranslator {
 
     public static function resourcesConfigAbstract($lang) {
         if ($lang == "fr") {
-            return "Le module Resources permet de gérer des resources (descirption, fiches de vie)";
+            return "Le module Resources permet de gérer des resources (description, fiches de vie)";
         }
         return "The Resources module allows to manage a resources database (description, maintenance sheets)";
     }

@@ -28,7 +28,6 @@ require_once 'Modules/booking/Model/BkReport.php';
 
 require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
-
 /**
  * 
  * @author sprigent
@@ -57,10 +56,8 @@ class BookingstatisticsController extends CoresecureController {
         $form->setTitle(BookingTranslator::bookingreservationstats($lang));
         $form->addDate("date_begin", BookingTranslator::PeriodBegining($lang), true, $this->request->getParameterNoException("date_begin"));
         $form->addDate("date_end", BookingTranslator::PeriodEnd($lang), true, $this->request->getParameterNoException("date_end"));
-        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), 
-                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), 
-                array(1,0), $this->request->getParameterNoException("generateunitstats"));
-        
+        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateunitstats"));
+
         $modelColorCode = new BkColorCode();
         $colorCodes = $modelColorCode->getForList($id_space);
         $formAdd = new FormAdd($this->request, 'statreservationsFormAdd');
@@ -496,6 +493,9 @@ class BookingstatisticsController extends CoresecureController {
         $modelGraph = new BkGraph();
         $data = $modelGraph->getStatReservationPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode);
 
+        $colorModel = new BkColorCode();
+        $colorCodes = $colorModel->getColorCodes($id_space);
+
         $objWorkSheet = $objPHPExcel->createSheet();
         $lang = $this->getLanguage();
         $objWorkSheet->setTitle(BookingTranslator::Reservation_per_resource($lang));
@@ -510,7 +510,19 @@ class BookingstatisticsController extends CoresecureController {
         $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
         $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
         $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $num = 3;
+        foreach ($colorCodes as $c) {
+            $num++;
+            $letter = $this->get_col_letter($num);
+            $objWorkSheet->SetCellValue($letter . $curentLine, $c["name"]);
+            $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            $objPHPExcel->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
+        }
 
+        $resourcesids = $data['resourcesids'];
         $resources = $data['resource'];
         $counting = $data['count'];
         $time = $data['time'];
@@ -520,6 +532,15 @@ class BookingstatisticsController extends CoresecureController {
             $objWorkSheet->SetCellValue('A' . $curentLine, $resources[$i]);
             $objWorkSheet->SetCellValue('B' . $curentLine, $counting[$i]);
             $objWorkSheet->SetCellValue('C' . $curentLine, $time[$i]);
+            $num = 3;
+            foreach ($colorCodes as $c) {
+                $num++;
+                $timeColor = $modelGraph->getReservationPerResourceColor($dateBegin, $dateEnd, $resourcesids[$i], $c['id']);
+                
+                $letter = $this->get_col_letter($num);
+                $objWorkSheet->SetCellValue($letter . $curentLine, $timeColor);
+                $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            }
 
             $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
@@ -722,10 +743,10 @@ class BookingstatisticsController extends CoresecureController {
 
         $objPHPExcel = $this->statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
         $objPHPExcel = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-        if($generateunitstats == 1){
+        if ($generateunitstats == 1) {
             $objPHPExcel = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
             $objPHPExcel = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-        }    
+        }
         return $objPHPExcel;
     }
 

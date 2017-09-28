@@ -232,15 +232,17 @@ class InInvoice extends Model {
         return array();
     }
 
-    public function getAllInvoicesPeriod($periodStart, $periodEnd) {
-        $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ?";
-        $user = $this->runRequest($sql, array($periodStart, $periodEnd));
+    public function getAllInvoicesPeriod($periodStart, $periodEnd, $id_space) {
+        $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ? AND id_space=?";
+        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space));
         return $user->fetchAll();
     }
 
-    public function getInvoicesPeriod($controller, $periodStart, $periodEnd) {
-        $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ? AND controller=?";
-        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $controller));
+    public function getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space) {
+        $sql = "select * from in_invoice WHERE date_generated >= ? "
+                . "AND date_generated <= ? AND controller=? "
+                . "AND id_space=?";
+        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $controller, $id_space));
         return $user->fetchAll();
     }
 

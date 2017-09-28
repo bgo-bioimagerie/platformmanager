@@ -35,6 +35,8 @@ class SeProject extends Model {
         $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
         $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
         $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
+        $this->addColumn('se_project', 'samplereturn', 'TEXT', '');
+        $this->addColumn('se_project', 'samplereturndate', 'DATE', '0000-00-00');
         
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
@@ -62,6 +64,11 @@ class SeProject extends Model {
         }
     }
 
+    public function setSampleReturn($id, $samplereturn, $samplereturndate){
+        $sql = "UPDATE se_project SET samplereturn=?, samplereturndate=? WHERE id=?";
+        $this->runRequest($sql, array($samplereturn, $samplereturndate, $id));
+    }
+    
     public function getIdFromName($name, $id_space){
         $sql = "SELECT id FROM se_project WHERE name=? AND id_space=?";
         $req = $this->runRequest($sql, array($name, $id_space));
@@ -81,6 +88,13 @@ class SeProject extends Model {
     public function allPeriodProjects($id_space, $periodStart, $periodEnd){
         $sql = "SELECT * FROM se_project WHERE id_space=? AND date_open<=? AND (date_close=0000-00-00 OR date_close>=?) ORDER BY date_open ASC;";
         $projects = $this->runRequest($sql, array($id_space, $periodEnd, $periodStart))->fetchAll();
+        
+        $modelUser = new CoreUser();
+
+        for ($i = 0; $i < count($projects); $i++) {
+            $projects[$i]["user_name"] = $modelUser->getUserFUllName($projects[$i]['id_user']);
+            $projects[$i]["resp_name"] = $modelUser->getUserFUllName($projects[$i]['id_resp']);
+        }
         return $projects;
     }
     

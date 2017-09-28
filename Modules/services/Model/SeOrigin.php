@@ -22,6 +22,12 @@ class SeOrigin extends Model {
         $this->runRequest($sql);
         $this->addColumn('se_origin', 'display_order', 'int(11)', 0);
     }
+    
+    public function getName($id){
+        $sql = "SELECT name FROM se_origin WHERE id=?";
+        $req = $this->runRequest($sql, array($id))->fetch();
+        return $req[0];
+    }
 
     public function getIdFromName($name, $id_space){
         $sql = "SELECT id FROM se_origin WHERE name=? AND id_space=?";

@@ -17,9 +17,9 @@ class ComTranslator {
     
     public static function comConfigAbstract($lang) {
         if ($lang == "fr") {
-            return "Le module Com permet de ...";
+            return "Le module Com permet d'afficher des messages sur la page d'accueil";
         }
-        return "The Com module allows to ...";
+        return "The Com module allows to show messages in home page";
     }
 
     public static function configuration($lang = "") {
