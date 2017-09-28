@@ -17,9 +17,9 @@ class CatalogTranslator {
 
     public static function catalogConfigAbstract($lang) {
         if ($lang == "fr") {
-            return "Le module Catalog permet de ...";
+            return "Le module Catalog permet d'afficher les 'prestation' disponibles";
         }
-        return "The Catalog module allows to ...";
+        return "The Catalog module allows to show a catalog";
     }
 
     public static function configuration($lang = "") {

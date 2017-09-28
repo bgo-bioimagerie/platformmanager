@@ -40,6 +40,7 @@ Platform-Manager
 <div class="col-md-2 pm-space-navbar">
 <?php
 require_once 'Modules/core/Controller/CorespaceController.php';
+$nullrequest = new Request(array(), false);
 $spaceController = new CorespaceController($nullrequest);
 echo $spaceController->navbar($id_space);
 ?>

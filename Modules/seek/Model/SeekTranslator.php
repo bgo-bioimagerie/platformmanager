@@ -17,9 +17,9 @@ class SeekTranslator {
 
     public static function seekConfigAbstract($lang) {
         if ($lang == "fr") {
-            return "Le module Seek permet de ...";
+            return "Le module Seek permet de communiquer avec l'appli SEEK";
         }
-        return "The Seek module allows to ...";
+        return "The Seek module allows to connect PM and SEEK ";
     }
 
     public static function configuration($lang = "") {
@@ -75,8 +75,8 @@ class SeekTranslator {
 
     public static function dataUrl($lang = "") {
         if ($lang == "fr") {
-            return "Les données doivent etres enregistrer dans le dossier suivant "
-            . "afin d'être automatiquement téléchargés à la manip";
+            return "Lors de vos aquisitions les données doivent êtres enregistrées dans le dossier suivant : "
+            . "";
         }
         return "Data have to be saved in the following directory in order to be "
         . "automatically uploaded to the assay";

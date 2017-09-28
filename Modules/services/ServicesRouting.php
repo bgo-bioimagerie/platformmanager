@@ -39,6 +39,10 @@ class ServicesRouting extends Routing{
         $this->addRoute("servicesprojects", "servicesprojects", "servicesprojects", "index", array("id_space", "year"), array("", ""));
         $this->addRoute("servicesprojectsopened", "servicesprojectsopened", "servicesprojects", "opened", array("id_space", "year"), array("", ""));
         $this->addRoute("servicesprojectsclosed", "servicesprojectsclosed", "servicesprojects", "closed", array("id_space", "year"), array("", ""));
+        $this->addRoute("servicesprojectsperiod", "servicesprojectsperiod", "servicesprojects", "period", array("id_space", "year"), array("", ""));
+        
+        
+        
         $this->addRoute("servicesprojectsall", "servicesprojectsall", "servicesprojects", "all", array("id_space", "year"), array("", ""));
         $this->addRoute("servicesprojectedit", "servicesprojectedit", "servicesprojects", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojectdelete", "servicesprojectdelete", "servicesprojects", "delete", array("id_space", "id"), array("", ""));

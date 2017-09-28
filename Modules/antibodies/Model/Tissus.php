@@ -170,6 +170,7 @@ class Tissus extends Model {
             }
         }
 
+        /*
         if ($catalog) {
             $tissuscp = array();
             foreach ($tissuss as $tissus) {
@@ -188,6 +189,7 @@ class Tissus extends Model {
             }
             return $tissuscp;
         }
+         */
         return $tissuss;
     }
 

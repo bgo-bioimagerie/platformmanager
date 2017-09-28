@@ -320,14 +320,13 @@ if (!isset($searchCom)) {
             <table id="example" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
                 <thead>	 
                     <tr>
-                        <th class="text-center" colspan="10" style="color:#337AB7;">Anticorps</th>
+                        <th class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
                         <th class="text-center" colspan="2" style="background-color: #ffeeee; color:#337AB7;">Protocole</th>
-                        <th class="text-center" colspan="6" style="background-color: #eeffee; color:#337AB7;">Tissus</th>
+                        <th class="text-center" colspan="7" style="background-color: #eeffee; color:#337AB7;">Tissus</th>
                         <th class="text-center" colspan="4" style="background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
                     </tr>
 
-                    <tr>			
-                        <th></th>
+                    <tr>		
                         <th class="text-center" style="color:#337AB7;">No</th> 
                         <th class="text-center" style="color:#337AB7;">Nom</th>
                         <th class="text-center" style="color:#337AB7;">St</th>
@@ -341,6 +340,7 @@ if (!isset($searchCom)) {
                         <th class="text-center" style="background-color: #ffeeee; color:#337AB7;">proto</th>
                         <th class="text-center" style="background-color: #ffeeee; color:#337AB7;">AcI dil</th>
 
+                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;"></th>
                         <th class="text-center" style="background-color: #eeffee; color:#337AB7;">commentaire</th>
                         <th class="text-center" style="background-color: #eeffee; color:#337AB7;">espèce</th>
                         <th class="text-center" style="background-color: #eeffee; color:#337AB7;">organe</th>
@@ -360,40 +360,6 @@ if (!isset($searchCom)) {
 <?php foreach ($anticorpsArray as $anticorps) : ?> 
 
                         <tr>
-                            <td width="10%" class="text-left">
-
-                                <?php
-                                foreach ($anticorps['tissus'] as $tissus) {
-                                    $imageFile = "data/antibodies/" . $tissus["image_url"];
-                                    $printImage = true;
-                                    if (!file_exists($imageFile) || is_dir($imageFile)) {
-                                        $printImage = false;
-                                        //$imageFile = "Modules/antibodies/Theme/images_icon.png";
-                                    } else {
-                                        list($width, $height, $type, $attr) = getimagesize($imageFile);
-                                    }
-                                    if ($printImage) {
-                                        ?>
-                                        <a id="imgview_<?php echo $tissus["id"] ?>" >
-                                            <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
-                                        </a>
-                                        <script>
-                                            $(document).ready(function () {
-                                                $('#imgview_<?php echo $tissus["id"] ?>').on('click', function () {
-
-                                                    var img = "<p><?php echo $tissus["image_url"] ?></p><img src='<?php echo $imageFile ?>' width='100%'  />";
-
-                                                    $('#imagedivcontent').html(img);
-                                                    $('#imagepopup_box').show();
-                                                    $('#hider').show();
-                                                });
-                                            });
-                                        </script>
-            <?php
-        }
-    }
-    ?>
-                            </td>
                                 <?php
                                 $anticorpsId = $this->clean($anticorps['id']);
                                 $isCatalogue = "";
@@ -444,6 +410,42 @@ if (!isset($searchCom)) {
 
 
                             <!-- TISSUS -->
+                            <td width="10%" class="text-left" style="background-color: #eeffee;">
+
+                                <?php
+                                foreach ($anticorps['tissus'] as $tissus) {
+                                    $imageFile = "data/antibodies/" . $tissus["image_url"];
+                                    $printImage = true;
+                                    if (!file_exists($imageFile) || is_dir($imageFile)) {
+                                        $printImage = false;
+                                        //$imageFile = "Modules/antibodies/Theme/images_icon.png";
+                                    } else {
+                                        list($width, $height, $type, $attr) = getimagesize($imageFile);
+                                    }
+                                    if ($printImage) {
+                                        ?>
+                                        <a id="imgview_<?php echo $tissus["id"] ?>" >
+                                            <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
+                                            <br/>
+                                        </a>
+                                        <script>
+                                            $(document).ready(function () {
+                                                $('#imgview_<?php echo $tissus["id"] ?>').on('click', function () {
+
+                                                    var img = "<p><?php echo $tissus["image_url"] ?></p><img src='<?php echo $imageFile ?>' width='100%'  />";
+
+                                                    $('#imagedivcontent').html(img);
+                                                    $('#imagepopup_box').show();
+                                                    $('#hider').show();
+                                                });
+                                            });
+                                        </script>
+            <?php
+        }
+    }
+    ?>
+                            </td>
+                            
                             <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";

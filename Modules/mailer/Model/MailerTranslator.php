@@ -115,4 +115,11 @@ class MailerTranslator {
         return "Message was not sent <br/>' . 'Mailer error: ";
     }
 
+    public static function SendCopyToSender($lang) {
+        if ($lang == "fr") {
+            return "Envoyer une copie à la personne à l'origine de l'envoie de mail";
+        }
+        return "Send copy to sender";
+    }
+    
 }

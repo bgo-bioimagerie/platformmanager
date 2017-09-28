@@ -117,7 +117,7 @@ class SeekbookingController extends BookingabstractController {
         $recipient_id = $this->request->getParameter("recipient_id");
         $last_update = date("Y-m-d H:m:i", time());
         $color_type_id = $this->request->getParameter("color_type_id");
-        $short_description = $this->request->getParameter("short_description");
+        $short_description = $this->request->getParameterNoException("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
         
         $lang = $this->getLanguage();
