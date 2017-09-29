@@ -346,4 +346,18 @@ class InvoicesTranslator {
         return "Invoice informations have been saved";
     }
 
+    public static function currentTemplate($lang){
+        if ($lang == "fr") {
+            return "Modèle actuel";
+        }
+        return "Current template";
+    }
+    
+    public static function Download($lang){
+        if ($lang == "fr") {
+            return "Télécharger";
+        }
+        return "Download";
+    }
+    
 }

@@ -290,17 +290,18 @@ class Form {
      * @param type $label
      * @param type $url
      */
-    public function addDownloadButton($label, $url) {
+    public function addDownloadButton($name, $label, $url, $manual) {
         $this->types[] = "downloadbutton";
-        $this->names[] = $url;
+        $this->names[] = $name;
         $this->labels[] = $label;
-        $this->isMandatory[] = false;
+        $this->isMandatory[] = $manual;
         $this->choices[] = array();
         $this->choicesid[] = array();
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->setValue($name, $url);
     }
 
     /**
@@ -658,7 +659,7 @@ class Form {
                 $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "downloadbutton") {
-                $html .= $formHtml->downloadbutton($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
+                $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "select") {
                 $sub = "";

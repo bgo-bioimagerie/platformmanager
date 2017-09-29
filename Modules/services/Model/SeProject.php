@@ -669,6 +669,16 @@ class SeProject extends Model {
         return $totalHT;
     }
 
+    public function getReturnedSamples($id_space){
+        $sql = "SELECT * FROM se_project WHERE id_space=? AND samplereturndate!='0000-00-00'";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $modelUser = new EcUser();
+        for($i = 0 ; $i < count($data) ; $i++){
+            $data[$i]['resp'] = $modelUser->getUserFUllName($data[$i]['id_resp']);
+        }
+        return $data;
+    }
+    
     /**
      * Delete a unit
      * @param number $id Unit ID
@@ -679,4 +689,5 @@ class SeProject extends Model {
         $this->runRequest($sql, array($id));
     }
 
+    
 }

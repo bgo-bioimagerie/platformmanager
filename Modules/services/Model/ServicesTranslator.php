@@ -856,6 +856,13 @@ class ServicesTranslator {
         return "Sample return";
     }
     
+    public function servicesstatisticsprojectsamplesreturn($lang){
+        if ($lang == "fr") {
+            return "Restitution des échantillons";
+        }
+        return "Sample return listing";
+    }
+    
     public static function Origin($lang){
         if ($lang == "fr") {
             return "Origine";

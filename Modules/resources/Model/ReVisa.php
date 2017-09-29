@@ -259,9 +259,9 @@ class ReVisa extends Model {
         $this->runRequest($sql, array($id));
     }
 
-    public function getAllInstructors() {
-        $sql = "select distinct id_instructor from re_visas";
-        $req = $this->runRequest($sql);
+    public function getAllInstructors($id_space) {
+        $sql = "select distinct id_instructor from re_visas WHERE id_resource_category IN (SELECT id FROM re_category WHERE id_space=?)";
+        $req = $this->runRequest($sql, array($id_space));
         $instructors = $req->fetchAll();
 
         $modelUser = new CoreUser();
