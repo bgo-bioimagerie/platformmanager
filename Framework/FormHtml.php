@@ -226,16 +226,16 @@ class FormHtml {
     static public function date($validated, $label, $name, $value, $lang, $required, $labelWidth = 2, $inputWidth = 9) {
 
         $star = "";
-        if($required != ""){
+        if ($required != "") {
             $star = "*";
         }
-        
+
         $html = "<div class=\"form-group" . $validated . "\">";
-        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label .$star. "</label>";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $star . "</label>";
 
         $html .= "<div class='col-xs-" . $inputWidth . "'>";
         $html .= "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-        $html .= "<input type='text' ".$required." class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
+        $html .= "<input type='text' " . $required . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
         $html .= "          <span class=\"input-group-addon\">";
         $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
         $html .= "          </span>";
@@ -493,13 +493,25 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function downloadbutton($label, $name, $labelWidth = 2, $inputWidth = 9) {
-        $html = "<div class=\"form-group\">";
-        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
-        $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<button class=\"btn  btn-default\" id=\"" . $name . "\" type=\"button\" onclick=\"location.href = '" . $name . "'\">" . $label . "</button>";
-        $html .= "</div>";
-        $html .= "</div>";
+    static public function downloadbutton($formid, $label, $name, $value, $manual = false, $labelWidth = 2, $inputWidth = 9) {
+
+        if ($manual) {
+            $html = "<div class=\"form-group\">";
+            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . "</label>";
+            $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
+            $html .= "<input name=\"".$name."\" type=\"hidden\" value=\"".$value."\">";
+            $html .= "<input type=\"submit\" id=\"" . $formid . "submit" . "\" class=\"btn btn-default\" value=\"" . $label . "\" />";
+            $html .= "</div>";
+            $html .= "</div>";
+        } else {
+            $html = "<div class=\"form-group\">";
+            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
+            $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
+            $html .= "<button class=\"btn  btn-default\" id=\"" . $name . "\" type=\"button\" onclick=\"location.href = '" . $name . "'\">" . $label . "</button>";
+            $html .= "</div>";
+            $html .= "</div>";
+        }
+
         return $html;
     }
 
@@ -516,10 +528,10 @@ class FormHtml {
     static public function inlineSelect($name, $choices, $choicesid, $value, $isMandatory, $vect = false, $submitOnchange = "") {
 
         $required = "";
-        if ($isMandatory){
+        if ($isMandatory) {
             $required = "required";
         }
-        
+
         $vectv = "";
         if ($vect) {
             $vectv = "[]";
@@ -528,7 +540,7 @@ class FormHtml {
         if ($submitOnchange != "") {
             $submit = "onchange=\"updateResponsibe(this);\"";
         }
-        $html = "<select ".$required." class=\"form-control select\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " >";
+        $html = "<select " . $required . " class=\"form-control select\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " >";
         for ($v = 0; $v < count($choices); $v++) {
             $selected = "";
             if ($value == $choicesid[$v]) {
@@ -562,12 +574,12 @@ class FormHtml {
     static public function select($label, $name, $choices, $choicesid, $value, $isMandatory, $labelWidth = 2, $inputWidth = 9, $submitOnChange = "") {
 
         $star = "";
-        if ($isMandatory){
+        if ($isMandatory) {
             $star = "*";
         }
-        
+
         $html = "<div class=\"form-group\">";
-        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $star ."</label>";
+        $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $star . "</label>";
         $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value, $isMandatory, false, $submitOnChange);
         $html .= "</div>";
@@ -637,7 +649,7 @@ class FormHtml {
         }
         foreach ($externalButtons as $ext) {
             if ($ext["newtab"]) {
-                $html .= "<input type=\"button\" value=\"".$ext["name"]."\" onclick=\"window.open('". $ext["url"] ."')\" class=\"btn btn-" . $ext["type"] . "\" />";
+                $html .= "<input type=\"button\" value=\"" . $ext["name"] . "\" onclick=\"window.open('" . $ext["url"] . "')\" class=\"btn btn-" . $ext["type"] . "\" />";
             } else {
                 $html .= "<button type=\"button\" onclick=\"location.href='" . $ext["url"] . "'\" class=\"btn btn-" . $ext["type"] . "\">" . $ext["name"] . "</button>";
             }

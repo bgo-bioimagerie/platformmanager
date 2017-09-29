@@ -1453,5 +1453,11 @@ class BookingTranslator {
         return "Can user edit started reservation ?";
     }
     
+    public static function AllDay($lang){
+        if ($lang == "fr") {
+            return "Toute la journée";
+        }
+        return "All day";
+    } 
     
 }

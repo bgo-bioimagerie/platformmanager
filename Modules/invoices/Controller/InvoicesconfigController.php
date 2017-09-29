@@ -44,118 +44,132 @@ class InvoicesconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "invoices", "invoices", "glyphicon glyphicon-euro", 
-                    $this->request->getParameter("invoicesmenustatus"),
-                    $this->request->getParameter("invoicesmenudisplay"),
-                    1,
-                    $this->request->getParameter("invoicesmenucolor")
-                    );
+            $modelSpace->setSpaceMenu($id_space, "invoices", "invoices", "glyphicon glyphicon-euro", $this->request->getParameter("invoicesmenustatus"), $this->request->getParameter("invoicesmenudisplay"), 1, $this->request->getParameter("invoicesmenucolor")
+            );
 
             $this->redirect("invoicesconfig/" . $id_space);
 
             return;
         }
-        
+
         // period invoices
         $formPeriod = $this->periodForm($modelCoreConfig, $id_space, $lang);
-        if($formPeriod->check()){
-            $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang) , $id_space);
+        if ($formPeriod->check()) {
+            $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang), $id_space);
             $modelCoreConfig->setParam("invoiceperiodend", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodend"), $lang), $id_space);
-            
-            $this->redirect("invoicesconfig/".$id_space);
+
+            $this->redirect("invoicesconfig/" . $id_space);
             return;
         }
-        
+
         // options
         $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($id_space, $lang);
-        if($formUseInvoiceDatePaid->check()){
+        if ($formUseInvoiceDatePaid->check()) {
             $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $id_space);
-            $this->redirect("invoicesconfig/".$id_space);
+            $this->redirect("invoicesconfig/" . $id_space);
             return;
         }
-        
+
         // view
         $forms = array($formMenusactivation->getHtml($lang),
-                       $formPeriod->getHtml($lang)
+            $formPeriod->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    public function pdftemplateAction($id_space){
-        
+    public function pdftemplateAction($id_space) {
+
         $lang = $this->getLanguage();
+
+        $formDownload = new Form($this->request, "formDownloadTemplate");
+        $formDownload->setTitle(InvoicesTranslator::currentTemplate($lang));
+        $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'data/invoices/' . $id_space . '/template.php', true);
+        if ($formDownload->check()) {
+
+            $file = $this->request->getParameter('url');
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header("Content-Disposition: attachment; filename=$file");
+            header("Content-Type: application/zip");
+            header("Content-Transfer-Encoding: binary");
+
+            // read the file from disk
+            readfile($file);
+            return;
+        }
+
         $formUpload = new Form($this->request, "formUploadTemplate");
         $formUpload->setTitle(InvoicesTranslator::uploadTemplate($lang));
         $formUpload->addUpload("template", "");
-        $formUpload->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/".$id_space);
+        $formUpload->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/" . $id_space);
         $formUpload->setColumnsWidth(0, 12);
         $formUpload->setButtonsWidth(2, 10);
-        if($formUpload->check()){
-            FileUpload::uploadFile('data/invoices/'.$id_space.'/', 'template', 'template.php');
-            $this->redirect('invoicepdftemplate/'.$id_space);
+        if ($formUpload->check()) {
+            FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'template', 'template.php');
+            $this->redirect('invoicepdftemplate/' . $id_space);
             return;
         }
-        
+
         $formUploadImages = new Form($this->request, "formUploadImages");
         $formUploadImages->setTitle(InvoicesTranslator::UploadImages($lang));
         $formUploadImages->addUpload("image", "");
-        $formUploadImages->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/".$id_space);
+        $formUploadImages->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/" . $id_space);
         $formUploadImages->setButtonsWidth(2, 10);
         $formUploadImages->setColumnsWidth(0, 12);
-        if($formUploadImages->check()){
-            FileUpload::uploadFile('data/invoices/'.$id_space.'/', 'image', $_FILES["image"]["name"]);
-            $this->redirect('invoicepdftemplate/'.$id_space);
+        if ($formUploadImages->check()) {
+            FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'image', $_FILES["image"]["name"]);
+            $this->redirect('invoicepdftemplate/' . $id_space);
             return;
         }
-        
+
         $dataTable = new TableView();
         $dataTable->setTitle(InvoicesTranslator::Images($lang));
-        $dataTable->addDeleteButton("invoicepdftemplatedelete/".$id_space);
-        
-        $files = scandir('data/invoices/'.$id_space);
+        $dataTable->addDeleteButton("invoicepdftemplatedelete/" . $id_space);
+
+        $files = scandir('data/invoices/' . $id_space);
         $data = array();
-        foreach($files as $file){
-            if( strpos ( $file, ".") > 0 && $file != "template.php"){
-                $data[] = array('name' => $file, 'id' => str_replace ( '.' , "__pm__", $file));
+        foreach ($files as $file) {
+            if (strpos($file, ".") > 0 && $file != "template.php") {
+                $data[] = array('name' => $file, 'id' => str_replace('.', "__pm__", $file));
             }
         }
-        
+
         $headers = array(
             "name" => InvoicesTranslator::Name($lang)
         );
-        
+
         $tableHtml = $dataTable->view($data, $headers);
-       
-        $this->render(array("id_space" => $id_space, 
-            "formUpload" => $formUpload->getHtml($lang), "tableHtml" => $tableHtml, 
+
+        $this->render(array("id_space" => $id_space,
+            "formDownload" => $formDownload->getHtml($lang),
+            "formUpload" => $formUpload->getHtml($lang), "tableHtml" => $tableHtml,
             "formUploadImages" => $formUploadImages->getHtml($lang),
             "lang" => $lang));
-        
     }
-    
-    public function pdftemplatedeleteAction($id_space, $name){
-        
-        $namefile = str_replace ( "__pm__", '.' , $name);
-        unlink('data/invoices/'.$id_space.'/'.$namefile);
-        $this->redirect('invoicepdftemplate/'.$id_space);
+
+    public function pdftemplatedeleteAction($id_space, $name) {
+
+        $namefile = str_replace("__pm__", '.', $name);
+        unlink('data/invoices/' . $id_space . '/' . $namefile);
+        $this->redirect('invoicepdftemplate/' . $id_space);
     }
-    
-    protected function useInvoiceDatePaidForm($id_space, $lang){
-        
+
+    protected function useInvoiceDatePaidForm($id_space, $lang) {
+
         $modelConfig = new CoreConfig();
         $useDatePaid = $modelConfig->getParamSpace("useInvoiceDatePaid", $id_space);
-        
+
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(InvoicesTranslator::useInvoiceDatePaid($lang));
-        
-        $form->addSelect("useInvoiceDatePaid", InvoicesTranslator::useInvoiceDatePaid($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $useDatePaid);
-        
+
+        $form->addSelect("useInvoiceDatePaid", InvoicesTranslator::useInvoiceDatePaid($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $useDatePaid);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;
     }
-    
+
     protected function menusactivationForm($id_space, $lang) {
 
         $modelSpace = new CoreSpace();
@@ -171,25 +185,25 @@ class InvoicesconfigController extends CoresecureController {
         $form->addSelect("invoicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("invoicesmenudisplay", CoreTranslator::Display_order($lang), false, $displayUserMenu);
         $form->addColor("invoicesmenucolor", CoreTranslator::color($lang), false, $invoicesmenucolor);
-        
+
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
 
         return $form;
     }
-    
-    public function periodForm($modelCoreConfig, $id_space, $lang){
+
+    public function periodForm($modelCoreConfig, $id_space, $lang) {
         $invoiceperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space), $lang);
         $invoiceperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodend", $id_space), $lang);
-        
+
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));
         $form->addDate("invoiceperiodbegin", InvoicesTranslator::invoiceperiodbegin($lang), true, $invoiceperiodbegin);
         $form->addDate("invoiceperiodend", InvoicesTranslator::invoiceperiodend($lang), true, $invoiceperiodend);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/".$id_space);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
-        
+
         return $form;
     }
 

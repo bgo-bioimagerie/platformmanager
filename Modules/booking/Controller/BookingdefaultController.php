@@ -126,22 +126,39 @@ class BookingdefaultController extends BookingabstractController {
         $color_type_id = $this->request->getParameter("color_type_id");
         $short_description = $this->request->getParameterNoException("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
+        $all_day_long = $this->request->getParameterNoException("all_day_long");
 
         $lang = $this->getLanguage();
         $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
         $dateResaStartArray = explode("-", $dateResaStart);
-        $hour_startH = $this->request->getParameter("hour_startH");
-        $hour_startM = $this->request->getParameter("hour_startm");
-        $start_time = mktime($hour_startH, $hour_startM, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+        if($all_day_long == 1){
+            $modelResource = new ResourceInfo();
+            $modelScheduling = new BkScheduling();
+            $schedul = $modelScheduling->get($modelResource->getAreaID($id_resource));
+            $start_time = mktime($schedul["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
 
+        }
+        else{
+            $hour_startH = $this->request->getParameter("hour_startH");
+            $hour_startM = $this->request->getParameter("hour_startm");
+            $start_time = mktime($hour_startH, $hour_startM, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+        }
+        
+        
         $dateResaEnd = CoreTranslator::dateToEn($this->request->getParameter("resa_end"), $lang);
-
         $dateResaEndArray = explode("-", $dateResaEnd);
-        $hour_endH = $this->request->getParameter("hour_endH");
-        //echo "hour_endH = " . $hour_endH . "<br/>";
-        $hour_endM = $this->request->getParameter("hour_endm");
-        $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
-
+        
+        if($all_day_long == 1){
+            $modelResource = new ResourceInfo();
+            $modelScheduling = new BkScheduling();
+            $schedul = $modelScheduling->get($modelResource->getAreaID($id_resource));
+            $end_time = mktime($schedul["day_end"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+        }
+        else{
+            $hour_endH = $this->request->getParameter("hour_endH");
+            $hour_endM = $this->request->getParameter("hour_endm");
+            $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
+        }
         $modelSupInfo = new BkCalSupInfo();
         $supInfos = $modelSupInfo->getForResource($id_resource);
         $supplementaries = "";
@@ -232,7 +249,8 @@ class BookingdefaultController extends BookingabstractController {
                 $valid = false;
             }
             if ($valid) {
-                $modelCalEntry->setEntry($id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
+                $id_new = $modelCalEntry->setEntry($id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
+                $modelCalEntry->setAllDayLong($id_new, $all_day_long);
                 $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
             }
         } else {
@@ -275,6 +293,7 @@ class BookingdefaultController extends BookingabstractController {
                         $id_entry = $modelCalEntry->setEntry(0, $btime, $end_time + $pass, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                         //echo 'set period <br/>';
                         $modelCalEntry->setPeriod($id_entry, $id_period);
+                        $modelCalEntry->setAllDayLong($id_entry, $all_day_long);
                         $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
                     }
                 }
@@ -308,6 +327,8 @@ class BookingdefaultController extends BookingabstractController {
                         $id_entry = $modelCalEntry->setEntry(0, $btime, $end_time + $pass, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                         //echo 'set period <br/>';
                         $modelCalEntry->setPeriod($id_entry, $id_period);
+                        $modelCalEntry->setAllDayLong($id_entry, $all_day_long);
+                        
                         $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
                     }
                 }
@@ -405,6 +426,7 @@ class BookingdefaultController extends BookingabstractController {
                         $id_entry = $modelCalEntry->setEntry(0, $start_m_time, $end_m_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                         //echo 'set period <br/>';
                         $modelCalEntry->setPeriod($id_entry, $id_period);
+                        $modelCalEntry->setAllDayLong($id_entry, $all_day_long);
                         $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
                     }
                 }
@@ -456,6 +478,7 @@ class BookingdefaultController extends BookingabstractController {
                         $id_entry = $modelCalEntry->setEntry(0, $start_m_time, $end_m_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                         //echo 'set period <br/>';
                         $modelCalEntry->setPeriod($id_entry, $id_period);
+                        $modelCalEntry->setAllDayLong($id_entry, $all_day_long);
                         $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
                     }
                 }
@@ -638,6 +661,7 @@ class BookingdefaultController extends BookingabstractController {
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
         // date time
+        $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"]);
         $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["start_time"]), $lang));
         $form->addHour("hour_start", BookingTranslator::time($lang), false, array(date("H", $resaInfo["start_time"]), date("i", $resaInfo["start_time"])));
 
