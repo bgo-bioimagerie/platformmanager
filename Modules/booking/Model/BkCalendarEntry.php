@@ -42,6 +42,7 @@ class BkCalendarEntry extends Model {
         $this->runRequest($sql);
         
         $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
+        $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
     }
     
     public function updateNullResponsibles(){
@@ -137,6 +138,11 @@ class BkCalendarEntry extends Model {
             "package_id" => 0,
             "responsible_id" => $resps[0]['id_resp'],
             "invoice_id" => 0);
+    }
+    
+    public function setAllDayLong($id, $all_day_long){
+        $sql = "UPDATE bk_calendar_entry SET all_day_long=? WHERE id=?";
+        $this->runRequest($sql, array($all_day_long, $id));
     }
 
     public function setEntry($id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id) {
