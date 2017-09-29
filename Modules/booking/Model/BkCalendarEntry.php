@@ -137,7 +137,8 @@ class BkCalendarEntry extends Model {
             "supplementaries" => "",
             "package_id" => 0,
             "responsible_id" => $resps[0]['id_resp'],
-            "invoice_id" => 0);
+            "invoice_id" => 0,
+            "all_day_long" => 0);
     }
     
     public function setAllDayLong($id, $all_day_long){
