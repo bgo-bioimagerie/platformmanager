@@ -95,7 +95,12 @@ class ServicesprojectsController extends CoresecureController {
             $years = $modelEntry->closedProjectsYears($id_space);
             $yearsUrl = "servicesprojectsclosed";
             if ($year == "") {
-                $year = $years[count($years) - 1];
+                if(count($years) < 1){
+                    $year = time('Y');
+                }
+                else{
+                    $year = $years[count($years) - 1];
+                }
             }
             $dates = $this->getProjectPeriod($id_space, $year);
             $title = ServicesTranslator::Closed_projects($lang);
