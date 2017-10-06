@@ -264,7 +264,7 @@ class ServicesTranslator {
 
     public static function OpenedUpper($lang) {
         if ($lang == "fr") {
-            return "OUVERT";
+            return "PERIODE";
         }
         return "OPEN";
     }

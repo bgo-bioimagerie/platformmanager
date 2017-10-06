@@ -9,6 +9,11 @@ Platform-Manager
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+
 <!-- Bootstrap core CSS -->
 <link href="externals/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -31,7 +36,7 @@ Platform-Manager
         </div>
 
         <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1">
+        <div class="col-sm-10 col-sm-offset-1 text-center">
             <p></p>    
             <h3 style="text-align:center;"><?php echo $home_message ?></h3>
             <p></p>

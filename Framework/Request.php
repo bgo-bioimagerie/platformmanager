@@ -71,9 +71,14 @@ class Request {
      * @return string Value of the parameter
      * @throws Exception If the parameter does not exist in the request
      */
-    public function getParameter($name) {
+    public function getParameter($name, $clean = true) {
         if ($this->isParameter($name)) {
-            return $this->parameters [$name];
+            if($clean){
+                return $this->clean($this->parameters [$name]);
+            }
+            else{
+                return $this->parameters [$name];    
+            }
         } else {
             throw new Exception("Parameter '$name' is not in the request");
         }
@@ -86,12 +91,24 @@ class Request {
      *        	Name of the parameter
      * @return string Value of the parameter, or en empty string if the parameter is not set
      */
-    public function getParameterNoException($name) {
+    public function getParameterNoException($name, $clean = true) {
         if ($this->isParameter($name)) {
-            return $this->parameters [$name];
+            if($clean){
+                return $this->clean($this->parameters [$name]);
+            }
+            else{
+                return $this->parameters [$name];    
+            }
         } else {
             return '';
         }
+    }
+    
+    public function clean($value){
+        if(is_array($value)){
+            return $value;
+        }
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', false);
     }
 
 }
