@@ -1,4 +1,5 @@
 <?php require_once 'Framework/ti.php' ?>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8" />

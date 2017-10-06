@@ -34,7 +34,7 @@ class ComtileController extends CoresecureController {
         $form->setButtonsWidth(1, 11);
         
         if($form->check()){
-            $modelParam->setParam("tilemessage", $form->getParameter("message"), $id_space);
+            $modelParam->setParam("tilemessage", $this->request->getParameter("message", false), $id_space);
             $this->redirect('comtileedit/'.$id_space);
         }
         
