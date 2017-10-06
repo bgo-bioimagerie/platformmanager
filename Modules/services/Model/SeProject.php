@@ -387,8 +387,8 @@ class SeProject extends Model {
     }
 
     public function openedEntries($id_space, $sortentry = 'id') {
-        $sql = "select * from se_project WHERE date_close=? order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql, array("0000-00-00"));
+        $sql = "select * from se_project WHERE date_close=? AND id_space=? order by " . $sortentry . " ASC;";
+        $req = $this->runRequest($sql, array("0000-00-00", $id_space));
 
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
