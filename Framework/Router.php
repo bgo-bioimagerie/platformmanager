@@ -13,6 +13,7 @@ require_once 'FCache.php';
 class router {
 
     protected $modelCache;
+    protected $useRouterController; 
 
     public function __construct() {
         $this->modelCache = new FCache();
@@ -59,7 +60,12 @@ class router {
                 ));
             }
         } else {
-            $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
+            if($this->useRouterController){
+                $controller->indexAction($args);
+            }
+            else{
+                $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
+            }
         }
     }
 
@@ -129,14 +135,6 @@ class router {
         $args = $urlInfo["pathInfo"]["gets"];
         $argsValues = array();
 
-        /*
-          if (count($args) > count($urlInfo["pathData"]) - 1) {
-          throw new Exception("Missing arguments in the URL");
-          }
-          for ($i = 0; $i < count($args); $i++) {
-          $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
-          }
-         */
         for ($i = 0; $i < count($args); $i++) {
             if (isset($urlInfo["pathData"][$i + 1])) {
                 $argsValues[$args[$i]["name"]] = $urlInfo["pathData"][$i + 1];
@@ -144,7 +142,6 @@ class router {
                 $argsValues[$args[$i]["name"]] = "";
             }
         }
-
 
         return $argsValues;
     }
@@ -174,10 +171,31 @@ class router {
             // Instantiate controler
             require ($fileController);
             $controller = new $classController ($request);
-            //$controller->setRequest($request);
+            $this->useRouterController = false;
             return $controller;
         } else {
-            throw new Exception("Unable to find the controller file '$fileController' ");
+            $rooterController = Configuration::get("routercontroller");
+            if($rooterController != ""){
+            $rooterControllerArray = explode("::", "$rooterController");
+            if(count($rooterControllerArray) == 3){
+                $classController = $rooterControllerArray[2];
+                $module = $moduleName;
+                $fileController = 'Modules/' . $rooterControllerArray[0] . "/Controller/" . $rooterControllerArray[2] . ".php";
+                if(file_exists($fileController)){
+                    
+                    require ($fileController);
+                    $controller = new $classController ($request);
+                    $this->useRouterController = true;
+                    return $controller;
+                }
+            }
+            else{
+                throw new Exception("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
+            }
+            }
+            else{
+                throw new Exception("Unable to find the controller file '$fileController' ");
+            }
         }
     }
 
