@@ -124,6 +124,17 @@ abstract class Model {
         return false;
     }
 
+    public function createTableInNotExists($tableName){
+        $sql = "CREATE TABLE IF NOT EXISTS `" . $tableName . "`"
+                . " (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY)";
+        $this->runRequest($sql);
+    }
+    
+    public function addPrimary($tableName, $primary){
+        $sql = "ALTER TABLE ".$tableName." ADD PRIMARY KEY (".$primary.");";
+        $this->runRequest($sql);   
+    }
+    
     /**
      * 
      */

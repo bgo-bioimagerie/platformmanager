@@ -31,6 +31,8 @@ class ComController extends CoresecureController {
         $lang = $this->getLanguage();
         $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Tilemessage}}', ComTranslator::Tilemessage($lang), $html);
+        $html = str_replace('{{News}}', ComTranslator::News($lang), $html);
+        
         return $html;
     }
     

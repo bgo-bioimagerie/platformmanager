@@ -50,12 +50,34 @@ class BookingstatisticsController extends CoresecureController {
     public function statreservationsAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
-
         $lang = $this->getLanguage();
+
+        $modelCoreConfig = new CoreConfig();
+        $date_begin = $this->request->getParameterNoException("date_begin");
+        if ($date_begin == "") {
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $dateArray = explode("-", $date_begin);
+            $y = date("Y") - 1;
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        }
+        $date_end = $this->request->getParameterNoException("date_end");
+        if ($date_end == "") {
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $dateArray = explode("-", $date_end);
+            $y = date("Y");
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        }
+
+
+
         $form = new Form($this->request, "statreservationsForm");
         $form->setTitle(BookingTranslator::bookingreservationstats($lang));
-        $form->addDate("date_begin", BookingTranslator::PeriodBegining($lang), true, $this->request->getParameterNoException("date_begin"));
-        $form->addDate("date_end", BookingTranslator::PeriodEnd($lang), true, $this->request->getParameterNoException("date_end"));
+        $form->addDate("date_begin", BookingTranslator::PeriodBegining($lang), true, $date_begin);
+        $form->addDate("date_end", BookingTranslator::PeriodEnd($lang), true, $date_end);
         $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateunitstats"));
 
         $modelColorCode = new BkColorCode();
@@ -163,11 +185,31 @@ class BookingstatisticsController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $modelCoreConfig = new CoreConfig();
+        $date_begin = $this->request->getParameterNoException("date_begin");
+        if ($date_begin == "") {
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $dateArray = explode("-", $date_begin);
+            $y = date("Y") - 1;
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        }
+        $date_end = $this->request->getParameterNoException("date_end");
+        if ($date_end == "") {
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $dateArray = explode("-", $date_end);
+            $y = date("Y");
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        }
+
         // build the form
         $form = new Form($this->request, "sygrrifstats/statbookingusers");
         $form->setTitle(BookingTranslator::bookingusersstats($lang));
-        $form->addDate('startdate', BookingTranslator::Date_Begin($lang), true, $this->request->getParameterNoException("startdate"));
-        $form->addDate('enddate', BookingTranslator::Date_End($lang), true, $this->request->getParameterNoException("enddate"));
+        $form->addDate('startdate', BookingTranslator::Date_Begin($lang), true, $date_begin);
+        $form->addDate('enddate', BookingTranslator::Date_End($lang), true, $date_end);
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingusersstats/" . $id_space);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "statistics/" . $id_space);
 
@@ -536,7 +578,7 @@ class BookingstatisticsController extends CoresecureController {
             foreach ($colorCodes as $c) {
                 $num++;
                 $timeColor = $modelGraph->getReservationPerResourceColor($dateBegin, $dateEnd, $resourcesids[$i], $c['id']);
-                
+
                 $letter = $this->get_col_letter($num);
                 $objWorkSheet->SetCellValue($letter . $curentLine, $timeColor);
                 $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);

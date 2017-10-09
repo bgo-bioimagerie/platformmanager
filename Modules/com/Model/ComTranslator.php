@@ -8,13 +8,13 @@
  */
 class ComTranslator {
 
-    public static function com($lang){
+    public static function com($lang) {
         if ($lang == "fr") {
             return "com";
         }
         return "com";
     }
-    
+
     public static function comConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Com permet d'afficher des messages sur la page d'accueil";
@@ -52,11 +52,68 @@ class ComTranslator {
         return "Activate/deactivate menus";
     }
 
-    public static function Tilemessage($lang = ""){
-             if ($lang == "fr") {
+    public static function Tilemessage($lang = "") {
+        if ($lang == "fr") {
             return "Message accueil espace";
         }
-        return "Space tile message";   
+        return "Space tile message";
+    }
+
+    public static function News($lang) {
+        if ($lang == "fr") {
+            return "Actualités";
+        }
+        return "News";
+    }
+
+    public static function Title($lang) {
+        if ($lang == "fr") {
+            return "Titre";
+        }
+        return "Title";
     }
     
- }
+    public static function Date($lang) {
+        if ($lang == "fr") {
+            return "Date";
+        }
+        return "Date";
+    }
+    
+    public static function Expire($lang) {
+        if ($lang == "fr") {
+            return "Expire";
+        }
+        return "Expire";
+    }
+    
+    public static function NewsEdit($lang) {
+        if ($lang == "fr") {
+            return "Edition d'actualité";
+        }
+        return "News edit";
+    }
+    
+    public static function Media($lang) {
+        if ($lang == "fr") {
+            return "Média";
+        }
+        return "Media";
+    }
+    
+    public static function NewsHasBeenSaved($lang) {
+        if ($lang == "fr") {
+            return "L'actualité à été sauvegardée";
+        }
+        return "News has been saved";
+    }
+    
+    public static function Content($lang) {
+        if ($lang == "fr") {
+            return "Contenu";
+        }
+        return "Content";
+    }
+    
+
+}
