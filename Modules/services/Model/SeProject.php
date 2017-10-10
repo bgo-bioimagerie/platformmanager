@@ -53,6 +53,20 @@ class SeProject extends Model {
         $this->runRequest($sql2);
     }
     
+    public function getRespsPeriod($id_space, $periodStart, $periodEnds){
+        $sql = "SELECT DISTINCT id_resp "
+                . " FROM se_project "
+                . " WHERE id_space=? AND date_open<=? AND (date_close=0000-00-00 OR date_close>=?) ";
+        $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnds));
+        $data = $req->fetchAll();
+        $modelUser = new CoreUser();
+        for($i = 0 ; $i < count($data) ; $i++){
+            $data[$i]["name"] = $modelUser->getUserFUllName($data[$i]["id_resp"]);
+            $data[$i]["email"] = $modelUser->getEmail($data[$i]["id_resp"]);
+        }
+        return $data;
+    }
+    
     public function mergeUsers($users){
         for($i = 1 ; $i < count($users) ; $i++){
             $sql = "UPDATE se_project SET id_resp=? WHERE id_resp=?";
@@ -478,6 +492,7 @@ class SeProject extends Model {
         $sql2 = "SELECT id_user FROM se_visa WHERE id=? AND id_space=?";
         $id_user = $this->runRequest($sql2, array($info['closed_by'], $id_space))->fetch();
         $info['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
+        $info['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
         
         return $info;
     }
@@ -491,6 +506,7 @@ class SeProject extends Model {
             $sql = "SELECT id_user FROM se_visa WHERE id=? AND id_space=?";
             $id_user = $this->runRequest($sql, array($projects[$i]['closed_by'], $id_space))->fetch();
             $projects[$i]['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
+            $projects[$i]['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
             
         }
         

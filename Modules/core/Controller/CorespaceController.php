@@ -47,6 +47,12 @@ class CorespaceController extends CoresecureController {
     public function viewAction($id_space) {
 
         $space = $this->spaceModel->getSpace($id_space);
+        
+        $modelConfig = new CoreConfig();
+        $space_home_page = $modelConfig->getParamSpace('space_home_page', $id_space);
+        if ($space_home_page != ""){
+            $this->redirect($space_home_page . "/" . $id_space);
+        }
 
         $lang = $this->getLanguage();
         $showAdmMenu = false;

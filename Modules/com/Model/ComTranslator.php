@@ -72,48 +72,54 @@ class ComTranslator {
         }
         return "Title";
     }
-    
+
     public static function Date($lang) {
         if ($lang == "fr") {
             return "Date";
         }
         return "Date";
     }
-    
+
     public static function Expire($lang) {
         if ($lang == "fr") {
             return "Expire";
         }
         return "Expire";
     }
-    
+
     public static function NewsEdit($lang) {
         if ($lang == "fr") {
             return "Edition d'actualité";
         }
         return "News edit";
     }
-    
+
     public static function Media($lang) {
         if ($lang == "fr") {
             return "Média";
         }
         return "Media";
     }
-    
+
     public static function NewsHasBeenSaved($lang) {
         if ($lang == "fr") {
             return "L'actualité à été sauvegardée";
         }
         return "News has been saved";
     }
-    
+
     public static function Content($lang) {
         if ($lang == "fr") {
             return "Contenu";
         }
         return "Content";
     }
-    
+
+    public static function useComAsSpaceHomePage($lang) {
+        if ($lang == "fr") {
+            return "Utiliser la page d'actualité comme accueil de l'espace";
+        }
+        return "use com as space home page";
+    }
 
 }

@@ -40,8 +40,8 @@ class ComNews extends Model {
 
     public function getByDate($id_space, $limit = -1) {
         $today = date('Y-m-d');
-        $sql = "SELECT * FROM com_news WHERE id_space=? AND expires>=? LIMIT ? ORDER BY date ASC;";
-        $req = $this->runRequest($sql, array($id_space, $today, $limit));
+        $sql = "SELECT * FROM com_news WHERE id_space=? AND expires>=? ORDER BY date ASC LIMIT ".$limit.";";
+        $req = $this->runRequest($sql, array($id_space, $today));
         return $req->fetchAll();
     }
 

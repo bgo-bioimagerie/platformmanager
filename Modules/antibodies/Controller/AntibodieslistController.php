@@ -271,19 +271,23 @@ class AntibodieslistController extends CoresecureController {
 
         $lang = $this->getLanguage();
         // informations form
-        $form = $this->createEditForm($id_space, $id);
+        if ($id != 0) {
+            $anticorps = $this->antibody->getAnticorpsFromId($id);
+        } else {
+            $anticorps = $this->antibody->getDefaultAnticorps();
+        }
+        $form = $this->createEditForm($id_space, $anticorps, $id);
         if ($form->check()) {
 
             $idNew = $this->antibody->setAntibody($id, $id_space, $form->getParameter("name"), $form->getParameter("no_h2p2"), $form->getParameter("fournisseur"), $form->getParameter("id_source"), $form->getParameter("reference"), $form->getParameter("clone"), $form->getParameter("lot"), $form->getParameter("id_isotype"), $form->getParameter("stockage")
             );
-            $this->antibody->setExportCatalog($idNew, $form->getParameter("export_catalog")
-            );
+            
             $this->antibody->setApplicationStaining($idNew, $form->getParameter("id_staining"), $form->getParameter("id_application")
             );
 
             $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
 
-            $this->redirect('anticorpsedit/' . $id_space . '/' . $id);
+            $this->redirect('anticorpsedit/' . $id_space . '/' . $idNew);
             return;
         }
 
@@ -291,6 +295,27 @@ class AntibodieslistController extends CoresecureController {
         $modelTissus = new Tissus();
         $tissus = $modelTissus->getInfoForAntibody($id);
         $tissusTable = $this->createTissusTable($id_space, $tissus);
+        
+        // Add Catalogue form
+        $catalogFormHtml = "";
+        if ($id > 0) {
+            $catalogForm = new Form($this->request, "setToCatalogForm");
+            $catalogForm->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), 
+                CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
+            $catalogForm->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . '/' . $id);
+            $catalogForm->setColumnsWidth(2, 10);
+            $catalogForm->setButtonsWidth(2, 0);
+            
+            if( $catalogForm->check() ){
+                $this->antibody->setExportCatalog($id, $form->getParameter("export_catalog"));
+            
+                $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+
+                $this->redirect('anticorpsedit/' . $id_space . '/' . $id);
+                return;
+            }
+            $catalogFormHtml = $catalogForm->getHtml($lang);
+        }
 
         // Owner Table
         $modelOwner = new AcOwner();
@@ -321,7 +346,8 @@ class AntibodieslistController extends CoresecureController {
             "tissusTable" => $tissusTable,
             "ownersTable" => $ownersTable,
             "formtissus" => $tissusFormGenerator->getHtml(),
-            "formowner" => $ownerFormGenerator->getHtml()
+            "formowner" => $ownerFormGenerator->getHtml(),
+            "formCatalog" => $catalogFormHtml
         ));
     }
 
@@ -451,13 +477,7 @@ class AntibodieslistController extends CoresecureController {
         $this->redirect('anticorpsedit/'.$id_space.'/'.$owner['id_anticorps']);
     }
 
-    protected function createEditForm($id_space, $id) {
-
-        if ($id != 0) {
-            $anticorps = $this->antibody->getAnticorpsFromId($id);
-        } else {
-            $anticorps = $this->antibody->getDefaultAnticorps();
-        }
+    protected function createEditForm($id_space, $anticorps, $id) {
 
         $lang = $this->getLanguage();
         $form = new Form($this->request, 'antibodyEditForm');
@@ -489,7 +509,7 @@ class AntibodieslistController extends CoresecureController {
         $stainingsList = $modelStaining->getForList($id_space);
         $form->addSelect("id_staining", AntibodiesTranslator::Staining($lang), $stainingsList["names"], $stainingsList["ids"], $anticorps["id_staining"]);
 
-        $form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
+        //$form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . "/" . $id);
         $form->setColumnsWidth(2, 8);

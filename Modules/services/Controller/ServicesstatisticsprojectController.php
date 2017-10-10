@@ -201,7 +201,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->getStyle('M1')->applyFromArray($styleBorderedCell);
         $objPHPExcel->getActiveSheet()->getStyle('N1')->applyFromArray($styleBorderedCell);
         $objPHPExcel->getActiveSheet()->getStyle('O1')->applyFromArray($styleBorderedCell);
-        
+
         $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::OpenedUpper($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('A2', CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->getStyle('A2')->applyFromArray($styleBorderedCell);
@@ -252,11 +252,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         $objPHPExcel->getActiveSheet()->SetCellValue('M2', ServicesTranslator::Visa($lang));
         $objPHPExcel->getActiveSheet()->getStyle('M2')->applyFromArray($styleBorderedCell);
-        
+
         $objPHPExcel->getActiveSheet()->mergeCells('N1:O1');
         $objPHPExcel->getActiveSheet()->SetCellValue('N2', ServicesTranslator::SampleReturn($lang));
         $objPHPExcel->getActiveSheet()->getStyle('N2')->applyFromArray($styleBorderedCell);
-        
+
         $objPHPExcel->getActiveSheet()->SetCellValue('O2', CoreTranslator::Date($lang));
         $objPHPExcel->getActiveSheet()->getStyle('O2')->applyFromArray($styleBorderedCell);
 
@@ -306,7 +306,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $visaClosed = "";
             if ($proj["date_close"] != "0000-00-00") {
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
-                $visaClosed = $proj["closed_by"];
+                $visaClosed = $proj["closed_by_in"];
             }
 
             $objPHPExcel->getActiveSheet()->SetCellValue('I' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
@@ -375,8 +375,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, ServicesTranslator::Visa_Send_Invoice($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $curentLine, ServicesTranslator::SampleReturn($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('R' . $curentLine, CoreTranslator::Date($lang));
-    
-        
+
+
         $total = 0;
         $modelProject = new SeProject();
         $modelInvoiceVisa = new InVisa();
@@ -393,7 +393,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaName($invoice["visa_send"]));
+            $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($invoice["visa_send"]));
 
             //echo "invoice controller = " . $invoice["controller"] . '<br/>';
             if ($invoice["controller"] == "servicesinvoiceproject") {
@@ -428,7 +428,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
                     $visaClosed = "";
                     if ($proj["date_close"] != "0000-00-00") {
                         $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
-                        $visaClosed = $proj["closed_by"];
+                        $visaClosed = $proj["closed_by_in"];
                     }
                     $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
                     $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
@@ -442,7 +442,6 @@ class ServicesstatisticsprojectController extends CoresecureController {
                     $objPHPExcel->getActiveSheet()->getStyle('N' . $curentLine)->applyFromArray($styleBorderedCell);
                     $objPHPExcel->getActiveSheet()->getStyle('Q' . $curentLine)->applyFromArray($styleBorderedCell);
                     $objPHPExcel->getActiveSheet()->getStyle('R' . $curentLine)->applyFromArray($styleBorderedCell);
-                
                 }
             }
 
@@ -954,6 +953,63 @@ class ServicesstatisticsprojectController extends CoresecureController {
         header('Content-Disposition: attachment;filename="platorm-manager-samples-return.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
+    }
+
+    public function mailrespsAction($id_space) {
+
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelCoreConfig = new CoreConfig();
+        $date_begin = $this->request->getParameterNoException("date_begin");
+        if ($date_begin == "") {
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $dateArray = explode("-", $date_begin);
+            $y = date("Y") - 1;
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        }
+        $date_end = $this->request->getParameterNoException("date_end");
+        if ($date_end == "") {
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $dateArray = explode("-", $date_end);
+            $y = date("Y");
+            $m = $dateArray[1];
+            $d = $dateArray[2];
+            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        }
+
+        // build the form
+        $form = new Form($this->request, "formmailresps");
+        $form->setTitle(ServicesTranslator::emailsResponsibles($lang), 3);
+        $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, $date_begin);
+        $form->addDate("end_period", ServicesTranslator::End_period($lang), true, $date_end);
+
+        $form->setValidationButton("Ok", "servicesstatisticsmailresps/" . $id_space);
+
+        if ($form->check()) {
+
+            $modelProject = new SeProject();
+            $data = $modelProject->getRespsPeriod(
+                    $id_space, CoreTranslator::dateToEn($this->request->getParameter('begining_period'), $lang), CoreTranslator::dateToEn($this->request->getParameter('end_period'), $lang)
+            );
+
+            // export csv
+            header("Content-Type: application/csv-tab-delimited-table");
+            header("Content-disposition: filename=bookingusers.csv");
+
+            $content = "name ; email \r\n";
+
+            foreach ($data as $user) {
+                $content.= $user["name"] . ";";
+                $content.= $user["email"] . "\r\n";
+            }
+            echo $content;
+            return;
+        }
+
+        $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
     }
 
 }

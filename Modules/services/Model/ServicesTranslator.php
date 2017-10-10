@@ -170,7 +170,7 @@ class ServicesTranslator {
         }
         return "Period projects";
     }
-    
+
     public static function Closed_projects($lang) {
         if ($lang == "fr") {
             return "Projets clos";
@@ -296,6 +296,7 @@ class ServicesTranslator {
         }
         return "Add project";
     }
+
     public static function New_team($lang) {
         if ($lang == "fr") {
             return "Nouvelle equipe";
@@ -722,154 +723,167 @@ class ServicesTranslator {
         }
         return "ORIGINS";
     }
-    
+
     public static function Discount($lang) {
         if ($lang == "fr") {
             return "Pourcentage de remise";
         }
         return "Discount";
     }
-    
+
     public static function Visa($lang) {
         if ($lang == "fr") {
             return "Visa";
         }
         return "Visa";
     }
-    
+
     public static function servicesVisas($lang) {
         if ($lang == "fr") {
             return "Visas";
         }
         return "Visas";
     }
-    
+
     public static function Closed_by($lang) {
         if ($lang == "fr") {
             return "Visas";
         }
         return "Closed by";
     }
-    
+
     public static function Date_Send_Invoice($lang) {
         if ($lang == "fr") {
             return "Date d'envoi facture";
         }
         return "Date send invoice";
     }
-    
+
     public static function Invoice($lang) {
         if ($lang == "fr") {
             return "Relevé";
         }
         return "Invoice";
     }
-    
+
     public static function Visa_Send_Invoice($lang) {
         if ($lang == "fr") {
             return "Visa d'envoi facture";
         }
         return "Visa send invoice";
     }
-    
+
     public static function DelayWarningInDays($lang) {
         if ($lang == "fr") {
             return "Temps signal avertissement projets (en jours)";
         }
         return "Projects delay warning (in days)";
     }
-    
+
     public static function industryProjectInDelay($lang) {
         if ($lang == "fr") {
             return "Projets privés en délai";
         }
         return "Industry project in time";
     }
-    
+
     public static function industryProjectOutDelay($lang) {
         if ($lang == "fr") {
             return "Projets privés hors délai";
         }
         return "Industry project out time";
     }
-    
+
     public static function academicProjectInDelay($lang) {
         if ($lang == "fr") {
             return "Projets académique en délai";
         }
         return "Academic project in time";
     }
-    
+
     public static function academicProjectOutDelay($lang) {
         if ($lang == "fr") {
             return "Projets académique hors délai";
         }
         return "Academic project out time";
     }
-    
+
     public static function TheFieldVisaIsMandatoryWithClosed($lang) {
         if ($lang == "fr") {
             return "Erreur: le champ visa est obligatoire pour clore un projet";
         }
         return "Error: the field visa is mandatory for a closed project";
     }
-    
+
     public static function Gantt($lang) {
         if ($lang == "fr") {
             return "Gantt";
         }
         return "Gantt";
     }
-    
-    public static function InCharge($lang){
+
+    public static function InCharge($lang) {
         if ($lang == "fr") {
             return "Personne en charge du projet";
         }
         return "Manager in charge";
     }
-    
-    public static function PersonInChargeIsMandatory($lang){
+
+    public static function PersonInChargeIsMandatory($lang) {
         if ($lang == "fr") {
             return "Personne en charge du projet est un champ obligatoire";
         }
         return "Person in charge is mandatory";
     }
-    
-    public static function GanttOpened($lang){
+
+    public static function GanttOpened($lang) {
         if ($lang == "fr") {
             return "Gantt en cours";
         }
         return "Gantt opened";
     }
-    
-    public static function GanttPeriod($lang){
+
+    public static function GanttPeriod($lang) {
         if ($lang == "fr") {
             return "Gantt période";
         }
         return "Gantt period";
     }
-    
-    public static function SampleReturn($lang){
+
+    public static function SampleReturn($lang) {
         if ($lang == "fr") {
             return "Restitution des échantillons";
         }
         return "Sample return";
     }
-    
-    public function servicesstatisticsprojectsamplesreturn($lang){
+
+    public function servicesstatisticsprojectsamplesreturn($lang) {
         if ($lang == "fr") {
             return "Restitution des échantillons";
         }
         return "Sample return listing";
     }
-    
-    public static function Origin($lang){
+
+    public static function Origin($lang) {
         if ($lang == "fr") {
             return "Origine";
         }
         return "Origin";
     }
-    
-    
-}
 
+    public static function emailsResponsibles($lang) {
+        if ($lang == "fr") {
+            return "Couriels des responsables";
+        }
+        return "Emails responsibles";
+    }
+    
+    public static function servicesstatisticsmailresps($lang) {
+        if ($lang == "fr") {
+            return "Couriels des responsables";
+        }
+        return "Emails responsibles";
+    }
+    
+
+}

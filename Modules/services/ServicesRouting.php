@@ -88,6 +88,7 @@ class ServicesRouting extends Routing {
         // statistics
         $this->addRoute("servicesstatisticsorder", "servicesstatisticsorder", "servicesstatisticsorder", "index", array("id_space"), array(""));
         $this->addRoute("servicesstatisticsproject", "servicesstatisticsproject", "servicesstatisticsproject", "index", array("id_space"), array(""));
+        $this->addRoute("servicesstatisticsmailresps", "servicesstatisticsmailresps", "servicesstatisticsproject", "mailresps", array("id_space"), array(""));
 
         $this->addRoute("servicesstatisticsprojectsamplesreturn", "servicesstatisticsprojectsamplesreturn", "servicesstatisticsproject", "samplesreturn", array("id_space"), array(""));
     }

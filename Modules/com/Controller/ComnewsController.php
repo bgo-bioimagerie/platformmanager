@@ -3,6 +3,8 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/FileUpload.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/com/Model/ComTranslator.php';
 require_once 'Modules/com/Model/ComNews.php';
@@ -24,7 +26,7 @@ class ComnewsController extends CoresecureController {
 
     public function indexAction($id_space) {
 
-        $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
+        //$this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelComNews = new ComNews();
@@ -81,9 +83,9 @@ class ComnewsController extends CoresecureController {
             $idNew = $modelComNews->set($id, $id_space, $title, $content, $date, $expire);
 
             // upload
-            $target_dir = "data/com/news";
+            $target_dir = "data/com/news/";
             if ($_FILES["media"]["name"] != "") {
-                $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
+                $ext = pathinfo($_FILES["media"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "media", $idNew . "_" . $ext);
 
                 $modelComNews->setMedia($idNew, $target_dir . $idNew . "_" . $ext);

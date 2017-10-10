@@ -694,14 +694,26 @@ class BkStatsUser extends Model {
                                 AND resource_id IN (SELECT id FROM re_info WHERE id_space=:space)';
 		$req = $this->runRequest($sql, $q);
 		$recs = $req->fetchAll();
+                
+                $sql2 = 'SELECT DISTINCT responsible_id FROM bk_calendar_entry WHERE
+				(start_time >=:start AND start_time <= :end)
+                                AND resource_id IN (SELECT id FROM re_info WHERE id_space=:space)';
+		$req2 = $this->runRequest($sql2, $q);
+		$recresps = $req2->fetchAll();
 		
 		// get the users informations (name, firstname, unit, email)
 		$modelUser = new CoreUser();
+                $recss = array();
 		for($i = 0 ; $i < count($recs) ; $i++){
-			$recs[$i]['name'] = $modelUser->getUserFUllName($recs[$i]['recipient_id']);
-			$recs[$i]['email'] = $modelUser->getEmail($recs[$i]['recipient_id']);
+                    
+			$recss[] = array('name' => $modelUser->getUserFUllName($recs[$i]['recipient_id']),
+			 'email' => $modelUser->getEmail($recs[$i]['recipient_id']));
+		}
+                for($i = 0 ; $i < count($recresps) ; $i++){
+			$recss[]= array('name' => $modelUser->getUserFUllName($recresps[$i]['responsible_id']),
+			    'email' => $modelUser->getEmail($recresps[$i]['responsible_id']));
 		}
 	
-		return $recs;
+		return $recss;
 	}
 }
