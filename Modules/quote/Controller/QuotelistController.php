@@ -314,6 +314,7 @@ class QuotelistController extends CoresecureController {
         $resp = $info["recipient"];
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
+        $isquote = true;
 
         $details = "";
         $invoiceInfo["title"] = "";
