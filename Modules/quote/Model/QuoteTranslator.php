@@ -131,21 +131,21 @@ class QuoteTranslator {
 
     public static function EditQuote($lang) {
         if ($lang == "fr") {
-            return "Modifier Devis";
+            return "Devis";
         }
         return "Edit quote";
     }
 
     public static function CreateNewUserQuote($lang) {
         if ($lang == "fr") {
-            return "Nouveau devis";
+            return "Devis nouvel utilisateur";
         }
         return "Create new user quote";
     }
 
     public static function CreateExistingUserQuote($lang) {
         if ($lang == "fr") {
-            return "Nouveau devis utilisateur";
+            return "Devis utilisateur";
         }
         return "Create new quote";
     }

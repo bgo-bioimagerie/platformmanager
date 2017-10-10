@@ -121,7 +121,7 @@ class QuotelistController extends CoresecureController {
 
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled');
-            $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
+            //$form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
         }
@@ -130,9 +130,11 @@ class QuotelistController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
 
         if ($form->check()) {
+            
+            //echo "date open = " . $form->getParameter('date_open') . "<br/>";
+            //return;
             $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'), 
-                    CoreTranslator::dateToEn($form->getParameter('date_open'), 
-                            $lang)
+                    $form->getParameter('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $this->redirect("quoteuser/" . $id_space . "/" . $id);
@@ -233,7 +235,10 @@ class QuotelistController extends CoresecureController {
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
-            $id = $modelQuote->set($id, $id_space, $form->getParameter('recipient'), $form->getParameter('address'), $form->getParameter('id_belonging'), 0, CoreTranslator::dateToEn($form->getParameter('date_open'), $lang)
+            $id = $modelQuote->set($id, $id_space, $form->getParameter('recipient'), 
+                    $form->getParameter('address'), 
+                    $form->getParameter('id_belonging'), 0, 
+                    $form->getParameter('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $this->redirect("quotenew/" . $id_space . "/" . $id);

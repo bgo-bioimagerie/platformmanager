@@ -23,6 +23,11 @@
             <?php echo $tissusTable ?>
             <a class="btn btn-primary" id="addtissusbutton"><?php echo AntibodiesTranslator::addTissus($lang) ?></a>
         </div>
+        
+        <div class="col-md-12 pm-table-short">
+            <?php echo $formCatalog ?>
+        </div>
+        
         <div class="col-md-12 pm-table-short">
             <?php echo $ownersTable ?>
             <a class="btn btn-primary" id="addownerbutton"><?php echo AntibodiesTranslator::addOwner($lang) ?></a>

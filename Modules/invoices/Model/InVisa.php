@@ -92,6 +92,15 @@ class InVisa extends Model {
         $modelUser = new EcUser();
         return $modelUser->getUserFUllName($data["id_user"]);
     }
+    
+    public function getVisaNameShort($id){
+        $sql = "SELECT * FROM in_visa WHERE id=?";
+        $data = $this->runRequest($sql, array($id))->fetch();
+        
+        $modelUser = new EcUser();
+        return $modelUser->getUserInitials($data["id_user"]);
+    }
+    
 
     /**
      * Delete a unit

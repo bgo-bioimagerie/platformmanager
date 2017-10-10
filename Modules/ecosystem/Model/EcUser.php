@@ -358,6 +358,20 @@ class EcUser extends Model {
             return "";
         }
     }
+    
+    public function getUserInitials($id){
+        $sql = "select firstname, name from core_users where id=?";
+        $user = $this->runRequest($sql, array(
+            $id
+        ));
+
+        if ($user->rowCount() == 1) {
+            $userf = $user->fetch();
+            return ucfirst(substr($userf ['name'], 0, 1)) . " " . ucfirst(substr($userf ['firstname'], 0, 1));
+        } else {
+            return "";
+        }
+    }
 
     public function getResponsibleOfUnit($id_unit) {
         $sql = "SELECT core_users.id AS id, core_users.name AS name, core_users.firstname AS firstname "
