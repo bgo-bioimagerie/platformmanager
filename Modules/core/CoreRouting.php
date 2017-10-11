@@ -14,6 +14,10 @@ class CoreRouting extends Routing{
         $this->addRoute("coreconnection", "coreconnection", "coreconnection", "index");
         $this->addRoute("corelogin", "corelogin", "coreconnection", "login");
         $this->addRoute("corelogout", "corelogout", "coreconnection", "logout");
+        $this->addRoute("corepasswordforgotten", "corepasswordforgotten", "coreconnection", "passwordforgotten");
+        
+        
+        
         
         // tiles
         $this->addRoute("coretiles", "coretiles", "coretiles", "index");

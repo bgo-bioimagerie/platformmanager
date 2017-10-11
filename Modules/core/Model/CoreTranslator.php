@@ -27,10 +27,10 @@ class CoreTranslator {
     }
 
     public static function dateFromEn($date, $lang) {
-        if($date == "0000-00-00"){
+        if ($date == "0000-00-00") {
             return "";
         }
-        
+
         if ($lang == "fr") {
             $dateArray = explode("-", $date);
             if (count($dateArray) == 3) {
@@ -55,7 +55,7 @@ class CoreTranslator {
     public static function this_will_edit_the_configuration_file($lang) {
         if ($lang == "fr") {
             return "Cela va modifier le fichier de configuration Config/conf.ini (vérifier "
-            . "que www-data peut écrire dans ce fichier avant de valider)";
+                    . "que www-data peut écrire dans ce fichier avant de valider)";
         }
         return "This will edit the configuration file Config/conf.ini (make sure the file is writable by www-data)";
     }
@@ -675,14 +675,13 @@ class CoreTranslator {
         }
         return "contract ends";
     }
-    
+
     public static function contract_ends_or_does_not_login_for_1_year($lang = "") {
         if ($lang == "fr") {
             return "fin de contrat ou ne s'est pas connecté depuis 1 années";
         }
         return "contract ends or did not connect since 1 years ";
     }
-    
 
     public static function does_not_login_for_n_year($n, $lang = "") {
         if ($lang == "fr") {
@@ -837,7 +836,7 @@ class CoreTranslator {
         }
         return $status;
     }
-    
+
     public static function Translate_status_from_id($lang, $id_status) {
         if ($lang == "fr") {
             if ($id_status == 1) {
@@ -850,8 +849,7 @@ class CoreTranslator {
                 return "administrateur";
             }
             return "rôle introuvable";
-        }
-        else if ($lang == "fr") {
+        } else if ($lang == "fr") {
             if ($id_status == 1) {
                 return "visitor";
             } else if ($id_status == 2) {
@@ -1250,146 +1248,190 @@ class CoreTranslator {
         }
         return "Menu";
     }
-    
+
     public static function Spaces($lang) {
         if ($lang == "fr") {
             return "Espaces";
         }
         return "Spaces";
     }
-    
+
     public static function Add_Space($lang) {
         if ($lang == "fr") {
             return "Ajouter espace";
         }
         return "Add space";
     }
-    
+
     public static function Edit_space($lang) {
         if ($lang == "fr") {
             return "Modifier espace";
         }
         return "Edit space";
     }
-    
+
     public static function PrivateA($lang) {
         if ($lang == "fr") {
             return "Privé";
         }
         return "Private";
     }
-    
+
     public static function PublicA($lang) {
         if ($lang == "fr") {
             return "Publique";
         }
         return "Public";
     }
-    
+
     public static function Visitor($lang) {
         if ($lang == "fr") {
             return "Visiteur";
         }
         return "Visitor";
     }
-    
+
     public static function Manager($lang) {
         if ($lang == "fr") {
             return "Gestionnaire";
         }
         return "Manager";
     }
-    
+
     public static function Role($lang) {
         if ($lang == "fr") {
             return "Rôle";
         }
         return "Role";
     }
-    
+
     public static function Access($lang) {
         if ($lang == "fr") {
             return "Accès";
         }
         return "Access";
     }
-    
+
     public static function View_Menu($lang) {
         if ($lang == "fr") {
             return "Menu espace";
         }
         return "View menu";
     }
-    
+
     public static function Neww($lang) {
         if ($lang == "fr") {
             return "Nouveau";
         }
         return "New";
     }
- 
+
     public static function Inactive($lang) {
         if ($lang == "fr") {
             return "Inactif";
         }
         return "Inactive";
     }
-    
+
     public static function Update($lang) {
         if ($lang == "fr") {
             return "Mise à jour";
         }
         return "Update";
     }
- 
+
     public static function UpdateComment($lang) {
         if ($lang == "fr") {
             return "Mise à jour du cache du routeur et les base de données des modules";
         }
         return "This update the rooting cache and the modules database";
     }
-    
+
     public static function MenuName($lang) {
         if ($lang == "fr") {
             return "Nom du menu";
         }
         return "Menu name";
     }
-    
+
     public static function ExportAll($lang) {
         if ($lang == "fr") {
             return "Exporter tous";
         }
         return "Export all users";
     }
-    
+
     public static function UseTLS($lang) {
         if ($lang == "fr") {
             return "Chiffrage TLS";
         }
         return "Use TLS";
     }
-    
-    public static function RememberMe($lang){
+
+    public static function RememberMe($lang) {
         if ($lang == "fr") {
             return "Se souvenir de moi";
         }
         return "Remember me";
     }
-    
-    public static function Who_can_delete_users($lang){
+
+    public static function Who_can_delete_users($lang) {
         if ($lang == "fr") {
             return "Qui peut supprimer des utilisateurs";
         }
         return "Who can delete users";
     }
-    
-    public static function Select($lang){
+
+    public static function Select($lang) {
         if ($lang == "fr") {
             return "Choix";
         }
         return "Select";
     }
+
+    public static function AccountPasswordReset($lang) {
+        if ($lang == "fr") {
+            return "Réinitialisation mot de passe";
+        }
+        return "Account password reset";
+    }
+
+    public static function AccountPasswordResetMessage($lang) {
+        if ($lang == "fr") {
+            return "Vous avez demandé une réinitialisation de votre mot de passe. Votre nouveau mot de passe est ";
+        }
+        return "Your password has been reset as per requested. Your new password is ";
+    }
+
+    public static function ExtAccountMessage($lang) {
+        if ($lang == "fr") {
+            return "Votre connexion à Platform-Manager est gérée par un annuaire externe. Merci de contacter"
+                    . "les administrateurs pour plus d'informations";
+        }
+        return "Your account password is managed using an external directory. Please contact administrators"
+                . " to get the procedure to change your password";
+    }
+
+    public static function ResetPasswordMessageSend($lang) {
+        if ($lang == "fr") {
+            return "Un couriel à été envoyé avec un nouveau mot de passe. Pensez à le modifier dans le menu"
+                    . " 'mon compte'";
+        }
+        return "En email has been send with the new password. Please change it in 'My account' section";
+    }
+
+    public static function PasswordForgotten($lang) {
+        if ($lang == "fr") {
+            return "Mot de passe oublié";
+        }
+        return "Password forgotten";
+    }
+
+    public static function UserNotFoundWithEmail($lang) {
+        if ($lang == "fr") {
+            return "Aucun compte utilisateur ne correspond au couriel donné";
+        }
+        return "Cannot find user with the given email";
+    }
     
 }
-

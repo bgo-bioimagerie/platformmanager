@@ -84,6 +84,9 @@ Platform-Manager
                         </div>
                         <br/>
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+                            <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>
+                        </div>
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
                     </div>
