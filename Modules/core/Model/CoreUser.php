@@ -77,6 +77,18 @@ class CoreUser extends Model {
             return "";
         }
     }
+    
+    public function getUserByEmail($email){
+        $sql = "SELECT * FROM core_users WHERE email=?";
+        $user = $this->runRequest($sql, array($email));
+        //echo 'found ' . $user->rowCount() . "users <br/>";
+        if ($user->rowCount() == 1) {
+            $userf = $user->fetch();
+            return $userf;
+        } else {
+            return false;
+        }
+    }
 
     public function getUserInitiales($id) {
         $sql = "select firstname, name from core_users where id=?";

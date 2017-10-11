@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Form.php';
+
 require_once 'Modules/core/Controller/CorecookiesecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
@@ -10,6 +12,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
+require_once 'Modules/mailer/Model/MailerSend.php';
 
 /**
  * Controler managing the user connection 
@@ -79,25 +82,24 @@ class CoreconnectionController extends CorecookiesecureController {
             if ($connect == "allowed") {
 
                 $user = $this->initSession($login);
-                
+
                 // generate the remember me cookie
-                if ($this->request->isparameter("remember")){
+                if ($this->request->isparameter("remember")) {
                     //throw new Exception("Set cookie <br/>");
                     $key = sha1($this->generateRandomKey());
                     //echo "set cookie with id = " . $key . "<br/>";
-                    $cookieSet = setcookie("auth", $user['idUser'] . "-" . $key, time() + 3600*24*3 );
-                    if (!$cookieSet){
+                    $cookieSet = setcookie("auth", $user['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
+                    if (!$cookieSet) {
                         //die("die failed to set cookie with key " . $key . "<br/>");
                         throw new Exception("failed to set cookie with key " . $key . "<br/>");
                     }
                     $modelUser = new CoreUser();
                     $modelUser->setRememberKey($user['idUser'], $key);
                 }
-                
+
                 // redirect
                 $redirectPath = $this->getRedirectPath();
                 $this->redirectNoRemoveHeader($redirectPath);
-                
             } else {
                 $this->indexAction($connect);
             }
@@ -105,7 +107,7 @@ class CoreconnectionController extends CorecookiesecureController {
             throw new Exception("Action not allowed : login or passeword undefined");
         }
     }
-    
+
     /**
      * 
      * @return type
@@ -113,7 +115,7 @@ class CoreconnectionController extends CorecookiesecureController {
     public function getRedirectPath() {
         $modelConfig = new CoreConfig();
         $redirectController = $modelConfig->getParam("default_home_path");
-        if ($redirectController == ""){
+        if ($redirectController == "") {
             $redirectController = "coretiles";
         }
         if (isset($_SESSION["user_settings"]["homepage"])) {
@@ -126,14 +128,13 @@ class CoreconnectionController extends CorecookiesecureController {
         return $redirectController;
     }
 
-    
     /**
      * Logout (delete the session)
      */
     public function logoutAction() {
-        
+
         setcookie('auth', '', -1);
-        
+
         $this->request->getSession()->destroy();
         $this->redirectNoRemoveHeader("coretiles");
     }
@@ -166,22 +167,80 @@ class CoreconnectionController extends CorecookiesecureController {
                     // update the user infos
                     $status = $modelCoreConfig->getParam("ldapDefaultStatus");
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-                    
+
                     $userInfo = $this->user->getUserByLogin($login);
-					//print_r($userInfo);
-                    
+                    //print_r($userInfo);
+
                     $modelSpace = new CoreSpace();
                     $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa){
+                    foreach ($spacesToActivate as $spa) {
                         $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
                     }
-                    
+
                     return $this->user->isActive($login);
                 }
             }
         }
 
         return "Login or password not correct";
+    }
+
+    public function passwordforgottenAction() {
+
+        $lang = $this->getLanguage();
+        $form = new Form($this->request, 'formpasswordforgottern');
+        $form->addText("email", CoreTranslator::Email($lang), true);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "corepasswordforgotten");
+
+        $_SESSION["message"] = CoreTranslator::PasswordForgotten($lang);
+        if ($form->check()) {
+            $email = $this->request->getParameter("email");
+            $model = new CoreUser();
+            $user = $model->getUserByEmail($email);
+            if ($user) {
+
+                if ($user["source"] == "ext") {
+                    $_SESSION["message"] = CoreTranslator::ExtAccountMessage(lang);
+                } else {
+
+                    $newPassWord = $this->randomPassword();
+                    $model->changePwd($user["id"], $newPassWord);
+
+                    $mailer = new MailerSend();
+                    $from = "support@platform-manager.com";
+                    $fromName = "Platform-Manager";
+                    $toAdress = $email;
+                    $subject = CoreTranslator::AccountPasswordReset($lang);
+                    $content = CoreTranslator::AccountPasswordResetMessage($lang) . "'" . $newPassWord . "'";
+                    $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+                    $_SESSION["message"] = CoreTranslator::ResetPasswordMessageSend($lang);
+                }
+                
+            }
+            else{
+                $_SESSION["message"] = CoreTranslator::UserNotFoundWithEmail($lang);
+            }
+        }
+
+        $modelConfig = new CoreConfig();
+        $home_title = $modelConfig->getParam("home_title");
+        $home_message = $modelConfig->getParam("home_message");
+        
+
+        $this->render(array("home_title" => $home_title,
+            "home_message" => $home_message,
+            "formHtml" => $form->getHtml($lang)));
+    }
+
+    protected function randomPassword() {
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 
 }
