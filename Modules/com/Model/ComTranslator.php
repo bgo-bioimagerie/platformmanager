@@ -122,4 +122,46 @@ class ComTranslator {
         return "use com as space home page";
     }
 
+    public static function Twitter($lang) {
+        if ($lang == "fr") {
+            return "Twitter";
+        }
+        return "Twitter";
+    }
+
+    public static function UserTwitter($lang) {
+        if ($lang == "fr") {
+            return "Utiliser Twitter";
+        }
+        return "Use Twitter";
+    }
+
+    public static function AuthAccessToken($lang) {
+        if ($lang == "fr") {
+            return "Auth Access Token";
+        }
+        return "Auth Access Token";
+    }
+
+    public static function AuthAccessTokenSecret($lang) {
+        if ($lang == "fr") {
+            return "Auth Access Token Secret";
+        }
+        return "Auth Access Token Secret";
+    }
+
+    public static function ConsumerKey($lang) {
+        if ($lang == "fr") {
+            return "Consumer Key";
+        }
+        return "Consumer Key";
+    }
+
+    public static function ConsumerKeySecret($lang) {
+        if ($lang == "fr") {
+            return "Consumer Key Secret";
+        }
+        return "Consumer Key Secret";
+    }
+
 }
