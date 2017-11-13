@@ -1,4 +1,4 @@
-<?php include 'Modules/statistics/View/layout.php' ?>
+<?php include 'Modules/core/View/Coredashboard/layout.php' ?>
 
 <!-- body -->     
 <?php startblock('content') ?>
@@ -7,4 +7,5 @@
     <?php echo $formHtml ?>
 </div>
 
-<?php endblock();
+<?php
+endblock();

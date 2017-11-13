@@ -23,9 +23,27 @@ class StatisticsController extends CoresecureController {
     public function navbar($id_space) {
 
         $lang = $this->getLanguage();
-        $html = '<li>';
+
+        $html = "<nav class=\"navbar navbar-default sidebar\" style=\"border: 1px solid #f1f1f1;\" role=\"navigation\">";
+        $html .= "<div class=\"container-fluid\">";
+        $html .= "<div class=\"navbar-header\" style=\"background-color: #e1e1e1;\">";
+        $html .= "    <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-sidebar-navbar-collapse-1\">";
+        $html .= "        <span class=\"sr-only\">Toggle navigation</span>";
+        $html .= "        <span class=\"icon-bar\"></span>";
+        $html .= "        <span class=\"icon-bar\"></span>";
+        $html .= "        <span class=\"icon-bar\"></span>";
+        $html .= "    </button>      ";
+        $html .= "</div>";
+        $html .= "<div class=\"collapse navbar-collapse\"  id=\"bs-sidebar-navbar-collapse-1\">";
+        $html .= "    <ul class=\"nav navbar-nav\" >";
+        $html .= "        <li>";
+        $html .= "           <a style=\"background-color:{{bgcolor}}; color: #fff; margin-left: -14px;\" href=\"\"> {{title}} <span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon {{glyphicon}}\"></span></a>";
+        $html .= "        </li>";
+        $html .= "        <ul class=\"pm-nav-li\">";
+
+        $html .= '<li>';
         $html .= '<div class="inline pm-inline-div">';
-        $html .= '<a href="statisticsglobal/'.$id_space.'">' . StatisticsTranslator::StatisticsGlobal($lang) . '</a>';
+        $html .= '<a href="statisticsglobal/' . $id_space . '">' . StatisticsTranslator::StatisticsGlobal($lang) . '</a>';
         $html .= '</div></li><br/>';
 
         $modelSpace = new CoreSpace();
@@ -81,6 +99,18 @@ class StatisticsController extends CoresecureController {
                 }
             }
         }
+        
+        
+                $html.= "</ul>";
+        $html.=  "   </ul>";
+        $html.= "</div>";
+        $html.= "</div>";
+        $html.= "</nav>";
+        
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("statistics", $id_space);
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', InvoicesTranslator::invoices($lang), $html);
 
         return $html;
     }

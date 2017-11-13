@@ -28,6 +28,12 @@ class QuoteController extends CoresecureController {
         $html = str_replace('{{Quotes}}', QuoteTranslator::Quotes($lang), $html);
         $html = str_replace('{{CreateExistingUserQuote}}', QuoteTranslator::CreateExistingUserQuote($lang), $html);
         $html = str_replace('{{CreateNewUserQuote}}', QuoteTranslator::CreateNewUserQuote($lang), $html);
+
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("quote", $id_space);
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', QuoteTranslator::Quote($lang), $html);
         return $html;
     }
 

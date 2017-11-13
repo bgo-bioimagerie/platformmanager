@@ -41,22 +41,22 @@ if ($space['color'] == "") {
         $navController = new ComtileController(new Request(array(), false));
         echo $navController->indexAction($id_space);
         ?>
-
-        <div class="page-header">
-            <h2>
-                <?php echo CoreTranslator::Tools($lang) ?>
-                <br>
-            </h2>
-        </div>
+        
+        <?php
+        foreach($sections as $section){    
+        ?>
+        
+            <h3>
+                <?php echo $section["name"] ?>
+            </h3>
         <div class="pm-tiles" >
             <div class="pm-tiles bs-glyphicons">
                 <ul class="pm-tiles bs-glyphicons-list">
                     <?php
-                    $configModel = new CoreConfig();
-                    foreach ($spaceMenuItems as $item) {
+                    foreach ($section["items"] as $item) {
                         ?>
-                        <li style="background-color:<?php echo $item["color"] ?>;">
-                            <a href="<?php echo $item["url"] . "/" . $id_space ?>">
+                        <li style="background-color:<?php echo $item["bgcolor"] ?>; color:<?php echo $item["color"] ?>">
+                            <a href="<?php echo $item["url"] ?>">
                                 <span class="pm-tiles glyphicon <?php echo $item["icon"] ?>" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
                             </a>
@@ -68,6 +68,7 @@ if ($space['color'] == "") {
             </div>
         </div>
         <?php
+        }
         if ($showAdmMenu) {
             ?>
             <div class="page-header">

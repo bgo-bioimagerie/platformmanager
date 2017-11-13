@@ -27,6 +27,10 @@ class EcosystemController extends CoresecureController {
     }
 
     public function navbar($id_space){
+
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("ecusers", $id_space);
+
         $html = file_get_contents('Modules/ecosystem/View/Ecosystem/navbar.php');
         
         $lang = $this->getLanguage();
@@ -40,6 +44,11 @@ class EcosystemController extends CoresecureController {
         $html = str_replace('{{Export}}', CoreTranslator::Export($lang), $html);
         $html = str_replace('{{Responsible}}', CoreTranslator::Responsible($lang), $html);
         $html = str_replace('{{ExportAll}}', CoreTranslator::ExportAll($lang), $html);
+
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', EcosystemTranslator::ecusers($lang), $html);
+        
         
         return $html;
 

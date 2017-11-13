@@ -35,9 +35,20 @@ class AntibodiesController extends CoresecureController {
     }
 
     public function navbar($id_space) {
-        $html = file_get_contents('Modules/antibodies/View/Antibodies/navbar.php');
         
+        $lang = $this->getLanguage();
+        
+        $html = file_get_contents('Modules/antibodies/View/Antibodies/navbar.php');
+
         $html = str_replace('{{id_space}}', $id_space, $html);
+
+
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', AntibodiesTranslator::antibodies($lang), $html);
+        
         return $html;
     }
 

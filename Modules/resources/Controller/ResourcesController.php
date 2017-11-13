@@ -56,6 +56,11 @@ class ResourcesController extends CoresecureController {
         $html = str_replace('{{States}}', ResourcesTranslator::States($lang), $html);
         $html = str_replace('{{Event_Types}}', ResourcesTranslator::Event_Types($lang), $html);
         
+                $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("resources", $id_space);
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', ResourcesTranslator::Resources($lang), $html);
         return $html;
     }
 }

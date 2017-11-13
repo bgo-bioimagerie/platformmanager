@@ -19,18 +19,24 @@ class CatalogController extends CoresecureController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("catalog");
     }
-    
-        public function navbar($id_space){
+
+    public function navbar($id_space) {
         $html = file_get_contents('Modules/catalog/View/Catalog/navbar.php');
-        
+
         $lang = $this->getLanguage();
         $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Categories}}', CatalogTranslator::Categories($lang), $html);
         $html = str_replace('{{Prestations}}', CatalogTranslator::Prestations($lang), $html);
-        return $html;
 
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("catalogsettings", $id_space);
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', CatalogTranslator::Catalog_settings($lang), $html);
+        
+        return $html;
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -41,4 +47,5 @@ class CatalogController extends CoresecureController {
         $lang = $this->getLanguage();
         $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
+
 }

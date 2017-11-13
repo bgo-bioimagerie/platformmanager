@@ -499,6 +499,7 @@ class ServicesprojectsController extends CoresecureController {
         if ($form->check()) {
 
             $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $modelProject->setOrigin($id_project, $this->request->getParameter("id_origin"));
             $modelProject->setInCharge($id_project, $this->request->getParameter("in_charge"));
 
             $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);

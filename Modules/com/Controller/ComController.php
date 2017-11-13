@@ -21,10 +21,10 @@ class ComController extends CoresecureController {
         $_SESSION["openedNav"] = "com";
     }
 
-    public function indexAction($id_space){
-        $this->redirect('comtileedit/'.$id_space);
+    public function indexAction($id_space) {
+        $this->redirect('comtileedit/' . $id_space);
     }
-    
+
     public function navbar($id_space) {
         $html = file_get_contents('Modules/com/View/Com/navbar.php');
 
@@ -32,9 +32,14 @@ class ComController extends CoresecureController {
         $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Tilemessage}}', ComTranslator::Tilemessage($lang), $html);
         $html = str_replace('{{News}}', ComTranslator::News($lang), $html);
-        
+
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("com", $id_space);
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', ComTranslator::Com($lang), $html);
+
         return $html;
     }
-    
 
 }
