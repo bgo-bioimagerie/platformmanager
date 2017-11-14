@@ -84,6 +84,7 @@ class BreedingsalesController extends CoresecureController {
      * Edit a provider form
      */
     public function editAction($id_space, $id) {
+        
         // security
         $this->checkAuthorizationMenuSpace("breeding", $id_space, $_SESSION["id_user"]);
         // lang
@@ -91,6 +92,8 @@ class BreedingsalesController extends CoresecureController {
 
         // data
         $data = $this->model->get($id);
+        
+        //print_r($data);
 
         $modelClient = new BrClient();
         $clients = $modelClient->getForList($id_space);
@@ -111,23 +114,28 @@ class BreedingsalesController extends CoresecureController {
         $form->addSelect("id_status", BreedingTranslator::Status($lang), $status["names"], $status["ids"], $data["id_status"]);
         $form->addText("purchase_order_num", BreedingTranslator::PurchaseOrderNumber($lang), $data["purchase_order_num"]);
         $form->addSelect("id_client", BreedingTranslator::Client($lang), $clients["names"], $clients["ids"], false, $data["id_client"]);
-        $form->addSelect("id_delivery_method", BreedingTranslator::DeliveryMethod($lang), $deliveryMethods["names"], $deliveryMethods["ids"], false, $data["id_delivery_method"]);
+        $form->addSelect("id_delivery_method", BreedingTranslator::DeliveryMethod($lang), $deliveryMethods["names"], $deliveryMethods["ids"], $data["id_delivery_method"]);
         $form->addDate("delivery_expected", BreedingTranslator::DeliveryExpected($lang), false, CoreTranslator::dateFromEn($data["delivery_expected"], $lang));
         $form->addSelect("id_contact_type", BreedingTranslator::ContactType($lang), $contactTypes["names"], $contactTypes["ids"], $data["id_contact_type"]);
         $form->addText("cancel_reason", BreedingTranslator::CancelReason($lang), false, $data["cancel_reason"]);
         $form->addDate("cancel_date", BreedingTranslator::CancelDate($lang), false, CoreTranslator::dateFromEn($data["cancel_date"], $lang));
         $form->addTextArea("further_information", BreedingTranslator::FurtherInformations($lang), false, $data["further_information"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "brsalenew/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "brsaleedit/" . $id_space . "/" . $id);
         $form->setButtonsWidth(2, 9);
 
         if ($form->check()) {
-            $id = $this->model->editInfo(
-                    $id, $form->getParameter('id_status'), $form->getParameter('purchase_order_num'), $form->getParameter('id_delivery_method'), $form->getParameter('delivery_expected'), $form->getParameter('id_contact_type'), $form->getParameter('cancel_reason'), $form->getParameter('cancel_date'), $form->getParameter('further_information')
+            
+            $this->model->editInfo(
+                    $id, $form->getParameter('id_status'), $form->getParameter('purchase_order_num'), 
+                    $form->getParameter('id_delivery_method'), $form->getParameter('delivery_expected'), 
+                    $form->getParameter('id_contact_type'), $form->getParameter('cancel_reason'), 
+                    $form->getParameter('cancel_date'), $form->getParameter('further_information')
             );
 
             $this->redirect("brsaleedit/" . $id_space . "/" . $id);
             return;
+             
         }
 
         // render the View
@@ -205,8 +213,13 @@ class BreedingsalesController extends CoresecureController {
         $form->setButtonsWidth(2, 9);
 
         if ($form->check()) {
-            $modelItem->set($id, $id_sale, CoreTranslator::dateToEn($form->getParameter("date"), $lang), $form->getParameter("id_batch"), $form->getParameter("requested_product"), $form->getParameter("requested_quantity"), $form->getParameter("quantity"), $form->getParameter("comment")
+            
+            $id_batch = $form->getParameter("id_batch");
+            $modelItem->set($id, $id_sale, CoreTranslator::dateToEn($form->getParameter("date"), $lang), $id_batch, $form->getParameter("requested_product"), $form->getParameter("requested_quantity"), $form->getParameter("quantity"), $form->getParameter("comment")
             );
+            
+            $modelBath = new BrBatch();
+            $modelBath->updateQuantity($id_batch);
             
             $this->redirect("brsaleitems/" . $id_space . "/" . $id_sale);
         }

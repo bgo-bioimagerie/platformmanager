@@ -44,7 +44,7 @@ class BatchInfoForm extends FormGenerator{
         $this->form->addSelect("id_female_spawner", BreedingTranslator::FemaleSpawner($this->lang), $batchs["names"], $batchs["ids"], $this->getData("id_female_spawner"));
         $this->form->addSelectMandatory("id_destination", BreedingTranslator::Destination($this->lang), $destinations["names"], $destinations["ids"], $this->getData("id_destination"));
         $this->form->addSelectMandatory("id_product", BreedingTranslator::Product($this->lang), $products["names"], $products["ids"], $this->getData("id_product"));
-        $this->form->addNumber("quantity", BreedingTranslator::InitialQuantity($this->lang), true, $this->getData("quantity"));
+        $this->form->addNumber("quantity_start", BreedingTranslator::InitialQuantity($this->lang), true, $this->getData("quantity_start"));
         
         $this->form->addSelectMandatory("chipped", BreedingTranslator::Chipped($this->lang), array(coreTranslator::no($this->lang), coreTranslator::yes($this->lang)), array(0,1), $this->getData("chipped"));
         $this->form->addTextArea("comment", BreedingTranslator::Comment($this->lang), false, $this->getData("comment"));
@@ -68,7 +68,8 @@ class BatchInfoForm extends FormGenerator{
             $this->request->getParameter("comment") 
         );
             
-        $model->setQuantity($id, $this->request->getParameter("quantity"));
+        $model->setQuantityStart($id, $this->request->getParameter("quantity_start"));
+        $model->updateQuantity($id);
         return $id;
     }
     

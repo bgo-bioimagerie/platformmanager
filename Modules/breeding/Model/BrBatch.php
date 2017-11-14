@@ -19,9 +19,38 @@ class BrBatch extends Model {
         $this->setColumnsInfo("quantity_losse", "int(11)", 0);
         $this->setColumnsInfo("quantity_sale", "int(11)", 0);
         $this->setColumnsInfo("chipped", "int(1)", ""); // 0 vs 1
-        $this->setColumnsInfo("comment", "text", ""); 
+        $this->setColumnsInfo("comment", "text", "");
 
         $this->primaryKey = "id";
+    }
+
+    public function updateQuantity($id) {
+
+        // losse
+        $sql = "SELECT * FROM br_losses WHERE id_batch=?";
+        $losses = $this->runRequest($sql, array($id))->fetchAll();
+        $quantity_losse = 0;
+        foreach ($losses as $l) {
+            $quantity_losse += $l["quantity"];
+        }
+
+        // sales
+        $sql2 = "SELECT * FROM br_sale_items WHERE id_batch=?";
+        $salesitems = $this->runRequest($sql2, array($id))->fetchAll();
+        $quantity_sold = 0;
+        foreach ($salesitems as $s) {
+            $quantity_sold += $s["quantity"];
+        }
+
+        // start
+        $sql3 = "SELECT quantity_start FROM br_batchs WHERE id=?";
+        $quantity_startarray = $this->runRequest($sql3, array($id))->fetch();
+        $quantity_start = $quantity_startarray[0];
+
+        // update quantity
+        $quantity = $quantity_start - $quantity_losse - $quantity_sold;
+        $sql4 = "UPDATE br_batchs SET quantity=?, quantity_sale=?, quantity_losse=? WHERE id=?";
+        $this->runRequest($sql4, array($quantity, $quantity_sold, $quantity_losse, $id));
     }
 
     public function getAll($id_space) {
@@ -29,56 +58,61 @@ class BrBatch extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function getInProgress($id_space){
+    public function getInProgress($id_space) {
         $sql = "SELECT * FROM br_batchs WHERE id_space=? AND quantity>0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
-    
-        public function getArchives($id_space){
+
+    public function getArchives($id_space) {
         $sql = "SELECT * FROM br_batchs WHERE id_space=? AND quantity=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
-    
+
     public function get($id) {
         $sql = "SELECT * FROM br_batchs WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
-    
-    public function getName($id){
+
+    public function getName($id) {
         $sql = "SELECT reference FROM br_batchs WHERE id=?";
         $data = $this->runRequest($sql, array($id))->fetch();
         return $data[0];
     }
 
-    public function set($id, $id_space, $reference, $created, $id_male_spawner, $id_female_spawner, 
-                        $id_destination, $id_product,  $chipped, $comment ) {
+    public function set($id, $id_space, $reference, $created, $id_male_spawner, $id_female_spawner, $id_destination, $id_product, $chipped, $comment) {
         if ($id == 0) {
             $sql = 'INSERT INTO br_batchs (id_space, reference, created, id_male_spawner, id_female_spawner, 
             id_destination, id_product,  chipped, comment) VALUES (?,?,?,?,?,?,?,?,?)';
-            $this->runRequest($sql, array( $id_space, $reference, $created, $id_male_spawner, $id_female_spawner, 
-            $id_destination, $id_product,  $chipped, $comment ));
+            $this->runRequest($sql, array($id_space, $reference, $created, $id_male_spawner, $id_female_spawner,
+                $id_destination, $id_product, $chipped, $comment));
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE br_batchs SET id_space=?, reference=?, created=?, id_male_spawner=?, id_female_spawner=?, 
             id_destination=?, id_product=?, chipped=?, comment=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $reference, $created, $id_male_spawner, $id_female_spawner, 
-            $id_destination, $id_product,  $chipped, $comment, $id));
+            $this->runRequest($sql, array($id_space, $reference, $created, $id_male_spawner, $id_female_spawner,
+                $id_destination, $id_product, $chipped, $comment, $id));
             return $id;
         }
     }
 
-    public function setQuantity($id, $quantity){
+    public function setQuantity($id, $quantity) {
         $sql = "UPDATE br_batchs SET quantity=? WHERE id=?";
         $this->runRequest($sql, array($quantity, $id));
     }
 
-    public function getForList($id_space){
+    public function setQuantityStart($id, $quantity) {
+        $sql = "UPDATE br_batchs SET quantity_start=? WHERE id=?";
+        $this->runRequest($sql, array($quantity, $id));
+    }
+
+    public function getForList($id_space) {
         $sql = "SELECT * FROM br_batchs WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        $names = array(); $ids = array();
+        $names = array();
+        $ids = array();
         $names[] = "";
         $ids[] = 0;
-        foreach($data as $d){
+        foreach ($data as $d) {
             $names[] = $d["reference"];
             $ids[] = $d["id"];
         }

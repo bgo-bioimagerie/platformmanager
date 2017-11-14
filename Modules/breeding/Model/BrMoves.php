@@ -23,8 +23,8 @@ class BrMoves extends Model {
         $modelStatus = new BrSaleStatus();
         foreach ($sales as $sale) {
             $data[] = array(
-                "id" => $sale["id"],
-                "date" => $sale["date"],
+                "id" => "sale_" . $sale["id"],
+                "date" => CoreTranslator::dateFromEn($sale["date"], $lang),
                 "quantity" => $sale["quantity"],
                 "type" => BreedingTranslator::Sale($lang),
                 "details" => $modelStatus->getName($sale["id_status"], $lang),
@@ -35,8 +35,8 @@ class BrMoves extends Model {
         $modelLosseTypes = new BrLosseType();
         foreach ($losses as $losse) {
             $data[] = array(
-                "id" => $losse["id"],
-                "date" => $losse["date"],
+                "id" => "losse_" . $losse["id"],
+                "date" => CoreTranslator::dateFromEn($losse["date"], $lang),
                 "quantity" => $losse["quantity"],
                 "type" => BreedingTranslator::Losses($lang),
                 "details" => $modelLosseTypes->getName($losse["id_type"], $lang),

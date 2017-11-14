@@ -36,12 +36,12 @@ class BrSale extends Model {
     }
     
     public function getSent($id_space) {
-        $sql = "SELECT * FROM br_sales WHERE id_space=? AND id_status=3 OR id_status=4";
+        $sql = "SELECT * FROM br_sales WHERE id_space=? AND id_status=3";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
     public function getCanceled($id_space) {
-        $sql = "SELECT * FROM br_sales WHERE id_space=? AND id_status=5";
+        $sql = "SELECT * FROM br_sales WHERE id_space=? AND ( id_status=4 OR id_status=5 )";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 

@@ -41,79 +41,95 @@ endblock();
     require_once 'Modules/core/Controller/CorespaceController.php';
     $spaceController = new CorespaceController(new Request(array(), false));
     echo $spaceController->navbar($id_space);
+
+    $modelCoreConfig = new CoreConfig();
+    $showNavBarBreeding = $modelCoreConfig->getParam("showNavBarBreeding", $id_space);
     ?>
 </div> 
-<div class="col-md-8">
+<?php if ($showNavBarBreeding) { ?>
+    <div class="col-md-8">
+    <?php } else { ?>
+        <div class="col-md-10">
+        <?php } ?>
 
-    <div class="col-md-12 pm-table-short">
-        <div class="col-md-7">
-            <h3><?php echo BreedingTranslator::Batch($lang) . $batch["reference"] ?></h3>
-        </div>
-        <div class="text-center">
-            <div class="btn-group btn-group-sm">
-                <a class="btn btn-default <?php
-                if ($activTab == "infos") {
-                    echo "active";
-                }
-                ?>" href="<?php echo "brbatch/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
-                    <span class="glyphicon glyphicon-file" style="font-size: 20px"></span>
-                    <p><?php echo BreedingTranslator::Infos($lang) ?></p>
-                </a>
-                <a class="btn btn-default <?php
-                if ($activTab == "moves") {
-                    echo "active";
-                }
-                ?>" href="<?php echo "brmoves/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
-                    <span class="glyphicon glyphicon-resize-vertical" style="font-size: 20px"></span>
-                    <p><?php echo BreedingTranslator::Moves($lang) ?></p>
-                </a>
-                <a class="btn btn-default <?php
-                   if ($activTab == "treatments") {
-                       echo "active";
-                   }
-                ?>" href="<?php echo "brtreatments/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
-                    <span class="glyphicon glyphicon-plus" style="font-size: 20px"></span>
-                    <p><?php echo BreedingTranslator::Treatments($lang) ?></p>
-                </a>
-                <a class="btn btn-default <?php
-                   if ($activTab == "chipping") {
-                       echo "active";
-                   }
-                ?>" href="<?php echo "brchipping/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
-                    <span class="glyphicon glyphicon-certificate" style="font-size: 20px"></span>
-                    <p><?php echo BreedingTranslator::Chipping($lang) ?></p>
-                </a>
-                
+        <div class="col-md-12 pm-table-short">
+            <div class="col-md-7">
+                <h3><?php echo BreedingTranslator::Batch($lang) . $batch["reference"] ?></h3>
+
+
+                <?php echo BreedingTranslator::Quantity($lang) . ": " . $batch["quantity"] ?><br/>
+                <?php echo BreedingTranslator::InitialQuantity($lang) . ": " . $batch["quantity_start"] ?><br/>
+                <?php echo BreedingTranslator::Losses($lang) . ": " . $batch["quantity_losse"] ?><br/>
+                <?php echo BreedingTranslator::Sales($lang) . ": " . $batch["quantity_sale"] ?>
             </div>
-        </div>    
+            <div class="text-center">
+                <div class="btn-group btn-group-sm">
+
+                    <a class="btn btn-default <?php
+                    if ($activTab == "infos") {
+                        echo "active";
+                    }
+                    ?>" href="<?php echo "brbatch/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
+                        <span class="glyphicon glyphicon-file" style="font-size: 20px"></span>
+                        <p><?php echo BreedingTranslator::Infos($lang) ?></p>
+                    </a>
+                    <a class="btn btn-default <?php
+                    if ($activTab == "moves") {
+                        echo "active";
+                    }
+                    ?>" href="<?php echo "brmoves/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
+                        <span class="glyphicon glyphicon-resize-vertical" style="font-size: 20px"></span>
+                        <p><?php echo BreedingTranslator::Moves($lang) ?></p>
+                    </a>
+                    <a class="btn btn-default <?php
+                    if ($activTab == "treatments") {
+                        echo "active";
+                    }
+                    ?>" href="<?php echo "brtreatments/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
+                        <span class="glyphicon glyphicon-plus" style="font-size: 20px"></span>
+                        <p><?php echo BreedingTranslator::Treatments($lang) ?></p>
+                    </a>
+                    <a class="btn btn-default <?php
+                    if ($activTab == "chipping") {
+                        echo "active";
+                    }
+                    ?>" href="<?php echo "brchipping/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
+                        <span class="glyphicon glyphicon-certificate" style="font-size: 20px"></span>
+                        <p><?php echo BreedingTranslator::Chipping($lang) ?></p>
+                    </a>
+
+                </div>
+            </div>    
+        </div>
+
+
+        <div class="col-md-12 pm-table">
+            <?php endblock(); ?>
+
+
+
+
+            <?php startblock('content') ?>
+            <?php endblock() ?>    
+
+
+
+
+
+
+            <?php startblock('footer') ?>
+        </div>
     </div>
 
-
-    <div class="col-md-12 pm-table">
-<?php endblock(); ?>
-
-
-
-
-        <?php startblock('content') ?>
-<?php endblock() ?>    
-
-
-
-
-
-
-    <?php startblock('footer') ?>
+    <?php if ($showNavBarBreeding) { ?>
+        <div class="col-md-2 pm-space-navbar-right" >
+            <?php
+            require_once 'Modules/breeding/Controller/BreedingController.php';
+            $menucontroller = new BreedingController(new Request(array(), false));
+            echo $menucontroller->navbar($id_space);
+            ?>
+        <?php } ?>
     </div>
-</div>
-<div class="col-md-2 pm-space-navbar-right" >
-<?php
-require_once 'Modules/breeding/Controller/BreedingController.php';
-$menucontroller = new BreedingController(new Request(array(), false));
-echo $menucontroller->navbar($id_space);
-?>
-
-</div>
 </div>
 <?php
 endblock();
