@@ -6,6 +6,8 @@ require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
 require_once 'Modules/ecosystem/Model/EcResponsible.php';
 require_once 'Modules/ecosystem/Model/EcProject.php';
+require_once 'Modules/ecosystem/Model/EcConvention.php';
+
 
 /**
  * Class defining methods to install and initialize the core database
@@ -36,7 +38,10 @@ class EcosystemInstall extends Model {
 
         $projectModel = new EcProject();
         $projectModel->createTable();
-
+        
+        $convModel = new EcConvention();
+        $convModel->createTable();
+        
         if (!file_exists('data/core/')) {
             mkdir('data/core/', 0777, true);
         }
