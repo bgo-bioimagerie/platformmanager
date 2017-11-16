@@ -106,6 +106,11 @@ class CoreSpace extends Model {
         return $req[0];
     }
 
+    public function getSpaceMenuFromUrl($url, $id_space){
+        $sql = "SELECT * FROM core_space_menus WHERE id_space=? AND url=?";
+        return $this->runRequest($sql, array($id_space, $url))->fetch();
+    }
+
     public function getSpaceMenusDisplay($id_space, $url) {
         $sql = "SELECT display_order FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();

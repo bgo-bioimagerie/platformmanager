@@ -29,7 +29,22 @@ class ServicesController extends CoresecureController {
     public function navbar($id_space) {
 
         $lang = $this->getLanguage();
-        $html = "";
+        $html = "<nav class=\"navbar navbar-default sidebar\" style=\"border: 1px solid #f1f1f1;\" role=\"navigation\">";
+        $html .= "<div class=\"container-fluid\">";
+        $html .= "<div class=\"navbar-header\" style=\"background-color: #e1e1e1;\">";
+        $html .= "    <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-sidebar-navbar-collapse-1\">";
+        $html .= "        <span class=\"sr-only\">Toggle navigation</span>";
+        $html .= "        <span class=\"icon-bar\"></span>";
+        $html .= "        <span class=\"icon-bar\"></span>";
+        $html .= "        <span class=\"icon-bar\"></span>";
+        $html .= "    </button>      ";
+        $html .= "</div>";
+        $html .= "<div class=\"collapse navbar-collapse\"  id=\"bs-sidebar-navbar-collapse-1\">";
+        $html .= "    <ul class=\"nav navbar-nav\" >";
+        $html .= "        <li>";
+        $html .= "           <a style=\"background-color:{{bgcolor}}; color: #fff; margin-left: -14px;\" href=\"\"> {{title}} <span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon {{glyphicon}}\"></span></a>";
+        $html .= "        </li>";
+        $html .= "        <ul class=\"pm-nav-li\">";
 
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
@@ -40,15 +55,15 @@ class ServicesController extends CoresecureController {
             $htmlprojet = str_replace("{{Opened_projects}}", ServicesTranslator::Opened_projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Closed_projects}}", ServicesTranslator::Closed_projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Period_projects}}", ServicesTranslator::Period_projects($lang), $htmlprojet);
-            
-            
+
+
             $htmlprojet = str_replace("{{New_project}}", ServicesTranslator::New_project($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Projects}}", ServicesTranslator::Projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{origins}}", ServicesTranslator::servicesOrigin($lang), $htmlprojet);
             $htmlprojet = str_replace("{{visas}}", ServicesTranslator::servicesVisas($lang), $htmlprojet);
             $htmlprojet = str_replace("{{ganttopened}}", ServicesTranslator::GanttOpened($lang), $htmlprojet);
             $htmlprojet = str_replace("{{ganttperiod}}", ServicesTranslator::GanttPeriod($lang), $htmlprojet);
-            
+
             $html .= $htmlprojet;
         }
 
@@ -86,6 +101,18 @@ class ServicesController extends CoresecureController {
         $htmlListing = str_replace("{{services}}", ServicesTranslator::services($lang), $htmlListing);
 
         $html .= $htmlListing;
+
+        $html.= "</ul>";
+        $html.= "   </ul>";
+        $html.= "</div>";
+        $html.= "</div>";
+        $html.= "</nav>";
+
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("services", $id_space);
+        $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
+        $html = str_replace('{{title}}', ServicesTranslator::Services($lang), $html);
 
         return $html;
     }

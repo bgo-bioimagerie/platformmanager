@@ -1433,5 +1433,75 @@ class CoreTranslator {
         }
         return "Cannot find user with the given email";
     }
+
+    public static function Dashboard($lang) {
+        if ($lang == "fr") {
+            return "Tableau de bord";
+        }
+        return "Dashboard";
+    }
+
+    public static function ActivateCustomDashboard($lang) {
+        if ($lang == "fr") {
+            return "activer le tableau de bord personalisé";
+        }
+        return "Activate custom dashboard";
+    }
+
+    public static function Choice($lang) {
+        if ($lang == "fr") {
+            return "Choix";
+        }
+        return "Choice";
+    }
+
+    public static function Activation($lang) {
+        if ($lang == "fr") {
+            return "Activation";
+        }
+        return "Activation";
+    }
+
+    public static function Sections($lang) {
+        if ($lang == "fr") {
+            return "Sections";
+        }
+        return "Sections";
+    }
+
+    public static function NewSection($lang) {
+        if ($lang == "fr") {
+            return "Nouvelle section";
+        }
+        return "New section";
+    }
+
+    public static function EditSection($lang) {
+        if ($lang == "fr") {
+            return "Editer section";
+        }
+        return "Edit section";
+    }
+
+    public static function NewItem($lang) {
+        if ($lang == "fr") {
+            return "Nouvel item";
+        }
+        return "New item";
+    }
+
+    public static function Section($lang) {
+        if ($lang == "fr") {
+            return "Section";
+        }
+        return "Section";
+    }
+
+    public static function Width($lang) {
+        if ($lang == "fr") {
+            return "Largeur";
+        }
+        return "Width";
+    }
     
 }

@@ -52,6 +52,15 @@ class CoreRouting extends Routing{
         $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id"), array(""));
         $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id"), array(""));
         
+        // space dashboard
+        $this->addRoute("spacedashboard", "spacedashboard", "coredashboard", "index", array("id_space"), array(""));
+        $this->addRoute("spacedashboardsections", "spacedashboardsections", "coredashboard", "sections", array("id_space"), array(""));
+        $this->addRoute("spacedashboardsectionedit", "spacedashboardsectionedit", "coredashboard", "sectionedit", array("id_space", "id"), array("", ""));
+        $this->addRoute("spacedashboardsectiondelete", "spacedashboardsectiondelete", "coredashboard", "sectiondelete", array("id_space", "id"), array("", ""));
+        
+        $this->addRoute("spacedashboarditems", "spacedashboarditems", "coredashboard", "items", array("id_space"), array(""));
+        $this->addRoute("spacedashboarditemedit", "spacedashboarditemedit", "coredashboard", "itemedit", array("id_space", "id"), array("", ""));
+        $this->addRoute("spacedashboarditemdelete", "spacedashboarditemdelete", "coredashboard", "itemdelete", array("id_space", "id"), array("", ""));
         
         // menus
         $this->addRoute("coremenus", "coremenus", "coremenus", "index");
@@ -61,6 +70,7 @@ class CoreRouting extends Routing{
         
         // api
         $this->addRoute("apinavbar", "apinavbar", "corenavbar", "navbar", array(), array(), true);
+        
         
     }
 }

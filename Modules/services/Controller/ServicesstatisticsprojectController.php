@@ -992,7 +992,9 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
             $modelProject = new SeProject();
             $data = $modelProject->getRespsPeriod(
-                    $id_space, CoreTranslator::dateToEn($this->request->getParameter('begining_period'), $lang), CoreTranslator::dateToEn($this->request->getParameter('end_period'), $lang)
+                    $id_space, 
+                    CoreTranslator::dateToEn($this->request->getParameter('begining_period'), $lang), 
+                    CoreTranslator::dateToEn($this->request->getParameter('end_period'), $lang)
             );
 
             // export csv

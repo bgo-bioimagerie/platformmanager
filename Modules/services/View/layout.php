@@ -45,7 +45,7 @@ endblock();
     echo $spaceController->navbar($id_space);
     ?>
 </div> 
-<div class="col-md-10">
+<div class="col-md-8">
     <?php endblock(); ?>
 
 
@@ -57,6 +57,13 @@ endblock();
 
 
     <?php startblock('footer') ?>
+</div>
+<div class="col-md-2 pm-space-navbar-right" >
+    <?php
+    require_once 'Modules/services/Controller/ServicesController.php';
+    $menucontroller = new ServicesController(new Request(array(), false));
+    echo $menucontroller->navbar($id_space);
+    ?>
 </div>
 <?php
 endblock();

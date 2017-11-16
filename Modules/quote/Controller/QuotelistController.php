@@ -134,7 +134,7 @@ class QuotelistController extends CoresecureController {
             //echo "date open = " . $form->getParameter('date_open') . "<br/>";
             //return;
             $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'), 
-                    $form->getParameter('date_open')
+                    $this->request->getParameterNoException('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $this->redirect("quoteuser/" . $id_space . "/" . $id);

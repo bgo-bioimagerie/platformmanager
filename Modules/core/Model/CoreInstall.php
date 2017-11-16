@@ -11,6 +11,8 @@ require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreProjects.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
+require_once 'Modules/core/Model/CoreDashboardSection.php';
+require_once 'Modules/core/Model/CoreDashboardItem.php';
 
 /**
  * Class defining the Install model
@@ -63,6 +65,14 @@ class CoreInstall extends Model {
         
         $modelModules = new CoreInstalledModules();
         $modelModules->createTable();
+        
+        
+        $modeldbsection = new CoreDashboardSection();
+        $modeldbsection->createTable();
+        
+        $modeldbitem = new CoreDashboardItem();
+        $modeldbitem->createTable();
+        
         
     }
     /**

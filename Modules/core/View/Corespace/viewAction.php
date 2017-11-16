@@ -90,7 +90,13 @@ if ($space['color'] == "") {
                                 <span class="pm-tiles glyphicon glyphicon-cog" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Access($lang) ?></span>
                             </a>
-                        </li>  
+                        </li> 
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="<?php echo "spacedashboard/" . $space["id"] ?>">
+                                <span class="pm-tiles glyphicon glyphicon-th" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Dashboard($lang) ?></span>
+                            </a>
+                        </li> 
                     </ul>
                 </div>
             </div>

@@ -70,3 +70,11 @@ body,html{
     background-color: #ffffff;
     min-height: 2000px;
 }
+
+.pm-nav-li{
+    list-style-type: none;
+    margin-left: -7px;
+    padding-left: 15px;
+    background-color: #f1f1f1;
+    border: 1px solid #f1f1f1;
+}

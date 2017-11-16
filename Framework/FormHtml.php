@@ -540,7 +540,7 @@ class FormHtml {
         if ($submitOnchange != "") {
             $submit = "onchange=\"updateResponsibe(this);\"";
         }
-        $html = "<select " . $required . " class=\"form-control select\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " >";
+        $html = "<select " . $required . " class=\"form-control select\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" " . $submit . " style=\"width: 100%;\">";
         for ($v = 0; $v < count($choices); $v++) {
             $selected = "";
             if ($value == $choicesid[$v]) {

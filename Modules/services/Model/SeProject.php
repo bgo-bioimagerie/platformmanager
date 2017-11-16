@@ -57,7 +57,7 @@ class SeProject extends Model {
         $sql = "SELECT DISTINCT id_resp "
                 . " FROM se_project "
                 . " WHERE id_space=? AND date_open<=? AND (date_close=0000-00-00 OR date_close>=?) ";
-        $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnds));
+        $req = $this->runRequest($sql, array($id_space, $periodEnds, $periodStart));
         $data = $req->fetchAll();
         $modelUser = new CoreUser();
         for($i = 0 ; $i < count($data) ; $i++){

@@ -14,6 +14,8 @@ class FormGenerator{
     protected $request;
     protected $id;
     protected $validationUrl;
+    protected $data;
+    protected $title;
     
     
     public function __construct(Request $request,  $id, $url){
@@ -21,6 +23,21 @@ class FormGenerator{
         $this->id = $id;
         $this->validationUrl = $url;
         $this->lang = 'en';
+    }
+    
+    public function setTitle($title){
+        $this->title = $title;
+    }
+    
+    public function setData($data){
+        $this->data = $data;
+    }
+    
+    public function getData($index){
+        if(isset($this->data[$index])){
+            return $this->data[$index];
+        }
+        return "";
     }
     
     public function setLang($lang){
