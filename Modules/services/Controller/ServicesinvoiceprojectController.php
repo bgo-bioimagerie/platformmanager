@@ -232,6 +232,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $total = (1-floatval($discount)/100)*$total;
         $form->addNumber("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
+        $form->setButtonsWidth(4, 8);
         return $form;
     }
 

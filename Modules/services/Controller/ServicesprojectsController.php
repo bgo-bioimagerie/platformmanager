@@ -92,7 +92,12 @@ class ServicesprojectsController extends CoresecureController {
             $entriesArray = $modelEntry->openedEntries($id_space, $sortentry);
         } else if ($status == "closed") {
 
-            $years = $modelEntry->closedProjectsYears($id_space);
+            $modelCoreConfig = new CoreConfig();
+            $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
+            $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
+            
+            $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodbegin, $projectperiodend);
+            
             $yearsUrl = "servicesprojectsclosed";
             if ($year == "") {
                 if(count($years) < 1){
@@ -118,8 +123,28 @@ class ServicesprojectsController extends CoresecureController {
                 $year = date("Y", time()) - 1;
             }
             $yearp = $year + 1;
-            $periodStart = $year . "-" . $projectperiodbeginArray[1] . "-" . $projectperiodbeginArray[2];
-            $periodEnd = $yearp . "-" . $projectperiodendArray[1] . "-" . $projectperiodendArray[2] . "<br/>";
+            
+            $month = $projectperiodbeginArray[1];
+            if($month < 10){
+                $month = "0" . $month;
+            }
+            $monthp = $projectperiodendArray[1];
+            if($monthp < 10){
+                $monthp = "0" . $monthp;
+            }
+            
+            $day = $projectperiodbeginArray[2];
+            if($day < 10){
+                $day = "0" . $day;
+            }
+            
+            $dayp = $projectperiodendArray[2];
+            if($dayp < 10){
+                $dayp = "0" . $dayp;
+            }
+            
+            $periodStart = $year . "-" . $month . "-" . $day;
+            $periodEnd = $yearp . "-" . $monthp . "-" . $dayp;
 
             $entriesArray = $modelEntry->allPeriodProjects($id_space, $periodStart, $periodEnd);
         }

@@ -40,6 +40,8 @@ class BreedingRouting extends Routing{
         
         // moves
         $this->addRoute("brmoves", "brmoves", "breedingmoves", "index", array("id_space", "id_batch"), array("", ""));
+        $this->addRoute("brmoveedit", "brmoveedit", "breedingmoves", "edit", array("id_space", "id_batch", "id"), array("", "", ""));
+        
         
         // treatments
         $this->addRoute("brtreatments", "brtreatments", "breedingtreatments", "index", array("id_space", "id_batch"), array("", ""));
@@ -56,6 +58,10 @@ class BreedingRouting extends Routing{
         $this->addRoute("brproducts", "brproducts", "breedingproducts", "index", array("id_space"), array(""));
         $this->addRoute("brproductedit", "brproductedit", "breedingproducts", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("brproductdelete", "brproductdelete", "breedingproducts", "delete", array("id_space", "id"), array("", ""));
+        
+        $this->addRoute("brproductstageedit", "brproductstageedit", "breedingproducts", "stageedit", array("id_space", "id_product", "id"), array("", "", ""));
+        $this->addRoute("brproductstagedelete", "brproductstagedelete", "breedingproducts", "stagedelete", array("id_space", "id_product", "id"), array("", "", ""));
+        
         
         // batch
         $this->addRoute("brbatchs", "brbatchs", "breedingbatchs", "index", array("id_space"), array(""));
@@ -85,6 +91,7 @@ class BreedingRouting extends Routing{
        
         // prices 
         $this->addRoute("brprices", "brprices", "breedingprices", "index", array("id_space"), array(""));
+        $this->addRoute("brpriceedit", "brpriceedit", "breedingprices", "edit", array("id_space", "id_product_stage"), array("", ""));
         
         // company 
         $this->addRoute("brcompany", "brcompany", "breedingcompany", "index", array("id_space"), array(""));
@@ -94,6 +101,8 @@ class BreedingRouting extends Routing{
         $this->addRoute("brcontacttypeedit", "brcontacttypeedit", "breedingcontacttypes", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("brcontacttypedelete", "brcontacttypedelete", "breedingcontacttypes", "delete", array("id_space", "id"), array("", ""));
         
-        // 
+        // company
+        $this->addRoute("brcompany", "brcompany", "breedingcompany", "index", array("id_space"), array(""));
+        
     }
 }

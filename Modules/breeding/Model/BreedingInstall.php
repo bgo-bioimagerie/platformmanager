@@ -15,6 +15,11 @@ require_once 'Modules/breeding/Model/BrChipping.php';
 require_once 'Modules/breeding/Model/BrContactType.php';
 require_once 'Modules/breeding/Model/BrSale.php';
 require_once 'Modules/breeding/Model/BrSaleItem.php';
+require_once 'Modules/breeding/Model/BrCompany.php';
+require_once 'Modules/breeding/Model/BrProductStage.php';
+require_once 'Modules/breeding/Model/BrPrice.php';
+require_once 'Modules/breeding/Model/BrProductUnitQ.php';
+
 
 /**
  * Class defining methods to install and initialize the Breeding database
@@ -60,15 +65,27 @@ class BreedingInstall extends Model {
 
         $model11 = new BrChipping();
         $model11->createTable();
-        
+
         $model12 = new BrContactType();
         $model12->createTable();
-        
+
         $model13 = new BrSale();
         $model13->createTable();
-        
+
         $model14 = new BrSaleItem();
         $model14->createTable();
+
+        $model15 = new BrCompany();
+        $model15->createTable();
+
+        $model16 = new BrProductStage();
+        $model16->createTable();
+
+        $model17 = new BrPrice();
+        $model17->createTable();
+        
+        $model18 = new BrProductUnitQ();
+        $model18->createTable();
     }
 
 }

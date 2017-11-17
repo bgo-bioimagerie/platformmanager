@@ -11,7 +11,7 @@ class BrLosse extends Model {
         $this->setColumnsInfo("id_batch", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", "");
         $this->setColumnsInfo("date", "date", "");
-        $this->setColumnsInfo("quantity", "varchar(255)", "");
+        $this->setColumnsInfo("quantity", "int(4)", "");
         $this->setColumnsInfo("comment", "text", "");
         $this->setColumnsInfo("id_type", "text", "");
 

@@ -24,12 +24,12 @@
                     </li>
                     <li>
                         <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brsalesinprogress/{{id_space}}">{{SalesInProgress}}</a> 
+                            <a id="menu-button" href="brsalesinprigress/{{id_space}}">{{SalesInProgress}}</a> 
                         </div>
                     </li>
                     <li>
                         <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brsalessend/{{id_space}}">{{SalesSent}}</a> 
+                            <a id="menu-button" href="brsalessent/{{id_space}}">{{SalesSent}}</a> 
                         </div>
                     </li>
                     <li>

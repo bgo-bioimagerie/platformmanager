@@ -2,6 +2,7 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/Breeding/Model/BrSaleStatus.php';
+require_once 'Modules/Breeding/Model/BrSale.php';
 
 class BrMoves extends Model {
 
@@ -21,13 +22,17 @@ class BrMoves extends Model {
         $data = array();
 
         $modelStatus = new BrSaleStatus();
+        $modelSale = new BrSale();
         foreach ($sales as $sale) {
+            
+            $saleInfo = $modelSale->get($sale["id_sale"]);
+           
             $data[] = array(
-                "id" => $sale["id"],
-                "date" => $sale["date"],
+                "id" => "sale_" . $sale["id"],
+                "date" => CoreTranslator::dateFromEn($sale["date"], $lang),
                 "quantity" => $sale["quantity"],
                 "type" => BreedingTranslator::Sale($lang),
-                "details" => $modelStatus->getName($sale["id_status"], $lang),
+                "details" => $modelStatus->getName($saleInfo["id_status"], $lang),
                 "comment" => $sale["comment"]
             );
         }
@@ -35,8 +40,8 @@ class BrMoves extends Model {
         $modelLosseTypes = new BrLosseType();
         foreach ($losses as $losse) {
             $data[] = array(
-                "id" => $losse["id"],
-                "date" => $losse["date"],
+                "id" => "losse_" . $losse["id"],
+                "date" => CoreTranslator::dateFromEn($losse["date"], $lang),
                 "quantity" => $losse["quantity"],
                 "type" => BreedingTranslator::Losses($lang),
                 "details" => $modelLosseTypes->getName($losse["id_type"], $lang),

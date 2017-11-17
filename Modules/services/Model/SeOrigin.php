@@ -25,8 +25,12 @@ class SeOrigin extends Model {
     
     public function getName($id){
         $sql = "SELECT name FROM se_origin WHERE id=?";
-        $req = $this->runRequest($sql, array($id))->fetch();
-        return $req[0];
+        $req = $this->runRequest($sql, array($id));
+        if( $req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return "";
     }
 
     public function getIdFromName($name, $id_space){

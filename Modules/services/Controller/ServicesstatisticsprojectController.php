@@ -398,8 +398,15 @@ class ServicesstatisticsprojectController extends CoresecureController {
             //echo "invoice controller = " . $invoice["controller"] . '<br/>';
             if ($invoice["controller"] == "servicesinvoiceproject") {
                 $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
+                
+                //if ( $proj["name"] == "16-004 (Pancréas triple marquages)" ){
+                //if( $proj["id"] == 90){
+                //throw new Exception(print_r($proj));
+                //}
+                
                 //print_r($proj);
                 //echo "<br/>";
+                //return;
 
                 if (isset($proj["new_team"])) {
 
@@ -420,6 +427,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
                     $objPHPExcel->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
                     $objPHPExcel->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
+                    //$originName = $modelOrigin->getName($proj["id_origin"]);
+                    
                     $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
                     $objPHPExcel->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 

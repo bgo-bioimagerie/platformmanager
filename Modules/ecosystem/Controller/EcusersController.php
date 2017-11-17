@@ -10,6 +10,7 @@ require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
 require_once 'Modules/ecosystem/Model/EcResponsible.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
+require_once 'Modules/ecosystem/Model/EcConvention.php';
 
 /**
  * Manage the units (each user belongs to an unit)
@@ -277,9 +278,14 @@ class EcusersController extends CoresecureController {
         }
         $form->addDate("date_convention", EcosystemTranslator::Date_convention($lang), false, CoreTranslator::dateFromEn($user["date_convention"], $lang));
 
-        if ($user["convention_url"] != "") {
-            $form->addDownloadButton(EcosystemTranslator::Convention($lang), $user["convention_url"]);
+        $modelconvention = new EcConvention();
+        $conventionUrl = $modelconvention->getUrl($id_space, $id);
+        if ($conventionUrl != "") {
+            //$form->addDownloadButton(EcosystemTranslator::Convention($lang), $conventionUrl);
+            $form->addDownloadButton($conventionUrl, EcosystemTranslator::Convention($lang), $conventionUrl, false);
         }
+        
+        
         $form->addUpload("convention_url", EcosystemTranslator::Convention($lang));
 
         $form->addDate("date_end_contract", EcosystemTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
@@ -330,7 +336,7 @@ class EcusersController extends CoresecureController {
                 );
                 $modelResp = new EcResponsible();
                 $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
-                $this->uploadConvention($id);
+                $this->uploadConvention($id_space, $id);
                 $modelSpace->setUser($id, $id_space, $this->request->getParameter("space_status"));
                 $_SESSION["message"] = EcosystemTranslator::UserHasBeenSaved($lang);
                 $this->redirect("ecusersedit/" . $id_space . "/".$id);
@@ -361,7 +367,7 @@ class EcusersController extends CoresecureController {
                     );
                     $modelResp = new EcResponsible();
                     $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
-                    $this->uploadConvention($id);
+                    $this->uploadConvention($id_space, $id);
                     $modelSpace->setUser($id, $id_space, $this->request->getParameter("space_status"));
                     $_SESSION["message"] = EcosystemTranslator::UserHasBeenSaved($lang);
                     $this->redirect("ecusersedit/" . $id_space . "/" . $id);
@@ -391,12 +397,16 @@ class EcusersController extends CoresecureController {
         return implode($pass); //turn the array into a string
     }
 
-    public function uploadConvention($id) {
+    public function uploadConvention($id_space, $id_user) {
         $target_dir = "data/ecosystem/convention/";
         if ($_FILES["convention_url"]["name"] != "") {
             $ext = pathinfo($_FILES["convention_url"]["name"], PATHINFO_EXTENSION);
-            FileUpload::uploadFile($target_dir, "convention_url", $id . "." . $ext);
-            $this->userModel->setConventionUrl($id, $target_dir . $id . "." . $ext);
+            
+            $url = $id_space . "_" . $id_user . "." . $ext;
+            FileUpload::uploadFile($target_dir, "convention_url", $url);
+            
+            $modelconvention = new EcConvention();
+            $modelconvention->set($id_space, $id_user, $target_dir . $url);
         }
     }
 

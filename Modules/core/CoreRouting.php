@@ -70,6 +70,7 @@ class CoreRouting extends Routing{
         
         // api
         $this->addRoute("apinavbar", "apinavbar", "corenavbar", "navbar", array(), array(), true);
+        $this->addRoute("apilogin", "apilogin", "corelogin", "login", array(), array(), true);
         
         
     }

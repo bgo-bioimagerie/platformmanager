@@ -765,40 +765,167 @@ class BreedingTranslator {
         }
         return "New";
     }
-    
+
     public static function EditLosse($lang) {
         if ($lang == "fr") {
             return "Editer perte";
         }
         return "Edit losse";
     }
-    
+
     public static function lossetype($lang) {
         if ($lang == "fr") {
             return "Type de perte";
         }
         return "Losse type";
     }
-    
+
     public static function NewLosseType($lang) {
         if ($lang == "fr") {
             return "Nouveau type de perte";
         }
         return "New losse type";
     }
-    
+
     public static function Edit_lossetype($lang) {
         if ($lang == "fr") {
             return "Editer type de perte";
         }
         return "Edit losse type";
     }
-    
+
     public static function Data_has_been_saved($lang) {
         if ($lang == "fr") {
             return "Les données on bien été sauvegardées";
         }
         return "Data has been saved";
     }
+
+    public static function County($lang) {
+        if ($lang == "fr") {
+            return "Département";
+        }
+        return "County";
+    }
+
+    public static function Tel($lang) {
+        if ($lang == "fr") {
+            return "Téléphone";
+        }
+        return "Phone";
+    }
+
+    public static function Fax($lang) {
+        if ($lang == "fr") {
+            return "Télécopie";
+        }
+        return "Fax";
+    }
+
+    public static function ApprovalNumber($lang) {
+        if ($lang == "fr") {
+            return "No agrément établissement";
+        }
+        return "Approval number";
+    }
+
+    public static function Start($lang) {
+        if ($lang == "fr") {
+            return "Début";
+        }
+        return "Start";
+    }
+
+    public static function End($lang) {
+        if ($lang == "fr") {
+            return "Fin";
+        }
+        return "End";
+    }
+
+    public static function Stages($lang) {
+        if ($lang == "fr") {
+            return "Stades";
+        }
+        return "Stages";
+    }
+
+    public static function NewStage($lang) {
+        if ($lang == "fr") {
+            return "Nouveau stade";
+        }
+        return "Sew stage";
+    }
+
+    public static function Days($lang) {
+        if ($lang == "fr") {
+            return "Jours";
+        }
+        return "Days";
+    }
+
+    public static function Month($lang) {
+        if ($lang == "fr") {
+            return "Mois";
+        }
+        return "Months";
+    }
+
+    public static function Weeks($lang) {
+        if ($lang == "fr") {
+            return "Semaines";
+        }
+        return "Weeks";
+    }
+
+    public static function Years($lang) {
+        if ($lang == "fr") {
+            return "Années";
+        }
+        return "Years";
+    }
+
+    public static function EditStage($lang) {
+        if ($lang == "fr") {
+            return "Editer stade";
+        }
+        return "Edit stage";
+    }
+
+    public static function Order($lang) {
+        if ($lang == "fr") {
+            return "Ordre";
+        }
+        return "Order";
+    }
+
+    public static function Unit($lang) {
+        if ($lang == "fr") {
+            return "Unité";
+        }
+        return "Unit";
+    }
+
+    public static function UnitQuantity($lang) {
+        if ($lang == "fr") {
+            return "Quantité unitaire";
+        }
+        return "Unit quantity";
+    }
+    
+    public static function Edit_Price($lang) {
+        if ($lang == "fr") {
+            return "Editer prix";
+        }
+        return "Edit price";
+    }
+
+        public static function DeliveryForm($lang) {
+        if ($lang == "fr") {
+            return "Bon de livraison";
+        }
+        return "Delivery form";
+    }
+    
     
 }

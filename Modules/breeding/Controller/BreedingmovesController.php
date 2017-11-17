@@ -45,8 +45,8 @@ class BreedingmovesController extends CoresecureController {
 
         // table
         $table = new TableView();
-        $table->addLineEditButton("brmoveedit/" . $id_space);
-        $table->addDeleteButton("brmovedelete/" . $id_space, "id", "date");
+        $table->addLineEditButton("brmoveedit/" . $id_space . "/" . $id_batch);
+        $table->addDeleteButton("brmovedelete/" . $id_space . "/" . $id_batch, "id", "date");
         $tableHtml = $table->view($moves, array(
             "date" => CoreTranslator::Date($lang),
             "quantity" => BreedingTranslator::Quantity($lang),
@@ -68,5 +68,15 @@ class BreedingmovesController extends CoresecureController {
             'batch' => $batch
         ));
     }
-
+    
+    public function editAction($id_space, $id_batch, $id){
+        
+        $idArray = explode("_", $id);
+        if( $idArray[0] == "sale"){
+            $this->redirect("brsaleedit/" . $id_space . "/" . $idArray[1] );
+        }
+        else if($idArray[0] == "losse"){
+            $this->redirect("brlosseedit/" . $id_space . "/" . $id_batch . "/" . $idArray[1] );
+        }
+    }
 }

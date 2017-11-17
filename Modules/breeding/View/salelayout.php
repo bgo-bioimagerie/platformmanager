@@ -75,6 +75,14 @@ endblock();
                     <p><?php echo BreedingTranslator::Details($lang) ?></p>
                 </a>
                 <a class="btn btn-default <?php
+                   if ($activTab == "deliveryform") {
+                       echo "active";
+                   }
+                ?>" href="<?php echo "brsaledeliveryform/" . $id_space . "/" . $id_sale ?>" style="height: 50px;">
+                    <span class="glyphicon glyphicon-plane" style="font-size: 20px"></span>
+                    <p><?php echo BreedingTranslator::DeliveryForm($lang) ?></p>
+                </a>
+                <a class="btn btn-default <?php
                    if ($activTab == "invoicing") {
                        echo "active";
                    }
