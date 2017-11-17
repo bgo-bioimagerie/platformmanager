@@ -100,8 +100,19 @@ class SeProject extends Model {
     }
     
     public function allPeriodProjects($id_space, $periodStart, $periodEnd){
-        $sql = "SELECT * FROM se_project WHERE id_space=? AND date_open<=? AND (date_close=0000-00-00 OR date_close>=?) ORDER BY date_open ASC;";
-        $projects = $this->runRequest($sql, array($id_space, $periodEnd, $periodStart))->fetchAll();
+        $sql = "SELECT * FROM se_project WHERE id_space=? AND ("
+                . " ( date_open<=? AND date_close>=? AND date_close<=? ) "
+                . " OR ( date_open>=? AND date_open<=? AND date_close>=? AND date_close<=? ) "
+                . " OR ( date_open>=? AND date_open<=? AND date_close>=? ) "
+                . " OR ( date_open<=? AND date_close>=?) "
+                . " OR date_close=0000-00-00 "
+                . ") ORDER BY date_open ASC;";
+        $projects = $this->runRequest($sql, array($id_space, 
+            $periodStart, $periodStart, $periodEnd,
+            $periodStart, $periodEnd, $periodStart, $periodEnd,
+            $periodStart, $periodEnd, $periodEnd,
+            $periodStart, $periodEnd
+                ))->fetchAll();
         
         $modelUser = new CoreUser();
 
@@ -151,6 +162,49 @@ class SeProject extends Model {
             for ($i = $firstYear; $i <= $lastYear; $i++) {
                 $years[] = $i;
             }
+            return $years;
+        }
+        return array();
+    }
+    
+    public function closedProjectsPeriods($id_space, $periodBegin, $periodEnd){
+        $sql = "SELECT date_close FROM se_project WHERE date_close!='0000-00-00' AND id_space=? ORDER BY date_close ASC";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        
+        // extract years
+        if (count($data) > 0) {
+            $firstDate = $data[0][0];
+            $firstDateInfo = explode("-", $firstDate);
+            $firstYear = $firstDateInfo[0];
+            $i = 0;
+            while ($firstYear == "0000") {
+                $i++;
+                $firstDate = $data[$i][0];
+                $firstDateInfo = explode("-", $firstDate);
+                $firstYear = $firstDateInfo[0];
+            }
+            
+            $periodBeginInfo = explode('-', $periodBegin);
+            if ( $firstDateInfo[1]."-".$firstDateInfo[2] >=  $periodBeginInfo[1] ."-".$periodBeginInfo[2] ){
+                $firstYear = $firstYear-1;
+            }
+
+            // last year
+            $lastDate = $data[count($data) - 1][0];
+            $lastDateInfo = explode("-", $lastDate);
+            $periodEndInfo = explode('-', $periodEnd);
+            if ( $lastDateInfo[1]."-".$lastDateInfo[2] >=  $periodEndInfo[1] ."-".$periodEndInfo[2] ){
+                $lastYear = $lastDateInfo[0] +1;
+            }
+            else{
+                $lastYear = $lastDateInfo[0];
+            }
+            
+            $years = array();
+            for ($i = $firstYear; $i <= $lastYear; $i++) {
+                $years[] = $i;
+            }
+            
             return $years;
         }
         return array();
@@ -483,10 +537,24 @@ class SeProject extends Model {
         //echo "details = " . $invoiceItem["details"] . "<br/>";
         //echo 'count details = ' . count($details) . "<br/>";
         $proj = explode("=", $details[count($details)-2]);
-        $projName = $proj[0];
+        //$projName = $proj[0];
         
-        $sqlp = "SELECT * FROM se_project WHERE name=?";
-        $info = $this->runRequest($sqlp, array($projName))->fetch();
+        $projUrl = explode("/", $proj[1]);
+        $projID = $projUrl[2];
+        $sqlp = "SELECT * FROM se_project WHERE id=?";
+        $req = $this->runRequest($sqlp, array($projID));
+        if ( $req->rowCount() > 0 ){
+            $info = $req->fetch();
+        }
+        else{
+            $info = array();
+            $info['closed_by'] = "";
+            $info['closed_by_in'] = "";
+        }
+        //else{
+        //    echo 'cannot find project for name ' . $projName . "and id " . $projID ."<br>";
+        //}
+        
         
         $modelUser = new EcUser();
         $sql2 = "SELECT id_user FROM se_visa WHERE id=? AND id_space=?";

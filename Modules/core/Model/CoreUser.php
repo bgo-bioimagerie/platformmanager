@@ -2,6 +2,9 @@
 
 require_once 'Framework/Model.php';
 
+require_once 'Modules/core/Model/CoreConfig.php';
+require_once 'Modules/core/Model/CoreLdap.php';
+
 class CoreUser extends Model {
 
     public function __construct() {
@@ -570,6 +573,46 @@ class CoreUser extends Model {
     public function delete($id) {
         $sql = "DELETE FROM core_users WHERE id=?";
         $this->runRequest($sql, array($id));
+    }
+    
+    public function login($login, $pwd) {
+
+        // test if local account
+        if ($this->isLocalUser($login)) {
+            //echo "found local user <br/>";
+            return $this->connect($login, $pwd);
+        }
+
+        // search for LDAP account
+        else {
+            //echo "into LDap <br/>";
+            $modelCoreConfig = new CoreConfig();
+            if ($modelCoreConfig->getParam("useLdap") == true) {
+
+                $modelLdap = new CoreLdap();
+                $ldapResult = $modelLdap->getUser($login, $pwd);
+                if ($ldapResult == "error") {
+                    return "Cannot connect to ldap using the given login and password";
+                } else {
+                    // update the user infos
+                    $status = $modelCoreConfig->getParam("ldapDefaultStatus");
+                    $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
+
+                    $userInfo = $this->user->getUserByLogin($login);
+                    //print_r($userInfo);
+
+                    $modelSpace = new CoreSpace();
+                    $spacesToActivate = $modelSpace->getSpaces('id');
+                    foreach ($spacesToActivate as $spa) {
+                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
+                    }
+
+                    return $this->user->isActive($login);
+                }
+            }
+        }
+
+        return "Login or password not correct";
     }
 
 }

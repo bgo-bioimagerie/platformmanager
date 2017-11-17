@@ -64,33 +64,43 @@ class CoreSpace extends Model {
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
     }
-    
+
     public function mergeUsers($users) {
         for ($i = 1; $i < count($users); $i++) {
             $sql = "UPDATE core_j_spaces_user SET id_user=? WHERE id_user=?";
             $this->runRequest($sql, array($users[0], $users[$i]));
         }
-        
+
         $sql = "DELETE FROM core_j_spaces_user WHERE status=0";
         $this->runRequest($sql);
     }
 
-    public function doesManageSpace($id_user){
+    public function doesManageSpace($id_user) {
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > 2";
         $req = $this->runRequest($sql, array($id_user));
-        if($req->rowCount() > 0){
+        if ($req->rowCount() > 0) {
             return true;
         }
         return false;
     }
-    
-    public function getEmailsSpaceManagers($id_space){
+
+    public function getSpaceIdFromName($name) {
+        $sql = "SELECT id FROM core_spaces WHERE name=?";
+        $req = $this->runRequest($sql, array($name));
+        if( $req->rowCount() > 0 ){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+
+    public function getEmailsSpaceManagers($id_space) {
         $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>2)";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
-    
-    public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu=1, $color="") {
+
+    public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu = 1, $color = "") {
         if ($this->isSpaceMenu($id_space, $url)) {
             $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=? WHERE id_space=? AND url=?";
             $this->runRequest($sql, array($module, $icon, $user_role, $display_order, $has_sub_menu, $color, $id_space, $url));
@@ -106,7 +116,7 @@ class CoreSpace extends Model {
         return $req[0];
     }
 
-    public function getSpaceMenuFromUrl($url, $id_space){
+    public function getSpaceMenuFromUrl($url, $id_space) {
         $sql = "SELECT * FROM core_space_menus WHERE id_space=? AND url=?";
         return $this->runRequest($sql, array($id_space, $url))->fetch();
     }
@@ -116,13 +126,12 @@ class CoreSpace extends Model {
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         return $req[0];
     }
-    
+
     public function getSpaceMenusColor($id_space, $url) {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         return $req[0];
     }
-    
 
     public function isSpaceMenu($id_space, $url) {
         $sql = "SELECT id FROM core_space_menus WHERE id_space=? AND url=?";
@@ -138,19 +147,15 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space, $user_role))->fetchAll();
     }
 
-    
     public function getDistinctSpaceMenusModules($id_space) {
         $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
-    
-    
-    
+
     public function getAllSpaceMenusModules($id_space) {
         $sql = "SELECT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
-    
 
     public function getAllSpaceMenus($id_space) {
         $sql = "SELECT * FROM core_space_menus WHERE id_space=?";
@@ -190,8 +195,7 @@ class CoreSpace extends Model {
                 $roles[$i]["role_name"] = CoreTranslator::Manager($lang);
             } else if ($roles[$i]["status"] == 4) {
                 $roles[$i]["role_name"] = CoreTranslator::Admin($lang);
-            }
-            else{
+            } else {
                 $roles[$i]["role_name"] = "unknown";
             }
         }
@@ -299,7 +303,7 @@ class CoreSpace extends Model {
             $this->runRequest($sql, array($id_user, $id_space, $status));
         }
     }
-    
+
     public function setUser($id_user, $id_space, $status) {
         if ($this->isUser($id_user, $id_space)) {
             $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
