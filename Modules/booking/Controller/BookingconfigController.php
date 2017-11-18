@@ -121,6 +121,17 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
+        $bookingRestrictionForm = $this->bookingRestrictionForm($id_space, $lang);
+        if( $bookingRestrictionForm->check() ){
+                    
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("Bkmaxbookingperday", $this->request->getParameter("Bkmaxbookingperday"), $id_space);
+            $modelConfig->setParam("BkbookingDelayUserCanEdit", $this->request->getParameter("BkbookingDelayUserCanEdit"), $id_space);
+            
+            $this->redirect("bookingconfig/".$id_space);
+            return;
+        }
+        
         $setbookingoptionsquery = $this->request->getParameterNoException("setbookingoptionsquery");
         if ($setbookingoptionsquery == "yes") {
             $bookingSettings = $this->optionsQuery($id_space);
@@ -139,6 +150,7 @@ class BookingconfigController extends CoresecureController {
             $formMenuName->getHtml($lang),
             $formbookingUseRecurentBooking->getHtml($lang),
             $formBookingCanUserEditStartedResa->getHtml($lang),
+            $bookingRestrictionForm->getHtml($lang),
             $formBookingOption->getHtml($lang), 
             $formeditReservation->getHtml($lang), 
             $formEditBookingMailing->getHtml($lang));
@@ -273,6 +285,24 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect('BkEditBookingMailing', BookingTranslator::Send_emails($lang), array(BookingTranslator::Never($lang), BookingTranslator::When_manager_admin_edit_a_reservation($lang)), array(1,2), $BkEditBookingMailing);
         $form->addSelect('BkBookingMailingAdmins', BookingTranslator::EmailManagers($lang), array(BookingTranslator::Never($lang), BookingTranslator::WhenAUserBook($lang)), array(1,2), $BkBookingMailingAdmins);
         $form->addSelect('BkBookingMailingDelete', BookingTranslator::EmailWhenResaDelete($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkBookingMailingDelete);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+    
+    protected function bookingRestrictionForm($id_space, $lang){
+        
+        $modelCoreConfig = new CoreConfig();
+	$maxBookingPerDay = $modelCoreConfig->getParamSpace("Bkmaxbookingperday", $id_space);
+        $bookingDelayUserCanEdit = $modelCoreConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
+        
+        $form = new Form($this->request, "BkbookingRestrictionForm");
+        $form->addSeparator(BookingTranslator::BookingRestriction($lang));
+        
+        $form->addNumber("Bkmaxbookingperday", BookingTranslator::Maxbookingperday($lang), false, $maxBookingPerDay);
+        $form->addNumber("BkbookingDelayUserCanEdit", BookingTranslator::BookingDelayUserCanEdit($lang), false, $bookingDelayUserCanEdit);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

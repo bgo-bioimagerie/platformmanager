@@ -1248,5 +1248,6 @@ class BookinginvoiceTranslator {
         }
         return "Discount";
     }        
+   
     
 }

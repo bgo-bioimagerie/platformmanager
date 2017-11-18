@@ -18,6 +18,7 @@ require_once 'Modules/booking/Model/BkCalendarPeriod.php';
 
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReArea.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
@@ -99,9 +100,16 @@ class BookingdefaultController extends BookingabstractController {
         if ($role >= 3) {
             return true;
         }
+        
+        $modelConfig = new CoreConfig();
+        $limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
+        
         if ($id_recipient == $id_user) {
-            if ($start_date > time()) {
-                return true;
+            
+            if( $limitHours >= 0){
+                if ($start_date - 3600*$limitHours > time()) {
+                    return true;
+                }
             }
             $modelConfig = new CoreConfig();
             $canEdit = $modelConfig->getParamSpace("BkCanUserEditStartedResa", $id_space);
@@ -242,12 +250,27 @@ class BookingdefaultController extends BookingabstractController {
         $periodic_option = $this->request->getParameterNoException("periodic_radio");
 
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
+            
+            
             // test if a resa already exists on this periode
             $conflict = $modelCalEntry->isConflict($start_time, $end_time, $id_resource, $id);
             if ($conflict) {
                 $_SESSION["message"] = BookingTranslator::reservationError($lang);
                 $valid = false;
             }
+            // test if the user is above quota
+            $modelSpace = new CoreSpace();
+            $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
+            if( $userSpaceRole <= 2 ){
+                $bookingQuota = $modelCoreConfig->getParamSpace("Bkmaxbookingperday", $id_space);
+                //echo "call has too many reservatins <br/>";
+                $userHasTooManyReservations = $modelCalEntry->hasTooManyReservations($start_time, $_SESSION["id_user"], $id_resource, $id, $bookingQuota);
+                if ($userHasTooManyReservations){              
+                    $_SESSION["message"] = BookingTranslator::quotaReservationError($bookingQuota, $lang);
+                    $valid = false;
+                }
+            }
+            
             if ($valid) {
                 $id_new = $modelCalEntry->setEntry($id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                 $modelCalEntry->setAllDayLong($id_new, $all_day_long);
@@ -503,7 +526,10 @@ class BookingdefaultController extends BookingabstractController {
 
             // mail content
             $from = $user["email"];
-            $toAdress = $modelSpace->getEmailsSpaceManagers($id_space);
+            
+            $modelResoucesResp = new ReResps();
+            $toAdress = $modelResoucesResp->getResourcesManagersEmails($id_resource);
+            //$toAdress = $modelSpace->getEmailsSpaceManagers($id_space);
             $subject = $resourceName . " has been booked";
             $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
             if( !$BkUseRecurentBooking || $periodic_option == 1 ){
