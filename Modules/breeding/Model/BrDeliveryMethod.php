@@ -26,7 +26,12 @@ class BrDeliveryMethod extends Model {
         $sql = "SELECT name FROM br_delivery_method WHERE id=?";
         $d = $this->runRequest($sql, array($id))->fetch();
         return $d[0];
-
+    }
+    
+    public function getIdFromName($name){
+        $sql = "SELECT id FROM br_delivery_method WHERE name=?";
+        $d = $this->runRequest($sql, array($name))->fetch();
+        return $d[0];
     }
 
     public function set($id, $id_space, $name) {

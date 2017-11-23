@@ -126,6 +126,16 @@ class SeStats extends Model {
 
             $id_pricing = $modelUnit->getBelonging($id_unit, $id_space);
             $pricingInfo = $modelBelonging->getInfo($id_pricing);
+            
+            $onTime = true;
+            if ($project["date_close"] != "" && $project["date_close"] != "0000-00-00"
+                && $project["time_limit"] != "" && $project["time_limit"] != "0000-00-00"    ){
+                if ( $project["date_close"] > $project["time_limit"]){
+                    $onTime = false;
+                }
+            }
+            
+            /*
             $onTime = false;
             
             if( $project["date_close"] == "0000-00-00" ){
@@ -134,6 +144,7 @@ class SeStats extends Model {
             if( $project["time_limit"] == "0000-00-00" || $project["time_limit"] >= $project["date_close"]  ){
                 $onTime = true;
             }
+            */
             
             
             if ($pricingInfo["type"] == 1) {

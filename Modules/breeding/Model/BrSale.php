@@ -31,12 +31,12 @@ class BrSale extends Model {
     }
 
     public function getInProgress($id_space) {
-        $sql = "SELECT * FROM br_sales WHERE id_space=? AND id_status<=2";
+        $sql = "SELECT * FROM br_sales WHERE id_space=? AND id_status<=2 ORDER BY delivery_expected DESC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
     public function getSent($id_space) {
-        $sql = "SELECT * FROM br_sales WHERE id_space=? AND id_status=3";
+        $sql = "SELECT * FROM br_sales WHERE id_space=? AND id_status=3 ORDER BY delivery_expected DESC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     

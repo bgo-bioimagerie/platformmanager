@@ -27,7 +27,7 @@ class CoreloginApi extends Controller {
         if ($this->request->isParameter("login") && $this->request->isParameter("password")) {
             $this->login();
         } else {
-            echo json_encode(['error' => "login and password are not in the request"]);
+            echo json_encode(['status' => "error", 'error' => "login and password are not in the request"]);
         }
     }
 

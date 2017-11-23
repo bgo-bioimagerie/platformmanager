@@ -1227,14 +1227,13 @@ class BookingTranslator {
         }
         return "Are you sure you want to delete this reservation ?";
     }
-    
+
     public static function RemoveReservationPeriodic($lang) {
         if ($lang == "fr") {
             return "Etes vous sure de vouloir supprimer toutes les réservations de la periodicité ?";
         }
         return "Are you sure you want to delete all the reservation of the periodicity ?";
     }
-    
 
     public static function SendEmailsToUsers($lang) {
         if ($lang == "fr") {
@@ -1333,131 +1332,161 @@ class BookingTranslator {
         }
         return "Error: fields date and visa are mandatory";
     }
-    
-    public static function Use_recurent_booking($lang){
+
+    public static function Use_recurent_booking($lang) {
         if ($lang == "fr") {
             return "Utiliser les réservation périodiques";
         }
         return "Use recurent booking";
     }
-    
-    public static function Single($lang){
+
+    public static function Single($lang) {
         if ($lang == "fr") {
             return "Simple";
         }
         return "Single";
     }
-    
-    public static function Periodic($lang){
+
+    public static function Periodic($lang) {
         if ($lang == "fr") {
             return "Périodique";
         }
         return "Periodic";
     }
-    
-    public static function None($lang){
+
+    public static function None($lang) {
         if ($lang == "fr") {
             return "Aucune";
         }
         return "None";
     }
-    
-    public static function EveryDay($lang){
+
+    public static function EveryDay($lang) {
         if ($lang == "fr") {
             return "Chaque jour";
         }
         return "Every day";
     }
-    
-    public static function EveryWeek($lang){
+
+    public static function EveryWeek($lang) {
         if ($lang == "fr") {
             return "Chaque semaine";
         }
         return "Every week";
     }
-    
-    public static function Every2Week($lang){
+
+    public static function Every2Week($lang) {
         if ($lang == "fr") {
             return "Une semaine sur 2";
         }
         return "Every 2 week";
     }
-    
-    public static function Every3Week($lang){
+
+    public static function Every3Week($lang) {
         if ($lang == "fr") {
             return "Une semaine sur 3";
         }
         return "Every 3 week";
     }
-    
-    public static function Every4Week($lang){
+
+    public static function Every4Week($lang) {
         if ($lang == "fr") {
             return "Une semaine sur 4";
         }
         return "Every 4 week";
     }
-    
-    public static function Every5Week($lang){
+
+    public static function Every5Week($lang) {
         if ($lang == "fr") {
             return "Une semaine sur 5";
         }
         return "Every 5 week";
     }
-    
-    public static function EveryMonthSameDate($lang){
+
+    public static function EveryMonthSameDate($lang) {
         if ($lang == "fr") {
             return "Chaque mois, même date";
         }
         return "Every month, same date";
     }
-    
-    public static function EveryMonthSameDay($lang){
+
+    public static function EveryMonthSameDay($lang) {
         if ($lang == "fr") {
             return "Chaque mois, même jour de la semaine";
         }
         return "Every month, same day";
     }
-    
-    public static function EveryYearSameDate($lang){
+
+    public static function EveryYearSameDate($lang) {
         if ($lang == "fr") {
             return "Chaque mois, même date";
         }
         return "Every year, same date";
     }
-    
-    public static function PeriodicityType($lang){
+
+    public static function PeriodicityType($lang) {
         if ($lang == "fr") {
             return "Type de periodicité";
         }
         return "Periodicity type";
     }
-    
-    public static function DateEndPeriodicity($lang){
+
+    public static function DateEndPeriodicity($lang) {
         if ($lang == "fr") {
             return "Date de fin de périodicité";
         }
         return "Date end periodicity";
     }
-    
-    public static function DeletePeriod($lang){
+
+    public static function DeletePeriod($lang) {
         if ($lang == "fr") {
             return "Suprimé périodicité";
         }
         return "Delete periodicity";
     }
-    
-    public static function CanUserEditStartedResa($lang){
+
+    public static function CanUserEditStartedResa($lang) {
         if ($lang == "fr") {
             return "Un utilisateur peut-il modifier une réservation débutée ?";
         }
         return "Can user edit started reservation ?";
     }
-    
-    public static function AllDay($lang){
+
+    public static function AllDay($lang) {
         if ($lang == "fr") {
             return "Toute la journée";
         }
         return "All day";
-    } 
+    }
+
+    public static function BookingRestriction($lang) {
+        if ($lang == "fr") {
+            return "Restrictions sur les réservations";
+        }
+        return "Booking restrictions";
+    }
+
+    public static function Maxbookingperday($lang) {
+        if ($lang == "fr") {
+            return "Maximum de réservations par jour";
+        }
+        return "Max booking per day";
+    }
+    
+    public static function BookingDelayUserCanEdit($lang) {
+        if ($lang == "fr") {
+            return "Temps (en heure) avant la réservation où l'utilisateur ne peux plus annuler une réservation"
+            . "-1 pour aucune restriction";
+        }
+        return "Time (in hours) before a booking when a user can cancel a reservation (-1 for no restrictions)";
+    }
+    
+    public static function quotaReservationError($bookingQuota, $lang) {
+        if ($lang == "fr") {
+            return "Erreur: Vous avez déjà " . $bookingQuota . " réservation pour cette ressource ce jour";
+        }
+        return "Error:You already have " . $bookingQuota . " reservations this day for this resource" ;
+    }
+    
     
 }

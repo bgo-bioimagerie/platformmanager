@@ -43,6 +43,7 @@ class BkCalendarEntry extends Model {
         
         $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
         $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
+        $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
     }
     
     public function updateNullResponsibles(){
@@ -145,6 +146,11 @@ class BkCalendarEntry extends Model {
         $sql = "UPDATE bk_calendar_entry SET all_day_long=? WHERE id=?";
         $this->runRequest($sql, array($all_day_long, $id));
     }
+    
+    public function setDeleted($id, $deleted = 1){
+        $sql = "UPDATE bk_calendar_entry SET deleted=? WHERE id=?";
+        $this->runRequest($sql, array($deleted, $id));
+    }
 
     public function setEntry($id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id) {
         if ($id == 0) {
@@ -190,9 +196,9 @@ class BkCalendarEntry extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function getAllEntries() {
-        $sql = "select * from bk_calendar_entry";
-        $req = $this->runRequest($sql);
+    public function getAllEntries($deleted = 0) {
+        $sql = "select * from bk_calendar_entry WHERE deleted=?";
+        $req = $this->runRequest($sql, array($deleted));
         return $req->fetchAll();
     }
 
@@ -213,7 +219,7 @@ class BkCalendarEntry extends Model {
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'resp' => $id_resp, 'resource' => $id_resource);
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
 				start_time >=:start AND start_time < :end AND resource_id=:resource AND responsible_id=:resp
-                                AND invoice_id=0
+                                AND invoice_id=0 AND deleted=0 
 				ORDER BY id';
         $req = $this->runRequest($sql, $q);
         return $req->fetchAll();
@@ -303,6 +309,7 @@ class BkCalendarEntry extends Model {
         $q = array('start' => $dateBegin, 'end' => $dateEnd);
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
 				(start_time <=:end AND end_time >= :start) 
+                                AND deleted=0
 				ORDER BY start_time';
         $req = $this->runRequest($sql, $q);
         return $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
@@ -323,6 +330,7 @@ class BkCalendarEntry extends Model {
 
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
 				(start_time <=:end AND end_time >= :start) AND resource_id = :res
+                                AND deleted=0
 				ORDER BY start_time';
 
         $req = $this->runRequest($sql, $q);
@@ -382,6 +390,7 @@ class BkCalendarEntry extends Model {
                            (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
                            (start_time <=:start AND end_time >= :end) 
                            ) 
+                           AND deleted=0
 			AND resource_id = :res;";
         $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id);
         $req = $this->runRequest($sql, $q);
@@ -396,6 +405,36 @@ class BkCalendarEntry extends Model {
                     return true;
                 }
             }
+            return true;
+        } else{
+            return false;
+        }
+    }
+    
+    public function hasTooManyReservations($start_time, $id_user, $id_resource, $reservation_id, $bookingQuota){
+        
+        $year = date('Y', $start_time);
+        $month = date('m', $start_time);
+        $day = date('d', $start_time);
+        
+        //echo "date = " . $year ."-". $month . "-" . $day . "<br/>";
+        //echo "booking quota = " . $bookingQuota . "<br/>";
+        
+        $startDayTime = mktime(0, 0, 0, $month, $day, $year);
+        $endDayTime = mktime(23, 59, 59, $month, $day, $year);
+        
+        $sql = "SELECT id FROM bk_calendar_entry WHERE "
+                . "start_time >= ? AND start_time<=? "
+                . "AND deleted=0 "
+                . "AND resource_id=? "
+                . "AND booked_by_id=? ";
+        
+        if($reservation_id != ""){
+            $sql .= "AND id!=?"; 
+        }
+        $req = $this->runRequest($sql, array($startDayTime, $endDayTime, $id_resource, $id_user, $reservation_id));
+        
+        if ($req->rowCount() >= $bookingQuota) {
             return true;
         } else{
             return false;
@@ -417,6 +456,7 @@ class BkCalendarEntry extends Model {
                            (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
                            (start_time <=:start AND end_time >= :end) 
                            ) 
+                           AND deleted=0
 			AND resource_id = :res;";
         $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id);
         $req = $this->runRequest($sql, $q);
@@ -448,6 +488,7 @@ class BkCalendarEntry extends Model {
         $sql = "SELECT id FROM bk_calendar_entry WHERE
 			  ((start_time >=:start AND start_time < :end) OR	
 			  (end_time >:start AND end_time <= :end)) 
+                          AND deleted=0
 			AND resource_id = :res;";
         $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id);
         $req = $this->runRequest($sql, $q);
@@ -472,8 +513,12 @@ class BkCalendarEntry extends Model {
      * @param unknown $id
      */
     public function removeEntry($id) {
+        $sql = "UPDATE bk_calendar_entry SET deleted=? WHERE id=?";
+        $this->runRequest($sql, array(1, $id));
+        /*
         $sql = "DELETE FROM bk_calendar_entry WHERE id = ?";
         $this->runRequest($sql, array($id));
+         */
     }
 
     /**
@@ -481,8 +526,12 @@ class BkCalendarEntry extends Model {
      * @param unknown $series_id
      */
     public function removeEntriesFromSeriesID($series_id) {
+        $sql = "UPDATE bk_calendar_entry SET deleted=? WHERE repeat_id=?";
+        $this->runRequest($sql, array(1, $series_id));
+        /*
         $sql = "DELETE FROM bk_calendar_entry WHERE repeat_id = ?";
         $this->runRequest($sql, array($series_id));
+         */
     }
 
     /**
@@ -515,6 +564,7 @@ class BkCalendarEntry extends Model {
         $sql = 'SELECT id FROM bk_calendar_entry WHERE
 				(start_time >=:start AND start_time <= :end) AND (responsible_id = :resp)
                                 AND resource_id IN (SELECT id FROM re_info WHERE id_space= :space)
+                                AND deleted=0
                                 AND invoice_id=0';
         $req = $this->runRequest($sql, $q);
 
@@ -535,7 +585,9 @@ class BkCalendarEntry extends Model {
     public function hasUnitEntry($unit_id, $startdate, $enddate) {
         $q = array('start' => $startdate, 'end' => $enddate);
         $sql = 'SELECT DISTINCT recipient_id, id FROM bk_calendar_entry WHERE
-				(start_time >=:start AND start_time <= :end)';
+				(start_time >=:start AND start_time <= :end)
+                                AND deleted=0
+                                ';
         $req = $this->runRequest($sql, $q);
         $recs = $req->fetchAll();
 
@@ -558,7 +610,7 @@ class BkCalendarEntry extends Model {
      * @return multitype:
      */
     public function getUserBooking($user_id) {
-        $sql = "select * from bk_calendar_entry where recipient_id=? order by end_time DESC;";
+        $sql = "select * from bk_calendar_entry where recipient_id=? AND deleted=0 order by end_time DESC;";
         $req = $this->runRequest($sql, array($user_id));
         return $req->fetchAll();
     }
@@ -570,7 +622,7 @@ class BkCalendarEntry extends Model {
      * @return multitype:
      */
     public function getUserBookingResource($user_id, $resource_id) {
-        $sql = "select * from bk_calendar_entry where recipient_id=? and resource_id=? order by end_time DESC;";
+        $sql = "select * from bk_calendar_entry where recipient_id=? and resource_id=? AND deleted=0 order by end_time DESC;";
         $req = $this->runRequest($sql, array($user_id, $resource_id));
         return $req->fetchAll();
     }
@@ -586,6 +638,7 @@ class BkCalendarEntry extends Model {
 				FROM core_users AS user
 				INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
 				WHERE bk_calendar_entry.resource_id=?
+                                AND deleted=0
 				AND user.is_active = 1 
 				;";
         $req = $this->runRequest($sql, array($resource_id));
@@ -604,6 +657,7 @@ class BkCalendarEntry extends Model {
 				INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
 				WHERE bk_calendar_entry.resource_id IN (SELECT id FROM re_info WHERE id_area=?) 
 				AND user.is_active = 1  
+                                AND deleted=0
 				;";
         $req = $this->runRequest($sql, array($area_id));
         return $req->fetchAll();

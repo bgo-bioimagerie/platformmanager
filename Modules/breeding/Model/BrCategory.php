@@ -28,6 +28,13 @@ class BrCategory extends Model {
         return $d[0];
 
     }
+    
+    
+    public function getIdFromName($name){
+        $sql = "SELECT id FROM br_categories WHERE name=?";
+        $d = $this->runRequest($sql, array($name))->fetch();
+        return $d[0];
+    }
 
     public function set($id, $id_space, $name) {
         if ($id == 0) {

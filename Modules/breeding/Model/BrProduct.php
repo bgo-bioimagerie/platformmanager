@@ -45,6 +45,16 @@ class BrProduct extends Model {
             return $id;
         }
     }
+    
+    public function getIdFromName($name){
+        $sql = "SELECT id FROM br_products WHERE name=?";
+        $req = $this->runRequest($sql, array($name));
+        if ($req->rowCount() > 0){
+            $tmp =  $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
 
     public function getForList($id_space){
         $sql = "SELECT * FROM br_products WHERE id_space=?";

@@ -229,9 +229,9 @@ class BreedingTranslator {
 
     public static function Pricing($lang) {
         if ($lang == "fr") {
-            return "Pricing";
+            return "Secteur d'activité";
         }
-        return "Secteur d'activité";
+        return "Pricing";
     }
 
     public static function UsersInstitutions($lang) {
@@ -912,7 +912,7 @@ class BreedingTranslator {
         }
         return "Unit quantity";
     }
-    
+
     public static function Edit_Price($lang) {
         if ($lang == "fr") {
             return "Editer prix";
@@ -920,12 +920,68 @@ class BreedingTranslator {
         return "Edit price";
     }
 
-        public static function DeliveryForm($lang) {
+    public static function DeliveryForm($lang) {
         if ($lang == "fr") {
             return "Bon de livraison";
         }
         return "Delivery form";
     }
+
+    public static function Service($lang) {
+        if ($lang == "fr") {
+            return "Service";
+        }
+        return "Service";
+    }
+
+    public static function Sexing($lang) {
+        if ($lang == "fr") {
+            return "Sexage";
+        }
+        return "Sexing";
+    }
+
+    public static function QuantityFemale($lang) {
+        if ($lang == "fr") {
+            return "Nombre de femelles";
+        }
+        return "Quantity of female";
+    }
+
+    public static function QuantityMale($lang) {
+        if ($lang == "fr") {
+            return "Nombre de mâles";
+        }
+        return "Quantity of male";
+    }
+
+    public static function SexingDate($lang) {
+        if ($lang == "fr") {
+            return "Date de sexage";
+        }
+        return "Sexing date";
+    }
+
+    public static function Females($lang) {
+        if ($lang == "fr") {
+            return "Femelles";
+        }
+        return "Females";
+    }
+
+    public static function Males($lang) {
+        if ($lang == "fr") {
+            return "Mâles";
+        }
+        return "Males";
+    }
     
+    public static function BirthDate($lang) {
+        if ($lang == "fr") {
+            return "Date de naissance";
+        }
+        return "Birth date";
+    }
     
+
 }
