@@ -49,7 +49,7 @@ class BreedingclientsController extends CoresecureController {
         $table->addDeleteButton("brclientdelete/" . $id_space);
         $tableHtml = $table->view($providersArray, array(
             "name" => CoreTranslator::Name($lang), 
-            "pricing_name" => CoreTranslator::Address($lang) 
+            "pricing_name" => BreedingTranslator::Pricing($lang) 
             ));
 
         // render the View
@@ -85,6 +85,7 @@ class BreedingclientsController extends CoresecureController {
         $form->addText("contact_name", BreedingTranslator::ContactName($lang), false, $client["contact_name"]);
         $form->addText("institution", BreedingTranslator::Institution($lang), false, $client["institution"]);
         $form->addText("building_floor", BreedingTranslator::BuildingFloor($lang), false, $client["building_floor"]);
+        $form->addText("service", BreedingTranslator::Service($lang), false, $client["service"]);
         $form->addTextArea("address", BreedingTranslator::Address($lang), false, $client["address"]);
         $form->addText("zip_code", BreedingTranslator::Zip_code($lang), false, $client["zip_code"]);
         $form->addText("city", BreedingTranslator::City($lang), false, $client["city"]);
@@ -107,6 +108,7 @@ class BreedingclientsController extends CoresecureController {
                 $form->getParameter("contact_name"), 
                 $form->getParameter("institution"), 
                 $form->getParameter("building_floor"), 
+                $form->getParameter("service"), 
                 $form->getParameter("address"), 
                 $form->getParameter("zip_code"), 
                 $form->getParameter("city"), 

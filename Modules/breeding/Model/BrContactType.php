@@ -28,6 +28,16 @@ class BrContactType extends Model {
         return $d[0];
 
     }
+    
+    public function exists($name){
+        $sql = "SELECT id FROM br_contact_types WHERE name=?";
+        $req = $this->runRequest($sql, array($name));
+        if ($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
 
     public function set($id, $id_space, $name) {
         if ($id == 0) {

@@ -251,7 +251,8 @@ class BreedingsalesController extends CoresecureController {
         }
         $headers = array(
             "status" => BreedingTranslator::Status($lang),
-            "client" => BreedingTranslator::Client($lang)
+            "client" => BreedingTranslator::Client($lang),
+            "delivery_expected" => BreedingTranslator::DeliveryExpected($lang)
         );
 
         // table
@@ -284,7 +285,8 @@ class BreedingsalesController extends CoresecureController {
         }
         $headers = array(
             "status" => BreedingTranslator::Status($lang),
-            "client" => BreedingTranslator::Client($lang)
+            "client" => BreedingTranslator::Client($lang),
+            "delivery_expected" => BreedingTranslator::DeliveryExpected($lang)
         );
 
         // table

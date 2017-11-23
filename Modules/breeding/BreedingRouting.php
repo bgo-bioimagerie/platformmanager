@@ -104,5 +104,12 @@ class BreedingRouting extends Routing{
         // company
         $this->addRoute("brcompany", "brcompany", "breedingcompany", "index", array("id_space"), array(""));
         
+        // sexing
+        $this->addRoute("brsexing", "brsexing", "breedingsexing", "index", array("id_space", "id_batch"), array("", ""));
+        
+        // import
+        
+        $this->addRoute("brimport", "brimport", "breedingimport", "index", array("id_space"), array(""));
+        
     }
 }

@@ -109,12 +109,12 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         }
 
         // summary
-        $summary["total"] = $modelAuthorizations->getTotalForPeriod($period_begin, $period_end);
-        $summary["distinctuser"] = $modelAuthorizations->getDistinctUserForPeriod($period_begin, $period_end);
-        $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($period_begin, $period_end);
-        $summary["distinctvisa"] = $modelAuthorizations->getDistinctVisaForPeriod($period_begin, $period_end);
-        $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($period_begin, $period_end);
-        $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($period_begin, $period_end);
+        $summary["total"] = $modelAuthorizations->getTotalForPeriod($id_space, $period_begin, $period_end);
+        $summary["distinctuser"] = $modelAuthorizations->getDistinctUserForPeriod($id_space, $period_begin, $period_end);
+        $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($id_space, $period_begin, $period_end);
+        $summary["distinctvisa"] = $modelAuthorizations->getDistinctVisaForPeriod($id_space, $period_begin, $period_end);
+        $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($id_space, $period_begin, $period_end);
+        $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($id_space, $period_begin, $period_end);
 
         $this->generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
     }

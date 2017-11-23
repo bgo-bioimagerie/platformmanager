@@ -22,11 +22,16 @@ class BrLosseType extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
-    public function getName($id){
+    public function getName($id) {
         $sql = "SELECT name FROM br_losse_types WHERE id=?";
         $d = $this->runRequest($sql, array($id))->fetch();
         return $d[0];
+    }
 
+    public function getIdFromName($name) {
+        $sql = "SELECT id FROM br_losse_types WHERE name=?";
+        $d = $this->runRequest($sql, array($name))->fetch();
+        return $d[0];
     }
 
     public function set($id, $id_space, $name) {
@@ -41,11 +46,12 @@ class BrLosseType extends Model {
         }
     }
 
-    public function getForList($id_space){
+    public function getForList($id_space) {
         $sql = "SELECT * FROM br_losse_types WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        $names = array(); $ids = array();
-        foreach($data as $d){
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
             $names[] = $d["name"];
             $ids[] = $d["id"];
         }

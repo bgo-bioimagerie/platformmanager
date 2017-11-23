@@ -348,39 +348,39 @@ class BkAuthorization extends Model {
         }
     }
 
-    public function getTotalForPeriod($period_begin, $period_end){
-        $sql = 'SELECT * FROM bk_authorization WHERE date>=? AND date<=?';
-        $req = $this->runRequest($sql, array($period_begin, $period_end));
+    public function getTotalForPeriod($id_space, $period_begin, $period_end){
+        $sql = 'SELECT * FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
+        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
     
-    public function getDistinctUserForPeriod($period_begin, $period_end){
-        $sql = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date>=? AND date<=?';
-        $req = $this->runRequest($sql, array($period_begin, $period_end));
+    public function getDistinctUserForPeriod($id_space, $period_begin, $period_end){
+        $sql = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
+        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
     
-    public function getDistinctUnitForPeriod($period_begin, $period_end){
-        $sql = 'SELECT DISTINCT lab_id FROM bk_authorization WHERE date>=? AND date<=?';
-        $req = $this->runRequest($sql, array($period_begin, $period_end));
+    public function getDistinctUnitForPeriod($id_space, $period_begin, $period_end){
+        $sql = 'SELECT DISTINCT lab_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
+        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
     
-    public function getDistinctVisaForPeriod($period_begin, $period_end){
-        $sql = 'SELECT DISTINCT visa_id FROM bk_authorization WHERE date>=? AND date<=?';
-        $req = $this->runRequest($sql, array($period_begin, $period_end));
+    public function getDistinctVisaForPeriod($id_space, $period_begin, $period_end){
+        $sql = 'SELECT DISTINCT visa_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
+        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
     
-    public function getDistinctResourceForPeriod($period_begin, $period_end){
-        $sql = 'SELECT DISTINCT resource_id FROM bk_authorization WHERE date>=? AND date<=?';
-        $req = $this->runRequest($sql, array($period_begin, $period_end));
+    public function getDistinctResourceForPeriod($id_space, $period_begin, $period_end){
+        $sql = 'SELECT DISTINCT resource_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
+        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
     
-    public function getNewPeopleForPeriod($period_begin, $period_end){
-        $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date >=? AND date <=? ORDER BY date';
-        $req = $this->runRequest($sql_search_1, array($period_begin, $period_end));
+    public function getNewPeopleForPeriod($id_space, $period_begin, $period_end){
+        $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date >=? AND date <=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? ) ORDER BY date';
+        $req = $this->runRequest($sql_search_1, array($period_begin, $period_end, $id_space));
         $res_distinct_nf = $req->fetchAll();
         $new_people = 0;
         foreach ($res_distinct_nf as $rDN) {

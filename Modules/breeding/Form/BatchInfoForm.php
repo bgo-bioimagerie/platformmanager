@@ -39,7 +39,7 @@ class BatchInfoForm extends FormGenerator{
         
         $this->form->addHidden("id", $this->getData("id"));
         $this->form->addText("reference", BreedingTranslator::Reference($this->lang), true, $this->getData("reference"));
-        $this->form->addDate("created", BreedingTranslator::Created($this->lang), true, CoreTranslator::dateFromEn($this->getData("created"), $this->lang));
+        $this->form->addDate("created", BreedingTranslator::BirthDate($this->lang), true, CoreTranslator::dateFromEn($this->getData("created"), $this->lang));
         $this->form->addSelect("id_male_spawner", BreedingTranslator::MaleSpawner($this->lang), $batchs["names"], $batchs["ids"], $this->getData("id_male_spawner"));
         $this->form->addSelect("id_female_spawner", BreedingTranslator::FemaleSpawner($this->lang), $batchs["names"], $batchs["ids"], $this->getData("id_female_spawner"));
         $this->form->addSelectMandatory("id_destination", BreedingTranslator::Destination($this->lang), $destinations["names"], $destinations["ids"], $this->getData("id_destination"));

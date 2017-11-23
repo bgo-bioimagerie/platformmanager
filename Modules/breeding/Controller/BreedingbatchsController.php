@@ -77,7 +77,8 @@ class BreedingbatchsController extends CoresecureController {
         $table->addLineEditButton("brbatchedit/" . $id_space);
         $table->addDeleteButton("brbatchdelete/" . $id_space, "id", "reference");
         $tableHtml = $table->view($providersArray, array(
-            "reference" => BreedingTranslator::Reference($lang)
+            "reference" => BreedingTranslator::Reference($lang),
+            "created" => BreedingTranslator::Created($lang)
             ));
 
         // render the View
@@ -103,7 +104,8 @@ class BreedingbatchsController extends CoresecureController {
         $table->addLineEditButton("brbatchedit/" . $id_space);
         $table->addDeleteButton("brbatchdelete/" . $id_space, "id", "reference");
         $tableHtml = $table->view($providersArray, array(
-            "reference" => BreedingTranslator::Reference($lang)
+            "reference" => BreedingTranslator::Reference($lang),
+            "created" => BreedingTranslator::Created($lang)
             ));
 
         // render the View

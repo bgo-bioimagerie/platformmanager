@@ -793,6 +793,13 @@ class ServicesTranslator {
         }
         return "Industry project out time";
     }
+    
+    public static function OutDelay($lang){
+        if ($lang == "fr") {
+            return "Hors délai";
+        }
+        return "Out time";
+    }
 
     public static function academicProjectInDelay($lang) {
         if ($lang == "fr") {

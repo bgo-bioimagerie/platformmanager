@@ -53,14 +53,24 @@ endblock();
         <?php } ?>
 
         <div class="col-md-12 pm-table-short">
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <h3><?php echo BreedingTranslator::Batch($lang) . $batch["reference"] ?></h3>
 
 
                 <?php echo BreedingTranslator::Quantity($lang) . ": " . $batch["quantity"] ?><br/>
                 <?php echo BreedingTranslator::InitialQuantity($lang) . ": " . $batch["quantity_start"] ?><br/>
                 <?php echo BreedingTranslator::Losses($lang) . ": " . $batch["quantity_losse"] ?><br/>
-                <?php echo BreedingTranslator::Sales($lang) . ": " . $batch["quantity_sale"] ?>
+                <?php echo BreedingTranslator::Sales($lang) . ": " . $batch["quantity_sale"] ?><br/>
+                <?php
+                if( $batch["sexing_date"] != "0000-00-00" ){
+                    echo BreedingTranslator::SexingDate($lang) . ": " . CoreTranslator::dateFromEn($batch["sexing_date"], $lang) . ":";
+                ?>
+                <a href="brbatch/<?php echo $id_space ?>/<?php echo $batch["sexing_f_batch_id"] ?>"><?php echo $batch["sexing_female_num"] . " " . BreedingTranslator::Females($lang) ?></a>
+                <a href="brbatch/<?php echo $id_space ?>/<?php echo $batch["sexing_m_batch_id"] ?>"><?php echo $batch["sexing_male_num"] . " " . BreedingTranslator::Males($lang) ?></a>
+                         
+                <?php
+                }
+                ?>
             </div>
             <div class="text-center">
                 <div class="btn-group btn-group-sm">
@@ -96,6 +106,14 @@ endblock();
                     ?>" href="<?php echo "brchipping/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
                         <span class="glyphicon glyphicon-certificate" style="font-size: 20px"></span>
                         <p><?php echo BreedingTranslator::Chipping($lang) ?></p>
+                    </a>
+                    <a class="btn btn-default <?php
+                    if ($activTab == "sexing") {
+                        echo "active";
+                    }
+                    ?>" href="<?php echo "brsexing/" . $id_space . "/" . $batch["id"] ?>" style="height: 50px;">
+                        <span class="glyphicon glyphicon-tags" style="font-size: 20px"></span>
+                        <p><?php echo BreedingTranslator::Sexing($lang) ?></p>
                     </a>
 
                 </div>

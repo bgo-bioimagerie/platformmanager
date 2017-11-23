@@ -263,11 +263,13 @@ class BookingdefaultController extends BookingabstractController {
             $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
             if( $userSpaceRole <= 2 ){
                 $bookingQuota = $modelCoreConfig->getParamSpace("Bkmaxbookingperday", $id_space);
-                //echo "call has too many reservatins <br/>";
-                $userHasTooManyReservations = $modelCalEntry->hasTooManyReservations($start_time, $_SESSION["id_user"], $id_resource, $id, $bookingQuota);
-                if ($userHasTooManyReservations){              
-                    $_SESSION["message"] = BookingTranslator::quotaReservationError($bookingQuota, $lang);
-                    $valid = false;
+                if($bookingQuota != "" && $bookingQuota>0){
+                    //echo "call has too many reservatins <br/>";
+                    $userHasTooManyReservations = $modelCalEntry->hasTooManyReservations($start_time, $_SESSION["id_user"], $id_resource, $id, $bookingQuota);
+                    if ($userHasTooManyReservations){              
+                        $_SESSION["message"] = BookingTranslator::quotaReservationError($bookingQuota, $lang);
+                        $valid = false;
+                    }
                 }
             }
             
