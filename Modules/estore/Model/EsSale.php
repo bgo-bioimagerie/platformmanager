@@ -2,7 +2,7 @@
 
 require_once 'Framework/Model.php';
 
-class BrSale extends Model {
+class EsSale extends Model {
 
     public function __construct() {
         $this->tableName = "es_sales";

@@ -10,6 +10,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
  */
 class CoreSpace extends Model {
 
+    public static $INACTIF = 0;
     public static $VISITOR = 1;
     public static $USER = 2;
     public static $MANAGER = 3;
@@ -17,9 +18,9 @@ class CoreSpace extends Model {
 
     public static function roles($lang) {
 
-        $names = array(CoreTranslator::Visitor($lang), CoreTranslator::User($lang),
+        $names = array(CoreTranslator::Inactive($lang), CoreTranslator::Visitor($lang), CoreTranslator::User($lang),
             CoreTranslator::Manager($lang), CoreTranslator::Admin($lang));
-        $ids = array(1, 2, 3, 4);
+        $ids = array(0, 1, 2, 3, 4);
         return array("names" => $names, "ids" => $ids);
     }
 

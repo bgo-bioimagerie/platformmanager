@@ -4,15 +4,15 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
-require_once 'Modules/breeding/Model/BreedingTranslator.php';
-require_once 'Modules/breeding/Model/BrCompany.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+require_once 'Modules/clients/Model/ClCompany.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class BreedingcompanyController extends CoresecureController {
+class ClientscompanyController extends CoresecureController {
 
     /**
      * User model object
@@ -24,8 +24,8 @@ class BreedingcompanyController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->companyModel = new BrCompany();
-        $_SESSION["openedNav"] = "breeding";
+        $this->companyModel = new ClCompany();
+        $_SESSION["openedNav"] = "clients";
     }
 
     /**
@@ -37,7 +37,7 @@ class BreedingcompanyController extends CoresecureController {
     public function indexAction($id_space) {
 
         // security
-        $this->checkAuthorizationMenuSpace("breeding", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         // lang
         $lang = $this->getLanguage();
 
@@ -58,7 +58,7 @@ class BreedingcompanyController extends CoresecureController {
         $form->addText('email', BreedingTranslator::Email($lang), true, $data["email"]);
         $form->addText('approval_number', BreedingTranslator::ApprovalNumber($lang), true, $data["approval_number"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "brcompany/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "clcompany/" . $id_space);
         $form->setButtonsWidth(4, 8);
 
         // Check if the form has been validated
@@ -69,7 +69,7 @@ class BreedingcompanyController extends CoresecureController {
 
             $_SESSION["message"] = BreedingTranslator::Data_has_been_saved($lang);
             // after the provider is saved we redirect to the providers list page
-            $this->redirect("brcompany/" . $id_space);
+            $this->redirect("clcompany/" . $id_space);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

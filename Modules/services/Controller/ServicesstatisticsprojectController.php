@@ -537,7 +537,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::academicProjectInDelay($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectInDelay"] . " (" . round($delayStats["percentageAcademicProjectInDelay"]) . "%)");
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectOutDelay($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::academicProjectOutDelay($lang));
         $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectOutDelay"] . " (" . round($delayStats["percentageAcademicProjectOutDelay"]) . "%)");
 
 

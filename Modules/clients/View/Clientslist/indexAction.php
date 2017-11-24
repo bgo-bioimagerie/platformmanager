@@ -1,4 +1,4 @@
-<?php include 'Modules/breeding/View/layout.php' ?>
+<?php include 'Modules/clients/View/layout.php' ?>
 
 <!-- body -->     
 <?php startblock('content') ?>
@@ -6,7 +6,7 @@
 <div class="page-header">
     <h3><?php echo BreedingTranslator::Clients($lang) ?></h3>
 </div>    
-<a class="btn btn-default" href="brclientedit/<?php echo $id_space ?>"><?php echo BreedingTranslator::NewClient($lang) ?></a>
+<a class="btn btn-default" href="clclientedit/<?php echo $id_space ?>"><?php echo BreedingTranslator::NewClient($lang) ?></a>
     <?php echo $tableHtml ?>
 </div>
 <?php
