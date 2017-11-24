@@ -202,6 +202,49 @@ class InInvoice extends Model {
         }
     }
 
+    public function allPeriodYears($id_space, $periodBegin, $periodEnd){
+        $sql = "SELECT date_generated FROM in_invoice WHERE id_space=?";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        
+        // extract years
+        if (count($data) > 0) {
+            $firstDate = $data[0][0];
+            $firstDateInfo = explode("-", $firstDate);
+            $firstYear = $firstDateInfo[0];
+            $i = 0;
+            while ($firstYear == "0000") {
+                $i++;
+                $firstDate = $data[$i][0];
+                $firstDateInfo = explode("-", $firstDate);
+                $firstYear = $firstDateInfo[0];
+            }
+            
+            $periodBeginInfo = explode('-', $periodBegin);
+            if ( $firstDateInfo[1]."-".$firstDateInfo[2] >=  $periodBeginInfo[1] ."-".$periodBeginInfo[2] ){
+                $firstYear = $firstYear-1;
+            }
+
+            // last year
+            $lastDate = $data[count($data) - 1][0];
+            $lastDateInfo = explode("-", $lastDate);
+            $periodEndInfo = explode('-', $periodEnd);
+            if ( $lastDateInfo[1]."-".$lastDateInfo[2] >=  $periodEndInfo[1] ."-".$periodEndInfo[2] ){
+                $lastYear = $lastDateInfo[0] +1;
+            }
+            else{
+                $lastYear = $lastDateInfo[0];
+            }
+            
+            $years = array();
+            for ($i = $firstYear; $i <= $lastYear; $i++) {
+                $years[] = $i;
+            }
+            
+            return $years;
+        }
+        return array();
+    }
+    
     public function allYears($id_space) {
 
         $sql = "SELECT date_generated FROM in_invoice WHERE id_space=?";
