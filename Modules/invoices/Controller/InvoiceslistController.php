@@ -111,7 +111,7 @@ class InvoiceslistController extends CoresecureController {
         $tableView = $table->view($invoices, $headers);
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableView,
-            "year" => $year, "years" => $years
+            "year" => $year, "years" => $years, "sent" => $sent
         ));
     }
     
