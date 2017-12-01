@@ -6,6 +6,7 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/clients/Model/ClPricing.php';
 
 /**
  * 
@@ -24,7 +25,7 @@ class ClientslistController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->clientModel = new BrClient ();
+        $this->clientModel = new ClClient ();
         $_SESSION["openedNav"] = "clients";
     }
 
@@ -45,7 +46,9 @@ class ClientslistController extends CoresecureController {
         $providersArray = $this->clientModel->getAll($id_space);
 
         $table = new TableView();
+        
         $table->addLineEditButton("clclientedit/" . $id_space);
+        $table->addLineButton("clclientusers/" . $id_space, "id", CoreTranslator::Users($lang));
         $table->addDeleteButton("clclientdelete/" . $id_space);
         $tableHtml = $table->view($providersArray, array(
             "name" => CoreTranslator::Name($lang), 
@@ -73,7 +76,7 @@ class ClientslistController extends CoresecureController {
         $client = $this->clientModel->get($id);
 
         // pricings
-        $modelPricing = new BrPricing();
+        $modelPricing = new ClPricing();
         $pricings = $modelPricing->getForList($id_space);
         
         // form
@@ -101,7 +104,7 @@ class ClientslistController extends CoresecureController {
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
-            $this->clientModel->set(
+            $idNew = $this->clientModel->set(
                 $id, 
                 $id_space, 
                 $form->getParameter("name"), 
@@ -118,8 +121,10 @@ class ClientslistController extends CoresecureController {
                 $form->getParameter("pricing")
             ); 
             
+            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            
             // after the provider is saved we redirect to the providers list page
-            $this->redirect("clclients/" . $id_space);
+            $this->redirect("clclientedit/" . $id_space . "/" . $idNew);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

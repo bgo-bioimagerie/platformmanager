@@ -43,6 +43,38 @@ class BookingstatisticsController extends CoresecureController {
         //$this->checkAuthorizationMenu("booking");
         $_SESSION["openedNav"] = "statistics";
     }
+    
+    public function statquantitiesAction($id_space){
+        
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        
+        $form = new Form($this->request, "bookingStatQuantities");
+        $form->setTitle(BookingTranslator::statQuantities($lang));
+        $form->addDate("datebegin", BookingTranslator::Date_Begin($lang), true);
+        $form->addDate("dateend", BookingTranslator::Date_End($lang), true);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "statquantities/" .$id_space);
+        
+        if ($form->check()){
+        
+            $modelBooking = new BkCalendarEntry();
+            $stats = $modelBooking->getStatsQuantities(
+                    $id_space,
+                    CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
+                    CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
+                    );
+            print_r($stats);
+            return;
+        }
+        
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang)
+        ));
+        
+        
+    }
 
     /**
      * Statistics form pages

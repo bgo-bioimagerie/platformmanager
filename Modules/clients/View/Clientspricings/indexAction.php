@@ -4,9 +4,9 @@
 <?php startblock('content') ?>
 <div class="col-md-12 pm-table">
 <div class="page-header">
-    <h3><?php echo BreedingTranslator::Pricings($lang) ?></h3>
+    <h3><?php echo ClientsTranslator::Pricings($lang) ?></h3>
 </div>    
-<a class="btn btn-default" href="clpricingedit/<?php echo $id_space ?>"><?php echo BreedingTranslator::NewPricing($lang) ?></a>
+<a class="btn btn-default" href="clpricingedit/<?php echo $id_space ?>/0"><?php echo ClientsTranslator::NewPricing($lang) ?></a>
     <?php echo $tableHtml ?>
 </div>
 <?php

@@ -189,6 +189,19 @@ class TableView {
         }
         return false;
     }
+    
+    protected function isButtons(){
+        if (count($this->linesButtonActions) > 0){
+            return true;
+        }
+        if ($this->editURL != ""){
+            return true;
+        }
+        if ($this->deleteURL != ""){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Generate a basic table view
@@ -241,23 +254,18 @@ class TableView {
         $html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
         //$html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";
 
+        $isButtons = $this->isButtons();
         // table header
         $html .= "<thead>";
         $html .= "<tr>";
 
-        if ($this->editURL != "" && !$this->isprint) {
+        if ($isButtons){
             $html .= "<th></th>";
         }
-        if ($this->deleteURL != "" && !$this->isprint) {
-            $html .= "<th></th>";
-        }
+        
+        
         if ($this->downloadButton != "") {
             $html .= "<th></th>";
-        }
-        if (count($this->linesButtonActions) > 0) {
-            for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
-                $html .= "<th></th>";
-            }
         }
         foreach ($headers as $key => $value) {
             $title = "";
@@ -274,13 +282,19 @@ class TableView {
 
         // table body			
         $html .= "<tbody>";
+        
         foreach ($data as $dat) {
             if ($this->printIt($dat)) {
                 $html .= "<tr>";
                 
+                
+                if ($isButtons){
+                    $html .= "<td>";
+                }
+                
                 if (count($this->linesButtonActions) > 0 && !$this->isprint) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
-                        $html .= "<td>" . "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button>" . "</td>";
+                        $html .= "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button><span> </span>";
                     }
                 }
 
@@ -290,15 +304,21 @@ class TableView {
                         $idxVal = $dat[$this->editIndex];
                     }
                     if($this->editJS){
-                        $html .= "<td>" . "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button>" . "</td>";
+                        $html .= "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button><span> </span>" ;
                     }
                     else{
-                         $html .= "<td>" . "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button>" . "</td>";   
+                         $html .= "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button><span> </span>";   
                     }  
                 }
                 if ($this->deleteURL != "" && !$this->isprint) {
-                    $html .= "<td>" . $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]) . "</td>";
+                    $html .= $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]);
                 }
+                
+                if ($isButtons){
+                    $html .= "</td>";
+                }
+                
+                
 
                 if ($this->downloadButton != "") {
                     $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
