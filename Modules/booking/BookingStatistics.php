@@ -18,6 +18,7 @@ class BookingStatistics extends Routing{
         $this->addRoute("bookingusersstats", "bookingusersstats", "bookingstatistics", "statbookingusers", array("id_space"), array(""));
         $this->addRoute("bookingreservationstats", "bookingreservationstats", "bookingstatistics", "statreservations", array("id_space"), array(""));
         $this->addRoute("bookinggrrstats", "bookinggrrstats", "bookingstatistics", "grr", array("id_space"), array(""));
+        $this->addRoute("bookingstatquantities", "statquantities", "bookingstatistics", "statquantities", array("id_space"), array(""));
     
     }
 }

@@ -4,6 +4,13 @@ require_once 'Framework/Model.php';
 
 class EsSaleStatus extends Model {
 
+    public static $Entered = 1;
+    public static $InProgress = 2;
+    public static $Sent = 3;
+    public static $Sold = 4;
+    public static $Canceled = 5;
+    public static $Lost = 6;
+    
     public function __construct() {
         
     }

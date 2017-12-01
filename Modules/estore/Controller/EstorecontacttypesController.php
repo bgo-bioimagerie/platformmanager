@@ -4,15 +4,15 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
-require_once 'Modules/breeding/Model/BreedingTranslator.php';
-require_once 'Modules/breeding/Model/BrDeliveryMethod.php';
+require_once 'Modules/estore/Model/EstoreTranslator.php';
+require_once 'Modules/estore/Model/EsContactType.php';
 
 /**
  * 
  * @author sprigent
- * Controller for the provider example of breeding module
+ * Controller for the provider example of estore module
  */
-class BreedingdeliveryController extends CoresecureController {
+class EstorecontacttypesController extends CoresecureController {
     
     /**
      * User model object
@@ -24,8 +24,8 @@ class BreedingdeliveryController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->model = new BrDeliveryMethod ();
-        $_SESSION["openedNav"] = "breeding";
+        $this->model = new EsContactType ();
+        $_SESSION["openedNav"] = "estore";
     }
 
     /**
@@ -37,7 +37,7 @@ class BreedingdeliveryController extends CoresecureController {
     public function indexAction($id_space) {
         
         // security
-        $this->checkAuthorizationMenuSpace("breeding", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         // lang
         $lang = $this->getLanguage();
 
@@ -45,8 +45,8 @@ class BreedingdeliveryController extends CoresecureController {
         $providersArray = $this->model->getAll($id_space);
 
         $table = new TableView();
-        $table->addLineEditButton("brdeliveryedit/" . $id_space);
-        $table->addDeleteButton("brdeliverydelete/" . $id_space);
+        $table->addLineEditButton("escontacttypeedit/" . $id_space);
+        $table->addDeleteButton("escontacttypedelete/" . $id_space);
         $tableHtml = $table->view($providersArray, array(
             "name" => CoreTranslator::Name($lang)
             ));
@@ -64,7 +64,7 @@ class BreedingdeliveryController extends CoresecureController {
      */
     public function editAction($id_space, $id) {
         // security
-        $this->checkAuthorizationMenuSpace("breeding", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         //lang
         $lang = $this->getLanguage();
 
@@ -78,25 +78,26 @@ class BreedingdeliveryController extends CoresecureController {
 
         // form
         // build the form
-        $form = new Form($this->request, "pricing/edit");
-        $form->setTitle(BreedingTranslator::Edit_Delivery_Method($lang), 3);
+        $form = new Form($this->request, "contacttype/edit");
+        $form->setTitle(EstoreTranslator::EditContactType($lang), 3);
         $form->addHidden("id", $pricing["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $pricing["name"]);
         
-        $form->setValidationButton(CoreTranslator::Ok($lang), "brdeliveryedit/" . $id_space . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "brdeliveries/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "escontacttypeedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "escontacttypes/" . $id_space);
         $form->setButtonsWidth(4, 8);
 
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), 
+            $idNew = $this->model->set($form->getParameter("id"), 
                     $id_space, 
                     $form->getParameter("name")
                 );   
             
+            $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
             // after the provider is saved we redirect to the providers list page
-            $this->redirect("brdeliveries/" . $id_space);
+            $this->redirect("escontacttypeedit/" . $id_space . "/" . $idNew);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -114,12 +115,12 @@ class BreedingdeliveryController extends CoresecureController {
      */
     public function deleteAction($id_space, $id) {
         // security
-        $this->checkAuthorizationMenuSpace("breeding", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         
         // query to delete the provider
         $this->model->delete($id);
         
         // after the provider is deleted we redirect to the providers list page
-        $this->redirect("brdeliveries/" . $id_space);
+        $this->redirect("escontacttypes/" . $id_space);
     }
 }

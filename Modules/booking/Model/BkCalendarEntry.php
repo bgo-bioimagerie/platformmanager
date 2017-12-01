@@ -40,90 +40,124 @@ class BkCalendarEntry extends Model {
 		);";
 
         $this->runRequest($sql);
-        
+
         $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
         $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
         $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
     }
-    
-    public function updateNullResponsibles(){
-        
+
+    public function getStatsQuantities($id_space, $dateBegin, $dateEnd) {
+
+        $dateBeginArray = explode("-", $dateBegin);
+        $beginTime = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]);
+        $dateEndArray = explode("-", $dateEnd);
+        $endTime = mktime(0, 0, 0, $dateEndArray[1], $dateEndArray[2], $dateEndArray[0]);
+
+        // get all the quantity types
+        $sql = "SELECT * FROM bk_calquantities WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?)";
+        $quantities = $this->runRequest($sql, array($id_space))->fetchAll();
+        for ($i = 0; $i < count($quantities); $i++) {
+            $count = 0;
+            $sql = "SELECT quantities FROM bk_calendar_entry WHERE start_time>=? AND start_time<=? AND resource_id IN (SELECT id FROM re_info WHERE id_space=?)";
+            $dd = $this->runRequest($sql, array($beginTime, $endTime, $id_space))->fetchAll();
+            foreach ($dd as $dddd) {
+                $d = $dddd[0];
+                //if ( $d != ""){
+                //    echo $d . "<br/>";
+                //}
+                $darray = explode(";", $d);
+                foreach ($darray as $di) {
+                    $diarray = explode("=", $d);
+                    if ($diarray[0] == $quantities[$i]["id"]) {
+                        $count += $diarray[1];
+                    }
+                }
+            }
+
+            $quantities[$i]["count"] = $count;
+        }
+
+        return $quantities;
+    }
+
+    public function updateNullResponsibles() {
+
         $sql = "SELECT * FROM bk_calendar_entry WHERE responsible_id<=1";
         $data = $this->runRequest($sql)->fetchAll();
         $modelResponsible = new EcResponsible();
-        foreach($data as $d){
+        foreach ($data as $d) {
             $resps = $modelResponsible->getUserResponsibles($d["recipient_id"]);
-            
+
             //print_r($resps); echo "<br/>";
             //echo "id = " . $d["id"] . "<br/>"; 
-            
-            if(count($resps) > 0){
+
+            if (count($resps) > 0) {
                 $sql = "UPDATE bk_calendar_entry SET responsible_id=? WHERE id=?";
                 $this->runRequest($sql, array($resps[0]["id_resp"], $d["id"]));
             }
         }
     }
-    
-    public function mergeUsers($users){
-        for($i = 1 ; $i < count($users) ; $i++){
+
+    public function mergeUsers($users) {
+        for ($i = 1; $i < count($users); $i++) {
             $sql = "UPDATE bk_calendar_entry SET recipient_id=? WHERE recipient_id=?";
             $this->runRequest($sql, array($users[0], $users[$i]));
-            
+
             $sql2 = "UPDATE bk_calendar_entry SET booked_by_id=? WHERE booked_by_id=?";
             $this->runRequest($sql2, array($users[0], $users[$i]));
-            
+
             $sql3 = "UPDATE bk_calendar_entry SET responsible_id=? WHERE responsible_id=?";
             $this->runRequest($sql3, array($users[0], $users[$i]));
         }
     }
-    
-    public function getPeriod($id){
+
+    public function getPeriod($id) {
         $sql = "SELECT period_id FROM bk_calendar_entry WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
         return $tmp[0];
     }
-    
-    public function setPeriod($id, $period_id){
+
+    public function setPeriod($id, $period_id) {
         $sql = "UPDATE bk_calendar_entry SET period_id=? WHERE id=?";
         $this->runRequest($sql, array($period_id, $id));
     }
-    
-    public function cleanBadResa(){
+
+    public function cleanBadResa() {
         $sql = "DELETE FROM bk_calendar_entry WHERE (start_time>end_time) OR start_time=0 OR end_time=0";
         $this->runRequest($sql);
     }
-    
-    public function setReservationInvoice($reservation_id, $invoice_id){
+
+    public function setReservationInvoice($reservation_id, $invoice_id) {
         $sql = "UPDATE bk_calendar_entry SET invoice_id=? WHERE id=?";
         $this->runRequest($sql, array($invoice_id, $reservation_id));
     }
-    
-    public function getInvoiceEntries($id_invoice){
+
+    public function getInvoiceEntries($id_invoice) {
         $sql = "SELECT * FROM bk_calendar_entry WHERE invoice_id=?";
         return $this->runRequest($sql, array($id_invoice))->fetchAll();
     }
-    
-    public function getResourcesForInvoice($id_invoice){
+
+    public function getResourcesForInvoice($id_invoice) {
         $sql = "SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE invoice_id=?";
         return $this->runRequest($sql, array($id_invoice))->fetchAll();
     }
-    
-    public function getResourcesUsersForInvoice($id_resource, $id_invoice){
+
+    public function getResourcesUsersForInvoice($id_resource, $id_invoice) {
         $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE resource_id=? AND invoice_id=?";
         return $this->runRequest($sql, array($id_resource, $id_invoice))->fetchAll();
     }
-    
-    public function getResourcesUserResaForInvoice($id_resource, $id_user, $id_invoice){
+
+    public function getResourcesUserResaForInvoice($id_resource, $id_user, $id_invoice) {
         $sql = "SELECT * FROM bk_calendar_entry WHERE recipient_id=? AND resource_id=? AND invoice_id=?";
         return $this->runRequest($sql, array($id_user, $id_resource, $id_invoice))->fetchAll();
     }
 
     public function getDefault($start_time, $end_time, $resource_id, $id_user) {
-        
+
         $modelResp = new EcResponsible();
         $resps = $modelResp->getUserResponsibles($id_user);
         //print_r($resps);
-        
+
         return array("id" => 0,
             "start_time" => $start_time,
             "end_time" => $end_time,
@@ -141,13 +175,13 @@ class BkCalendarEntry extends Model {
             "invoice_id" => 0,
             "all_day_long" => 0);
     }
-    
-    public function setAllDayLong($id, $all_day_long){
+
+    public function setAllDayLong($id, $all_day_long) {
         $sql = "UPDATE bk_calendar_entry SET all_day_long=? WHERE id=?";
         $this->runRequest($sql, array($all_day_long, $id));
     }
-    
-    public function setDeleted($id, $deleted = 1){
+
+    public function setDeleted($id, $deleted = 1) {
         $sql = "UPDATE bk_calendar_entry SET deleted=? WHERE id=?";
         $this->runRequest($sql, array($deleted, $id));
     }
@@ -346,7 +380,7 @@ class BkCalendarEntry extends Model {
                 $userInfo = $modelUser->userAllInfo($rid);
                 $data[$i]["recipient_fullname"] = $userInfo["name"] . " " . $userInfo["firstname"];
                 $data[$i]["phone"] = "";
-                if(isset($userInfo["phone"])){
+                if (isset($userInfo["phone"])) {
                     $data[$i]["phone"] = $userInfo["phone"];
                 }
                 $data[$i]["color_bg"] = $modelColor->getColorCodeValue($data[$i]["color_type_id"]);
@@ -383,7 +417,7 @@ class BkCalendarEntry extends Model {
         return $data;
     }
 
-    public function isConflictP($start_time, $end_time, $resource_id, $id_period){
+    public function isConflictP($start_time, $end_time, $resource_id, $id_period) {
         $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
 			  ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
                            (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
@@ -406,41 +440,41 @@ class BkCalendarEntry extends Model {
                 }
             }
             return true;
-        } else{
+        } else {
             return false;
         }
     }
-    
-    public function hasTooManyReservations($start_time, $id_user, $id_resource, $reservation_id, $bookingQuota){
-        
+
+    public function hasTooManyReservations($start_time, $id_user, $id_resource, $reservation_id, $bookingQuota) {
+
         $year = date('Y', $start_time);
         $month = date('m', $start_time);
         $day = date('d', $start_time);
-        
+
         //echo "date = " . $year ."-". $month . "-" . $day . "<br/>";
         //echo "booking quota = " . $bookingQuota . "<br/>";
-        
+
         $startDayTime = mktime(0, 0, 0, $month, $day, $year);
         $endDayTime = mktime(23, 59, 59, $month, $day, $year);
-        
+
         $sql = "SELECT id FROM bk_calendar_entry WHERE "
                 . "start_time >= ? AND start_time<=? "
                 . "AND deleted=0 "
                 . "AND resource_id=? "
                 . "AND booked_by_id=? ";
-        
-        if($reservation_id != ""){
-            $sql .= "AND id!=?"; 
+
+        if ($reservation_id != "") {
+            $sql .= "AND id!=?";
         }
         $req = $this->runRequest($sql, array($startDayTime, $endDayTime, $id_resource, $id_user, $reservation_id));
-        
+
         if ($req->rowCount() >= $bookingQuota) {
             return true;
-        } else{
+        } else {
             return false;
         }
     }
-    
+
     /**
      * Check if a new entry is in conflic with an existing entries
      * @param unknown $start_time
@@ -471,12 +505,12 @@ class BkCalendarEntry extends Model {
                 }
             }
             return true;
-        } else{
+        } else {
             return false;
         }
     }
-    
-       /**
+
+    /**
      * Check if a new entry is in conflic with an existing entries
      * @param unknown $start_time
      * @param unknown $end_time
@@ -503,7 +537,7 @@ class BkCalendarEntry extends Model {
                 }
             }
             return true;
-        } else{
+        } else {
             return false;
         }
     }
@@ -516,8 +550,8 @@ class BkCalendarEntry extends Model {
         $sql = "UPDATE bk_calendar_entry SET deleted=? WHERE id=?";
         $this->runRequest($sql, array(1, $id));
         /*
-        $sql = "DELETE FROM bk_calendar_entry WHERE id = ?";
-        $this->runRequest($sql, array($id));
+          $sql = "DELETE FROM bk_calendar_entry WHERE id = ?";
+          $this->runRequest($sql, array($id));
          */
     }
 
@@ -529,8 +563,8 @@ class BkCalendarEntry extends Model {
         $sql = "UPDATE bk_calendar_entry SET deleted=? WHERE repeat_id=?";
         $this->runRequest($sql, array(1, $series_id));
         /*
-        $sql = "DELETE FROM bk_calendar_entry WHERE repeat_id = ?";
-        $this->runRequest($sql, array($series_id));
+          $sql = "DELETE FROM bk_calendar_entry WHERE repeat_id = ?";
+          $this->runRequest($sql, array($series_id));
          */
     }
 
@@ -559,7 +593,7 @@ class BkCalendarEntry extends Model {
         $endPeriodArray = explode("-", $enddate);
         $searchDate_end = mktime(23, 59, 59, $endPeriodArray[1], $endPeriodArray[2], $endPeriodArray[0]);
 
-        
+
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'resp' => $resp_id, 'space' => $id_space);
         $sql = 'SELECT id FROM bk_calendar_entry WHERE
 				(start_time >=:start AND start_time <= :end) AND (responsible_id = :resp)
@@ -572,7 +606,6 @@ class BkCalendarEntry extends Model {
             return 1;
         }
         return 0;
-
     }
 
     /**

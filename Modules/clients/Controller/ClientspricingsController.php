@@ -90,13 +90,14 @@ class ClientspricingsController extends CoresecureController {
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
-            $this->pricingModel->set($form->getParameter("id"), 
+            $newId = $this->pricingModel->set($form->getParameter("id"), 
                     $id_space, 
                     $form->getParameter("name")
                 );   
             
+            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
             // after the provider is saved we redirect to the providers list page
-            $this->redirect("clpricings/" . $id_space);
+            $this->redirect("clpricingedit/" . $id_space . "/" . $newId);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

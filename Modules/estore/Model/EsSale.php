@@ -37,10 +37,28 @@ class EsSale extends Model {
         // cancel
         $this->setColumnsInfo("cancel_reason", "varchar(255)", "");
         $this->setColumnsInfo("cancel_date", "date", "0000-00-00");
+        
+        // status
+        $this->setColumnsInfo("id_status", "int(11)", 0);
 
         $this->primaryKey = "id";
     }
+    
+    public function get($id){
+        $sql = "SELECT * FROM es_sales WHERE id=?";
+        return $this->runRequest($sql, array($id))->fetch();
+    }
 
+    public function updateStatus($id){
+        
+        $sql = "SELECT MAX(id_status) AS id_status FROM es_sale_history WHERE id_sale=?";
+        $tmp = $req = $this->runRequest($sql, array($id))->fetch();
+        
+        $sql2 = "UPDATE es_sales SET id_status=? WHERE id=?";
+        $this->runRequest($sql2, array($tmp[0], $id));
+        
+    }
+    
     public function setEntered($id, $id_space, $id_client, $date_expected, $id_contact_type, $further_information){
         if ($id == 0){
             $sql = "INSERT INTO es_sales (id_space, id_client, date_expected, id_contact_type, further_information) VALUES (?,?,?,?,?)";
@@ -50,6 +68,7 @@ class EsSale extends Model {
         else{
             $sql = "UPDATE es_sales SET id_space=?, id_client=?, date_expected=?, id_contact_type=?, further_information=? WHERE id=?";
             $this->runRequest($sql, array($id_space, $id_client, $date_expected, $id_contact_type, $further_information, $id));
+            return $id;
         }
     }
     
@@ -83,5 +102,25 @@ class EsSale extends Model {
         $this->runRequest($sql, array($id));
         
     }
+    
+    public function count($id_space, $id_status){
+        $sql = "SELECT id FROM es_sales WHERE id_space=? AND id_status=?";
+        return $this->runRequest($sql, array($id_space, $id_status))->rowCount();
+    }
+    
+    public function getForSpace($id_space, $id_status){
+        $sql = "SELECT * FROM es_sales WHERE id_space=? AND id_status=?";
+        $data = $this->runRequest($sql, array($id_space, $id_status))->fetchAll();
+        
+        $modelClient = new ClClient();
+        $modelContactType = new EsContactType();
+        for($i = 0 ; $i < count($data) ; $i++){
+            $data[$i]["client"] = $modelClient->getName($data[$i]["id_client"]);
+            $data[$i]["contact_type"] = $modelContactType->getName($data[$i]["id_contact_type"]);
+            $data[$i]["number"] = '#' . $data[$i]["id"];
+        }
+        return $data;
+    }
+    
 
 }

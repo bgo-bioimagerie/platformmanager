@@ -1488,5 +1488,12 @@ class BookingTranslator {
         return "Error:You already have " . $bookingQuota . " reservations this day for this resource" ;
     }
     
+    public static function statquantities($lang) {
+        if ($lang == "fr") {
+            return "stat quantitées";
+        }
+        return "stat quantities";
+    }
+    
     
 }

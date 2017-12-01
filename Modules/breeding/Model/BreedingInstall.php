@@ -1,13 +1,12 @@
 <?php
 
 require_once 'Framework/Model.php';
-require_once 'Modules/breeding/Model/BrDeliveryMethod.php';
+
 require_once 'Modules/breeding/Model/BrBatch.php';
 require_once 'Modules/breeding/Model/BrLosse.php';
 require_once 'Modules/breeding/Model/BrLosseType.php';
 require_once 'Modules/breeding/Model/BrTreatment.php';
 require_once 'Modules/breeding/Model/BrChipping.php';
-require_once 'Modules/breeding/Model/BrContactType.php';
 require_once 'Modules/breeding/Model/BrSale.php';
 require_once 'Modules/breeding/Model/BrSaleItem.php';
 require_once 'Modules/breeding/Model/BrProductStage.php';
@@ -27,9 +26,6 @@ class BreedingInstall extends Model {
      */
     public function createDatabase() {
 
-        $model3 = new BrDeliveryMethod();
-        $model3->createTable();
-
         $model7 = new BrBatch();
         $model7->createTable();
 
@@ -45,9 +41,6 @@ class BreedingInstall extends Model {
         $model11 = new BrChipping();
         $model11->createTable();
 
-        $model12 = new BrContactType();
-        $model12->createTable();
-
         $model13 = new BrSale();
         $model13->createTable();
 
@@ -62,6 +55,7 @@ class BreedingInstall extends Model {
         
         $model18 = new BrProductUnitQ();
         $model18->createTable();
+        
     }
 
 }
