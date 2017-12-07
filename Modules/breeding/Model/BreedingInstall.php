@@ -9,9 +9,9 @@ require_once 'Modules/breeding/Model/BrTreatment.php';
 require_once 'Modules/breeding/Model/BrChipping.php';
 require_once 'Modules/breeding/Model/BrSale.php';
 require_once 'Modules/breeding/Model/BrSaleItem.php';
-require_once 'Modules/breeding/Model/BrProductStage.php';
-require_once 'Modules/breeding/Model/BrPrice.php';
-require_once 'Modules/breeding/Model/BrProductUnitQ.php';
+
+require_once 'Modules/breeding/Model/BrCategory.php';
+require_once 'Modules/breeding/Model/BrProduct.php';
 
 
 /**
@@ -46,15 +46,13 @@ class BreedingInstall extends Model {
 
         $model14 = new BrSaleItem();
         $model14->createTable();
-
-        $model16 = new BrProductStage();
-        $model16->createTable();
-
-        $model17 = new BrPrice();
-        $model17->createTable();
         
-        $model18 = new BrProductUnitQ();
-        $model18->createTable();
+        $model15 = new BrCategory();
+        $model15->createTable();
+        
+        $model16 = new BrProduct();
+        $model16->createTable();
+        
         
     }
 

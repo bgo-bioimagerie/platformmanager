@@ -9,7 +9,18 @@ class BrCategory extends Model {
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", "");
+        $this->setColumnsInfo("description", "text", "");
         $this->primaryKey = "id";
+    }
+
+    public function getFirstId($id_sapce) {
+        $sql = "SELECT id FROM br_categories WHERE id_space=?";
+        $req = $this->runRequest($sql, array($id_sapce));
+        if ($req->rowCount() > 0) {
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        return 0;
     }
 
     public function getAll($id_space) {
@@ -22,33 +33,30 @@ class BrCategory extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
-    public function getName($id){
-        $sql = "SELECT name FROM br_categories WHERE id=?";
-        $d = $this->runRequest($sql, array($id))->fetch();
-        return $d[0];
-
-    }
-    
-    
-    public function getIdFromName($name){
-        $sql = "SELECT id FROM br_categories WHERE name=?";
-        $d = $this->runRequest($sql, array($name))->fetch();
-        return $d[0];
+    public function getName($id) {
+        $sql = "SELECT * FROM br_categories WHERE id=?";
+        $data = $this->runRequest($sql, array($id));
+        if ($data->rowCount() > 0) {
+            $tmp = $data->fetch();
+            return $tmp[0];
+        } else {
+            return "";
+        }
     }
 
-    public function set($id, $id_space, $name) {
+    public function set($id, $id_space, $name, $description) {
         if ($id == 0) {
-            $sql = 'INSERT INTO br_categories (id_space, name) VALUES (?,?)';
-            $this->runRequest($sql, array($id_space, $name));
+            $sql = 'INSERT INTO br_categories (id_space, name, description) VALUES (?,?,?)';
+            $this->runRequest($sql, array($id_space, $name, $description));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE br_categories SET id_space=?, name=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $name, $id));
+            $sql = 'UPDATE br_categories SET id_space=?, name=?, description=? WHERE id=?';
+            $this->runRequest($sql, array($id_space, $name, $description, $id));
             return $id;
         }
     }
 
-    public function getForList($id_space){
+    public function getForList($id_space) {
         $sql = "SELECT * FROM br_categories WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $names = array(); $ids = array();
@@ -57,6 +65,12 @@ class BrCategory extends Model {
             $ids[] = $d["id"];
         }
         return array("names" => $names, "ids" => $ids);
+    }
+
+    public function getIdFromName($name) {
+        $sql = "SELECT id FROM br_categories WHERE name=?";
+        $d = $this->runRequest($sql, array($name))->fetch();
+        return $d[0];
     }
 
     public function delete($id) {

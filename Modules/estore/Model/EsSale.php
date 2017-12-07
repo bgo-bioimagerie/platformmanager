@@ -31,6 +31,7 @@ class EsSale extends Model {
         $this->setColumnsInfo("packing_price", "DECIMAL(9,2)", 0);
         $this->setColumnsInfo("delivery_price", "DECIMAL(9,2)", 0);
         $this->setColumnsInfo("discount", "DECIMAL(9,2)", 0);
+        $this->setColumnsInfo("vat", "int(1)", 0);
         $this->setColumnsInfo("total_ht", "DECIMAL(9,2)", 0);
         $this->setColumnsInfo("total_ttc", "DECIMAL(9,2)", 0);
         
@@ -77,8 +78,9 @@ class EsSale extends Model {
         $this->runRequest($sql, array($date_validated, $id));
     } 
     
+    
     public function setQuote($id, $quote_packing_price, $quote_delivery_price){
-        $sql = "UPDATE es_sale SET quote_packing_price=?, quote_delivery_price=? WHERE id=?";
+        $sql = "UPDATE es_sales SET quote_packing_price=?, quote_delivery_price=? WHERE id=?";
         $this->runRequest($sql, array($quote_packing_price, $quote_delivery_price, $id));
     }
   

@@ -1495,5 +1495,19 @@ class BookingTranslator {
         return "stat quantities";
     }
     
+    public static function Restrictions($lang) {
+        if ($lang == "fr") {
+            return "Restrictions";
+        }
+        return "Restrictions";
+    }
+    
+    public static function RestrictionsFor($lang) {
+        if ($lang == "fr") {
+            return "Restrictions pour ";
+        }
+        return "Restrictions for";
+    }
+    
     
 }

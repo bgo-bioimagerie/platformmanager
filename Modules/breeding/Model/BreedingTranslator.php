@@ -906,20 +906,6 @@ class BreedingTranslator {
         return "Unit";
     }
 
-    public static function UnitQuantity($lang) {
-        if ($lang == "fr") {
-            return "Quantité unitaire";
-        }
-        return "Unit quantity";
-    }
-
-    public static function Edit_Price($lang) {
-        if ($lang == "fr") {
-            return "Editer prix";
-        }
-        return "Edit price";
-    }
-
     public static function DeliveryForm($lang) {
         if ($lang == "fr") {
             return "Bon de livraison";
@@ -975,13 +961,19 @@ class BreedingTranslator {
         }
         return "Males";
     }
-    
+
     public static function BirthDate($lang) {
         if ($lang == "fr") {
             return "Date de naissance";
         }
         return "Birth date";
     }
-    
+
+    public static function Image($lang) {
+        if ($lang == "fr") {
+            return "Image";
+        }
+        return "Image";
+    }
 
 }

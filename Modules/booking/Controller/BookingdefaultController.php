@@ -15,6 +15,8 @@ require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkAccess.php';
 require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Model/BkCalendarPeriod.php';
+require_once 'Modules/booking/Model/BkRestrictions.php';
+
 
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
@@ -90,7 +92,7 @@ class BookingdefaultController extends BookingabstractController {
         return $modelResa->getDefault($start_time, $end_time, $id_resource, $id_user);
     }
 
-    private function canUserEditReservation($id_space, $id_user, $id_reservation, $id_recipient, $start_date) {
+    private function canUserEditReservation($id_space, $id_resource, $id_user, $id_reservation, $id_recipient, $start_date) {
 
         if ($id_reservation == 0) {
             return true;
@@ -102,7 +104,9 @@ class BookingdefaultController extends BookingabstractController {
         }
         
         $modelConfig = new CoreConfig();
-        $limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
+        $modelRestrictions = new BkRestrictions();
+        $limitHours = $modelRestrictions->getBookingDelayUserCanEdit($id_resource);
+        //$limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
         
         if ($id_recipient == $id_user) {
             
@@ -223,7 +227,7 @@ class BookingdefaultController extends BookingabstractController {
             return;
         }
 
-        $canEdit = $this->canUserEditReservation($id_space, $_SESSION["id_user"], $id, $recipient_id, $start_time);
+        $canEdit = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $id, $recipient_id, $start_time);
         if (!$canEdit) {
             throw new Exception("ERROR: You're not allowed to modify this reservation");
         }
@@ -246,6 +250,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // set the reservation
         $modelCoreConfig = new CoreConfig();
+        $modelRestrictions = new BkRestrictions();
         $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
         $periodic_option = $this->request->getParameterNoException("periodic_radio");
 
@@ -262,7 +267,8 @@ class BookingdefaultController extends BookingabstractController {
             $modelSpace = new CoreSpace();
             $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
             if( $userSpaceRole <= 2 ){
-                $bookingQuota = $modelCoreConfig->getParamSpace("Bkmaxbookingperday", $id_space);
+                $bookingQuota = $modelRestrictions->getMaxBookingPerDay($id_resource);
+                //$bookingQuota = $modelCoreConfig->getParamSpace("Bkmaxbookingperday", $id_space);
                 if($bookingQuota != "" && $bookingQuota>0){
                     //echo "call has too many reservatins <br/>";
                     $userHasTooManyReservations = $modelCalEntry->hasTooManyReservations($start_time, $_SESSION["id_user"], $id_resource, $id, $bookingQuota);
@@ -716,7 +722,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $packageChecked = $resaInfo["package_id"];
 
-        $userCanEdit = $this->canUserEditReservation($id_space, $_SESSION["id_user"], $resaInfo["id"], $resaInfo["recipient_id"], $resaInfo["start_time"]);
+        $userCanEdit = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $resaInfo["id"], $resaInfo["recipient_id"], $resaInfo["start_time"]);
 
         // create delete form
         $formDelete = new Form($this->request, "bookingeditreservationdefaultdeleteform");
