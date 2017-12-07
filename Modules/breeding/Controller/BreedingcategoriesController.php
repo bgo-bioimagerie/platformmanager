@@ -70,7 +70,7 @@ class BreedingcategoriesController extends CoresecureController {
 
         // default empy provider
         if ($id == 0) {
-            $pricing = array("id" => 0, "name" => "");
+            $pricing = array("id" => 0, "name" => "", "description" => "");
         }
         else{
             $pricing = $this->model->get($id);
@@ -82,6 +82,7 @@ class BreedingcategoriesController extends CoresecureController {
         $form->setTitle(BreedingTranslator::Edit_Category($lang), 3);
         $form->addHidden("id", $pricing["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $pricing["name"]);
+        $form->addTextArea("description", CoreTranslator::Description($lang), true, $pricing["description"]);
         
         $form->setValidationButton(CoreTranslator::Ok($lang), "brproductcategoryedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "brproductcategories/" . $id_space);
@@ -92,7 +93,8 @@ class BreedingcategoriesController extends CoresecureController {
             // run the database query
             $this->model->set($form->getParameter("id"), 
                     $id_space, 
-                    $form->getParameter("name")
+                    $form->getParameter("name"),
+                    $form->getParameter("description")
                 );   
             
             // after the provider is saved we redirect to the providers list page

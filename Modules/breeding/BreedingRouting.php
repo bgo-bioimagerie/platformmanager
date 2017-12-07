@@ -12,7 +12,10 @@ class BreedingRouting extends Routing{
         // add here the module routes
         $this->addRoute("breeding", "breeding", "breedingbatchs", "index", array("id_space"), array(""));
         
-        
+        // products
+        $this->addRoute("brproducts", "brproducts", "breedingproducts", "index", array("id_space"), array(""));
+        $this->addRoute("brproductedit", "brproductedit", "breedingproducts", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("brproductdelete", "brproductdelete", "breedingproducts", "delete", array("id_space", "id"), array("", ""));
         
         // losse types
         $this->addRoute("brlossetypes", "brlossetypes", "breedinglossetypes", "index", array("id_space"), array(""));
@@ -49,21 +52,8 @@ class BreedingRouting extends Routing{
         $this->addRoute("brbatch", "brbatch", "breedingbatchs", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("brbatchdelete", "brbatchdelete", "breedingbatchs", "delete", array("id_space", "id"), array("", ""));
         
-        // delivery methods
-        $this->addRoute("brdeliveries", "brdeliveries", "breedingdelivery", "index", array("id_space"), array(""));
-        $this->addRoute("brdeliveryedit", "brdeliveryedit", "breedingdelivery", "edit", array("id_space", "id"), array("", ""));
-        $this->addRoute("brdeliverydelete", "brdeliverydelete", "breedingdelivery", "delete", array("id_space", "id"), array("", ""));
         
         
-        
-        // prices 
-        $this->addRoute("brprices", "brprices", "breedingprices", "index", array("id_space"), array(""));
-        $this->addRoute("brpriceedit", "brpriceedit", "breedingprices", "edit", array("id_space", "id_product_stage"), array("", ""));
-        
-        // company 
-        $this->addRoute("brcompany", "brcompany", "breedingcompany", "index", array("id_space"), array(""));
-        
-
         
         // sexing
         $this->addRoute("brsexing", "brsexing", "breedingsexing", "index", array("id_space", "id_batch"), array("", ""));

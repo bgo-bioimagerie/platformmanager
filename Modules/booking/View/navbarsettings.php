@@ -58,6 +58,11 @@ if ($ecmenucolortxt == "") {
             <a href="bookingdisplay/<?php echo $id_space ?>"><?php echo BookingTranslator::Display($lang) ?></a><br/>
         </div>	
         <div  class="btn-block" id="menu-button-div">
+            <a href="bookingrestrictions/<?php echo $id_space ?>"><?php echo BookingTranslator::Restrictions($lang) ?></a><br/>
+        </div>	
+        
+        
+        <div  class="btn-block" id="menu-button-div">
             <a href="bookingaccessibilities/<?php echo $id_space ?>"><?php echo BookingTranslator::Accessibilities($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">

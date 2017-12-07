@@ -34,6 +34,11 @@
                     </li>
                     <li>
                         <div class="pm-inline-div">
+                            <a id="menu-button" href="bookingrestrictions/{{id_space}}">{{Restrictions}}</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="pm-inline-div">
                             <a id="menu-button" href="bookingnightwe/{{id_space}}">{{Nightwe}}</a>
                         </div>
                     </li>

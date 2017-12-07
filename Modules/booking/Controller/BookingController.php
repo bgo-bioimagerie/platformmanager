@@ -53,6 +53,8 @@ class BookingController extends BookingabstractController {
         $html = str_replace('{{Quantities}}', BookingTranslator::Quantities($lang), $html);
         $html = str_replace('{{booking}}', BookingTranslator::booking($lang), $html);
         $html = str_replace('{{Block_Resouces}}', BookingTranslator::Block_Resouces($lang), $html);
+        $html = str_replace('{{Restrictions}}', BookingTranslator::Restrictions($lang), $html);
+        
         
         
         $modelSpace = new CoreSpace();

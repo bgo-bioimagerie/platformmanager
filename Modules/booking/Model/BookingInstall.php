@@ -16,6 +16,7 @@ require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkOwnerPrice.php';
 require_once 'Modules/booking/Model/BkCalendarPeriod.php';
+require_once 'Modules/booking/Model/BkRestrictions.php';
 
 /**
  * Class defining methods to install and initialize the core database
@@ -72,6 +73,9 @@ class BookingInstall extends Model {
         
         $model14 = new BkCalendarPeriod();
         $model14->createTable();
+        
+        $model15 = new BkRestrictions();
+        $model15->createTable();
         
         if (!file_exists('data/booking/')) {
             mkdir('data/booking/', 0777, true);

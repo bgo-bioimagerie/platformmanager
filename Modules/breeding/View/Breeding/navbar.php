@@ -15,30 +15,6 @@
                 </li>
                 <ul class="pm-nav-li">
                     <li>
-                        {{Sales}}
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brsalenew/{{id_space}}">{{NewSale}}</a> 
-                        </div>
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brsalesinprigress/{{id_space}}">{{SalesInProgress}}</a> 
-                        </div>
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brsalessent/{{id_space}}">{{SalesSent}}</a> 
-                        </div>
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brsalescanceled/{{id_space}}">{{SalesCanceled}}</a> 
-                        </div>
-                    </li>
-                    <br/>
-                    <li>
                         {{Batchs}}
                     </li>
                     <li>
@@ -63,63 +39,23 @@
                     <li>
                         <div class="inline pm-inline-div">
                             <a id="menu-button" href="brproductcategories/{{id_space}}">{{CategoriesProduct}}</a> 
-                            <a id="menu-button" href="brproductcategoryedit/{{id_space}}/0">+</a> 
+                            <!-- <a id="menu-button" href="brproductcategoryedit/{{id_space}}/0">+</a> -->
                         </div>
                     </li>
                     <li>
                         <div class="inline pm-inline-div">
                             <a id="menu-button" href="brproducts/{{id_space}}">{{Products}}</a> 
-                            <a id="menu-button" href="brproductedit/{{id_space}}/0">+</a> 
+                            <!-- <a id="menu-button" href="brproductedit/{{id_space}}/0">+</a> -->
                         </div>
                     </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brprices/{{id_space}}">{{Prices}}</a> 
-                        </div>
-                    </li>
-                    
                     <br/>
-                    <li>
-                        {{UsersInstitutions}}
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brclients/{{id_space}}">{{Clients}}</a>
-                            <a id="menu-button" href="brclientedit/{{id_space}}/0">+</a> 
-                        </div>
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brpricings/{{id_space}}">{{Pricings}}</a>
-                            <a id="menu-button" href="brpricingedit/{{id_space}}/0">+</a> 
-                        </div>
-                    </li>
-                    
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brcompany/{{id_space}}">{{CompanyInfo}}</a>
-                        </div>
-                    </li>
-                    <br>
                     <li>
                         {{Glossary}}
                     </li>
                     <li>
                         <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brcontacttypes/{{id_space}}">{{ContactTypes}}</a>
-                            <a id="menu-button" href="brcontacttypeedit/{{id_space}}/0">+</a> 
-                        </div>
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
-                            <a id="menu-button" href="brdeliveries/{{id_space}}">{{Delivery}}</a>
-                            <a id="menu-button" href="brdeliveryedit/{{id_space}}/0">+</a> 
-                        </div>
-                    </li>
-                    <li>
-                        <div class="inline pm-inline-div">
                             <a id="menu-button" href="brlossetypes/{{id_space}}">{{LosseTypes}}</a>
-                            <a id="menu-button" href="brlossetypeedit/{{id_space}}/0">+</a> 
+                            <!-- <a id="menu-button" href="brlossetypeedit/{{id_space}}/0">+</a> -->
                         </div>
                     </li>
                     

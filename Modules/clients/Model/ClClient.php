@@ -23,6 +23,12 @@ class ClClient extends Model {
         $this->setColumnsInfo("pricing", "int(11)", "");
         $this->primaryKey = "id";
     }
+    
+    public function getPricingID($id){
+        $sql = "SELECT pricing FROM cl_clients WHERE id=?";
+        $tmp = $this->runRequest($sql, array($id))->fetch();
+        return $tmp[0];
+    }
 
     public function getAll($id_space) {
         $sql = "SELECT * FROM cl_clients WHERE id_space=?";

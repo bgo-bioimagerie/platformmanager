@@ -1,4 +1,4 @@
-<?php include 'Modules/breeding/View/layout.php' ?>
+<?php include 'Modules/estore/View/layout.php' ?>
 
 <!-- body -->     
 <?php startblock('content') ?>

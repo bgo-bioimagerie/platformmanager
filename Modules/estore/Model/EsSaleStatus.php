@@ -6,10 +6,11 @@ class EsSaleStatus extends Model {
 
     public static $Entered = 1;
     public static $InProgress = 2;
-    public static $Sent = 3;
-    public static $Sold = 4;
-    public static $Canceled = 5;
-    public static $Lost = 6;
+    public static $Quoted = 3;
+    public static $Sent = 4;
+    public static $Sold = 5;
+    public static $Canceled = 6;
+    public static $Lost = 7;
     
     public function __construct() {
         
@@ -18,46 +19,51 @@ class EsSaleStatus extends Model {
     public function getAll($lang) {
 
         $status = array();
-        $status[] = array("id" => 1, "name" => BreedingTranslator::Entered($lang));
-        $status[] = array("id" => 2, "name" => BreedingTranslator::InProgress($lang));
-        $status[] = array("id" => 3, "name" => BreedingTranslator::Sent($lang));
-        $status[] = array("id" => 4, "name" => BreedingTranslator::Sold($lang));
-        $status[] = array("id" => 5, "name" => BreedingTranslator::Canceled($lang));
-        $status[] = array("id" => 6, "name" => BreedingTranslator::Lost($lang));
+        $status[] = array("id" => 1, "name" => EstoreTranslator::Entered($lang));
+        $status[] = array("id" => 2, "name" => EstoreTranslator::InProgress($lang));
+        $status[] = array("id" => 3, "name" => EstoreTranslator::Quoted($lang));
+        $status[] = array("id" => 4, "name" => EstoreTranslator::Sent($lang));
+        $status[] = array("id" => 5, "name" => EstoreTranslator::Sold($lang));
+        $status[] = array("id" => 6, "name" => EstoreTranslator::Canceled($lang));
+        $status[] = array("id" => 7, "name" => EstoreTranslator::Lost($lang));
     }
 
     public function getName($id, $lang){
         if ($id == 1){
-            return BreedingTranslator::Entered($lang);
+            return EstoreTranslator::Entered($lang);
         }
         if ($id == 2){
-            return BreedingTranslator::InProgress($lang);
+            return EstoreTranslator::InProgress($lang);
         }
         if ($id == 3){
-            return BreedingTranslator::Sent($lang);
+            return EstoreTranslator::Quoted($lang);
         }
         if ($id == 4){
-            return BreedingTranslator::Sold($lang);
+            return EstoreTranslator::Sent($lang);
         }
         if ($id == 5){
-            return BreedingTranslator::Canceled($lang);
+            return EstoreTranslator::Sold($lang);
         }
         if ($id == 6){
-            return BreedingTranslator::Lost($lang);
+            return EstoreTranslator::Canceled($lang);
+        }
+        if ($id == 7){
+            return EstoreTranslator::Lost($lang);
         }
     }
     
     public function getForList($lang) {
         $names = array(
-            BreedingTranslator::Entered($lang),
-            BreedingTranslator::InProgress($lang),
-            BreedingTranslator::Sent($lang),
-            BreedingTranslator::Sold($lang),
-            BreedingTranslator::Canceled($lang),
-            BreedingTranslator::Lost($lang)
+            EstoreTranslator::Entered($lang),
+            EstoreTranslator::InProgress($lang),
+            EstoreTranslator::Quoted($lang),
+            EstoreTranslator::Sent($lang),
+            EstoreTranslator::Sold($lang),
+            EstoreTranslator::Canceled($lang),
+            EstoreTranslator::Lost($lang)
         );
 
-        $ids = array(1, 2, 3, 4, 5, 6);
+        $ids = array(1, 2, 3, 4, 5, 6, 7);
 
         return array("names" => $names, "ids" => $ids);
     }

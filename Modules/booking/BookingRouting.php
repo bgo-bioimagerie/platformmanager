@@ -39,6 +39,9 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingblock", "bookingblock", "bookingblock", "index", array("id_space"), array(""));
         $this->addRoute("bookingblockquery", "bookingblockquery", "bookingblock", "blockresourcesquery", array("id_space"), array(""));
         
+        $this->addRoute("bookingrestrictions", "bookingrestrictions", "bookingrestrictions", "index", array("id_space"), array(""));
+        $this->addRoute("bookingrestrictionedit", "bookingrestrictionedit", "bookingrestrictions", "edit", array("id_space", "id"), array("", ""));
+        
         $this->addRoute("bookingday", "bookingday", "booking", "day", array("id_space", "action", "message"), array("", "", ""));
         $this->addRoute("bookingdayarea", "bookingdayarea", "booking", "dayarea", array("id_space","action", "message"), array("", "", ""));
         $this->addRoute("bookingweek", "bookingweek", "booking", "week", array("id_space", "action", "message"), array("", "", ""));

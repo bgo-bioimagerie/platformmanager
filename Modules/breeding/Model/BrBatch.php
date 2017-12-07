@@ -29,6 +29,11 @@ class BrBatch extends Model {
         $this->primaryKey = "id";
     }
     
+    public function getProductID($id_batch){
+        $sql = "SELECT id_product FROM br_batchs WHERE id=?";
+        $tmp = $this->runRequest($sql, array($id_batch))->fetch();
+        return $tmp[0];
+    }    
     
     public function findByName($name){
         $sql = "SELECT id FROM br_batchs WHERE reference=?";
