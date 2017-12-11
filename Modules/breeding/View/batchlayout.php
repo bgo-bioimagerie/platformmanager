@@ -56,21 +56,40 @@ endblock();
             <div class="col-md-6">
                 <h3><?php echo BreedingTranslator::Batch($lang) . $batch["reference"] ?></h3>
 
+                <table class="table">
+                    <tr>
+                        <td><?php echo BreedingTranslator::Quantity($lang) ?></td>
+                        <td><?php echo $batch["quantity"] ?></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo BreedingTranslator::InitialQuantity($lang) ?></td>
+                        <td><?php echo $batch["quantity_start"] ?> </td>
+                    </tr>
+                    <tr>
+                        <td><?php echo BreedingTranslator::Losses($lang) ?></td>
+                        <td><?php echo $batch["quantity_losse"] ?></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo BreedingTranslator::Sales($lang) ?></td>
+                        <td><?php echo $batch["quantity_sale"] ?></td>
+                    </tr>
 
-                <?php echo BreedingTranslator::Quantity($lang) . ": " . $batch["quantity"] ?><br/>
-                <?php echo BreedingTranslator::InitialQuantity($lang) . ": " . $batch["quantity_start"] ?><br/>
-                <?php echo BreedingTranslator::Losses($lang) . ": " . $batch["quantity_losse"] ?><br/>
-                <?php echo BreedingTranslator::Sales($lang) . ": " . $batch["quantity_sale"] ?><br/>
-                <?php
-                if( $batch["sexing_date"] != "0000-00-00" ){
-                    echo BreedingTranslator::SexingDate($lang) . ": " . CoreTranslator::dateFromEn($batch["sexing_date"], $lang) . ":";
-                ?>
-                <a href="brbatch/<?php echo $id_space ?>/<?php echo $batch["sexing_f_batch_id"] ?>"><?php echo $batch["sexing_female_num"] . " " . BreedingTranslator::Females($lang) ?></a>
-                <a href="brbatch/<?php echo $id_space ?>/<?php echo $batch["sexing_m_batch_id"] ?>"><?php echo $batch["sexing_male_num"] . " " . BreedingTranslator::Males($lang) ?></a>
-                         
-                <?php
-                }
-                ?>
+
+                    <?php
+                    if ($batch["sexing_date"] != "0000-00-00") {
+                        ?>
+                        <tr>
+                            <td><?php echo BreedingTranslator::SexingDate($lang) . ": " . CoreTranslator::dateFromEn($batch["sexing_date"], $lang) ?></td>
+                            <td>
+                                <a href="brbatch/<?php echo $id_space ?>/<?php echo $batch["sexing_f_batch_id"] ?>"><?php echo $batch["sexing_female_num"] . " " . BreedingTranslator::Females($lang) ?></a>
+                                <a href="brbatch/<?php echo $id_space ?>/<?php echo $batch["sexing_m_batch_id"] ?>"><?php echo $batch["sexing_male_num"] . " " . BreedingTranslator::Males($lang) ?></a>
+
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </table>
             </div>
             <div class="text-center">
                 <div class="btn-group btn-group-sm">

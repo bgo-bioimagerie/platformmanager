@@ -7,6 +7,9 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClPricing.php';
+require_once 'Modules/clients/Model/ClAddress.php';
+
+require_once 'Modules/clients/Form/AddressForm.php';
 
 /**
  * 
@@ -14,7 +17,7 @@ require_once 'Modules/clients/Model/ClPricing.php';
  * Controller for the provider example of breeding module
  */
 class ClientslistController extends CoresecureController {
-    
+
     /**
      * User model object
      */
@@ -36,7 +39,7 @@ class ClientslistController extends CoresecureController {
      * Page showing a table containing all the providers in the database
      */
     public function indexAction($id_space) {
-        
+
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         // lang
@@ -46,14 +49,14 @@ class ClientslistController extends CoresecureController {
         $providersArray = $this->clientModel->getAll($id_space);
 
         $table = new TableView();
-        
+
         $table->addLineEditButton("clclientedit/" . $id_space);
         $table->addLineButton("clclientusers/" . $id_space, "id", CoreTranslator::Users($lang));
         $table->addDeleteButton("clclientdelete/" . $id_space);
         $tableHtml = $table->view($providersArray, array(
-            "name" => CoreTranslator::Name($lang), 
-            "pricing_name" => ClientsTranslator::Pricing($lang) 
-            ));
+            "name" => CoreTranslator::Name($lang),
+            "pricing_name" => ClientsTranslator::Pricing($lang)
+        ));
 
         // render the View
         $this->render(array(
@@ -74,11 +77,21 @@ class ClientslistController extends CoresecureController {
 
         // get client
         $client = $this->clientModel->get($id);
+        
+        $modelAdress = new ClAddress();
+        $addressDelivery = $modelAdress->get($client["address_delivery"]);
+        $addressInvoice = $modelAdress->get($client["address_invoice"]);
 
         // pricings
         $modelPricing = new ClPricing();
         $pricings = $modelPricing->getForList($id_space);
         
+        // preferences
+        $preferences = array(
+            "ids" => array(1,2),
+            "names" => array(ClientsTranslator::Email($lang), ClientsTranslator::Letter($lang))
+            );
+
         // form
         // build the form
         $form = new Form($this->request, "client/edit");
@@ -86,55 +99,77 @@ class ClientslistController extends CoresecureController {
         $form->addHidden("id", $client["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $client["name"]);
         $form->addText("contact_name", ClientsTranslator::ContactName($lang), false, $client["contact_name"]);
-        $form->addText("institution", ClientsTranslator::Institution($lang), false, $client["institution"]);
-        $form->addText("building_floor", ClientsTranslator::BuildingFloor($lang), false, $client["building_floor"]);
-        $form->addText("service", ClientsTranslator::Service($lang), false, $client["service"]);
-        $form->addTextArea("address", ClientsTranslator::Address($lang), false, $client["address"]);
-        $form->addText("zip_code", ClientsTranslator::Zip_code($lang), false, $client["zip_code"]);
-        $form->addText("city", ClientsTranslator::City($lang), false, $client["city"]);
-        $form->addText("country", ClientsTranslator::Country($lang), false, $client["country"]);
         $form->addText("phone", ClientsTranslator::Phone($lang), false, $client["phone"]);
         $form->addText("email", ClientsTranslator::Email($lang), false, $client["email"]);
-        
-        $form->addSelect("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
 
+        $form->addSelect("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
+        $form->addSelect("invoice_send_preference", ClientsTranslator::invoice_send_preference($lang), $preferences["names"], $preferences["ids"], $client["invoice_send_preference"]);
+        
         $form->setValidationButton(CoreTranslator::Ok($lang), "clclientedit/" . $id_space . "/" . $id);
+        $form->setColumnsWidth(3, 9);
+        $form->setButtonsWidth(4, 8);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "clclients/" . $id_space);
 
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
             $idNew = $this->clientModel->set(
-                $id, 
-                $id_space, 
-                $form->getParameter("name"), 
-                $form->getParameter("contact_name"), 
-                $form->getParameter("institution"), 
-                $form->getParameter("building_floor"), 
-                $form->getParameter("service"), 
-                $form->getParameter("address"), 
-                $form->getParameter("zip_code"), 
-                $form->getParameter("city"), 
-                $form->getParameter("country"), 
-                $form->getParameter("phone"), 
-                $form->getParameter("email"), 
-                $form->getParameter("pricing")
-            ); 
-            
+                    $id, $id_space, $form->getParameter("name"), $form->getParameter("contact_name"), 
+                    $form->getParameter("phone"), 
+                    $form->getParameter("email"), $form->getParameter("pricing"),
+                    $form->getParameter("invoice_send_preference")
+            );
+
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
-            
+
             // after the provider is saved we redirect to the providers list page
             $this->redirect("clclientedit/" . $id_space . "/" . $idNew);
-        } else {
-            // set the view
-            $formHtml = $form->getHtml($lang);
-            // render the view
-            $this->render(array(
-                'id_space' => $id_space,
-                'lang' => $lang,
-                'formHtml' => $formHtml
-            ));
+            return;
         }
+
+
+        // Address delivery
+        $formAddressDelivery = new AddressForm($this->request, "formAddressDelivery", "clclientedit/" . $id_space . "/" . $id);
+        $formAddressDelivery->setLang($lang);
+        $formAddressDelivery->setTitle(ClientsTranslator::AddressDelivery($lang));
+        $formAddressDelivery->setSpace($id_space);
+        $formAddressDelivery->setData($addressDelivery);
+        $formAddressDelivery->render();
+        $formd = $formAddressDelivery->getForm();
+        if ($formd->check()) {
+            $id_adress = $formAddressDelivery->save();
+            
+            $this->clientModel->setAddressDelivery($id, $id_adress);
+            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $this->redirect("clclientedit/" . $id_space . "/" . $id);
+            return;
+        }
+        
+        // Address invoice
+        $formAddressInvoice = new AddressForm($this->request, "formAddressInvoice", "clclientedit/" . $id_space . "/" . $id);
+        $formAddressInvoice->setLang($lang);
+        $formAddressInvoice->setTitle(ClientsTranslator::AddressInvoice($lang));
+        $formAddressInvoice->setSpace($id_space);
+        $formAddressInvoice->setData($addressInvoice);
+        $formAddressInvoice->render();
+        $formi = $formAddressInvoice->getForm();
+        if ($formi->check()) {
+            $id_adress = $formAddressInvoice->save();
+            
+            $this->clientModel->setAddressInvoice($id, $id_adress);
+            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $this->redirect("clclientedit/" . $id_space . "/" . $id);
+            return;
+        }
+
+        // render the view
+        $this->render(array(
+            'id_space' => $id_space,
+            'lang' => $lang,
+            'formHtml' => $form->getHtml($lang),
+            'formDeliveryHtml' => $formd->getHtml($lang),
+            'formInvoiceHtml' => $formi->getHtml($lang),
+        ));
     }
 
     /**
@@ -143,11 +178,12 @@ class ClientslistController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
-        
+
         // query to delete the provider
         $this->clientModel->delete($id);
-        
+
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clclients/" . $id_space);
     }
+
 }
