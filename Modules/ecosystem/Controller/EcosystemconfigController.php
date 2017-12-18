@@ -7,6 +7,7 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/ecosystem/Model/EcosystemInstall.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 

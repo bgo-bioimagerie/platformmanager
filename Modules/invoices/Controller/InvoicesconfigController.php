@@ -5,6 +5,7 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Framework/FileUpload.php';
 
+require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/invoices/Model/InvoicesInstall.php';
@@ -106,6 +107,8 @@ class InvoicesconfigController extends CoresecureController {
         $formUpload->setButtonsWidth(2, 10);
         if ($formUpload->check()) {
             FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'template', 'template.php');
+            
+            $_SESSION["message"] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang) ;
             $this->redirect('invoicepdftemplate/' . $id_space);
             return;
         }

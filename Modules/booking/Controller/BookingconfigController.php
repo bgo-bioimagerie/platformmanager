@@ -6,6 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/booking/Model/BookingInstall.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -152,7 +153,7 @@ class BookingconfigController extends CoresecureController {
             $formMenuName->getHtml($lang),
             $formbookingUseRecurentBooking->getHtml($lang),
             $formBookingCanUserEditStartedResa->getHtml($lang),
-            $bookingRestrictionForm->getHtml($lang),
+            //$bookingRestrictionForm->getHtml($lang),
             $formBookingOption->getHtml($lang), 
             $formeditReservation->getHtml($lang), 
             $formEditBookingMailing->getHtml($lang));

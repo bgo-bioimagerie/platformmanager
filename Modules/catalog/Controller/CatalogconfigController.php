@@ -9,6 +9,8 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/catalog/Model/CatalogInstall.php';
 require_once 'Modules/catalog/Model/CatalogTranslator.php';
 
+require_once 'Modules/core/Controller/CorespaceController.php';
+
 /**
  * 
  * @author sprigent

@@ -7,6 +7,7 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/resources/Model/ResourcesInstall.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 

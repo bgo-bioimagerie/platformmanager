@@ -587,8 +587,17 @@ class BookingController extends BookingabstractController {
             $curentResource = $_SESSION['bk_id_resource'];
             $curentAreaId = $_SESSION['bk_id_area'];
             $curentDate = $_SESSION['bk_curentDate'];
+            //echo "curent area id " . $curentAreaId . "<br/>"; 
             //echo "curent date n-2 = " . $curentDate . "<br/>";
         }
+        
+        $modelArea = new ReArea();
+        $areaSpace = $modelArea->getSpace($curentAreaId);
+        if ($areaSpace != $id_space){
+            $curentAreaId = $modelArea->getDefaultArea($id_space);
+            $curentResource = 0;
+        }
+        
 
         //echo "curent date n-1= " . $curentDate . "<br/>";
         // change input if action
@@ -628,7 +637,6 @@ class BookingController extends BookingabstractController {
           $_SESSION['curentDate'] = $curentDate;
          */
         // get the area info
-        $modelArea = new ReArea();
         $area = $modelArea->get($curentAreaId);
 
         // get the resource info

@@ -19,7 +19,8 @@ class CoreconnectscriptController extends Controller {
         $modelUser = new CoreUser();
         $modelUser->updateLastConnection($_SESSION['id_user']);
         
-        if ($_SESSION['user_status'] >= 3) {
+        $modelSpace = new CoreSpace();
+        if ($modelSpace->isUserSpaceAdmin($_SESSION['id_user'])) {
             $modelUser->updateUsersActive();
         }
     }

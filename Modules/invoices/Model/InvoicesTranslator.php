@@ -360,4 +360,12 @@ class InvoicesTranslator {
         return "Download";
     }
     
+    public static function TheTemplateHasBeenUploaded($lang){
+        if ($lang == "fr") {
+            return "Le modèle à bien été téléversé";
+        }
+        return "The template has been uploaded";
+    }
+    
+    
 }

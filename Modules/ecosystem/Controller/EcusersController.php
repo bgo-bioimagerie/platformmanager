@@ -138,7 +138,7 @@ class EcusersController extends CoresecureController {
         if($this->isUserStatus($who_can_delete_user)){
             $table->addDeleteButton("ecusersdelete/" . $id_space);
         }
-        $table->setFixedColumnsNum(5);
+        $table->setFixedColumnsNum(3);
         if ($authorisations_location == 2) {
             $table->addLineButton("Sygrrifauthorisations/userauthorizations", "id", CoreTranslator::Authorizations($lang));
         }

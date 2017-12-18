@@ -36,5 +36,6 @@ class EcosystemRouting extends Routing{
         // merge
         $this->addRoute("mergeunits", "mergeunits", "ecmerge", "units", array("id_space"), array(""));
         $this->addRoute("mergeusers", "mergeusers", "ecmerge", "users", array("id_space"), array(""));
+        $this->addRoute("removeresponsible", "removeresponsible", "ecmerge", "resp", array("id_space"), array(""));
     }
 }

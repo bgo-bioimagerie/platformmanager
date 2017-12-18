@@ -6,6 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/quote/Model/QuoteInstall.php';
 require_once 'Modules/quote/Model/QuoteTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 

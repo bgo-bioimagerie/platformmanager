@@ -356,6 +356,7 @@ class CoreUser extends Model {
      * Update user to active or unactive depending on the settings criteria
      */
     public function updateUsersActive() {
+        
         $modelConfig = new CoreConfig ();
         $desactivateType = $modelConfig->getParam("user_desactivate");
 
@@ -368,6 +369,10 @@ class CoreUser extends Model {
                 $this->updateUserActiveLastLogin(2);
             } else if ($desactivateType == 5) {
                 $this->updateUserActiveLastLogin(3);
+            }
+            else if ($desactivateType == 6){
+                $this->updateUserActiveContract();
+                $this->updateUserActiveLastLogin(1);
             }
         }
     }

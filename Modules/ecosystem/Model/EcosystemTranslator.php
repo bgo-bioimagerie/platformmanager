@@ -1123,4 +1123,11 @@ class EcosystemTranslator {
         return "The first selected is the one taken as the reference";
     }
     
+    public static function RemoveRespFromAllUsers($lang){
+        if ($lang == "fr") {
+            return "Suprimer un responsable de tous les utilisateurs";
+        }
+        return "Remove one responsible from all users";
+    }
+    
 }

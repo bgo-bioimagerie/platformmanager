@@ -171,6 +171,11 @@ class EcResponsible extends Model {
         }
     }
 
+    public function removeRespFromAllJoin($idResp) {
+        $sql = "DELETE FROM ec_j_user_responsible WHERE id_resp = ?";
+        $this->runRequest($sql, array($idResp));
+    }
+    
     /**
      * Remove all the user/responsible join af a given user
      * @param number $idUser
