@@ -6,6 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/mailer/Model/MailerInstall.php';
 require_once 'Modules/mailer/Model/MailerTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 

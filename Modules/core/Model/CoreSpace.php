@@ -66,6 +66,15 @@ class CoreSpace extends Model {
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
     }
 
+    public function isUserSpaceAdmin($id_user){
+        $sql = "SELECT id_user FROM core_j_spaces_user WHERE id_user=? AND status>=3";
+        $req = $this->runRequest($sql, array($id_user));
+        if ( $req->rowCount() > 0 ){
+            return true;
+        }
+        return false; 
+    }
+    
     public function mergeUsers($users) {
         for ($i = 1; $i < count($users); $i++) {
             $sql = "UPDATE core_j_spaces_user SET id_user=? WHERE id_user=?";

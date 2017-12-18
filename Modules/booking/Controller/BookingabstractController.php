@@ -58,11 +58,15 @@ class BookingabstractController extends CoresecureController {
         $areas = array();
         $modelUserSpace = new CoreSpace();
         $status = $modelUserSpace->getUserSpaceRole($curentSiteId, $_SESSION["id_user"]);
-        if ($status < 2) {
+       
+        if ($status <= 2) {
             $areas = $modelArea->getUnrestrictedAreasIDNameForSite($curentSiteId);
+            
         } else {
             $areas = $modelArea->getAreasIDNameForSite($curentSiteId);
         }
+        
+        
 
         $foundArea = false;
         foreach ($areas as $area) {

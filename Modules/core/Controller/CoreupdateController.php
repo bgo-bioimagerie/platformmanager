@@ -7,7 +7,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 
-require_once 'Modules/core/Model/CoreInstall.php';
+//require_once 'Modules/core/Model/CoreInstall.php';
 
 
 /**
@@ -55,6 +55,9 @@ class CoreupdateController extends Controller {
                 $moduleName = ucfirst(strtolower($modules[$i]));
                 $installFile = "Modules/" . $modules[$i] . "/Model/" . $moduleName . "Install.php";
                 if (file_exists($installFile)) {
+                    
+                    //echo 'update database ' .$modules[$i]  . "<br/>";
+                    
                     if (!$first){
                         $modulesInstalled .= ", ";
                     }
@@ -66,6 +69,8 @@ class CoreupdateController extends Controller {
                     $className = $moduleName . "Install";
                     $object = new $className();
                     $object->createDatabase();
+                    
+                    //echo 'update database ' .$modules[$i]  . "done <br/>";
                 }
             }
         } catch (Exception $e) {

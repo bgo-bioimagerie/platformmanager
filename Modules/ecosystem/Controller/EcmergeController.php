@@ -8,6 +8,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcUnit.php';
 require_once 'Modules/ecosystem/Model/EcBelonging.php';
+require_once 'Modules/ecosystem/Model/EcResponsible.php';
 require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -131,6 +132,35 @@ class EcmergeController extends CoresecureController {
             'formHtml' => $form->getHtml($lang),
             'lang' => $lang
         ));
+    }
+    
+    public function respAction(){
+        $lang = $this->getLanguage();
+        
+        $usersList = $this->userModel->getAcivesForSelect("name");
+        
+        $form = new Form($this->request, "formmdeleterespusers");
+        $form->setTitle(EcosystemTranslator::RemoveRespFromAllUsers($lang));
+        
+        $form->addSelect("resp", EcosystemTranslator::Responsible($lang), $usersList["names"], $usersList["ids"]);
+        
+        $form->setValidationButton(CoreTranslator::Ok($lang), "removeresponsible");
+        
+        if( $form->check() ){
+            $resp = $form->getParameter("resp");
+            
+            $modelResp = new EcResponsible();
+            $modelResp->removeRespFromAllJoin($resp);
+            
+            $_SESSION["message"] = "resp has been removed";
+            return;
+        }
+        
+        $this->render(array(
+            'formHtml' => $form->getHtml($lang),
+            'lang' => $lang
+        ));
+        
     }
     
     protected function mergeUsers($users){

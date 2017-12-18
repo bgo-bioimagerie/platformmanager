@@ -28,6 +28,31 @@ class ReArea extends Model {
         $sql = "SELECT * FROM re_area WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
+    
+    public function getSpace($id){
+        $sql = "SELECT id_space FROM re_area WHERE id=?";
+        $d = $this->runRequest($sql, array($id))->fetch();
+        return $d[0];
+    }
+    
+    public function getDefaultArea($id_space){
+        $sql = "SELECT id FROM re_area WHERE id_space=? AND restricted=0";
+        $req = $this->runRequest($sql, array($id_space));
+        if ($req->rowCount() > 0){
+            $tmp = $req->fetch();
+            return $tmp[0];
+        }
+        else{
+            $sql = "SELECT id FROM re_area WHERE id_space=? AND restricted=1";
+            $req = $this->runRequest($sql, array($id_space));
+            if ($req->rowCount() > 0){
+                $tmp = $req->fetch();
+                return $tmp[0];
+            }
+            return 0;
+        }
+        
+    }
 
     public function getIdFromNameSpace($name, $id_space) {
         $sql = "SELECT id FROM re_area WHERE name=? AND id_space=?";
