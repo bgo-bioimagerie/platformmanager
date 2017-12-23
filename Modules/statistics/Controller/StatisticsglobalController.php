@@ -32,33 +32,38 @@ class StatisticsglobalController extends CoresecureController {
 
         $modelCoreConfig = new CoreConfig();
         $date_begin = $this->request->getParameterNoException("date_begin");
-        if($date_begin == ""){
+        if ($date_begin == "") {
             $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
-            $dateArray = explode("-", $date_begin);
-            $y = date("Y") - 1;
-            $m = $dateArray[1];
-            $d = $dateArray[2];
-            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
-            
+            if ($date_begin != "") {
+                $dateArray = explode("-", $date_begin);
+                $y = date("Y") - 1;
+                $m = $dateArray[1];
+                $d = $dateArray[2];
+                $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            } else {
+                $date_begin = date("Y", time()) . "-01-01";
+            }
         }
         $date_end = $this->request->getParameterNoException("date_end");
-        if($date_end == ""){
+        if ($date_end == "") {
             $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
-            $dateArray = explode("-", $date_end);
-            $y = date("Y");
-            $m = $dateArray[1];
-            $d = $dateArray[2];
-            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            if ($date_end != "") {
+                $dateArray = explode("-", $date_end);
+                $y = date("Y");
+                $m = $dateArray[1];
+                $d = $dateArray[2];
+                $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            } else {
+                $date_end = date("Y", time()) . "-12-31";
+            }
         }
-        
-        
+
+
         $form = new Form($this->request, "generateGlobalStatForm");
         $form->setTitle(StatisticsTranslator::StatisticsGlobal($lang));
-        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, $date_begin);
-        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, $date_end);
-        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), 
-                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), 
-                array(1,0), $this->request->getParameterNoException("generateunitstats"));
+        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, CoreTranslator::dateFromEn($date_begin, $lang) );
+        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, CoreTranslator::dateFromEn($date_end, $lang) );
+        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateunitstats"));
 
         $modelColorCode = new BkColorCode();
         $colorCodes = $modelColorCode->getForList($id_space);
@@ -86,7 +91,7 @@ class StatisticsglobalController extends CoresecureController {
             }
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
-            
+
             $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space);
         }
 
@@ -102,7 +107,7 @@ class StatisticsglobalController extends CoresecureController {
         $objPHPExcel = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel);
 
         $objPHPExcel->setActiveSheetIndex(1);
-        
+
         // write excel file
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
 

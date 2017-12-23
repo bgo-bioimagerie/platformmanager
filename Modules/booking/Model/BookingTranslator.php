@@ -1472,42 +1472,83 @@ class BookingTranslator {
         }
         return "Max booking per day";
     }
-    
+
     public static function BookingDelayUserCanEdit($lang) {
         if ($lang == "fr") {
             return "Temps (en heure) avant la réservation où l'utilisateur ne peux plus annuler une réservation"
-            . "-1 pour aucune restriction";
+                    . "-1 pour aucune restriction";
         }
         return "Time (in hours) before a booking when a user can cancel a reservation (-1 for no restrictions)";
     }
-    
+
     public static function quotaReservationError($bookingQuota, $lang) {
         if ($lang == "fr") {
             return "Erreur: Vous avez déjà " . $bookingQuota . " réservation pour cette ressource ce jour";
         }
-        return "Error:You already have " . $bookingQuota . " reservations this day for this resource" ;
+        return "Error:You already have " . $bookingQuota . " reservations this day for this resource";
     }
-    
+
     public static function statquantities($lang) {
         if ($lang == "fr") {
             return "stat quantitées";
         }
         return "stat quantities";
     }
-    
+
     public static function Restrictions($lang) {
         if ($lang == "fr") {
             return "Restrictions";
         }
         return "Restrictions";
     }
-    
+
     public static function RestrictionsFor($lang) {
         if ($lang == "fr") {
             return "Restrictions pour ";
         }
         return "Restrictions for";
     }
-    
-    
+
+    public static function Authorized($lang) {
+        if ($lang == "fr") {
+            return "Est autorisé";
+        }
+        return "Is authorised";
+    }
+
+    public static function History($lang) {
+        if ($lang == "fr") {
+            return "Historique";
+        }
+        return "History";
+    }
+
+    public static function Visa($lang) {
+        if ($lang == "fr") {
+            return "Visa";
+        }
+        return "Visa";
+    }
+
+    public static function DateActivation($lang) {
+        if ($lang == "fr") {
+            return "Date d'activation";
+        }
+        return "Activation date";
+    }
+
+    public static function DateDesactivation($lang) {
+        if ($lang == "fr") {
+            return "Date de désactivation";
+        }
+        return "Unactivation date";
+    }
+
+    public static function Authorisations_history_for($lang) {
+        if ($lang == "fr") {
+            return "Historique d'autorisations pour";
+        }
+        return "Authorisations history for";
+    }
+
 }

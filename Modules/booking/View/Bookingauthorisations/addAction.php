@@ -5,7 +5,7 @@
 
 <div class="col-md-12 pm-table">
     
-    <?php echo $tableHtml ?>
+    <?php echo $formHtml ?>
     
 </div>
 

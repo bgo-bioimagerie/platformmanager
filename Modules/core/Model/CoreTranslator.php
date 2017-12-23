@@ -1504,4 +1504,27 @@ class CoreTranslator {
         return "Width";
     }
     
+    public static function SpaceIcons($lang) {
+        if ($lang == "fr") {
+            return "Icones de la page d'accueil des espaces";
+        }
+        return "Icons of the home page";
+    }
+    
+    public static function smallIcons($lang) {
+        if ($lang == "fr") {
+            return "Petites icones";
+        }
+        return "Small icons";
+    }
+    
+    public static function IconsWithDescription($lang) {
+        if ($lang == "fr") {
+            return "Icones avec description";
+        }
+        return "Icons with description";
+    }
+    
+    
+    
 }

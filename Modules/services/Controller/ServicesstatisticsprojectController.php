@@ -88,16 +88,18 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $modelProjects = new SeProject();
         $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $id_space);
 
+       
+        
         // get all the priced projects details
         $projectsBalance = $modelProjects->getPeriodeServicesBalances($id_space, $periodStart, $periodEnd);
         $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($id_space, $periodStart, $periodEnd);
-
+        
         // get the stats
         $modelStats = new SeStats();
         $stats = $modelStats->computeStats($id_space, $periodStart, $periodEnd);
         $delayStats = $modelStats->computeDelayStats($id_space, $periodStart, $periodEnd);
         $statsOrigins = $modelStats->computeOriginStats($id_space, $periodStart, $periodEnd);
-
+        
         // get the bill manager list
         $modelBillManager = new InInvoice();
         if ($isglobal) {

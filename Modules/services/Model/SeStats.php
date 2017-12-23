@@ -104,10 +104,24 @@ class SeStats extends Model {
     
     public function computeDelayStats($id_space, $periodStart, $periodEnd){
         // total number of projects 
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ?";
-        $req = $this->runRequest($sql, array($periodStart, $periodEnd));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=?";
+        $req = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
+        
+        if (count($projects) == 0){
+            return array(
+                "numberIndustryProjectInDelay" => 0,
+                      "percentageIndustryProjectInDelay" => 0,  
+                      "numberIndustryProjectOutDelay" => 0,
+                      "percentageIndustryProjectOutDelay" => 0,
+                      "numberAcademicProjectInDelay" => 0,
+                      "percentageAcademicProjectInDelay" => 0,  
+                      "numberAcademicProjectOutDelay" => 0,
+                      "percentageAcademicProjectOutDelay" => 0,  
+            
+            );
+        }
 
         // number of accademic and industry projects
         $numberIndustryProjectInDelay = 0;
@@ -229,8 +243,8 @@ class SeStats extends Model {
     public function computeStats($id_space, $startDate_min, $startDate_max) {
 
         // total number of projects 
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=?";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
 

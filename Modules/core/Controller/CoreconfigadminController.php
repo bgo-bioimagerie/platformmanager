@@ -18,22 +18,22 @@ class CoreconfigadminController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        
+
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new Exception("Error 503: Permission denied");
         }
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
     public function indexAction() {
 
-        
+
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
-        
+
         // maintenance form
         $formMaintenance = $this->maintenanceForm($modelCoreConfig, $lang);
         if ($formMaintenance->check()) {
@@ -42,31 +42,31 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
-        
+
         /*
-        // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang);
-        if ($formMenusactivation->check()) {
+          // maintenance form
+          $formMenusactivation = $this->menusactivationForm($lang);
+          if ($formMenusactivation->check()) {
 
-            $modelMenu = new CoreMenu();
-            $modelMenu->setDataMenu("users", "coreusers", $this->request->getParameter("usermenustatus"), "glyphicon-user");
+          $modelMenu = new CoreMenu();
+          $modelMenu->setDataMenu("users", "coreusers", $this->request->getParameter("usermenustatus"), "glyphicon-user");
 
-            $this->redirect("coreconfigadmin");
-            return;
-        }
-         
+          $this->redirect("coreconfigadmin");
+          return;
+          }
+
          */
-        
+
         // maintenance form
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
-            
+
             $this->redirect("coreldapconfig");
             return;
         }
-               
-        
-        
+
+
+
         // homePageForm
         $formHomePage = $this->homePageForm($modelCoreConfig, $lang);
         if ($formHomePage->check()) {
@@ -74,7 +74,7 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
-        
+
         // formConnectionPage
         $formConnectionPage = $this->connectionPageForm($modelCoreConfig, $lang);
         if ($formConnectionPage->check()) {
@@ -92,33 +92,42 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
-        
+
+        // space dashboard icons
+        $formSpaceIconsForm = $this->spaceIconForm($modelCoreConfig, $lang);
+        if ($formSpaceIconsForm->check()) {
+            $modelCoreConfig->setParam("space_icon_type", $this->request->getParameter("space_icon_type"));
+
+            $this->redirect("coreconfigadmin");
+            return;
+        }
+
         // desactivateUserForm
         $formDesactivateUser = $this->desactivateUserForm($modelCoreConfig, $lang);
-        if ($formDesactivateUser->check()){
+        if ($formDesactivateUser->check()) {
             $modelCoreConfig->setParam("user_desactivate", $this->request->getParameter("user_desactivate"));
-        
+
             $this->redirect("coreconfigadmin");
             return;
         }
-        
+
         // email form
         $formEmail = $this->emailForm($modelCoreConfig, $lang);
-        if ($formEmail->check()){
+        if ($formEmail->check()) {
             $modelCoreConfig->setParam("admin_email", $this->request->getParameter("admin_email"));
-        
+
             $this->redirect("coreconfigadmin");
             return;
         }
-        
+
         $formNavbar = $this->navbarColorForm($modelCoreConfig, $lang);
-        if($formNavbar->check()){
-            
+        if ($formNavbar->check()) {
+
             $modelCoreConfig->setParam("navbar_bg_color", $this->request->getParameter("navbar_bg_color"));
             $modelCoreConfig->setParam("navbar_bg_highlight", $this->request->getParameter("navbar_bg_highlight"));
             $modelCoreConfig->setParam("navbar_text_color", $this->request->getParameter("navbar_text_color"));
             $modelCoreConfig->setParam("navbar_text_highlight", $this->request->getParameter("navbar_text_highlight"));
-            
+
             $css = file_get_contents("Modules/core/Theme/navbar-fixed-top.css");
             $css = str_replace("navbar_bg_color", $this->request->getParameter("navbar_bg_color"), $css);
             $css = str_replace("navbar_bg_highlight", $this->request->getParameter("navbar_bg_highlight"), $css);
@@ -126,37 +135,38 @@ class CoreconfigadminController extends CoresecureController {
             $css = str_replace("navbar_text_highlight", $this->request->getParameter("navbar_text_highlight"), $css);
 
             file_put_contents("data/core/theme/navbar-fixed-top.css", $css);
-        
+
             $this->redirect("coreconfigadmin");
             return;
         }
         // who can delete user
         $formDeleteUser = $this->whoCanDeleteUserForm($modelCoreConfig, $lang);
-        
-        if($formDeleteUser->check()){
+
+        if ($formDeleteUser->check()) {
             $modelCoreConfig->setParam("who_can_delete_user", $this->request->getParameter("who_can_delete_user"));
-            
+
             $this->redirect("coreconfigadmin");
             return;
         }
         // backup form
         $formBackup = $this->backupForm($lang);
-        if ($formBackup->check()){
+        if ($formBackup->check()) {
             $modelBackup = new CoreBackupDatabase();
             $modelBackup->run();
             $this->redirect("coreconfigadmin");
             return;
         }
-        
-        
+
+
         // view
-        $forms = array($formMaintenance->getHtml($lang), 
-            $formDesactivateUser->getHtml($lang), 
+        $forms = array($formMaintenance->getHtml($lang),
+            $formSpaceIconsForm->getHtml($lang),
+            $formDesactivateUser->getHtml($lang),
             $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
-            $formConnectionPage->getHtml($lang), 
+            $formConnectionPage->getHtml($lang),
             $formDeleteUser->getHtml($lang),
             $formEmail->getHtml($lang), $formNavbar->getHtml($lang), $formBackup->getHtml($lang));
-        
+
         $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
@@ -205,7 +215,7 @@ class CoreconfigadminController extends CoresecureController {
 
         $modelMenu = new CoreMenu();
         $statusUserMenu = $modelMenu->getDataMenusUserType("users");
-        
+
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
@@ -233,33 +243,33 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function ldapForm($lang){
-        
+    protected function ldapForm($lang) {
+
         $form = new Form($this->request, "ldapForm");
         $form->addSeparator(CoreTranslator::LdapConfig($lang));
-        
+
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Config($lang), "coreconfigadmin");
         return $form;
     }
-    
+
     /**
      * 
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
      */
-    protected function homePageForm($modelCoreConfig, $lang){
-        
+    protected function homePageForm($modelCoreConfig, $lang) {
+
         $form = new Form($this->request, "homePageForm");
         $form->addSeparator(CoreTranslator::Home($lang));
         $form->addText("default_home_path", CoreTranslator::Home_page($lang), true, $modelCoreConfig->getParam("default_home_path"));
-        
+
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
-    
+
     /**
      * 
      * @param type $modelCoreConfig
@@ -286,31 +296,20 @@ class CoreconfigadminController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
-    
-    /**
-     * 
-     * @param type $modelCoreConfig
-     * @param type $lang
-     * @return \Form
-     */
-    protected function desactivateUserForm($modelCoreConfig, $lang){
-        
-	$value = $modelCoreConfig->getParam("user_desactivate");
-        
+
+    protected function spaceIconForm($modelCoreConfig, $lang) {
+        $value = $modelCoreConfig->getParam("space_icon_type");
         $choices = array();
         $choicesid = array();
-        $choicesid[] = 1; $choices[] = CoreTranslator::never($lang);
-        $choicesid[] = 2; $choices[] = CoreTranslator::contract_ends($lang);
-        $choicesid[] = 3; $choices[] = CoreTranslator::does_not_login_for_n_year(1, $lang);
-        $choicesid[] = 4; $choices[] = CoreTranslator::does_not_login_for_n_year(2, $lang);
-        $choicesid[] = 5; $choices[] = CoreTranslator::does_not_login_for_n_year(3, $lang);
-        $choicesid[] = 6; $choices[] = CoreTranslator::contract_ends_or_does_not_login_for_1_year($lang);
-        
-        $form = new Form($this->request, "desactivateUserForm");
-        $form->addSeparator(CoreTranslator::non_active_users($lang));
-        $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), 
-                $choices, $choicesid, $value);
-        
+        $choicesid[] = 1;
+        $choices[] = CoreTranslator::smallIcons($lang);
+        $choicesid[] = 2;
+        $choices[] = CoreTranslator::IconsWithDescription($lang);
+
+        $form = new Form($this->request, "spaceIconForm");
+        $form->addSeparator(CoreTranslator::SpaceIcons($lang));
+        $form->addSelect("space_icon_type", CoreTranslator::Choice($lang), $choices, $choicesid, $value);
+
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
@@ -322,73 +321,108 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function emailForm($modelCoreConfig, $lang){
-        $value = $modelCoreConfig->getParam("admin_email");
-        
-        $form = new Form($this->request, "emailForm");
+    protected function desactivateUserForm($modelCoreConfig, $lang) {
+
+        $value = $modelCoreConfig->getParam("user_desactivate");
+
+        $choices = array();
+        $choicesid = array();
+        $choicesid[] = 1;
+        $choices[] = CoreTranslator::never($lang);
+        $choicesid[] = 2;
+        $choices[] = CoreTranslator::contract_ends($lang);
+        $choicesid[] = 3;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(1, $lang);
+        $choicesid[] = 4;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(2, $lang);
+        $choicesid[] = 5;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(3, $lang);
+        $choicesid[] = 6;
+        $choices[] = CoreTranslator::contract_ends_or_does_not_login_for_1_year($lang);
+
+        $form = new Form($this->request, "desactivateUserForm");
         $form->addSeparator(CoreTranslator::non_active_users($lang));
-        $form->addText("admin_email", CoreTranslator::Email($lang), false, $value);
-        
+        $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $value);
+
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
-    
-    /**
-     * 
-     * @param type $lang
-     * @return \Form
-     */
-    protected function backupForm($lang){
-        
-        $form = new Form($this->request, "backupForm");
-        $form->addSeparator(CoreTranslator::Backup($lang));
-        
-        $form->setButtonsWidth(2, 9);
-        $form->setValidationButton(CoreTranslator::Run_backup($lang), "coreconfigadmin");
-        return $form;
-    }
-    
+
     /**
      * 
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
      */
-    protected function navbarColorForm($modelCoreConfig, $lang){
+    protected function emailForm($modelCoreConfig, $lang) {
+        $value = $modelCoreConfig->getParam("admin_email");
+
+        $form = new Form($this->request, "emailForm");
+        $form->addSeparator(CoreTranslator::non_active_users($lang));
+        $form->addText("admin_email", CoreTranslator::Email($lang), false, $value);
+
+        $form->setButtonsWidth(2, 9);
+        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
+        return $form;
+    }
+
+    /**
+     * 
+     * @param type $lang
+     * @return \Form
+     */
+    protected function backupForm($lang) {
+
+        $form = new Form($this->request, "backupForm");
+        $form->addSeparator(CoreTranslator::Backup($lang));
+
+        $form->setButtonsWidth(2, 9);
+        $form->setValidationButton(CoreTranslator::Run_backup($lang), "coreconfigadmin");
+        return $form;
+    }
+
+    /**
+     * 
+     * @param type $modelCoreConfig
+     * @param type $lang
+     * @return \Form
+     */
+    protected function navbarColorForm($modelCoreConfig, $lang) {
         $navbar_bg_color = $modelCoreConfig->getParam("navbar_bg_color");
         $navbar_bg_highlight = $modelCoreConfig->getParam("navbar_bg_highlight");
         $navbar_text_color = $modelCoreConfig->getParam("navbar_text_color");
         $navbar_text_highlight = $modelCoreConfig->getParam("navbar_text_highlight");
-        
+
         $form = new Form($this->request, "navbarColorForm");
         $form->addSeparator(CoreTranslator::menu_color($lang));
         $form->addColor("navbar_bg_color", CoreTranslator::Background_color($lang), false, $navbar_bg_color);
         $form->addColor("navbar_bg_highlight", CoreTranslator::Background_highlight($lang), false, $navbar_bg_highlight);
         $form->addColor("navbar_text_color", CoreTranslator::Text_color($lang), false, $navbar_text_color);
         $form->addColor("navbar_text_highlight", CoreTranslator::Text_highlight($lang), false, $navbar_text_highlight);
-        
+
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
-    
-    protected function whoCanDeleteUserForm($modelCoreConfig, $lang){
+
+    protected function whoCanDeleteUserForm($modelCoreConfig, $lang) {
         $who_can_delete_user = $modelCoreConfig->getParam("who_can_delete_user");
-        
+
         $form = new Form($this->request, "whoCanDeleteUserForm");
         $form->addSeparator(CoreTranslator::Who_can_delete_users($lang));
-        
+
         $choices = array(
             CoreTranslator::User($lang),
             CoreTranslator::Admin($lang)
         );
-        $choicesid = array(1,2);
-                
+        $choicesid = array(1, 2);
+
         $form->addSelect("who_can_delete_user", CoreTranslator::Select($lang), $choices, $choicesid, $who_can_delete_user);
-        
+
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
+
 }
