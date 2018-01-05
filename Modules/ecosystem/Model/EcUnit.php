@@ -33,37 +33,46 @@ class EcUnit extends Model {
 
         $this->runRequest($sql2);
     }
-    
-    public function mergeUnits($units){
-        
+
+    public function mergeUnits($units) {
+
         // remove useless belongings joint
-        for($i = 1 ; $i<count($units) ; $i++){
+        for ($i = 1; $i < count($units); $i++) {
             $sql = "DELETE FROM ec_j_belonging_units WHERE id_unit=?";
             $this->runRequest($sql, array($units[$i]));
         }
-        
+
         // remove units
-        for($i = 1 ; $i<count($units) ; $i++){
+        for ($i = 1; $i < count($units); $i++) {
             $sql = "DELETE FROM ec_units WHERE id=?";
             $this->runRequest($sql, array($units[$i]));
         }
-
     }
-    
-    public function getIdFromName($name){
-        $sql = "SELECT id FROM ec_units WHERE name=?";
-        $data= $this->runRequest($sql, array($name));
-        if ($data->rowCount() > 0){
+
+    public function getName($id) {
+        $sql = "SELECT name FROM ec_units WHERE id=?";
+        $data = $this->runRequest($sql, array($id));
+        if ($data->rowCount() > 0) {
             $tmp = $data->fetch();
             return $tmp[0];
         }
         return 0;
     }
-    
-    public function copyToMultipleBelonging($id_space){
+
+    public function getIdFromName($name) {
+        $sql = "SELECT id FROM ec_units WHERE name=?";
+        $data = $this->runRequest($sql, array($name));
+        if ($data->rowCount() > 0) {
+            $tmp = $data->fetch();
+            return $tmp[0];
+        }
+        return 0;
+    }
+
+    public function copyToMultipleBelonging($id_space) {
         $sql = "SELECT * FROM ec_units";
         $units = $this->runRequest($sql)->fetchAll();
-        foreach($units as $unit){
+        foreach ($units as $unit) {
             $this->setBelonging($id_space, $unit["id_belonging"], $unit["id"]);
         }
     }
@@ -80,12 +89,12 @@ class EcUnit extends Model {
     }
 
     public function setBelonging($id_space, $id_belonging, $id_unit) {
-        
+
         $sql = "DELETE FROM ec_j_belonging_units WHERE id_unit=? AND id_space=?";
         $this->runRequest($sql, array($id_unit, $id_space));
-        
+
         //echo "set belonging: " . $id_space . " " . $id_belonging . " " . $id_unit . "<br/>"; 
-        
+
         if ($this->isSetUnit($id_space, $id_unit)) {
             //echo "update belonging <br>";
             $sql = "UPDATE ec_j_belonging_units SET id_belonging=? WHERE id_unit=? AND id_space=?";
@@ -341,7 +350,7 @@ class EcUnit extends Model {
             $tmp = $unit->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
-            
+
             echo "Cannot find the unit using the given name:" . $name . "<br/>";
             return 0;
             //throw new Exception("Cannot find the unit using the given name:" . $name);

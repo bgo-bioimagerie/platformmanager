@@ -12,3 +12,4 @@ require 'Framework/Router.php';
 
 $router = new Router();
 $router->routerRequest();
+debug_print_backtrace();

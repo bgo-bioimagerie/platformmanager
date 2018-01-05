@@ -51,7 +51,7 @@ class ServicesoriginsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         if ($id == 0) {
-            $value = array("name" => "");
+            $value = array("name" => "", "display_order" => 1);
         } else {
             $value = $this->originModel->get($id);
         }
@@ -66,7 +66,8 @@ class ServicesoriginsController extends CoresecureController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "servicesorigins/" . $id_space);
 
         if ($form->check()) {
-            $this->originModel->set($id, $this->request->getParameter("name"), 
+            $this->originModel->set($id, 
+                    $this->request->getParameter("name"), 
                     $this->request->getParameter("display_order"), $id_space);
             
             $this->redirect("servicesorigins/" . $id_space);

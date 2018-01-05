@@ -159,12 +159,14 @@ class SeOrder extends Model {
         return $req->fetchAll();
     }
     
-    public function openedForRespPeriod($dateBegin, $dateEnd, $id_resp){
+    public function openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space){
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
                 . "AND id_user IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=?) "
                 . "AND date_open>=? "
-                . "AND date_close<=? ";
-        $req = $this->runRequest($sql, array($id_resp, $dateBegin, $dateEnd));
+                . "AND date_close<=? "
+                . "AND id_space=? ";
+                
+        $req = $this->runRequest($sql, array($id_resp, $dateBegin, $dateEnd, $id_space));
         return $req->fetchAll();
     }
     

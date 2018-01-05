@@ -26,6 +26,9 @@ class InvoicesRouting extends Routing{
         $this->addRoute("invoiceinfo", "invoiceinfo", "invoiceslist", "info", array("id_space", "id"), array("", ""));
         $this->addRoute("invoicedelete", "invoicedelete", "invoiceslist", "delete", array("id_space", "id"), array("", ""));
         
-        
+        // global invoice
+        $this->addRoute("invoiceglobal", "invoiceglobal", "invoiceglobal", "index", array("id_space"), array(""));
+        $this->addRoute("invoiceglobaledit", "invoiceglobaledit", "invoiceglobal", "editquery", array("id_space", "id"), array("", ""));
+        $this->addRoute("invoiceglobalpdf", "invoiceglobalpdf", "invoiceglobal", "pdf", array("id_space", "id", "pdf"), array("", "", ""));
     }
 }

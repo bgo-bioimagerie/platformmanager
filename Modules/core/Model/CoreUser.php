@@ -359,7 +359,7 @@ class CoreUser extends Model {
 
         $modelConfig = new CoreConfig ();
         $desactivateType = $modelConfig->getParam("user_desactivate");
-
+        
         if ($desactivateType > 1) {
             if ($desactivateType == 2) {
                 $this->updateUserActiveContract();
@@ -428,6 +428,8 @@ class CoreUser extends Model {
      * @param number $numberYear Number of years
      */
     private function updateUserActiveLastLogin($numberYear) {
+        
+        //echo "updateUserActiveLastLogin <br/>";
         $sql = "select id, date_last_login, date_created from core_users where is_active=1";
         $req = $this->runRequest($sql);
         $users = $req->fetchAll();
@@ -448,15 +450,7 @@ class CoreUser extends Model {
                 $createdDate = explode("-", $createdDate);
                 $timec = mktime(0, 0, 0, $createdDate [1], $createdDate [2], $createdDate [0]);
                 $timec = date("Y-m-d", $timec + $numberYear * 31556926);
-                /*
-                  if ($user["name"] == "test"){
-                  print_r($createdDate);
-                  print_r($lastLoginDate);
-                  echo "today = " . $today . "<br/>";
-                  echo "timell = " . $timell . "<br/>";
-                  echo "timec = " . $timec . "<br/>";
-                  }
-                 */
+                
                 $changedUsers = array();
                 if ($timec <= $today) {
                     if ($timell <= $today) {
@@ -479,11 +473,12 @@ class CoreUser extends Model {
 
                         // desactivate authorizations
                         $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
-                        $this->runRequest($sql, array($user ['id'], date("Y-m-s"), time()));
+                        $this->runRequest($sql, array( date("Y-m-d", time() ), $user ['id'] ));
                     }
                 }
             }
         }
+        //echo "updateUserActiveLastLogin ends <br/>";
     }
 
     /**

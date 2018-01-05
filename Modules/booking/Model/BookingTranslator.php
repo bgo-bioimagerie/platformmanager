@@ -15,6 +15,13 @@ class BookingTranslator {
         return "booking";
     }
 
+    public static function MAD($lang) {
+        if ($lang == "fr") {
+            return "Mise à disposition";
+        }
+        return "Location";
+    }
+    
     public static function bookingConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Booking permet de réserver des resources dans un calendrier";
