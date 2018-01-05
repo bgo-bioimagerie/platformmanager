@@ -67,8 +67,8 @@ class CoreSpace extends Model {
     }
 
     public function isUserSpaceAdmin($id_user){
-        $sql = "SELECT id_user FROM core_j_spaces_user WHERE id_user=? AND status>=3";
-        $req = $this->runRequest($sql, array($id_user));
+        $sql = "SELECT id_user FROM core_j_spaces_user WHERE id_user=? AND status>=?";
+        $req = $this->runRequest($sql, array($id_user, 3));
         if ( $req->rowCount() > 0 ){
             return true;
         }

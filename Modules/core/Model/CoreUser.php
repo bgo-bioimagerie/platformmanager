@@ -417,7 +417,7 @@ class CoreUser extends Model {
 
                     // desactivate authorizations
                     $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
-                    $this->runRequest($sql, array($user ['id'], date("Y-m-s"), time()));
+                    $this->runRequest($sql, array($user ['id'], date("Y-m-s")));
                 }
             }
         }
