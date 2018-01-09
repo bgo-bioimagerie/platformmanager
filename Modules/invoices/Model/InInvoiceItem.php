@@ -36,6 +36,11 @@ class InInvoiceItem extends Model {
         $sql = "SELECT * FROM in_invoice_item WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
+    
+    public function getForInvoice($id_invoice){
+        $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=?";
+        return $this->runRequest($sql, array($id_invoice))->fetch();
+    }
 
     public function setItem($id, $id_invoice, $module, $controller, $content, $details, $total_ht) {
         if (!$this->isItem($id)) {
@@ -45,6 +50,11 @@ class InInvoiceItem extends Model {
             $sql = "UPDATE in_invoice_item SET id_invoice=?, module=?, controller=?, content=?, details=?, total_ht=? WHERE id=?";
             $this->runRequest($sql, array($id_invoice, $module, $controller, $content, $details, $total_ht, $id));
         }
+    }
+    
+    public function setItemContent($id_invoice, $content){
+        $sql = "UPDATE in_invoice_item SET content=? WHERE id_invoice=?";
+        $this->runRequest($sql, array($content, $id_invoice));
     }
 
     public function editItemContent($id, $content, $total_ht) {

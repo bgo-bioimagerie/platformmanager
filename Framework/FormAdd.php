@@ -67,6 +67,21 @@ class FormAdd {
         $this->choicesid[] = "";
     }
 
+     /**
+     * Add label field 
+     * @param type $name Field name
+     * @param type $values Field value
+     */
+    public function addLabel($name, $values){
+        $this->types[] = "label";
+        $this->names[] = $name;
+        $this->labels[] = "";
+        $this->setValue($name, $values);
+        $this->isMandatory[] = false;
+        $this->choices[] = "";
+        $this->choicesid[] = "";
+    }
+    
     /**
      * Add a select field 
      * @param type $name Field name
@@ -193,6 +208,8 @@ class FormAdd {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "hidden") {
                         $html .= $formHtml->inlineHidden($this->names[$j], $this->values[$j][$i], false, true);
+                    } else if ($this->types[$j] == "l"){
+                        $html .= $formHtml->inlineLabel($this->names[$j], $this->values[$j][$i], true);
                     } else {
                         $html .= "error undefine form input type " . $this->types[$j];
                     }

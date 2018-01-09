@@ -51,6 +51,10 @@ class InvoiceslistController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        if ($sent == ""){
+            $sent = 0;
+        }
+        
         $modelInvoices = new InInvoice();
         $modelUser = new EcUser();
         

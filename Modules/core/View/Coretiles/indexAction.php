@@ -44,6 +44,28 @@ if (!$headless) {
                 <ul class="bs-glyphicons-list">
                     <?php
                     foreach ($toolMenu[$i]["items"] as $item) {
+                        
+                        if( $iconType == 1){
+                            
+                            $key = $item['link'];
+                            $value = $item['name'];
+                            $icon = $item['icon'];
+                            $color = '#428bca';
+                            if (isset($item['color']) && $item['color'] != "") {
+                                $color = $item['color'];
+                            }
+                            ?>
+                            <li style="background-color:<?php echo $color ?>">
+                                <a href="<?php echo $key ?>">
+                                    
+                                   <img src="<?php echo $icon ?>" alt="logo" style="margin-top: -10px;width:100px;height:75px">
+                                    <span class="glyphicon-class"><?php echo $value ?></span>
+                                </a>
+                            </li>
+            
+                            <?php
+                        }
+                        else{
                         ?>
                         <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
                             <!-- IMAGE -->
@@ -65,6 +87,7 @@ if (!$headless) {
                             
                         </div>   
                         <?php
+                        }
                         /*
                           $color = '#428bca';
                           if (isset($item['color']) && $item['color'] != "") {

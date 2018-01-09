@@ -17,20 +17,19 @@ class BkAuthorization extends Model {
      *
      * @return PDOStatement
      */
-    public function createTable() {
-        $sql = "CREATE TABLE IF NOT EXISTS `bk_authorization` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`date` DATE NOT NULL,		
-		`user_id` int(11) NOT NULL,
-		`lab_id` int(11) NOT NULL,
-		`visa_id` int(11) NOT NULL,
-		`resource_id` int(11) NOT NULL,	
-		`is_active` int(1) NOT NULL,			
-		PRIMARY KEY (`id`)
-		);";
-
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+    public function __construct() {
+        
+        $this->tableName = "bk_authorization";
+        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("user_id", "int(11)", 0);
+        $this->setColumnsInfo("resource_id", "int(11)", 0);
+        $this->setColumnsInfo("visa_id", "int(11)", 0);
+        $this->setColumnsInfo("date", "DATE", "0000-00-00");
+        $this->setColumnsInfo("date_desactivation", "DATE", "0000-00-00");
+        $this->setColumnsInfo("is_active", "int(1)", 1);
+        
+        $this->primaryKey = "id";
+        
     }
     
     public function mergeUsers($users){
@@ -40,81 +39,19 @@ class BkAuthorization extends Model {
         }
     }
 
-    /**
-     * Add an authorization
-     * @param date $date
-     * @param number $user_id
-     * @param number $lab_id
-     * @param number $visa_id
-     * @param number $resource_id
-     * @param number $is_active
-     */
-    public function addAuthorization($date, $user_id, $lab_id, $visa_id, $resource_id, $is_active = 1) {
-        $sql = "insert into bk_authorization(date, user_id, lab_id, visa_id, resource_id, is_active)" .
-                " values(?,?,?,?,?,?)";
-        $this->runRequest($sql, array(
-            $date,
-            $user_id,
-            $lab_id,
-            $visa_id,
-            $resource_id,
-            $is_active
-        ));
-    }
-
-    /**
-     * Add an authorization if not exists
-     * @param date $date
-     * @param number $user_id
-     * @param number $lab_id
-     * @param number $visa_id
-     * @param number $resource_id
-     * @param number $is_active
-     */
-    public function setAuthorization($id, $date, $user_id, $lab_id, $visa_id, $resource_id, $is_active = 1) {
-
-        if (!$this->isAuthorisation($id)) {
-            $sql = "insert into bk_authorization(id, date, user_id, lab_id, visa_id, resource_id, is_active)" .
-                    " values(?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array(
-                $id,
-                $date,
-                $user_id,
-                $lab_id,
-                $visa_id,
-                $resource_id,
-                $is_active
-            ));
-        }
+    public function getForResourceAndUser($id_resource_category, $id_user){
+        $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND user_id=?";
+        return $this->runRequest($sql, array($id_resource_category, $id_user))->fetchAll();
     }
     
-    public function insertAuth($date, $user_id, $lab_id, $visa_id, $resource_id){
-        $is_active = 1;
-        $sql = "insert into bk_authorization(date, user_id, lab_id, visa_id, resource_id, is_active)" .
-                    " values(?,?,?,?,?,?)";
-            $this->runRequest($sql, array(
-                $date,
-                $user_id,
-                $lab_id,
-                $visa_id,
-                $resource_id,
-                $is_active
-            ));
+    public function add($user_id, $resource_id, $visa_id, $date){
+        $sql = "INSERT INTO bk_authorization (user_id, resource_id, visa_id, date, is_active) VALUES (?,?,?,?,?)";
+        $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, 1));
     }
-
-    /**
-     * Check if an authorization exists
-     * @param numer $id AUthorization ID
-     * @return boolean
-     */
-    public function isAuthorisation($id) {
-        $sql = "select * from bk_authorization where id=?;";
-        $data = $this->runRequest($sql, array($id));
-        if ($data->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+    
+    public function set($id, $user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active){
+        $sql = "UPDATE bk_authorization SET user_id=?, resource_id=?, visa_id=?, date=?, date_desactivation=?, is_active=? WHERE id=?";
+        $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active, $id));
     }
 
     /**
@@ -152,161 +89,10 @@ class BkAuthorization extends Model {
         ));
     }
 
-    /**
-     * Set unactive all the authorizations of a given user
-     * @param number $userId ID of the user
-     */
-    public function desactivateAthorizationsForUser($userId) {
-        $sql = "select id from bk_authorization where user_id=?";
-        $req = $this->runRequest($sql, array($userId));
-        $auths = $req->fetchAll();
-
-        foreach ($auths as $auth) {
-            $this->unactivate($auth["id"]);
-        }
-    }
-
-    /**
-     * Set unactive all the authorizations for multiple users
-     * @param array $ids
-     */
-    public function desactivateAthorizationsForUsers($ids) {
-        foreach ($ids as $id) {
-            $this->desactivateAthorizationsForUser($id);
-        }
-    }
-
-    /**
-     * Update the informations of an authorization
-     * @param number $id Authorization ID
-     * @param date $date New date
-     * @param number $user_id New user ID
-     * @param number $lab_id New lab ID
-     * @param number $visa_id New lab ID 
-     * @param number $resource_id New resource ID
-     * @param number $is_active new Active status
-     */
-    public function editAuthorization($id, $date, $user_id, $lab_id, $visa_id, $resource_id, $is_active = 1) {
-        $sql = "update bk_authorization set date=?, user_id=?, lab_id=?, visa_id=?, resource_id=?,
-					   is_active=?	where id=?";
-        $this->runRequest($sql, array(
-            $date,
-            $user_id,
-            $lab_id,
-            $visa_id,
-            $resource_id,
-            $is_active,
-            $id
-                ));
-    }
-
-    /**
-     * Get the list of all the authorizations
-     * @return multitype: array of all authorizations informations
-     */
-    public function getAuths() {
-        $sql = "select * from bk_authorization";
-        $req = $this->runRequest($sql);
-        return $req->fetchAll();
-    }
-
-    /**
-     * Get the list of all the authorizations converting the IDs to names
-     * @param string $sortentry
-     * @return multitype: array of all authorizations informations
-     */
-    public function getAuthorizations($sortentry = 'id') {
-
-        $sqlSort = "bk_authorization.id";
-        if ($sortentry == "date") {
-            $sqlSort = "bk_authorization.date";
-        } else if ($sortentry == "userFirstname") {
-            $sqlSort = "core_users.firstname";
-        } else if ($sortentry == "userName") {
-            $sqlSort = "core_users.name";
-        } else if ($sortentry == "unit") {
-            $sqlSort = "core_units.name";
-        } else if ($sortentry == "visa") {
-            $sqlSort = "sy_visas.name";
-        } else if ($sortentry == "ressource") {
-            $sqlSort = "sy_resourcescategory.name";
-        }
-
-        $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.name AS userName, core_users.firstname AS userFirstname, core_units.name AS unitName, sy_visas.name AS visa, sy_resourcescategory.name AS resource 		
-					from bk_authorization
-					     INNER JOIN core_users on bk_authorization.user_id = core_users.id
-					     INNER JOIN core_units on bk_authorization.lab_id = core_units.id
-					     INNER JOIN sy_visas on bk_authorization.visa_id = sy_visas.id
-					     INNER JOIN sy_resourcescategory on bk_authorization.resource_id = sy_resourcescategory.id
-					ORDER BY " . $sqlSort . ";";
-        $auth = $this->runRequest($sql);
-        return $auth->fetchAll();
-    }
-
-    /**
-     * Get the list of all the active authorizations
-     * @param string $sortentry
-     * @param number $is_active
-     * @return multitype:
-     */
-    public function getActiveAuthorizations($sortentry = 'id', $is_active = 1) {
-
-
-        /*
-          $sqlSort = "bk_authorization.id";
-          if ($sortentry == "date"){
-          $sqlSort = "bk_authorization.date";
-          }
-          else if ($sortentry == "userFirstname"){
-          $sqlSort = "core_users.firstname";
-          }
-          else if ($sortentry == "userName"){
-          $sqlSort = "core_users.name";
-          }
-          else if ($sortentry == "unit"){
-          $sqlSort = "core_units.name";
-          }
-          else if ($sortentry == "visa"){
-          $sqlSort = "sy_visas.name";
-          }
-          else if ($sortentry == "ressource"){
-          $sqlSort = "sy_resourcescategory.name";
-          }
-
-          $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.name AS userName, core_users.firstname AS userFirstname, core_units.name AS unitName, sy_visas.name AS visa, sy_resourcescategory.name AS resource
-          from bk_authorization
-          INNER JOIN core_users on bk_authorization.user_id = core_users.id
-          INNER JOIN core_units on bk_authorization.lab_id = core_units.id
-          INNER JOIN sy_visas on bk_authorization.visa_id = sy_visas.id
-          INNER JOIN sy_resourcescategory on bk_authorization.resource_id = sy_resourcescategory.id
-          WHERE bk_authorization.is_active=".$is_active."
-          ORDER BY ". $sqlSort . ";";
-         */
-
-        $sql = "SELECT * from bk_authorization WHERE is_active=" . $is_active . ";";
-        $auth = $this->runRequest($sql);
-        return $auth->fetchAll();
-    }
-
-    /**
-     * Get an authorization info given it ID
-     * @param number $id Authorization ID
-     * @return array: Authorization informations 
-     */
-    public function getAuthorization($id) {
+    public function get($id) {
         $sql = "SELECT * from bk_authorization where id=?";
         $auth = $this->runRequest($sql, array($id));
         return $auth->fetch();
-    }
-
-    /**
-     * get user authorizations
-     * @param integer $userID User ID
-     */
-    public function getUserAuthorizations($userID) {
-        $sql = "SELECT * from bk_authorization where user_id=?";
-        $auth = $this->runRequest($sql, array($userID));
-        return $auth->fetchAll();
     }
 
     /**
@@ -326,27 +112,8 @@ class BkAuthorization extends Model {
         }
     }
 
-    public function getAuthorisationID($id_resource, $id_user) {
-        $sql = "SELECT id from bk_authorization where user_id=? AND resource_id=? AND is_active=1";
-        $data = $this->runRequest($sql, array($id_user, $id_resource));
-        if ($data->rowCount() >= 1) {
-            $d = $data->fetch();
-            return $d[0];  // get the first line of the result
-        } else {
-            return 0;
-        }
-    }
+ 
     
-    public function getAuthorisationInfo($id_resource, $id_user) {
-        $sql = "SELECT * from bk_authorization where user_id=? AND resource_id=? AND is_active=1";
-        $data = $this->runRequest($sql, array($id_user, $id_resource));
-        if ($data->rowCount() >= 1) {
-            $d = $data->fetch();
-            return $d;  // get the first line of the result
-        } else {
-            return 0;
-        }
-    }
 
     public function getTotalForPeriod($id_space, $period_begin, $period_end){
         $sql = 'SELECT * FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';

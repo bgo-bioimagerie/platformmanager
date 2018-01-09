@@ -57,7 +57,10 @@ class BookingRouting extends Routing{
         
         
         $this->addRoute("bookingauthorisations", "bookingauthorisations", "bookingauthorisations", "index", array("id_space", "id"), array("", ""));
-        $this->addRoute("bookingauthorisationsquery", "bookingauthorisationsquery", "bookingauthorisations", "query", array("id_space"), array(""));
+        $this->addRoute("bookingauthorisationshist", "bookingauthorisationshist", "bookingauthorisations", "history", array("id_space", "id"), array("", ""));
+        $this->addRoute("bookingauthorisationsadd", "bookingauthorisationsadd", "bookingauthorisations", "add", array("id_space", "id"), array("", ""));
+        $this->addRoute("bookingauthorisationsedit", "bookingauthorisationsedit", "bookingauthorisations", "edit", array("id_space", "id"), array("", ""));
+        
         
         $this->addRoute("bookingprices", "bookingprices", "bookingprices", "index", array("id_space"), array(""));
         $this->addRoute("bookingpricesowner", "bookingpricesowner", "bookingprices", "owner", array("id_space"), array(""));

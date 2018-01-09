@@ -66,6 +66,12 @@ class InvoicesController extends CoresecureController {
         $html .= '<a href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
         $html .= '</div>';
         $html .= '</li><br/>';
+        
+        $html .= "<li>";
+        $html .= '<div class="inline pm-inline-div">';
+        $html .= '<a href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
+        $html .= '</div>';
+        $html .= '</li><br/>';
 
         
         $modelSpace = new CoreSpace();

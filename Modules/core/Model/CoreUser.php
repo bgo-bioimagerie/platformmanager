@@ -24,51 +24,49 @@ class CoreUser extends Model {
         $this->setColumnsInfo("remember_key", "varchar(255)", "");
         $this->primaryKey = "id";
     }
-    
+
     public function mergeUsers($users) {
         for ($i = 1; $i < count($users); $i++) {
             $sql = "DELETE FROM core_users WHERE id=?";
             $this->runRequest($sql, array($users[$i]));
         }
     }
-    
-    public function disableUsers($desactivateSetting){
-        
-        
+
+    public function disableUsers($desactivateSetting) {
+
+
         $date = date('Y-m-d', time());
         $oneyearago = date('Y-m-d', strtotime($date . ' -1 year'));
-       
-        
-        if($desactivateSetting == 6){
+
+
+        if ($desactivateSetting == 6) {
             $sql = "SELECT * FROM core_users WHERE (date_last_login!=? "
                     . "AND date_last_login<? ) "
                     . "OR (date_end_contract!=? AND date_end_contract < ?)";
-            
+
             $req = $this->runRequest($sql, array('0000-00-00', $oneyearago, '0000-00-00', $date))->fetchAll();
-            
-            foreach ($req as $r){
+
+            foreach ($req as $r) {
                 $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
                 $this->runRequest($sql, array($r['id']));
             }
-            
         }
         /// \todo implement other cases
-        
     }
-    
-    public function getRemeberKey($id){
+
+    public function getRemeberKey($id) {
         $sql = "SELECT remember_key FROM core_users WHERE id=?";
         $req = $this->runRequest($sql, array($id));
         $data = $req->fetch();
         return $data[0];
     }
-    
-    public function setRememberKey($id, $key){
+
+    public function setRememberKey($id, $key) {
         $sql = "UPDATE core_users SET remember_key=? WHERE id=?";
-        $this->runRequest($sql,array($key, $id));
+        $this->runRequest($sql, array($key, $id));
     }
-    
-    public function getUserLogin($id){
+
+    public function getUserLogin($id) {
         $sql = "select login from core_users where id=?";
         $user = $this->runRequest($sql, array(
             $id
@@ -80,8 +78,8 @@ class CoreUser extends Model {
             return "";
         }
     }
-    
-    public function getUserByEmail($email){
+
+    public function getUserByEmail($email) {
         $sql = "SELECT * FROM core_users WHERE email=?";
         $user = $this->runRequest($sql, array($email));
         //echo 'found ' . $user->rowCount() . "users <br/>";
@@ -147,12 +145,14 @@ class CoreUser extends Model {
     public function add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $encrypte = true) {
 
         $pwde = $pwd;
-        if($encrypte){
+        if ($encrypte) {
             $pwde = md5($pwd);
         }
-        
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active) VALUES(?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active));
+
+        $datecreated = date("Y-m-d", time());
+
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created) VALUES(?,?,?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -161,11 +161,11 @@ class CoreUser extends Model {
         $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }
-    
-    public function isUserId($id){
+
+    public function isUserId($id) {
         $sql = "SELECT * FROM core_users WHERE id=?";
         $req = $this->runRequest($sql, array($id));
-        if($req->rowCount() > 0 ){
+        if ($req->rowCount() > 0) {
             return true;
         }
         return false;
@@ -274,7 +274,7 @@ class CoreUser extends Model {
             throw new Exception("Cannot find the user using the given parameters");
         }
     }
-    
+
     public function getUserIDByLogin($login) {
         $sql = "select id from core_users where login=?";
         $user = $this->runRequest($sql, array(
@@ -287,19 +287,19 @@ class CoreUser extends Model {
             return 0;
         }
     }
-    
+
     /**
      * 
      * @param type $login
      * @return int
      */
-    public function getIdByLogin($login){
+    public function getIdByLogin($login) {
         $sql = "SELECT id FROM core_users WHERE login=?";
         $user = $this->runRequest($sql, array(
             $login
         ));
         if ($user->rowCount() == 1) {
-            $data =  $user->fetch(); 
+            $data = $user->fetch();
             return $data[0];
         } else {
             return 0;
@@ -338,16 +338,16 @@ class CoreUser extends Model {
             $userId
         ));
     }
-    
+
     public function setLastConnection($userId, $time) {
         $sql = "update core_users set date_last_login=? where id=?";
         $this->runRequest($sql, array(
             $time, $userId
         ));
     }
-    
-    public function getLastConnection($userId){
-        $sql ="SELECT date_last_login FROM core_users WHERE id=?";
+
+    public function getLastConnection($userId) {
+        $sql = "SELECT date_last_login FROM core_users WHERE id=?";
         $req = $this->runRequest($sql, array($userId))->fetch();
         return $req[0];
     }
@@ -356,10 +356,10 @@ class CoreUser extends Model {
      * Update user to active or unactive depending on the settings criteria
      */
     public function updateUsersActive() {
-        
+
         $modelConfig = new CoreConfig ();
         $desactivateType = $modelConfig->getParam("user_desactivate");
-
+        
         if ($desactivateType > 1) {
             if ($desactivateType == 2) {
                 $this->updateUserActiveContract();
@@ -369,8 +369,7 @@ class CoreUser extends Model {
                 $this->updateUserActiveLastLogin(2);
             } else if ($desactivateType == 5) {
                 $this->updateUserActiveLastLogin(3);
-            }
-            else if ($desactivateType == 6){
+            } else if ($desactivateType == 6) {
                 $this->updateUserActiveContract();
                 $this->updateUserActiveLastLogin(1);
             }
@@ -415,6 +414,10 @@ class CoreUser extends Model {
             if ($contractDate != "0000-00-00") {
                 if ($contractDate < $today) {
                     $this->setactive($user["id"], 0);
+
+                    // desactivate authorizations
+                    $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
+                    $this->runRequest($sql, array($user ['id'], date("Y-m-s")));
                 }
             }
         }
@@ -425,6 +428,8 @@ class CoreUser extends Model {
      * @param number $numberYear Number of years
      */
     private function updateUserActiveLastLogin($numberYear) {
+        
+        //echo "updateUserActiveLastLogin <br/>";
         $sql = "select id, date_last_login, date_created from core_users where is_active=1";
         $req = $this->runRequest($sql);
         $users = $req->fetchAll();
@@ -445,15 +450,7 @@ class CoreUser extends Model {
                 $createdDate = explode("-", $createdDate);
                 $timec = mktime(0, 0, 0, $createdDate [1], $createdDate [2], $createdDate [0]);
                 $timec = date("Y-m-d", $timec + $numberYear * 31556926);
-                /*
-                  if ($user["name"] == "test"){
-                  print_r($createdDate);
-                  print_r($lastLoginDate);
-                  echo "today = " . $today . "<br/>";
-                  echo "timell = " . $timell . "<br/>";
-                  echo "timec = " . $timec . "<br/>";
-                  }
-                 */
+                
                 $changedUsers = array();
                 if ($timec <= $today) {
                     if ($timell <= $today) {
@@ -461,8 +458,27 @@ class CoreUser extends Model {
                         $changedUsers [] = $user ['id'];
                     }
                 }
+            } else {
+                //echo 'try to desactivate ' . $user ['id'] . " with authorizations <br>";
+                $sql = "SELECT * FROM bk_authorization WHERE user_id=? ORDER BY date DESC";
+                $req = $this->runRequest($sql, array($user ['id']));
+                if ($req->rowCount() > 0) {
+                    $data = $req->fetch();
+
+                    $date_y = date('Y', time()) - $numberYear;
+                    $dateref = $date_y . "-" . date("m-d", time());
+                    if ($data["date"] != "0000-00-00" && $data["date"] < $dateref) {
+                        //echo 'desactivate ' . $user ['id'] . " with authorizations <br>";
+                        $this->setactive($user ['id'], 0);
+
+                        // desactivate authorizations
+                        $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
+                        $this->runRequest($sql, array( date("Y-m-d", time() ), $user ['id'] ));
+                    }
+                }
             }
         }
+        //echo "updateUserActiveLastLogin ends <br/>";
     }
 
     /**
@@ -579,7 +595,7 @@ class CoreUser extends Model {
         $sql = "DELETE FROM core_users WHERE id=?";
         $this->runRequest($sql, array($id));
     }
-    
+
     public function login($login, $pwd) {
 
         // test if local account

@@ -346,26 +346,61 @@ class InvoicesTranslator {
         return "Invoice informations have been saved";
     }
 
-    public static function currentTemplate($lang){
+    public static function currentTemplate($lang) {
         if ($lang == "fr") {
             return "Modèle actuel";
         }
         return "Current template";
     }
-    
-    public static function Download($lang){
+
+    public static function Download($lang) {
         if ($lang == "fr") {
             return "Télécharger";
         }
         return "Download";
     }
-    
-    public static function TheTemplateHasBeenUploaded($lang){
+
+    public static function TheTemplateHasBeenUploaded($lang) {
         if ($lang == "fr") {
             return "Le modèle à bien été téléversé";
         }
         return "The template has been uploaded";
     }
+
+    public static function NewInvoice($lang) {
+        if ($lang == "fr") {
+            return "Nouveau relevé";
+        }
+        return "New invoice";
+    }
+
+    public static function Product($lang) {
+        if ($lang == "fr") {
+            return "Produit/service";
+        }
+        return "Product";
+    }
+
+    public static function PDF($lang) {
+        if ($lang == "fr") {
+            return "PDF";
+        }
+        return "PDF";
+    }
     
+    public static function PDFDetails($lang) {
+        if ($lang == "fr") {
+            return "PDF avec détails";
+        }
+        return "PDF with details";
+    }
     
+    public static function User($lang) {
+        if ($lang == "fr") {
+            return "Utilisateur";
+        }
+        return "User";
+    }
+    
+
 }

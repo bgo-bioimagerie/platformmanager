@@ -443,6 +443,25 @@ class FormHtml {
         return $html;
     }
 
+        /**
+     * 
+     * @param type $name
+     * @param type $value
+     * @param type $required
+     * @param type $vect
+     * @return string
+     */
+    static public function inlineLabel($name, $value, $vect = false) {
+
+        $vectv = "";
+        if ($vect) {
+            $vectv = "[]";
+        }
+        $html = "<span class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
+        $html .= ">" . $value . "</span>";
+
+        return $html;
+    }
     /**
      * 
      * @param type $useJavascript

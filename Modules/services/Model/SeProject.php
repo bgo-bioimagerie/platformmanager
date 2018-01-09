@@ -566,8 +566,8 @@ class SeProject extends Model {
     }
 
     public function getProjectsOpenedPeriod($beginPeriod, $endPeriod, $id_space) {
-        $sql = "select * from se_project where date_open>=? AND date_open<=?";
-        $projects = $this->runRequest($sql, array($beginPeriod, $endPeriod))->fetchAll();
+        $sql = "select * from se_project where date_open>=? AND date_open<=? AND id_space=?";
+        $projects = $this->runRequest($sql, array($beginPeriod, $endPeriod, $id_space))->fetchAll();
         
         $modelUser = new EcUser();
         for($i = 0 ; $i < count($projects) ; $i++){
@@ -596,7 +596,7 @@ class SeProject extends Model {
     }
 
     public function getPeriodeServicesBalances($id_space, $beginPeriod, $endPeriod) {
-        $sql = "select * from se_project where id_space=? AND date_close>=? OR date_close='0000-00-00'";
+        $sql = "select * from se_project where id_space=? AND (date_close>=? OR date_close='0000-00-00')";
         $req = $this->runRequest($sql, array($id_space, $beginPeriod));
         $projects = $req->fetchAll();
 
@@ -632,8 +632,8 @@ class SeProject extends Model {
     public function getPeriodeBilledServicesBalances($id_space, $beginPeriod, $endPeriod) {
 
         // get the projects 
-        $sql1 = "select * from se_project where id IN (SELECT DISTINCT id_project FROM se_project_service WHERE id_invoice IN(SELECT id FROM in_invoice WHERE date_generated>=? AND date_generated<=?))";
-        $req1 = $this->runRequest($sql1, array($beginPeriod, $endPeriod));
+        $sql1 = "select * from se_project where id IN (SELECT DISTINCT id_project FROM se_project_service WHERE id_invoice IN(SELECT id FROM in_invoice WHERE date_generated>=? AND date_generated<=? AND id_space=?))";
+        $req1 = $this->runRequest($sql1, array($beginPeriod, $endPeriod, $id_space));
         $projects = $req1->fetchAll();
 
         $items = array();

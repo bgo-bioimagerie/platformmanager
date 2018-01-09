@@ -35,6 +35,20 @@ class ReVisa extends Model {
         return $pdo;
     }
 
+    public function getForListByCategory($id_resource_category){
+        $sql = "SELECT * FROM re_visas WHERE id_resource_category=? AND is_active=1";
+        $data = $this->runRequest($sql, array($id_resource_category))->fetchAll();
+        
+        $names = array();
+        $ids = array();
+        foreach ($data as $d){
+            $modelUser = new CoreUser();
+            $names[] = $modelUser->getUserInitiales($d["id_instructor"]);
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+    
     public function mergeUsers($users){
         for($i = 1 ; $i < count($users) ; $i++){
             $sql = "UPDATE re_visas SET id_instructor=? WHERE id_instructor=?";
