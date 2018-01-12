@@ -79,6 +79,51 @@ class BkCalendarEntry extends Model {
 
         return $quantities;
     }
+    
+    public function getStatTimeResps($id_space, $dateBegin, $dateEnd){
+        
+        //dates to time
+        $dateBeginArray = explode("-", $dateBegin);
+        $dateBeginTime = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]);
+        
+        $dateEndArray = explode("-", $dateEnd);
+        $dateEndTime = mktime(0, 0, 0, $dateEndArray[1], $dateEndArray[2], $dateEndArray[0]);
+        
+        
+        // get all resources
+        $sql1 = "SELECT id, name FROM re_info WHERE id_space=?";
+        $resources = $this->runRequest($sql1, array($id_space))->fetchAll();
+        
+        // get all responsibles
+        $sql2 = "SELECT DISTINCT responsible_id FROM bk_calendar_entry WHERE resource_id IN (SELECT id FROM re_info WHERE id_space=?) AND start_time>=? AND start_time<=?";
+        $resps = $this->runRequest($sql2, array($id_space, $dateBeginTime, $dateEndTime))->fetchAll();
+        
+        
+        $data = array();
+        $data["resources"] = $resources;
+        $data["count"] = array();
+        
+        foreach($resps as $resp){
+            
+            $sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
+            $respinfo = $this->runRequest($sqlr, array($resp[0]))->fetch();
+            
+            $resourceCount = array();
+            foreach( $resources as $resource){
+                $sql3 = "SELECT * FROM bk_calendar_entry WHERE responsible_id=? AND resource_id=? AND start_time>=? AND start_time<=?";
+                $res = $this->runRequest($sql3, array($resp[0], $resource["id"], $dateBeginTime, $dateEndTime))->fetchAll();
+                $time = 0;
+                foreach($res as $r){
+                    $time += $r["end_time"] - $r["start_time"];
+                }
+                $resourceCount[] = array( "resource" => $resource["name"], "time" => round($time/3600, 1) );
+            }
+            
+            $data["count"][] = array( "responsible" => $respinfo["name"] . " " . $respinfo["firstname"], "count" => $resourceCount ); 
+        }
+        return $data;
+        
+    }
 
     public function updateNullResponsibles() {
 
