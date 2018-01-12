@@ -1557,5 +1557,19 @@ class BookingTranslator {
         }
         return "Authorisations history for";
     }
-
+    
+    public static function statResp($lang) {
+        if ($lang == "fr") {
+            return "Durées réservations par responsables";
+        }
+        return "Booking time per responsible";
+    }
+    
+    public static function bookingstatreservationresp($lang) {
+        if ($lang == "fr") {
+            return "Temps réservation par responsable";
+        }
+        return "Booking time per responsible";
+    }
+    
 }

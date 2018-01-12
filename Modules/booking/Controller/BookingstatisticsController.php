@@ -76,6 +76,51 @@ class BookingstatisticsController extends CoresecureController {
         
     }
 
+    public function statreservationrespAction($id_space){
+        
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        
+        $form = new Form($this->request, "bookingStatTimeResp");
+        $form->setTitle(BookingTranslator::statResp($lang));
+        $form->addDate("datebegin", BookingTranslator::Date_Begin($lang), true);
+        $form->addDate("dateend", BookingTranslator::Date_End($lang), true);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatreservationresp/" .$id_space);
+        
+        if ($form->check()){
+        
+            $modelBooking = new BkCalendarEntry();
+            $stats = $modelBooking->getStatTimeResps(
+                    $id_space,
+                    CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
+                    CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
+                    );
+            
+            $csv = ",";
+            foreach ( $stats["resources"] as $resoure ){
+                $csv .= $resoure["name"] . ",";
+            }
+            $csv .= "\n";
+            foreach ( $stats["count"] as $data ){
+                $csv .= $data["responsible"] . ",";
+                foreach( $data["count"] as $count ){
+                    $csv .= $count["time"] . ",";
+                }
+                $csv .= "\n";
+            }
+            
+            header('Content-Disposition: attachment; filename="filename.csv";');
+            echo $csv;
+            return;
+        }
+        
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang)
+        ));
+    }
+    
     /**
      * Statistics form pages
      */
