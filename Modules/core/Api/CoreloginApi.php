@@ -27,7 +27,7 @@ class CoreloginApi extends Controller {
         if ($this->request->isParameter("login") && $this->request->isParameter("password")) {
             $this->login();
         } else {
-            echo json_encode(['status' => "error", 'error' => "login and password are not in the request"]);
+            echo json_encode(array('status' => "error", 'error' => "login and password are not in the request"));
         }
     }
 
@@ -46,13 +46,13 @@ class CoreloginApi extends Controller {
                 
                 $id_space = $modelSpace->getSpaceIdFromName($spaceName);
                 $spaceRole = $modelSpace->getUserSpaceRole($id_space, $user[0]);
-                echo json_encode(['status' => $status, "space_role" => $spaceRole]);
+                echo json_encode(array('status' => $status, "space_role" => $spaceRole));
             }
             else{
-                echo json_encode(['status' => $status]);
+                echo json_encode(array('status' => $status));
             }
         } else {
-            echo json_encode(['status' => "denied", 'error' => $status]);
+            echo json_encode(array('status' => "denied", 'error' => $status));
         }
     }
 

@@ -45,6 +45,20 @@ class BkCalendarEntry extends Model {
         $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
         $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
     }
+    
+    public function getEntriesForUserResource($id_user, $id_resource){
+        
+        $sql = "SELECT * FROM bk_calendar_entry WHERE recipient_id=? AND resource_id=? ORDER BY start_time DESC LIMIT 10";
+        $data = $this->runRequest($sql, array($id_user, $id_resource))->fetchAll();
+        for ($i = 0 ; $i < count($data) ; $i++){
+            $data[$i]["hourstart"] = date("H:i", $data[$i]["start_time"]);
+            $data[$i]["hourend"] = date("H:i", $data[$i]["end_time"]);
+            $data[$i]["datetimebegin"] = date("Y-m-d_H-i", $data[$i]["start_time"]);
+            $data[$i]["date"] = date("d/m/Y", $data[$i]["start_time"]);
+        }
+        return $data;
+        
+    }
 
     public function getStatsQuantities($id_space, $dateBegin, $dateEnd) {
 
