@@ -70,7 +70,7 @@ class CoreconnectionController extends CorecookiesecureController {
 
         if ($this->request->isparameter("login") && $this->request->isParameter("pwd")) {
             $login = $this->request->getParameter("login");
-            $pwd = $this->request->getparameter("pwd");
+            $pwd = $this->request->getparameter("pwd", false);
 
             if ($login == "--") {
                 $this->generateView(array('msgError' => 'Login not correct', "admin_email" => $admin_email), "index");

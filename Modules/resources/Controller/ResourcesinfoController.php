@@ -59,7 +59,8 @@ class ResourcesinfoController extends CoresecureController {
             "name" => CoreTranslator::Name($lang),
             "category" => ResourcesTranslator::Category($lang),
             "area" => ResourcesTranslator::Area($lang),
-            "display_order" => ResourcesTranslator::Display_order($lang)
+            "display_order" => ResourcesTranslator::Display_order($lang),
+            "id" => "ID"
         );
 
         $modelResource = new ResourceInfo();
