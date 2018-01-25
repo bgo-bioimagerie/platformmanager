@@ -51,14 +51,19 @@ class BookingauthorisationsController extends CoresecureController {
         $data = array();
         foreach ($resources as $r) {
             if ($modelAuth->hasAuthorization($r["id"], $id)) {
+                $authInfo = $modelAuth->getLastActiveAuthorization($r["id"], $id);
                 $authorised = CoreTranslator::yes($lang);
                 $authorised_color = "#32CD32";
+                $date_authorized = CoreTranslator::dateFromEn($authInfo["date"], $lang);
             } else {
                 $authorised = CoreTranslator::no($lang);
                 $authorised_color = "#FF8C00";
+                $date_authorized = "";
             }
-            $data[] = array("id" => $r["id"] . "_" . $id,
+            $data[] = array(
+                "id" => $r["id"] . "_" . $id,
                 "resource_category" => $r["name"],
+                "date_authorised" => $date_authorized,
                 "authorised" => $authorised,
                 "authorised_color" => $authorised_color
             );
@@ -66,7 +71,8 @@ class BookingauthorisationsController extends CoresecureController {
 
         $headers = array(
             "resource_category" => ResourcesTranslator::Category($lang),
-            "authorised" => BookingTranslator::Authorized($lang)
+            "authorised" => BookingTranslator::Authorized($lang),
+            "date_authorised" => CoreTranslator::Date($lang)
         );
 
         $table = new TableView();

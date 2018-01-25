@@ -17,7 +17,7 @@
 </div>
 <?php echo $script ?>
 
-<?php if ($id > 0) { ?>
+<?php if ($id > 0 && $_SESSION["user_status"] > 1) { ?>
     <br>
     <div class="col-md-12 pm-form-short">
         <div class="page-header">
