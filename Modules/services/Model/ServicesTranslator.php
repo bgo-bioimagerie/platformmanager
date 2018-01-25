@@ -892,5 +892,55 @@ class ServicesTranslator {
         return "Emails responsibles";
     }
     
+    
+   public static function RoomNumber($lang) {
+        if ($lang == "fr") {
+            return "Salle";
+        }
+        return "Room number";
+    }
+    
+    
+    public static function servicesStock($lang) {
+        if ($lang == "fr") {
+            return "Stock";
+        }
+        return "Stock";
+    }
+    
+    public static function Cabinets($lang) {
+        if ($lang == "fr") {
+            return "Armoires";
+        }
+        return "Cabinets";
+    }
+    
+    public static function Cabinet($lang) {
+        if ($lang == "fr") {
+            return "Armoire";
+        }
+        return "Cabinet";
+    }
+    
+    public static function Shelfs($lang) {
+        if ($lang == "fr") {
+            return "Etagères";
+        }
+        return "Shelves";
+    }
+    
+    public static function Shelf($lang) {
+        if ($lang == "fr") {
+            return "Etagère";
+        }
+        return "Shelf";
+    }
+    
+    public static function Closing($lang) {
+        if ($lang == "fr") {
+            return "Libération de produit";
+        }
+        return "Closing";
+    }
 
 }

@@ -39,3 +39,15 @@
     <a id="menu-button" href="servicesvisas/{{id_space}}">{{visas}}</a>
     <a id="menu-button" href="servicesvisaedit/{{id_space}}">+</a>
 </div>
+<br/>
+<li>
+    {{stock}}
+</li>
+<div class="inline pm-inline-div">
+    <a id="menu-button" href="stockcabinets/{{id_space}}">{{cabinets}}</a>
+    <a id="menu-button" href="stockcabinetedit/{{id_space}}">+</a>
+</div>
+<div class="inline pm-inline-div">
+    <a id="menu-button" href="stockshelfs/{{id_space}}">{{shelfs}}</a>
+    <a id="menu-button" href="stockshelfedit/{{id_space}}">+</a>
+</div>
