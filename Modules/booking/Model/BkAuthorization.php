@@ -111,6 +111,17 @@ class BkAuthorization extends Model {
             return false;
         }
     }
+    
+    public function getLastActiveAuthorization($id_resource, $id_user){
+        $sql = "SELECT * from bk_authorization where user_id=? AND resource_id=? AND is_active=1 ORDER BY date ASC;";
+        $data = $this->runRequest($sql, array($id_user, $id_resource));
+        if ($data->rowCount() >= 1){
+            return $data->fetch();  
+        }
+        else{
+            return array();
+        }
+    }
 
  
     

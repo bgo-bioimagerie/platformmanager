@@ -50,7 +50,7 @@ class Anticorps extends Model {
         // add new column
         $this->addColumn("ac_anticorps", "id_staining", "float(11)", 1);
         $this->addColumn("ac_anticorps", "id_application", "float(11)", 1);
-        $this->addColumn("ac_anticorps", "export_catalog", "int(1)", 1);
+        $this->addColumn("ac_anticorps", "export_catalog", "int(1)", 0);
         $this->addColumn("ac_anticorps", "image_url", "varchar(250)", "");
         $this->addColumn("ac_anticorps", "image_desc", "varchar(250)", "");
         $this->addColumn("ac_anticorps", "id_space", "INT(11)", 0);

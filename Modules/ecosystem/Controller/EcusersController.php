@@ -272,9 +272,11 @@ class EcusersController extends CoresecureController {
         $curentUserStatus = $modelUser->getStatus($_SESSION["id_user"]);
         if ($curentUserStatus > 1 ){
             $form->addSelect("id_status", EcosystemTranslator::Status($lang), $choicesS, $choicesidS, $user["status_id"]);
+            $form->addSelect("is_active", EcosystemTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $user["is_active"]);
         }
         else{
             $form->addHidden("id_status", 1);
+            $form->addHidden("is_active", $user["is_active"]);
         }
         $form->addDate("date_convention", EcosystemTranslator::Date_convention($lang), false, CoreTranslator::dateFromEn($user["date_convention"], $lang));
 
@@ -332,7 +334,7 @@ class EcusersController extends CoresecureController {
                         $this->request->getParameter("phone"), $this->request->getParameter("unit"), 
                         $this->request->getParameter("is_responsible"), $this->request->getParameter("id_status"), 
                         CoreTranslator::dateToEn($this->request->getParameter("date_convention"), $lang) , 
-                        CoreTranslator::dateToEn($this->request->getParameter("date_end_contract"), $lang) , 1
+                        CoreTranslator::dateToEn($this->request->getParameter("date_end_contract"), $lang) , $this->request->getParameter("is_active")
                 );
                 $modelResp = new EcResponsible();
                 $modelResp->setResponsibles($id, $this->request->getParameter("responsibles"));
@@ -414,21 +416,31 @@ class EcusersController extends CoresecureController {
 
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
 
-        $user = $this->userModel->getInfo($id);
+        if ( $_SESSION["user_status"] > 1 ){
+        
+            $user = $this->userModel->getInfo($id);
 
-        // generate view
-        $lang = $this->getLanguage();
-        $this->render(array(
-            'id_space' => $id_space,
-            'lang' => $lang,
-            'user' => $user
-        ));
+            // generate view
+            $lang = $this->getLanguage();
+            $this->render(array(
+                'id_space' => $id_space,
+                'lang' => $lang,
+                'user' => $user
+            ));
+        }
+        else{
+            throw new Exception("Permission denied");
+        }
     }
 
     public function changepwdqAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
 
+        if ( $_SESSION["user_status"] > 2 ){ 
+            throw new Exception("Permission denied");
+        }
+        
         $lang = $this->getLanguage();
         $id = $this->request->getParameter("id");
         $pwd = $this->request->getParameter("pwd");
