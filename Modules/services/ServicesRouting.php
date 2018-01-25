@@ -59,6 +59,9 @@ class ServicesRouting extends Routing {
 
         $this->addRoute("servicesprojectsheet", "servicesprojectsheet", "servicesprojects", "sheet", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojectfollowup", "servicesprojectfollowup", "servicesprojects", "followup", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesprojectsclosing", "servicesprojectclosing", "servicesprojects", "closing", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesprojectsamplereturn", "servicesprojectsamplereturn", "servicesprojects", "samplereturn", array("id_space", "id"), array("", ""));
+        
         $this->addRoute("servicesprojecteditentry", "servicesprojecteditentry", "servicesprojects", "editentry", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojecteditentryquery", "servicesprojecteditentryquery", "servicesprojects", "editentryquery", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojectdeleteentry", "servicesprojectdeleteentry", "servicesprojects", "deleteentry", array("id_space", "id_project", "id"), array("", "", ""));
@@ -91,6 +94,18 @@ class ServicesRouting extends Routing {
         $this->addRoute("servicesstatisticsmailresps", "servicesstatisticsmailresps", "servicesstatisticsproject", "mailresps", array("id_space"), array(""));
 
         $this->addRoute("servicesstatisticsprojectsamplesreturn", "servicesstatisticsprojectsamplesreturn", "servicesstatisticsproject", "samplesreturn", array("id_space"), array(""));
+
+        
+        // stock
+        $this->addRoute("stockcabinets", "stockcabinets", "stockcabinet", "index", array("id_space"), array(""));
+        $this->addRoute("stockcabinetedit", "stockcabinetedit", "stockcabinet", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("stockcabinetdelete", "stockcabinetdelete", "stockcabinet", "delete", array("id_space", "id"), array("", ""));
+
+        $this->addRoute("stockshelfs", "stockshelfs", "stockshelf", "index", array("id_space"), array(""));
+        $this->addRoute("stockshelfedit", "stockshelfedit", "stockshelf", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("stockshelfdelete", "stockshelfdelete", "stockshelf", "delete", array("id_space", "id"), array("", ""));
+        
+        
     }
 
 }

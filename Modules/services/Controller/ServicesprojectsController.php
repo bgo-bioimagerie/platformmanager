@@ -14,6 +14,8 @@ require_once 'Modules/services/Model/SeVisa.php';
 require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/ecosystem/Model/EcBelonging.php';
 
+require_once 'Modules/services/Model/StockShelf.php';
+
 /**
  * 
  * @author sprigent
@@ -95,15 +97,14 @@ class ServicesprojectsController extends CoresecureController {
             $modelCoreConfig = new CoreConfig();
             $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
-            
+
             $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodbegin, $projectperiodend);
-            
+
             $yearsUrl = "servicesprojectsclosed";
             if ($year == "") {
-                if(count($years) < 1){
+                if (count($years) < 1) {
                     $year = time('Y');
-                }
-                else{
+                } else {
                     $year = $years[count($years) - 1];
                 }
             }
@@ -123,26 +124,26 @@ class ServicesprojectsController extends CoresecureController {
                 $year = date("Y", time()) - 1;
             }
             $yearp = $year + 1;
-            
+
             $month = $projectperiodbeginArray[1];
-            if($month < 10){
+            if ($month < 10) {
                 $month = "0" . $month;
             }
             $monthp = $projectperiodendArray[1];
-            if($monthp < 10){
+            if ($monthp < 10) {
                 $monthp = "0" . $monthp;
             }
-            
+
             $day = $projectperiodbeginArray[2];
-            if($day < 10){
+            if ($day < 10) {
                 $day = "0" . $day;
             }
-            
+
             $dayp = $projectperiodendArray[2];
-            if($dayp < 10){
+            if ($dayp < 10) {
                 $dayp = "0" . $dayp;
             }
-            
+
             $periodStart = $year . "-" . $month . "-" . $day;
             $periodEnd = $yearp . "-" . $monthp . "-" . $dayp;
 
@@ -271,6 +272,77 @@ class ServicesprojectsController extends CoresecureController {
         $this->redirect("services/" . $id_space);
     }
 
+    public function closingAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelVisa = new SeVisa();
+        $visas = $modelVisa->getForList($id_space);
+
+        $modelProject = new SeProject();
+        $project = $modelProject->getEntry($id);
+
+        $modelShelf = new StockShelf();
+        $cabinets = $modelShelf->getAllForProjectSelect($id_space);
+
+        $form = new Form($this->request, "projectclosingform");
+        $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($project["date_close"], $lang));
+        $form->addSelect("closed_by", ServicesTranslator::Closed_by($lang), $visas["names"], $visas["ids"], $project["closed_by"]);
+        $form->addSelect("id_cabinet", ServicesTranslator::Cabinet($lang), $cabinets["names"], $cabinets["ids"], $project["id_sample_cabinet"]);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectclosing/" . $id_space . "/" . $id);
+        $form->setButtonsWidth(2, 10);
+
+        if ($form->check()) {
+            $modelProject->closing(
+                $id,
+                CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang),
+                $this->request->getParameter("closed_by"),
+                $this->request->getParameter("id_cabinet")
+            );
+
+            $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
+            $this->redirect("servicesprojectclosing/" . $id_space . "/" . $id);
+            return;
+        }
+
+        $headerInfo["projectId"] = $id;
+        $headerInfo["curentTab"] = "closing";
+
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang),
+            "headerInfo" => $headerInfo, "projectName" => $project["name"]));
+    }
+
+    public function samplereturnAction($id_space, $id) {
+
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelProject = new SeProject();
+        $project = $modelProject->getEntry($id);
+
+        $form = new Form($this->request, "projectreturnform");
+        $form->addTextArea("samplereturn", ServicesTranslator::SampleReturn($lang), false, $project["samplereturn"]);
+        $form->addDate("samplereturndate", ServicesTranslator::SampleReturn($lang), false, CoreTranslator::dateFromEn($project["samplereturndate"], $lang));
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsamplereturn/" . $id_space . "/" . $id);
+        $form->setButtonsWidth(2, 10);
+
+        if ($form->check()) {
+            $modelProject->setSampleReturn($id, $this->request->getParameter("samplereturn"), CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang));
+
+            $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
+            $this->redirect("servicesprojectsamplereturn/" . $id_space . "/" . $id);
+            return;
+        }
+
+        $headerInfo["projectId"] = $id;
+        $headerInfo["curentTab"] = "samplereturn";
+
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang),
+            "headerInfo" => $headerInfo, "projectName" => $project["name"]));
+    }
+
     public function sheetAction($id_space, $id) {
 
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
@@ -316,42 +388,17 @@ class ServicesprojectsController extends CoresecureController {
 
         $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, CoreTranslator::dateFromEn($value["time_limit"], $lang));
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
-        if ($id > 0) {
-            $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));
 
-            $modelVisa = new SeVisa();
-            $visas = $modelVisa->getForList($id_space);
-
-            $form->addSelect("closed_by", ServicesTranslator::Closed_by($lang), $visas["names"], $visas["ids"], $value["closed_by"]);
-        
-            $form->addTextArea("samplereturn", ServicesTranslator::SampleReturn($lang), false, $value["samplereturn"]);
-            $form->addDate("samplereturndate", ServicesTranslator::SampleReturn($lang), false, CoreTranslator::dateFromEn($value["samplereturndate"], $lang));
-            
-        } else {
-            $form->addHidden("date_close", $value["date_close"]);
-            $form->addHidden("closed_by", $value["closed_by"]);
-            $form->addHidden("samplereturn", $value["samplereturn"]);
-            $form->addHidden("samplereturndate", $value["samplereturndate"]);
-        }
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
 
-            if ($this->request->getParameter("date_close") != "" && $this->request->getParameter("closed_by") == 0) {
-                $message = ServicesTranslator::TheFieldVisaIsMandatoryWithClosed($lang);
-                $_SESSION["message"] = $message;
-                $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);
-                return;
-            }
-
-            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), $value["date_close"], $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
 
             $modelProject->setOrigin($id, $this->request->getParameter("id_origin"));
-            $modelProject->setClosedBy($id, $this->request->getParameter("closed_by"));
             $modelProject->setInCharge($id, $this->request->getParameter("in_charge"));
-            $modelProject->setSampleReturn($id, $this->request->getParameter("samplereturn"), 
-                    CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang));
+
 
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
             $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);

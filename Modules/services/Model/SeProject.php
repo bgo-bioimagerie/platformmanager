@@ -37,6 +37,7 @@ class SeProject extends Model {
         $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
         $this->addColumn('se_project', 'samplereturn', 'TEXT', '');
         $this->addColumn('se_project', 'samplereturndate', 'DATE', '0000-00-00');
+        $this->addColumn('se_project', 'id_sample_cabinet', 'int(11)', 0);
         
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
@@ -51,6 +52,13 @@ class SeProject extends Model {
 		);";
 
         $this->runRequest($sql2);
+    }
+    
+    public function closing($id, $date_close, $closed_by, $id_cabinet){
+        
+        $sql = "UPDATE se_project SET date_close=?, closed_by=?, id_sample_cabinet=? WHERE id=?";
+        $this->runRequest($sql, array($date_close, $closed_by, $id_cabinet, $id));
+        
     }
     
     public function getRespsPeriod($id_space, $periodStart, $periodEnds){
