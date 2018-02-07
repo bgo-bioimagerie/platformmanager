@@ -5,7 +5,7 @@ require_once 'Framework/TableView.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/StockCabinet.php';
-require_once 'Modules/services/Model/Stockshelf.php';
+require_once 'Modules/services/Model/StockShelf.php';
 
 require_once 'Modules/services/Model/ServicesTranslator.php';
 
