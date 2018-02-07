@@ -282,25 +282,31 @@ class ServicesprojectsController extends CoresecureController {
         $modelProject = new SeProject();
         $project = $modelProject->getEntry($id);
 
-        $modelShelf = new StockShelf();
-        $cabinets = $modelShelf->getAllForProjectSelect($id_space);
+
 
         $form = new Form($this->request, "projectclosingform");
         $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($project["date_close"], $lang));
         $form->addSelect("closed_by", ServicesTranslator::Closed_by($lang), $visas["names"], $visas["ids"], $project["closed_by"]);
-        $form->addSelect("id_cabinet", ServicesTranslator::Cabinet($lang), $cabinets["names"], $cabinets["ids"], $project["id_sample_cabinet"]);
+        $form->addTextArea("samplereturn", ServicesTranslator::SampleReturn($lang), false, $project["samplereturn"]);
+        $form->addDate("samplereturndate", ServicesTranslator::DateSampleReturn($lang), false, CoreTranslator::dateFromEn($project["samplereturndate"], $lang));
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectclosing/" . $id_space . "/" . $id);
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
-            $modelProject->closing(
-                $id,
-                CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang),
-                $this->request->getParameter("closed_by"),
-                $this->request->getParameter("id_cabinet")
+            
+            $modelProject->closeProject(
+                    $id,
+                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang),
+                    $this->request->getParameter("closed_by")
             );
-
+            
+            $modelProject->sampleReturn(
+                    $id,
+                    $this->request->getParameter("samplereturn"),
+                    CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang)
+            );
+            
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
             $this->redirect("servicesprojectclosing/" . $id_space . "/" . $id);
             return;
@@ -313,26 +319,36 @@ class ServicesprojectsController extends CoresecureController {
             "headerInfo" => $headerInfo, "projectName" => $project["name"]));
     }
 
-    public function samplereturnAction($id_space, $id) {
+    public function samplestockAction($id_space, $id) {
 
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $modelShelf = new StockShelf();
+        $cabinets = $modelShelf->getAllForProjectSelect($id_space);
+        
         $modelProject = new SeProject();
         $project = $modelProject->getEntry($id);
 
         $form = new Form($this->request, "projectreturnform");
-        $form->addTextArea("samplereturn", ServicesTranslator::SampleReturn($lang), false, $project["samplereturn"]);
-        $form->addDate("samplereturndate", ServicesTranslator::SampleReturn($lang), false, CoreTranslator::dateFromEn($project["samplereturndate"], $lang));
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsamplereturn/" . $id_space . "/" . $id);
+        
+        $form->addSelect("samplestocked", ServicesTranslator::SampleStocked($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $project["samplestocked"]);
+        $form->addSelect("id_cabinet", ServicesTranslator::Cabinet($lang), $cabinets["names"], $cabinets["ids"], $project["id_sample_cabinet"]);
+        $form->addTextArea("samplescomment", ServicesTranslator::Comment($lang), false, $project["samplescomment"]);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsample/" . $id_space . "/" . $id);
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
-            $modelProject->setSampleReturn($id, $this->request->getParameter("samplereturn"), CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang));
+            $modelProject->setSampleStock(
+                    $id, 
+                    $this->request->getParameter("samplestocked"),
+                    $this->request->getParameter("id_cabinet"),
+                    $this->request->getParameter("samplescomment")
+            );
 
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
-            $this->redirect("servicesprojectsamplereturn/" . $id_space . "/" . $id);
+            $this->redirect("servicesprojectsample/" . $id_space . "/" . $id);
             return;
         }
 

@@ -863,6 +863,13 @@ class ServicesTranslator {
         }
         return "Sample return";
     }
+    
+    public static function DateSampleReturn($lang){
+        if ($lang == "fr") {
+            return "Restitution date";
+        }
+        return "Date restitution";
+    }
 
     public function servicesstatisticsprojectsamplesreturn($lang) {
         if ($lang == "fr") {
@@ -910,28 +917,28 @@ class ServicesTranslator {
     
     public static function Cabinets($lang) {
         if ($lang == "fr") {
-            return "Armoires";
+            return "Emplacements";
         }
         return "Cabinets";
     }
     
     public static function Cabinet($lang) {
         if ($lang == "fr") {
-            return "Armoire";
+            return "Emplacement";
         }
         return "Cabinet";
     }
     
     public static function Shelfs($lang) {
         if ($lang == "fr") {
-            return "Etagères";
+            return "Compartiments";
         }
         return "Shelves";
     }
     
     public static function Shelf($lang) {
         if ($lang == "fr") {
-            return "Etagère";
+            return "Compartiment";
         }
         return "Shelf";
     }
@@ -942,5 +949,20 @@ class ServicesTranslator {
         }
         return "Closing";
     }
+    
+    public static function Samples($lang) {
+        if ($lang == "fr") {
+            return "Echantillons";
+        }
+        return "Samples";
+    }
+    
+    public static function SampleStocked($lang) {
+        if ($lang == "fr") {
+            return "Echantillons";
+        }
+        return "Samples";
+    }
+    
 
 }

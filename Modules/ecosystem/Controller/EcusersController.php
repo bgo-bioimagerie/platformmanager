@@ -272,10 +272,14 @@ class EcusersController extends CoresecureController {
         $curentUserStatus = $modelUser->getStatus($_SESSION["id_user"]);
         if ($curentUserStatus > 1 ){
             $form->addSelect("id_status", EcosystemTranslator::Status($lang), $choicesS, $choicesidS, $user["status_id"]);
-            $form->addSelect("is_active", EcosystemTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $user["is_active"]);
         }
         else{
             $form->addHidden("id_status", 1);
+        }
+        if ( $curentUserStatus > 1 || $user["is_active"] == 0 ){
+            $form->addSelect("is_active", EcosystemTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $user["is_active"]);
+        }
+        else{
             $form->addHidden("is_active", $user["is_active"]);
         }
         $form->addDate("date_convention", EcosystemTranslator::Date_convention($lang), false, CoreTranslator::dateFromEn($user["date_convention"], $lang));

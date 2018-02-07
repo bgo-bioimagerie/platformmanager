@@ -13,7 +13,6 @@ require_once 'Modules/services/Model/SeVisa.php';
 
 require_once 'Modules/services/Model/StockCabinet.php';
 require_once 'Modules/services/Model/StockShelf.php';
-require_once 'Modules/services/Model/StockBatchShelf.php';
 /**
  * Class defining methods to install and initialize the core database
  *
@@ -62,8 +61,6 @@ class ServicesInstall extends Model {
         $modelCabinet = new StockCabinet();
         $modelCabinet->createTable();
         
-        $modelBatchShelf = new StockBatchShelf();
-        $modelBatchShelf->createTable();
 
         if (!file_exists('data/services/')) {
             mkdir('data/services/', 0777, true);
