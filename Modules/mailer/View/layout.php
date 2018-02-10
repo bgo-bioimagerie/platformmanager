@@ -28,35 +28,32 @@ if (!$headless) {
 
 <?php
 startblock('navbar');
-if (!$headless) {
-    require_once 'Modules/core/Controller/CorenavbarController.php';
-    $navController = new CorenavbarController(new Request(array(), false));
-    echo $navController->navbar();
-}
+require_once 'Modules/core/Controller/CorenavbarController.php';
+$navController = new CorenavbarController(new Request(array(), false));
+echo $navController->navbar();
 endblock();
 ?>
 
 
-    <?php startblock('spacenavbar'); ?>
-<div class="col-md-2 pm-space-navbar">
-    <?php
-    require_once 'Modules/core/Controller/CorespaceController.php';
-    $spaceController = new CorespaceController(new Request(array(), false));
-    echo $spaceController->navbar($id_space);
-    ?>
-</div> 
-<div class="col-md-10">
-<?php endblock(); ?>
+<?php startblock('spacenavbar'); ?>
+<?php
+require_once 'Modules/core/Controller/CorespaceController.php';
+$spaceController = new CorespaceController(new Request(array(), false));
+echo $spaceController->navbar($id_space);
+?>
+<div class="col-md-12 col-lg-12 pm-space-content" >
+    <?php endblock(); ?>
 
 
 
     <?php startblock('content') ?>
-<?php endblock() ?>
+    <?php endblock() ?>
 
 
 
 
-<?php startblock('footer') ?>
+    <?php startblock('footer') ?>
 </div>
+
 <?php
 endblock();

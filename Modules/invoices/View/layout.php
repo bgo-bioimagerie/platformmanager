@@ -26,43 +26,41 @@ if (!$headless) {
 
 
 
-<?php startblock('navbar'); 
-if(!$headless){
-    require_once 'Modules/core/Controller/CorenavbarController.php';
-    $navController = new CorenavbarController(new Request(array()));
-    echo $navController->navbar();
- }
- endblock(); ?>
+<?php
+startblock('navbar');
+require_once 'Modules/core/Controller/CorenavbarController.php';
+$navController = new CorenavbarController(new Request(array(), false));
+echo $navController->navbar();
+endblock();
+?>
 
 
 <?php startblock('spacenavbar'); ?>
-<div class="col-md-2 pm-space-navbar">
 <?php
 require_once 'Modules/core/Controller/CorespaceController.php';
 $spaceController = new CorespaceController(new Request(array(), false));
 echo $spaceController->navbar($id_space);
 ?>
-</div> 
-<div class="col-md-8">
-<?php
-endblock(); ?>
-
-
-
-<?php startblock('content') ?>
-    <?php endblock() ?>
-    
-
-
-
-<?php startblock('footer') ?>
-</div>
-<div class="col-md-2 pm-space-navbar-right" >
+<div class="col-md-2 pm-space-navbar" >
     <?php
     require_once 'Modules/invoices/Controller/InvoicesController.php';
     $menucontroller = new InvoicesController(new Request(array(), false));
     echo $menucontroller->navbar($id_space);
     ?>
 </div>
-<?php endblock();
-    
+<div class="col-md-10 pm-space-content" >
+    <?php endblock(); ?>
+
+
+
+    <?php startblock('content') ?>
+    <?php endblock() ?>
+
+
+
+
+    <?php startblock('footer') ?>
+</div>
+
+<?php
+endblock();

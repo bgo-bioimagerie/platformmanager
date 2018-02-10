@@ -33,6 +33,16 @@ if (!$headless) {
     }
     
     ?>
-    <?php //include 'Modules/core/View/spacebar.php'; ?>
+    <?php endblock(); ?>
+    
+    
+    <?php startblock('spacenavbar'); ?>
+<?php
+require_once 'Modules/core/Controller/CorespaceController.php';
+$spaceController = new CorespaceController(new Request(array(), false));
+echo $spaceController->navbar($id_space);
+?>
+<div class="row" style="margin-top: 55px">
     <?php include 'Modules/booking/View/navbarbooking.php'; ?>
+</div>
     <?php endblock();
