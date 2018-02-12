@@ -153,6 +153,8 @@ class BookingdefaultController extends BookingabstractController {
         else{
             $hour_startH = $this->request->getParameter("hour_startH");
             $hour_startM = $this->request->getParameter("hour_startm");
+            $modelScheduling = new BkScheduling();
+            $hour_startM = $modelScheduling->getClosestMinutes($id_resource, $hour_startM);
             $start_time = mktime($hour_startH, $hour_startM, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
         }
         
@@ -169,6 +171,9 @@ class BookingdefaultController extends BookingabstractController {
         else{
             $hour_endH = $this->request->getParameter("hour_endH");
             $hour_endM = $this->request->getParameter("hour_endm");
+            $modelScheduling = new BkScheduling();
+            $hour_endM = $modelScheduling->getClosestMinutes($id_resource, $hour_endM);
+            
             $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
         $modelSupInfo = new BkCalSupInfo();

@@ -38,11 +38,13 @@ if (!$headless) {
     
     <?php startblock('spacenavbar'); ?>
 <?php
-require_once 'Modules/core/Controller/CorespaceController.php';
-$spaceController = new CorespaceController(new Request(array(), false));
-echo $spaceController->navbar($id_space);
+if (!$headless){
+    require_once 'Modules/core/Controller/CorespaceController.php';
+    $spaceController = new CorespaceController(new Request(array(), false));
+    echo $spaceController->navbar($id_space);
+}
 ?>
-<div class="row" style="margin-top: 55px">
+<div class="row" <?php if (!$headless){ echo 'style="margin-top: 55px"'; } ?> >
     <?php include 'Modules/booking/View/navbarbooking.php'; ?>
 </div>
     <?php endblock();
