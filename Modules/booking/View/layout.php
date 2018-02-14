@@ -44,7 +44,20 @@ if (!$headless){
     echo $spaceController->navbar($id_space);
 }
 ?>
-<div class="row" <?php if (!$headless){ echo 'style="margin-top: 55px"'; } ?> >
+<div class="col-md-12 col-lg-12" <?php if (!$headless){ echo 'style="margin-top: 55px;'; } ?> >
     <?php include 'Modules/booking/View/navbarbooking.php'; ?>
 </div>
-    <?php endblock();
+
+    <?php endblock(); ?>
+
+
+
+    <?php startblock('content') ?>
+    <?php endblock() ?>
+
+
+
+
+    <?php startblock('footer') ?>
+
+<?php endblock();
