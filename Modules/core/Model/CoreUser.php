@@ -158,8 +158,15 @@ class CoreUser extends Model {
 
     public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
 
-        $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
-        $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+        $sqla = "SELECT is_active FROM core_users WHERE id=?";
+        $req = $this->runRequest($sqla, array($id))->fetch();
+        if ($req[0] != $is_active) {
+            $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, date_last_login=?, is_active=? WHERE id=?";
+            $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, "0000-00-00", $is_active, $id));
+        } else {
+            $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
+            $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+        }
     }
 
     public function isUserId($id) {
@@ -359,7 +366,7 @@ class CoreUser extends Model {
 
         $modelConfig = new CoreConfig ();
         $desactivateType = $modelConfig->getParam("user_desactivate");
-        
+
         if ($desactivateType > 1) {
             if ($desactivateType == 2) {
                 $this->updateUserActiveContract();
@@ -428,7 +435,7 @@ class CoreUser extends Model {
      * @param number $numberYear Number of years
      */
     private function updateUserActiveLastLogin($numberYear) {
-        
+
         //echo "updateUserActiveLastLogin <br/>";
         $sql = "select id, date_last_login, date_created from core_users where is_active=1";
         $req = $this->runRequest($sql);
@@ -450,7 +457,7 @@ class CoreUser extends Model {
                 $createdDate = explode("-", $createdDate);
                 $timec = mktime(0, 0, 0, $createdDate [1], $createdDate [2], $createdDate [0]);
                 $timec = date("Y-m-d", $timec + $numberYear * 31556926);
-                
+
                 $changedUsers = array();
                 if ($timec <= $today) {
                     if ($timell <= $today) {
@@ -473,7 +480,7 @@ class CoreUser extends Model {
 
                         // desactivate authorizations
                         $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
-                        $this->runRequest($sql, array( date("Y-m-d", time() ), $user ['id'] ));
+                        $this->runRequest($sql, array(date("Y-m-d", time()), $user ['id']));
                     }
                 }
             }
