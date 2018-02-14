@@ -461,11 +461,13 @@ class CoreUser extends Model {
                 $changedUsers = array();
                 if ($timec <= $today) {
                     if ($timell <= $today) {
+                        echo "desactivate " . $user ['id'] . " with logindate <br>";
                         $this->setactive($user ['id'], 0);
                         $changedUsers [] = $user ['id'];
                     }
                 }
             } else {
+                /*
                 //echo 'try to desactivate ' . $user ['id'] . " with authorizations <br>";
                 $sql = "SELECT * FROM bk_authorization WHERE user_id=? ORDER BY date DESC";
                 $req = $this->runRequest($sql, array($user ['id']));
@@ -475,7 +477,7 @@ class CoreUser extends Model {
                     $date_y = date('Y', time()) - $numberYear;
                     $dateref = $date_y . "-" . date("m-d", time());
                     if ($data["date"] != "0000-00-00" && $data["date"] < $dateref) {
-                        //echo 'desactivate ' . $user ['id'] . " with authorizations <br>";
+                        echo 'desactivate ' . $user ['id'] . " with authorizations <br>";
                         $this->setactive($user ['id'], 0);
 
                         // desactivate authorizations
@@ -483,6 +485,8 @@ class CoreUser extends Model {
                         $this->runRequest($sql, array(date("Y-m-d", time()), $user ['id']));
                     }
                 }
+                 
+                 */
             }
         }
         //echo "updateUserActiveLastLogin ends <br/>";
