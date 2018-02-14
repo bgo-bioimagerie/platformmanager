@@ -158,15 +158,20 @@ class CoreUser extends Model {
 
     public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
 
-        $sqla = "SELECT is_active FROM core_users WHERE id=?";
-        $req = $this->runRequest($sqla, array($id))->fetch();
-        if ($req[0] != $is_active) {
-            $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, date_last_login=?, is_active=? WHERE id=?";
-            $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, "0000-00-00", $is_active, $id));
-        } else {
-            $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
-            $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
-        }
+        /*
+          $sqla = "SELECT is_active FROM core_users WHERE id=?";
+          $req = $this->runRequest($sqla, array($id))->fetch();
+          if ($req[0] != $is_active) {
+          $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, date_last_login=?, is_active=? WHERE id=?";
+          $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, "0000-00-00", $is_active, $id));
+          } else {
+          $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
+          $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+          }
+         */
+        $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
+        $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+        
     }
 
     public function isUserId($id) {
@@ -468,24 +473,24 @@ class CoreUser extends Model {
                 }
             } else {
                 /*
-                //echo 'try to desactivate ' . $user ['id'] . " with authorizations <br>";
-                $sql = "SELECT * FROM bk_authorization WHERE user_id=? ORDER BY date DESC";
-                $req = $this->runRequest($sql, array($user ['id']));
-                if ($req->rowCount() > 0) {
-                    $data = $req->fetch();
+                  //echo 'try to desactivate ' . $user ['id'] . " with authorizations <br>";
+                  $sql = "SELECT * FROM bk_authorization WHERE user_id=? ORDER BY date DESC";
+                  $req = $this->runRequest($sql, array($user ['id']));
+                  if ($req->rowCount() > 0) {
+                  $data = $req->fetch();
 
-                    $date_y = date('Y', time()) - $numberYear;
-                    $dateref = $date_y . "-" . date("m-d", time());
-                    if ($data["date"] != "0000-00-00" && $data["date"] < $dateref) {
-                        echo 'desactivate ' . $user ['id'] . " with authorizations <br>";
-                        $this->setactive($user ['id'], 0);
+                  $date_y = date('Y', time()) - $numberYear;
+                  $dateref = $date_y . "-" . date("m-d", time());
+                  if ($data["date"] != "0000-00-00" && $data["date"] < $dateref) {
+                  echo 'desactivate ' . $user ['id'] . " with authorizations <br>";
+                  $this->setactive($user ['id'], 0);
 
-                        // desactivate authorizations
-                        $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
-                        $this->runRequest($sql, array(date("Y-m-d", time()), $user ['id']));
-                    }
-                }
-                 
+                  // desactivate authorizations
+                  $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
+                  $this->runRequest($sql, array(date("Y-m-d", time()), $user ['id']));
+                  }
+                  }
+
                  */
             }
         }
