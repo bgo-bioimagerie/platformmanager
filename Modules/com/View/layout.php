@@ -12,7 +12,11 @@ Platform-Manager
 <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
 <?php
 $headless = Configuration::get("headless");
+$pmspaceheadercontent = "";
+$pmspaceheadernavbar = "pm-space-navbar-no-header";
 if (!$headless) {
+    $pmspaceheadercontent = "pm-space-content";
+    $pmspaceheadernavbar = "pm-space-navbar";
     ?>
     <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <?php
@@ -38,14 +42,21 @@ endblock();
 
 
 <?php startblock('spacenavbar'); ?>
-<div class="col-md-2 pm-space-navbar">
-    <?php
+<?php
+if (!$headless) {
     require_once 'Modules/core/Controller/CorespaceController.php';
     $spaceController = new CorespaceController(new Request(array(), false));
     echo $spaceController->navbar($id_space);
+}
+?>
+<div class="col-md-2 col-lg-2 <?php echo $pmspaceheadernavbar ?>" >
+    <?php
+    require_once 'Modules/com/Controller/ComController.php';
+    $menucontroller = new ComController(new Request(array(), false));
+    echo $menucontroller->navbar($id_space);
     ?>
-</div> 
-<div class="col-md-8">
+</div>
+<div class="col-md-10 col-lg-10 <?php echo $pmspaceheadercontent ?>" >
     <?php endblock(); ?>
 
 
@@ -58,12 +69,6 @@ endblock();
 
     <?php startblock('footer') ?>
 </div>
-<div class="col-md-2 pm-space-navbar-right" >
-    <?php
-    require_once 'Modules/com/Controller/ComController.php';
-    $menucontroller = new ComController(new Request(array(), false));
-    echo $menucontroller->navbar($id_space);
-    ?>
-</div>
+
 <?php
 endblock();

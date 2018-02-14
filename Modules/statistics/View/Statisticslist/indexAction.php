@@ -3,8 +3,4 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="container">
-    
-</div>
-
 <?php endblock();

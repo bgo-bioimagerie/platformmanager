@@ -12,7 +12,11 @@ Platform-Manager
 <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
 <?php
 $headless = Configuration::get("headless");
+$pmspaceheadercontent = "";
+$pmspaceheadernavbar = "pm-space-navbar-no-header";
 if (!$headless) {
+    $pmspaceheadercontent = "pm-space-content";
+    $pmspaceheadernavbar = "pm-space-navbar";
     ?>
     <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <?php
@@ -26,43 +30,45 @@ if (!$headless) {
 
 
 
-<?php startblock('navbar'); 
-if(!$headless){
-require_once 'Modules/core/Controller/CorenavbarController.php';
-$navController = new CorenavbarController(new Request(array(), false));
-echo $navController->navbar();
+<?php
+startblock('navbar');
+if (!$headless) {
+    require_once 'Modules/core/Controller/CorenavbarController.php';
+    $navController = new CorenavbarController(new Request(array(), false));
+    echo $navController->navbar();
 }
- endblock(); ?>
+endblock();
+?>
 
 
 <?php startblock('spacenavbar'); ?>
-<div class="col-md-2 pm-space-navbar">
 <?php
-require_once 'Modules/core/Controller/CorespaceController.php';
-$spaceController = new CorespaceController(new Request(array(), false));
-echo $spaceController->navbar($id_space);
+if (!$headless) {
+    require_once 'Modules/core/Controller/CorespaceController.php';
+    $spaceController = new CorespaceController(new Request(array(), false));
+    echo $spaceController->navbar($id_space);
+}
 ?>
-</div> 
-<div class="col-md-8">
-<?php
-endblock(); ?>
-
-
-
-<?php startblock('content') ?>
-    <?php endblock() ?>
-    
-
-
-
-<?php startblock('footer') ?>
-</div>
-<div class="col-md-2 pm-space-navbar-right" >
+<div class="col-md-2 col-lg-2 <?php echo $pmspaceheadernavbar ?>" >
     <?php
     require_once 'Modules/statistics/Controller/StatisticsController.php';
     $menucontroller = new StatisticsController(new Request(array(), false));
     echo $menucontroller->navbar($id_space);
     ?>
 </div>
-<?php endblock();
-    
+<div class="col-md-10 col-lg-10 <?php echo $pmspaceheadercontent ?>" >
+    <?php endblock(); ?>
+
+
+
+    <?php startblock('content') ?>
+    <?php endblock() ?>
+
+
+
+
+    <?php startblock('footer') ?>
+</div>
+
+<?php
+endblock();

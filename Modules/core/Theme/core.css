@@ -1,6 +1,6 @@
 body,html{
     height: 100%;
-    background-color: #f1f1f1;
+    background-color: #e7ecf0;
 }
 
 .select {
@@ -13,40 +13,40 @@ body,html{
 }
 
 .pm-content {
-    background-color: #f1f1f1;
+    background-color: #e7ecf0;
     min-height: 2000px;
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
 }
 
 .pm-nav{
-    background-color: #f1f1f1;
+    background-color: #e7ecf0;
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
 }
 
 .pm-form{
     background-color: #ffffff; 
-    border: 7px solid #f1f1f1;
+    border: 7px solid #e7ecf0;
     min-height: 2000px;
 }
 
 .pm-form-short{
     background-color: #ffffff; 
-    border: 7px solid #f1f1f1;
+    border: 7px solid #e7ecf0;
     padding-bottom: 7px;
 }
 
 .pm-table{
     background-color: #ffffff; 
-    border: 7px solid #f1f1f1;
+    border: 7px solid #e7ecf0;
     padding-top: 7px;
     height: 2000px;
 }
 
 .pm-table-short{
     background-color: #ffffff; 
-    border: 7px solid #f1f1f1;
+    border: 7px solid #e7ecf0;
     padding-top: 7px;
 }
 
@@ -73,8 +73,11 @@ body,html{
 
 .pm-nav-li{
     list-style-type: none;
+    /*
     margin-left: -7px;
     padding-left: 15px;
-    background-color: #f1f1f1;
-    border: 1px solid #f1f1f1;
+    border: 1px solid #e7ecf0;
+    */
+    background-color: #e7ecf0;
+    border: none;
 }

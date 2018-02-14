@@ -42,6 +42,39 @@ class BkScheduling extends Model {
             "resa_time_setting" => 1, "default_color_id" => 1);
     }
 
+    
+    protected function getClosest($search, $arr) {
+        $closest = null;
+        foreach ($arr as $item) {
+            if ($closest === null || abs($search - $closest) > abs($item - $search)) {
+                $closest = $item;
+            }
+        }
+        return $closest;
+    }
+
+    public function getClosestMinutes($id_resource, $minutes){
+        
+        $sql = "SELECT size_bloc_resa FROM bk_schedulings WHERE id=(SELECT id_area FROM re_info WHERE id=?)";
+        $req = $this->runRequest($sql, array($id_resource));
+        if ($req->rowCount() > 0){
+            $d = $req->fetch();
+            $step = $d[0];
+            
+            $values = array();
+            $values[] = 0;
+            $last = 0;
+            while($last < 3600){
+                $last += $step;
+                $values[] = $last;
+            }
+            $m = $this->getClosest($minutes*60, $values);
+            return $m/60;
+        }
+        return $minutes;
+        
+    }
+    
     /**
      * get SyColorCodes informations
      * 

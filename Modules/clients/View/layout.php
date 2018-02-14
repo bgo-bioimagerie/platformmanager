@@ -12,7 +12,11 @@ Platform-Manager
 <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
 <?php
 $headless = Configuration::get("headless");
+$pmspaceheadercontent = "";
+$pmspaceheadernavbar = "pm-space-navbar-no-header";
 if (!$headless) {
+    $pmspaceheadercontent = "pm-space-content";
+    $pmspaceheadernavbar = "pm-space-navbar";
     ?>
     <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <?php
@@ -28,61 +32,43 @@ if (!$headless) {
 
 <?php
 startblock('navbar');
-require_once 'Modules/core/Controller/CorenavbarController.php';
-$navController = new CorenavbarController(new Request(array(), false));
-echo $navController->navbar();
-?>
-<div class="col-md-12" style="margin-top: 7px; margin-bottom: -14px;">
-    <?php
-    if (isset($_SESSION["message"])) {
-        ?>
-        <div class="alert alert-info">
-            <?php echo $_SESSION["message"] ?>
-        </div>
-        <?php
-        unset($_SESSION["message"]);
-    }
-    ?>
-</div>
-<?php 
+if (!$headless) {
+    require_once 'Modules/core/Controller/CorenavbarController.php';
+    $navController = new CorenavbarController(new Request(array(), false));
+    echo $navController->navbar();
+}
 endblock();
 ?>
 
 
 <?php startblock('spacenavbar'); ?>
-<div class="col-md-2 pm-space-navbar">
-    <?php
+<?php
+if (!$headless) {
     require_once 'Modules/core/Controller/CorespaceController.php';
     $spaceController = new CorespaceController(new Request(array(), false));
     echo $spaceController->navbar($id_space);
-
-    $modelCoreConfig = new CoreConfig();
-    $showNavBarClient = 1;//$modelCoreConfig->getParam("showNavBarClients", $id_space);
+}
+?>
+<div class="col-md-2 col-lg-2 <?php echo $pmspaceheadernavbar ?>" >
+    <?php
+    require_once 'Modules/clients/Controller/ClientsController.php';
+    $menucontroller = new ClientsController(new Request(array(), false));
+    echo $menucontroller->navbar($id_space);
     ?>
-</div> 
-<?php if ($showNavBarClient) { ?>
-    <div class="col-md-8">
-    <?php } else { ?>
-        <div class="col-md-10">
-        <?php } ?>
-
-        <?php endblock(); ?>
-
-        <?php startblock('content') ?>
-        <?php endblock() ?>    
-
-        <?php startblock('footer') ?>
-    </div>
-
-    <?php if ($showNavBarClient) { ?>
-        <div class="col-md-2 pm-space-navbar-right" >
-            <?php
-            require_once 'Modules/clients/Controller/ClientsController.php';
-            $menucontroller = new ClientsController(new Request(array(), false));
-            echo $menucontroller->navbar($id_space);
-            ?>
-        <?php } ?>
-    </div>
 </div>
+<div class="col-md-10 col-lg-10 <?php echo $pmspaceheadercontent ?>" >
+    <?php endblock(); ?>
+
+
+
+    <?php startblock('content') ?>
+    <?php endblock() ?>
+
+
+
+
+    <?php startblock('footer') ?>
+</div>
+
 <?php
 endblock();

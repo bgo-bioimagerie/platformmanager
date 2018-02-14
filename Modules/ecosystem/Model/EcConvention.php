@@ -35,7 +35,7 @@ class EcConvention extends Model {
             return $id;
         }
     }
-    
+
     public function exists($id_space, $id_user){
         $sql = "SELECT id FROM ec_convention WHERE id_space=? AND id_user=?";
         $req = $this->runRequest($sql, array($id_space, $id_user));

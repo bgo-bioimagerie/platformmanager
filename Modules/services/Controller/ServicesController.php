@@ -29,22 +29,25 @@ class ServicesController extends CoresecureController {
     public function navbar($id_space) {
 
         $lang = $this->getLanguage();
-        $html = "<nav class=\"navbar navbar-default sidebar\" style=\"border: 1px solid #f1f1f1;\" role=\"navigation\">";
-        $html .= "<div class=\"container-fluid\">";
-        $html .= "<div class=\"navbar-header\" style=\"background-color: #e1e1e1;\">";
-        $html .= "    <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-sidebar-navbar-collapse-1\">";
-        $html .= "        <span class=\"sr-only\">Toggle navigation</span>";
-        $html .= "        <span class=\"icon-bar\"></span>";
-        $html .= "        <span class=\"icon-bar\"></span>";
-        $html .= "        <span class=\"icon-bar\"></span>";
-        $html .= "    </button>      ";
-        $html .= "</div>";
-        $html .= "<div class=\"collapse navbar-collapse\"  id=\"bs-sidebar-navbar-collapse-1\">";
-        $html .= "    <ul class=\"nav navbar-nav\" >";
-        $html .= "        <li>";
-        $html .= "           <a style=\"background-color:{{bgcolor}}; color: #fff; margin-left: -14px;\" href=\"\"> {{title}} <span style=\"font-size:16px;\" class=\"pull-right hidden-xs showopacity glyphicon {{glyphicon}}\"></span></a>";
-        $html .= "        </li>";
-        $html .= "        <ul class=\"pm-nav-li\">";
+
+        $html = '<nav class="navbar navbar-default sidebar" role="navigation" style="border: none;">';
+        $html .= '<div class="container">';
+        $html .= '<div class="navbar-header" style="background-color: #e7ecf0;">';
+        $html .= '    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">';
+        $html .= '       <span class="sr-only">Toggle navigation</span>';
+        $html .= '       <span class="icon-bar"></span>';
+        $html .= '       <span class="icon-bar"></span>';
+        $html .= '       <span class="icon-bar"></span>';
+        $html .= '   </button>  ';    
+        $html .= ' </div>';
+        $html .= ' <div class="collapse navbar-collapse" style="border: none;">';
+        $html .= '   <ul class="nav navbar-nav" style="width: 25%;" id="bs-sidebar-navbar-collapse-1" >';
+        $html .= '       <li style="width: 100%">';
+        $html .= '           <a  style="background-color:{{bgcolor}}; color: #fff;" href=""> {{title}} ';
+        $html .= '          <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
+        $html .= '           </a>';
+        $html .= '       </li>';
+        $html .= '       <ul class="pm-nav-li">';
 
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);

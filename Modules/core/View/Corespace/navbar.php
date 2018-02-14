@@ -1,21 +1,14 @@
-<nav class="navbar navbar-default sidebar" role="navigation">
+<nav class="navbar navbar-default navbar-fixed-top" style="margin-top: 50px; background-color: #ffffff; z-index: 12;">
     <div class="container-fluid">
-
-        <div class="navbar-header" style="background-color: {{space.color}};">
-            <a href="corespace/{{space.id}}"><h3 style="text-align: center; font-size: 16px; color: #fff;">{{space.name}}</h3></a>
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+        <div class="navbar-header">
+            <a href="corespace/{{space.id}}"><h3 style="text-align: center; font-size: 16px;">{{space.name}}</h3></a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
-            </button>      
+            </button>
         </div>
-        <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                {{menuitems}}
-                
-                {{adminitems}}
-            </ul>
-        </div>
+        
     </div>
 </nav>
