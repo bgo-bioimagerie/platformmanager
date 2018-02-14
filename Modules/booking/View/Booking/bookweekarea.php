@@ -152,7 +152,6 @@ $dayWidth = 100 / 8;
             </div> 
 
         </div>
-        <br></br>
 
         <!-- hours reservation -->
 

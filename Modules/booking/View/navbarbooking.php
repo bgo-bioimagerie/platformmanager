@@ -62,7 +62,6 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 ?>
 
-<div class="col-md-12">
     <div class="bs-docs-header" id="content">
         
             <form role="form" class="form-horizontal" action="booking/<?php echo $id_space ?>" method="post" id="navform">
@@ -148,6 +147,6 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                 </div>   
             </form>
         </div>
-    </div>
+    
 
 <?php include "Framework/timepicker_script.php" ?>
