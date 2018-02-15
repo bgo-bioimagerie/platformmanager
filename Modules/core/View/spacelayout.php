@@ -45,7 +45,7 @@ $spaceController = new CorespaceController($nullrequest);
 echo $spaceController->navbar($id_space);
 ?>
 </div> 
-<div class="col-md-10">
+<div class="col-md-12">
 <?php
 endblock(); ?>
 
