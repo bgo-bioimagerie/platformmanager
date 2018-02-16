@@ -117,7 +117,9 @@
                 }
             }
 
-            data0 = {discount: $('#invoicediscount').val(), total_ht: $('#invoicetotalht').val(), content: data};
+            //alert("content = " + JSON.stringify(data) );
+
+            data0 = {discount: $('#invoicediscount').val(), total_ht: $('#invoicetotalht').val(), content: JSON.stringify(data)};
 
             $.post(
                     "<?php echo $validateURL ?>",

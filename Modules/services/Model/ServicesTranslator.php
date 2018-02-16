@@ -945,7 +945,7 @@ class ServicesTranslator {
     
     public static function Closing($lang) {
         if ($lang == "fr") {
-            return "Libération de produit";
+            return "Libération de projet";
         }
         return "Closing";
     }

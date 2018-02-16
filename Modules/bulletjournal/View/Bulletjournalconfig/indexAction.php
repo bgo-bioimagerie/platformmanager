@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12" style="background-color: #f1f1f1; min-height: 2000px;">
+<div class="col-md-12" style="min-height: 2000px;">
 
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <h1><?php echo BulletjournalTranslator::configuration($lang) ?></h1>

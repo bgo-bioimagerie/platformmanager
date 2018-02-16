@@ -137,15 +137,19 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $discount = $_POST["discount"];
         $total_ht = $_POST["total_ht"];
         $content = $_POST["content"];
+        
+        //print_r($content);
 
         $modelInvoice = new InInvoice();
         $modelInvoice->setDiscount($id_invoice, $discount);
         $modelInvoice->setTotal($id_invoice, $total_ht);
 
+        
         $modelItem = new InInvoiceItem();
-        $modelItem->setItemContent($id_invoice, json_encode($content));
+        $modelItem->setItemContent($id_invoice, $content);
 
         echo json_encode(array("status" => "success", "message" => InvoicesTranslator::InvoiceHasBeenSaved($lang)));
+        //echo json_encode(array("status" => "success", "message" => $content ));
     }
 
     public function deleteAction($id_space, $id_invoice) {
