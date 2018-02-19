@@ -25,6 +25,24 @@ class StockShelf extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
+    public function getFullName($id){
+        
+        if (!isset($id) || is_null($id) || $id == ""){
+            return "";
+        }
+        
+        $sql  = " SELECT stock_shelf.name as shelf, stock_cabinets.name as cabinet ";
+        $sql .= " FROM stock_shelf ";
+        $sql .= " INNER JOIN stock_cabinets ON stock_shelf.id_cabinet=stock_cabinets.id ";
+        $sql .= " WHERE stock_shelf.id = ?";
+        $req = $this->runRequest($sql, array($id));
+        if ( $req->rowCount() > 0 ){
+            $data = $req->fetch();
+            return $data["cabinet"] . " - " . $data["shelf"]; 
+        }
+        return "";
+    }
+    
     public function getOne($id){
         $sql = "SELECT * FROM stock_shelf WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();

@@ -50,11 +50,39 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $modelCoreConfig = new CoreConfig();
+        $date_begin = $this->request->getParameterNoException("begining_period");
+        if ($date_begin == "") {
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            if ($date_begin != "") {
+                $dateArray = explode("-", $date_begin);
+                $y = date("Y") - 1;
+                $m = $dateArray[1];
+                $d = $dateArray[2];
+                $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            } else {
+                $date_begin = date("Y", time()) . "-01-01";
+            }
+        }
+        $date_end = $this->request->getParameterNoException("end_period");
+        if ($date_end == "") {
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            if ($date_end != "") {
+                $dateArray = explode("-", $date_end);
+                $y = date("Y");
+                $m = $dateArray[1];
+                $d = $dateArray[2];
+                $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            } else {
+                $date_end = date("Y", time()) . "-12-31";
+            }
+        }
+        
         // build the form
         $form = new Form($this->request, "formbalancesheet");
         $form->setTitle(ServicesTranslator::Projects_balance($lang), 3);
-        $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, "");
-        $form->addDate("end_period", ServicesTranslator::End_period($lang), true, "");
+        $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, $date_begin);
+        $form->addDate("end_period", ServicesTranslator::End_period($lang), true, $date_end);
 
         $form->setValidationButton("Ok", "servicesstatisticsproject/" . $id_space);
 
@@ -264,6 +292,10 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         $objPHPExcel->getActiveSheet()->SetCellValue('P2', CoreTranslator::Date($lang));
         $objPHPExcel->getActiveSheet()->getStyle('P2')->applyFromArray($styleBorderedCell);
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('Q2', ServicesTranslator::Stock($lang));
+        $objPHPExcel->getActiveSheet()->getStyle('Q2')->applyFromArray($styleBorderedCell);
+        
 
         $objPHPExcel->getActiveSheet()->mergeCells('I1:N1');
         $objPHPExcel->getActiveSheet()->getStyle('I1')->applyFromArray($styleBorderedCell);
@@ -333,6 +365,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue('N' . $curentLine, $visaClosed);
             $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, $proj["samplereturn"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, CoreTranslator::dateFromEn($proj["samplereturndate"], $lang));
+            $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $curentLine, $proj["sample_cabinet"]);
+            
             $objPHPExcel->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('K' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('L' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -340,6 +374,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->getStyle('N' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('O' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('P' . $curentLine)->applyFromArray($styleBorderedCell);
+            $objPHPExcel->getActiveSheet()->getStyle('Q' . $curentLine)->applyFromArray($styleBorderedCell);
+       
         }
 
         for ($col = 'A'; $col !== 'Q'; $col++) {
@@ -944,31 +980,49 @@ class ServicesstatisticsprojectController extends CoresecureController {
         );
 
         $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::SampleReturn($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', ServicesTranslator::Project($lang));
+        
+        //responsable, unité,  utilisateur, no projet
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('A1', CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($styleBorderedCell);
-
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', CoreTranslator::Responsible($lang));
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('B1', EcosystemTranslator::Unit($lang));
         $objPHPExcel->getActiveSheet()->getStyle('B1')->applyFromArray($styleBorderedCell);
-
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', ServicesTranslator::SampleReturn($lang));
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('C1', CoreTranslator::User($lang));
         $objPHPExcel->getActiveSheet()->getStyle('C1')->applyFromArray($styleBorderedCell);
-
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', CoreTranslator::Date($lang));
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('D1', ServicesTranslator::Project($lang));
         $objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleBorderedCell);
+
+        $objPHPExcel->getActiveSheet()->SetCellValue('E1', ServicesTranslator::SampleReturn($lang));
+        $objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCell);
+
+        $objPHPExcel->getActiveSheet()->SetCellValue('F1', CoreTranslator::Date($lang));
+        $objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleBorderedCell);
+        
+        $objPHPExcel->getActiveSheet()->SetCellValue('G1', ServicesTranslator::Stock($lang));
+        $objPHPExcel->getActiveSheet()->getStyle('G1')->applyFromArray($styleBorderedCell);
 
         // projet; responsable, récupération matériel, date 
         $curentLine = 1;
         foreach ($returnedSamples as $r) {
             $curentLine++;
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $r['name']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $r['resp']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $r['samplereturn']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, CoreTranslator::dateFromEn($r['samplereturndate'], $lang));
-
+            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $r['resp']);
+            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $r['unit']);
+            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $r['user']);
+            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $r['name']);
+            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $r['samplereturn']);
+            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, CoreTranslator::dateFromEn($r['samplereturndate'], $lang));
+            $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, $r['sample_cabinet']);
+            
             $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
             $objPHPExcel->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
+            $objPHPExcel->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
+            $objPHPExcel->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCell);
+            $objPHPExcel->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCell);
         }
 
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
