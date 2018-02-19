@@ -73,6 +73,18 @@ class EcUser extends Model {
         }
         return 0;
     }
+    
+    public function getUnitName($id_user){
+        $sql = "SELECT id_unit FROM ec_users WHERE id=?";
+        $req = $this->runRequest($sql, array($id_user));
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            $sql = "SELECT name FROM ec_units WHERE id=?";
+            $tmp2 = $this->runRequest($sql, array($tmp[0]))->fetch();
+            return $tmp2[0];
+        }
+        return "";
+    }
 
     public function getStatus($id_user) {
         $sql = "SELECT id_status FROM core_users WHERE id=?";

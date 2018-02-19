@@ -6,6 +6,7 @@ require_once 'Modules/ecosystem/Model/EcUnit.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 
 require_once 'Modules/services/Model/SePrice.php';
+require_once 'Modules/services/Model/StockShelf.php';
 
 /**
  * Class defining the Unit model for consomable module
@@ -585,11 +586,13 @@ class SeProject extends Model {
         $projects = $this->runRequest($sql, array($beginPeriod, $endPeriod, $id_space))->fetchAll();
 
         $modelUser = new EcUser();
+        $modelSampleCabinet = new StockShelf();
         for ($i = 0; $i < count($projects); $i++) {
             $sql = "SELECT id_user FROM se_visa WHERE id=? AND id_space=?";
             $id_user = $this->runRequest($sql, array($projects[$i]['closed_by'], $id_space))->fetch();
             $projects[$i]['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
             $projects[$i]['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
+            $projects[$i]["sample_cabinet"] = $modelSampleCabinet->getFullName($projects[$i]["id_sample_cabinet"]);
         }
 
         /*
@@ -771,8 +774,12 @@ class SeProject extends Model {
         $sql = "SELECT * FROM se_project WHERE id_space=? AND samplereturndate!='0000-00-00'";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $modelUser = new EcUser();
+        $modelSampleCabinet = new StockShelf();
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]['resp'] = $modelUser->getUserFUllName($data[$i]['id_resp']);
+            $data[$i]['user'] = $modelUser->getUserFUllName($data[$i]['id_user']);
+            $data[$i]['unit'] = $modelUser->getUnitName($data[$i]['id_resp']);
+            $data[$i]["sample_cabinet"] = $modelSampleCabinet->getFullName($data[$i]["id_sample_cabinet"]);
         }
         return $data;
     }
