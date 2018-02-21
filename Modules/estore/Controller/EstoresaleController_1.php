@@ -227,25 +227,8 @@ class EstoresaleController extends CoresecureController {
         
     }
     
-    public function todoquoteAction($id_space, $id_sale){
-        
-    }
     
-    public function tosendsaleAction($id_space, $id_sale){
-        
-    }
     
-    public function invoicingAction($id_space, $id_sale){
-        
-    }
-    
-    public function paymentpendingAction($id_space, $id_sale){
-        
-    }
-    
-    public function endedAction($id_space, $id_sale){
-        
-    }
     
     
     

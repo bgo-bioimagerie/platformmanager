@@ -89,14 +89,14 @@ class EstoreTranslator {
 
     public static function EnteredSale($lang) {
         if ($lang == "fr") {
-            return "Ventes saisies";
+            return "Demande";
         }
         return "Entered sales";
     }
 
     public static function EnteredSales($lang) {
         if ($lang == "fr") {
-            return "Ventes saisies";
+            return "Demandes";
         }
         return "Entered sales";
     }
@@ -492,29 +492,75 @@ class EstoreTranslator {
         }
         return "Total no VAT";
     }
-    
+
     public static function TotalTTC($lang) {
         if ($lang == "fr") {
             return "Total TTC";
         }
         return "Total VAT";
     }
-    
+
     public static function invoicePDF($lang) {
         if ($lang == "fr") {
             return "Facture PDF";
         }
         return "Invoice PDF";
     }
-    
+
     public static function UnitPrice($lang) {
         if ($lang == "fr") {
             return "Prix unitaire";
         }
         return "Unit price";
     }
+
+    public static function Feasibility($lang) {
+        if ($lang == "fr") {
+            return "Faisabilité";
+        }
+        return "Feasibility";
+    }
+
+    public static function TodoQuote($lang) {
+        if ($lang == "fr") {
+            return "Devis à faire";
+        }
+        return "Todo quote";
+    }
+
+    public static function QuoteSent($lang) {
+        if ($lang == "fr") {
+            return "Devis envoyé";
+        }
+        return "Quote sent";
+    }
+
+    public static function ToSendSale($lang) {
+        if ($lang == "fr") {
+            return "Vente à envoyer";
+        }
+        return "To send";
+    }
+
+    public static function Invoicing($lang) {
+        if ($lang == "fr") {
+            return "Facturation";
+        }
+        return "Invoicing";
+    }
+
+    public static function PaymentPending($lang) {
+        if ($lang == "fr") {
+            return "Attente paiement";
+        }
+        return "Payment pending";
+    }
     
-    
-    
+    public static function Ended($lang) {
+        if ($lang == "fr") {
+            return "Soldé";
+        }
+        return "Ended";
+    }
 
 }

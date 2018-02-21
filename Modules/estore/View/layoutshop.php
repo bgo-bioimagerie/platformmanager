@@ -23,9 +23,6 @@ if (!$headless) {
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/spacemenu.css' />
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
 
-
-<title>jQuery mycart Plugin Example</title>
-<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <style>
     body { font-family:'Open Sans'}
     .badge-notify{
@@ -35,7 +32,6 @@ if (!$headless) {
         right: 10px;
     }
 </style>
-
 <?php endblock() ?> 
 
 
@@ -59,44 +55,40 @@ echo $navController->navbar();
     ?>
 </div>
 <?php
-$id_user = $_SESSION["id_user"];
-$modelSpace = new CoreSpace();
-$role = $modelSpace->getUserSpaceRole($id_space, $id_user);
-
-if ($role > 2) {
-    ?>
-    <div class="col-md-10">
-        <?php
-    } else {
-        ?>
-        <div class="col-md-12">
-            <?php
-        }
-        endblock();
-        ?>
+endblock();
+?>
 
 
-        <?php startblock('spacenavbar'); ?>
-        <?php endblock(); ?>
-
-        <?php startblock('content') ?>
-        <?php endblock() ?>    
-
-        <?php startblock('footer') ?>
-    </div>
+<?php startblock('spacenavbar'); ?>
+<div class="col-md-12 pm-space-navbar">
     <?php
-    if ($role > 2) {
-        ?>
-        <div class="col-md-2 pm-space-navbar-right" style="padding-left: 25px;">
-            <?php
-            require_once 'Modules/estore/Controller/EstoreController.php';
-            $menucontroller = new EstoreController(new Request(array(), false));
-            echo $menucontroller->navbar($id_space);
-            ?>
-        </div>
-        <?php
-    }
+    require_once 'Modules/core/Controller/CorespaceController.php';
+    $spaceController = new CorespaceController(new Request(array(), false));
+    echo $spaceController->navbar($id_space);
+
+    $modelCoreConfig = new CoreConfig();
+    $showNavBarEstore = 1; //$modelCoreConfig->getParam("showNavBarEstore", $id_space);
     ?>
+</div> 
+<div class="col-md-12" >
+<div class="col-md-2" >
     <?php
-    endblock();
-    
+    require_once 'Modules/estore/Controller/EstoreController.php';
+    $menucontroller = new EstoreController(new Request(array(), false));
+    echo $menucontroller->navbar($id_space);
+    ?>
+</div>
+
+<div class="col-md-10">
+    <?php endblock(); ?>
+
+    <?php startblock('content') ?>
+    <?php endblock() ?>    
+
+    <?php startblock('footer') ?>
+</div>
+
+
+</div>
+<?php
+endblock();

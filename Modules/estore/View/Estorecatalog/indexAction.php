@@ -6,38 +6,22 @@
 
 
 
-<div class="col-md-12" style="background-color: #f1f1f1; border-bottom: 1px solid #d1d1d1;">
+<div class="col-md-12" style="background-color: #e7ecf0; border-bottom: 1px solid #d1d1d1;">
 
-    <div class="col-md-10">
+    <div class="col-md-12">
         <h1>Xenopus </h1>
-    </div>
+    
     <div style="float: right; cursor: pointer;">
         <h1>   <span class="glyphicon glyphicon-shopping-cart my-cart-icon"><span class="badge badge-notify my-cart-badge"></span></span>
         </h1> 
     </div>
+        </div>
 </div>
 
 
 <div class="col-md-12">
-    <div class="col-md-2 text-center" style="background-color: #f1f1f1; margin-top: 14px;">
 
-        <p>CATEGORIES</p>
-
-        <?php
-        foreach ($categories as $category) {
-
-            $selected = "";
-            if ($id_category == $category['id']) {
-                $selected = "active";
-            }
-            ?>
-            <a class="btn btn-default btn-block <?php echo $selected ?>" href="estorecatalog/<?php echo $id_space ?>/<?php echo $category["id"] ?>" ><?php echo $category["name"] ?></a>
-            <?php
-        }
-        ?>
-
-    </div>
-    <div class="col-md-10" style="background-color: #f1f1f1; min-height: 2000px; border-left: 1px solid #d1d1d1;">
+    <div class="col-md-10" style="background-color: #e7ecf0; min-height: 2000px; border-right: 1px solid #d1d1d1;">
 
 
         <div class="row">
@@ -69,6 +53,24 @@
             ?>
 
         </div>
+    </div>
+        <div class="col-md-2 text-center" style="background-color: #e7ecf0; margin-top: 14px;">
+
+        <p>CATEGORIES</p>
+
+        <?php
+        foreach ($categories as $category) {
+
+            $selected = "";
+            if ($id_category == $category['id']) {
+                $selected = "active";
+            }
+            ?>
+            <a class="btn btn-default btn-block <?php echo $selected ?>" href="estorecatalog/<?php echo $id_space ?>/<?php echo $category["id"] ?>" ><?php echo $category["name"] ?></a>
+            <?php
+        }
+        ?>
+
     </div>
 </div>
 
@@ -108,8 +110,9 @@
                         'essalenew/<?php echo $id_space ?>',
                         {products: products},
                         function (data) {
+                            //alert( JSON.stringify(data));
                             if (data.status === "success") {
-                                $(location).attr('href', data.redirect);
+                               $(location).attr('href', data.redirect);
                             } else {
                                 alert(JSON.stringify(data.message));
                             }
