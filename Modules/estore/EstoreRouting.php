@@ -49,6 +49,21 @@ class EstoreRouting extends Routing{
         $this->addRoute("essaleenterededit", "essaleenterededit", "estoresale", "enterededit", array("id_space", "id"), array("", ""));
         $this->addRoute("essaleenteredadminedit", "essaleenteredadminedit", "estoresale", "enteredadminedit", array("id_space", "id"), array("", ""));
         
+        
+        
+        $this->addRoute("essalefeasibility", "essalefeasibility", "estoresale", "feasibility", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaletodoquote", "essaletodoquote", "estoresale", "todoquote", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essalequotesent", "essalequotesent", "estoresale", "quotesent", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaletosendsale", "essaletosendsale", "estoresale", "tosendsale", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaleinvoicing", "essaleinvoicing", "estoresale", "invoicing", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essalepaymentpending", "essalepaymentpending", "estoresale", "paymentpending", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaleended", "essaleended", "estoresale", "ended", array("id_space", "id_sale"), array("", ""));
+        
+        
+        
+        
+        /*
+        
         $this->addRoute("essaleinprogress", "essaleinprogress", "estoresale", "inprogress", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("esalequote", "esalequote", "estoresale", "quote", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("esaledelivery", "esaledelivery", "estoresale", "delivery", array("id_space", "id_sale"), array("", ""));
@@ -64,7 +79,7 @@ class EstoreRouting extends Routing{
         $this->addRoute("esalescanceled", "esalescanceled", "estoresale", "canceledlist", array("id_space"), array(""));
         $this->addRoute("esalesarchive", "esalesarchive", "estoresale", "archivelist", array("id_space"), array(""));
         
-        
+        */
         
     }
 }

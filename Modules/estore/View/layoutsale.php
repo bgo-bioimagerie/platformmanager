@@ -33,6 +33,24 @@ require_once 'Modules/core/Controller/CorenavbarController.php';
 $navController = new CorenavbarController(new Request(array(), false));
 echo $navController->navbar();
 ?>
+
+<?php
+endblock();
+?>
+
+
+<?php startblock('spacenavbar'); ?>
+<div class="col-md-12 pm-space-navbar">
+    <?php
+    require_once 'Modules/core/Controller/CorespaceController.php';
+    $spaceController = new CorespaceController(new Request(array(), false));
+    echo $spaceController->navbar($id_space);
+
+    $modelCoreConfig = new CoreConfig();
+    $showNavBarEstore = 1; //$modelCoreConfig->getParam("showNavBarEstore", $id_space);
+    ?>
+</div> 
+
 <div class="col-md-12" style="margin-top: 7px; margin-bottom: -14px;">
     <?php
     if (isset($_SESSION["message"])) {
@@ -45,32 +63,19 @@ echo $navController->navbar();
     }
     ?>
 </div>
-<?php 
-endblock();
-?>
+<div class="col-md-12">
+    <div class="col-md-2" >
+        <?php
+        require_once 'Modules/estore/Controller/EstoreController.php';
+        $menucontroller = new EstoreController(new Request(array(), false));
+        echo $menucontroller->navbar($id_space);
+        ?>
+    </div>
+    <div class="col-md-10">
+
+        <?php include 'Modules/estore/View/Estoresale/saleheader.php'; ?>
 
 
-<?php startblock('spacenavbar'); ?>
-<div class="col-md-2 pm-space-navbar">
-    <?php
-    require_once 'Modules/core/Controller/CorespaceController.php';
-    $spaceController = new CorespaceController(new Request(array(), false));
-    echo $spaceController->navbar($id_space);
-
-    $modelCoreConfig = new CoreConfig();
-    $showNavBarEstore = 1;//$modelCoreConfig->getParam("showNavBarEstore", $id_space);
-    ?>
-</div> 
-<?php if ($showNavBarEstore) { ?>
-    <div class="col-md-8">
-    <?php } else { ?>
-        <div class="col-md-10">
-        <?php } ?>
-
-            
-            <?php include 'Modules/estore/View/Estoresale/saleheader.php'; ?>
-                
-            
         <?php endblock(); ?>
 
         <?php startblock('content') ?>
@@ -79,15 +84,6 @@ endblock();
         <?php startblock('footer') ?>
     </div>
 
-    <?php if ($showNavBarEstore) { ?>
-        <div class="col-md-2 pm-space-navbar-right" >
-            <?php
-            require_once 'Modules/estore/Controller/EstoreController.php';
-            $menucontroller = new EstoreController(new Request(array(), false));
-            echo $menucontroller->navbar($id_space);
-            ?>
-        <?php } ?>
-    </div>
 </div>
 <?php
 endblock();
