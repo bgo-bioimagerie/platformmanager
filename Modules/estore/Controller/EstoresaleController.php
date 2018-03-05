@@ -184,6 +184,33 @@ class EstoresaleController extends CoresecureController {
         ));
     }
 
+    
+    public function enteredadmineditlistAction($id_space){
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$Entered);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::Entered($lang));
+        $table->addLineEditButton("essaleenteredadminedit/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
+        
+    }
+    
     public function enteredadmineditAction($id_space, $id) {
 
         // security
@@ -223,7 +250,59 @@ class EstoresaleController extends CoresecureController {
     }
     
     
+    public function feasibilitylistAction($id_space){
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$Feasibility);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::Feasibility($lang));
+        $table->addLineEditButton("essalefeasibility/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
+        
+    }
+    
     public function feasibilityAction($id_space, $id_sale){
+        
+    }
+    
+    public function todoquotelistAction($id_space){
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$TodoQuote);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::TodoQuote($lang));
+        $table->addLineEditButton("essaletodoquote/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
         
     }
     
@@ -231,7 +310,85 @@ class EstoresaleController extends CoresecureController {
         
     }
     
+    public function tosendsalelistAction($id_space){
+        
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$ToSendSale);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::ToSendSale($lang));
+        $table->addLineEditButton("essaletosendsale/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
+        
+    }
+    
+    public function quotesentlistAction($id_space){
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$QuoteSent);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::QuoteSent($lang));
+        $table->addLineEditButton("quotesent/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
+    }
+    
     public function tosendsaleAction($id_space, $id_sale){
+        
+    }
+    
+    public function invoicinglistAction($id_space){
+                // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$Invoicing);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::Invoicing($lang));
+        $table->addLineEditButton("essaleinvoicing/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
         
     }
     
@@ -239,12 +396,64 @@ class EstoresaleController extends CoresecureController {
         
     }
     
+    public function paymentpendinglistAction($id_space){
+                // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$PaymentPending);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::PaymentPending($lang));
+        $table->addLineEditButton("essalepaymentpending/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
+        
+    }
+    
     public function paymentpendingAction($id_space, $id_sale){
         
     }
     
-    public function endedAction($id_space, $id_sale){
+    public function endedlistAction($id_space){
         
+                // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$Ended);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::Ended($lang));
+        $table->addLineEditButton("essaleended/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
+    }
+    
+    public function endedAction($id_space, $id_sale){
+
     }
     
     
@@ -582,82 +791,11 @@ class EstoresaleController extends CoresecureController {
         
     }
     
-    public function inprogresslistAction($id_space){
-                // security
-        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
 
-        $modelSale = new EsSale();
-        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$InProgress);
 
-        $table = new TableView();
-        $table->setTitle(EstoreTranslator::SalesInProgress($lang));
-        $table->addLineEditButton("essaleinprogress/" . $id_space);
-        $headers = array(
-            "number" => EstoreTranslator::ID($lang),
-            "date_expected" => EstoreTranslator::DateExpected($lang),
-            "client" => EstoreTranslator::ClientAccount($lang)
-        );
-        $tableHtml = $table->view($data, $headers);
-
-        $this->render(array(
-            "id_space" => $id_space,
-            "lang" => $lang,
-            "tableHtml" => $tableHtml
-        ));
-    }
-
-    public function quotedlistAction($id_space){
-        
-        // security
-        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
-
-        $modelSale = new EsSale();
-        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$Quoted);
-
-        $table = new TableView();
-        $table->setTitle(EstoreTranslator::SalesQuoted($lang));
-        $table->addLineEditButton("esalequote/" . $id_space);
-        $headers = array(
-            "number" => EstoreTranslator::ID($lang),
-            "date_expected" => EstoreTranslator::DateExpected($lang),
-            "client" => EstoreTranslator::ClientAccount($lang)
-        );
-        $tableHtml = $table->view($data, $headers);
-
-        $this->render(array(
-            "id_space" => $id_space,
-            "lang" => $lang,
-            "tableHtml" => $tableHtml
-        ));
-    }
+ 
     
-    public function sentlistAction($id_space){
-        
-        // security
-        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
 
-        $modelSale = new EsSale();
-        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$Sent);
-
-        $table = new TableView();
-        $table->setTitle(EstoreTranslator::SalesSent($lang));
-        $table->addLineEditButton("esaledelivery/" . $id_space);
-        $headers = array(
-            "number" => EstoreTranslator::ID($lang),
-            "date_expected" => EstoreTranslator::DateExpected($lang),
-            "client" => EstoreTranslator::ClientAccount($lang)
-        );
-        $tableHtml = $table->view($data, $headers);
-
-        $this->render(array(
-            "id_space" => $id_space,
-            "lang" => $lang,
-            "tableHtml" => $tableHtml
-        ));
-    }
     
     public function canceledlistAction($id_space){
         

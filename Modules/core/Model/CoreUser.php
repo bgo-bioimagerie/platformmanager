@@ -466,7 +466,7 @@ class CoreUser extends Model {
                 $changedUsers = array();
                 if ($timec <= $today) {
                     if ($timell <= $today) {
-                        echo "desactivate " . $user ['id'] . " with logindate <br>";
+                        //echo "desactivate " . $user ['id'] . " with logindate <br>";
                         $this->setactive($user ['id'], 0);
                         $changedUsers [] = $user ['id'];
                     }

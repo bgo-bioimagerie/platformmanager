@@ -562,5 +562,12 @@ class EstoreTranslator {
         }
         return "Ended";
     }
+    
+    public static function Canceled($lang) {
+        if ($lang == "fr") {
+            return "Annulée";
+        }
+        return "Canceled";
+    }
 
 }

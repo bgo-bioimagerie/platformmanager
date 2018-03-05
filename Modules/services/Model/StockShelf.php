@@ -18,7 +18,7 @@ class StockShelf extends Model {
     }
 
     public function getAll($id_space){
-        $sql  = " SELECT stock_shelf.*, stock_cabinets.name as cabinet ";
+        $sql  = " SELECT stock_shelf.*, stock_cabinets.name as cabinet, stock_cabinets.room_number as room ";
         $sql .= " FROM stock_shelf ";
         $sql .= " INNER JOIN stock_cabinets ON stock_shelf.id_cabinet=stock_cabinets.id ";
         $sql .= " WHERE stock_shelf.id_cabinet IN (SELECT id FROM stock_cabinets WHERE stock_cabinets.id_space=?)";
@@ -31,14 +31,14 @@ class StockShelf extends Model {
             return "";
         }
         
-        $sql  = " SELECT stock_shelf.name as shelf, stock_cabinets.name as cabinet ";
+        $sql  = " SELECT stock_shelf.name as shelf, stock_cabinets.name as cabinet, stock_cabinets.room_number as room ";
         $sql .= " FROM stock_shelf ";
         $sql .= " INNER JOIN stock_cabinets ON stock_shelf.id_cabinet=stock_cabinets.id ";
         $sql .= " WHERE stock_shelf.id = ?";
         $req = $this->runRequest($sql, array($id));
         if ( $req->rowCount() > 0 ){
             $data = $req->fetch();
-            return $data["cabinet"] . " - " . $data["shelf"]; 
+            return $data["room"] . " - " .$data["cabinet"] . " - " . $data["shelf"]; 
         }
         return "";
     }

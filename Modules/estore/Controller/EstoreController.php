@@ -34,13 +34,17 @@ class EstoreController extends CoresecureController {
 
 
         $html = str_replace('{{Sales}}', EstoreTranslator::Sales($lang), $html);
-        $html = str_replace('{{SalesEntered}}', EstoreTranslator::EnteredSale($lang), $html);
-        $html = str_replace('{{SalesQuoted}}', EstoreTranslator::SalesQuoted($lang), $html);
-        $html = str_replace('{{SalesInProgress}}', EstoreTranslator::SalesInProgress($lang), $html);
-        $html = str_replace('{{SalesSent}}', EstoreTranslator::SalesSent($lang), $html);
-        $html = str_replace('{{SalesCanceled}}', EstoreTranslator::SalesCanceled($lang), $html);
-        $html = str_replace('{{SalesArchives}}', EstoreTranslator::SalesArchives($lang), $html);
-
+        $html = str_replace('{{Entered}}', EstoreTranslator::Entered($lang), $html);
+        $html = str_replace('{{Feasibility}}', EstoreTranslator::Feasibility($lang), $html);
+        $html = str_replace('{{TodoQuote}}', EstoreTranslator::TodoQuote($lang), $html);
+        $html = str_replace('{{QuoteSent}}', EstoreTranslator::QuoteSent($lang), $html);
+        $html = str_replace('{{ToSendSale}}', EstoreTranslator::ToSendSale($lang), $html);
+        $html = str_replace('{{Invoicing}}', EstoreTranslator::Invoicing($lang), $html);
+        $html = str_replace('{{PaymentPending}}', EstoreTranslator::PaymentPending($lang), $html);
+        $html = str_replace('{{Ended}}', EstoreTranslator::Ended($lang), $html);
+        $html = str_replace('{{Canceled}}', EstoreTranslator::Canceled($lang), $html);
+        
+        
         
         $html = str_replace('{{Products}}', EstoreTranslator::Products($lang), $html);
         $html = str_replace('{{CategoriesProduct}}', EstoreTranslator::CategoriesProduct($lang), $html);
@@ -70,13 +74,14 @@ class EstoreController extends CoresecureController {
         $html = str_replace('{{title}}', $title, $html);
         
         // get the number of entered sales
-        $html = $this->replaceNotification($id_space, '{{countEntered}}', EsSaleStatus::$Entered, $html);
-        $html = $this->replaceNotification($id_space, '{{countInProgress}}', EsSaleStatus::$InProgress, $html);
-        $html = $this->replaceNotification($id_space, '{{countQuoted}}', EsSaleStatus::$Quoted, $html);
-        $html = $this->replaceNotification($id_space, '{{countSent}}', EsSaleStatus::$Sent, $html);
-        $html = $this->replaceNotification($id_space, '{{countCanceled}}', EsSaleStatus::$Canceled, $html);
-        $html = $this->replaceNotification($id_space, '{{countSold}}', EsSaleStatus::$Sold, $html);
-
+        $html = $this->replaceNotification($id_space, '{{countAdminEditList}}', EsSaleStatus::$Entered, $html);
+        $html = $this->replaceNotification($id_space, '{{countFaisabilityList}}', EsSaleStatus::$Feasibility, $html);
+        $html = $this->replaceNotification($id_space, '{{countTodoQuoteList}}', EsSaleStatus::$TodoQuote, $html);
+        $html = $this->replaceNotification($id_space, '{{countQuoteSentList}}', EsSaleStatus::$QuoteSent, $html);
+        $html = $this->replaceNotification($id_space, '{{countSendSaleList}}', EsSaleStatus::$ToSendSale, $html);
+        $html = $this->replaceNotification($id_space, '{{countInvoicingList}}', EsSaleStatus::$Invoicing, $html);
+        $html = $this->replaceNotification($id_space, '{{countPaymentPendingList}}', EsSaleStatus::$PaymentPending, $html);
+        
         return $html;
     }
     

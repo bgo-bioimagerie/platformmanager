@@ -138,8 +138,15 @@ section{
 }
 
 .pm-space-navbar{
-    margin-top: 57px;
+    margin-top: 50px;
     background-color: #e7ecf0;
+    padding-right: 0px;
+    padding-left: 0px;
+    color: #fff;
+}
+
+.pm-space-navbar a{
+    color: #fff;
 }
 
 .pm-space-navbar-no-header{

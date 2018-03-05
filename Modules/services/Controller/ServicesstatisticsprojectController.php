@@ -293,7 +293,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('P2', CoreTranslator::Date($lang));
         $objPHPExcel->getActiveSheet()->getStyle('P2')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('Q2', ServicesTranslator::Stock($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('Q2', ServicesTranslator::StockSamples($lang));
         $objPHPExcel->getActiveSheet()->getStyle('Q2')->applyFromArray($styleBorderedCell);
         
 
@@ -995,13 +995,13 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('D1', ServicesTranslator::Project($lang));
         $objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', ServicesTranslator::SampleReturn($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('E1', ServicesTranslator::SampleReturnStock($lang));
         $objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCell);
 
         $objPHPExcel->getActiveSheet()->SetCellValue('F1', CoreTranslator::Date($lang));
         $objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('G1', ServicesTranslator::Stock($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('G1', ServicesTranslator::StockSamples($lang));
         $objPHPExcel->getActiveSheet()->getStyle('G1')->applyFromArray($styleBorderedCell);
 
         // projet; responsable, récupération matériel, date 
