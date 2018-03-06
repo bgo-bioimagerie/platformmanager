@@ -21,7 +21,6 @@ class EstoreRouting extends Routing{
         $this->addRoute("esproductcategoryedit", "esproductcategoryedit", "estoreproductcategory", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("esproductcategorydelete", "esproductcategorydelete", "estoreproductcategory", "delete", array("id_space", "id"), array("", ""));
         
-        
         $this->addRoute("esproducts", "esproducts", "estoreproduct", "index", array("id_space"), array(""));
         $this->addRoute("esproductedit", "esproductedit", "estoreproduct", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("esproductdelete", "esproductdelete", "estoreproduct", "delete", array("id_space", "id"), array("", ""));
@@ -53,12 +52,25 @@ class EstoreRouting extends Routing{
         
         $this->addRoute("essalefeasibility", "essalefeasibility", "estoresale", "feasibility", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaletodoquote", "essaletodoquote", "estoresale", "todoquote", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essalequotepdf", "essalequotepdf", "estoresale", "todoquotepdf", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essalequotesent", "essalequotesent", "estoresale", "quotesent", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaletosendsale", "essaletosendsale", "estoresale", "tosendsale", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaletosendsalepdf", "essaletosendsalepdf", "estoresale", "tosendsalepdf", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaleinvoicing", "essaleinvoicing", "estoresale", "invoicing", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaleinvoicingpdf", "essaleinvoicingpdf", "estoresale", "invoicingpdf", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essalepaymentpending", "essalepaymentpending", "estoresale", "paymentpending", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaleended", "essaleended", "estoresale", "ended", array("id_space", "id_sale"), array("", ""));
         
+        $this->addRoute("essaleenteredadmineditlist", "essaleenteredadmineditlist", "estoresale", "enteredadmineditlist", array("id_space"), array(""));
+        $this->addRoute("essalefeasibilitylist", "essalefeasibilitylist", "estoresale", "feasibilitylist", array("id_space"), array(""));
+        $this->addRoute("essaletodoquotelist", "essaletodoquotelist", "estoresale", "todoquotelist", array("id_space"), array(""));
+        $this->addRoute("essalequotesentlist", "essalequotesentlist", "estoresale", "quotesentlist", array("id_space"), array(""));
+        $this->addRoute("essaletosendsalelist", "essaletosendsalelist", "estoresale", "tosendsalelist", array("id_space"), array(""));
+        $this->addRoute("essaleinvoicinglist", "essaleinvoicinglist", "estoresale", "invoicinglist", array("id_space"), array(""));
+        $this->addRoute("essalepaymentpendinglist", "essalepaymentpendinglist", "estoresale", "paymentpendinglist", array("id_space"), array(""));
+        $this->addRoute("essaleendedlist", "essaleendedlist", "estoresale", "endedlist", array("id_space"), array(""));
+        
+        $this->addRoute("esalescanceled", "esalescanceled", "estoresale", "canceledlist", array("id_space"), array(""));
         
         
         

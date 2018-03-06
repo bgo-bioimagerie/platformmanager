@@ -64,7 +64,7 @@ endblock();
     ?>
 </div>
 <div class="col-md-12">
-    <div class="col-md-2" >
+    <div class="col-md-2">
         <?php
         require_once 'Modules/estore/Controller/EstoreController.php';
         $menucontroller = new EstoreController(new Request(array(), false));

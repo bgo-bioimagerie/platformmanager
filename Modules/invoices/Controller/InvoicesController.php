@@ -30,51 +30,40 @@ class InvoicesController extends CoresecureController {
 
         $lang = $this->getLanguage();
         
-        $html = '<nav class="navbar navbar-default sidebar" role="navigation" style="border: none;">';
-        $html .= '<div class="container">';
-        $html .= '<div class="navbar-header" style="background-color: #e7ecf0;">';
-        $html .= '    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">';
-        $html .= '       <span class="sr-only">Toggle navigation</span>';
-        $html .= '       <span class="icon-bar"></span>';
-        $html .= '       <span class="icon-bar"></span>';
-        $html .= '       <span class="icon-bar"></span>';
-        $html .= '   </button>  ';    
-        $html .= ' </div>';
-        $html .= ' <div class="collapse navbar-collapse" style="border: none;">';
-        $html .= '   <ul class="nav navbar-nav" style="width: 25%" id="bs-sidebar-navbar-collapse-1" >';
-        $html .= '       <li style="width: 100%">';
-        $html .= '           <a  style="background-color:{{bgcolor}}; color: #fff;" href=""> {{title}} ';
-        $html .= '          <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
-        $html .= '           </a>';
-        $html .= '       </li>';
-        $html .= '       <ul class="pm-nav-li">';
-        
-        
-        $html .= "<li>";
-        $html .= '<div class="inline pm-inline-div">';
-        $html .= '<a href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
+        $html  = '<div class="col-xs-12" style="border: none; margin-top: 7px; padding-right: 0px; padding-left: 0px;">';
+        $html .= '<div class="col-xs-12" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
+        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href=""> {{title}}'; 
+        $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
+        $html .= '</a>';
         $html .= '</div>';
-        $html .= '</li>';
-        $html .= "<li>";
-        $html .= '<div class="inline pm-inline-div">';
-        $html .= '<a href="invoicessent/' . $id_space . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
+
+        $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<a id="menu-button" href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
         $html .= '</div>';
-        $html .= '</li>';
         
-        $html .= "<li>";
-        $html .= '<div class="inline pm-inline-div">';
-        $html .= '<a href="invoicesvisas/' . $id_space . '">' . InvoicesTranslator::Visas($lang) . '</a>';
-        $html .= '<a href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
+        $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<a id="menu-button" href="invoicessent/' . $id_space . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
         $html .= '</div>';
-        $html .= '</li><br/>';
         
-        $html .= "<li>";
-        $html .= '<div class="inline pm-inline-div">';
+        $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<a id="menu-button" href="invoicesvisas/' . $id_space . '">' . InvoicesTranslator::Visas($lang) . '</a>';
+        $html .= '<a id="menu-button" href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
+        $html .= '</div>';
+        
+        
+        $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<br/>';
+        $html .= '</div>';
+        
+        $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
         $html .= '<a href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
         $html .= '</div>';
-        $html .= '</li><br/>';
-
         
+        $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<br/>';
+        $html .= '</div>';
+        
+
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
         $menus = $modelSpace->getDistinctSpaceMenusModules($id_space);
@@ -111,28 +100,25 @@ class InvoicesController extends CoresecureController {
                     if ($count > 0) {
                         $html .= "<br/>";
                     }
-                    $html .= "<li>";
+                    
+                    $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+                    $html .= '<br/>';
                     $html .= $txt;
-                    $html .= "<li/>";
+                    $html .= '</div>';
+                    
                 }
                 for ($i = 0; $i < $model->count(); $i++) {
                     $url = $model->getUrl($i);
                     $txt = $translator->$url($lang);
 
-                    $html .= "<li>";
-                    $html .= '<div class="inline pm-inline-div">';
+                    $html .= '<div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">';
                     $html .= '<a href="' . $url . "/" . $id_space . '">' . $txt . '</a>';
                     $html .= '</div>';
-                    $html .= '</li>';
                 }
             }
         }
         
-        $html.= "</ul>";
-        $html.=  "   </ul>";
         $html.= "</div>";
-        $html.= "</div>";
-        $html.= "</nav>";
         
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("invoices", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);

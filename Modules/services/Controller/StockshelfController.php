@@ -51,7 +51,8 @@ class StockshelfController extends CoresecureController {
         $tableHtml = $table->view($unitsArray, array(
             "id" => "ID", 
             "name" => CoreTranslator::Name($lang), 
-            "cabinet" => ServicesTranslator::Cabinet($lang)
+            "cabinet" => ServicesTranslator::Cabinet($lang),
+            "room" => ServicesTranslator::RoomNumber($lang)
         ));
 
         $this->render(array(

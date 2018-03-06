@@ -63,7 +63,7 @@ endblock();
 </div>
 <div class="col-md-12">
     <?php if ($showNavBarEstore) { ?>
-        <div class="col-md-2" >
+        <div class="col-md-2 col-xs-12" style="padding-left: 0px; padding-right: 0px;">
             <?php
             require_once 'Modules/estore/Controller/EstoreController.php';
             $menucontroller = new EstoreController(new Request(array(), false));
@@ -72,7 +72,7 @@ endblock();
         </div>
     <?php } ?>
 
-    <div class="col-md-10">
+    <div class="col-md-10 col-xs-12">
 
 
         <?php endblock(); ?>

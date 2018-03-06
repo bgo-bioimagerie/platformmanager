@@ -49,14 +49,14 @@ if (!$headless) {
     echo $spaceController->navbar($id_space);
 }
 ?>
-<div class="col-md-2 col-lg-2 <?php echo $pmspaceheadernavbar ?>" >
+<div class="col-md-2 col-lg-2 col-xs-12 <?php echo $pmspaceheadernavbar ?>">
     <?php
     require_once 'Modules/antibodies/Controller/AntibodiesController.php';
     $menucontroller = new AntibodiesController(new Request(array(), false));
     echo $menucontroller->navbar($id_space);
     ?>
 </div>
-<div class="col-md-10 col-lg-10 <?php echo $pmspaceheadercontent ?>" >
+<div class="col-md-10 col-lg-10 col-xs-12 <?php echo $pmspaceheadercontent ?>" >
     <?php endblock(); ?>
 
 

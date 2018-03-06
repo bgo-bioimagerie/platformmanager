@@ -7,6 +7,7 @@ require_once 'Modules/estore/Model/EsSale.php';
 require_once 'Modules/estore/Model/EsSaleEnteredItem.php';
 require_once 'Modules/estore/Model/EsSaleHistory.php';
 require_once 'Modules/estore/Model/EsSaleItem.php';
+require_once 'Modules/estore/Model/EsSaleItemInvoice.php';
 require_once 'Modules/estore/Model/EsSaleStatus.php';
 require_once 'Modules/estore/Model/EsDeliveryMethod.php';
 require_once 'Modules/estore/Model/EsContactType.php';
@@ -58,6 +59,8 @@ class EstoreInstall extends Model {
         $model10 = new EsPrice();
         $model10->createTable();
         
+        $model11 = new EsSaleItemInvoice();
+        $model11->createTable();
         
     }
 

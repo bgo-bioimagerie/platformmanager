@@ -10,6 +10,7 @@ class BrCategory extends Model {
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", "");
         $this->setColumnsInfo("description", "text", "");
+        $this->setColumnsInfo("vat", "float", 0);
         $this->primaryKey = "id";
     }
 
@@ -32,6 +33,12 @@ class BrCategory extends Model {
         $sql = "SELECT * FROM br_categories WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
+    
+    public function getVat($id){
+        $sql = "SELECT vat FROM br_categories WHERE id=?";
+        $tmp =  $this->runRequest($sql, array($id))->fetch();
+        return $tmp[0];
+    }
 
     public function getName($id) {
         $sql = "SELECT * FROM br_categories WHERE id=?";
@@ -44,14 +51,14 @@ class BrCategory extends Model {
         }
     }
 
-    public function set($id, $id_space, $name, $description) {
+    public function set($id, $id_space, $name, $description, $vat) {
         if ($id == 0) {
-            $sql = 'INSERT INTO br_categories (id_space, name, description) VALUES (?,?,?)';
-            $this->runRequest($sql, array($id_space, $name, $description));
+            $sql = 'INSERT INTO br_categories (id_space, name, description, vat) VALUES (?,?,?,?)';
+            $this->runRequest($sql, array($id_space, $name, $description, $vat));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE br_categories SET id_space=?, name=?, description=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $name, $description, $id));
+            $sql = 'UPDATE br_categories SET id_space=?, name=?, description=?, vat=? WHERE id=?';
+            $this->runRequest($sql, array($id_space, $name, $description, $vat, $id));
             return $id;
         }
     }

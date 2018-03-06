@@ -83,6 +83,8 @@ class BreedingcategoriesController extends CoresecureController {
         $form->addHidden("id", $pricing["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $pricing["name"]);
         $form->addTextArea("description", CoreTranslator::Description($lang), true, $pricing["description"]);
+        $form->addText("vat", CoreTranslator::Vat($lang), true, $pricing["vat"]);
+        
         
         $form->setValidationButton(CoreTranslator::Ok($lang), "brproductcategoryedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "brproductcategories/" . $id_space);
@@ -94,7 +96,8 @@ class BreedingcategoriesController extends CoresecureController {
             $this->model->set($form->getParameter("id"), 
                     $id_space, 
                     $form->getParameter("name"),
-                    $form->getParameter("description")
+                    $form->getParameter("description"),
+                    $form->getParameter("vat")
                 );   
             
             // after the provider is saved we redirect to the providers list page

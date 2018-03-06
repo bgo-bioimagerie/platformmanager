@@ -21,7 +21,7 @@
         <?php echo $tableHtml ?>
         
         <div class="col-md-12 text-right">
-            <a class="btn btn-primary" href="essaleinprogress/<?php echo $id_space ?>/<?php echo $saleInfo["id"] ?>">Faisabilité</a>
+            <a class="btn btn-primary" href="essalefeasibility/<?php echo $id_space ?>/<?php echo $saleInfo["id"] ?>">Faisabilité</a>
         </div>    
     </div>
 <?php

@@ -1525,6 +1525,11 @@ class CoreTranslator {
         return "Icons with description";
     }
     
-    
+    public static function Vat($lang) {
+        if ($lang == "fr") {
+            return "TVA (%)";
+        }
+        return "Vat";
+    }
     
 }

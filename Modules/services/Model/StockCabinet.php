@@ -19,13 +19,13 @@ class StockCabinet extends Model {
     }
 
     public function getForList($id_space){
-        $sql = "SELECT id, name FROM stock_cabinets WHERE id_space=? ORDER BY name ASC;";
+        $sql = "SELECT id, name, room_number FROM stock_cabinets WHERE id_space=? ORDER BY name ASC;";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         
         $names = array();
         $ids = array();
         foreach($data as $d){
-            $names[] = $d["name"];
+            $names[] = $d["room_number"] . " - " . $d["name"];
             $ids[] = $d["id"];
         }
         return array( "names" => $names, "ids" => $ids );

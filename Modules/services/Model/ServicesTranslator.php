@@ -114,6 +114,13 @@ class ServicesTranslator {
         }
         return "Stock";
     }
+    
+    public static function StockSamples($lang) {
+        if ($lang == "fr") {
+            return "Stock échantillons";
+        }
+        return "Stock samples";
+    }
 
     public static function Purchase($lang) {
         if ($lang == "fr") {
@@ -229,7 +236,7 @@ class ServicesTranslator {
 
     public static function Closed_date($lang) {
         if ($lang == "fr") {
-            return "Date de libération produit";
+            return "Date de libération projet";
         }
         return "Closed date";
     }
@@ -866,9 +873,9 @@ class ServicesTranslator {
     
     public static function DateSampleReturn($lang){
         if ($lang == "fr") {
-            return "Restitution date";
+            return "Date restitution";
         }
-        return "Date restitution";
+        return "Restitution date";
     }
 
     public function servicesstatisticsprojectsamplesreturn($lang) {
@@ -962,6 +969,13 @@ class ServicesTranslator {
             return "Echantillons";
         }
         return "Samples";
+    }
+    
+    public static function SampleReturnStock($lang) {
+        if ($lang == "fr") {
+            return "restitution/stockage";
+        }
+        return "Samples return/stock";
     }
     
 
