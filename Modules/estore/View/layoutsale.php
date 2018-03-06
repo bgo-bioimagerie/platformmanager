@@ -71,7 +71,7 @@ endblock();
         echo $menucontroller->navbar($id_space);
         ?>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-10" style="margin-top: 7px">
 
         <?php include 'Modules/estore/View/Estoresale/saleheader.php'; ?>
 

@@ -33,6 +33,9 @@ class EsSale extends Model {
         // Pricing
         $this->setColumnsInfo("invoice_delivery_price", "DECIMAL(9,2)", 0);
 
+        // paid
+        $this->setColumnsInfo("paid_date", "DATE", "0000-00-00");
+        
         // cancel
         $this->setColumnsInfo("cancel_reason", "varchar(255)", "");
         $this->setColumnsInfo("cancel_date", "date", "0000-00-00");
@@ -100,7 +103,10 @@ class EsSale extends Model {
     }
     
     
-    
+    public function setPaid($id, $paid_date){
+        $sql = "UPDATE es_sales SET paid_date=? WHERE id=?";
+        $this->runRequest($sql, array($paid_date, $id));
+    }
     
     
     

@@ -990,7 +990,7 @@ class EstoresaleController extends CoresecureController {
     
     
     public function paymentpendinglistAction($id_space){
-                // security
+        // security
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -1016,6 +1016,41 @@ class EstoresaleController extends CoresecureController {
     }
     
     public function paymentpendingAction($id_space, $id_sale){
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        
+        // data
+        $sale = $this->modelSales->get($id_sale);
+        
+        // form
+        $form = new Form($this->request, "esalepaymentpendingForm");
+        $form->setTitle(EstoreTranslator::Sale($lang) . " #" . $sale['id'] . " : " . EstoreTranslator::PaymentPending($lang));
+
+        $form->addDate("paid_date", EstoreTranslator::PaidDate($lang), true, CoreTranslator::dateFromEn($sale["paid_date"], $lang) );
+        
+        $form->setValidationButton(EstoreTranslator::Save($lang), "essalepaymentpending/" . $id_space . "/" . $id_sale);
+        $form->setButtonsWidth(4, 8);
+        
+        if ($form->check()) {
+            $this->modelSales->setPaid($id_sale, CoreTranslator::dateToEn($form->getParameter("paid_date"), $lang));
+            
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$PaymentPending, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_sale);
+            
+            $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
+            $this->redirect("essalepaymentpending/" . $id_space . "/" . $id_sale);
+            return;
+            
+        }
+        
+        $this->render(array(
+            'id_space' => $id_space,
+            'lang' => $lang,
+            'id_sale' => $sale["id"],
+            'salestatus' => $sale["id_status"],
+            'formHtml' => $form->getHtml($lang),
+        ));
         
     }
     

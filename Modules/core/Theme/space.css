@@ -149,6 +149,10 @@ section{
     color: #fff;
 }
 
+.pm-space-navbar a:hover{
+    color: #f1f1f1;
+}
+
 .pm-space-navbar-no-header{
     margin-top: 7px;
 }
