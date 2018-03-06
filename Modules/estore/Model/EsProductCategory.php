@@ -41,6 +41,10 @@ class EsProductCategory extends Model {
         return $this->productCategoryClass->getName($id);
     }
 
+    public function getVat($id){
+        return $this->productCategoryClass->getVat($id);
+    }
+    
     public function set($id, $id_space, $name, $description) {
         return $this->productCategoryClass->set($id, $id_space, $name, $description);
     }

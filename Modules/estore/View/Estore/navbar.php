@@ -28,21 +28,6 @@
     <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">
         {{countSendSaleList}}
         <a style="color: #fff;" id="menu-button" href="essaletosendsalelist/{{id_space}}">{{ToSendSale}}</a> 
-    </div>          
-
-    <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">
-        {{countInvoicingList}}
-        <a style="color: #fff;" id="menu-button" href="essaleinvoicinglist/{{id_space}}">{{Invoicing}}</a>    
-    </div>  
-
-    <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">
-        {{countPaymentPendingList}}
-        <a style="color: #fff;" id="menu-button" href="essalepaymentpendinglist/{{id_space}}">{{PaymentPending}}</a> 
-    </div>  
-
-    <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">
-        {{countSendSaleList}}
-        <a style="color: #fff;" id="menu-button" href="essaletosendsalelist/{{id_space}}">{{ToSendSale}}</a> 
     </div>
 
     <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">

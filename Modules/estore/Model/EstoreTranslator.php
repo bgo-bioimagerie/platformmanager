@@ -156,6 +156,13 @@ class EstoreTranslator {
         }
         return "Prices";
     }
+    
+    public static function Price($lang) {
+        if ($lang == "fr") {
+            return "Prix";
+        }
+        return "Price";
+    }
 
     public static function OtherInfo($lang) {
         if ($lang == "fr") {
@@ -387,6 +394,13 @@ class EstoreTranslator {
         }
         return "Purchase oder num";
     }
+    
+    public static function PurchaseOrder($lang) {
+        if ($lang == "fr") {
+            return "Bon de commande";
+        }
+        return "Purchase order";
+    }
 
     public static function DateDeliveryExpected($lang) {
         if ($lang == "fr") {
@@ -568,6 +582,20 @@ class EstoreTranslator {
             return "Annulée";
         }
         return "Canceled";
+    }
+    
+    public static function Save($lang) {
+        if ($lang == "fr") {
+            return "Sauvegarder";
+        }
+        return "Save";
+    }
+    
+    public static function DeliveryDateExpected($lang) {
+        if ($lang == "fr") {
+            return "Date livraison prévue";
+        }
+        return "Delivery date expected";
     }
 
 }

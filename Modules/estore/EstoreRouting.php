@@ -52,9 +52,12 @@ class EstoreRouting extends Routing{
         
         $this->addRoute("essalefeasibility", "essalefeasibility", "estoresale", "feasibility", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaletodoquote", "essaletodoquote", "estoresale", "todoquote", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essalequotepdf", "essalequotepdf", "estoresale", "todoquotepdf", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essalequotesent", "essalequotesent", "estoresale", "quotesent", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaletosendsale", "essaletosendsale", "estoresale", "tosendsale", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaletosendsalepdf", "essaletosendsalepdf", "estoresale", "tosendsalepdf", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaleinvoicing", "essaleinvoicing", "estoresale", "invoicing", array("id_space", "id_sale"), array("", ""));
+        $this->addRoute("essaleinvoicingpdf", "essaleinvoicingpdf", "estoresale", "invoicingpdf", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essalepaymentpending", "essalepaymentpending", "estoresale", "paymentpending", array("id_space", "id_sale"), array("", ""));
         $this->addRoute("essaleended", "essaleended", "estoresale", "ended", array("id_space", "id_sale"), array("", ""));
         
