@@ -54,6 +54,8 @@ class StockShelf extends Model {
         
         $names = array();
         $ids = array();
+        $ids[] = 0;
+        $names[] = "";
         for($i = 0 ; $i < count($data) ; $i++){
             $ids[] = $data[$i]["id"];
             $names[] = $data[$i]["cabinet"] . ": " . $data[$i]["name"];

@@ -771,7 +771,7 @@ class SeProject extends Model {
     }
 
     public function getReturnedSamples($id_space) {
-        $sql = "SELECT * FROM se_project WHERE id_space=? AND samplereturndate!='0000-00-00'";
+        $sql = "SELECT * FROM se_project WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $modelUser = new EcUser();
         $modelSampleCabinet = new StockShelf();

@@ -332,7 +332,7 @@ class ServicesprojectsController extends CoresecureController {
 
         $form = new Form($this->request, "projectreturnform");
         
-        $form->addSelect("samplestocked", ServicesTranslator::SampleStocked($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $project["samplestocked"]);
+        //$form->addSelect("samplestocked", ServicesTranslator::SampleStocked($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $project["samplestocked"]);
         $form->addSelect("id_cabinet", ServicesTranslator::Cabinet($lang), $cabinets["names"], $cabinets["ids"], $project["id_sample_cabinet"]);
         $form->addTextArea("samplescomment", ServicesTranslator::Comment($lang), false, $project["samplescomment"]);
         
@@ -342,7 +342,7 @@ class ServicesprojectsController extends CoresecureController {
         if ($form->check()) {
             $modelProject->setSampleStock(
                     $id, 
-                    $this->request->getParameter("samplestocked"),
+                    1,
                     $this->request->getParameter("id_cabinet"),
                     $this->request->getParameter("samplescomment")
             );

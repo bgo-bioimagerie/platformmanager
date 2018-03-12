@@ -5,7 +5,7 @@
             <button class="btn btn-default <?php if($headerInfo["curentTab"] == "sheet"){echo "active";} ?>" type="button" onclick="location.href = 'servicesprojectsheet/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::Sheet($lang) ?></button> 
             <button class="btn btn-default <?php if($headerInfo["curentTab"] == "followup"){echo "active";} ?>" type="button" onclick="location.href = 'servicesprojectfollowup/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::FollowUp($lang) ?></button> 
             <button class="btn btn-default <?php if($headerInfo["curentTab"] == "closing"){echo "active";} ?>" type="button" onclick="location.href = 'servicesprojectclosing/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::Closing($lang) ?></button> 
-            <button class="btn btn-default <?php if($headerInfo["curentTab"] == "samplereturn"){echo "active";} ?>" type="button" onclick="location.href = 'servicesprojectsample/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::Samples($lang) ?></button> 
+            <button class="btn btn-default <?php if($headerInfo["curentTab"] == "samplereturn"){echo "active";} ?>" type="button" onclick="location.href = 'servicesprojectsample/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::SamplesStock($lang) ?></button> 
             <?php $_SESSION["id_project"] = $headerInfo["projectId"]; ?>
         </div>
     </div>

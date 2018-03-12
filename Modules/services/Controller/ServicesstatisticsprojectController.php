@@ -979,7 +979,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
             ),
         );
 
-        $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::SampleReturn($lang));
+        $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::SamplesStock($lang));
         
         //responsable, unité,  utilisateur, no projet
         
@@ -995,7 +995,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('D1', ServicesTranslator::Project($lang));
         $objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', ServicesTranslator::SampleReturnStock($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('E1', ServicesTranslator::SampleReturn($lang));
         $objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCell);
 
         $objPHPExcel->getActiveSheet()->SetCellValue('F1', CoreTranslator::Date($lang));

@@ -49,10 +49,10 @@ class StockshelfController extends CoresecureController {
         $table->addLineEditButton("stockshelfedit/" . $id_space);
         $table->addDeleteButton("stockshelfdelete/" . $id_space);
         $tableHtml = $table->view($unitsArray, array(
-            "id" => "ID", 
-            "name" => CoreTranslator::Name($lang), 
+            "room" => ServicesTranslator::RoomNumber($lang),
             "cabinet" => ServicesTranslator::Cabinet($lang),
-            "room" => ServicesTranslator::RoomNumber($lang)
+            "name" => ServicesTranslator::Shelf($lang), 
+            "id" => "ID", 
         ));
 
         $this->render(array(

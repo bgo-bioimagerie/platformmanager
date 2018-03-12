@@ -191,16 +191,17 @@ class TableView {
     }
     
     protected function isButtons(){
+        $count = 0;
         if (count($this->linesButtonActions) > 0){
-            return true;
+            $count += count($this->linesButtonActions);
         }
         if ($this->editURL != ""){
-            return true;
+            $count ++;
         }
         if ($this->deleteURL != ""){
-            return true;
+            $count++;
         }
-        return false;
+        return $count;
     }
 
     /**
@@ -259,9 +260,12 @@ class TableView {
         $html .= "<thead>";
         $html .= "<tr>";
 
-        if ($isButtons){
+        for ($b = 0 ; $b < $isButtons ; $b++){
             $html .= "<th></th>";
         }
+        //if ($isButtons){
+        //    $html .= "<th></th>";
+        //}
         
         
         if ($this->downloadButton != "") {
@@ -288,13 +292,15 @@ class TableView {
                 $html .= "<tr>";
                 
                 
-                if ($isButtons){
-                    $html .= "<td>";
-                }
+                //if ($isButtons){
+                //    $html .= "<td>";
+                // }
                 
                 if (count($this->linesButtonActions) > 0 && !$this->isprint) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
+                        $html .= '<td style="width: 1%; white-space: nowrap;">';
                         $html .= "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button><span> </span>";
+                        $html .= "</td>";
                     }
                 }
 
@@ -303,20 +309,24 @@ class TableView {
                     if ($this->editIndex != "") {
                         $idxVal = $dat[$this->editIndex];
                     }
+                    $html .= '<td style="width: 1%; white-space: nowrap;">';
                     if($this->editJS){
                         $html .= "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button><span> </span>" ;
                     }
                     else{
                          $html .= "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button><span> </span>";   
                     }  
-                }
-                if ($this->deleteURL != "" && !$this->isprint) {
-                    $html .= $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]);
-                }
-                
-                if ($isButtons){
                     $html .= "</td>";
                 }
+                if ($this->deleteURL != "" && !$this->isprint) {
+                    $html .= '<td style="width: 1%; white-space: nowrap;">';
+                    $html .= $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]);
+                    $html .= "</td>";
+                }
+                
+                //if ($isButtons){
+                //    $html .= "</td>";
+                //}
                 
                 
 

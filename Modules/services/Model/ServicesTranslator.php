@@ -880,9 +880,9 @@ class ServicesTranslator {
 
     public function servicesstatisticsprojectsamplesreturn($lang) {
         if ($lang == "fr") {
-            return "Restitution des échantillons";
+            return "Stockage échantillons";
         }
-        return "Sample return listing";
+        return "Sample stock";
     }
 
     public static function Origin($lang) {
@@ -978,5 +978,11 @@ class ServicesTranslator {
         return "Samples return/stock";
     }
     
-
+    public static function SamplesStock($lang) {
+        if ($lang == "fr") {
+            return "stock échantillons";
+        }
+        return "Stock samples";
+    }
+    
 }

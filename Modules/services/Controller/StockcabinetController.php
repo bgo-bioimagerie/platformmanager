@@ -48,9 +48,9 @@ class StockcabinetController extends CoresecureController {
         $table->addLineEditButton("stockcabinetedit/" . $id_space);
         $table->addDeleteButton("stockcabinetdelete/" . $id_space);
         $tableHtml = $table->view($unitsArray, array(
-            "id" => "ID", 
-            "name" => CoreTranslator::Name($lang), 
-            "room_number" => ServicesTranslator::RoomNumber($lang)
+            "room_number" => ServicesTranslator::RoomNumber($lang),
+            "name" => ServicesTranslator::Cabinet($lang), 
+            "id" => "ID" 
         ));
 
         $this->render(array(
