@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
-require_once 'Modules/core/Model/CoreMenu.php';
+require_once 'Modules/core/Model/CoreAdminMenu.php';
 
 /**
  * Class defining methods to install and initialize the core database
@@ -17,7 +17,7 @@ class DevInstall extends Model {
      */
     public function createDatabase() {        
 
-        $modelCoreMenu = new CoreMenu();
+        $modelCoreMenu = new CoreAdminMenu();
         $modelCoreMenu->setAdminMenu("Dev", "dev", "glyphicon glyphicon-plus", 1);
     }
 }

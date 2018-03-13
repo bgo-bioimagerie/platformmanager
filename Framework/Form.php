@@ -270,7 +270,8 @@ class Form {
      * @param type $name 
      * @param type $label
      */
-    public function addUpload($name, $label) {
+    public function addUpload($name, $label, $value = "") {
+       
         $this->types[] = "upload";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -280,9 +281,10 @@ class Form {
         $this->validated[] = true;
         $this->useUpload = true;
         $this->enabled[] = "";
-        $this->setValue($name, "");
+        $this->setValue($name, $value);
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        
     }
 
     /**
@@ -656,7 +658,7 @@ class Form {
                 $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "upload") {
-                $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
+                $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "downloadbutton") {
                 $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth);

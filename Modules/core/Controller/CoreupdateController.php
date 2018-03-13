@@ -30,21 +30,15 @@ class CoreupdateController extends Controller {
 
         $lang = $this->getLanguage();
 
-        $form = new Form($this->request, "coreupdateform");
-        $form->setTitle(CoreTranslator::Update($lang));
-        $form->addComment(CoreTranslator::UpdateComment($lang));
-        $form->setValidationButton(CoreTranslator::Update($lang), 'coreupdate');
+        $updateInfo = $this->updateAction(1);
 
-        if ($form->check()) {
-            $_SESSION['message'] = $this->updateAction();
-            $this->redirect('coreupdate');
-        }
-
-        $this->render(array('formHtml' => $form->getHtml($lang)
+        $this->render(array(
+            'lang' => $lang,
+            'updateInfo' => $updateInfo
         ));
     }
 
-    public function updateAction() {
+    public function updateAction($fromButton = 0) {
 
         try {
             $modulesInstalled = '';
@@ -74,21 +68,22 @@ class CoreupdateController extends Controller {
                 }
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
-            return $e->getMessage();
+            if ( $fromButton == 0 ){
+                echo $e->getMessage();
+            }
+            else{
+                return array("status" => "error", "message" =>  $e->getMessage());
+            }
+            
         }
-        echo "Success: update done for modules: " . $modulesInstalled;
-        return "Success: update done for modules: " . $modulesInstalled;
+        
+        
+        if ($fromButton == 0){
+            echo "Success: update done for modules: " . $modulesInstalled;
+        }
+        else{
+            return array( "status" => "success", "message" => "Update done for modules: " . $modulesInstalled );
+        }
     }
     
-    public function coreupdateAction(){
-        
-        echo "start core update <br />";
-        
-        $modelInstall = new CoreInstall();
-        $modelInstall->createDatabase();
-        
-        echo "core update done";
-    }
-
 }

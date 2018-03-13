@@ -26,6 +26,7 @@ class ResourceInfo extends Model {
         $this->setColumnsInfo("id_area", "int(11)", 0);
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("display_order", "int(11)", 0);
+        $this->setColumnsInfo("image", "varchar(255)", "");
         $this->primaryKey = "id";
     }
 
@@ -42,6 +43,11 @@ class ResourceInfo extends Model {
             "id_space" => 0,
             "display_order" => 0
         );
+    }
+    
+    public function setImage($id, $image){
+        $sql = "UPDATE re_info SET image=? WHERE id=?";
+        $this->runRequest($sql, array($image, $id));
     }
 
     public function getAll($sort = "name") {
@@ -82,7 +88,10 @@ class ResourceInfo extends Model {
     }
     
     public function getBySpace($id) {
-        $sql = "SELECT * FROM re_info WHERE id_space=?";
+        $sql = "SELECT re_info.*, re_category.name as category "
+                . "FROM re_info "
+                . "INNER JOIN re_category ON re_info.id_category = re_category.id "
+                . "WHERE re_info.id_space=?";
         return $this->runRequest($sql, array($id))->fetchAll();
     }
     

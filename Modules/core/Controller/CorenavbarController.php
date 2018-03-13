@@ -2,7 +2,9 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
-require_once 'Modules/core/Model/CoreMenu.php';
+require_once 'Modules/core/Model/CoreAdminMenu.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreMainSubMenu.php';
 
 /**
  * Mather class for controller using secure connection
@@ -41,13 +43,16 @@ class CorenavbarController extends CoresecureController {
      * @return multitype: tool menu content
      */
     public function getMenu() {
-        $modulesModel = new CoreMenu();
-        $toolMenu = $modulesModel->getMenus("name");
         
-        for($i = 0 ; $i < count($toolMenu) ; $i++){
-            $toolMenu[$i]["items"] = $modulesModel->getItemsFormMenu($toolMenu[$i]["id"]);
+        $modelMainMenus = new CoreMainMenu();
+        $mainMenu = $modelMainMenus->getAll();
+        
+        $modelMainSubMenus = new CoreMainSubMenu();
+        
+        for($i = 0 ; $i < count($mainMenu) ; $i++){
+            $mainMenu[$i]["items"] = $modelMainSubMenus->getForMenu($mainMenu[$i]["id"]);
         }
-        return $toolMenu;
+        return $mainMenu;
     }
     
     /**
@@ -59,7 +64,7 @@ class CorenavbarController extends CoresecureController {
 
         $toolAdmin = null;
         if ($user_status_id >= CoreStatus::$ADMIN) {
-            $modulesModel = new CoreMenu();
+            $modulesModel = new CoreAdminMenu();
             $toolAdmin = $modulesModel->getAdminMenus();
         }
         return $toolAdmin;
@@ -75,6 +80,8 @@ class CorenavbarController extends CoresecureController {
         $lang = $this->getLanguage();
         $toolMenu = $this->getMenu();
         $toolAdmin = $this->getAdminMenu();
+        
+        //print_r($toolMenu);
 
         // get the view menu,fill it, and return the content
         $view = $this->generateNavfile(

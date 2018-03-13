@@ -67,6 +67,12 @@ class CatalogconfigController extends CoresecureController {
             $antibody_pluginR = $this->request->getParameterNoException("ca_use_antibodies");
             $modelConfig->setParam("ca_use_antibodies", $antibody_pluginR, $id_space);
         }
+        $formUseResources = $this->resourcesForm($id_space, $lang);
+        if ($formUseResources->check()) {
+            $modelConfig = new CoreConfig();
+            $resources_pluginR = $this->request->getParameterNoException("ca_use_resources");
+            $modelConfig->setParam("ca_use_resources", $resources_pluginR, $id_space);
+        }
 
         $formPublicPageHeader = $this->publicPageHeaderForm($id_space, $lang);
         if ($formPublicPageHeader->check()) {
@@ -85,6 +91,7 @@ class CatalogconfigController extends CoresecureController {
         $forms = array($formMenusactivation->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formUseAntibodies->getHtml($lang),
+            $formUseResources->getHtml($lang),
             $formPublicPageHeader->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
@@ -147,6 +154,21 @@ class CatalogconfigController extends CoresecureController {
         $form->addSeparator(CatalogTranslator::Antibody($lang));
 
         $form->addSelect("ca_use_antibodies", CatalogTranslator::Antibody_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_antibodies);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+    
+    protected function resourcesForm($id_space, $lang) {
+        $modelCoreConfig = new CoreConfig();
+        $ca_use_resources = $modelCoreConfig->getParam("ca_use_resources", $id_space);
+
+        $form = new Form($this->request, "ca_use_resourcesForm");
+        $form->addSeparator(CatalogTranslator::Resources($lang));
+
+        $form->addSelect("ca_use_resources", CatalogTranslator::Resources_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_resources);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);

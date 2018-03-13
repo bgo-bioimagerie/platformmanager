@@ -149,12 +149,28 @@ class CatalogTranslator {
         }
         return "antibody plugin";
     }
+    
+    
+    public static function Resources_plugin($lang) {
+        if ($lang == "fr") {
+            return "Plugin ressources";
+        }
+        return "Resources plugin";
+    }
 
     public static function Enabled($lang) {
         if ($lang == "fr") {
             return "Activé";
         }
         return "Enabled";
+    }
+    
+    
+    public static function Resources($lang) {
+        if ($lang == "fr") {
+            return "Ressources";
+        }
+        return "Resources";
     }
 
     public static function Unabled($lang) {

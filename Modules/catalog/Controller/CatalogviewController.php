@@ -11,6 +11,8 @@ require_once 'Modules/catalog/Model/CatalogTranslator.php';
 
 require_once 'Modules/antibodies/Model/Status.php';
 require_once 'Modules/antibodies/Model/Anticorps.php';
+
+require_once 'Modules/resources/Model/ResourceInfo.php';
 /**
  * 
  * @author sprigent
@@ -55,11 +57,21 @@ class CatalogviewController extends CoresecureController {
             $categories[count($categories)]["id"] = -12;
             $categories[count($categories) - 1]["name"] = CatalogTranslator::Antibodies($lang);
         }
+        $useResources = $modelCoreConfig->getParamSpace("ca_use_resources", $id_space);
+        if ($useResources == 1) {
+            $categories[count($categories)]["id"] = -13;
+            $categories[count($categories) - 1]["name"] = CatalogTranslator::Resources($lang);
+        }
         
         if ($idCategory == -12 || ( $idCategory == 0 && $categories[0]["id"] == -12)) {
             $this->antibodiesAction($id_space, $categories);
             return;
         }
+        if ($idCategory == -13 || ( $idCategory == 0 && $categories[0]["id"] == -13)) {
+            $this->resourcesAction($id_space, $categories);
+            return;
+        }
+        
         // view
         $this->render(array("id_space" => $id_space, "lang" => $lang,
             'categories' => $categories,
@@ -89,4 +101,19 @@ class CatalogviewController extends CoresecureController {
                 ), "antibodies");
     }
 
+    public function resourcesAction($id_space, $categories){
+        
+        $lang = $this->getLanguage();
+        
+        $modelResources = new ResourceInfo();
+        $resources = $modelResources->getBySpace($id_space);
+        
+        $this->render(array(
+            'id_space' => $id_space,
+            'categories' => $categories,
+            'entries' => $resources,
+            'lang' => $lang,
+            'activeCategory' => -13,
+        ), "resourcesAction");
+    }
 }

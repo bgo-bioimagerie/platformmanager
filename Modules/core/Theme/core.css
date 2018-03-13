@@ -81,3 +81,7 @@ body,html{
     background-color: #e7ecf0;
     border: none;
 }
+
+.pm-top-double-bar{
+    margin-top: 50px;
+}

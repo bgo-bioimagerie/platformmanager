@@ -1532,4 +1532,118 @@ class CoreTranslator {
         return "Vat";
     }
     
+    public static function MainSubMenus($lang) {
+        if ($lang == "fr") {
+            return "Sous menus";
+        }
+        return "Sub menus";
+    }
+    
+    public static function MainMenus($lang) {
+        if ($lang == "fr") {
+            return "Menus";
+        }
+        return "Menus";
+    }
+    
+    public static function MainMenu($lang) {
+        if ($lang == "fr") {
+            return "Menu";
+        }
+        return "Menu";
+    }
+    
+    public static function NewMainMenu($lang) {
+        if ($lang == "fr") {
+            return "Ajouter menu";
+        }
+        return "New menu";
+    }
+    
+    public static function NewMainSubMenu($lang) {
+        if ($lang == "fr") {
+            return "Ajouter sous menu";
+        }
+        return "New sub menu";
+    }
+    
+    public static function EditMainMenu($lang) {
+        if ($lang == "fr") {
+            return "Edition menu";
+        }
+        return "Edit menu";
+    }
+    
+    public static function EditMainSubMenu($lang) {
+        if ($lang == "fr") {
+            return "Edition sous menu";
+        }
+        return "Edit sub menu";
+    }
+    
+    public static function MenuSaved($lang) {
+        if ($lang == "fr") {
+            return "Le menu a bien été sauvegardé";
+        }
+        return "The menu has been saved";
+    }
+    
+    public static function SubMenus($lang) {
+        if ($lang == "fr") {
+            return "Sous menus";
+        }
+        return "Sub menus";
+    }
+    
+    public static function SubMenu($lang) {
+        if ($lang == "fr") {
+            return "Sous menu";
+        }
+        return "Sub menu";
+    }
+    
+    public static function ItemsFor($lang) {
+        if ($lang == "fr") {
+            return "Items pour: ";
+        }
+        return "Items for: ";
+    }
+    
+    public static function EditItemFor($lang) {
+        if ($lang == "fr") {
+            return "Edition item pour: ";
+        }
+        return "Edit items for: ";
+    }
+    
+    public static function EditItem($lang) {
+        if ($lang == "fr") {
+            return "Edition item";
+        }
+        return "Edit item";
+    }
+    
+    public static function Space($lang) {
+        if ($lang == "fr") {
+            return "Espace";
+        }
+        return "Space";
+    }
+    
+    public static function Item($lang) {
+        if ($lang == "fr") {
+            return "Item";
+        }
+        return "Item";
+    }
+    
+    public static function Image($lang) {
+        if ($lang == "fr") {
+            return "Image";
+        }
+        return "Image";
+    }
+    
+    
 }
+

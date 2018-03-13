@@ -28,55 +28,63 @@ if (!$headless) {
 <?php endblock(); ?>
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="col-xs-12 pm-tile-container">
 
-    <div class="container">
-        <?php
-        for ($i = 0; $i < count($toolMenu); $i++) {
-            ?>
-            <div class="page-header">
-                <h2>
-                    <?php echo $toolMenu[$i]["name"] ?>
-                    <br>
-                </h2>
-            </div>
-            <div class="bs-glyphicons">
-                <ul class="bs-glyphicons-list">
-                    <?php
-                    foreach ($toolMenu[$i]["items"] as $item) {
-                        
-                        if( $iconType == 1){
-                            
-                            $key = $item['link'];
-                            $value = $item['name'];
-                            $icon = $item['icon'];
-                            $color = '#428bca';
-                            if (isset($item['color']) && $item['color'] != "") {
-                                $color = $item['color'];
-                            }
-                            ?>
-                            <li style="background-color:<?php echo $color ?>">
-                                <a href="<?php echo $key ?>">
-                                    
-                                   <img src="<?php echo $icon ?>" alt="logo" style="margin-top: -10px;width:100px;height:75px">
-                                    <span class="glyphicon-class"><?php echo $value ?></span>
-                                </a>
-                            </li>
+<?php if ($showSubBar){ ?> 
+<div class="col-md-12 pm-nav">
+    <?php include('Modules/core/View/Coretiles/navbar.php'); ?>
+</div>  
+<?php } ?>
+
+
+<div class="col-xs-12" style="background-color: #fff">
+    <div class="container"<?php if ($showSubBar){echo 'style="margin-top: 50px;"';} ?> >
+        <h3><?php echo $title ?></h3>    
+    </div>
+</div>
+
+<div class="col-xs-12 pm-tile-container"  >
+
             
-                            <?php
+    
+    <div class="container">
+
+        
+        <div class="bs-glyphicons">
+            <ul class="bs-glyphicons-list">
+                <?php
+                foreach ($items as $item) {
+
+                    if ($iconType == 1) {
+
+                        $key = "corespace/" . $item['id'];
+                        $value = $item['name'];
+                        $icon = $item['image'];
+                        $color = '#428bca';
+                        if (isset($item['color']) && $item['color'] != "") {
+                            $color = $item['color'];
                         }
-                        else{
+                        ?>
+                        <li style="background-color:<?php echo $color ?>">
+                            <a href="<?php echo $key ?>">
+
+                                <img src="<?php echo $icon ?>" alt="logo" style="margin-top: -10px;width:100px;height:75px">
+                                <span class="glyphicon-class"><?php echo $value ?></span>
+                            </a>
+                        </li>
+
+                        <?php
+                    } else {
                         ?>
                         <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
                             <!-- IMAGE -->
-                            <a href="<?php echo $item["link"] ?>">
-                                <img src="<?php echo $item["icon"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px">
+                            <a href="<?php echo "corespace/" . $item["id"] ?>">
+                                <img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px">
                             </a>
                             <p>
                             </p>
                             <!-- TITLE -->
                             <p style="color:#018181; ">
-                                <a href="<?php echo $item["link"] ?>"> <?php echo $item["name"] ?> </a>
+                                <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> </a>
                             </p>
 
                             <!-- DESC -->
@@ -84,69 +92,13 @@ if (!$headless) {
                                 <?php echo $item["description"] ?>
                             </p>
 
-                            
+
                         </div>   
                         <?php
-                        }
-                        /*
-                          $color = '#428bca';
-                          if (isset($item['color']) && $item['color'] != "") {
-                          $color = $item['color'];
-                          }
-                          ?>
-                          <li style="background-color:<?php echo $color ?>">
-                          <a href="<?php echo $item["link"] ?>">
-                          <span aria-hidden="true"><img src="<?php echo $item["icon"] ?>" width="90px" alt="" /></span>
-                          <span class="glyphicon-class"><?php echo $item["name"] ?></span>
-                          </a>
-                          </li>
-                          <?php
-                         */
                     }
-                    ?>
-                    <ul/>
-            </div>
-                    <?php
                 }
                 ?>
-
-        <?php
-        if ($_SESSION["user_status"] >= CoreStatus::$ADMIN) {
-            ?>
-            <div class="page-header">
-                <h2>
-            <?php echo CoreTranslator::Admin($lang) ?>
-                    <br>
-                </h2>
-            </div>
-            <div class="bs-glyphicons">
-                <ul class="bs-glyphicons-list">
-
-    <?php
-    if (isset($toolAdmin)) {
-        foreach ($toolAdmin as $tool) {
-            $key = $tool['link'];
-            $value = $tool['name'];
-            $icon = $tool['icon'];
-            $color = '#428bca';
-            if (isset($tool['color']) && $tool['color'] != "") {
-                $color = $tool['color'];
-            }
-            ?>
-                            <li style="background-color:<?php echo $color ?>">
-                                <a href="<?php echo $key ?>">
-                                    <span class="glyphicon <?php echo $icon ?>" aria-hidden="true"></span>
-                                    <span class="glyphicon-class"><?php echo $value ?></span>
-                                </a>
-                            </li>
-            <?php
-        }
-    }
-    ?>
-                </ul>
-                    <?php
-                }
-                ?>
+                <ul/>
         </div>
     </div>
 
