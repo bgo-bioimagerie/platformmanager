@@ -6,7 +6,6 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CorecookiesecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
-require_once 'Modules/core/Model/CoreMenu.php';
 require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';

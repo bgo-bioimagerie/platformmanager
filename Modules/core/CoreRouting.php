@@ -16,6 +16,11 @@ class CoreRouting extends Routing{
         $this->addRoute("corelogout", "corelogout", "coreconnection", "logout");
         $this->addRoute("corepasswordforgotten", "corepasswordforgotten", "coreconnection", "passwordforgotten");
         
+        // create account
+        $this->addRoute("corecreateaccount", "corecreateaccount", "coreaccount", "index");
+        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");
+         
+         
         // home
         $this->addRoute("corehome", "corehome", "corehome", "index");
         
@@ -42,6 +47,13 @@ class CoreRouting extends Routing{
         $this->addRoute("spaceconfiguser", "spaceconfiguser", "corespace", "configusers", array("id_space"), array(""));
         $this->addRoute("spaceconfigmodule", "spaceconfigmodule", "corespace", "configmodule", array("id_space", "name_module"), array("", ""));
         
+        // space access
+        $this->addRoute("corespaceaccess", "corespaceaccess", "corespaceaccess", "index", array("id_space"), array(""));
+        $this->addRoute("corespacependingusers", "corespacependingusers", "corespaceaccess", "pendingusers", array("id_space"), array(""));
+        $this->addRoute("corespacependinguseredit", "corespacependinguseredit", "corespaceaccess", "pendinguseredit", array("id_space", "id"), array("", ""));
+        $this->addRoute("corespaceaccessusers", "corespaceaccessusers", "corespaceaccess", "users", array("id_space"), array(""));
+        $this->addRoute("corespaceaccessusersinactifs", "corespaceaccessusersinactifs", "corespaceaccess", "usersinactif", array("id_space"), array(""));
+        
         
         
         $this->addRoute("spaceconfigdeleteuser", "spaceconfigdeleteuser", "corespace", "configdeleteuser", array("id_space", "id_user"), array("", ""));
@@ -64,13 +76,6 @@ class CoreRouting extends Routing{
         $this->addRoute("coremainmenuitemedit", "coremainmenuitemedit", "coremainmenu", "itemedit", array("id"), array(""));
         $this->addRoute("coremainmenuitemdelete", "coremainmenuitemdelete", "coremainmenu", "itemdelete", array("id"), array(""));
         
-        
-        
-        // // menus old
-        // $this->addRoute("coremenus", "coremenus", "coremenus", "index");
-        // $this->addRoute("coremenusitems", "coremenusitems", "coremenus", "items");
-        // $this->addRoute("coremenusitemedit", "coremenusitemedit", "coremenus", "itemedit", array("id"), array(""));
-        // $this->addRoute("coremenusitemdelete", "coremenusitemdelete", "coremenus", "itemdelete", array("id"), array(""));
         
         // api
         $this->addRoute("apinavbar", "apinavbar", "corenavbar", "navbar", array(), array(), true);

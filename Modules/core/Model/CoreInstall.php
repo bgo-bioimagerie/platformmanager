@@ -11,12 +11,12 @@ require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreProjects.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
-require_once 'Modules/core/Model/CoreDashboardSection.php';
-require_once 'Modules/core/Model/CoreDashboardItem.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
 require_once 'Modules/core/Model/CoreMainSubMenu.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreMainMenuPatch.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
+
 
 /**
  * Class defining the Install model
@@ -70,13 +70,6 @@ class CoreInstall extends Model {
         $modelModules = new CoreInstalledModules();
         $modelModules->createTable();
         
-        
-        $modeldbsection = new CoreDashboardSection();
-        $modeldbsection->createTable();
-        
-        $modeldbitem = new CoreDashboardItem();
-        $modeldbitem->createTable();
-        
         $modelCoreMainMenu = new CoreMainMenu();
         $modelCoreMainMenu->createTable();
         
@@ -86,6 +79,8 @@ class CoreInstall extends Model {
         $modelCoreMainMenuItem = new CoreMainMenuItem();
         $modelCoreMainMenuItem->createTable();
         
+        $modelPending = new CorePendingAccount();
+        $modelPending->createTable();
         
         $modelMainMenuPatch = new CoreMainMenuPatch();
         $modelMainMenuPatch->patch();

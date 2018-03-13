@@ -76,6 +76,8 @@ class CoreSpace extends Model {
         
         $ids = array();
         $names = array();
+        $ids[] = 0;
+        $names[] = "";
         foreach($data as $d){
             $ids[] = $d["id"];
             $names[] = $d["name"];

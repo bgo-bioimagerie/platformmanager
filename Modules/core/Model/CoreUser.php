@@ -22,9 +22,28 @@ class CoreUser extends Model {
         $this->setColumnsInfo("date_end_contract", "date", "");
         $this->setColumnsInfo("date_last_login", "date", "");
         $this->setColumnsInfo("remember_key", "varchar(255)", "");
+        $this->setColumnsInfo("validated", "int(1)", 1);
         $this->primaryKey = "id";
     }
 
+    public function createAccount($login, $pwd, $name, $firstname, $email){
+        
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created) VALUES (?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d")));
+        return $this->getDatabase()->lastInsertId();
+    }
+    
+    public function validateAccount($id){
+        $sql = "UPDATE core_users SET validated=1 WHERE id=?";
+        $this->runRequest($sql, array($id));
+    }
+    
+    public function getDateCreated($id){
+        $sql = "SELECT date_created FROM core_users WHERE id=?";
+        $d = $this->runRequest($sql, array($id))->fetch();
+        return $d[0];
+    }
+    
     public function mergeUsers($users) {
         for ($i = 1; $i < count($users); $i++) {
             $sql = "DELETE FROM core_users WHERE id=?";
@@ -650,6 +669,17 @@ class CoreUser extends Model {
         }
 
         return "Login or password not correct";
+    }
+    
+    public function generateRandomPassword() {
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 
 }

@@ -8,8 +8,6 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
-require_once 'Modules/core/Model/CoreDashboardItem.php';
-require_once 'Modules/core/Model/CoreDashboardSection.php';
 
 /**
  * 
