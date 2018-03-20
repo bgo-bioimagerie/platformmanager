@@ -75,9 +75,9 @@ class BkOwnerPrice extends Model {
         return 0;
     }
 
-    public function getDayPrice($id_resource, $id_units) {
+    public function getDayPrice($id_resource, $id_client) {
         $sql = "SELECT price FROM bk_owner_prices WHERE id_resource=? AND id_unit=? AND day_night_we=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_units, "day"));
+        $req = $this->runRequest($sql, array($id_resource, $id_client, "day"));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -85,9 +85,9 @@ class BkOwnerPrice extends Model {
         return -1;
     }
 
-    public function getNightPrice($id_resource, $id_units) {
+    public function getNightPrice($id_resource, $id_client) {
         $sql = "SELECT price FROM bk_owner_prices WHERE id_resource=? AND id_unit=? AND day_night_we=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_units, "night"));
+        $req = $this->runRequest($sql, array($id_resource, $id_client, "night"));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -95,9 +95,9 @@ class BkOwnerPrice extends Model {
         return -1;
     }
 
-    public function getWePrice($id_resource, $id_units) {
+    public function getWePrice($id_resource, $id_client) {
         $sql = "SELECT price FROM bk_owner_prices WHERE id_resource=? AND id_unit=? AND day_night_we=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_units, "we"));
+        $req = $this->runRequest($sql, array($id_resource, $id_client, "we"));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -105,9 +105,9 @@ class BkOwnerPrice extends Model {
         return -1;
     }
 
-    public function getPackagePrice($package_id, $resources_id, $belonging_id) {
+    public function getPackagePrice($package_id, $resources_id, $id_client) {
         $sql = "SELECT price FROM bk_owner_prices WHERE id_resource=? AND id_unit=? AND id_package=?";
-        $req = $this->runRequest($sql, array($resources_id, $belonging_id, $package_id));
+        $req = $this->runRequest($sql, array($resources_id, $id_client, $package_id));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];

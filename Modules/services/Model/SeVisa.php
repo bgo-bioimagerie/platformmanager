@@ -2,8 +2,6 @@
 
 require_once 'Framework/Model.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-
 /**
  * Class defining the Unit model for consomable module
  *

@@ -1,8 +1,6 @@
 <?php
 
 require_once 'Framework/Model.php';
-require_once 'Modules/ecosystem/Model/EcResponsible.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
 require_once 'Modules/resources/Model/ReResps.php';
 
 /**
@@ -372,8 +370,10 @@ class BkAuthorization extends Model {
         return $req->fetchAll();
     }
     
+    // unit = client
     public function getFormResourceUnitPeriod($resource_id, $unit_id, $period_begin, $period_end){
-        $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND date>=? AND date<=? AND user_id IN (SELECT id from ec_users WHERE id_unit=?)";
+        
+        $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND date>=? AND date<=? AND user_id IN (SELECT id_user from cl_j_client_user WHERE id_client=?)";
         $req = $this->runRequest($sql, array($resource_id, $period_begin, $period_end, $unit_id));
         return $req->fetchAll();
     }

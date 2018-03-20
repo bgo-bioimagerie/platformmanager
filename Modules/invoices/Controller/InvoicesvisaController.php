@@ -6,6 +6,9 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InVisa.php';
+
+require_once 'Modules/core/Model/CoreUser.php';
+
 /**
  * 
  * @author sprigent
@@ -70,7 +73,7 @@ class InvoicesvisaController extends CoresecureController {
         $form = new Form($this->request, "editserviceform");
         $form->addSeparator(InvoicesTranslator::Visa($lang));
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
         
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);

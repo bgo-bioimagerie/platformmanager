@@ -108,9 +108,9 @@ class InInvoice extends Model {
         $this->runRequest($sql, array($id_user, $id_invoice));
     }
 
-    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_responsible, $total_ht = 0, $period_begin = "0000-00-00", $period_end = "0000-00-00", $id_project = 0) {
+    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = "0000-00-00", $period_end = "0000-00-00", $id_project = 0) {
         $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
+        $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, 0, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -153,10 +153,9 @@ class InInvoice extends Model {
             $dateSendCondition = "AND date_send != '0000-00-00' ";
         }
         
-        $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
+        $sql = "SELECT in_invoice.*, cl_clients.name AS resp "
                 . "FROM in_invoice "
-                . "INNER JOIN ec_units ON ec_units.id=in_invoice.id_unit "
-                . "INNER JOIN core_users ON core_users.id=in_invoice.id_responsible "
+                . "INNER JOIN cl_clients ON cl_clients.id=in_invoice.id_responsible "
                 . "WHERE in_invoice.id_space=? AND in_invoice.date_generated >=? AND in_invoice.date_generated <=? "
                 . $dateSendCondition
                 . "ORDER BY " . $sortentry . " DESC;";

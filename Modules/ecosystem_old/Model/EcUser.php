@@ -30,6 +30,11 @@ class EcUser extends Model {
 
         $this->runRequest($sql);
     }
+    
+    public function getPhone($id){
+        $sql = "SELECT phone FROM ec_users WHERE id=?";
+        return $this->runRequest($sql, array($id))->fetch();
+    }
 
     public function mergeUsers($users) {
         for ($i = 1; $i < count($users); $i++) {
@@ -1186,4 +1191,6 @@ class EcUser extends Model {
         $writer->save('php://output');
     }
 
+    
+    
 }

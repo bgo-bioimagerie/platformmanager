@@ -6,8 +6,9 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
+
+require_once 'Modules/clients/Model/ClPricing.php';
 
 /**
  * 
@@ -31,7 +32,7 @@ class BookingnightweController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // get the core belongings
-        $modelBelonging = new EcBelonging();
+        $modelBelonging = new ClPricing();
         $belongings = $modelBelonging->getAll($id_space);
         
         //print_r($belongings);
@@ -88,7 +89,7 @@ class BookingnightweController extends CoresecureController {
         $modelPricing = new BkNightWE();
         $pricing = $modelPricing->getPricing($id, $id_space);
 
-        $modelBelonging = new EcBelonging();
+        $modelBelonging = new ClPricing();
         $pricing["name"] = $modelBelonging->getName($id);
 
         $this->render(array(

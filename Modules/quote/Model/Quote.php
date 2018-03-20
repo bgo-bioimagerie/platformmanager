@@ -2,6 +2,8 @@
 
 require_once 'Framework/Model.php';
 
+require_once 'Modules/core/Model/CoreUser.php';
+
 class Quote extends Model {
 
     public function __construct() {
@@ -32,15 +34,15 @@ class Quote extends Model {
         $data = $this->runRequest($sql, array($id))->fetch();
 
         if ($data['id_user'] != 0) {
-            $modelUser = new EcUser();
-            $modelUnit = new EcUnit();
+            $modelUser = new CoreUser();
+            $modelUserClient = new ClClientUser();
+            $modelClient = new ClClient();
 
             $data["recipient"] = $modelUser->getUserFUllName($data["id_user"]);
-            $resps = $modelUser->getUserResponsibles($data["id_user"]);
+            $resps = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space);
             if (count($resps) > 0) {
-                $unitID = $modelUser->getUnit($resps[0]['id_resp']);
-                $data["address"] = $modelUnit->getUnitName($unitID) . "\n" . $modelUnit->getAdress($unitID);
-                $data["id_belonging"] = $modelUnit->getBelonging($unitID, $id_space);
+                $data["address"] = $modelClient->getAddressInvoice($resps[0]["id"]);
+                $data["id_belonging"] = $resps[0]["id"]; 
             }
         }
         return $data;

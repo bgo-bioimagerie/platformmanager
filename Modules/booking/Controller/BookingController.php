@@ -5,12 +5,10 @@ require_once 'Framework/Form.php';
 require_once 'Modules/booking/Controller/BookingabstractController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkBookingTableCSS.php';
-//require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/booking/Model/BkCalQuantities.php';
 require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkAccess.php';
-//require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Controller/BookingdefaultController.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
@@ -19,7 +17,6 @@ require_once 'Modules/resources/Model/ReEvent.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
 
 /**
  * 

@@ -266,6 +266,14 @@ class CoreTranslator {
         return "Convention";
     }
 
+    public static function ConventionDownload($lang) {
+        if ($lang == "fr") {
+            return "Télécharger charte";
+        }
+        return "Convention download";
+    }
+    
+    
     public static function Date_convention($lang) {
         if ($lang == "fr") {
             return "Charte signée le";
@@ -1715,6 +1723,48 @@ class CoreTranslator {
         }
         return "Date created";
     }
+    
+    public static function Activate($lang){
+        if ($lang == "fr") {
+            return "Activer";
+        }
+        return "Activate";
+    }
+    
+    public static function UserAccountHasBeenActivated($lang){
+        if ($lang == "fr") {
+            return "Le compte utilisateur a bien été activé";
+        }
+        return "User account has been activated";        
+    }
+    
+    public static function AccessFor($lang){
+        if ($lang == "fr") {
+            return "Accès pour";
+        }
+        return "Access for";        
+    }
+    
+    public static function UserAccessHasBeenSaved($lang){
+        if ($lang == "fr") {
+            return "Les accès ont bien été enregistrés";
+        }
+        return "User access has been saved";        
+    }
+    
+    public static function Download($lang){
+        if ($lang == "fr") {
+            return "Télécharger";
+        }
+        return "Download";        
+    }
+    
+    public static function Informations($lang){
+        if ($lang == "fr") {
+            return "Informations";
+        }
+        return "Informations";        
+    }   
     
     
 }

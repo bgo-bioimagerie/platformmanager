@@ -7,7 +7,6 @@ require_once 'Framework/FileUpload.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 
@@ -21,8 +20,6 @@ require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
 
-
-require_once 'Modules/ecosystem/Model/EcUser.php';
 
 /**
  * 
@@ -168,7 +165,7 @@ class ResourcesinfoController extends CoresecureController {
         $resourceInfo = $modelResource->get($id);
 
         $modelEvent = new ReEvent();
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $modelState = new ReState();
         $modelEventType = new ReEventType();
         $events = $modelEvent->getByResource($id);
@@ -207,7 +204,7 @@ class ResourcesinfoController extends CoresecureController {
         );
 
         $modelEvent = new ReEvent();
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $modelState = new ReState();
         $modelEventType = new ReEventType();
         $events = $modelEvent->getByResource($id);
@@ -337,7 +334,7 @@ class ResourcesinfoController extends CoresecureController {
         $modelResources = new ResourceInfo();
 
         $modelEvent = new ReEvent();
-        $modelUser = New EcUser();
+        $modelUser = New CoreUser();
         $users = $modelUser->getActiveUsersInfo(1);
         $choicesU = array();
         $choicesidU = array();
@@ -406,7 +403,7 @@ class ResourcesinfoController extends CoresecureController {
             $rstatus[] = $r["id_status"];
         }
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getActiveUsersInfo(1);
         $choicesU = array();
         $choicesidU = array();

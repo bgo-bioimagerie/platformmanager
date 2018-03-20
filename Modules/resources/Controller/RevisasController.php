@@ -6,8 +6,6 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
 
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ReVisa.php';
@@ -107,7 +105,7 @@ class RevisasController extends CoresecureController {
         }
         $form->addSelect("id_resource_category", ResourcesTranslator::Categories($lang), $rcchoices, $rcchoicesid, $visaInfo["id_resource_category"]);
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
         $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
 
@@ -172,7 +170,7 @@ class RevisasController extends CoresecureController {
         $content.= "\r\n";
 
         // instructors
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         foreach ($instructors as $instructor) {
             $content .= $modelUser->getUserFUllName($instructor["id_instructor"]) . ";";
             foreach ($resources as $resource) {

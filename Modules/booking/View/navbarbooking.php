@@ -57,7 +57,6 @@ if ($sygrrifmenucolor == "") {
 </head>
 
 <?php
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 ?>

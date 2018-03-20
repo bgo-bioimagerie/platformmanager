@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 class EsSaleHistory extends Model {
 
@@ -45,7 +45,7 @@ class EsSaleHistory extends Model {
         $req = $this->runRequest($sql, array($id_sale));
         if ( $req->rowCount() > 0){
             $data = $req->fetch();
-            $modelUser = new EcUser();
+            $modelUser = new CoreUser();
             $data["username"] = $modelUser->getUserFUllName($data["id_user"]);
             return $data;
         }
@@ -57,7 +57,7 @@ class EsSaleHistory extends Model {
         $req = $this->runRequest($sql, array($id_sale));
         if ( $req->rowCount() > 0){
             $data = $req->fetch();
-            $modelUser = new EcUser();
+            $modelUser = new CoreUser();
             $data["username"] = $modelUser->getUserFUllName($data["id_user"]);
             return $data;
         }

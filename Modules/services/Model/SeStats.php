@@ -3,10 +3,6 @@
 require_once 'Framework/Model.php';
 require_once 'Modules/services/Model/SeProject.php';
 
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once("externals/PHPExcel/Classes/PHPExcel.php");
 
@@ -29,17 +25,15 @@ class SeStats extends Model {
         $numberAccademicProjects = 0;
         $numberIndustryProjects = 0;
 
-        $modelUser = new ecUser();
-        $modelUnit = new ecUnit();
-        $modelBelonging = new ecBelonging();
+        //$modelUser = new CoreUser();
+        $modelClient = new ClClient();
+        $modelPricing = new ClPricing();
 
         foreach ($projects as $project) {
 
             // get the responsible unit
-            $id_unit = $modelUser->getUserUnit($project["id_resp"]);
-
-            $id_pricing = $modelUnit->getBelonging($id_unit);
-            $pricingInfo = $modelBelonging->getInfo($id_pricing);
+            $clientInfo = $modelClient->get($project["id_resp"]);
+            $pricingInfo = $modelPricing->get($clientInfo["pricing"]);
             if ($pricingInfo["type"] == 1) {
 
                 $numberAccademicProjects++;
@@ -129,17 +123,14 @@ class SeStats extends Model {
         $numberAcademicProjectInDelay = 0;
         $numberAcademicProjectOutDelay = 0;
         
-        $modelUser = new ecUser();
-        $modelUnit = new ecUnit();
-        $modelBelonging = new ecBelonging();
+        $modelClient = new ClClient();
+        $modelPricing = new ClPricing();
 
         foreach ($projects as $project) {
             
             // get the responsible unit
-            $id_unit = $modelUser->getUnit($project["id_resp"]);
-
-            $id_pricing = $modelUnit->getBelonging($id_unit, $id_space);
-            $pricingInfo = $modelBelonging->getInfo($id_pricing);
+            $clientInfo = $modelClient->get($project["id_resp"]);
+            $pricingInfo = $modelPricing->get($clientInfo["pricing"]);
             
             $onTime = true;
             if ($project["date_close"] != "" && $project["date_close"] != "0000-00-00"
@@ -252,17 +243,17 @@ class SeStats extends Model {
         $numberAccademicProjects = 0;
         $numberIndustryProjects = 0;
 
-        $modelUser = new EcUser();
-        $modelUnit = new EcUnit();
-        $modelBelonging = new EcBelonging();
+        //$modelUser = new CoreUser();
+        $modelClient = new ClClient();
+        $modelPricing = new ClPricing();
 
         foreach ($projects as $project) {
 
             // get the responsible unit
-            $id_unit = $modelUser->getUnit($project["id_resp"]);
+            $clientInfo = $modelClient->get($project["id_resp"]);
 
-            $id_pricing = $modelUnit->getBelonging($id_unit, $id_space);
-            $pricingInfo = $modelBelonging->getInfo($id_pricing);
+            $pricingInfo = $modelPricing->get($clientInfo["pricing"]);
+            
             if ($pricingInfo["type"] == 1) {
 
                 $numberAccademicProjects++;

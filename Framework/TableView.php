@@ -356,8 +356,18 @@ class TableView {
                                    $html .= '<td style="background-color:"' .$ccolor.';"> </td>';
                             }
                         }
-                        if($value["type"] == "glyphicon"){
+                        else if($value["type"] == "glyphicon"){
                             $html .= '<td><span class="'.$val.'" aria-hidden="true" style="color:'.$value["color"].'"></span></td>';
+                        }
+                        else if ($value["type"] == "download"){
+                            $html .= '<td>';
+                            if ( $val != "" ){
+                                $html .= "<form role=\"form\" id=\"tabledownload\" class=\"form-horizontal\" action=\"".$value["action"]."\" method=\"POST\">";
+                                $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$val."\">";
+                                $html .= "<input type=\"submit\" class=\"btn btn-default\" value=\"" . $value["text"] . "\" />";
+                                $html .= "</form>";
+                            }
+                            $html .= '</td>';
                         }
                     }
                     else{

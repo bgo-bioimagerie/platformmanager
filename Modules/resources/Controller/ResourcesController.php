@@ -7,7 +7,6 @@ require_once 'Framework/FileUpload.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 
@@ -21,8 +20,6 @@ require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
 
-
-require_once 'Modules/ecosystem/Model/EcUser.php';
 
 /**
  * 

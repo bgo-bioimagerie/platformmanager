@@ -70,8 +70,8 @@ class Form {
         $this->id = $id;
         $this->labelWidth = 4;
         $this->inputWidth = 6;
-        $this->buttonsWidth = 6;
-        $this->buttonsOffset = 6;
+        $this->buttonsWidth = 12;
+        $this->buttonsOffset = 0;
         $this->title = "";
         $this->validationURL = "";
         $this->cancelURL = "";
@@ -97,8 +97,8 @@ class Form {
      * @param type $buttonsOffset Number of offset bootstrap columns
      */
     public function setButtonsWidth($buttonsWidth, $buttonsOffset) {
-        $this->buttonsWidth = $buttonsWidth;
-        $this->buttonsOffset = $buttonsOffset;
+        //$this->buttonsWidth = $buttonsWidth;
+        //$this->buttonsOffset = $buttonsOffset;
     }
 
     /**

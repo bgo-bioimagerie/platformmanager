@@ -16,6 +16,8 @@ require_once 'Modules/core/Model/CoreMainSubMenu.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreMainMenuPatch.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 
 
 /**
@@ -82,8 +84,20 @@ class CoreInstall extends Model {
         $modelPending = new CorePendingAccount();
         $modelPending->createTable();
         
+        $modelCoreSpaceUser = new CoreSpaceUser();
+        $modelCoreSpaceUser->createTable();
+        
+        $modelCoreSpaceAccessOptions = new CoreSpaceAccessOptions();
+        $modelCoreSpaceAccessOptions->createTable();
+        
+        
         $modelMainMenuPatch = new CoreMainMenuPatch();
         $modelMainMenuPatch->patch();
+        
+        if (!file_exists('data/conventions/')) {
+            mkdir('data/conventions/', 0777, true);
+        }
+        
     }
     /**
      * Test if the database informations are correct

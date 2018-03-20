@@ -10,10 +10,6 @@ require_once 'Modules/quote/Model/QuoteTranslator.php';
 require_once 'Modules/quote/Model/Quote.php';
 require_once 'Modules/quote/Model/QuoteItem.php';
 
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 
@@ -21,6 +17,11 @@ require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SePrice.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+
+
+require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/clients/Model/ClClientUser.php';
 
 /**
  * 
@@ -47,21 +48,22 @@ class QuotelistController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $model = new Quote();
-        $modelBel = new EcBelonging();
-        $modelUser = new EcUser();
-        $modelUnit = new EcUnit();
+        $modelUser = new CoreUser();
+        $modelClient = new ClClient(); 
+        $pricings = new ClPricing();
+        $modelUSerClients = new ClClientUser();
         $data = $model->getAll($id_space);
         for ($i = 0; $i < count($data); $i++) {
             if ($data[$i]["id_user"] > 0) {
                 $data[$i]["recipient"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
-                $resps = $modelUser->getUserResponsibles($data[$i]["id_user"]);
+                $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space);
                 if (count($resps) > 0) {
-                    $unitID = $modelUser->getUnit($resps[0]['id_resp']);
-                    $data[$i]["address"] = $modelUnit->getAdress($unitID);
-                    $data[$i]["id_belonging"] = $modelUnit->getBelonging($unitID, $id_space);
+                    $unitID = $modelUser->getUnit($resps[0]['id_client']);
+                    $data[$i]["address"] = $modelClient->getAddressInvoice($resps[0]['id_client']);
+                    $data[$i]["id_belonging"] = $modelClient->getPricingID($resps[0]['id_client']);
                 }
             }
-            $data[$i]["belonging"] = $modelBel->getName($data[$i]["id_belonging"]);
+            $data[$i]["belonging"] = $pricings->getName($data[$i]["id_belonging"]);
             $data[$i]["date_open"] = CoreTranslator::dateFromEn($data[$i]["date_open"], $lang);
             $data[$i]["date_last_modified"] = CoreTranslator::dateFromEn($data[$i]["date_last_modified"], $lang);
         }
@@ -115,7 +117,7 @@ class QuotelistController extends CoresecureController {
             $form->addSeparator2(QuoteTranslator::Description($lang));
         }
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
         $form->addSelect('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
 
@@ -223,9 +225,9 @@ class QuotelistController extends CoresecureController {
         $form->addTextArea("address", QuoteTranslator::Address($lang), true, $info['address']);
 
 
-        $belModel = new EcBelonging();
+        $belModel = new ClPricing();
         $bel = $belModel->getForList($id_space);
-        $form->addSelect('id_belonging', EcosystemTranslator::Belonging($lang), $bel["names"], $bel["ids"], $info['id_belonging']);
+        $form->addSelect('id_belonging', ClientsTranslator::Pricings($lang), $bel["names"], $bel["ids"], $info['id_belonging']);
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled', $info['date_open']);
             $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));

@@ -21,7 +21,6 @@ require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/booking/Model/BkStatsUser.php';
 require_once 'Modules/booking/Model/BkGraph.php';
 require_once 'Modules/booking/Model/BkReport.php';
@@ -734,8 +733,9 @@ class BookingstatisticsController extends CoresecureController {
 
         // get data
         $modelGraph = new BkGraph();
-        $modelUser = new EcUser();
-        $resps = $modelUser->getResponsibles($id_space);
+        $modelClients = new ClClient();
+        
+        $resps = $modelClients->getAll($id_space);
         $data = $modelGraph->getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode);
 
         $objWorkSheet = $objPHPExcel->createSheet();

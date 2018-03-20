@@ -13,7 +13,7 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 /**
  * 
@@ -59,7 +59,7 @@ class MailerController extends CoresecureController {
             }
         }
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $user = $modelUser->userAllInfo($_SESSION["id_user"]);
         $from = $user["email"];
 
@@ -79,10 +79,10 @@ class MailerController extends CoresecureController {
         // get the emails
         $toAdress = array();
         if ($to == "all") {
-            $modelUser = new EcUser();
+            $modelUser = new CoreUser();
             $toAdress = $modelUser->getAllSpaceActifEmails($id_space);
         } elseif ($to == "managers") {
-            $modelUser = new EcUser();
+            $modelUser = new CoreUser();
             $toAdress = $modelUser->getActiveManagersEmails($id_space);
         } else {
             $toEx = explode("_", $to);

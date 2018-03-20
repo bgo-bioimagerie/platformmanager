@@ -3,15 +3,17 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
-require_once 'Modules/core/Controller/CoresecureController.php';
-require_once 'Modules/invoices/Model/InvoicesTranslator.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
 
+require_once 'Modules/core/Controller/CoresecureController.php';
+
+require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InVisa.php';
+
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+require_once 'Modules/clients/Model/ClClient.php';
+
 
 /**
  * 
@@ -56,7 +58,7 @@ class InvoiceslistController extends CoresecureController {
         }
         
         $modelInvoices = new InInvoice();
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         
         $modelConfig = new CoreConfig();
         $invoiceperiodbegin = $modelConfig->getParamSpace("invoiceperiodbegin", $id_space);
@@ -95,8 +97,7 @@ class InvoiceslistController extends CoresecureController {
         $headers = array(
             "number" => InvoicesTranslator::Number($lang),
             "title" => InvoicesTranslator::Title($lang),
-            "unit" => EcosystemTranslator::Unit($lang),
-            "resp" => EcosystemTranslator::Responsible($lang),
+            "resp" => ClientsTranslator::ClientAccount($lang),
             "date_generated" => InvoicesTranslator::Date_generated($lang),
             "date_paid" => InvoicesTranslator::Date_paid($lang),
             "total_ht" => InvoicesTranslator::Total_HT($lang),
@@ -159,8 +160,9 @@ class InvoiceslistController extends CoresecureController {
 
     protected function infoForm($id_space, $id){
         $lang = $this->getLanguage();
-        $modelUnit = new EcUnit();
-        $modelUser = new EcUser();
+        //$modelClient = new ClClient();
+        $modelUser = new CoreUser();
+        $modelClient = new ClClient();
         $modelInvoice = new InInvoice();
         $invoice = $modelInvoice->get($id);
 
@@ -171,8 +173,7 @@ class InvoiceslistController extends CoresecureController {
         $form = new Form($this->request, "infoActionForm");
         $form->setTitle(InvoicesTranslator::InvoiceInfo($lang));
         $form->addText("number", InvoicesTranslator::Number($lang), false, $invoice["number"], false);
-        $form->addText("unit", EcosystemTranslator::Units($lang), false, $modelUnit->getUnitName($invoice["id_unit"]), false);
-        $form->addText("resp", EcosystemTranslator::Responsible($lang), false, $modelUser->getUserFUllName($invoice["id_responsible"]), false);
+        $form->addText("resp", ClientsTranslator::ClientAccount($lang), false, $modelClient->getName($invoice["id_responsible"]), false);
         $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, CoreTranslator::dateFromEn($invoice["date_generated"], $lang));
         $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
         

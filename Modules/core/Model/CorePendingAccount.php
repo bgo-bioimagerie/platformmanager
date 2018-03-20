@@ -15,6 +15,11 @@ class CorePendingAccount extends Model {
         $this->primaryKey = "id";
     }
 
+    public function validate($id, $validated_by){
+        $sql = "UPDATE core_pending_accounts SET validated=?, date=?, validated_by=? WHERE id=?";
+        $this->runRequest($sql, array(1, date('Y-m-d'), $validated_by, $id));
+    }
+    
     public function add($id_user, $id_space){
         $sql = "INSERT INTO core_pending_accounts (id_user, id_space, validated) VALUES (?,?,?)";
         $this->runRequest($sql, array($id_user, $id_space, 0));

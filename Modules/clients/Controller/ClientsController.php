@@ -37,7 +37,7 @@ class ClientsController extends CoresecureController {
         $modelConfig = new CoreConfig();
         $title = $modelConfig->getParamSpace("clientsMenuName", $id_space);
         if($title == ""){
-            $title = ClientsTranslator::estore($lang);
+            $title = ClientsTranslator::clients($lang);
         }
         
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);

@@ -2,8 +2,8 @@
 
 require_once 'Framework/Model.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-
+require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/clients/Model/ClClientUser.php';
 /**
  * Class defining the Unit model for consomable module
  *
@@ -264,13 +264,13 @@ class SeOrder extends Model {
         $items = $modelServices->getBySpace($id_space);
         //print_r($items);
         
-        $modelUser = new EcUser();
-        $modelUnit = new EcUnit();
+        $modelClientUser = new ClClientUser();
+        $modelClient = new ClClient();
         for ($i = 0; $i < count($orders); $i++) {
             
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
                 //echo "id user = " . $orders[$i]["id_user"] . "<br/>";
-                $resps = $modelUser->getUserResponsibles($orders[$i]["id_user"]);
+                $resps = $modelClientUser->getUserClientAccounts($orders[$i]["id_user"], $id_space);
                 //echo "coucou 1 <br/>";echo "resps = <br/>";
                 //print_r($resps);
                 if (count($resps) > 0){
@@ -290,8 +290,7 @@ class SeOrder extends Model {
             //print_r($itemsSummary);
             //$items = $this->getProjectServices($projects[$i]["id"]);
 
-            $id_unit = $modelUser->getUnit($orders[$i]["id_resp"]);
-            $LABpricingid = $modelUnit->getBelonging($id_unit);
+            $LABpricingid = $modelClient->getPricingID($orders[$i]["id_resp"]);
             $orders[$i]["total"] = $this->calculateOrderTotal($itemsSummary, $LABpricingid);
         }
 

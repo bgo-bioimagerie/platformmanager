@@ -9,7 +9,7 @@ require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SePrice.php';
 
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
+require_once 'Modules/clients/Model/ClPricing.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
@@ -42,10 +42,10 @@ class ServicespricesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelBelonging = new EcBelonging();
+        $modelBelonging = new ClPricing();
         $modelPrice = new SePrice();
         $services = $this->serviceModel->getAll($id_space);
-        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        $belongings = $modelBelonging->getAll($id_space);
         
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Prices($lang), 3);

@@ -41,7 +41,8 @@ class ResourceInfo extends Model {
             "id_category" => 0,
             "id_area" => 0,
             "id_space" => 0,
-            "display_order" => 0
+            "display_order" => 0,
+            "image" => ""
         );
     }
     
@@ -84,7 +85,11 @@ class ResourceInfo extends Model {
 
     public function get($id) {
         $sql = "SELECT * FROM re_info WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+        $req = $this->runRequest($sql, array($id));
+        if ( $req->rowCount() > 0 ){
+            return $req->fetch();
+        }
+        return null;
     }
     
     public function getBySpace($id) {

@@ -5,16 +5,18 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Model/SeVisa.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-
 require_once 'Modules/services/Model/StockShelf.php';
+
+require_once 'Modules/clients/Model/ClPricing.php';
+require_once 'Modules/clients/Model/ClClient.php';
 
 /**
  * 
@@ -163,7 +165,7 @@ class ServicesprojectsController extends CoresecureController {
 
         $headersArray = array(
             "id" => "ID",
-            "resp_name" => CoreTranslator::Responsible($lang),
+            "resp_name" => ClientsTranslator::ClientAccount($lang),
             "name" => ServicesTranslator::No_identification($lang),
             "user_name" => CoreTranslator::User($lang),
             "date_open" => ServicesTranslator::Opened_date($lang),
@@ -172,9 +174,9 @@ class ServicesprojectsController extends CoresecureController {
             "close_icon" => array("title" => "", "type" => "glyphicon", "color" => "red"),
         );
 
-        $modelUser = new EcUser();
-        $modelUnit = new EcUnit();
-        $modelBelonging = new EcBelonging();
+        //$modelUser = new CoreUser();
+        $modelPricing = new ClPricing();
+        $modelClient = new ClClient();
 
         $modelConfig = new CoreConfig();
         $warning = $modelConfig->getParamSpace("SeProjectDelayWarning", $id_space);
@@ -211,9 +213,12 @@ class ServicesprojectsController extends CoresecureController {
             $entriesArray[$i]["time_limit"] = CoreTranslator::dateFromEn($entriesArray[$i]["time_limit"], $lang);
 
             // get the pricing color
-            $id_unit = $modelUser->getUnit($entriesArray[$i]["id_resp"]);
-            $id_belonging = $modelUnit->getBelonging($id_unit, $id_space);
-            $pricingInfo = $modelBelonging->getInfo($id_belonging);
+            $clientAccounts = $modelClient->get($entriesArray[$i]["id_resp"]);
+            //print_r($clientAccounts);
+            
+            $entriesArray[$i]["resp_name"] = $clientAccounts["name"];
+            $pricingInfo = $modelPricing->get($clientAccounts["pricing"]);
+            
             $entriesArray[$i]["color"] = $pricingInfo["color"];
 
             $entriesArray[$i]["time_color"] = "#ffffff";
@@ -378,9 +383,10 @@ class ServicesprojectsController extends CoresecureController {
             $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
         }
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
+        $modelClients = new ClClient();
         $users = $modelUser->getAcivesForSelect("name");
-        $resps = $modelUser->getAcivesRespsForSelect("name");
+        $resps = $modelClients->getForList($id_space);
 
         $modelVisa = new SeVisa();
         $inChargeList = $modelVisa->getForList($id_space);
@@ -603,13 +609,9 @@ class ServicesprojectsController extends CoresecureController {
         $projectEntries = $modelProject->getProjectServicesBase($id);
 
         // calculate total sum and price HT
-        $modelUser = new EcUser();
-        $modelUnit = new ECUnit();
-
+        $modelClient = new ClClient();
         $id_resp = $modelProject->getResp($id);
-        $id_unit = $modelUser->getUnit($id_resp);
-
-        $LABpricingid = $modelUnit->getBelonging($id_unit, $id_space);
+        $LABpricingid = $modelClient->getPricingID($id_resp);
 
         $itemPricing = new SePrice();
 

@@ -12,8 +12,10 @@ pwd = MYSQL_PASS
 headless = false
 
 [Modules]
-modules[] = "core"
-modules[] = "ecosystem"
+modules[] = "Core"
+modules[] = "transfer"
+modules[] = "clients"
+modules[] = "users"
 modules[] = "resources"
 modules[] = "services"
 modules[] = "booking"
@@ -24,8 +26,9 @@ modules[] = "mailer"
 modules[] = "documents"
 modules[] = "antibodies"
 modules[] = "quote"
-modules[] = "bulletjournal"
 modules[] = "com"
+modules[] = "breeding"
+modules[] = "estore"
 
 [Company]
 name = "Platform-Manager"

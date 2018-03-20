@@ -62,7 +62,7 @@ class BkNightWE extends Model {
     public function getPricing($id, $id_space) {
         $sql = "select * from bk_nightwe where id_belonging=? AND id_space=?";
         $data = $this->runRequest($sql, array($id, $id_space));
-        if ($data->rowCount() == 1) {
+        if ($data->rowCount() > 0) {
             return $data->fetch();  // get the first line of the result
         } else {
             return array();

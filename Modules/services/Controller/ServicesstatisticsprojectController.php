@@ -15,12 +15,11 @@ require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/services/Model/SeStats.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-
 require_once 'Modules/invoices/Model/InVisa.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+
 
 /**
  * 
@@ -115,11 +114,10 @@ class ServicesstatisticsprojectController extends CoresecureController {
         // get all the opened projects informations
         $modelProjects = new SeProject();
         $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $id_space);
-
-       
         
         // get all the priced projects details
         $projectsBalance = $modelProjects->getPeriodeServicesBalances($id_space, $periodStart, $periodEnd);
+        
         $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($id_space, $periodStart, $periodEnd);
         
         // get the stats
@@ -142,8 +140,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
     private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $render) {
 
-        $modelUser = new EcUser();
-        $modelUnit = new EcUnit();
+        $modelUser = new CoreUser();
+        $modelClient = new ClClient();
 
         $lang = $this->getLanguage();
         // Create new PHPExcel object
@@ -308,7 +306,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($openedProjects as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
+            $unitName = $modelClient->getName($proj["id_resp"]);
 
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -433,10 +431,14 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $modelProject = new SeProject();
         $modelInvoiceVisa = new InVisa();
         $modelOrigin = new SeOrigin();
+        
+        
+        
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
+            $unitName = $modelClient->getInstitution($invoice["id_responsible"]);
+            
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
 
@@ -662,9 +664,10 @@ class ServicesstatisticsprojectController extends CoresecureController {
         //$objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBilledBalance["projects"];
+        
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
@@ -770,7 +773,8 @@ class ServicesstatisticsprojectController extends CoresecureController {
         //print_r($projects);
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
+            
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
@@ -986,7 +990,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->SetCellValue('A1', CoreTranslator::Responsible($lang));
         $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', EcosystemTranslator::Unit($lang));
+        $objPHPExcel->getActiveSheet()->SetCellValue('B1', ClientsTranslator::Institution($lang));
         $objPHPExcel->getActiveSheet()->getStyle('B1')->applyFromArray($styleBorderedCell);
         
         $objPHPExcel->getActiveSheet()->SetCellValue('C1', CoreTranslator::User($lang));

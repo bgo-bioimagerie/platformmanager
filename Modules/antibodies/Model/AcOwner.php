@@ -1,7 +1,6 @@
 <?php
 
 require_once 'Framework/Model.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
 
 /**
  * Class defining the Tissus model
@@ -51,7 +50,7 @@ class AcOwner extends Model {
         }
         $sql = "SELECT * FROM ac_j_user_anticorps WHERE id_anticorps=?";
         $data = $this->runRequest($sql, array($id_antibody))->fetchAll();
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["id_utilisateur"]);
         }
