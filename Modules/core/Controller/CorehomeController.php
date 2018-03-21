@@ -28,10 +28,22 @@ class CorehomeController extends CoresecureController {
     public function indexAction() {
 
         $lang = $this->getLanguage();
-
-        $this->render(array(
-            'lang' => $lang,    
-        ));
+        
+        // get the first menu
+        $modelMainMenu = new CoreMainMenu();
+        $menus = $modelMainMenu->getAll();
+        
+        if ( count($menus) > 0){
+           
+            $this->redirect("coretiles/1/" . $menus[0]["id"]);
+            return;
+            
+        }
+        else{
+            $this->render(array(
+                'lang' => $lang,    
+            ));
+        }
     }
 
 }
