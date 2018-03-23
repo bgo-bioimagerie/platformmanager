@@ -4,6 +4,8 @@ require_once 'Framework/Controller.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorenavbarController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreMainMenuItem.php';
+
 
 /**
  * 
@@ -24,25 +26,77 @@ class CoretilesController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction() {
+    public function indexAction($level = 1, $id = -1) {
 
-        $navController = new CorenavbarController($this->request);
-        $toolMenu = $navController->getMenu();
-        $toolAdmin = $navController->getAdminMenu();
+        if ( $id < 0 ){
+            $this->redirect("coretilesdoc");
+        }
         
-        $modelConfig = new CoreConfig();
-        $navcolor = $modelConfig->getParam("navbar_bg_highlight");
-        $navcolortxt = $modelConfig->getParam("navbar_text_highlight");
-
-        $modelCoreConfig = new CoreConfig();
-        $iconType = $modelCoreConfig->getParam("space_icon_type");
+        if ( $level == 1 ){
+            $this->showMainMenu($id);
+        }
+        else if ($level == 2){
+            $this->showMainSubMenu($id);
+        }
+        else{
+            $this->redirect("corehome");
+        }
+        
+    }
+    
+    public function showMainMenu($id){
+        $modelMenu = new CoreMainMenu();
+        
+        if ($id < 0){
+            $id = $modelMenu->getFirstIdx();
+        }
+        // get default sub menu
+        $id_sub = $modelMenu->getFirstSubMenu($id);
+        
+        $this->showMainSubMenu($id_sub);
+    }
+    
+    public function showMainSubMenu($id){
+        
+        $modelSubMenu = new CoreMainSubMenu();
+        
+        if ($id < 0){
+            $id = $modelSubMenu->getFirstIdx();
+        }
+        
+        $modelMainMenuItem = new CoreMainMenuItem();
+        $mainSubMenus = $modelSubMenu->getForMenu($modelSubMenu->getMainMenu($id));
+        
+        $showSubBar = false;
+        if ( $modelMainMenuItem->haveAllSingleItem($mainSubMenus) ){
+            $items = $modelMainMenuItem->getSpacesFromSingleItemList($mainSubMenus);
+            $title = $modelSubMenu->getMainMenuName($id);
+        }
+        else{
+            if (count($mainSubMenus) > 1){
+                $showSubBar = true;
+            }
+            $items = $modelMainMenuItem->getSpacesFromSubMenu($id);
+            $title = $modelSubMenu->getName($id);
+        }
         
         $lang = $this->getLanguage();
-        $this->render(array('toolMenu' => $toolMenu, 'toolAdmin' => $toolAdmin, 
-            "lang" => $lang, "navcolor" => $navcolor, "navcolortxt" => $navcolortxt,
-            "iconType" => $iconType
-            ));
+        $modelCoreConfig = new CoreConfig();
+        $this->render(array(
+            'lang' => $lang,
+            'iconType' => $modelCoreConfig->getParam("space_icon_type"),
+            'showSubBar' => $showSubBar,
+            'items' => $items,
+            'mainSubMenus' => $mainSubMenus,
+            'title' => $title
+        ), "indexAction");
+    }
+    
+    public function docAction(){
         
+        $this->render(array(
+            "lang" => $this->getLanguage()
+        ));
     }
 
 }

@@ -36,10 +36,14 @@ class CoreSpace extends Model {
 		`name` varchar(30) NOT NULL DEFAULT '',
                 `status` int(1) NOT NULL DEFAULT 0,
                 `color` varchar(7) NOT NULL DEFAULT '',
+                `description` text NOT NULL DEFAULT '',
+                `image` varchar(255) NOT NULL DEFAULT '',
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
         $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
+        $this->addColumn('core_spaces', 'description', 'text', '');
+        $this->addColumn('core_spaces', 'image', "varchar(255)", '');
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
 		`id_user` int(11) NOT NULL DEFAULT 1,
@@ -64,6 +68,21 @@ class CoreSpace extends Model {
         $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+    }
+    
+    public function getForList(){
+        $sql = "SELECT * FROM core_spaces ORDER BY name ASC";
+        $data = $this->runRequest($sql);
+        
+        $ids = array();
+        $names = array();
+        $ids[] = 0;
+        $names[] = "";
+        foreach($data as $d){
+            $ids[] = $d["id"];
+            $names[] = $d["name"];
+        }
+        return array( "ids" => $ids, "names" => $names);
     }
 
     public function isUserSpaceAdmin($id_user){
@@ -275,6 +294,16 @@ class CoreSpace extends Model {
             $this->addSpace($name, $status, $color);
             return $this->getDatabase()->lastInsertId();
         }
+    }
+    
+    public function setDescription($id, $description){
+        $sql = "UPDATE core_spaces SET description=? WHERE id=?";
+        $this->runRequest($sql, array($description, $id));
+    }
+    
+    public function setImage($id, $image){
+        $sql = "UPDATE core_spaces SET image=? WHERE id=?";
+        $this->runRequest($sql, array($image, $id));
     }
 
     public function isSpace($id) {

@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-form">
+<div class="col-md-12 pm-form-short">
     <form role="form" class="form-horizontal" action="bookinggrrstats/<?php echo $id_space ?>"
           method="post" id="statform">
 
@@ -214,7 +214,7 @@
     </form>
 </div>
 
-<div class="col-md-10 col-md-offset-2" id="pm-table">
+<div class="col-md-10 col-md-offset-2 pm-table-short">
 
     <?php
     if (isset($table)) {

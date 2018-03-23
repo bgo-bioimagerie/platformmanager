@@ -128,6 +128,13 @@ class ResourcesTranslator {
         }
         return "Description";
     }
+    
+    public static function DescriptionFull($lang) {
+        if ($lang == "fr") {
+            return "Description longue";
+        }
+        return "Full description";
+    }
 
     public static function Infos($lang) {
         if ($lang == "fr") {

@@ -2,7 +2,7 @@
 
 require_once 'Framework/Model.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 /**
  * Class defining the Unit model for consomable module
@@ -89,7 +89,7 @@ class InVisa extends Model {
         $sql = "SELECT * FROM in_visa WHERE id=?";
         $data = $this->runRequest($sql, array($id))->fetch();
         
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         return $modelUser->getUserFUllName($data["id_user"]);
     }
     
@@ -97,7 +97,7 @@ class InVisa extends Model {
         $sql = "SELECT * FROM in_visa WHERE id=?";
         $data = $this->runRequest($sql, array($id))->fetch();
         
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         return $modelUser->getUserInitials($data["id_user"]);
     }
     

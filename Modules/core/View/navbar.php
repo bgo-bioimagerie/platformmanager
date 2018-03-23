@@ -24,22 +24,8 @@ if ($menuUrl != ""){
                             <?php 
                             for($i = 0 ; $i < count($toolMenu) ; $i++){
                                 ?>
-                            
-				
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <?php echo $toolMenu[$i]["name"] ?> <span class="caret"></span></a>
-					<ul class="dropdown-menu" role="menu">
-					<?php 
-					
-        				foreach ($toolMenu[$i]["items"] as $tool) {
-        					$key = $tool['link'];
-        					$value = $tool['name'];
-        					?>
-        					<li><a href="<?php echo $key?>" > <?php echo  CoreTranslator::MenuItem($value, $lang) ?> </a></li>
-        					<?php
-        				}
-        			?>
-					</ul>
+				<li>
+                                    <a href="coretiles/1/<?php echo $toolMenu[$i]["id"] ?>" > <?php echo $toolMenu[$i]["name"] ?></a>
 				</li>
                                 <?php
                             }

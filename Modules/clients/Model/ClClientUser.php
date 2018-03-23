@@ -17,6 +17,12 @@ class ClClientUser extends Model {
         return $this->runRequest($sql, array($id_client))->fetchAll();
     }
     
+    public function getUserClientAccounts($id_user, $id_space){
+        
+        $sql = "SELECT * FROM cl_clients WHERE id_space=? AND id IN (SELECT id_client FROM cl_j_client_user WHERE id_user=?)";
+        return $this->runRequest( $sql, array($id_space, $id_user) )->fetchAll();
+    }
+    
 
     public function set($id_client, $id_user){
         if (!$this->exists($id_client, $id_user)){

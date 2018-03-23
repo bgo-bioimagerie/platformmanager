@@ -6,7 +6,6 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/resources/Model/ReArea.php';
 
 /**

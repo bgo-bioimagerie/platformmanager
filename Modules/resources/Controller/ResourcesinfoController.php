@@ -7,7 +7,6 @@ require_once 'Framework/FileUpload.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 
@@ -21,8 +20,6 @@ require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
 
-
-require_once 'Modules/ecosystem/Model/EcUser.php';
 
 /**
  * 
@@ -118,8 +115,9 @@ class ResourcesinfoController extends CoresecureController {
         $form->addSelect("id_category", ResourcesTranslator::Category($lang), $choicesC, $choicesidC, $data["id_category"]);
         $form->addSelect("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
         $form->addNumber("display_order", ResourcesTranslator::Display_order($lang), false, $data["display_order"]);
+        $form->addUpload("image", CoreTranslator::Image($lang), $data["image"]);
         $form->addText("description", ResourcesTranslator::Description($lang), false, $data["description"], true);
-        $form->addTextArea("long_description", ResourcesTranslator::Description($lang), false, $data["long_description"], true);
+        $form->addTextArea("long_description", ResourcesTranslator::DescriptionFull($lang), false, $data["long_description"], true);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "resourcesedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "resources/" . $id_space);
@@ -127,7 +125,19 @@ class ResourcesinfoController extends CoresecureController {
         $form->setColumnsWidth(2, 10);
 
         if ($form->check()) {
-            $modelResource->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("brand"), $form->getParameter("type"), $form->getParameter("description"), $form->getParameter("long_description"), $form->getParameter("id_category"), $form->getParameter("id_area"), $id_space, $form->getParameter("display_order"));
+            $id = $modelResource->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("brand"), $form->getParameter("type"), $form->getParameter("description"), $form->getParameter("long_description"), $form->getParameter("id_category"), $form->getParameter("id_area"), $id_space, $form->getParameter("display_order"));
+            
+            // upload image
+            $target_dir = "data/resources/";
+            if ($_FILES["image"]["name"] != "") {
+                $ext = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
+
+                $url = $id . "." . $ext;
+                FileUpload::uploadFile($target_dir, "image", $url);
+
+                $modelResource->setImage($id, $target_dir . $url);
+            }
+            
             $this->redirect("resources/" . $id_space);
             return;
         }
@@ -155,7 +165,7 @@ class ResourcesinfoController extends CoresecureController {
         $resourceInfo = $modelResource->get($id);
 
         $modelEvent = new ReEvent();
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $modelState = new ReState();
         $modelEventType = new ReEventType();
         $events = $modelEvent->getByResource($id);
@@ -194,7 +204,7 @@ class ResourcesinfoController extends CoresecureController {
         );
 
         $modelEvent = new ReEvent();
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $modelState = new ReState();
         $modelEventType = new ReEventType();
         $events = $modelEvent->getByResource($id);
@@ -324,7 +334,7 @@ class ResourcesinfoController extends CoresecureController {
         $modelResources = new ResourceInfo();
 
         $modelEvent = new ReEvent();
-        $modelUser = New EcUser();
+        $modelUser = New CoreUser();
         $users = $modelUser->getActiveUsersInfo(1);
         $choicesU = array();
         $choicesidU = array();
@@ -393,7 +403,7 @@ class ResourcesinfoController extends CoresecureController {
             $rstatus[] = $r["id_status"];
         }
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getActiveUsersInfo(1);
         $choicesU = array();
         $choicesidU = array();

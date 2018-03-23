@@ -108,6 +108,13 @@ class CoreTranslator {
         }
         return "My Account";
     }
+    
+    public static function Account($lang = "") {
+        if ($lang == "fr") {
+            return "Compte utilisateur";
+        }
+        return "Account";
+    }
 
     public static function Settings($lang = "") {
         if ($lang == "fr") {
@@ -259,6 +266,14 @@ class CoreTranslator {
         return "Convention";
     }
 
+    public static function ConventionDownload($lang) {
+        if ($lang == "fr") {
+            return "Télécharger charte";
+        }
+        return "Convention download";
+    }
+    
+    
     public static function Date_convention($lang) {
         if ($lang == "fr") {
             return "Charte signée le";
@@ -1279,7 +1294,7 @@ class CoreTranslator {
 
     public static function PublicA($lang) {
         if ($lang == "fr") {
-            return "Publique";
+            return "Public";
         }
         return "Public";
     }
@@ -1402,6 +1417,22 @@ class CoreTranslator {
         }
         return "Your password has been reset as per requested. Your new password is ";
     }
+    
+    public static function AccountCreatedEmail($lang, $login, $pwd){
+        if ($lang == "fr") {
+            return "Vous avez demandé un compte sur Platform-Manager. Votre identifiant est ".$login." et votre mot de passe est " . $pwd;
+        }
+        return "Your asked for a new account on Platform-Manager. Your login is " . $login . " and your password is " . $pwd;
+    }
+    
+    public static function CreatedAccountMessage($lang){
+        if ($lang == "fr") {
+            return "Votre compte a bien été créé et un email avec vos identifiants vous a été envoyé. Votre compte sera actif lorsqu'un-e responsable"
+            . " de l'accès que vous avez demandé l'activera";
+        }
+        return "Your account has been created and you will recieve an email with your credentials. You will be able to connect to your account when a manager of"
+        . " the acces you asked for will validate your account";
+    }
 
     public static function ExtAccountMessage($lang) {
         if ($lang == "fr") {
@@ -1503,33 +1534,237 @@ class CoreTranslator {
         }
         return "Width";
     }
-    
+
     public static function SpaceIcons($lang) {
         if ($lang == "fr") {
             return "Icones de la page d'accueil des espaces";
         }
         return "Icons of the home page";
     }
-    
+
     public static function smallIcons($lang) {
         if ($lang == "fr") {
             return "Petites icones";
         }
         return "Small icons";
     }
-    
+
     public static function IconsWithDescription($lang) {
         if ($lang == "fr") {
             return "Icones avec description";
         }
         return "Icons with description";
     }
-    
+
     public static function Vat($lang) {
         if ($lang == "fr") {
             return "TVA (%)";
         }
         return "Vat";
     }
+
+    public static function MainSubMenus($lang) {
+        if ($lang == "fr") {
+            return "Sous menus";
+        }
+        return "Sub menus";
+    }
+
+    public static function MainMenus($lang) {
+        if ($lang == "fr") {
+            return "Menus";
+        }
+        return "Menus";
+    }
+
+    public static function MainMenu($lang) {
+        if ($lang == "fr") {
+            return "Menu";
+        }
+        return "Menu";
+    }
+
+    public static function NewMainMenu($lang) {
+        if ($lang == "fr") {
+            return "Ajouter menu";
+        }
+        return "New menu";
+    }
+
+    public static function NewMainSubMenu($lang) {
+        if ($lang == "fr") {
+            return "Ajouter sous menu";
+        }
+        return "New sub menu";
+    }
+
+    public static function EditMainMenu($lang) {
+        if ($lang == "fr") {
+            return "Edition menu";
+        }
+        return "Edit menu";
+    }
+
+    public static function EditMainSubMenu($lang) {
+        if ($lang == "fr") {
+            return "Edition sous menu";
+        }
+        return "Edit sub menu";
+    }
+
+    public static function MenuSaved($lang) {
+        if ($lang == "fr") {
+            return "Le menu a bien été sauvegardé";
+        }
+        return "The menu has been saved";
+    }
+
+    public static function SubMenus($lang) {
+        if ($lang == "fr") {
+            return "Sous menus";
+        }
+        return "Sub menus";
+    }
+
+    public static function SubMenu($lang) {
+        if ($lang == "fr") {
+            return "Sous menu";
+        }
+        return "Sub menu";
+    }
+
+    public static function ItemsFor($lang) {
+        if ($lang == "fr") {
+            return "Items pour: ";
+        }
+        return "Items for: ";
+    }
+
+    public static function EditItemFor($lang) {
+        if ($lang == "fr") {
+            return "Edition item pour: ";
+        }
+        return "Edit items for: ";
+    }
+
+    public static function EditItem($lang) {
+        if ($lang == "fr") {
+            return "Edition item";
+        }
+        return "Edit item";
+    }
+
+    public static function Space($lang) {
+        if ($lang == "fr") {
+            return "Espace";
+        }
+        return "Space";
+    }
+
+    public static function Item($lang) {
+        if ($lang == "fr") {
+            return "Item";
+        }
+        return "Item";
+    }
+
+    public static function Image($lang) {
+        if ($lang == "fr") {
+            return "Image";
+        }
+        return "Image";
+    }
+
+    public static function or_($lang) {
+        if ($lang == "fr") {
+            return "Ou";
+        }
+        return "Or";
+    }
+
+    public static function CreateAccount($lang) {
+        if ($lang == "fr") {
+            return "Créer un compte";
+        }
+        return "Create an account";
+    }
+
+    public static function AccessTo($lang){
+        if ($lang == "fr") {
+            return "Demande accès à";
+        }
+        return "Access to";
+    }
+    
+    public static function Error($lang){
+        if ($lang == "fr") {
+            return "Erreur";
+        }
+        return "Error";
+    }
+    
+    public static function PendingUsers($lang){
+        if ($lang == "fr") {
+            return "Attente d'activation";
+        }
+        return "Pending accounts";
+    }
+    
+    public static function PendingUserAccounts($lang){
+        if ($lang == "fr") {
+            return "Comptes en attente d'activation";
+        }
+        return "Pending users accounts";
+    }
+    
+    public static function DateCreated($lang){
+        if ($lang == "fr") {
+            return "Date de création";
+        }
+        return "Date created";
+    }
+    
+    public static function Activate($lang){
+        if ($lang == "fr") {
+            return "Activer";
+        }
+        return "Activate";
+    }
+    
+    public static function UserAccountHasBeenActivated($lang){
+        if ($lang == "fr") {
+            return "Le compte utilisateur a bien été activé";
+        }
+        return "User account has been activated";        
+    }
+    
+    public static function AccessFor($lang){
+        if ($lang == "fr") {
+            return "Accès pour";
+        }
+        return "Access for";        
+    }
+    
+    public static function UserAccessHasBeenSaved($lang){
+        if ($lang == "fr") {
+            return "Les accès ont bien été enregistrés";
+        }
+        return "User access has been saved";        
+    }
+    
+    public static function Download($lang){
+        if ($lang == "fr") {
+            return "Télécharger";
+        }
+        return "Download";        
+    }
+    
+    public static function Informations($lang){
+        if ($lang == "fr") {
+            return "Informations";
+        }
+        return "Informations";        
+    }   
+    
     
 }

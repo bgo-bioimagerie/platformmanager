@@ -9,7 +9,6 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
 
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 /**
  * 

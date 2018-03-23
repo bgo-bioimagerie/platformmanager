@@ -6,27 +6,20 @@
 <?php startblock('content') ?>
 
 <?php
-if (isset($_SESSION["message"])) {
-    $pos = strpos($_SESSION["message"], "uccess");
-    if ($pos === false) {
+    if ( $updateInfo["status"] == "error") {
         ?>
         <div class="alert alert-danger">
-            <?php echo $_SESSION["message"] ?>
+            <?php echo $updateInfo["message"] ?>
         </div>
         <?php
     } else {
         ?>
         <div class="alert alert-success">
-            <?php echo $_SESSION["message"] ?>
+            <?php echo $updateInfo["message"] ?>
         </div>
         <?php
     }
-}
 ?>
 
-
-<div class="container" id="pm-table">
-    <?php echo $formHtml ?>
-</div>
 <?php
 endblock();

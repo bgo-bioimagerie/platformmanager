@@ -2,8 +2,8 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
-require_once 'Modules/ecosystem/Model/EcResponsible.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/clients/Model/ClClientUser.php';
 
 /**
  * Class defining the GRR area model
@@ -119,7 +119,8 @@ class BkCalendarEntry extends Model {
         
         foreach($resps as $resp){
             
-            $sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
+            $sqlr = "SELECT name from cl_clients WHERE id=?";
+            //$sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
             $respinfo = $this->runRequest($sqlr, array($resp[0]))->fetch();
             
             $resourceCount = array();
@@ -133,7 +134,7 @@ class BkCalendarEntry extends Model {
                 $resourceCount[] = array( "resource" => $resource["name"], "time" => round($time/3600, 1) );
             }
             
-            $data["count"][] = array( "responsible" => $respinfo["name"] . " " . $respinfo["firstname"], "count" => $resourceCount ); 
+            $data["count"][] = array( "responsible" => $respinfo["name"], "count" => $resourceCount ); 
         }
         return $data;
         
@@ -143,16 +144,20 @@ class BkCalendarEntry extends Model {
 
         $sql = "SELECT * FROM bk_calendar_entry WHERE responsible_id<=1";
         $data = $this->runRequest($sql)->fetchAll();
-        $modelResponsible = new EcResponsible();
+        $modelUserClient = new ClUserClient();
+        
+        $modelResource = new ResourceInfo();
+        $id_space = $modelResource->get($data["id_space"]);
+        
         foreach ($data as $d) {
-            $resps = $modelResponsible->getUserResponsibles($d["recipient_id"]);
-
+            $resps = $modelUserClient->getUserAccounts($id_space, $d["recipient_id"]);
+            
             //print_r($resps); echo "<br/>";
             //echo "id = " . $d["id"] . "<br/>"; 
 
             if (count($resps) > 0) {
                 $sql = "UPDATE bk_calendar_entry SET responsible_id=? WHERE id=?";
-                $this->runRequest($sql, array($resps[0]["id_resp"], $d["id"]));
+                $this->runRequest($sql, array($resps[0]["id"], $d["id"]));
             }
         }
     }
@@ -213,8 +218,12 @@ class BkCalendarEntry extends Model {
 
     public function getDefault($start_time, $end_time, $resource_id, $id_user) {
 
-        $modelResp = new EcResponsible();
-        $resps = $modelResp->getUserResponsibles($id_user);
+        $modelAccount = new ClClientUser();
+        
+        $modelResources = new ResourceInfo();
+        $resourceInfo = $modelResources->get($resource_id);
+        
+        $resps = $modelAccount->getUserClientAccounts($id_user, $resourceInfo["id_space"]);
         //print_r($resps);
 
         return array("id" => 0,
@@ -230,7 +239,7 @@ class BkCalendarEntry extends Model {
             "quantities" => "",
             "supplementaries" => "",
             "package_id" => 0,
-            "responsible_id" => $resps[0]['id_resp'],
+            "responsible_id" => $resps[0]['id'],
             "invoice_id" => 0,
             "all_day_long" => 0);
     }
@@ -430,7 +439,7 @@ class BkCalendarEntry extends Model {
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
 
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $modelColor = new BkColorCode();
         for ($i = 0; $i < count($data); $i++) {
             //echo "color id = " . $data[$i]["color_type_id"] . "</br>";

@@ -12,14 +12,14 @@ require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkOwnerPrice.php';
 
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
-
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
 require_once 'Modules/booking/Model/BookinginvoiceTranslator.php';
+
+require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+
 
 /**
  * 
@@ -62,10 +62,9 @@ class InvoiceglobalController extends InvoiceAbstractController {
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
             $id_resp = $this->request->getParameter("id_resp");
-            $id_unit = $this->request->getParameter("id_unit");
-            if ($id_resp != 0 && $id_unit != 0) {
+            if ($id_resp != 0) {
 
-                $this->invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $id_resp);
+                $this->invoice($id_space, $beginPeriod, $endPeriod, $id_resp);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
@@ -111,14 +110,13 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $modelItem = new InInvoiceItem();
         $invoiceItem = $modelItem->getForInvoice($id_invoice);
 
-        $modelUnit = new EcUnit();
-        $modelUser = new EcUser();
-
+        $modelClient = new ClClient();
+        
         $number = $invoice["number"];
         $date = $invoice["date_generated"];
-        $unit = $modelUnit->getName($invoice["id_unit"]);
-        $resp = $modelUser->getUserFUllName($invoice["id_responsible"]);
-        $adress = $modelUnit->getAdress($invoice["id_unit"]);
+        $unit = "";
+        $resp = $modelClient->getContactName($invoice["id_responsible"]);
+        $adress = $modelClient->getAddressInvoice($invoice["id_responsible"]);
         $content = json_decode($invoiceItem["content"], true);
         $table = $this->invoiceTable($content, $invoice, $lang);
 
@@ -239,17 +237,12 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
         $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
-        $unitId = $this->request->getParameterNoException("id_unit");
         $respId = $this->request->getParameterNoException("id_resp");
 
-        $modelUnit = new EcUnit();
-        $units = $modelUnit->getUnitsForList("name");
-
-        $modelUser = new EcUser();
-        $resps = $modelUser->getResponsibleOfUnit($unitId);
-
-        $form->addSelect("id_unit", EcosystemTranslator::Units($lang), $units["names"], $units["ids"], $unitId, true);
-        $form->addSelect("id_resp", EcosystemTranslator::Responsible($lang), $resps["names"], $resps["ids"], $respId);
+        $modelClients = new ClClient();
+        $resps = $modelClients->getForList($id_space);
+        
+        $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
         $form->setButtonsWidth(2, 9);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $id_space);
@@ -281,20 +274,19 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 }
             }
             if ($found){
-                $id_unit = $modelUser->getUnit($resp["id"]);
-                $this->invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $resp["id"]);
+                $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"]);
             }
         }
     }
 
-    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $id_resp) {
+    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp) {
 
         $lang = $this->getLanguage();
 
         // create invoice in the database
         $modelInvoice = new InInvoice();
         $invoiceNumber = $modelInvoice->getNextNumber();
-        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, $invoiceNumber, date("Y-m-d", time()), $id_unit, $id_resp, 0, $beginPeriod, $endPeriod);
+        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, $invoiceNumber, date("Y-m-d", time()), $id_resp, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
         $modelInvoice->setTitle($id_invoice, "Facturation: période du " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " au " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
@@ -314,7 +306,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
                 $moduleArray = array();
                 $moduleArray["module"] = $module;
-                $moduleArray["data"] = $model->invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $id_resp, $id_invoice, $lang);
+                $moduleArray["data"] = $model->invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $id_invoice, $lang);
                 $invoiceDataArray[] = $moduleArray;
                 //echo 'total HT ' . $module . " = " . $moduleArray["data"]["total_ht"] . "<br/>";
                 //print_r($moduleArray);

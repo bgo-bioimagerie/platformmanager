@@ -17,7 +17,7 @@ require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Model/BkCalendarPeriod.php';
 require_once 'Modules/booking/Model/BkRestrictions.php';
 
-
+require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReResps.php';
@@ -25,8 +25,7 @@ require_once 'Modules/resources/Model/ReArea.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 require_once 'Modules/mailer/Model/MailerSend.php';
 
@@ -201,8 +200,8 @@ class BookingdefaultController extends BookingabstractController {
             $end_time = $start_time + 3600 * $pk_duration;
         }
 
-        $modelResp = new EcResponsible();
-        $userResps = $modelResp->getUserResponsibles($recipient_id);
+        $modelResp = new ClClientUser();
+        $userResps = $modelResp->getUserClientAccounts($recipient_id, $id_space);
         $foundResp = false;
         foreach ($userResps as $uresp) {
             if ($uresp["id"] == $responsible_id) {
@@ -530,7 +529,7 @@ class BookingdefaultController extends BookingabstractController {
             $space = $modelSpace->getSpace($id_space);
 
             // user info
-            $userModel = new EcUser();
+            $userModel = new CoreUser();
             $user = $userModel->getInfo($_SESSION["id_user"]);
             
             // get resource name
@@ -576,7 +575,7 @@ class BookingdefaultController extends BookingabstractController {
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getAllForSelect($id_space, "name");
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
 
         $form = new Form($this->request, "editReservationDefault");
@@ -592,32 +591,32 @@ class BookingdefaultController extends BookingabstractController {
         }
         // responsible
         if ($canEditReservation) {
-            $modelResp = new EcResponsible();
-            $modelUser = new EcUser();
+            $modelResp = new ClClientUser();
+            $modelUser = new CoreUser();
             $choices = array();
             $choicesid = array();
             $rID = $this->request->getParameterNoException("recipient_id");
             if ($rID == "") {
                 $rID = $resaInfo["recipient_id"];
             }
-            $resps = $modelResp->getUserResponsibles($rID);
+            $resps = $modelResp->getUserClientAccounts($rID, $id_space);
             foreach ($resps as $r) {
                 $choicesid[] = $r["id"];
-                $choices[] = $modelUser->getUserFUllName($r["id"]);
+                $choices[] = ($r["name"]);
             }
-            $form->addSelect("responsible_id", EcosystemTranslator::Responsible($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
+            $form->addSelect("responsible_id", ClientsTranslator::ClientAccount($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
         } else {
-            $modelResp = new EcResponsible();
-            $resps = $modelResp->getUserResponsibles($_SESSION["id_user"]);
+            $modelResp = new ClClientUser();
+            $resps = $modelResp->getUserClientAccounts($_SESSION["id_user"], $id_space);
             if (count($resps) > 1) {
-                $modelUser = new EcUser();
+                $modelUser = new CoreUser();
                 $choices = array();
                 $choicesid = array();
                 foreach ($resps as $r) {
                     $choicesid[] = $r["id"];
-                    $choices[] = $modelUser->getUserFUllName($r["id"]);
+                    $choices[] = $r["name"];
                 }
-                $form->addSelect("responsible_id", EcosystemTranslator::Responsible($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
+                $form->addSelect("responsible_id", ClientsTranslator::ClientAccount($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
             } else {
                 $form->addHidden("responsible_id", $resaInfo["responsible_id"]);
             }
@@ -827,7 +826,6 @@ class BookingdefaultController extends BookingabstractController {
     public function deleteAction($id_space, $id) {
 
         $sendmail = $this->request->getParameter("sendmail");
-
         if ($sendmail == 1) {
             // get the resource
             $modelCalEntry = new BkCalendarEntry();
@@ -843,7 +841,7 @@ class BookingdefaultController extends BookingabstractController {
             $space = $modelSpace->getSpace($id_space);
 
             // user info
-            $userModel = new EcUser();
+            $userModel = new CoreUser();
             $user = $userModel->getInfo($_SESSION["id_user"]);
 
             // mail content
@@ -857,7 +855,7 @@ class BookingdefaultController extends BookingabstractController {
             $mailerModel = new MailerSend();
             $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
         }
-
+        
         $modelCalEntry = new BkCalendarEntry();
         $modelCalEntry->removeEntry($id);
 

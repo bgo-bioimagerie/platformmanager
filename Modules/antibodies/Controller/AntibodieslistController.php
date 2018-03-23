@@ -450,7 +450,7 @@ class AntibodieslistController extends CoresecureController {
             "no_dossier" => AntibodiesTranslator::No_dossier($lang),
         );
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]["utilisateur"] = $modelUser->getUserFUllName($data[$i]["id_utilisateur"]);
             $data[$i]["date_recept"] = CoreTranslator::dateFromEn($data[$i]["date_recept"], $lang);

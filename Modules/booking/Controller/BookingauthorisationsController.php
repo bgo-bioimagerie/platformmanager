@@ -39,6 +39,9 @@ class BookingauthorisationsController extends CoresecureController {
         $modelResources = new ReCategory();
         $resources = $modelResources->getBySpace($id_space);
 
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+
         // user name
         $modelUser = new EcUser();
         $userName = $modelUser->getUserFUllName($id);
@@ -88,6 +91,7 @@ class BookingauthorisationsController extends CoresecureController {
             "lang" => $lang,
             "id_space" => $id_space,
             'tableHtml' => $tableHtml,
+            'space' => $space
         ));
     }
 
@@ -140,10 +144,14 @@ class BookingauthorisationsController extends CoresecureController {
 
         $tableHtml = $table->view($data, $headers);
 
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+
         $this->render(array(
             "lang" => $lang,
             "id_space" => $id_space,
             'tableHtml' => $tableHtml,
+            'space' => $space
         ));
     }
 
@@ -192,10 +200,14 @@ class BookingauthorisationsController extends CoresecureController {
             return;
         }
 
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+
         $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
-            'formHtml' => $form->getHtml($lang)
+            'formHtml' => $form->getHtml($lang),
+            'space' => $space
         ));
     }
 
@@ -240,10 +252,14 @@ class BookingauthorisationsController extends CoresecureController {
             return;
         }
 
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+
         $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
-            'formHtml' => $form->getHtml($lang)
+            'formHtml' => $form->getHtml($lang),
+            'space' => $space
         ));
     }
 

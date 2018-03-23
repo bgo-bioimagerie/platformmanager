@@ -77,7 +77,7 @@ Platform-Manager
                                 <div class="checkbox">
                                     <label><input type="checkbox" name="remember" value=""><?php echo CoreTranslator::RememberMe($language) ?></label>
                                 </div>
-                                   
+
                                 <button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
                             </form>
 
@@ -86,10 +86,37 @@ Platform-Manager
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
                             <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>
                         </div>
+                        
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
+                        
+                            
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+                            <br></br>
+                            <p class="text-center">
+                                <b><?php echo CoreTranslator::or_($language) ?></b>
+                            </p>
+                        </div>
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+                            <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
+                        </div>
+                        
+
+                        <!--
+                        <div style="padding-top: 25px; margin-bottom: 25px;">
+                                <b>
+                            <p class="text-center"><?php echo CoreTranslator::or_($language) ?>
+                            </b>
+                            </p>
+                            </div>
+                            <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
+                         -->
                     </div>
+                        
+                        
+                            
+                    
                 </div> 
             </div> 
         </div>

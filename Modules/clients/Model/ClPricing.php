@@ -9,6 +9,10 @@ class ClPricing extends Model {
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", "");
+        $this->setColumnsInfo("color", "varchar(7)", "");
+        $this->setColumnsInfo("type", "int(1)", 0);
+        $this->setColumnsInfo("display_order", "int(11)", 0);
+        
         $this->primaryKey = "id";
     }
 
@@ -22,10 +26,14 @@ class ClPricing extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
-    public function getIdFromName($name) {
-        $sql = "SELECT id FROM cl_pricings WHERE name=?";
-        $tmp = $this->runRequest($sql, array($name))->fetch();
-        return $tmp[0];
+    public function getIdFromName($name, $id_space) {
+        $sql = "SELECT id FROM cl_pricings WHERE name=? AND id_space=?";
+        $tmp = $this->runRequest($sql, array($name, $id_space));
+        if ( $tmp->rowCount() > 0 ){
+            $tm = $tmp->fetch();
+            return $tm[0];
+        }
+        return 0;
     }
 
     public function getName($id) {
@@ -34,14 +42,16 @@ class ClPricing extends Model {
         return $d[0];
     }
 
-    public function set($id, $id_space, $name) {
+    
+    
+    public function set($id, $id_space, $name, $color, $type, $display_order) {
         if ($id == 0) {
-            $sql = 'INSERT INTO cl_pricings (id_space, name) VALUES (?,?)';
-            $this->runRequest($sql, array($id_space, $name));
+            $sql = 'INSERT INTO cl_pricings (id_space, name, color, type, display_order) VALUES (?,?,?,?,?)';
+            $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE cl_pricings SET id_space=?, name=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $name, $id));
+            $sql = 'UPDATE cl_pricings SET id_space=?, name=?, color=?, type=?, display_order=? WHERE id=?';
+            $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order, $id));
             return $id;
         }
     }

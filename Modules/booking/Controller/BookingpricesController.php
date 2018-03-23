@@ -6,9 +6,7 @@ require_once 'Framework/TableView.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
+require_once 'Modules/clients/Model/ClPricing.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
@@ -44,10 +42,11 @@ class BookingpricesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelBelonging = new EcBelonging();
+        $modelPricing = new ClPricing();
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getBySpace($id_space);
-        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        
+        $belongings = $modelPricing->getAll($id_space);
         
         $table = new TableView();
         

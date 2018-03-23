@@ -1567,9 +1567,16 @@ class BookingTranslator {
     
     public static function bookingstatreservationresp($lang) {
         if ($lang == "fr") {
-            return "Temps réservation par responsable";
+            return "Temps réservation par compte client";
         }
-        return "Booking time per responsible";
+        return "Booking time per account";
+    }
+    
+    public static function bookingauthorisations($lang) {
+        if ($lang == "fr") {
+            return "Autorisations";
+        }
+        return "Booking access";
     }
     
 }

@@ -7,9 +7,6 @@ require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 
 
-
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-
 /**
  * Class defining the SyColorCode model
  *
@@ -43,7 +40,7 @@ class ServicesInvoice extends InvoiceModel {
         return false;
     }
     
-    public function invoice($id_space, $beginPeriod, $endPeriod, $id_unit, $id_resp, $invoice_id, $lang) {
+    public function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $invoice_id, $lang) {
 
         // get all services
         $sql = "SELECT * FROM se_services WHERE id_space=?";
@@ -59,8 +56,8 @@ class ServicesInvoice extends InvoiceModel {
 
         $modelPrice = new SePrice();
 
-        $modelUnit = new EcUnit();
-        $id_belongings = $modelUnit->getBelonging($id_unit, $id_space);
+        $modelClient = new ClClient();
+        $id_belongings = $modelClient->getPricingID($id_resp);
 
         // get quantities
         $content = array();

@@ -597,5 +597,13 @@ class EstoreTranslator {
         }
         return "Delivery date expected";
     }
+    
+    public static function PaidDate($lang) {
+        if ($lang == "fr") {
+            return "Date de paiement";
+        }
+        return "Paid date";
+    }
+    
 
 }

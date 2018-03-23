@@ -42,14 +42,23 @@ class ClientspricingsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // Query to the database
-        $providersArray = $this->pricingModel->getAll($id_space);
+        $belongingsArray = $this->pricingModel->getAll($id_space);
+        for ($i = 0; $i < count($belongingsArray); $i++) {
+            if ($belongingsArray[$i]["type"] == 1) {
+                $belongingsArray[$i]["type"] = CoreTranslator::Academic($lang);
+            } else {
+                $belongingsArray[$i]["type"] = CoreTranslator::Company($lang);
+            }
+        }
 
         $table = new TableView();
         $table->addLineEditButton("clpricingedit/" . $id_space);
         $table->addDeleteButton("clpricingdelete/" . $id_space);
-        $tableHtml = $table->view($providersArray, array(
-            "name" => CoreTranslator::Name($lang)
-            ));
+        $table->setColorIndexes(array("color" => "color"));
+        $tableHtml = $table->view($belongingsArray, array("name" => CoreTranslator::Name($lang),
+            "color" => CoreTranslator::color($lang), "type" => CoreTranslator::type($lang),
+            "id" => "ID"
+        ));
 
         // render the View
         $this->render(array(
@@ -75,6 +84,8 @@ class ClientspricingsController extends CoresecureController {
         else{
             $pricing = $this->pricingModel->get($id);
         }
+        
+        
 
         // form
         // build the form
@@ -82,6 +93,13 @@ class ClientspricingsController extends CoresecureController {
         $form->setTitle(ClientsTranslator::Edit_Pricing($lang), 3);
         $form->addHidden("id", $pricing["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $pricing["name"]);
+        $form->addColor("color", CoreTranslator::color($lang), false, $pricing["color"]);
+        $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $pricing["display_order"]);
+
+        $choices = array(CoreTranslator::Academic($lang), CoreTranslator::Company($lang));
+        $choicesid = array(1, 2);
+        $form->addSelect("type", CoreTranslator::type($lang), $choices, $choicesid, $pricing["type"]);
+        
         
         $form->setValidationButton(CoreTranslator::Ok($lang), "clpricingedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "clpricings/" . $id_space);
@@ -92,7 +110,10 @@ class ClientspricingsController extends CoresecureController {
             // run the database query
             $newId = $this->pricingModel->set($form->getParameter("id"), 
                     $id_space, 
-                    $form->getParameter("name")
+                    $form->getParameter("name"),
+                    $form->getParameter("color"),
+                    $form->getParameter("type"),
+                    $form->getParameter("display_order")
                 );   
             
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);

@@ -117,12 +117,11 @@ class CoreusersController extends CoresecureController {
         }
         $script = "";
         if ($form->check()) {
-            if ($modelUser->isLogin($this->request->getParameter('login'))){
+            if ($modelUser->isLogin($this->request->getParameter('login'))) {
                 $script .= '<script language="javascript">';
-                $script .= 'alert("'. CoreTranslator::LoginAlreadyExists($lang) .'")';
-                $script .=  '</script>';
-            }
-            else{
+                $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
+                $script .= '</script>';
+            } else {
                 $this->editQuery($form, $modelUser, $lang);
                 $this->redirect("coreusers");
                 return;
@@ -196,31 +195,34 @@ class CoreusersController extends CoresecureController {
         $formPwd->setButtonsWidth(3, 8);
 
         if ($formPwd->check()) {
-            
+
             $this->myaccountquery($modelUser, $formPwd, $id, $lang);
             $this->redirect("coretiles");
             return;
         }
-        
-        $this->render(array("formHtml" => $formPwd->getHtml($lang)));
-    }
-    
-    protected function myaccountquery($modelUser, $formPwd, $id, $lang){
-        $previouspwddb = $modelUser->getpwd($id);
-            $previouspwd = $formPwd->getParameter("curentpwd");
-            
-            if ($previouspwddb['pwd'] == md5($previouspwd)) {
 
-                $pwd = $formPwd->getParameter("pwd");
-                $pwdc = $formPwd->getParameter("confirm");
-                if ($pwd == $pwdc) {
-                    $modelUser->changePwd($id, $pwd);
-                } else {
-                    throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
-                }
+        $this->render(array(
+            "lang" => $lang,
+            "formHtml" => $formPwd->getHtml($lang)
+        ));
+    }
+
+    protected function myaccountquery($modelUser, $formPwd, $id, $lang) {
+        $previouspwddb = $modelUser->getpwd($id);
+        $previouspwd = $formPwd->getParameter("curentpwd");
+
+        if ($previouspwddb['pwd'] == md5($previouspwd)) {
+
+            $pwd = $formPwd->getParameter("pwd");
+            $pwdc = $formPwd->getParameter("confirm");
+            if ($pwd == $pwdc) {
+                $modelUser->changePwd($id, $pwd);
             } else {
-                throw new Exception(CoreTranslator::The_curent_password_is_not_correct($lang));
+                throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
             }
+        } else {
+            throw new Exception(CoreTranslator::The_curent_password_is_not_correct($lang));
+        }
     }
 
 }

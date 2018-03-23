@@ -16,16 +16,22 @@ class CoreRouting extends Routing{
         $this->addRoute("corelogout", "corelogout", "coreconnection", "logout");
         $this->addRoute("corepasswordforgotten", "corepasswordforgotten", "coreconnection", "passwordforgotten");
         
-        
-        
+        // create account
+        $this->addRoute("corecreateaccount", "corecreateaccount", "coreaccount", "index");
+        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");
+         
+         
+        // home
+        $this->addRoute("corehome", "corehome", "corehome", "index");
         
         // tiles
-        $this->addRoute("coretiles", "coretiles", "coretiles", "index");
+        $this->addRoute("coretiles", "coretiles", "coretiles", "index", array("level", "id"), array("", ""));
+        $this->addRoute("coretilesdoc", "coretilesdoc", "coretiles", "doc");
+        
         
         // Update
         $this->addRoute("update", "update", "coreupdate", "update");
-        $this->addRoute("coreupdate", "coreupdate", "coreupdate", "update");
-        $this->addRoute("coreupdateform", "coreupdateform", "coreupdate", "index");
+        $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
         
         // Users
         $this->addRoute("coreusers", "coreusers", "coreusers", "index");
@@ -41,32 +47,36 @@ class CoreRouting extends Routing{
         $this->addRoute("spaceconfiguser", "spaceconfiguser", "corespace", "configusers", array("id_space"), array(""));
         $this->addRoute("spaceconfigmodule", "spaceconfigmodule", "corespace", "configmodule", array("id_space", "name_module"), array("", ""));
         
+        // space access
+        $this->addRoute("corespaceaccess", "corespaceaccess", "corespaceaccess", "index", array("id_space", "letter", "active"), array("", "", ""));
+        $this->addRoute("corespacependingusers", "corespacependingusers", "corespaceaccess", "pendingusers", array("id_space"), array(""));
+        $this->addRoute("corespacependinguseredit", "corespacependinguseredit", "corespaceaccess", "pendinguseredit", array("id_space", "id"), array("", ""));
+        $this->addRoute("corespaceaccessusers", "corespaceaccessusers", "corespaceaccess", "users", array("id_space", "letter"), array("", ""));
+        $this->addRoute("corespaceaccessusersinactifs", "corespaceaccessusersinactifs", "corespaceaccess", "usersinactif", array("id_space", "letter"), array("", ""));
+        $this->addRoute("coreaccessuseredit", "coreaccessuseredit", "corespaceaccess", "useredit", array("id_space", "id"), array("", ""));
+        
         
         
         $this->addRoute("spaceconfigdeleteuser", "spaceconfigdeleteuser", "corespace", "configdeleteuser", array("id_space", "id_user"), array("", ""));
-        
-        
         
         // spaces admin
         $this->addRoute("spaceadmin", "spaceadmin", "corespaceadmin", "index");
         $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id"), array(""));
         $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id"), array(""));
         
-        // space dashboard
-        $this->addRoute("spacedashboard", "spacedashboard", "coredashboard", "index", array("id_space"), array(""));
-        $this->addRoute("spacedashboardsections", "spacedashboardsections", "coredashboard", "sections", array("id_space"), array(""));
-        $this->addRoute("spacedashboardsectionedit", "spacedashboardsectionedit", "coredashboard", "sectionedit", array("id_space", "id"), array("", ""));
-        $this->addRoute("spacedashboardsectiondelete", "spacedashboardsectiondelete", "coredashboard", "sectiondelete", array("id_space", "id"), array("", ""));
+        // main menu
+        $this->addRoute("coremainmenus", "coremainmenus", "coremainmenu", "index");
+        $this->addRoute("coremainmenuedit", "coremainmenuedit", "coremainmenu", "edit", array("id"), array(""));
+        $this->addRoute("coremainmenudelete", "coremainmenudelete", "coremainmenu", "delete", array("id"), array(""));
         
-        $this->addRoute("spacedashboarditems", "spacedashboarditems", "coredashboard", "items", array("id_space"), array(""));
-        $this->addRoute("spacedashboarditemedit", "spacedashboarditemedit", "coredashboard", "itemedit", array("id_space", "id"), array("", ""));
-        $this->addRoute("spacedashboarditemdelete", "spacedashboarditemdelete", "coredashboard", "itemdelete", array("id_space", "id"), array("", ""));
+        $this->addRoute("coremainsubmenus", "coremainsubmenus", "coremainmenu", "submenus");
+        $this->addRoute("coremainsubmenuedit", "coremainsubmenuedit", "coremainmenu", "submenuedit", array("id"), array(""));
+        $this->addRoute("coremainsubmenudelete", "coremainsubmenudelete", "coremainmenu", "submenudelete", array("id"), array(""));
         
-        // menus
-        $this->addRoute("coremenus", "coremenus", "coremenus", "index");
-        $this->addRoute("coremenusitems", "coremenusitems", "coremenus", "items");
-        $this->addRoute("coremenusitemedit", "coremenusitemedit", "coremenus", "itemedit", array("id"), array(""));
-        $this->addRoute("coremenusitemdelete", "coremenusitemdelete", "coremenus", "itemdelete", array("id"), array(""));
+        $this->addRoute("coremainmenuitems", "coremainmenuitems", "coremainmenu", "items");
+        $this->addRoute("coremainmenuitemedit", "coremainmenuitemedit", "coremainmenu", "itemedit", array("id"), array(""));
+        $this->addRoute("coremainmenuitemdelete", "coremainmenuitemdelete", "coremainmenu", "itemdelete", array("id"), array(""));
+        
         
         // api
         $this->addRoute("apinavbar", "apinavbar", "corenavbar", "navbar", array(), array(), true);

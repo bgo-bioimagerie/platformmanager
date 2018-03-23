@@ -494,10 +494,14 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function upload($label, $name, $labelWidth = 2, $inputWidth = 9) {
+    static public function upload($label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
         $html = "<div class=\"form-group\"> ";
         $html .= " <label class=\"control-label col-xs-" . $labelWidth . "\"> " . $label . " </label> ";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
+        
+        if ($value != ""){
+            $html .= '<img src="'.$value.'" width="100">';
+        }
         $html .= " <input type=\"file\" name=\"" . $name . "\" id=\"" . $name . "\"> ";
         $html .= "</div>";
         $html .= "</div>";
@@ -523,12 +527,27 @@ class FormHtml {
             $html .= "</div>";
             $html .= "</div>";
         } else {
+            
+            $html = "<form role=\"form\" id=\"" . $formid . "filetransfert\" class=\"form-horizontal\" action=\"transfersimplefiledownload\" method=\"POST\">";
+            $html .= "<div class=\"form-group\">";
+            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . "</label>";
+            $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
+            $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$value."\">";
+            $html .= "<input type=\"submit\" id=\"" . $formid . "filetransfertsubmit" . "\" class=\"btn btn-default\" value=\"" . $label . "\" />";
+            $html .= "</div>";
+            $html .= "</div>";
+            $html .= "</form>";
+            
+            
+            /*
             $html = "<div class=\"form-group\">";
             $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
             $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-            $html .= "<button class=\"btn  btn-default\" id=\"" . $name . "\" type=\"button\" onclick=\"location.href = '" . $name . "'\">" . $label . "</button>";
+            $html .= "<button class=\"btn  btn-default\" id=\"" . $name . "\" type=\"button\" onclick=\"location.href = './" . $name . "'\">" . $label . "</button>";
             $html .= "</div>";
             $html .= "</div>";
+             * 
+             */
         }
 
         return $html;

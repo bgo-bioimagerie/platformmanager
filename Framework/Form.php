@@ -70,8 +70,8 @@ class Form {
         $this->id = $id;
         $this->labelWidth = 4;
         $this->inputWidth = 6;
-        $this->buttonsWidth = 6;
-        $this->buttonsOffset = 6;
+        $this->buttonsWidth = 12;
+        $this->buttonsOffset = 0;
         $this->title = "";
         $this->validationURL = "";
         $this->cancelURL = "";
@@ -97,8 +97,8 @@ class Form {
      * @param type $buttonsOffset Number of offset bootstrap columns
      */
     public function setButtonsWidth($buttonsWidth, $buttonsOffset) {
-        $this->buttonsWidth = $buttonsWidth;
-        $this->buttonsOffset = $buttonsOffset;
+        //$this->buttonsWidth = $buttonsWidth;
+        //$this->buttonsOffset = $buttonsOffset;
     }
 
     /**
@@ -270,7 +270,8 @@ class Form {
      * @param type $name 
      * @param type $label
      */
-    public function addUpload($name, $label) {
+    public function addUpload($name, $label, $value = "") {
+       
         $this->types[] = "upload";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -280,9 +281,10 @@ class Form {
         $this->validated[] = true;
         $this->useUpload = true;
         $this->enabled[] = "";
-        $this->setValue($name, "");
+        $this->setValue($name, $value);
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        
     }
 
     /**
@@ -656,7 +658,7 @@ class Form {
                 $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "upload") {
-                $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->labelWidth, $this->inputWidth);
+                $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "downloadbutton") {
                 $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth);

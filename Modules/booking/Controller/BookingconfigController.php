@@ -7,6 +7,8 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/booking/Model/BookingInstall.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
+
 
 /**
  * 
@@ -52,6 +54,11 @@ class BookingconfigController extends CoresecureController {
                     1,
                     $this->request->getParameter("colorSettingsMenu")
                     );
+            
+            if ( $this->request->getParameter("bookingsettingsmenustatus") > 0 ){
+                $modelAccess = new CoreSpaceAccessOptions();
+                $modelAccess->set($id_space, "bookingauthorisations", "booking", "bookingauthorisations");
+            }
             
             $this->redirect("bookingconfig/".$id_space);
             return;

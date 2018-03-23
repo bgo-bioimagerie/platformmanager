@@ -6,7 +6,6 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreStatus.php';
-require_once 'Modules/core/Model/CoreMenu.php';
 
 
 /**
@@ -209,11 +208,13 @@ abstract class CoresecureController extends CorecookiesecureController {
      * @param type $menuName
      * @return type
      */
+    /*
     public function isUserMenuAuthorized($menuName) {
         $controllerMenu = new CoreMenu();
         $minimumStatus = $controllerMenu->getMenuStatusByName($menuName);
         return $this->isUserAuthorized($minimumStatus);
     }
+    */
 
     /**
      * 

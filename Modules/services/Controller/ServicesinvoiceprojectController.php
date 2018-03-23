@@ -16,8 +16,8 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SePrice.php';
 
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+
 
 /**
  * 
@@ -52,10 +52,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $id_projects = $this->request->getParameter("id_project");
             $id_resp = $this->getProjectsResp($id_projects);
             //echo "id resp = " . $id_resp . "<br/>";
-            $modelUser = new EcUser();
-            $id_unit = $modelUser->getUnit($id_resp);
             //echo "id unit = " . $id_unit . "<br/>";
-            $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_unit, $id_resp);
+            $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp);
             $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice);
             return;
         }
@@ -66,11 +64,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
             $id_resp = $this->request->getParameter("id_resp");
-            $id_unit = $this->request->getParameter("id_unit");
-            if ($id_resp != 0 && $id_unit != 0) {
+            if ($id_resp != 0) {
                 $id_projects = $modelProject->getProjectsOpenedPeriodResp($beginPeriod, $endPeriod, $id_resp);
 
-                $this->invoiceProjects($id_space, $id_projects, $id_unit, $id_resp);
+                $this->invoiceProjects($id_space, $id_projects, $id_resp);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
@@ -260,17 +257,12 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
         $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
-        $unitId = $this->request->getParameterNoException("id_unit");
         $respId = $this->request->getParameterNoException("id_resp");
 
-        $modelUnit = new EcUnit();
-        $units = $modelUnit->getUnitsForList("name");
+        $modelClient = new ClClient();
+        $resps = $modelClient->getForList($id_space);
 
-        $modelUser = new EcUser();
-        $resps = $modelUser->getResponsibleOfUnit($unitId);
-
-        $form->addSelect("id_unit", EcosystemTranslator::Units($lang), $units["names"], $units["ids"], $unitId, true);
-        $form->addSelect("id_resp", EcosystemTranslator::Responsible($lang), $resps["names"], $resps["ids"], $respId);
+        $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
         $form->setButtonsWidth(2, 9);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $id_space);
@@ -284,15 +276,14 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelProject = new SeProject();
         $id_resp = $modelProject->getResp($id_project);
         //echo "$id_resp = " . $id_resp . "<br/>";
-        $modelUser = new EcUser();
-        $id_unit = $modelUser->getUnit($id_resp);
+        
         $id_projects = array();
         $id_projects[] = $id_project;
-        $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_unit, $id_resp);
+        $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp);
         $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice);
     }
 
-    protected function invoiceProjects($id_space, $id_projects, $id_unit, $id_resp) {
+    protected function invoiceProjects($id_space, $id_projects, $id_resp) {
 
         // add invoice
         //echo "add invoice <br/>";
@@ -301,13 +292,16 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $module = "services";
         $controller = "servicesinvoiceproject";
         $number = $modelInvoice->getNextNumber();
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_resp);
         $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
         
         // parse content
         //echo "parse content <br/>";
-        $modelUnit = new EcUnit();
-        $id_belonging = $modelUnit->getBelonging($id_unit, $id_space);
+        $modelClient = new ClClient();
+        $id_belonging = $modelClient->getPricingID($id_resp);
+        
+        //echo 'resp = ' . $id_resp . '<br/>';
+        //echo 'belonging = ' . $id_belonging . "<br/>";
         $total_ht = 0;
         $modelProject = new SeProject();
         $addedServices = array();
@@ -445,11 +439,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         }
         $table .= "</table>";
 
-        $modelUnit = new EcUnit();
-        $unit = $modelUnit->getUnitName($invoice["id_unit"]);
-        $adress = $modelUnit->getAdress($invoice["id_unit"]);
-        $modelUser = new EcUser();
-        $resp = $modelUser->getUserFUllName($invoice["id_responsible"]);
+        $modelClient = new ClClient();
+        $unit = "";
+        $adress = $modelClient->getAddressInvoice($invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
+        $resp = $modelClient->getContactName($invoice["id_responsible"]);
         $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
     }
 

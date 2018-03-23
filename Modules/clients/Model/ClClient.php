@@ -19,12 +19,29 @@ class ClClient extends Model {
         $this->setColumnsInfo("invoice_send_preference", "int(11)", 0); // 1 email; 2 postal
         $this->primaryKey = "id";
     }
-
+    
+    public function getInstitution($id){
+        $sql = "SELECT * FROM cl_addresses WHERE id=(SELECT address_invoice FROM cl_clients WHERE id=?)";
+        $address = $this->runRequest($sql, array($id))->fetch();
+        return $address["institution"];
+    }
+    
+    public function getAddressInvoice($id){
+        $sql = "SELECT * FROM cl_addresses WHERE id=(SELECT address_invoice FROM cl_clients WHERE id=?)";
+        $address = $this->runRequest($sql, array($id))->fetch();
+        return $address["institution"] . "\n" . $address["building_floor"] 
+                . "\n" . $address["service"] 
+                . "\n" . $address["address"]
+                . "\n" . $address["zip_code"] 
+                . " " . $address["city"]
+                . "," . $address["country"] ;
+    }
+    
     public function setAddressDelivery($id, $id_addressdelivery) {
         $sql = "UPDATE cl_clients SET address_delivery=? WHERE id=?";
         $this->runRequest($sql, array($id_addressdelivery, $id));
     }
-
+    
     public function setAddressInvoice($id, $id_addressinvoice) {
         $sql = "UPDATE cl_clients SET address_invoice=? WHERE id=?";
         $this->runRequest($sql, array($id_addressinvoice, $id));
@@ -49,6 +66,13 @@ class ClClient extends Model {
 
     public function getName($id) {
         $sql = "SELECT name FROM cl_clients WHERE id=?";
+        $data = $this->runRequest($sql, array($id))->fetch();
+        return $data[0];
+    }
+    
+    
+    public function getContactName($id) {
+        $sql = "SELECT contact_name FROM cl_clients WHERE id=?";
         $data = $this->runRequest($sql, array($id))->fetch();
         return $data[0];
     }

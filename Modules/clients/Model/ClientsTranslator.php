@@ -283,4 +283,11 @@ class ClientsTranslator {
         return "invoice send preference";
     }
     
+    public static function ClientAccount($lang) {
+        if ($lang == "fr") {
+            return "Compte client";
+        }
+        return "Client account";
+    }
+    
 }

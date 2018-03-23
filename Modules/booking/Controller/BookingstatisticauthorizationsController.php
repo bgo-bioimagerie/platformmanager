@@ -21,7 +21,7 @@ require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 /**
  * 
@@ -97,9 +97,10 @@ class BookingstatisticauthorizationsController extends CoresecureController {
             }
         }
 
+        
         // by unit
-        $modelUnits = new EcUnit();
-        $units = $modelUnits->getUnits("name");
+        $modelClients = new ClClient();
+        $units = $modelClients->getAll($id_space);
         $countResourcesUnit = array();
         foreach ($resources as $resource) {
             foreach ($units as $unit) {
@@ -157,7 +158,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
 
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $instructorsStartLine = $curentLine + 1;
         foreach ($instructors as $instructor) {
             $curentLine++;
@@ -396,12 +397,8 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         // query
         $statUserModel = new BkStatsUser();
         if ($email != "") {
-            //header_remove();
-            //ob_clean();
             $statUserModel->authorizedUsersMail($resource_id, $id_space);
         } else {
-            //header_remove();
-            //ob_clean();
             $statUserModel->authorizedUsers($resource_id, $id_space, $lang);
         }
 

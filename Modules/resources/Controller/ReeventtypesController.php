@@ -7,7 +7,6 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReEventType.php';
 
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 /**
  * 

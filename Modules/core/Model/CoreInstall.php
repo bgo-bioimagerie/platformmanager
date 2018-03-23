@@ -6,13 +6,19 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
-require_once 'Modules/core/Model/CoreMenu.php';
+require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreProjects.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
-require_once 'Modules/core/Model/CoreDashboardSection.php';
-require_once 'Modules/core/Model/CoreDashboardItem.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreMainSubMenu.php';
+require_once 'Modules/core/Model/CoreMainMenuItem.php';
+require_once 'Modules/core/Model/CoreMainMenuPatch.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
+
 
 /**
  * Class defining the Install model
@@ -48,7 +54,7 @@ class CoreInstall extends Model {
         $modelUserS = new CoreUserSettings();
         $modelUserS->createTable();
          
-        $modelMenu = new CoreMenu();
+        $modelMenu = new CoreAdminMenu();
         $modelMenu->createTable();
         $modelMenu->addCoreDefaultMenus();
        
@@ -66,13 +72,31 @@ class CoreInstall extends Model {
         $modelModules = new CoreInstalledModules();
         $modelModules->createTable();
         
+        $modelCoreMainMenu = new CoreMainMenu();
+        $modelCoreMainMenu->createTable();
         
-        $modeldbsection = new CoreDashboardSection();
-        $modeldbsection->createTable();
+        $modelCoreMainSubMenu = new CoreMainSubMenu();
+        $modelCoreMainSubMenu->createTable();
         
-        $modeldbitem = new CoreDashboardItem();
-        $modeldbitem->createTable();
+        $modelCoreMainMenuItem = new CoreMainMenuItem();
+        $modelCoreMainMenuItem->createTable();
         
+        $modelPending = new CorePendingAccount();
+        $modelPending->createTable();
+        
+        $modelCoreSpaceUser = new CoreSpaceUser();
+        $modelCoreSpaceUser->createTable();
+        
+        $modelCoreSpaceAccessOptions = new CoreSpaceAccessOptions();
+        $modelCoreSpaceAccessOptions->createTable();
+        
+        
+        $modelMainMenuPatch = new CoreMainMenuPatch();
+        $modelMainMenuPatch->patch();
+        
+        if (!file_exists('data/conventions/')) {
+            mkdir('data/conventions/', 0777, true);
+        }
         
     }
     /**

@@ -4,6 +4,7 @@ require_once 'Framework/Model.php';
 
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreLdap.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
 
 class CoreUser extends Model {
 
@@ -22,7 +23,50 @@ class CoreUser extends Model {
         $this->setColumnsInfo("date_end_contract", "date", "");
         $this->setColumnsInfo("date_last_login", "date", "");
         $this->setColumnsInfo("remember_key", "varchar(255)", "");
+        $this->setColumnsInfo("validated", "int(1)", 1);
         $this->primaryKey = "id";
+    }
+
+    public function getAll() {
+        $sql = "SELECT * FROM core_users";
+        return $this->runRequest($sql)->fetchAll();
+    }
+
+    public function getUserInitials($id) {
+        $sql = "select firstname, name from core_users where id=?";
+        $user = $this->runRequest($sql, array(
+            $id
+        ));
+
+        if ($user->rowCount() == 1) {
+            $userf = $user->fetch();
+            return ucfirst(substr($userf ['name'], 0, 1)) . " " . ucfirst(substr($userf ['firstname'], 0, 1));
+        } else {
+            return "";
+        }
+    }
+
+    public function createAccount($login, $pwd, $name, $firstname, $email) {
+
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created) VALUES (?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d")));
+        return $this->getDatabase()->lastInsertId();
+    }
+
+    public function editBaseInfo($id, $name, $firstname, $email) {
+        $sql = "UPDATE core_users SET name=?, firstname=?, email=? WHERE id=?";
+        $this->runRequest($sql, array($name, $firstname, $email, $id));
+    }
+
+    public function validateAccount($id) {
+        $sql = "UPDATE core_users SET validated=1 WHERE id=?";
+        $this->runRequest($sql, array($id));
+    }
+
+    public function getDateCreated($id) {
+        $sql = "SELECT date_created FROM core_users WHERE id=?";
+        $d = $this->runRequest($sql, array($id))->fetch();
+        return $d[0];
     }
 
     public function mergeUsers($users) {
@@ -171,7 +215,6 @@ class CoreUser extends Model {
          */
         $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
-        
     }
 
     public function isUserId($id) {
@@ -251,14 +294,14 @@ class CoreUser extends Model {
      * @return boolean True if the user is in the database
      */
     public function connect($login, $pwd) {
-        $sql = "select id, is_active from core_users where login=? and pwd=?";
+        $sql = "select id, is_active, validated from core_users where login=? and pwd=?";
         $user = $this->runRequest($sql, array(
             $login,
             md5($pwd)
         ));
         if ($user->rowCount() == 1) {
             $req = $user->fetch();
-            if ($req ["is_active"] == 1) {
+            if ($req ["is_active"] == 1 && $req ["validated"] == 1) {
                 return "allowed";
             } else {
                 return "Your account is not active";
@@ -652,4 +695,78 @@ class CoreUser extends Model {
         return "Login or password not correct";
     }
 
+    public function generateRandomPassword() {
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
+    }
+
+    public function getActiveUsersInfo($active) {
+        $sql = "SELECT * FROM core_users WHERE is_active=? ORDER BY name ASC;";
+        $users = $this->runRequest($sql, array($active))->fetchAll();
+        return $users;
+    }
+
+    public function getActiveUsersInfoLetter($letter, $active) {
+
+        $sql = "SELECT * FROM core_users WHERE is_active=? AND name LIKE '" . $letter . "%' ORDER BY name ASC;";
+        $users = $this->runRequest($sql, array($active))->fetchAll();
+        return $users;
+    }
+
+    public function getAcivesForSelect($sortentry) {
+        $modelUser = new CoreUser();
+        $users = $modelUser->getActiveUsers($sortentry);
+        $names = array();
+        $ids = array();
+        $names[] = "";
+        $ids[] = "";
+        foreach ($users as $res) {
+            $names[] = $res["name"] . " " . $res["firstname"];
+            $ids[] = $res["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+
+        /**
+     * get the informations of a user from it's id
+     *
+     * @param int $id
+     *        	Id of the user to query
+     * @throws Exception if the user connot be found
+     */
+    public function userAllInfo($id) {
+        $sql = "SELECT * "
+                . "FROM core_users "
+                . "WHERE id=?";
+        $req = $this->runRequest($sql, array($id));
+
+
+        if ($req->rowCount() == 1) {
+            $userInfo = $req->fetch();
+            //$userInfo["id_resps"] = $this->getUserResponsibles($id);
+
+            return $userInfo;
+        } else {
+            return array("id" => 0,
+                "login" => 'unknown',
+                "firstname" => 'unknown',
+                "name" => 'unknown',
+                "email" => '',
+                "pwd" => '',
+                "id_status" => 1,
+                "convention" => 0,
+                "date_convention" => '0000-00-00',
+                "date_created" => '0000-00-00',
+                "date_last_login" => '0000-00-00',
+                "date_end_contract" => '0000-00-00',
+                "is_active" => 1,
+                "source" => 'local');
+        }
+    }
 }
