@@ -826,7 +826,6 @@ class BookingdefaultController extends BookingabstractController {
     public function deleteAction($id_space, $id) {
 
         $sendmail = $this->request->getParameter("sendmail");
-
         if ($sendmail == 1) {
             // get the resource
             $modelCalEntry = new BkCalendarEntry();
@@ -856,7 +855,7 @@ class BookingdefaultController extends BookingabstractController {
             $mailerModel = new MailerSend();
             $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
         }
-
+        
         $modelCalEntry = new BkCalendarEntry();
         $modelCalEntry->removeEntry($id);
 
