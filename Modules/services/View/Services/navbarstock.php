@@ -1,4 +1,6 @@
-<div class="col-xs-12" style="background-color:{{bgcolor}};">
+
+<div class="col-xs-12" style="background-color:{{bgcolor}}; margin-top: 7px;">
+        <br/>
     {{Stock}}
 </div>
 <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">

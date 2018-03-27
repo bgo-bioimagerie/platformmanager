@@ -6,7 +6,6 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 
 require_once 'Modules/booking/Model/BkColorCode.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 
 /**
  * 

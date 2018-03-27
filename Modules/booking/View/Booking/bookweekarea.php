@@ -178,7 +178,7 @@ $dayWidth = 100 / 8;
                     $resourceCount = - 1;
                     $modelBookingSetting = new BkBookingSettings ();
                     //$moduleProject = new CoreProject ();
-                    $ModulesManagerModel = new CoreMenu ();
+                    //$ModulesManagerModel = new CoreMenu ();
                     $isProjectMode = false; //$ModulesManagerModel->getDataMenusUserType("projects");
 
                     for ($i = -1; $i < count($resourcesBase); $i++) {

@@ -17,9 +17,9 @@ class ClientsTranslator {
 
     public static function clientsConfigAbstract($lang) {
         if ($lang == "fr") {
-            return "Le module Clients permet de ...";
+            return "Le module Clients permet de gérer des comptes clients pour la facturation";
         }
-        return "The Clients module allows to ...";
+        return "The Clients module allows to manage client accounts for invoicing";
     }
 
     public static function configuration($lang = "") {
