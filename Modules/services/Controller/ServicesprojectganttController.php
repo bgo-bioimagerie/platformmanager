@@ -11,9 +11,6 @@ require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Model/SeVisa.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-
 /**
  * 
  * @author sprigent
@@ -80,13 +77,11 @@ class ServicesprojectganttController extends CoresecureController {
         $modelUser = new CoreUser();
         $projectsjson = "[";
         $first = true;
-        $modelEcUser = new EcUser();
-        $modelEcBel = new EcBelonging();
-        $modelEcUnit = new EcUnit();
+        $modelClient = new ClClient();
+        $modelBelonging = new ClPricing();
         foreach ($projects as $proj) {
 
-            $belonging = $modelEcUnit->getBelonging($modelEcUser->getUnit($proj["id_resp"]), $id_space);
-            $belInfo = $modelEcBel->getInfo($belonging);
+            $belInfo = $modelClient->get($proj["id_resp"]);
             
             $bkColor = 'col' . $belInfo["id"];
             
@@ -140,7 +135,7 @@ class ServicesprojectganttController extends CoresecureController {
         $projectsjson .= "]";
 
 
-        $bels = $modelEcBel->getAll($id_space);
+        $bels = $modelBelonging->getAll($id_space);
         $css = "";
         foreach ($bels as $bel) {
 

@@ -11,8 +11,6 @@ require_once 'Modules/booking/Model/BkAuthorization.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 
 /**
@@ -43,7 +41,7 @@ class BookingauthorisationsController extends CoresecureController {
         $space = $modelSpace->getSpace($id_space);
 
         // user name
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id);
 
 

@@ -3,7 +3,6 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
-require_once 'Modules/core/Model/CoreMenu.php';
 require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 
 /**
