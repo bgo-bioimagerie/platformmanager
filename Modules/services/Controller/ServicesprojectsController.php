@@ -536,9 +536,10 @@ class ServicesprojectsController extends CoresecureController {
                 "comment" => array());
         }
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
+        $modelClient = new ClClient();
         $users = $modelUser->getAcivesForSelect("name");
-        $resps = $modelUser->getAcivesRespsForSelect("name");
+        $resps = $modelClient->getForList($id_space);
 
         $modelVisa = new SeVisa();
         $inChargeList = $modelVisa->getForList($id_space);

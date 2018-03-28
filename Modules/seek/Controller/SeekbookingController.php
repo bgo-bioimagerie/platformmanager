@@ -19,9 +19,6 @@ require_once 'Modules/resources/Model/ReArea.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-
 require_once 'Modules/mailer/Model/MailerSend.php';
 
 require_once 'Modules/seek/Model/SeResaAssay.php';
@@ -248,7 +245,7 @@ class SeekbookingController extends BookingabstractController {
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getAllForSelect($id_space, "name");
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
 
         $form = new Form($this->request, "editReservationDefault");
@@ -262,26 +259,25 @@ class SeekbookingController extends BookingabstractController {
             $form->addHidden("recipient_id", $resaInfo["recipient_id"]);
         }
         // responsible
+        $modelUserClient = new ClClientUser();
         if ($canEditReservation) {
-            $modelResp = new EcResponsible();
-            $modelUser = new EcUser();
+            $modelUser = new CoreUser();
             $choices = array();
             $choicesid = array();
             $rID = $this->request->getParameterNoException("recipient_id");
             if ($rID == ""){
                 $rID = $resaInfo["recipient_id"];
             }
-            $resps = $modelResp->getUserResponsibles($rID);
+            $resps = $modelUserClient->getUserClientAccounts($rID, $id_space);
             foreach ($resps as $r) {
                 $choicesid[] = $r["id"];
                 $choices[] = $modelUser->getUserFUllName($r["id"]);
             }
             $form->addSelect("responsible_id", EcosystemTranslator::Responsible($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
         } else {
-            $modelResp = new EcResponsible();
-            $resps = $modelResp->getUserResponsibles($_SESSION["id_user"]);
+            $resps = $modelUserClient->getUserClientAccounts($_SESSION["id_user"], $id_space);
             if (count($resps) > 1) {
-                $modelUser = new EcUser();
+                $modelUser = new CoreUser();
                 $choices = array();
                 $choicesid = array();
                 foreach ($resps as $r) {
@@ -492,7 +488,7 @@ class SeekbookingController extends BookingabstractController {
             $space = $modelSpace->getSpace($id_space);
         
             // user info
-            $userModel = new EcUser();
+            $userModel = new CoreUser();
             $user = $userModel->getInfo($_SESSION["id_user"]);
             
             // mail content

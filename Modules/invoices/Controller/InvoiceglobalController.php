@@ -253,7 +253,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $modules = Configuration::get("modules");
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $resps = $modelUser->getResponsibles(); 
         
        

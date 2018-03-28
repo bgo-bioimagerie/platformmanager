@@ -15,6 +15,7 @@ require_once 'Modules/core/Model/CoreInstalledModules.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 
+require_once 'Modules/mailer/Model/MailerSend.php';
 
 
 /**
@@ -151,6 +152,66 @@ class CorespaceaccessController extends CoresecureController {
         $this->indexAction($id_space, $letter, "unactive");
     }
     
+    public function useraddAction($id_space){
+        
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        
+        $form = new Form($this->request, "createuseraccountform");
+        $form->setTitle(CoreTranslator::CreateAccount($lang));
+        $form->addText("login", CoreTranslator::Login($lang), true);
+        $form->addText("name", CoreTranslator::Name($lang), true);
+        $form->addText("firstname", CoreTranslator::Firstname($lang), true);
+        $form->addEmail("email", CoreTranslator::email($lang), true);
+
+        $form->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd");
+
+        if ($form->check()) {
+
+            $modelCoreUser = new CoreUser();
+
+            if ($modelCoreUser->isLogin($form->getParameter("login"))) {
+                $_SESSION["message"] = CoreTranslator::Error($lang) . ":" . CoreTranslator::LoginAlreadyExists($lang);
+            } else {
+                $pwd = $modelCoreUser->generateRandomPassword();
+
+                $id_user = $modelCoreUser->createAccount(
+                        $form->getParameter("login"), 
+                        $pwd, 
+                        $form->getParameter("name"), 
+                        $form->getParameter("firstname"), 
+                        $form->getParameter("email")
+                );
+                $modelCoreUser->validateAccount($id_user);
+                
+                $mailer = new MailerSend();
+                $from = "support@platform-manager.com";
+                $fromName = "Platform-Manager";
+                $toAdress = $form->getParameter("email");
+                $subject = CoreTranslator::Account($lang);
+                $content = CoreTranslator::AccountCreatedEmail($lang, $form->getParameter("login"), $pwd);
+                $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+
+                $_SESSION["message"] = CoreTranslator::AccountHasBeenCreated($lang);
+                
+                $this->redirect("corespaceaccessuseradd/".$id_space);
+                return;
+            }
+        }
+        
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+
+        $this->render(array(
+            'lang' => $lang,
+            'id_space' => $id_space,
+            'space' => $space,
+            "formHtml" => $form->getHtml($lang)
+        ));
+        
+        
+    }
+    
     public function usereditAction($id_space, $id){
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -163,6 +224,8 @@ class CorespaceaccessController extends CoresecureController {
         
         $modelUserSpace = new CoreSpaceUser();
         $spaceUserInfo = $modelUserSpace->getUserSpaceInfo($id);
+        //echo 'space user info: <br/>'; 
+        //print_r($spaceUserInfo);
         
         $roles = $modelSpace->roles($lang);
         

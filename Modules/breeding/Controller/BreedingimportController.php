@@ -6,7 +6,6 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/breeding/Model/BreedingTranslator.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/breeding/Model/BrClient.php';
 require_once 'Modules/breeding/Model/BrPricing.php';
@@ -96,7 +95,7 @@ class BreedingimportController extends CoresecureController {
         $result = $pdo_old->query($sql);
         $data_old = $result->fetchAll();
 
-        $model = new EcUser();
+        $model = new CoreUser();
         $modelSpace = new CoreSpace();
 
         foreach ($data_old as $do) {
@@ -416,7 +415,7 @@ class BreedingimportController extends CoresecureController {
 
         $name_old = $data_old[0];
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         return $modelUser->getIdFromLogin($name_old);
     }
 

@@ -18,6 +18,9 @@
     <div class="col-xs-12 pm-inline-div" style="background-color:<?php echo $space["color"] ?>;">
         <a style="color: #fff" id="menu-button" href="corespaceaccessusersinactifs/<?php echo $space["id"] ?>"><?php echo CoreTranslator::Inactive($lang) ?></a>
     </div>
+    <div class="col-xs-12 pm-inline-div" style="background-color:<?php echo $space["color"] ?>;">
+        <a style="color: #fff" id="menu-button" href="corespaceaccessuseradd/<?php echo $space["id"] ?>"><?php echo CoreTranslator::Add($lang) ?></a>
+    </div>
         
 
 </div>

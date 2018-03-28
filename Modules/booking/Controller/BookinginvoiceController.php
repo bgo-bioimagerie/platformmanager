@@ -812,7 +812,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $invoiceInfo = $modelInvoice->get($id_invoice);
 
         $entries = $modelCalEntry->getInvoiceEntries($id_invoice);
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         for ($i = 0; $i < count($entries); $i++) {
             $entries[$i]["recipient"] = $modelUser->getUserFUllName($entries[$i]["recipient_id"]);
             $entries[$i]["resource"] = $modelResource->getName($entries[$i]["resource_id"]);

@@ -103,8 +103,8 @@ class ServicesstatisticsorderController extends CoresecureController {
 
     private function makeBalanceXlsFile($periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices) {
 
-        $modelUser = new EcUser();
-        $modelUnit = new EcUnit();
+        $modelUser = new CoreUser();
+        $modelClient = new ClClient();
 
         $lang = $this->getLanguage();
         // Create new PHPExcel object
@@ -216,7 +216,8 @@ class ServicesstatisticsorderController extends CoresecureController {
         foreach ($openedOrders as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
 
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -286,7 +287,8 @@ class ServicesstatisticsorderController extends CoresecureController {
         $orders = $ordersBilledBalance["orders"];
         foreach ($orders as $proj) {
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
@@ -361,7 +363,8 @@ class ServicesstatisticsorderController extends CoresecureController {
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
+            $unitName = $modelClient->getInstitution($invoice["id_responsible"]);
+            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
@@ -439,7 +442,8 @@ class ServicesstatisticsorderController extends CoresecureController {
         //print_r($projects);
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));

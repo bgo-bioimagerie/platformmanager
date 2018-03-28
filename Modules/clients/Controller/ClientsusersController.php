@@ -8,9 +8,6 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 
-require_once 'Modules/ecosystem/Model/EcUser.php';
-
-
 
 /**
  * 
@@ -49,7 +46,7 @@ class ClientsusersController extends CoresecureController {
         $modelClient = new ClClient();
         $clientName = $modelClient->getName($id_client);
 
-        $modelUsers = new EcUser();
+        $modelUsers = new CoreUser();
         $users = $modelUsers->getAcivesForSelect("name");
 
         $modelClientUser = new ClClientUser();

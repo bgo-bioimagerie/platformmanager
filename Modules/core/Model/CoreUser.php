@@ -27,6 +27,11 @@ class CoreUser extends Model {
         $this->primaryKey = "id";
     }
 
+    public function getInfo($id){
+        $sql = "SELECT * FROM core_users WHERE id=?";
+        $this->runRequest($sql, array($id))->fetch();
+    }
+    
     public function getAll() {
         $sql = "SELECT * FROM core_users";
         return $this->runRequest($sql)->fetchAll();

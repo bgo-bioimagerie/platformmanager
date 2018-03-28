@@ -2,12 +2,6 @@
 
 require_once 'Framework/Controller.php';
 
-// ecosystem
-require_once 'Modules/ecosystem/Model/EcUser.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-require_once 'Modules/ecosystem/Model/EcResponsible.php';
-
 // resources
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
