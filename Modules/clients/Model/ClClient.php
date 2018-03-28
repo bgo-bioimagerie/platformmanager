@@ -84,7 +84,7 @@ class ClClient extends Model {
     }
 
     public function getForList($id_space) {
-        $sql = "SELECT * FROM cl_clients WHERE id_space=?";
+        $sql = "SELECT * FROM cl_clients WHERE id_space=? ORDER BY name ASC;";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $names = array();
         $ids = array();

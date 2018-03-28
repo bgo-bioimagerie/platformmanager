@@ -8,7 +8,7 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeOrder.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 /**
  * 
@@ -141,7 +141,7 @@ class ServicesordersController extends CoresecureController {
             $items = array("services" => array(), "quantities" => array());
         }
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
 
         $form->addSeparator(CoreTranslator::Description($lang));

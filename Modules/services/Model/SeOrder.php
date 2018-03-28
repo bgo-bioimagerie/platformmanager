@@ -318,13 +318,15 @@ class SeOrder extends Model {
         $orders = $req1->fetchAll();
 
         $items = array();
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
+        $modelUserClient = new ClClientUser();
         $modelUnit = new EcUnit();
         for ($i = 0; $i < count($orders); $i++) {
 
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
                 //echo "id user = " . $orders[$i]["id_user"] . "<br/>";
-                $resps = $modelUser->getUserResponsibles($orders[$i]["id_user"]);
+                $resps = $modelUserClient->getUserClientAccounts($orders[$i]["id_user"], $id_space);
+                //$resps = $modelUser->getUserResponsibles($orders[$i]["id_user"]);
                 //echo "coucou 1 <br/>";echo "resps = <br/>";
                 //print_r($resps);
                 if (count($resps) > 0){

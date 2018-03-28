@@ -70,7 +70,7 @@ class ServicesvisaController extends CoresecureController {
         $form = new Form($this->request, "editserviceform");
         $form->addSeparator(ServicesTranslator::Visa($lang));
 
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
         
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);

@@ -15,10 +15,6 @@ require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 
-require_once 'Modules/ecosystem/Model/EcUnit.php';
-require_once 'Modules/ecosystem/Model/EcUser.php';
-
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
 //require_once 'Modules/statistics/Model/StatisticsTranslator.php';
@@ -145,6 +141,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     }
 
     protected function createByUnitForm($id_space, $lang) {
+        /*
         $form = new Form($this->request, "invoicebyunitform");
         $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
 
@@ -161,12 +158,15 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
         $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
-        $form->addSelect("id_unit", EcosystemTranslator::Units($lang), $units["names"], $units["ids"], $unitId, true);
-        $form->addSelect("id_resp", EcosystemTranslator::Responsible($lang), $resps["names"], $resps["ids"], $respId);
+        $form->addSelect("id_unit", ClientsTranslator::Institution($lang), $units["names"], $units["ids"], $unitId, true);
+        $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
         return $form;
+         
+         */
+        return "";
     }
 
     private function generateRespBill($dateBegin, $dateEnd, $id_unit, $id_resp, $id_space) {
@@ -378,7 +378,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelUnit = new EcUnit();
         $unit = $modelUnit->getUnitName($invoice["id_unit"]);
         $adress = $modelUnit->getAdress($invoice["id_unit"]);
-        $modelUser = new EcUser();
+        $modelUser = new CoreUser();
         $resp = $modelUser->getUserFUllName($invoice["id_responsible"]);
         $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
     }

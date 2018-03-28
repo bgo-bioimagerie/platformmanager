@@ -70,8 +70,7 @@ class ServicesbalanceController extends CoresecureController {
     
     private function makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats) {
 
-        $modelUser = new EcUser();
-        $modelUnit = new EcUnit();
+        $modelUser = new CoreUser();
 
         $lang = $this->getLanguage();
         // Create new PHPExcel object
@@ -209,10 +208,12 @@ class ServicesbalanceController extends CoresecureController {
         $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 2;
+        $modelClient = new ClClient();
         foreach ($openedProjects as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
 
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -301,9 +302,11 @@ class ServicesbalanceController extends CoresecureController {
         //$objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, SpTranslator::TotalPrice($lang));
 
         $projects = $projectsBilledBalance["projects"];
+        //$modelClient = new ClClient();
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
@@ -454,7 +457,8 @@ class ServicesbalanceController extends CoresecureController {
         $projects = $projectsBalance["projects"];
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
+            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
