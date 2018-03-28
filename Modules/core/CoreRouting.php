@@ -54,6 +54,8 @@ class CoreRouting extends Routing{
         $this->addRoute("corespaceaccessusers", "corespaceaccessusers", "corespaceaccess", "users", array("id_space", "letter"), array("", ""));
         $this->addRoute("corespaceaccessusersinactifs", "corespaceaccessusersinactifs", "corespaceaccess", "usersinactif", array("id_space", "letter"), array("", ""));
         $this->addRoute("coreaccessuseredit", "coreaccessuseredit", "corespaceaccess", "useredit", array("id_space", "id"), array("", ""));
+        $this->addRoute("corespaceaccessuseradd", "corespaceaccessuseradd", "corespaceaccess", "useradd", array("id_space"), array(""));
+        
         
         
         

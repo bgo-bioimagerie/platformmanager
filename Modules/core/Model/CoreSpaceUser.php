@@ -30,8 +30,24 @@ class CoreSpaceUser extends Model {
     }
     
     public function setRole($id_user, $id_space, $role){
-        $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
-        $this->runRequest($sql, array($role, $id_user, $id_space));
+        if ( !$this->exists($id_user, $id_space) ){
+            $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
+            $this->runRequest($sql, array($id_user, $id_space, $role));
+        }
+        else{
+            $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
+            $this->runRequest($sql, array($role, $id_user, $id_space));    
+        }
+        
+    }
+    
+    public function exists($id_user, $id_space){
+        $sql = "SELECT id FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id_user, $id_space));
+        if ($req->rowCount() > 0){
+            return true;
+        }
+        return false;
     }
     
     public function setDateEndContract($id_user, $id_space, $date_contract_end){

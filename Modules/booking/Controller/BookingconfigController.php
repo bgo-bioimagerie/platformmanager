@@ -58,6 +58,7 @@ class BookingconfigController extends CoresecureController {
             if ( $this->request->getParameter("bookingsettingsmenustatus") > 0 ){
                 $modelAccess = new CoreSpaceAccessOptions();
                 $modelAccess->set($id_space, "bookingauthorisations", "booking", "bookingauthorisations");
+                
             }
             
             $this->redirect("bookingconfig/".$id_space);

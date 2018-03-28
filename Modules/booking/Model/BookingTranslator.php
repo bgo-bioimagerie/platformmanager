@@ -845,21 +845,21 @@ class BookingTranslator {
 
     static public function Authorisations_for($lang) {
         if ($lang == "fr") {
-            return "Autorisations pour ";
+            return "Habilitation pour ";
         }
         return "Authorisations for";
     }
 
     public static function Active_Authorizations($lang = "") {
         if ($lang == "fr") {
-            return "Autorisations actives";
+            return "Habilitation actives";
         }
         return "Active Authorizations";
     }
 
     public static function Unactive_Authorizations($lang = "") {
         if ($lang == "fr") {
-            return "Autorisations non actives";
+            return "Habilitation non actives";
         }
         return "Inactive Authorizations";
     }
@@ -1013,7 +1013,7 @@ class BookingTranslator {
 
     public static function Authorisations_statistics($lang = "") {
         if ($lang == "fr") {
-            return "Statistiques autorisations";
+            return "Statistiques habilitation";
         }
         return "Authorisations statistics";
     }
@@ -1328,7 +1328,7 @@ class BookingTranslator {
 
     public static function Use_Auth_Visa($lang) {
         if ($lang == "fr") {
-            return "Utiliser les visas d'authorisations";
+            return "Utiliser les visas d'habilitation";
         }
         return "Use authorisation visa";
     }
@@ -1518,7 +1518,7 @@ class BookingTranslator {
 
     public static function Authorized($lang) {
         if ($lang == "fr") {
-            return "Est autorisé";
+            return "Est habilité";
         }
         return "Is authorised";
     }
@@ -1553,7 +1553,7 @@ class BookingTranslator {
 
     public static function Authorisations_history_for($lang) {
         if ($lang == "fr") {
-            return "Historique d'autorisations pour";
+            return "Historique d'habilitation pour";
         }
         return "Authorisations history for";
     }
@@ -1574,7 +1574,7 @@ class BookingTranslator {
     
     public static function bookingauthorisations($lang) {
         if ($lang == "fr") {
-            return "Autorisations";
+            return "Habilitations";
         }
         return "Booking access";
     }

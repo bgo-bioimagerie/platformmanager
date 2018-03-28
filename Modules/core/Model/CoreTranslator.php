@@ -1766,5 +1766,12 @@ class CoreTranslator {
         return "Informations";        
     }   
     
+    public static function AccountHasBeenCreated($lang){
+        if ($lang == "fr") {
+            return "Le compte a bien été créé";
+        }
+        return "Account has been created";        
+    }   
+    
     
 }
