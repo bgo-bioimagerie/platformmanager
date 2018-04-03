@@ -39,10 +39,11 @@ class CoreaccountController extends Controller {
 
         $form = new Form($this->request, "createaccountform");
         $form->setTitle(CoreTranslator::CreateAccount($lang));
-        $form->addText("login", CoreTranslator::Login($lang), true);
         $form->addText("name", CoreTranslator::Name($lang), true);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true);
+        $form->addText("login", CoreTranslator::Login($lang), true);
         $form->addEmail("email", CoreTranslator::email($lang), true);
+        $form->addText("phone", CoreTranslator::Phone($lang), false);
         $form->addSelectMandatory("id_space", CoreTranslator::AccessTo($lang), $spaces["names"], $spaces["ids"]);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "corecreateaccount");
@@ -63,7 +64,7 @@ class CoreaccountController extends Controller {
                         $form->getParameter("firstname"), 
                         $form->getParameter("email")
                 );
-                
+                $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
                 $modelPeningAccounts = new CorePendingAccount();
                 $modelPeningAccounts->add($id_user, $form->getParameter("id_space"));
 

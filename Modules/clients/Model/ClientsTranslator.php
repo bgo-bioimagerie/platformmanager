@@ -10,7 +10,7 @@ class ClientsTranslator {
 
     public static function clients($lang) {
         if ($lang == "fr") {
-            return "Clients";
+            return "Comptes clients";
         }
         return "Clients";
     }
@@ -289,5 +289,34 @@ class ClientsTranslator {
         }
         return "Client account";
     }
+    
+    public static function Identifier($lang) {
+        if ($lang == "fr") {
+            return "Identifiant";
+        }
+        return "Identifier";
+    }
+    
+    public static function clientsuseraccounts($lang) {
+        if ($lang == "fr") {
+            return "Comptes clients";
+        }
+        return "Client accounts";
+    }
+    
+    public static function ClientAccountsFor($lang) {
+        if ($lang == "fr") {
+            return "Comptes clients pour ";
+        }
+        return "Client accounts for ";
+    }
+        
+    public static function addClientAccountFor($lang) {
+        if ($lang == "fr") {
+            return "Ajouter un comptes clients pour ";
+        }
+        return "add a client accounts for ";
+    }
+    
     
 }

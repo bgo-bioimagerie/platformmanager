@@ -117,6 +117,7 @@ class CorespaceaccessController extends CoresecureController {
             "firstname" => CoreTranslator::Firstname($lang),
             "login" => CoreTranslator::Login($lang),
             "email" => CoreTranslator::Email($lang),
+            "phone" => CoreTranslator::Phone($lang),
             "spaces" => CoreTranslator::Spaces($lang),
             "date_convention" => CoreTranslator::Convention($lang),
             "date_contract_end" => CoreTranslator::Date_end_contract($lang),
@@ -159,10 +160,12 @@ class CorespaceaccessController extends CoresecureController {
         
         $form = new Form($this->request, "createuseraccountform");
         $form->setTitle(CoreTranslator::CreateAccount($lang));
-        $form->addText("login", CoreTranslator::Login($lang), true);
+        
         $form->addText("name", CoreTranslator::Name($lang), true);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true);
+        $form->addText("login", CoreTranslator::Login($lang), true);
         $form->addEmail("email", CoreTranslator::email($lang), true);
+        $form->addText("phone", CoreTranslator::Phone($lang), false);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd");
 
@@ -182,6 +185,7 @@ class CorespaceaccessController extends CoresecureController {
                         $form->getParameter("firstname"), 
                         $form->getParameter("email")
                 );
+                $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
                 $modelCoreUser->validateAccount($id_user);
                 
                 $mailer = new MailerSend();

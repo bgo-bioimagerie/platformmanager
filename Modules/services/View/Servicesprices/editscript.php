@@ -14,7 +14,7 @@
                 
                 var strid = this.id;
                 var arrayid = strid.split("_");
-                //alert("add note clicked " + arrayid[1]);
+                //alert("edit note clicked " + arrayid[1]);
                 showEditEntryForm(<?php echo $id_space ?>, arrayid[1]);
             });
     <?php

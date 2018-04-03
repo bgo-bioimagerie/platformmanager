@@ -88,9 +88,9 @@ class ServicespricesController extends CoresecureController {
     
     public function editqueryAction($id_space){
         
-        $modelBelonging = new EcBelonging();
+        $modelPricing = new ClPricing();
         $modelPrice = new SePrice();
-        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        $belongings = $modelPricing->getAll($id_space);
         
         $id_service = $this->request->getParameter('service_id');
         

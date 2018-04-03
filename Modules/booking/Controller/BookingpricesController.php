@@ -31,7 +31,6 @@ class BookingpricesController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $_SESSION["openedNav"] = "invoices";
     }
 
     /**
@@ -137,9 +136,9 @@ class BookingpricesController extends CoresecureController {
     
     public function editqueryAction($id_space){
         
-        $modelBelonging = new EcBelonging();
+        $modelBelonging = new ClPricing();
         $modelPrice = new BkPrice();
-        $belongings = $modelBelonging->getBelongings($id_space, "display_order");
+        $belongings = $modelBelonging->getAll($id_space);
         
         $id_resource = $this->request->getParameter('resource_id');
         

@@ -8,6 +8,8 @@ require_once 'Modules/clients/Model/ClientsInstall.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
+require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
+
 /**
  * 
  * @author sprigent
@@ -41,14 +43,16 @@ class ClientsconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            
-            $modelSpace->setSpaceMenu($id_space, "clients", "clients", "glyphicon-user", 
+            $modelSpace->setSpaceMenu($id_space, "clients", "clients", "glyphicon-credit-card", 
                     $this->request->getParameter("clientsmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     1,
                     $this->request->getParameter("colorMenu")
                     );
             
+            $modelAccess = new CoreSpaceAccessOptions();
+            $modelAccess->set($id_space, "clientsuseraccounts", "clients", "clientsuseraccounts");
+                
             $this->redirect("clientsconfig/".$id_space);
             return;
         }

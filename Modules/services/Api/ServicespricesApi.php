@@ -5,8 +5,8 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/SeProject.php';
 
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
 require_once 'Modules/services/Model/SeService.php';
+require_once 'Modules/clients/Model/ClPricing.php';
 
 
 
@@ -27,9 +27,9 @@ class ServicespricesApi extends CoresecureController {
     public function getpricesAction($id_space, $id_service) {
         
         $modelPrices = new SePrice();
-        $modelBelongings = new EcBelonging();
+        $modelPricing = new ClPricing();
         $modelService = new SeService();
-        $belongings = $modelBelongings->getAll($id_space, "display_order");
+        $belongings = $modelPricing->getAll($id_space);
         
         $data = array();
         

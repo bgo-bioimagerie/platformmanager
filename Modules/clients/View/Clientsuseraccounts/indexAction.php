@@ -2,8 +2,10 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="col-md-12 pm-form-short">
+<div class="col-md-12 pm-table">
     <?php echo $formHtml ?>
+    <br/>
+    <?php echo $tableHtml ?>
 </div>
 <?php
 endblock();

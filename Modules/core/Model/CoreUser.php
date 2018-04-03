@@ -16,6 +16,7 @@ class CoreUser extends Model {
         $this->setColumnsInfo("name", "varchar(100)", "");
         $this->setColumnsInfo("firstname", "varchar(100)", "");
         $this->setColumnsInfo("email", "varchar(255)", "");
+        $this->setColumnsInfo("phone", "varchar(255)", "");
         $this->setColumnsInfo("status_id", "int(2)", 0);
         $this->setColumnsInfo("source", "varchar(30)", "local");
         $this->setColumnsInfo("is_active", "int(1)", 1);
@@ -61,6 +62,11 @@ class CoreUser extends Model {
     public function editBaseInfo($id, $name, $firstname, $email) {
         $sql = "UPDATE core_users SET name=?, firstname=?, email=? WHERE id=?";
         $this->runRequest($sql, array($name, $firstname, $email, $id));
+    }
+    
+    public function setPhone($id, $phone) {
+        $sql = "UPDATE core_users SET phone=? WHERE id=?";
+        $this->runRequest($sql, array($phone, $id));
     }
 
     public function validateAccount($id) {
