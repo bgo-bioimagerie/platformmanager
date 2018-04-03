@@ -8,26 +8,18 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 
-
 /**
  * 
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientsusersController extends CoresecureController {
-
-    /**
-     * User model object
-     */
-    private $pricingModel;
+class ClientsuseraccountsController extends CoresecureController {
 
     /**
      * Constructor
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->pricingModel = new ClPricing ();
-        $_SESSION["openedNav"] = "clients";
     }
 
     /**
@@ -36,51 +28,49 @@ class ClientsusersController extends CoresecureController {
      * 
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($id_space, $id_client) {
+    public function indexAction($id_space, $id_user) {
 
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         // lang
         $lang = $this->getLanguage();
 
-        $modelClient = new ClClient();
-        $clientName = $modelClient->getName($id_client);
-
-        $modelUsers = new CoreUser();
-        $users = $modelUsers->getAcivesForSelect("name");
+        $modelUser = new CoreUser();
+        $userFullName = $modelUser->getUserFUllName($id_user);
 
         $modelClientUser = new ClClientUser();
+        $accounts = $modelClientUser->getUserClientAccounts($id_user, $id_space);
+        
+        $modelClient = new ClClient();
+        $clients = $modelClient->getForList($id_space);
 
         $form = new Form($this->request, "clientsusersform");
-        $form->setTitle(ClientsTranslator::UsersForAccount($lang) . ": " . $clientName);
-        $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"]);
-        $form->setValidationButton(CoreTranslator::Add($lang), "clclientusers/" . $id_space . "/" . $id_client);
+        $form->setTitle(ClientsTranslator::addClientAccountFor($lang) . ": " . $userFullName);
+        $form->addSelect("id_client", CoreTranslator::User($lang), $clients["names"], $clients["ids"]);
+        $form->setValidationButton(CoreTranslator::Add($lang), "clientsuseraccounts/" . $id_space . "/" . $id_user);
         $form->setButtonsWidth(4, 8);
         
         if ($form->check()) {
 
-            $modelClientUser->set($id_client, $form->getParameter("id_user"));
+            $modelClientUser->set($form->getParameter("id_client"), $id_user);
 
             $_SESSION["message"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
-            $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
+            $this->redirect("clientsuseraccounts/" . $id_space . "/" . $id_user);
             return;
         }
-
-        $data = $modelClientUser->getUsersInfo($id_client);
-
+        
         $table = new TableView();
-        $table->setTitle(ClientsTranslator::ClientUsers($lang));
-        $table->addDeleteButton("clclientuserdelete/".$id_space."/" .$id_client);
-        $headers = array("name" => CoreTranslator::Name($lang),
-            "firstname" => CoreTranslator::Firstname($lang)
-        );
-        $tableHtml = $table->view($data, $headers);
+        $table->setTitle(ClientsTranslator::ClientAccountsFor($lang) . $userFullName);
+        $table->addDeleteButton("clientsuseraccountsdelete/" . $id_space . "/" . $id_user);
+        $tableHtml = $table->view($accounts, array(
+            "name" => ClientsTranslator::Identifier($lang)
+        ));
 
         $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
-            "formHtml" => $form->getHtml($lang),
-            "tableHtml" => $tableHtml
+            "tableHtml" => $tableHtml,
+            "formHtml" => $form->getHtml($lang)
                 )
         );
     }
@@ -88,15 +78,15 @@ class ClientsusersController extends CoresecureController {
     /**
      * Remove a provider
      */
-    public function deleteAction($id_space, $id_client, $id_user) {
+    public function deleteAction($id_space, $id_user, $id) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
 
         //echo 'delete client user ' . $id . "<br/>";
         $modelClientUser = new ClClientUser();
-        $modelClientUser->deleteClientUser($id_client, $id_user);
+        $modelClientUser->deleteClientUser($id, $id_user);
 
-        $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
+        $this->redirect("clientsuseraccounts/" . $id_space . "/" . $id_user);
     }
 
 }

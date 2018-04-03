@@ -4,14 +4,15 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
+
+require_once 'Modules/clients/Model/ClPricing.php';
+
 
 /**
  * 
@@ -31,9 +32,9 @@ class BookingpricesApi extends CoresecureController {
 
         $lang = $this->getLanguage();
         $modelPrices = new BkPrice();
-        $modelBelongings = new EcBelonging();
+        $modelBelongings = new ClPricing();
         $modelResource = new ResourceInfo();
-        $belongings = $modelBelongings->getAll($id_space, "display_order");
+        $belongings = $modelBelongings->getAll($id_space);
         $modelPackage = new BkPackage();
 
         $data = array();

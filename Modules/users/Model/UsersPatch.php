@@ -34,8 +34,28 @@ class UsersPatch extends Model {
             $this->copyEcUsersToUsers();
             $this->updateInvoicesRespIDs(false);
         }
+        $this->copyPhones();
     }
 
+    public function copyPhones(){
+        
+        $sql = "SELECT id_core, phone FROM users_info";
+        $data = $this->runRequest($sql)->fetchAll();
+        
+        foreach ($data as $d){
+            $sql0 = "SELECT phone FROM core_users WHERE id=?";
+            $oldPhone = $this->runRequest($sql0, array($d["id_core"]))->fetch();
+            
+            //echo 'old phone = ' . $oldPhone . "<br/>";
+            
+            if ($oldPhone[0] == ""){
+                $sql = "UPDATE core_users SET phone=? WHERE id=?";
+                $this->runRequest($sql, array($d["phone"], $d["id_core"]));
+            }
+        }
+        
+    }
+    
     public function removeEcosystemFromSpaceTools() {
         $sql = "DELETE FROM core_space_menus WHERE module=?";
         $this->runRequest($sql, array("ecosystem"));

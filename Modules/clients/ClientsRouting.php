@@ -14,11 +14,22 @@ class ClientsRouting extends Routing{
         
         $this->addRoute("clclients", "clclients", "clientslist", "index", array("id_space"), array(""));
         $this->addRoute("clclientedit", "clclientedit", "clientslist", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("clclienteditdelivery", "clclienteditdelivery", "clientslist", "editdeliveryaddress", array("id_space", "id"), array("", ""));
+        $this->addRoute("clclienteditinvoice", "clclienteditinvoice", "clientslist", "editinvoiceaddress", array("id_space", "id"), array("", ""));
+        $this->addRoute("clclientedit", "clclientedit", "clientslist", "edit", array("id_space", "id"), array("", ""));
+        
         $this->addRoute("clclientdelete", "clclientdelete", "clientslist", "delete", array("id_space", "id"), array("", ""));
         
         // clients user
         $this->addRoute("clclientusers", "clclientusers", "clientsusers", "index", array("id_space", "id_client"), array("", ""));
         $this->addRoute("clclientuserdelete", "clclientuserdelete", "clientsusers", "delete", array("id_space", "id_client", "id"), array("", "", ""));
+        
+        // client account
+        $this->addRoute("clientsuseraccounts", "clientsuseraccounts", "clientsuseraccounts", "index", array("id_space", "id_user"), array("", ""));
+        $this->addRoute("clientsuseraccountsdelete", "clientsuseraccountsdelete", "clientsuseraccounts", "delete", array("id_space", "id_user", "id"), array("", "", ""));
+        
+        
+        
         
         // pricings
         $this->addRoute("clpricings", "clpricings", "clientspricings", "index", array("id_space"), array(""));

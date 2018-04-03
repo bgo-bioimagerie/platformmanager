@@ -54,7 +54,7 @@ class DocumentsconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
             
-            $modelSpace->setSpaceMenu($id_space, "documents", "documents", "glyphicon-user", 
+            $modelSpace->setSpaceMenu($id_space, "documents", "documents", "glyphicon-folder-open", 
                     $this->request->getParameter("documentsmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     0,

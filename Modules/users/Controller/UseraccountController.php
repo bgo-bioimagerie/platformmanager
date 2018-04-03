@@ -66,7 +66,7 @@ class UseraccountController extends CoresecureController {
                     $form->getParameter("firstname"),
                     $form->getParameter("email")
             );
-            
+            $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
             $modelUser->set($id_user, $form->getParameter("phone"), $form->getParameter("unit"));
             $modelUser->setBio($id_user, $form->getParameter("bio"));
             
