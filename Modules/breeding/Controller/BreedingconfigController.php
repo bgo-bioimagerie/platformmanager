@@ -42,7 +42,7 @@ class BreedingconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
 
-            $modelSpace->setSpaceMenu($id_space, "breeding", "breeding", "glyphicon-shopping-cart", $this->request->getParameter("breedingmenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("colorMenu")
+            $modelSpace->setSpaceMenu($id_space, "breeding", "breeding", "glyphicon-leaf", $this->request->getParameter("breedingmenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("colorMenu")
             );
 
             $this->redirect("breedingconfig/" . $id_space);

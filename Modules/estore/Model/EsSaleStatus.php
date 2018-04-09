@@ -30,7 +30,7 @@ class EsSaleStatus extends Model {
         $status[] = array("id" => 8, "name" => EstoreTranslator::Canceled($lang));
     }
 
-    public function getName($id, $lang) {
+    public static function getName($id, $lang) {
 
         if ($id == 1) {
             return EstoreTranslator::Feasibility($lang);

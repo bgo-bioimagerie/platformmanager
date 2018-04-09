@@ -20,6 +20,11 @@ class EsSaleHistory extends Model {
         return $this->runRequest($sql, array($id_sale))->fetchAll();
     }
     
+    public function getHistoryStatus($id_sale, $id_status){
+        $sql = "SELECT * FROM es_sale_history WHERE id_sale=? AND id_status=?";
+        return $this->runRequest($sql, array($id_sale, $id_status))->fetch();
+    }
+    
     public function set($id_sale, $id_status, $id_user, $date) {
         if (!$this->exists($id_sale, $id_status)) {
             $sql = 'INSERT INTO es_sale_history (id_sale, id_status, id_user, date) VALUES (?,?,?,?)';

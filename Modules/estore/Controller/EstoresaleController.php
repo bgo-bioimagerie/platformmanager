@@ -24,7 +24,7 @@ require_once 'Modules/estore/Model/EsSaleItemInvoice.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/breeding/Model/BrBatch.php';
 require_once 'Modules/estore/Model/EsPrice.php';
-
+require_once 'Modules/estore/Model/EsCancelReason.php';
 
 /**
  * 
@@ -362,7 +362,8 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
-            'tableHtml' => $tableHtml
+            'tableHtml' => $tableHtml,
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Feasibility)
         ));
     }
     
@@ -486,6 +487,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$TodoQuote)
         ));
         
     }
@@ -700,6 +702,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$QuoteSent)
         ));
     }
     
@@ -733,7 +736,7 @@ class EstoresaleController extends CoresecureController {
 
         $table = new TableView();
         $table->setTitle(EstoreTranslator::QuoteSent($lang));
-        $table->addLineEditButton("quotesent/" . $id_space);
+        $table->addLineEditButton("essalequotesent/" . $id_space);
         $headers = array(
             "number" => EstoreTranslator::ID($lang),
             "date_expected" => EstoreTranslator::DateExpected($lang),
@@ -792,6 +795,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$ToSendSale)
         ));
         
     }
@@ -998,6 +1002,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Invoicing)
         ));
         
     }
@@ -1191,6 +1196,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$PaymentPending)
         ));
         
     }
@@ -1237,13 +1243,111 @@ class EstoresaleController extends CoresecureController {
         $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
-            "data" => $data
+            "data" => $data, 
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Ended)
         ));
         
     }
     
     
-    
+    public function canceledlistAction($id_space){
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelSale = new EsSale();
+        $data = $modelSale->getForSpace($id_space, EsSaleStatus::$Canceled);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::Canceled($lang));
+        $table->addLineEditButton("esalescancel/" . $id_space);
+        $headers = array(
+            "number" => EstoreTranslator::ID($lang),
+            "date_expected" => EstoreTranslator::DateExpected($lang),
+            "client" => EstoreTranslator::ClientAccount($lang)
+        );
+        $tableHtml = $table->view($data, $headers);
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml
+        ));
+    }
   
+    public function cancelAction($id_space, $id_sale){
+        
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        
+        // data
+        $sale = $this->modelSales->get($id_sale);
+        
+        $modelCancelReason = new EsCancelReason();
+        $cancelReasons = $modelCancelReason->getForList($id_space);
+        
+        // form
+        $form = new Form($this->request, "esalecancelForm");
+        $form->setTitle(EstoreTranslator::Sale($lang) . " #" . $sale['id'] . " : " . EstoreTranslator::Cancel($lang));
+
+        $form->addSelect("cancel_reason", EstoreTranslator::CancelReason($lang), $cancelReasons["names"], $cancelReasons["ids"], $sale["cancel_reason"]);
+        $form->addTextArea("cancel_description", EstoreTranslator::Description($lang), false, $sale["cancel_description"]);
+        
+        $form->setValidationButton(EstoreTranslator::Close($lang), "esalescancel/" . $id_space . "/" . $id_sale);
+        $form->setButtonsWidth(4, 8);
+        
+        if ($form->check()) {
+            
+            $this->modelSales->setCanceled($id_sale, 
+                    $form->getParameter("cancel_reason"), 
+                    $form->getParameter("cancel_description")
+                    );
+            
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Canceled, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_sale);
+            
+            $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
+            $this->redirect("esalescancel/" . $id_space . "/" . $id_sale);
+            return;
+            
+        }
+        
+        $this->render(array(
+            'id_space' => $id_space,
+            'lang' => $lang,
+            'id_sale' => $sale["id"],
+            'salestatus' => $sale["id_status"],
+            'formHtml' => $form->getHtml($lang),
+            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Canceled)
+        ));
+        
+        
+        
+    }
+    
+    public function getSaleStatus($id_sale, $id_status){
+        
+        $lang = $this->getLanguage();
+        $sale = $this->modelSales->get($id_sale);
+        
+        $modelUser = new CoreUser();
+        
+        $modelHistory = new EsSaleHistory();
+        $history = $modelHistory->getHistoryStatus($id_sale, $id_status);
+        
+        $saleStatus["name"] = EsSaleStatus::getName($sale["id_status"], $lang);
+        $saleStatus["historyname"] = EsSaleStatus::getName($id_status, $lang);
+        if ( count($history) > 0){
+            $saleStatus['modifiedby'] = $modelUser->getUserFUllName($history["id_user"]);
+            $saleStatus['modifieddate'] = CoreTranslator::dateFromEn($history["date"], $lang);
+        }
+        else{
+            $saleStatus['modifiedby'] = "";
+            $saleStatus['modifieddate'] = "";
+        }
+        
+        return $saleStatus;
+    }
     
 }

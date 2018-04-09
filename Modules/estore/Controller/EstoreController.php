@@ -45,6 +45,7 @@ class EstoreController extends CoresecureController {
         $html = str_replace('{{Canceled}}', EstoreTranslator::Canceled($lang), $html);
         
         $html = str_replace('{{NotFeasibleReasons}}', EstoreTranslator::NotFeasibleReasons($lang), $html);
+        $html = str_replace('{{CancelReasons}}', EstoreTranslator::CancelReasons($lang), $html);
         
         
         

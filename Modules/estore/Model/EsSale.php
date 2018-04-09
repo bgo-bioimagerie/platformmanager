@@ -46,8 +46,8 @@ class EsSale extends Model {
         $this->setColumnsInfo("paid_amount", "DECIMAL(9,2)", 0);
         
         // cancel
-        $this->setColumnsInfo("cancel_reason", "varchar(255)", "");
-        $this->setColumnsInfo("cancel_date", "date", "0000-00-00");
+        $this->setColumnsInfo("cancel_reason", "int(11)", 0);
+        $this->setColumnsInfo("cancel_description", "text", "");
 
         // status
         $this->setColumnsInfo("id_status", "int(11)", 0);
@@ -116,15 +116,14 @@ class EsSale extends Model {
         $this->runRequest($sql, array($paid_amount, $paid_date, $id));
     }
     
-    
-    
-    
-    
-
-    public function setCancel($id, $cancel_reason, $cancel_date) {
-        $sql = "UPDATE es_sales SET cancel_reason=?, cancel_date=? WHERE id=?";
-        $this->runRequest($sql, array($cancel_reason, $cancel_date, $id));
+    public function setCanceled($id, $cancel_reason, $cancel_description){
+        $sql = "UPDATE es_sales SET cancel_reason=?, cancel_description=? WHERE id=?";
+        $this->runRequest($sql, array($cancel_reason, $cancel_description, $id));
     }
+    
+    
+    
+    
 
     public function delete($id) {
         $sql = "DELETE FROM br_sales WHERE id=?";
