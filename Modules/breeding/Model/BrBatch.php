@@ -159,7 +159,7 @@ class BrBatch extends Model {
         $names[] = "";
         $ids[] = 0;
         foreach ($data as $d) {
-            $names[] = $d["reference"];
+            $names[] = $d["reference"] . " (" . $d["quantity"] . ")";
             $ids[] = $d["id"];
         }
         return array("names" => $names, "ids" => $ids);

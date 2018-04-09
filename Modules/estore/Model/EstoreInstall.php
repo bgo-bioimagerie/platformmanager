@@ -14,7 +14,7 @@ require_once 'Modules/estore/Model/EsContactType.php';
 require_once 'Modules/estore/Model/EsSaleEnteredItem.php';
 require_once 'Modules/estore/Model/EsProductUnitQ.php';
 require_once 'Modules/estore/Model/EsPrice.php';
-
+require_once 'Modules/estore/Model/EsNotFeasibleReason.php';
 
 /**
  * Class defining methods to install and initialize the Estore database
@@ -61,6 +61,10 @@ class EstoreInstall extends Model {
         
         $model11 = new EsSaleItemInvoice();
         $model11->createTable();
+        
+        $model12 = new EsNotFeasibleReason();
+        $model12->createTable();
+        
         
     }
 

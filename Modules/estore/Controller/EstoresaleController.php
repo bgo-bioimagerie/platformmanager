@@ -9,7 +9,7 @@ require_once 'Modules/estore/Model/EstoreTranslator.php';
 require_once 'Modules/estore/Model/EsSale.php';
 require_once 'Modules/estore/Model/EsProductCategory.php';
 
-
+require_once 'Modules/estore/Model/EsNotFeasibleReason.php';
 
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/estore/Model/EsContactType.php';
@@ -130,12 +130,11 @@ class EstoresaleController extends CoresecureController {
             );
 
             $modelSaleHistory = new EsSaleHistory();
-            $modelSaleHistory->set($id, EsSaleStatus::$Entered, $_SESSION["id_user"], date('Y-m-d'), time());
+            $modelSaleHistory->set($id, EsSaleStatus::$Feasibility, $_SESSION["id_user"], date('Y-m-d'), time());
             $this->modelSales->updateStatus($id);
 
-
             $_SESSION["message"] = EstoreTranslator::Sale_entered_saved($lang);
-            $this->redirect("essaleenterededit/" . $id_space . "/" . $id);
+            $this->redirect("essalefeasibility/" . $id_space . "/" . $id);
             return;
         }
 
@@ -300,6 +299,9 @@ class EstoresaleController extends CoresecureController {
         }
 
         $sale = $this->modelSales->get($id_sale);
+        
+        $modelNotFeasibleReasons = new EsNotFeasibleReason();
+        $notFeasibleReasons = $modelNotFeasibleReasons->getForList($id_space);
 
         // build form
         $form = new Form($this->request, "esaleinprogressForm");
@@ -310,8 +312,17 @@ class EstoresaleController extends CoresecureController {
         $formAdd->addNumber("quantity", EstoreTranslator::Quantity($lang), $quantities);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         
+        $datev = $sale["date_validated"];
+        if ($datev == "0000-00-00"){
+           $datev = $sale["date_expected"]; 
+        }
+        
         $form->setFormAdd($formAdd, EstoreTranslator::Items($lang));
-        $form->addDate("date_validated", EstoreTranslator::DateValidated($lang), true, CoreTranslator::dateFromEn($sale["date_validated"], $lang) );
+        $form->addDate("date_validated", EstoreTranslator::DateValidated($lang), true, CoreTranslator::dateFromEn($datev, $lang) );
+        $form->addSelect("feasible", EstoreTranslator::Feasible($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $sale["feasible"] );
+        $form->addSelect("not_feasible_reason", EstoreTranslator::NotFeasibleReason($lang), $notFeasibleReasons["names"], $notFeasibleReasons["ids"], $sale["not_feasible_reason"]);
+        $form->addTextArea("feasible_comment", EstoreTranslator::Comment($lang), false, $sale["feasible_comment"]);
+        
         $form->setValidationButton(EstoreTranslator::Next($lang), "essalefeasibility/" . $id_space . "/" . $id_sale);
         $form->setButtonsWidth(2, 9);
         
@@ -325,7 +336,7 @@ class EstoresaleController extends CoresecureController {
                 $modelSaleItems->set($nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i]);
             }
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Feasibility, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$TodoQuote, $_SESSION["id_user"], date('Y-m-d', time()) );
             $this->modelSales->updateStatus($id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
@@ -333,12 +344,25 @@ class EstoresaleController extends CoresecureController {
             return;
         }
 
+        // sale items
+        $modelItems = new EsSaleEnteredItem();
+        $itemss = $modelItems->getitemsDesc($id_space, $id_sale);
+
+        $table = new TableView();
+        $table->setTitle(EstoreTranslator::Entered($lang), 4);
+        $headers = array(
+            "product" => EstoreTranslator::Product($lang),
+            "quantity" => EstoreTranslator::Quantity($lang)
+        );
+        $tableHtml = $table->view($itemss, $headers);
+        
         $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
+            'tableHtml' => $tableHtml
         ));
     }
     
@@ -415,11 +439,16 @@ class EstoresaleController extends CoresecureController {
         
         $form->setFormAdd($formAdd, EstoreTranslator::Items($lang));
         $form->addDate("quote_delivery_date", EstoreTranslator::DateDeliveryExpected($lang), true, CoreTranslator::dateFromEn($sale["quote_delivery_date"], $lang));
+        $form->addText("quote_packing_price", EstoreTranslator::PackingPrice($lang), true, $sale["quote_packing_price"] );
         $form->addText("quote_delivery_price", EstoreTranslator::DeliveryPrice($lang), true, $sale["quote_delivery_price"] );
-        //$form->addText("quote_totalht", EstoreTranslator::DeliveryPrice($lang), true, $sale["quote_totalht"] );
+        
+        $form->addDate("quote_send_date", EstoreTranslator::QuoteSentDate($lang), false, CoreTranslator::dateFromEn($sale["quote_sent_date"], $lang) );
+        
+
+//$form->addText("quote_totalht", EstoreTranslator::DeliveryPrice($lang), true, $sale["quote_totalht"] );
         
         $form->addExternalButton("PDF", "essalequotepdf/" . $id_space . "/" . $id_sale, "danger");
-        $form->addExternalButton(CoreTranslator::Next($lang), "essalequotesent/" . $id_space . "/" . $id_sale, "default");
+        //$form->addExternalButton(CoreTranslator::Next($lang), "essalequotesent/" . $id_space . "/" . $id_sale, "default");
         $form->setValidationButton(EstoreTranslator::Save($lang), "essaletodoquote/" . $id_space . "/" . $id_sale);
         $form->setButtonsWidth(4, 8);
         
@@ -431,17 +460,22 @@ class EstoresaleController extends CoresecureController {
             $nquantities = $form->getParameter("quantity");
             $nprices = $form->getParameter("prices");
             
-            $this->modelSales->setTodoQuote($id_sale, CoreTranslator::dateToEn($form->getParameter("quote_delivery_date"), $lang), $form->getParameter("quote_delivery_price"));
+            $this->modelSales->setTodoQuote($id_sale, 
+                    CoreTranslator::dateToEn($form->getParameter("quote_delivery_date"), $lang), 
+                    $form->getParameter("quote_delivery_price"),
+                    $form->getParameter("quote_packing_price"),
+                    CoreTranslator::dateToEn($form->getParameter("quote_send_date"), $lang)
+                    );
             for ($i = 0; $i < count($nids); $i++) {
                 $modelSaleItems->set($nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i], $nprices[$i]);
                 $totalht += $nquantities[$i]*$nprices[$i];
             }
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$TodoQuote, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$QuoteSent, $_SESSION["id_user"], date('Y-m-d', time()) );
             $this->modelSales->updateStatus($id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
-            $this->redirect("essaletodoquote/" . $id_space . "/" . $id_sale);
+            $this->redirect("essalequotesent/" . $id_space . "/" . $id_sale);
             return;
             
         }
@@ -512,6 +546,31 @@ class EstoresaleController extends CoresecureController {
             $totalVAT += $item["quantity"]*$item["price"]*(1+$vat/100);
             $table .= "</tr>";
         }
+        // packing
+        $table .= "<tr>";
+            $table .= "<td style=\"width: 25%; \">" . EstoreTranslator::PackingPrice($lang) . "</td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . 1 . " </td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . $sale["quote_packing_price"] . "</td>";
+            $table .= "<td style=\"width: 15%; text-align: left; \">" . $sale["quote_packing_price"] . "</td>";
+            $table .= "<td style=\"width: 10%; text-align: left; \">" . " 0%</td>";
+            
+            $totalHT += $sale["quote_packing_price"];
+            $totalVAT += $sale["quote_packing_price"];
+        $table .= "</tr>";
+        
+        // delivery
+        $table .= "<tr>";
+            $table .= "<td style=\"width: 25%; \">" . EstoreTranslator::DeliveryPrice($lang) . "</td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . 1 . " </td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . $sale["quote_delivery_price"] . "</td>";
+            $table .= "<td style=\"width: 15%; text-align: left; \">" . $sale["quote_delivery_price"] . "</td>";
+            $table .= "<td style=\"width: 10%; text-align: left; \">" . " 0%</td>";
+            
+            $totalHT += $sale["quote_delivery_price"];
+            $totalVAT += $sale["quote_delivery_price"];
+        $table .= "</tr>";
+            
+            
         $table .= "</tbody></table>";
         
         $table .= '<br>';
@@ -526,6 +585,15 @@ class EstoresaleController extends CoresecureController {
         $table .= '    </tr>';
         $table .= '</table>';
         
+        
+        $resp = $client["contact_name"];
+        $unit = "";
+        $adress = $modelClient->getAddressInvoice($sale["id_client"]);
+        $date = CoreTranslator::dateFromEn($sale["quote_sent_date"], $lang);
+        $invoiceInfo["title"] = "";
+        $useTTC = false;
+        $details = "";
+        $title = "DEVIS";
         // render
         ob_start();
         include('data/invoices/'.$id_space.'/template.php');
@@ -590,9 +658,13 @@ class EstoresaleController extends CoresecureController {
         $form->setTitle(EstoreTranslator::Sale($lang) . " #" . $sale['id'] . " : " . EstoreTranslator::QuoteSent($lang));
         
         $form->addText("purchase_order_num", EstoreTranslator::PurchaseOderNum($lang), false, $sale["purchase_order_num"]);
-        $form->addDownloadButton("data/estore/purchaseorders/" . $sale["purchase_order_file"], EstoreTranslator::PurchaseOrder($lang), $sale["purchase_order_file"], false);
         $form->addUpload("purchase_order_file", EstoreTranslator::PurchaseOrder($lang));
-        $form->addExternalButton(CoreTranslator::Next($lang), "essaletosendsale/" . $id_space . "/" . $id_sale, "default");
+        //$form->addExternalButton(CoreTranslator::Next($lang), "essaletosendsale/" . $id_space . "/" . $id_sale, "default");
+        
+        if ( $sale["purchase_order_file"] != "" ){
+            $form->addExternalButton(CoreTranslator::Download($lang) . " " . EstoreTranslator::PurchaseOrder($lang), "espurchaseorderdownload/" . $id_space . "/" . $id_sale, "default");
+        }
+        
         $form->setValidationButton(EstoreTranslator::Save($lang), "essalequotesent/" . $id_space . "/" . $id_sale);
         $form->setButtonsWidth(4, 8);
         
@@ -612,12 +684,12 @@ class EstoresaleController extends CoresecureController {
             }
             
             // history
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$QuoteSent, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$ToSendSale, $_SESSION["id_user"], date('Y-m-d', time()) );
             $this->modelSales->updateStatus($id_sale);
             
             // redirect
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
-            $this->redirect("essalequotesent/" . $id_space . "/" . $id_sale);
+            $this->redirect("essaletosendsale/" . $id_space . "/" . $id_sale);
             return;
         
         }
@@ -629,6 +701,25 @@ class EstoresaleController extends CoresecureController {
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
         ));
+    }
+    
+    public function purchaseorderdownloadAction($id_space, $id_sale){
+
+        $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
+
+        $sale = $this->modelSales->get($id_sale);
+        $file = "data/estore/purchaseorders/" . $sale["purchase_order_file"];
+        
+        header("Cache-Control: public");
+        header("Content-Description: File Transfer");
+        header('Content-Disposition: attachment; filename="'.basename($file).'"' );
+        header("Content-Type: application/pdf");
+        header("Content-Transfer-Encoding: binary");
+
+        // read the file from disk
+        readfile($file);
+        //    return;
+        //$this->redirect($path);
     }
     
     public function quotesentlistAction($id_space){
@@ -676,7 +767,7 @@ class EstoresaleController extends CoresecureController {
         $form->addDate("delivery_date_expected", EstoreTranslator::DeliveryDateExpected($lang), true, CoreTranslator::dateFromEn($sale["delivery_date_expected"], $lang));
         
         $form->addExternalButton(EstoreTranslator::DeliveryPaper($lang), "essaletosendsalepdf/" . $id_space . "/" . $id_sale, "danger");
-        $form->addExternalButton(EstoreTranslator::Next($lang), "essaleinvoicing/" . $id_space . "/" . $id_sale, "default");
+        //$form->addExternalButton(EstoreTranslator::Next($lang), "essaleinvoicing/" . $id_space . "/" . $id_sale, "default");
         
         $form->setValidationButton(EstoreTranslator::Save($lang), "essaletosendsale/" . $id_space . "/" . $id_sale);
         $form->setButtonsWidth(6, 6);
@@ -685,12 +776,12 @@ class EstoresaleController extends CoresecureController {
             $this->modelSales->setDelivery($id_sale, $form->getParameter("delivery_type"), CoreTranslator::dateToEn($form->getParameter("delivery_date_expected"), $lang));
         
             // history
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$ToSendSale, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Invoicing, $_SESSION["id_user"], date('Y-m-d', time()) );
             $this->modelSales->updateStatus($id_sale);
             
             // redirect
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
-            $this->redirect("essaletosendsale/" . $id_space . "/" . $id_sale);
+            $this->redirect("essaleinvoicing/" . $id_space . "/" . $id_sale);
             return;
             
         }
@@ -706,7 +797,7 @@ class EstoresaleController extends CoresecureController {
     }
     
     public function tosendsalepdfAction($id_space, $id_sale){
-                // security
+        // security
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         
@@ -714,7 +805,8 @@ class EstoresaleController extends CoresecureController {
         $sale = $this->modelSales->get($id_sale);
         
         $modelDelivery = new EsDeliveryMethod();
-        $deliveryName = $modelDelivery->getName($sale["id_delivery_method"]);
+        $deliveryName = $modelDelivery->getName($sale["delivery_type"]);
+        //echo "deliveryName = " . $deliveryName . "<br/>";
         
         $modelClient = new ClClient();
         $client = $modelClient->get($sale["id_client"]);
@@ -753,6 +845,7 @@ class EstoresaleController extends CoresecureController {
             $table .= "<td style=\"width: 15%; text-align: left; \">" . $item["quantity"] . "</td>";
             $table .= "</tr>";
         }
+        
         $table .= "</tbody></table>";
         
         // render
@@ -855,10 +948,22 @@ class EstoresaleController extends CoresecureController {
         $formAdd->setButtonsVisible(false);
         
         $form->setFormAdd($formAdd, EstoreTranslator::Items($lang));
-        $form->addText("invoice_delivery_price", EstoreTranslator::DeliveryPrice($lang), true, $sale["invoice_delivery_price"] );
+        
+        $packingPrice = $sale["invoice_packing_price"];
+        if ( $packingPrice == 0 ){
+            $packingPrice = $sale["quote_packing_price"];
+        }
+        $deliveryPrice = $sale["invoice_delivery_price"];
+        if ( $deliveryPrice == 0 ){
+            $deliveryPrice = $sale["quote_delivery_price"];
+        }
+        
+        $form->addText("invoice_packing_price", EstoreTranslator::PackingPrice($lang), true, $packingPrice );
+        $form->addText("invoice_delivery_price", EstoreTranslator::DeliveryPrice($lang), true, $deliveryPrice );
+        $form->addDate("invoice_sent_date", EstoreTranslator::SendDate($lang), false, CoreTranslator::dateFromEn($sale["invoice_sent_date"], $lang)  );
         
         $form->addExternalButton("PDF", "essaleinvoicingpdf/" . $id_space . "/" . $id_sale, "danger");
-        $form->addExternalButton(CoreTranslator::Next($lang), "essalepaymentpending/" . $id_space . "/" . $id_sale, "default");
+        //$form->addExternalButton(CoreTranslator::Next($lang), "essalepaymentpending/" . $id_space . "/" . $id_sale, "default");
         $form->setValidationButton(EstoreTranslator::Save($lang), "essaleinvoicing/" . $id_space . "/" . $id_sale);
         $form->setButtonsWidth(4, 8);
         
@@ -870,17 +975,19 @@ class EstoresaleController extends CoresecureController {
             $nquantities = $form->getParameter("quantity");
             $nprices = $form->getParameter("prices");
             
-            $this->modelSales->setInvoice($id_sale, $form->getParameter("invoice_delivery_price"));
+            $this->modelSales->setInvoice($id_sale, $form->getParameter("invoice_packing_price"), 
+                    $form->getParameter("invoice_delivery_price"), 
+                    CoreTranslator::dateToEn($form->getParameter("invoice_sent_date"), $lang));
             for ($i = 0; $i < count($nids); $i++) {
                 $modelSaleItemsInovice->set($nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i], $nprices[$i]);
                 $totalht += $nquantities[$i]*$nprices[$i];
             }
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Invoicing, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$PaymentPending, $_SESSION["id_user"], date('Y-m-d', time()) );
             $this->modelSales->updateStatus($id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
-            $this->redirect("essaleinvoicing/" . $id_space . "/" . $id_sale);
+            $this->redirect("essalepaymentpending/" . $id_space . "/" . $id_sale);
             return;
             
         }
@@ -902,6 +1009,7 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
+        $title = "FACTURE";
         $sale = $this->modelSales->get($id_sale);
         
         $modelDelivery = new EsDeliveryMethod();
@@ -951,6 +1059,29 @@ class EstoresaleController extends CoresecureController {
             $totalVAT += $item["quantity"]*$item["price"]*(1+$vat/100);
             $table .= "</tr>";
         }
+        // packing
+        $table .= "<tr>";
+            $table .= "<td style=\"width: 25%; \">" . EstoreTranslator::PackingPrice($lang) . "</td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . 1 . " </td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . $sale["invoice_packing_price"] . "</td>";
+            $table .= "<td style=\"width: 15%; text-align: left; \">" . $sale["invoice_packing_price"] . "</td>";
+            $table .= "<td style=\"width: 10%; text-align: left; \">" . " 0%</td>";
+            
+            $totalHT += $sale["invoice_packing_price"];
+            $totalVAT += $sale["invoice_packing_price"];
+        $table .= "</tr>";
+        
+        // delivery
+        $table .= "<tr>";
+            $table .= "<td style=\"width: 25%; \">" . EstoreTranslator::DeliveryPrice($lang) . "</td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . 1 . " </td>";
+            $table .= "<td style=\"width: 25%; text-align: left; \">" . $sale["invoice_delivery_price"] . "</td>";
+            $table .= "<td style=\"width: 15%; text-align: left; \">" . $sale["invoice_delivery_price"] . "</td>";
+            $table .= "<td style=\"width: 10%; text-align: left; \">" . " 0%</td>";
+            
+            $totalHT += $sale["invoice_delivery_price"];
+            $totalVAT += $sale["invoice_delivery_price"];
+        $table .= "</tr>";
         $table .= "</tbody></table>";
         
         $table .= '<br>';
@@ -965,6 +1096,13 @@ class EstoresaleController extends CoresecureController {
         $table .= '    </tr>';
         $table .= '</table>';
         
+        $resp = $client["contact_name"];
+        $unit = "";
+        $adress = $modelClient->getAddressInvoice($sale["id_client"]);
+        $date = CoreTranslator::dateFromEn($sale["invoice_sent_date"], $lang);
+        $invoiceInfo["title"] = "";
+        $useTTC = false;
+        $details = "";
         // render
         ob_start();
         include('data/invoices/'.$id_space.'/template.php');
@@ -1028,18 +1166,21 @@ class EstoresaleController extends CoresecureController {
         $form->setTitle(EstoreTranslator::Sale($lang) . " #" . $sale['id'] . " : " . EstoreTranslator::PaymentPending($lang));
 
         $form->addDate("paid_date", EstoreTranslator::PaidDate($lang), true, CoreTranslator::dateFromEn($sale["paid_date"], $lang) );
+        $form->addText("paid_amount", EstoreTranslator::PaidAmount($lang), true, $sale["paid_amount"]);
         
-        $form->setValidationButton(EstoreTranslator::Save($lang), "essalepaymentpending/" . $id_space . "/" . $id_sale);
+        $form->setValidationButton(EstoreTranslator::Close($lang), "essalepaymentpending/" . $id_space . "/" . $id_sale);
         $form->setButtonsWidth(4, 8);
         
         if ($form->check()) {
-            $this->modelSales->setPaid($id_sale, CoreTranslator::dateToEn($form->getParameter("paid_date"), $lang));
+            $this->modelSales->setPaid($id_sale, 
+                    $form->getParameter("paid_amount"),
+                    CoreTranslator::dateToEn($form->getParameter("paid_date"), $lang));
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$PaymentPending, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Ended, $_SESSION["id_user"], date('Y-m-d', time()) );
             $this->modelSales->updateStatus($id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
-            $this->redirect("essalepaymentpending/" . $id_space . "/" . $id_sale);
+            $this->redirect("essaleended/" . $id_space . "/" . $id_sale);
             return;
             
         }
@@ -1082,6 +1223,23 @@ class EstoresaleController extends CoresecureController {
     
     public function endedAction($id_space, $id_sale){
 
+        // security
+        $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        
+        $sale = $this->modelSales->get($id_sale);
+        
+        $data = "";
+        if ( $sale["id_status"] == EsSaleStatus::$Ended ){
+            $data = EstoreTranslator::ThisSaleIsClosed($lang);
+        }
+        
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "data" => $data
+        ));
+        
     }
     
     

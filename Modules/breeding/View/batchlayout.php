@@ -36,7 +36,7 @@ endblock();
 
 
 <?php startblock('spacenavbar'); ?>
-<div class="col-md-2 pm-space-navbar">
+<div class="col-md-12 pm-space-navbar">
     <?php
     require_once 'Modules/core/Controller/CorespaceController.php';
     $spaceController = new CorespaceController(new Request(array(), false));
@@ -46,11 +46,16 @@ endblock();
     $showNavBarBreeding = $modelCoreConfig->getParam("showNavBarBreeding", $id_space);
     ?>
 </div> 
-<?php if ($showNavBarBreeding) { ?>
-    <div class="col-md-8">
-    <?php } else { ?>
+
+        <div class="col-md-2 pm-space-navbar-right" >
+            <?php
+            require_once 'Modules/breeding/Controller/BreedingController.php';
+            $menucontroller = new BreedingController(new Request(array(), false));
+            echo $menucontroller->navbar($id_space);
+            ?>
+        </div>
+
         <div class="col-md-10">
-        <?php } ?>
 
         <div class="col-md-12 pm-table-short">
             <div class="col-md-6">
@@ -158,15 +163,6 @@ endblock();
         </div>
     </div>
 
-    <?php if ($showNavBarBreeding) { ?>
-        <div class="col-md-2 pm-space-navbar-right" >
-            <?php
-            require_once 'Modules/breeding/Controller/BreedingController.php';
-            $menucontroller = new BreedingController(new Request(array(), false));
-            echo $menucontroller->navbar($id_space);
-            ?>
-        <?php } ?>
-    </div>
 </div>
 <?php
 endblock();
