@@ -42,7 +42,7 @@ class EstoreconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
 
-            $modelSpace->setSpaceMenu($id_space, "estore", "estore", "glyphicon-user", $this->request->getParameter("estoremenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("colorMenu")
+            $modelSpace->setSpaceMenu($id_space, "estore", "estore", "glyphicon-shopping-cart", $this->request->getParameter("estoremenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("colorMenu")
             );
 
             $this->redirect("estoreconfig/" . $id_space);

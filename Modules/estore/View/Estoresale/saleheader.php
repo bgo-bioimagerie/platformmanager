@@ -59,3 +59,17 @@
     </div>
     
 </div>
+
+<div class="col-md-12 pm-form-short">
+    <div class="col-md-10">
+        <b><?php echo EstoreTranslator::StatusNow($lang) ?>:</b> <?php echo $saleHist['name'] ?><br/>
+        <b><?php echo EstoreTranslator::StatusHist($lang) ?>:</b> <?php echo $saleHist['historyname'] ?><br/>
+        <b><?php echo EstoreTranslator::ModifiedBy($lang) ?>:</b> <?php echo $saleHist['modifiedby'] ?> <br/>
+        <b><?php echo EstoreTranslator::ModifiedDate($lang) ?>:</b> <?php echo $saleHist['modifieddate'] ?> <br/>
+    </div>
+    <div class="col-md-2">
+        <br/>
+        <a class="btn btn-default" href="esalescancel/<?php echo $id_space ?>/<?php echo $id_sale ?>" ><?php echo EstoreTranslator::Cancel($lang) ?></a>
+    </div>
+    
+</div>

@@ -668,6 +668,67 @@ class EstoreTranslator {
         return "The sale is closed";
     }
     
+    public static function Cancel($lang) {
+        if ($lang == "fr") {
+            return "Annuler la vente";
+        }
+        return "Cancel";
+    }
     
+    public static function Status($lang) {
+        if ($lang == "fr") {
+            return "Statut";
+        }
+        return "Status";
+    }
+    
+    public static function StatusNow($lang) {
+        if ($lang == "fr") {
+            return "Statut actuel";
+        }
+        return "Status";
+    }
+    
+    public static function StatusHist($lang) {
+        if ($lang == "fr") {
+            return "Statut historique";
+        }
+        return "Status history";
+    }
+    
+    public static function ModifiedBy($lang) {
+        if ($lang == "fr") {
+            return "Modifié par";
+        }
+        return "Modified by";
+    }
+    
+    public static function ModifiedDate($lang) {
+        if ($lang == "fr") {
+            return "date modidification";
+        }
+        return "Date modified";
+    }
+    
+    public static function CancelReasons($lang) {
+        if ($lang == "fr") {
+            return "Raisons d'annulation";
+        }
+        return "Cancel reasons";
+    }
+    
+    public static function CancelReason($lang) {
+        if ($lang == "fr") {
+            return "Raison d'annulation";
+        }
+        return "Cancel reason";
+    }
+    
+    public static function EditCancelReason($lang) {
+        if ($lang == "fr") {
+            return "editer raisons d'annulation";
+        }
+        return "Edit cancel reasons";
+    }
     
 }

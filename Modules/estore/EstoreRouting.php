@@ -30,6 +30,11 @@ class EstoreRouting extends Routing{
         $this->addRoute("escontacttypeedit", "escontacttypeedit", "estorecontacttypes", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("escontacttypedelete", "escontacttypedelete", "estorecontacttypes", "delete", array("id_space", "id"), array("", ""));
         
+         // contact types
+        $this->addRoute("escancelreasons", "escancelreasons", "estorecancelreasons", "index", array("id_space"), array(""));
+        $this->addRoute("escancelreasonedit", "escancelreasonedit", "estorecancelreasons", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("escancelreasondelete", "escancelreasondelete", "estorecancelreasons", "delete", array("id_space", "id"), array("", ""));
+        
         // not feasible reason
         $this->addRoute("esnotfeasiblereasons", "esnotfeasiblereasons", "estorenotfeasiblereasons", "index", array("id_space"), array(""));
         $this->addRoute("esnotfeasiblereasonsedit", "esnotfeasiblereasonsedit", "estorenotfeasiblereasons", "edit", array("id_space", "id"), array("", ""));
@@ -76,11 +81,10 @@ class EstoreRouting extends Routing{
         $this->addRoute("essaleendedlist", "essaleendedlist", "estoresale", "endedlist", array("id_space"), array(""));
         
         $this->addRoute("esalescanceled", "esalescanceled", "estoresale", "canceledlist", array("id_space"), array(""));
+        $this->addRoute("esalescancel", "esalescancel", "estoresale", "cancel", array("id_space", "id_sale"), array("", ""));
+        
         
         $this->addRoute("espurchaseorderdownload", "espurchaseorderdownload", "estoresale", "purchaseorderdownload", array("id_space", "id_sale"), array("", ""));
-        
-        
-        
         
         /*
         

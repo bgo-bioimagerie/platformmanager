@@ -75,6 +75,10 @@
     <div class="col-xs-12 pm-inline-div"  style="background-color:{{bgcolor}};">
         <a style="color: #fff;" id="menu-button" href="esdeliveries/{{id_space}}">{{Delivery}}</a>
     </div>
+    <div class="col-xs-12 pm-inline-div"  style="background-color:{{bgcolor}};">
+        <a style="color: #fff;" id="menu-button" href="escancelreasons/{{id_space}}">{{CancelReasons}}</a>
+    </div>
+    
 
 </div>
 
