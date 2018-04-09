@@ -137,7 +137,7 @@ class CoremainmenuController extends CoresecureController {
         $form->addSelect("id_main_menu", CoreTranslator::MainMenu($lang), $mainMenus["names"], $mainMenus["ids"], $value["id_main_menu"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), true, $value["display_order"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "coremainsubmenuedit/");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coremainsubmenuedit/" . $id);
 
         if ($form->check()) {
 
@@ -148,6 +148,8 @@ class CoremainmenuController extends CoresecureController {
                     $form->getParameter("display_order"));
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
             $this->redirect("coremainsubmenus");
+             
+            return;
         }
 
         $this->render(array(
