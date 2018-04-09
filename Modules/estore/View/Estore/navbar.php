@@ -6,11 +6,6 @@
     </div>
 
     <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">
-        {{countAdminEditList}}
-        <a style="color: #fff;" id="menu-button" href="essaleenteredadmineditlist/{{id_space}}">{{Entered}}</a> 
-    </div>
-
-    <div class="col-xs-12 pm-inline-div" style="background-color:{{bgcolor}};">
         {{countFaisabilityList}}
         <a style="color: #fff;" id="menu-button" href="essalefeasibilitylist/{{id_space}}">{{Feasibility}}</a> 
     </div>
@@ -73,6 +68,9 @@
     
     <div class="col-xs-12 pm-inline-div"  style="background-color:{{bgcolor}};">
         <a style="color: #fff;" id="menu-button" href="escontacttypes/{{id_space}}">{{ContactTypes}}</a>
+    </div>
+    <div class="col-xs-12 pm-inline-div"  style="background-color:{{bgcolor}};">
+        <a style="color: #fff;" id="menu-button" href="esnotfeasiblereasons/{{id_space}}">{{NotFeasibleReasons}}</a>
     </div>
     <div class="col-xs-12 pm-inline-div"  style="background-color:{{bgcolor}};">
         <a style="color: #fff;" id="menu-button" href="esdeliveries/{{id_space}}">{{Delivery}}</a>

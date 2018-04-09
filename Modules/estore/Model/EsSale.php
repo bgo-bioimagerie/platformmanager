@@ -17,11 +17,17 @@ class EsSale extends Model {
 
         // validation info
         $this->setColumnsInfo("date_validated", "date", "0000-00-00");
+        $this->setColumnsInfo("feasible", "int(1)", 0);
+        $this->setColumnsInfo("not_feasible_reason", "int(1)", 0);
+        $this->setColumnsInfo("feasible_comment", "text", "");
+        
 
         // quote
         $this->setColumnsInfo("quote_delivery_date", "date", "0000-00-00");
         $this->setColumnsInfo("quote_delivery_price", "DECIMAL(9,2)", 0);
-
+        $this->setColumnsInfo("quote_packing_price", "DECIMAL(9,2)", 0);
+        $this->setColumnsInfo("quote_sent_date", "date", "0000-00-00");
+        
         // quotesent
         $this->setColumnsInfo("purchase_order_num", "varchar(255)", "");
         $this->setColumnsInfo("purchase_order_file", "varchar(255)", "");
@@ -32,9 +38,12 @@ class EsSale extends Model {
 
         // Pricing
         $this->setColumnsInfo("invoice_delivery_price", "DECIMAL(9,2)", 0);
-
+        $this->setColumnsInfo("invoice_packing_price", "DECIMAL(9,2)", 0);
+        $this->setColumnsInfo("invoice_sent_date", "date", "0000-00-00");
+        
         // paid
         $this->setColumnsInfo("paid_date", "DATE", "0000-00-00");
+        $this->setColumnsInfo("paid_amount", "DECIMAL(9,2)", 0);
         
         // cancel
         $this->setColumnsInfo("cancel_reason", "varchar(255)", "");
@@ -77,9 +86,9 @@ class EsSale extends Model {
         $this->runRequest($sql, array($date_validated, $id));
     }
 
-    public function setTodoQuote($id, $quote_delivery_date, $quote_delivery_price) {
-        $sql = "UPDATE es_sales SET quote_delivery_date=?, quote_delivery_price=? WHERE id=?";
-        $this->runRequest($sql, array($quote_delivery_date, $quote_delivery_price, $id));
+    public function setTodoQuote($id, $quote_delivery_date, $quote_delivery_price, $quote_packing_price, $quote_sent_date) {
+        $sql = "UPDATE es_sales SET quote_delivery_date=?, quote_delivery_price=?, quote_packing_price=?, quote_sent_date=? WHERE id=?";
+        $this->runRequest($sql, array($quote_delivery_date, $quote_delivery_price, $quote_packing_price, $quote_sent_date, $id));
     }
 
     public function setQuoteSent($id, $purchase_order_num) {
@@ -97,15 +106,14 @@ class EsSale extends Model {
         $this->runRequest($sql, array($delivery_type, $delivery_date_expected, $id));
     }
 
-    public function setInvoice($id, $invoice_delivery_price) {
-        $sql = "UPDATE es_sales SET invoice_delivery_price=? WHERE id=?";
-        $this->runRequest($sql, array($invoice_delivery_price, $id));
+    public function setInvoice($id, $invoice_packing_price, $invoice_delivery_price, $invoice_sent_date) {
+        $sql = "UPDATE es_sales SET invoice_packing_price=?, invoice_delivery_price=?, invoice_sent_date=? WHERE id=?";
+        $this->runRequest($sql, array($invoice_packing_price, $invoice_delivery_price, $invoice_sent_date, $id));
     }
     
-    
-    public function setPaid($id, $paid_date){
-        $sql = "UPDATE es_sales SET paid_date=? WHERE id=?";
-        $this->runRequest($sql, array($paid_date, $id));
+    public function setPaid($id, $paid_amount, $paid_date){
+        $sql = "UPDATE es_sales SET paid_amount=?, paid_date=? WHERE id=?";
+        $this->runRequest($sql, array($paid_amount, $paid_date, $id));
     }
     
     

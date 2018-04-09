@@ -30,6 +30,11 @@ class EstoreRouting extends Routing{
         $this->addRoute("escontacttypeedit", "escontacttypeedit", "estorecontacttypes", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("escontacttypedelete", "escontacttypedelete", "estorecontacttypes", "delete", array("id_space", "id"), array("", ""));
         
+        // not feasible reason
+        $this->addRoute("esnotfeasiblereasons", "esnotfeasiblereasons", "estorenotfeasiblereasons", "index", array("id_space"), array(""));
+        $this->addRoute("esnotfeasiblereasonsedit", "esnotfeasiblereasonsedit", "estorenotfeasiblereasons", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("esnotfeasiblereasonsdelete", "esnotfeasiblereasonsdelete", "estorenotfeasiblereasons", "delete", array("id_space", "id"), array("", ""));
+        
         // delivery methods
         $this->addRoute("esdeliveries", "esdeliveries", "estoredelivery", "index", array("id_space"), array(""));
         $this->addRoute("esdeliveryedit", "esdeliveryedit", "estoredelivery", "edit", array("id_space", "id"), array("", ""));
@@ -71,6 +76,9 @@ class EstoreRouting extends Routing{
         $this->addRoute("essaleendedlist", "essaleendedlist", "estoresale", "endedlist", array("id_space"), array(""));
         
         $this->addRoute("esalescanceled", "esalescanceled", "estoresale", "canceledlist", array("id_space"), array(""));
+        
+        $this->addRoute("espurchaseorderdownload", "espurchaseorderdownload", "estoresale", "purchaseorderdownload", array("id_space", "id_sale"), array("", ""));
+        
         
         
         

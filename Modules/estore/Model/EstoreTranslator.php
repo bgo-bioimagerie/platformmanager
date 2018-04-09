@@ -544,9 +544,9 @@ class EstoreTranslator {
 
     public static function QuoteSent($lang) {
         if ($lang == "fr") {
-            return "Devis envoyé";
+            return "Attente bon de commande";
         }
-        return "Quote sent";
+        return "Pending purchase order";
     }
 
     public static function ToSendSale($lang) {
@@ -605,5 +605,69 @@ class EstoreTranslator {
         return "Paid date";
     }
     
-
+    public static function Feasible($lang) {
+        if ($lang == "fr") {
+            return "Faisable";
+        }
+        return "Feasible";
+    }
+    
+    public static function NotFeasibleReason($lang) {
+        if ($lang == "fr") {
+            return "Raison de non faisabilité";
+        }
+        return "Not feasible reason";
+    }
+    
+    public static function NotFeasibleReasons($lang) {
+        if ($lang == "fr") {
+            return "Raisons de non faisabilité";
+        }
+        return "Not feasible reasons";
+    }
+    
+    public static function Comment($lang) {
+        if ($lang == "fr") {
+            return "Comment";
+        }
+        return "Commentaire";
+    }
+    
+    public static function QuoteSentDate($lang) {
+        if ($lang == "fr") {
+            return "Date envoi du devis";
+        }
+        return "Quote sent date";
+    }
+    
+    public static function SendDate($lang) {
+        if ($lang == "fr") {
+            return "Date envoi facture";
+        }
+        return "Send date";
+    }
+    
+    public static function PaidAmount($lang) {
+        if ($lang == "fr") {
+            return "Montant payé";
+        }
+        return "Paid amount";
+    }
+    
+    public static function Close($lang) {
+        if ($lang == "fr") {
+            return "Cloture";
+        }
+        return "Close";
+    }
+    
+    public static function ThisSaleIsClosed($lang) {
+        if ($lang == "fr") {
+            return "La vente est close";
+        }
+        return "The sale is closed";
+    }
+    
+    
+    
 }

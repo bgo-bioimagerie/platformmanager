@@ -44,6 +44,8 @@ class EstoreController extends CoresecureController {
         $html = str_replace('{{Ended}}', EstoreTranslator::Ended($lang), $html);
         $html = str_replace('{{Canceled}}', EstoreTranslator::Canceled($lang), $html);
         
+        $html = str_replace('{{NotFeasibleReasons}}', EstoreTranslator::NotFeasibleReasons($lang), $html);
+        
         
         
         $html = str_replace('{{Products}}', EstoreTranslator::Products($lang), $html);
@@ -74,7 +76,6 @@ class EstoreController extends CoresecureController {
         $html = str_replace('{{title}}', $title, $html);
         
         // get the number of entered sales
-        $html = $this->replaceNotification($id_space, '{{countAdminEditList}}', EsSaleStatus::$Entered, $html);
         $html = $this->replaceNotification($id_space, '{{countFaisabilityList}}', EsSaleStatus::$Feasibility, $html);
         $html = $this->replaceNotification($id_space, '{{countTodoQuoteList}}', EsSaleStatus::$TodoQuote, $html);
         $html = $this->replaceNotification($id_space, '{{countQuoteSentList}}', EsSaleStatus::$QuoteSent, $html);
