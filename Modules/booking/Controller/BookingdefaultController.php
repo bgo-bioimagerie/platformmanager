@@ -856,6 +856,38 @@ class BookingdefaultController extends BookingabstractController {
             $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
         }
         
+        $modelConfig = new CoreConfig();
+        $sendMailResponsibles = $modelConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
+        if ( $sendMailResponsibles > 0){
+            
+            // get the resource
+            $modelCalEntry = new BkCalendarEntry();
+            $entryInfo = $modelCalEntry->getEntry($id);
+            $id_resource = $entryInfo["resource_id"];
+            
+            $resourceModel = new ResourceInfo();
+            $resourceName = $resourceModel->getName($id_resource);
+            
+            // user info
+            $userModel = new CoreUser();
+            $user = $userModel->getInfo($_SESSION["id_user"]);
+            
+            // get the resource responsibles
+            $modelResource = new ReResps();
+            
+            // mail content
+            $from = $user["email"];
+            $toAdress = $modelResource->getResourcesManagersEmails($id_resource);
+            $subject = $resourceName . " has been freed";
+            $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
+
+            //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
+            // send the email
+            $mailerModel = new MailerSend();
+            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
+            
+        }
+        
         $modelCalEntry = new BkCalendarEntry();
         $modelCalEntry->removeEntry($id);
 
