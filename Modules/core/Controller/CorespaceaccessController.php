@@ -167,7 +167,7 @@ class CorespaceaccessController extends CoresecureController {
         $form->addEmail("email", CoreTranslator::email($lang), true);
         $form->addText("phone", CoreTranslator::Phone($lang), false);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd");
+        $form->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd/".$id_space);
 
         if ($form->check()) {
 
