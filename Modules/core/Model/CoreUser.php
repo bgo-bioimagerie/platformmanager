@@ -54,7 +54,7 @@ class CoreUser extends Model {
 
     public function createAccount($login, $pwd, $name, $firstname, $email) {
 
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id) VALUES (?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id) VALUES (?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d"), 1));
         return $this->getDatabase()->lastInsertId();
     }
