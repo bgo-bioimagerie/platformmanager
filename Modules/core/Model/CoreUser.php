@@ -17,7 +17,7 @@ class CoreUser extends Model {
         $this->setColumnsInfo("firstname", "varchar(100)", "");
         $this->setColumnsInfo("email", "varchar(255)", "");
         $this->setColumnsInfo("phone", "varchar(255)", "");
-        $this->setColumnsInfo("status_id", "int(2)", 0);
+        $this->setColumnsInfo("status_id", "int(2)", 1);
         $this->setColumnsInfo("source", "varchar(30)", "local");
         $this->setColumnsInfo("is_active", "int(1)", 1);
         $this->setColumnsInfo("date_created", "date", "");
@@ -54,8 +54,8 @@ class CoreUser extends Model {
 
     public function createAccount($login, $pwd, $name, $firstname, $email) {
 
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created) VALUES (?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d")));
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id) VALUES (?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d"), 1));
         return $this->getDatabase()->lastInsertId();
     }
 
