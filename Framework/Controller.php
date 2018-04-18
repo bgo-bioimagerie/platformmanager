@@ -50,7 +50,7 @@ abstract class Controller {
      * @throws Exception If the action does not exist in the curent controller
      */
     public function runAction($module, $action, $args = array()) {
-        $this->module = $module;
+        $this->module = strtolower($module);
         $actionName = $action . "Action";
         if (method_exists($this, $actionName)) {
             $this->action = $action;
