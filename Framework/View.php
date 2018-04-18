@@ -19,7 +19,7 @@ class View {
      * @param string $controller Controller to which the view is associated
      */
     public function __construct($action, $controller = "", $module = "") {
-        $file = 'Modules/' . $module . '/View/' . $controller . "/" . $action . '.php';
+        $file = 'Modules/' . strtolower($module) . '/View/' . $controller . "/" . $action . '.php';
         //echo "view file = " . $file . "<br/>";
         if (file_exists($file)) {
             $this->file = $file;
