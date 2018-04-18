@@ -159,11 +159,11 @@ class router {
         if ($isApi) {
             $classController = ucfirst(strtolower($controllerName)) . "Api";
             $module = $moduleName;
-            $fileController = 'Modules/' . $module . "/Api/" . $classController . ".php";
+            $fileController = 'Modules/' . strtolower($module) . "/Api/" . $classController . ".php";
         } else {
             $classController = ucfirst(strtolower($controllerName)) . "Controller";
             $module = $moduleName;
-            $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
+            $fileController = 'Modules/' . strtolower($module) . "/Controller/" . $classController . ".php";
         }
 
         //echo "controller file = " . $fileController . "<br/>";
@@ -176,22 +176,22 @@ class router {
         } else {
             $rooterController = Configuration::get("routercontroller");
             if($rooterController != ""){
-            $rooterControllerArray = explode("::", "$rooterController");
-            if(count($rooterControllerArray) == 3){
-                $classController = $rooterControllerArray[2];
-                $module = $moduleName;
-                $fileController = 'Modules/' . strtolower($rooterControllerArray[0]) . "/Controller/" . $rooterControllerArray[2] . ".php";
-                if(file_exists($fileController)){
-                    
-                    require ($fileController);
-                    $controller = new $classController ($request);
-                    $this->useRouterController = true;
-                    return $controller;
+                $rooterControllerArray = explode("::", "$rooterController");
+                if(count($rooterControllerArray) == 3){
+                    $classController = $rooterControllerArray[2];
+                    $module = $moduleName;
+                    $fileController = 'Modules/' . strtolower($rooterControllerArray[0]) . "/Controller/" . $rooterControllerArray[2] . ".php";
+                    if(file_exists($fileController)){
+                        
+                        require ($fileController);
+                        $controller = new $classController ($request);
+                        $this->useRouterController = true;
+                        return $controller;
+                    }
                 }
-            }
-            else{
-                throw new Exception("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
-            }
+                else{
+                    throw new Exception("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
+                }
             }
             else{
                 throw new Exception("Unable to find the controller file '$fileController' ");
