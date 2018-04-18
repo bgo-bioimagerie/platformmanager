@@ -180,7 +180,7 @@ class router {
             if(count($rooterControllerArray) == 3){
                 $classController = $rooterControllerArray[2];
                 $module = $moduleName;
-                $fileController = 'Modules/' . $rooterControllerArray[0] . "/Controller/" . $rooterControllerArray[2] . ".php";
+                $fileController = 'Modules/' . strtolower($rooterControllerArray[0]) . "/Controller/" . $rooterControllerArray[2] . ".php";
                 if(file_exists($fileController)){
                     
                     require ($fileController);
