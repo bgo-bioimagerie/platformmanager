@@ -91,7 +91,7 @@ Platform-Manager
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
                         
-                            
+                        <!--    
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
                             <br></br>
                             <p class="text-center">
@@ -101,7 +101,7 @@ Platform-Manager
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
                             <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
                         </div>
-                        
+                        -->
 
                         <!--
                         <div style="padding-top: 25px; margin-bottom: 25px;">
