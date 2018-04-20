@@ -9,6 +9,9 @@ require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreBackupDatabase.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
+require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreStatus.php';
+
 /**
  * 
  * @author sprigent
