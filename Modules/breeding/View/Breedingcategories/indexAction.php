@@ -6,7 +6,7 @@
 <div class="page-header">
     <h3><?php echo BreedingTranslator::CategoriesProduct($lang) ?></h3>
 </div>    
-<a class="btn btn-default" href="brproductcategoryedit/<?php echo $id_space ?>"><?php echo BreedingTranslator::NewCategoryProduct($lang) ?></a>
+<a class="btn btn-default" href="brproductcategoryedit/<?php echo $id_space ?>/0"><?php echo BreedingTranslator::NewCategoryProduct($lang) ?></a>
     <?php echo $tableHtml ?>
 </div>
 <?php

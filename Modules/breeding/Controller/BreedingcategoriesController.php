@@ -70,7 +70,7 @@ class BreedingcategoriesController extends CoresecureController {
 
         // default empy provider
         if ($id == 0) {
-            $pricing = array("id" => 0, "name" => "", "description" => "");
+            $pricing = array("id" => 0, "name" => "", "description" => "", "vat" => 0);
         }
         else{
             $pricing = $this->model->get($id);
@@ -102,6 +102,7 @@ class BreedingcategoriesController extends CoresecureController {
             
             // after the provider is saved we redirect to the providers list page
             $this->redirect("brproductcategories/" . $id_space);
+            return;
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

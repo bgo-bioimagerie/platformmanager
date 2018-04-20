@@ -17,6 +17,10 @@ class BreedingRouting extends Routing{
         $this->addRoute("brproductedit", "brproductedit", "breedingproducts", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("brproductdelete", "brproductdelete", "breedingproducts", "delete", array("id_space", "id"), array("", ""));
         
+        $this->addRoute("brproductcategories", "brproductcategories", "breedingcategories", "index", array("id_space"), array(""));
+        $this->addRoute("brproductcategoryedit", "brproductcategoryedit", "breedingcategories", "edit", array("id_space", "id"), array("", ""));
+        $this->addRoute("brproductcategorydelete", "brproductcategorydelete", "breedingcategories", "delete", array("id_space", "id"), array("", ""));
+        
         // losse types
         $this->addRoute("brlossetypes", "brlossetypes", "breedinglossetypes", "index", array("id_space"), array(""));
         $this->addRoute("brlossetypeedit", "brlossetypeedit", "breedinglossetypes", "edit", array("id_space", "id"), array("", ""));
