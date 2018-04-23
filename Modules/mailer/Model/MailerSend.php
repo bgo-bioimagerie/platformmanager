@@ -2,7 +2,7 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/mailer/Model/MailerTranslator.php';
-require("externals/PHPMailer/class.phpmailer.php");
+require("externals/PHPMailer/PHPMailerAutoload.php");
 
 /**
  * Class defining methods to send an email
@@ -19,26 +19,31 @@ class MailerSend extends Model {
                 echo " use copy to from <br/>";
             }
         }
-	
+
 	public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true ){
-		
+
 		// send the email
 		$mail = new PHPMailer();
 		$mail->IsHTML(true);
+		$smtp_host = getenv('SMTP_HOST');
+		if (!empty($smtp_host)) {
+			$mail->isSMTP();
+			$mail->Host = $smtp_host;
+		}
 		$mail->CharSet = "utf-8";
 		$mail->SetFrom($from, $fromName);
 		$mail->Subject = $subject;
-		
+
 		// parse content
 		$content = preg_replace("/\r\n|\r/", "<br />", $content);
 		$content = trim($content);
-		
+
 		$mail->Body = $content;
-		
+
 		if ($sentCopyToFrom){
 			$mail->AddCC($from);
 		}
-		
+
 		if (is_array ($toAdress)){
 			foreach($toAdress as $addres){
 				if ($addres[0] && $addres[0] != ""){
@@ -54,7 +59,7 @@ class MailerSend extends Model {
 				$mail->addBCC($toAdress);
 			}
 		}
-		
+
 		// get the language
 		$lang = "En";
 		if (isset ( $_SESSION ["user_settings"] ["language"] )) {
@@ -69,4 +74,3 @@ class MailerSend extends Model {
 	}
 
 }
-
