@@ -233,7 +233,7 @@ class CorespaceaccessController extends CoresecureController {
         $fullname = $modelUser->getUserFUllName($id);
 
         $modelUserSpace = new CoreSpaceUser();
-        $spaceUserInfo = $modelUserSpace->getUserSpaceInfo($id);
+        $spaceUserInfo = $modelUserSpace->getUserSpaceInfo2($id_space, $id);
         //echo 'space user info: <br/>';
         //print_r($spaceUserInfo);
 
