@@ -14,8 +14,8 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/mailer/Model/MailerSend.php';
 
 /**
- * Controler managing the user connection 
- * 
+ * Controler managing the user connection
+ *
  * @author Sylvain Prigent
  */
 class CoreconnectionController extends CorecookiesecureController {
@@ -33,7 +33,7 @@ class CoreconnectionController extends CorecookiesecureController {
     /**
      * (non-PHPdoc)
      * @see Controller::index()
-     * 
+     *
      */
     public function indexAction($message = "", $redirection = "") {
         $language = $this->getLanguage();
@@ -108,7 +108,7 @@ class CoreconnectionController extends CorecookiesecureController {
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function getRedirectPath() {
@@ -141,7 +141,7 @@ class CoreconnectionController extends CorecookiesecureController {
     /**
      * Connect a user to the application
      * @param string $login User login
-     * @param string $pwd User pssword 
+     * @param string $pwd User pssword
      * @return string Error message
      */
     private function connect($login, $pwd) {
@@ -206,7 +206,13 @@ class CoreconnectionController extends CorecookiesecureController {
                     $model->changePwd($user["id"], $newPassWord);
 
                     $mailer = new MailerSend();
-                    $from = "support@platform-manager.com";
+                    $mail_from = getenv('MAIL_FROM');
+                    if (!empty($mail_from)) {
+                        $from = $mail_from;
+                    }
+                    else {
+                        $from = "support@platform-manager.com";
+                    }
                     $fromName = "Platform-Manager";
                     $toAdress = $email;
                     $subject = CoreTranslator::AccountPasswordReset($lang);
@@ -214,7 +220,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
                     $_SESSION["message"] = CoreTranslator::ResetPasswordMessageSend($lang);
                 }
-                
+
             }
             else{
                 $_SESSION["message"] = CoreTranslator::UserNotFoundWithEmail($lang);
@@ -224,7 +230,7 @@ class CoreconnectionController extends CorecookiesecureController {
         $modelConfig = new CoreConfig();
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
-        
+
 
         $this->render(array("home_title" => $home_title,
             "home_message" => $home_message,

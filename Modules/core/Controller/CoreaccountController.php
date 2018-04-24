@@ -13,7 +13,7 @@ require_once 'Modules/mailer/Model/MailerSend.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -58,10 +58,10 @@ class CoreaccountController extends Controller {
                 $pwd = $modelCoreUser->generateRandomPassword();
 
                 $id_user = $modelCoreUser->createAccount(
-                        $form->getParameter("login"), 
-                        $pwd, 
-                        $form->getParameter("name"), 
-                        $form->getParameter("firstname"), 
+                        $form->getParameter("login"),
+                        $pwd,
+                        $form->getParameter("name"),
+                        $form->getParameter("firstname"),
                         $form->getParameter("email")
                 );
                 $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
@@ -69,7 +69,13 @@ class CoreaccountController extends Controller {
                 $modelPeningAccounts->add($id_user, $form->getParameter("id_space"));
 
                 $mailer = new MailerSend();
-                $from = "support@platform-manager.com";
+                $mail_from = getenv('MAIL_FROM');
+                if (!empty($mail_from)) {
+                    $from = $mail_from;
+                }
+                else {
+                    $from = "support@platform-manager.com";
+                }
                 $fromName = "Platform-Manager";
                 $toAdress = $form->getParameter("email");
                 $subject = CoreTranslator::Account($lang);
