@@ -39,6 +39,10 @@ class CoreSpaceUser extends Model {
             $this->runRequest($sql, array($role, $id_user, $id_space));    
         }
         
+        if ( $role > 0 ){
+            $sql = "UPDATE core_users SET is_active=? where id=?";
+            $this->runRequest($sql, array(1, $id_user));
+        }
     }
     
     public function exists($id_user, $id_space){
