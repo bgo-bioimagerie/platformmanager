@@ -3,8 +3,6 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 
-require_once 'Modules/ecosystem/Model/EcBelonging.php';
-
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPackage.php';
