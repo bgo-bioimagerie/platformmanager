@@ -32,7 +32,7 @@ class CoreUser extends Model {
         $sql = "SELECT * FROM core_users WHERE id=?";
         $this->runRequest($sql, array($id))->fetch();
     }
-    
+
     public function getAll() {
         $sql = "SELECT * FROM core_users";
         return $this->runRequest($sql)->fetchAll();
@@ -63,7 +63,7 @@ class CoreUser extends Model {
         $sql = "UPDATE core_users SET name=?, firstname=?, email=? WHERE id=?";
         $this->runRequest($sql, array($name, $firstname, $email, $id));
     }
-    
+
     public function setPhone($id, $phone) {
         $sql = "UPDATE core_users SET phone=? WHERE id=?";
         $this->runRequest($sql, array($phone, $id));
@@ -355,7 +355,7 @@ class CoreUser extends Model {
     }
 
     /**
-     * 
+     *
      * @param type $login
      * @return int
      */
