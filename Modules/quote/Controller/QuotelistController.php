@@ -58,9 +58,9 @@ class QuotelistController extends CoresecureController {
                 $data[$i]["recipient"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
                 $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space);
                 if (count($resps) > 0) {
-                    $unitID = $modelClient->getInstitution($resps[0]['id_client']);
-                    $data[$i]["address"] = $modelClient->getAddressInvoice($resps[0]['id_client']);
-                    $data[$i]["id_belonging"] = $modelClient->getPricingID($resps[0]['id_client']);
+                    $unitID = $modelClient->getInstitution($resps[0]['id']);
+                    $data[$i]["address"] = $modelClient->getAddressInvoice($resps[0]['id']);
+                    $data[$i]["id_belonging"] = $modelClient->getPricingID($resps[0]['id']);
                 }
             }
             $data[$i]["belonging"] = $pricings->getName($data[$i]["id_belonging"]);
