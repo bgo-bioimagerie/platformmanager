@@ -18,7 +18,7 @@ class SeOrder extends Model {
                 `id_space` int(11) NOT NULL,
                 `id_user` int(11) NOT NULL,
 		`id_status` int(1) NOT NULL,
-		`date_open` DATE,						
+		`date_open` DATE,
 		`date_last_modified` DATE,
 		`date_close` DATE,
                 `no_identification` varchar(150) NOT NULL DEFAULT '',
@@ -28,7 +28,7 @@ class SeOrder extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
-        
+
         $this->addColumn("se_order", "id_resp", "int(11)", 0);
         $this->addColumn("se_order", "id_invoice", "int(11)", 0);
         $this->addColumn("se_order", "created_by_id", "int(11)", 0);
@@ -44,22 +44,22 @@ class SeOrder extends Model {
 
         $this->runRequest($sql2);
     }
-    
+
     public function setCreatedBy($id, $id_user){
         $sql = "UPDATE se_order SET created_by_id=? WHERE id=?";
         $this->runRequest($sql, array($id_user, $id));
     }
-    
+
     public function setModifiedBy($id, $id_user){
         $sql = "UPDATE se_order SET modified_by_id=? WHERE id=?";
         $this->runRequest($sql, array($id_user, $id));
     }
-    
+
     public function setInvoiceID($id, $id_invoice){
         $sql = "UPDATE se_order SET id_invoice=? WHERE id=?";
         $this->runRequest($sql, array($id_invoice, $id));
     }
-    
+
     public function setService($id_order, $id_service, $quantity) {
         if ($this->isOrderService($id_order, $id_service)) {
             $sql = "UPDATE se_order_service SET quantity=? WHERE id_order=? AND id_service=?";
@@ -89,10 +89,10 @@ class SeOrder extends Model {
         }
         return array("services" => $services, "quantities" => $quantities);
     }
-    
+
     public function getOrderServiceQuantity($id_order, $id_service){
         $sql = "SELECT quantity FROM se_order_service WHERE id_order=? AND id_service=?";
-        
+
         $req =  $this->runRequest($sql, array($id_order, $id_service));
         if ($req->rowCount() == 1){
             return $req->fetch();
@@ -115,7 +115,7 @@ class SeOrder extends Model {
             return $idNew;
         }
     }
-    
+
     public function isOrder($id){
         $sql = "SELECT * FROM se_order WHERE id=?";
         $req = $this->runRequest($sql, array($id));
@@ -124,7 +124,7 @@ class SeOrder extends Model {
         }
         return false;
     }
-    
+
     public function addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
         $sql = "INSERT INTO se_order (id_space, id_user, no_identification, id_status, date_open, date_last_modified, date_close)
 				 VALUES(?,?,?,?,?,?,?)";
@@ -158,18 +158,18 @@ class SeOrder extends Model {
         $req = $this->runRequest($sql, array($id_resp));
         return $req->fetchAll();
     }
-    
+
     public function openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space){
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
                 . "AND id_user IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=?) "
                 . "AND date_open>=? "
                 . "AND date_close<=? "
                 . "AND id_space=? ";
-                
+
         $req = $this->runRequest($sql, array($id_resp, $dateBegin, $dateEnd, $id_space));
         return $req->fetchAll();
     }
-    
+
     public function openedEntries($id_space, $sortentry = 'id') {
         $sql = "select * from se_order where id_space=? AND id_status=1 order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
@@ -224,7 +224,7 @@ class SeOrder extends Model {
 		        where id=?";
         $this->runRequest($sql, array(date("Y-m-d", time()), $id));
     }
-    
+
     public function reopenEntry($id){
         $sql = "update se_order set id_status=1, date_close=?
 		        where id=?";
@@ -232,18 +232,18 @@ class SeOrder extends Model {
     }
 
     public function openedItemsForResp($id_resp){
-        
+
         $userList = " SELECT id_user FROM ec_j_user_responsible WHERE id_resp=? ";
         $orderList = " SELECT id FROM se_order WHERE id_user IN (".$userList.") AND id_status=1";
         $sql = "SELECT * FROM se_order_service WHERE id_order IN (".$orderList.")";
         return $this->runRequest($sql, array($id_resp))->fetchAll();
     }
-    
+
     public function getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd){
         $sql = "SELECT * FROM se_order WHERE id_space = ? AND date_open >= ? AND date_open <= ?";
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
         $orders = $req->fetchAll();
-        
+
         for($i = 0 ; $i < count($orders) ; $i++){
             if ($orders[$i]["id_resp"] == 0){
                 $sql = "SELECT id_resp FROM ec_j_user_responsible WHERE id_user=?";
@@ -253,28 +253,28 @@ class SeOrder extends Model {
         }
         return $orders;
     }
-    
+
     public function getPeriodeServicesBalancesOrders($id_space, $periodStart, $periodEnd){
         $sql = "select * from se_order where id_space=? AND date_open>=? OR date_open=?";
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
         $orders = $req->fetchAll();
-        
+
         //$items = array();
         $modelServices = new SeService();
         $items = $modelServices->getBySpace($id_space);
         //print_r($items);
-        
+
         $modelClientUser = new ClClientUser();
         $modelClient = new ClClient();
         for ($i = 0; $i < count($orders); $i++) {
-            
+
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
                 //echo "id user = " . $orders[$i]["id_user"] . "<br/>";
                 $resps = $modelClientUser->getUserClientAccounts($orders[$i]["id_user"], $id_space);
                 //echo "coucou 1 <br/>";echo "resps = <br/>";
                 //print_r($resps);
                 if (count($resps) > 0){
-                    
+
                     $orders[$i]["id_resp"] = $resps[0]["id"];
                 }
                 else{
@@ -283,7 +283,7 @@ class SeOrder extends Model {
             }
             $sql = "SELECT * FROM se_order_service WHERE id_order=?";
             $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"]));
-            
+
             //print_r($itemsSummary);
 
             $orders[$i]["entries"] = $itemsSummary;
@@ -296,9 +296,9 @@ class SeOrder extends Model {
 
         return array("items" => $items, "orders" => $orders);
     }
-    
+
     protected function calculateOrderTotal($itemsSummary, $LABpricingid){
-        
+
         $itemPricing = new SePrice();
         $totalHT = 0;
         foreach($itemsSummary as $item){
@@ -310,9 +310,9 @@ class SeOrder extends Model {
         }
         return $totalHT;
     }
-    
+
     public function getPeriodeBilledServicesBalancesOrders($id_space, $periodStart, $periodEnd){
-        // get the projects 
+        // get the projects
         $sql1 = "SELECT * FROM se_order WHERE id_space=? AND id_invoice > 0 AND date_open >= ? AND date_open <= ?";
         $req1 = $this->runRequest($sql1, array($id_space, $periodStart, $periodEnd));
         $orders = $req1->fetchAll();
@@ -321,6 +321,7 @@ class SeOrder extends Model {
         $modelUser = new CoreUser();
         $modelUserClient = new ClClientUser();
         $modelUnit = new EcUnit();
+        $modelClient = new ClClient();
         for ($i = 0; $i < count($orders); $i++) {
 
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
@@ -330,7 +331,7 @@ class SeOrder extends Model {
                 //echo "coucou 1 <br/>";echo "resps = <br/>";
                 //print_r($resps);
                 if (count($resps) > 0){
-                    
+
                     $orders[$i]["id_resp"] = $resps[0]["id"];
                 }
                 else{
@@ -342,8 +343,8 @@ class SeOrder extends Model {
             //print_r($itemsSummary);
 
             $orders[$i]["entries"] = $itemsSummary;
-            
-            $id_unit = $modelUser->getUnit($orders[$i]["id_resp"]);
+
+            $id_unit = $modelClient->getInstitution($orders[$i]["id_resp"]);
             $LABpricingid = $modelUnit->getBelonging($id_unit);
             $orders[$i]["total"] = $this->calculateOrderTotal($itemsSummary, $LABpricingid);
         }

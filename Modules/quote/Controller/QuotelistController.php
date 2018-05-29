@@ -24,7 +24,7 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -49,7 +49,7 @@ class QuotelistController extends CoresecureController {
 
         $model = new Quote();
         $modelUser = new CoreUser();
-        $modelClient = new ClClient(); 
+        $modelClient = new ClClient();
         $pricings = new ClPricing();
         $modelUSerClients = new ClClientUser();
         $data = $model->getAll($id_space);
@@ -58,7 +58,7 @@ class QuotelistController extends CoresecureController {
                 $data[$i]["recipient"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
                 $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space);
                 if (count($resps) > 0) {
-                    $unitID = $modelUser->getUnit($resps[0]['id_client']);
+                    $unitID = $modelClient->getInstitution($resps[0]['id_client']);
                     $data[$i]["address"] = $modelClient->getAddressInvoice($resps[0]['id_client']);
                     $data[$i]["id_belonging"] = $modelClient->getPricingID($resps[0]['id_client']);
                 }
@@ -132,10 +132,10 @@ class QuotelistController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-            
+
             //echo "date open = " . $form->getParameter('date_open') . "<br/>";
             //return;
-            $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'), 
+            $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'),
                     $this->request->getParameterNoException('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
@@ -237,9 +237,9 @@ class QuotelistController extends CoresecureController {
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
-            $id = $modelQuote->set($id, $id_space, $form->getParameter('recipient'), 
-                    $form->getParameter('address'), 
-                    $form->getParameter('id_belonging'), 0, 
+            $id = $modelQuote->set($id, $id_space, $form->getParameter('recipient'),
+                    $form->getParameter('address'),
+                    $form->getParameter('id_belonging'), 0,
                     $form->getParameter('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
@@ -283,7 +283,7 @@ class QuotelistController extends CoresecureController {
         // get the list of items
         $modelQuote = new Quote();
         $info = $modelQuote->getAllInfo($id_space, $id);
-        
+
         $modelQuoteitems = new QuoteItem();
         $items = $modelQuoteitems->getAll($id);
         $table = array();
@@ -334,7 +334,7 @@ class QuotelistController extends CoresecureController {
             $html2pdf->setDefaultFont('Arial');
             //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
             $html2pdf->writeHTML($content);
-            //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
+            //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>";
             $html2pdf->Output(QuoteTranslator::quote($lang) . "_" . $resp . '.pdf');
             return;
         } catch (HTML2PDF_exception $e) {
@@ -357,11 +357,11 @@ class QuotelistController extends CoresecureController {
 
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        
+
         //print_r($invoice);
         $total = 0;
         foreach ($tableData as $d) {
-           
+
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d["name"] . " " . $d["comment"] . "</td>";
             $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format($d["quantity"], 2, ',', ' ') . "</td>";

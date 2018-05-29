@@ -92,7 +92,7 @@ class v1tov2Controller extends Controller {
             $resourcesMap = $this->importResources($pdo_old, $id_space, $resourcesCategoriesMap, $areasMap);
             echo "fn 4 <br/>";
             $visasMap = $this->importVisas($pdo_old, $resourcesCategoriesMap, $usersMap);
-            
+
 
             // Booking
             echo "import booking <br/>";
@@ -159,7 +159,7 @@ class v1tov2Controller extends Controller {
 
         $model = new EcBelonging();
         $unitMap = array();
-        
+
         $display_order = 0;
         foreach ($bel_old as $uo) {
             $name = $uo["name"];
@@ -187,7 +187,7 @@ class v1tov2Controller extends Controller {
             if(isset($belongingMap[$uo["id_belonging"]])){
                 $id_belonging = $belongingMap[$uo["id_belonging"]];
             }
-            
+
             $newID = $modelUnit->importUnit2($this->unitNameMapping($name), $address, $id_belonging);
             $unitMap[$uo["id"]] = $newID;
         }
@@ -312,12 +312,12 @@ class v1tov2Controller extends Controller {
             $type = 0;
             $description = $ro["description"];
             $long_description = "";
-            
+
             $id_category = 1;
             if(isset($resourcesCategoriesMap[$ro["category_id"]])){
                 $id_category = $resourcesCategoriesMap[$ro["category_id"]];
             }
-            
+
             //print_r($areasMap);
             //echo ' re name = ' . $ro["name"] . "<br/>";
             //echo ' re area = ' . $ro["area_id"] . "<br/>";
@@ -513,7 +513,7 @@ class v1tov2Controller extends Controller {
 
         $model = new BkNightWE();
         foreach ($pricing_old as $d) {
-            
+
             $pric = 1;
             if(isset($belongingMap[$d["id"]])){
                 $pric = $belongingMap[$d["id"]];
@@ -532,7 +532,7 @@ class v1tov2Controller extends Controller {
         $packagesMap = array();
         foreach ($package_old as $d) {
 
-            /// chage id if several platform import 
+            /// chage id if several platform import
             $idResource = 1;
             if (isset($resourcesMap[$d["id_resource"]])) {
                 $idResource = $resourcesMap[$d["id_resource"]];
@@ -541,14 +541,14 @@ class v1tov2Controller extends Controller {
             $id_package = 0;
             if(isset($d["id_package"])){
                 $id_package = $d["id_package"];
-            
+
                 $model->setPackage($d["id_package"], $idResource, $d["name"], $d["duration"]);
                 $packagesMap[$d["id_package"]] = $d["id_package"];
             }
         }
         return $packagesMap;
     }
-    
+
     public function importPackagePices($pdo_old, $belongingMap, $packagesMap){
         $sql = "SELECT * FROM sy_j_packages_prices";
         $result = $pdo_old->query($sql);
@@ -649,6 +649,7 @@ class v1tov2Controller extends Controller {
         $model = new InInvoice();
         $modelItem = new InInvoiceItem();
         $modelUser = new EcUser();
+        $modelClient = new ClClient();
         $invoicesMap = array();
         foreach ($bills_old as $d) {
             $module = "services";
@@ -661,7 +662,7 @@ class v1tov2Controller extends Controller {
                 $id_resp = $usersMap[$d["id_resp"]];
             }
 
-            $id_unit = $modelUser->getUnit($usersMap[$d["id_resp"]]);
+            $id_unit = $modelClient->getInstitution($usersMap[$d["id_resp"]]);
             $id_responsible = $id_resp;
             $total_ht = $d["total_ht"];
             $period_begin = "";
@@ -695,9 +696,9 @@ class v1tov2Controller extends Controller {
                 $id_resp = $usersMap[$d["id_resp"]];
             }
             else{
-                $id_resp = 1; 
+                $id_resp = 1;
             }
-            
+
             if(isset($usersMap[$d["id_user"]])){
                 $id_user = $usersMap[$d["id_user"]];
             }

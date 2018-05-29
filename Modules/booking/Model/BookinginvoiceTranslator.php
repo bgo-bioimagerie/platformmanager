@@ -2,7 +2,7 @@
 
 /**
  * Class to translate the syggrif views
- * 
+ *
  * @author sprigent
  *
  */
@@ -59,7 +59,7 @@ class BookinginvoiceTranslator {
 
     public static function bookinggrrstats($lang) {
         if ($lang == "fr") {
-            return "Stats personalisés";
+            return "Stats personalisées";
         }
         return "Manual stats";
     }
@@ -954,7 +954,7 @@ class BookinginvoiceTranslator {
         }
         return "Invoice booking";
     }
-    
+
     public static function Invoice_All($lang = "") {
         if ($lang == "fr") {
             return "Facturer tout";
@@ -1220,34 +1220,34 @@ class BookinginvoiceTranslator {
         }
         return "Block resources";
     }
-    
+
     public static function RemoveReservation($lang){
         if ($lang == "fr") {
             return "Etes vous sure de vouloir supprimer la réservation ?";
         }
         return "Are you sure you want to delete this reservation ?";
     }
-    
+
     public static function SendEmailsToUsers($lang){
         if ($lang == "fr") {
             return "Prévenir les autres utilisateurs de la machine que le créneau est libéré:";
         }
         return "Inform other users of that the slot is free:";
     }
-    
+
     public static function EmailWhenResaDelete($lang){
         if ($lang == "fr") {
             return "Proposer d'envoyer un courriel lors de dé-réservation";
         }
         return "Ask to send email when cancel a booking";
     }
-            
+
     public static function Discount($lang){
         if ($lang == "fr") {
             return "Pourcentage de remise";
         }
         return "Discount";
-    }        
-   
-    
+    }
+
+
 }

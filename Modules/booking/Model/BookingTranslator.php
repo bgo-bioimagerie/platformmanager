@@ -2,7 +2,7 @@
 
 /**
  * Class to translate the syggrif views
- * 
+ *
  * @author sprigent
  *
  */
@@ -21,7 +21,7 @@ class BookingTranslator {
         }
         return "Location";
     }
-    
+
     public static function bookingConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Booking permet de réserver des resources dans un calendrier";
@@ -66,7 +66,7 @@ class BookingTranslator {
 
     public static function bookinggrrstats($lang) {
         if ($lang == "fr") {
-            return "Stats personalisés";
+            return "Stats personalisées";
         }
         return "Manual stats";
     }
@@ -1497,7 +1497,7 @@ class BookingTranslator {
 
     public static function statquantities($lang) {
         if ($lang == "fr") {
-            return "stat quantitées";
+            return "Stats quantitées";
         }
         return "stat quantities";
     }
@@ -1557,26 +1557,26 @@ class BookingTranslator {
         }
         return "Authorisations history for";
     }
-    
+
     public static function statResp($lang) {
         if ($lang == "fr") {
             return "Durées réservations par responsables";
         }
         return "Booking time per responsible";
     }
-    
+
     public static function bookingstatreservationresp($lang) {
         if ($lang == "fr") {
             return "Temps réservation par compte client";
         }
         return "Booking time per account";
     }
-    
+
     public static function bookingauthorisations($lang) {
         if ($lang == "fr") {
             return "Habilitations";
         }
         return "Booking access";
     }
-    
+
 }
