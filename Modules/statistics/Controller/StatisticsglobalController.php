@@ -11,7 +11,7 @@ require_once 'Modules/booking/Controller/BookingstatisticsController.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -93,6 +93,7 @@ class StatisticsglobalController extends CoresecureController {
             $excludeColorCode = $this->request->getParameter("exclude_color");
 
             $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space);
+            return;
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
