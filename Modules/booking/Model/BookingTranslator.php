@@ -1497,7 +1497,7 @@ class BookingTranslator {
 
     public static function statquantities($lang) {
         if ($lang == "fr") {
-            return "Stats quantitées";
+            return "Stats quantités";
         }
         return "stat quantities";
     }
