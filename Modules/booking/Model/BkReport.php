@@ -84,7 +84,7 @@ class BkReport extends Model {
 		}
 		
 		if ( $champ == "area" ){
-			return " a.name = " . $text;
+			return " a.name = '" . $text . "'";
 		}
 		if ($champ == "resource"){
 			return " r.name ". $like ." '%" . $text . "%'";
