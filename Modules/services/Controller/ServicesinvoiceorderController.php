@@ -20,7 +20,7 @@ require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 //require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -42,7 +42,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
         $formUnit = $this->createByUnitForm($id_space, $lang);
         if ($formUnit->check()) {
@@ -59,7 +59,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $formUnit->getHtml($lang)));
     }
-    
+
     /*
     public function getHeaders($lang) {
         return array(ServicesTranslator::service($lang), ServicesTranslator::Quantity($lang), ServicesTranslator::UnitPrice($lang));
@@ -82,7 +82,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     public function editAction($id_space, $id_invoice, $pdf = 0) {
 
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
-        
+
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
         $invoice = $modelInvoice->get($id_invoice);
@@ -110,8 +110,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             // apply discount
             $discount = $form->getParameter("discount");
             $total_ht = (1-floatval($discount)/100)*$total_ht;
-            
-            
+
+
             $modelInvoiceItem->editItemContent($id_items[0]["id"], $content, $total_ht);
             $modelInvoice->setTotal($id_invoice, $total_ht);
             $modelInvoice->setDiscount($id_invoice, $discount);
@@ -124,15 +124,15 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     }
 
     public function deleteAction($id_space, $id_invoice) {
-        
+
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
-        
+
         // get orders
         $modelInvoiceItem = new InInvoiceItem();
         $id_items = $modelInvoiceItem->getInvoiceItems($id_invoice);
         $details = $this->unparseDetails($id_items);
         $modelOrder = new SeOrder();
-        
+
         // re-open orders and remove invoice number
         foreach ($details as $detail) {
             $modelOrder->reopenEntry($detail[0]);
@@ -164,7 +164,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
         return $form;
-         
+
          */
         return "";
     }
@@ -176,14 +176,14 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelInvoiceItem = new InInvoiceItem();
         $modelUnit = new EcUnit();
         // select all the opened order
-        $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp);
+        $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
 
         if (count($orders) == 0) {
             throw new Exception("there are no orders open for this responsible");
             //echo "there are no orders open for this responsible";
             //return;
         }
-        
+
         $lang = $this->getLanguage();
 
         // get the bill number
@@ -193,18 +193,18 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
         $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
         $modelInvoice->setTitle($id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
-        
+
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForResp($id_resp);
         $belonging = $modelUnit->getBelonging($id_unit, $id_space);
         $content = $this->parseServicesToContent($services, $belonging);
         $details = $this->parseOrdersToDetails($orders, $id_space);
-        
+
         $total_ht = $this->calculateTotal($services, $belonging);
 
         $modelInvoiceItem->setItem(0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_invoice, $total_ht);
-        
+
         // close orders
         foreach ($orders as $order) {
             $modelOrder->setEntryCloded($order["id"]);
@@ -306,11 +306,11 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
-        
+
         $modelInvoice = new InInvoice();
         $discount = $modelInvoice->getDiscount($id_invoice);
         $form->addText("discount", ServicesTranslator::Discount($lang), false, $discount);
-        
+
         $total = (1-floatval($discount)/100)*$total;
         $form->addNumber("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
