@@ -28,6 +28,21 @@ class CoreUser extends Model {
         $this->primaryKey = "id";
     }
 
+    public function getResponsibles(){
+       $sql = 'SELECT DISTINCT responsible_id FROM bk_calendar_entry';
+       $req2 = $this->runRequest($sql);
+       $resps = $req2->fetchAll();
+       $resourceCount = array();
+       foreach($resps as $resp){
+            $sqlr = "SELECT * from cl_clients WHERE id=?";
+            $respinfo = $this->runRequest($sqlr, array($resp[0]))->fetch();
+            if($respinfo){
+            $resourceCount[] = $respinfo;
+            }
+       }
+       return $resourceCount;
+    }    
+
     public function getInfo($id){
         $sql = "SELECT * FROM core_users WHERE id=?";
         $this->runRequest($sql, array($id))->fetch();

@@ -17,13 +17,13 @@ class BookingInvoice extends InvoiceModel {
 
 
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
-        
+
         $beginArray = explode("-", $beginPeriod);
         $startPeriodeTime = mktime(0, 0, 0, $beginArray[1], $beginArray[2], $beginArray[0]);
-        
+
         $endArray = explode("-", $endPeriod);
         $endPeriodeTime = mktime(0, 0, 0, $endArray[1], $endArray[2], $endArray[0]);
-        
+
         $sql = "SELECT id FROM bk_calendar_entry WHERE responsible_id=? AND start_time>=? AND start_time<=? AND resource_id IN (SELECT id FROM re_info WHERE id_space=?)";
         $req = $this->runRequest($sql, array($id_resp, $startPeriodeTime, $endPeriodeTime, $id_space));
         if ( $req->rowCount() > 0){
@@ -31,13 +31,13 @@ class BookingInvoice extends InvoiceModel {
         }
         return false;
     }
-    
+
     public function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $invoice_id, $lang) {
-        
+
         // get all resources
         $modelClient = new ClClient();
         $LABpricingid = $modelClient->getPricingID($id_resp);
-        
+
         $modelResouces = new ResourceInfo();
         $resources = $modelResouces->getBySpace($id_space);
 
@@ -46,7 +46,7 @@ class BookingInvoice extends InvoiceModel {
         $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid, $id_resp, $id_space);
         //echo "pass 1<br/>";
         $packagesPrices = $this->getUnitPackagePricesForEachResource($resources, $LABpricingid, $id_resp);
-        
+
         // get all the reservations for each resources
         $total_ht = 0;
         $modelCal = new BkCalendarEntry();
@@ -85,63 +85,63 @@ class BookingInvoice extends InvoiceModel {
             $resourceCount = array();
             if (count($reservations) > 0) {
                 //echo "<br/> user time day = " . $userTime["nb_hours_day"] . "<br/>";
-                
+
                 $resourceCount["resource"] = $res["id"];
 
                 if ($userTime["nb_hours_day"] > 0) {
                     $resourceCount["label"] = $res["name"] . " " . BookingTranslator::Day($lang);
                     $resourceCount["quantity"] = $userTime["nb_hours_day"];
                     $resourceCount["unitprice"] = $timePrices[$res["id"]]["price_day"];
-                    
+
                     $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                     $content["count"][] = $resourceCount;
-                    
+
                 }
                 if ($userTime["nb_hours_night"] > 0) {
                     $resourceCount["label"] = $res["name"] . " " . BookingTranslator::night($lang);
                     $resourceCount["quantity"] = $userTime["nb_hours_night"];
                     $resourceCount["unitprice"] = $timePrices[$res["id"]]["price_night"];
-                    
+
                     $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                     $content["count"][] = $resourceCount;
-                    
+
                 }
                 if ($userTime["nb_hours_we"] > 0) {
                     $resourceCount["label"] = $res["name"] . " " . BookingTranslator::WE($lang);
                     $resourceCount["quantity"] = $userTime["nb_hours_we"];
                     $resourceCount["unitprice"] = $timePrices[$res["id"]]["price_we"];
-                    
+
                     $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                     $content["count"][] = $resourceCount;
-                    
+
                 }
                 foreach ($packagesPrices[$res["id"]] as $p) {
                     if ($userPackages[$p["id"]] > 0) {
-                        
+
                         $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName( $p["id"] );
                         $resourceCount["quantity"] = $userPackages[$p["id"]];
                         $resourceCount["unitprice"] = $p["price"];
-                        
+
                         $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                         $content["count"][] = $resourceCount;
                     }
                 }
-                
-                
+
+
             }
-            
-            
+
+
             //echo "<br/> content: $content <br/>";
         }
         $content["total_ht"] = $total_ht;
-        
+
         return $content;
-        
-        
+
+
     }
-    
+
     public function delete($id_invoice){
-     
+
         // get items
         require_once 'Modules/booking/Model/BkCalendarEntry.php';
         $model = new BkCalendarEntry();
@@ -150,22 +150,22 @@ class BookingInvoice extends InvoiceModel {
             $model->setReservationInvoice($s["id"], 0);
         }
     }
-    
+
     public function details($id_space, $invoice_id, $lang){
-        
+
         // all users in the invoice
         $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE invoice_id=?";
         $users = $this->runRequest($sql, array($invoice_id))->fetchAll();
-        
+
         // all resources in the invoice
         $sqlr = "SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE invoice_id=?";
         $resources = $this->runRequest($sqlr, array($invoice_id))->fetchAll();
-        
-        
-        
+
+
+
         $modelResource = new ResourceInfo();
         $modelUser = new CoreUser();
-        
+
         $data = array();
         $data["title"] = BookingTranslator::MAD($lang);
         $data["header"] = array(
@@ -177,11 +177,11 @@ class BookingInvoice extends InvoiceModel {
         $data["content"] = array();
         foreach($resources as $resource){
             $resouceName = $modelResource->getName($resource[0]);
-            
+
             foreach($users as $user){
 
                 //echo "user = " . $user[0] . ", resource = " . $resource[0] . "<br/>";
-                
+
                 $sql = "SELECT * FROM bk_calendar_entry WHERE invoice_id=? AND recipient_id=? AND resource_id=? ORDER BY start_time ASC";
                 $resreq = $this->runRequest($sql, array($invoice_id, $user[0], $resource[0]));
                 if ($resreq->rowCount() > 0){
@@ -190,30 +190,31 @@ class BookingInvoice extends InvoiceModel {
                     foreach($reservations as $res){
                         $time += $res["end_time"] - $res["start_time"];
                     }
-                    $data["content"][] = array( 
-                        "label" => $resouceName, 
+                    $data["content"][] = array(
+                        "label" => $resouceName,
                         "user" => $modelUser->getUserFUllName($user[0]),
-                        "date" => CoreTranslator::dateFromEn(date("Y-m-d", $reservations[0]["start_time"]), $lang) . " - " . 
-                                  CoreTranslator::dateFromEn(date("Y-m-d", $reservations[count($reservations)-1]["start_time"]), $lang), 
+                        "date" => CoreTranslator::dateFromEn(date("Y-m-d", $reservations[0]["start_time"]), $lang) . " - " .
+                                  CoreTranslator::dateFromEn(date("Y-m-d", $reservations[count($reservations)-1]["start_time"]), $lang),
                         "quantity" => $time/3600
-                        ); 
+                        );
                 }
-                
-                                             
+
+
             }
         }
         return $data;
     }
-    
+
     protected function getUnitTimePricesForEachResource($resources, $LABpricingid, $id_cient, $id_space) {
 
-        
-        
+
+
         // get the pricing informations
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
         //echo "getUnitTimePricesForEachResource 1 <br>";
         //$tarif_name = $pricingInfo['tarif_name'];
+        if(! array_key_exists('tarif_unique', $pricingInfo)){return Array();}
         $tarif_unique = $pricingInfo['tarif_unique'];
         $tarif_nuit = $pricingInfo['tarif_night'];
         $tarif_we = $pricingInfo['tarif_we'];
