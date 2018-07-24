@@ -12,7 +12,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 class UsersPatch extends Model {
 
     public function __construct() {
-        
+
     }
 
     public function patch() {
@@ -21,8 +21,14 @@ class UsersPatch extends Model {
         $sqlcl = "SELECT * FROM cl_clients";
         $client_count = $this->runRequest($sqlcl)->rowCount();
 
-        $sqlresp = "SELECT * FROM ec_j_user_responsible";
-        $sqlresp_count = $this->runRequest($sqlresp)->rowCount();
+        $sqlresp_count = 0;
+        try {
+            $sqlresp = "SELECT * FROM ec_j_user_responsible";
+            $sqlresp_count = $this->runRequest($sqlresp)->rowCount();
+        }
+        catch (Exception $e) {
+            echo "ec_j_user_responsible not present, skipping existing accounts migration\n";
+        }
 
         if ($sqlresp_count > 0 && $client_count == 0) {
 
@@ -38,24 +44,24 @@ class UsersPatch extends Model {
     }
 
     public function copyPhones(){
-        
+
         $sql = "SELECT id_core, phone FROM users_info";
         $data = $this->runRequest($sql)->fetchAll();
-        
+
         foreach ($data as $d){
             $sql0 = "SELECT phone FROM core_users WHERE id=?";
             $oldPhone = $this->runRequest($sql0, array($d["id_core"]))->fetch();
-            
+
             //echo 'old phone = ' . $oldPhone . "<br/>";
-            
+
             if ($oldPhone[0] == ""){
                 $sql = "UPDATE core_users SET phone=? WHERE id=?";
                 $this->runRequest($sql, array($d["phone"], $d["id_core"]));
             }
         }
-        
+
     }
-    
+
     public function removeEcosystemFromSpaceTools() {
         $sql = "DELETE FROM core_space_menus WHERE module=?";
         $this->runRequest($sql, array("ecosystem"));
@@ -72,7 +78,7 @@ class UsersPatch extends Model {
 
             foreach ($belongings as $belonging) {
                 $sqln = "INSERT INTO cl_pricings (id_space, name, color, type, display_order) VALUES (?,?,?,?,?)";
-                $this->runRequest($sqln, array($space["id"], $belonging["name"], 
+                $this->runRequest($sqln, array($space["id"], $belonging["name"],
                     $belonging["color"], $belonging["type"], $belonging["display_order"]));
             }
         }
@@ -284,7 +290,7 @@ class UsersPatch extends Model {
     }
 
     protected function updateInvoicesRespIDs($warning = false){
-        
+
         // invoices
         $sql = "SELECT * FROM in_invoice";
         $invoices = $this->runRequest($sql)->fetchAll();
@@ -293,57 +299,57 @@ class UsersPatch extends Model {
             $id_space = $invoice["id_space"];
             $resp_fullname = $modelUser->getUserFUllName( $invoice["id_responsible"] );
             $newRespID = $this->getResponsibleNewClientId($resp_fullname, $id_space);
-            
+
             $sql = "UPDATE in_invoice SET id_responsible=? WHERE id=?";
             $this->runRequest($sql, array($newRespID, $invoice["id"]));
         }
-        
+
         $sqlnwes = "SELECT * FROM bk_nightwe";
         $nwes = $this->runRequest($sqlnwes)->fetchAll();
         foreach($nwes as $nwe){
             $id_space = $nwe["id_space"];
             $belongingName = $this->getEcBelongingName($nwe["id_belonging"]);
             $newBelID = $this->getNewBelongingID($belongingName, $id_space);
-            
+
             $sql = "UPDATE bk_nightwe SET id_belonging=? WHERE id=?";
             $this->runRequest($sql, array($newBelID, $nwe["id"]));
-            
+
         }
-        
+
         // change bk_prices belongings
         $sqlbk = "SELECT * FROM bk_prices";
         $bk_prices = $this->runRequest($sqlbk)->fetchAll();
         foreach($bk_prices as $price){
             $belongingName = $this->getEcBelongingName($price["id_belonging"]);
-            
+
             // get id_space
             $sql = "SELECT id_space FROM re_info WHERE id=?";
             $id_space = $this->runRequest($sql, array($price["id_resource"]))->fetch();
-            
+
             $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
-            
+
             $sql2 = "UPDATE bk_prices SET id_belonging=? WHERE id=?";
             $this->runRequest($sql2, array($newBelID, $price["id"]));
         }
-        
+
         // change se_prices belongings
         $sqlse = "SELECT * FROM se_prices";
         $se_prices = $this->runRequest($sqlse)->fetchAll();
         foreach($se_prices as $price){
             $belongingName = $this->getEcBelongingName($price["id_belonging"]);
-            
+
             // get id_space
             $sql = "SELECT id_space FROM se_services WHERE id=?";
             $id_space = $this->runRequest($sql, array($price["id_service"]))->fetch();
-            
+
             $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
-            
+
             $sql2 = "UPDATE se_prices SET id_belonging=? WHERE id=?";
             $this->runRequest($sql2, array($newBelID, $price["id"]));
         }
-        
+
     }
-    
+
     protected function getNewBelongingID($name, $id_space){
         $sql = "SELECT id FROM cl_pricings WHERE name=? AND id_space=?";
         $req = $this->runRequest($sql, array($name, $id_space));
@@ -353,5 +359,5 @@ class UsersPatch extends Model {
         }
         return 0;
     }
-    
+
 }
