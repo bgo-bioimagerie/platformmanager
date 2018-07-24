@@ -12,7 +12,7 @@ pwd = MYSQL_PASS
 headless = false
 
 [Modules]
-modules[] = "Core"
+modules[] = "core"
 modules[] = "transfer"
 modules[] = "clients"
 modules[] = "users"

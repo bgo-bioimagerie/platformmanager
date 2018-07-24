@@ -11,10 +11,10 @@ class CoreAdminMenu extends Model {
 
     /**
      * Create the menus tables
-     * 
+     *
      * @return PDOStatement
      */
-    public function createTable() {
+    public function __construct() {
 
         $this->tableName = "core_adminmenu";
         $this->setColumnsInfo("id", "int(11)", 0);

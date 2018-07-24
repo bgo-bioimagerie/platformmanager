@@ -26,9 +26,14 @@ class MailerSend extends Model {
 		$mail = new PHPMailer();
 		$mail->IsHTML(true);
 		$smtp_host = getenv('SMTP_HOST');
+        $smtp_port = 25;
+        if(getenv('SMTP_PORT')) {
+            $smtp_port= intval(getenv('SMTP_PORT'));
+        }
 		if (!empty($smtp_host)) {
 			$mail->isSMTP();
 			$mail->Host = $smtp_host;
+            $mail->Port = $smtp_port;
 		}
 		$mail->CharSet = "utf-8";
 		$mail->SetFrom($from, $fromName);
