@@ -16,7 +16,7 @@ class BkAuthorization extends Model {
      * @return PDOStatement
      */
     public function __construct() {
-        
+
         $this->tableName = "bk_authorization";
         $this->setColumnsInfo("id", "int(11)", 0);
         $this->setColumnsInfo("user_id", "int(11)", 0);
@@ -25,11 +25,11 @@ class BkAuthorization extends Model {
         $this->setColumnsInfo("date", "DATE", "0000-00-00");
         $this->setColumnsInfo("date_desactivation", "DATE", "0000-00-00");
         $this->setColumnsInfo("is_active", "int(1)", 1);
-        
+
         $this->primaryKey = "id";
-        
+
     }
-    
+
     public function mergeUsers($users){
         for($i = 1 ; $i < count($users) ; $i++){
             $sql = "UPDATE bk_authorization SET user_id=? WHERE user_id=?";
@@ -41,12 +41,12 @@ class BkAuthorization extends Model {
         $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND user_id=?";
         return $this->runRequest($sql, array($id_resource_category, $id_user))->fetchAll();
     }
-    
+
     public function add($user_id, $resource_id, $visa_id, $date){
         $sql = "INSERT INTO bk_authorization (user_id, resource_id, visa_id, date, is_active) VALUES (?,?,?,?,?)";
         $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, 1));
     }
-    
+
     public function set($id, $user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active){
         $sql = "UPDATE bk_authorization SET user_id=?, resource_id=?, visa_id=?, date=?, date_desactivation=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active, $id));
@@ -109,51 +109,51 @@ class BkAuthorization extends Model {
             return false;
         }
     }
-    
+
     public function getLastActiveAuthorization($id_resource, $id_user){
         $sql = "SELECT * from bk_authorization where user_id=? AND resource_id=? AND is_active=1 ORDER BY date DESC;";
         $data = $this->runRequest($sql, array($id_user, $id_resource));
         if ($data->rowCount() >= 1){
-            return $data->fetch();  
+            return $data->fetch();
         }
         else{
             return array();
         }
     }
 
- 
-    
+
+
 
     public function getTotalForPeriod($id_space, $period_begin, $period_end){
         $sql = 'SELECT * FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
         $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
-    
+
     public function getDistinctUserForPeriod($id_space, $period_begin, $period_end){
         $sql = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
         $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
-    
+
     public function getDistinctUnitForPeriod($id_space, $period_begin, $period_end){
         $sql = 'SELECT DISTINCT lab_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
         $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
-    
+
     public function getDistinctVisaForPeriod($id_space, $period_begin, $period_end){
         $sql = 'SELECT DISTINCT visa_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
         $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
-    
+
     public function getDistinctResourceForPeriod($id_space, $period_begin, $period_end){
         $sql = 'SELECT DISTINCT resource_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
         $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
-    
+
     public function getNewPeopleForPeriod($id_space, $period_begin, $period_end){
         $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date >=? AND date <=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? ) ORDER BY date';
         $req = $this->runRequest($sql_search_1, array($period_begin, $period_end, $id_space));
@@ -171,8 +171,8 @@ class BkAuthorization extends Model {
         }
         return $new_people;
     }
-    
-    
+
+
     /**
      * Export authorization minimal sttistics
      * @param date $searchDate_start
@@ -363,16 +363,16 @@ class BkAuthorization extends Model {
         }
         return $t;
     }
-    
+
     public function getForResourceInstructorPeriod($resource_id, $instructor_id, $period_begin, $period_end){
         $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND date>=? AND date<=? AND visa_id IN (SELECT id FROM re_visas WHERE id_instructor=?) ";
         $req = $this->runRequest($sql, array($resource_id, $period_begin, $period_end, $instructor_id));
         return $req->fetchAll();
     }
-    
+
     // unit = client
     public function getFormResourceUnitPeriod($resource_id, $unit_id, $period_begin, $period_end){
-        
+
         $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND date>=? AND date<=? AND user_id IN (SELECT id_user from cl_j_client_user WHERE id_client=?)";
         $req = $this->runRequest($sql, array($resource_id, $period_begin, $period_end, $unit_id));
         return $req->fetchAll();
@@ -580,7 +580,7 @@ class BkAuthorization extends Model {
         $sql = "SELECT DISTINCT core_users.name, auth.visa_id, auth.date, core_users.firstname, core_users.email,"
                 . "ec_units.name AS unitName " .
                 "FROM bk_authorization AS auth " .
-                "INNER JOIN ec_units ON auth.lab_id = ec_units.id " .
+                "LEFT JOIN ec_units ON auth.lab_id = ec_units.id " .
                 "INNER JOIN core_users ON auth.user_id = core_users.id " .
                 "WHERE auth.resource_id=? AND auth.is_active=1 "
                 . " ORDER BY core_users.name ASC;";
@@ -607,12 +607,12 @@ class BkAuthorization extends Model {
      * @return multitype: Authorizations informations
      */
     public function getActiveAuthorizationForResourceCategory($resource_id) {
-        $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.name AS userName, core_users.firstname AS userFirstname, core_users.email AS userEmail, core_units.name AS unitName, sy_visas.name AS visa, sy_resourcescategory.name AS resource 		
+        $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.name AS userName, core_users.firstname AS userFirstname, core_users.email AS userEmail, ce_units.name AS unitName, se_visa.name AS visa, re_category.name AS resource
 					from bk_authorization
-					     INNER JOIN core_users on bk_authorization.user_id = core_users.id
-					     INNER JOIN core_units on bk_authorization.lab_id = core_units.id
-					     INNER JOIN sy_visas on bk_authorization.visa_id = sy_visas.id
-					     INNER JOIN sy_resourcescategory on bk_authorization.resource_id = sy_resourcescategory.id
+					     INNER JOIN ce_users on bk_authorization.user_id = core_users.id
+					     LEFT JOIN ce_units on bk_authorization.lab_id = ce_units.id
+					     INNER JOIN se_visa on bk_authorization.visa_id = se_visa.id
+					     INNER JOIN re_category on bk_authorization.resource_id = re_category.id
 				WHERE bk_authorization.resource_id=? AND bk_authorization.is_active=1
 				ORDER BY core_users.name;";
         $req = $this->runRequest($sql, array($resource_id));
