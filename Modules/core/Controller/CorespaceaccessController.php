@@ -254,7 +254,7 @@ class CorespaceaccessController extends CoresecureController {
             $modelUserSpace->setDateConvention($id, $id_space,  CoreTranslator::dateToEn($form->getParameter("date_convention"), $lang));
 
             // upload convention
-            $target_dir = "data/core/conventions/";
+            $target_dir = "data/conventions/";
             if ($_FILES["convention"]["name"] != "") {
                 $ext = pathinfo($_FILES["convention"]["name"], PATHINFO_EXTENSION);
 
