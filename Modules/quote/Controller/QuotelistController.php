@@ -296,12 +296,12 @@ class QuotelistController extends CoresecureController {
             if ($item['module'] == "booking") {
                 $name = $modelBooking->getName($item['id_content']);
                 $quantity = $item['quantity'];
-                $unitprice = $modelBookingPrices->getPrice($item['id_content'], $info['id_belonging']);
+                $unitprice = $modelBookingPrices->getPrice($item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);
             } else if ($item['module'] == "services") {
                 $name = $modelServices->getItemName($item['id_content']);
                 $quantity = $item['quantity'];
-                $unitprice = $modelServicesPrices->getPrice($item['id_content'], $info['id_belonging']);
+                $unitprice = $modelServicesPrices->getPrice($item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);
             }
             $table[] = array('name'=> $name, 'comment'=> $item['comment'], 'quantity'=>$quantity, 'unit_price'=>$unitprice, 'total'=>$itemtotal);
