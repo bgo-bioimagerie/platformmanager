@@ -42,7 +42,8 @@ class Quote extends Model {
             $resps = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space);
             if (count($resps) > 0) {
                 $data["address"] = $modelClient->getAddressInvoice($resps[0]["id"]);
-                $data["id_belonging"] = $resps[0]["id"]; 
+                $data["id_belonging"] = $resps[0]["id"];
+                $data["id_pricing"] = $resps[0]["pricing"];
             }
         }
         return $data;
