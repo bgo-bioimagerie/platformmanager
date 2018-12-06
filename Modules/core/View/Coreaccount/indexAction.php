@@ -4,7 +4,7 @@
 <!-- header -->
 <?php startblock('title') ?>
 Platform-Manager
-<?php endblock() ?> 
+<?php endblock() ?>
 <?php startblock('stylesheet') ?>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,11 +21,11 @@ Platform-Manager
 <link href="signin.css" rel="stylesheet">
 
 <!-- Bootstrap core CSS -->
-<script src="Modules/core/Themes/caroussel/ie-emulation-modes-warning.js"></script>
-<link href="Modules/core/Themes/caroussel/carousel.css" rel="stylesheet"> 
+<script src="Modules/core/Theme/caroussel/ie-emulation-modes-warning.js"></script>
+<link href="Modules/core/Theme/caroussel/carousel.css" rel="stylesheet"> 
 <?php endblock() ?>
 
-<!-- body -->     
+<!-- body -->
 <?php startblock('content') ?>
 
 <div class="col-md-12" style="background-color: #fff; height:100%">
@@ -36,7 +36,7 @@ Platform-Manager
             <h1 class="text-center login-title"><?php echo $home_title ?></h1>
         </div>
 
-        
+
         <!-- Message -->
         <div class="col-sm-10 col-sm-offset-1 text-center">
              <?php
@@ -58,15 +58,15 @@ Platform-Manager
         }
         ?>
         </div>
-        
+
          <!-- Form -->
         <div class="col-sm-10 col-sm-offset-1 text-center">
-            <p></p>    
+            <p></p>
             <?php echo $formHtml ?>
             <p></p>
         </div>
 
     </div>
-</div>   
+</div>
 <?php
 endblock();

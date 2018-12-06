@@ -11,7 +11,7 @@ class CoreConfig extends Model {
 
     /**
      * Create the table
-     * 
+     *
      * @return PDOStatement
      */
     public function createTable() {
@@ -23,30 +23,30 @@ class CoreConfig extends Model {
 		);";
 
         $this->runRequest($sql);
-        
+
         $sqlCol = "SHOW COLUMNS FROM `core_config` LIKE 'id';";
         $reqCol = $this->runRequest($sqlCol);
-       
+
         if ($reqCol->rowCount() > 0){
             $sql2 = "ALTER TABLE core_config CHANGE id `keyname` varchar(30) NOT NULL;";
             $this->runRequest($sql2);
             $sql3 = "alter table core_config drop primary key;";
             $this->runRequest($sql3);
         }
-        
+
         $this->addColumn('core_config', 'id_space', 'int(11)', 0);
     }
 
     /**
      * Create the application contact
-     * 
+     *
      * @return PDOStatement
      */
     public function createDefaultConfig() {
 
         $this->setParam("admin_email", "firstname.name@adress.com");
         $this->setParam("user_desactivate", "0");
-        $this->setParam("logo", "Themes/logo.jpg");
+        $this->setParam("logo", "Theme/logo.jpg");
         $this->setParam("home_title", "Database");
         $this->setParam("home_message", "");
     }

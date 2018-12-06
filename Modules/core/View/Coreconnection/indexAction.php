@@ -4,7 +4,7 @@
 <!-- header -->
 <?php startblock('title') ?>
 Platform-Manager
-<?php endblock() ?> 
+<?php endblock() ?>
 <?php startblock('stylesheet') ?>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,11 +21,11 @@ Platform-Manager
 <link href="signin.css" rel="stylesheet">
 
 <!-- Bootstrap core CSS -->
-<script src="Modules/core/Themes/caroussel/ie-emulation-modes-warning.js"></script>
-<link href="Modules/core/Themes/caroussel/carousel.css" rel="stylesheet"> 
+<script src="Modules/core/Theme/caroussel/ie-emulation-modes-warning.js"></script>
+<link href="Modules/core/Theme/caroussel/carousel.css" rel="stylesheet"> 
 <?php endblock() ?>
 
-<!-- body -->     
+<!-- body -->
 <?php startblock('content') ?>
 
 <div class="col-md-12" style="background-color: #fff; height:100%">
@@ -37,7 +37,7 @@ Platform-Manager
 
         <!-- Message -->
         <div class="col-sm-10 col-sm-offset-1 text-center">
-            <p></p>    
+            <p></p>
             <h3 style="text-align:center;"><?php echo $home_message ?></h3>
             <p></p>
         </div>
@@ -54,7 +54,7 @@ Platform-Manager
 
                 <?php } else { ?>
                     <div class="col-xs-12 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
-                    <?php } ?>    
+                    <?php } ?>
 
                     <div class="col-xs-12" style="height:100px;">
                         <p></p>
@@ -67,7 +67,7 @@ Platform-Manager
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">    
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                             <br></br>
 
                             <form class="form-signin" action="corelogin" method="post">
@@ -83,22 +83,22 @@ Platform-Manager
 
                         </div>
                         <br/>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                             <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>
                         </div>
-                        
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
-                        
-                        <!--    
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+
+                        <!--
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                             <br></br>
                             <p class="text-center">
                                 <b><?php echo CoreTranslator::or_($language) ?></b>
                             </p>
                         </div>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2"> 
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                             <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
                         </div>
                         -->
@@ -113,14 +113,13 @@ Platform-Manager
                             <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
                          -->
                     </div>
-                        
-                        
-                            
-                    
-                </div> 
-            </div> 
+
+
+
+
+                </div>
+            </div>
         </div>
     </div>
     <?php
     endblock();
-    

@@ -43,9 +43,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./Modules/core/Themes/caroussel/jquery.min.js"></script>
-    <script src="./Modules/core/Themes/caroussel/bootstrap.min.js"></script>
+    <script src="./Modules/core/Theme/caroussel/jquery.min.js"></script>
+    <script src="./Modules/core/Theme/caroussel/bootstrap.min.js"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="./Modules/core/Themes/caroussel/holder.min.js"></script>
+    <script src="./Modules/core/Theme/caroussel/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="./Modules/core/Themes/caroussel/ie10-viewport-bug-workaround.js"></script>
+    <script src="./Modules/core/Theme/caroussel/ie10-viewport-bug-workaround.js"></script>
