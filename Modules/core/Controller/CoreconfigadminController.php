@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Upload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreBackupDatabase.php';
@@ -10,7 +11,7 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -174,7 +175,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
@@ -194,7 +195,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $lang
      * @return \Form
      */
@@ -210,7 +211,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $lang
      * @return \Form
      */
@@ -242,7 +243,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $lang
      * @return \Form
      */
@@ -257,7 +258,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
@@ -274,7 +275,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
@@ -319,7 +320,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
@@ -353,7 +354,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
@@ -371,7 +372,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $lang
      * @return \Form
      */
@@ -386,7 +387,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
