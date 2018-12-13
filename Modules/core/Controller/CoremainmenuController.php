@@ -15,7 +15,7 @@ require_once 'Modules/core/Model/CoreMainMenuItem.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -48,7 +48,7 @@ class CoremainmenuController extends CoresecureController {
         $table->addLineEditButton("coremainmenuedit");
         $table->addDeleteButton("coremainmenudelete");
         $tableHtml = $table->view($menus, $headers);
-        
+
         $this->render(array(
             "lang" => $lang,
             "tableHtml" => $tableHtml
@@ -56,7 +56,7 @@ class CoremainmenuController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param int $id
      */
     public function editAction($id) {
@@ -65,7 +65,7 @@ class CoremainmenuController extends CoresecureController {
 
         $modelMenu = new CoreMainMenu();
         $value = $modelMenu->get($id);
-        
+
         $form = new Form($this->request, "editmainmenuform");
         $form->setTitle(CoreTranslator::EditMainMenu($lang));
         $form->addText("name", CoreTranslator::Name($lang), true, $value["name"]);
@@ -87,7 +87,7 @@ class CoremainmenuController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param int $id
      */
     public function deleteAction($id) {
@@ -142,13 +142,13 @@ class CoremainmenuController extends CoresecureController {
         if ($form->check()) {
 
             $modelMenu->set(
-                    $id, 
-                    $form->getParameter("name"), 
-                    $form->getParameter("id_main_menu"), 
+                    $id,
+                    $form->getParameter("name"),
+                    $form->getParameter("id_main_menu"),
                     $form->getParameter("display_order"));
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
             $this->redirect("coremainsubmenus");
-             
+
             return;
         }
 
@@ -157,22 +157,22 @@ class CoremainmenuController extends CoresecureController {
             "formHtml" => $form->getHtml($lang),
         ));
     }
-    
+
     public function submenudeleteAction($id){
         $model = new CoreMainSubMenu();
         $model->delete($id);
 
         $this->redirect("coremainsubmenus");
     }
-        
+
     public function itemsAction(){
         $lang = $this->getLanguage();
-         
-       
-        
+
+
+
         $modelItems = new CoreMainMenuItem();
         $items = $modelItems->getAll();
-        
+
         $table = new TableView();
         $table->setTitle(CoreTranslator::Items($lang));
         $headers = array(
@@ -190,21 +190,21 @@ class CoremainmenuController extends CoresecureController {
             "lang" => $lang,
             "tableHtml" => $tableHtml
         ));
-         
+
     }
-    
+
     public function itemeditAction($id){
         $lang = $this->getLanguage();
-        
+
         $modelItem = new CoreMainMenuItem();
         $item = $modelItem->get($id);
 
         $modelSpace = new CoreSpace();
         $spaceList = $modelSpace->getForList();
-        
+
         $modelSubMenu = new CoreMainSubMenu();
         $subMenuList = $modelSubMenu->getForList();
-        
+
         $form = new Form($this->request, "editmenuitemform");
         $form->setTitle(CoreTranslator::EditItem($lang));
         $form->addText("name", CoreTranslator::Name($lang), true, $item["name"]);
@@ -217,10 +217,10 @@ class CoremainmenuController extends CoresecureController {
         if ($form->check()) {
 
             $modelItem->set(
-                    $id, 
-                    $form->getParameter("name"), 
-                    $form->getParameter("id_sub_menu"), 
-                    $form->getParameter("id_space"), 
+                    $id,
+                    $form->getParameter("name"),
+                    $form->getParameter("id_sub_menu"),
+                    $form->getParameter("id_space"),
                     $form->getParameter("display_order")
             );
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
@@ -232,7 +232,16 @@ class CoremainmenuController extends CoresecureController {
             "formHtml" => $form->getHtml($lang),
         ));
     }
-    
-    
+
+    /**
+     *
+     * @param int $id
+     */
+    public function itemdeleteAction($id) {
+        $model = new CoreMainMenuItem();
+        $model->delete($id);
+
+        $this->redirect("coremainmenuitems");
+    }
 
 }
