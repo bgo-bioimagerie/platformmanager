@@ -12,7 +12,7 @@ require_once 'Modules/invoices/Model/InvoicesInstall.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -106,8 +106,11 @@ class InvoicesconfigController extends CoresecureController {
         $formUpload->setColumnsWidth(0, 12);
         $formUpload->setButtonsWidth(2, 10);
         if ($formUpload->check()) {
+            if (!file_exists('data/invoices/' . $id_space)) {
+                mkdir('data/invoices/' . $id_space, 0777, true);
+            }
             FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'template', 'template.php');
-            
+
             $_SESSION["message"] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang) ;
             $this->redirect('invoicepdftemplate/' . $id_space);
             return;
@@ -120,6 +123,9 @@ class InvoicesconfigController extends CoresecureController {
         $formUploadImages->setButtonsWidth(2, 10);
         $formUploadImages->setColumnsWidth(0, 12);
         if ($formUploadImages->check()) {
+            if (!file_exists('data/invoices/' . $id_space)) {
+                mkdir('data/invoices/' . $id_space, 0777, true);
+            }
             FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'image', $_FILES["image"]["name"]);
             $this->redirect('invoicepdftemplate/' . $id_space);
             return;
