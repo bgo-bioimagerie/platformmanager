@@ -10,7 +10,7 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
@@ -21,7 +21,7 @@ class CoreusersController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->checkAuthorization(CoreStatus::$USER);
+        $this->checkAuthorization(CoreStatus::$ADMIN);
         //$this->checkAuthorizationMenu("users");
     }
 
