@@ -9,7 +9,7 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the provider example of breeding module
  */
@@ -25,7 +25,7 @@ class ClientsuseraccountsController extends CoresecureController {
     /**
      * (non-PHPdoc)
      * @see Controller::index()
-     * 
+     *
      * Page showing a table containing all the providers in the database
      */
     public function indexAction($id_space, $id_user) {
@@ -40,16 +40,16 @@ class ClientsuseraccountsController extends CoresecureController {
 
         $modelClientUser = new ClClientUser();
         $accounts = $modelClientUser->getUserClientAccounts($id_user, $id_space);
-        
+
         $modelClient = new ClClient();
         $clients = $modelClient->getForList($id_space);
 
         $form = new Form($this->request, "clientsusersform");
         $form->setTitle(ClientsTranslator::addClientAccountFor($lang) . ": " . $userFullName);
-        $form->addSelect("id_client", CoreTranslator::User($lang), $clients["names"], $clients["ids"]);
+        $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"]);
         $form->setValidationButton(CoreTranslator::Add($lang), "clientsuseraccounts/" . $id_space . "/" . $id_user);
         $form->setButtonsWidth(4, 8);
-        
+
         if ($form->check()) {
 
             $modelClientUser->set($form->getParameter("id_client"), $id_user);
@@ -58,7 +58,7 @@ class ClientsuseraccountsController extends CoresecureController {
             $this->redirect("clientsuseraccounts/" . $id_space . "/" . $id_user);
             return;
         }
-        
+
         $table = new TableView();
         $table->setTitle(ClientsTranslator::ClientAccountsFor($lang) . $userFullName);
         $table->addDeleteButton("clientsuseraccountsdelete/" . $id_space . "/" . $id_user);
