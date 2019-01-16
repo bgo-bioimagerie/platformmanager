@@ -2,7 +2,7 @@
 
 /**
  * Class to translate the syggrif views
- * 
+ *
  * @author sprigent
  *
  */
@@ -240,83 +240,83 @@ class ClientsTranslator {
         }
         return "Users for account";
     }
-    
+
     public static function ClientUsers($lang) {
         if ($lang == "fr") {
             return "Utilisateurs";
         }
         return "Client users";
     }
-    
+
     public static function UserHasBeenAddedToClient($lang) {
         if ($lang == "fr") {
             return "L'utilisateur a bien été ajouté au compte client";
         }
         return "User has been ddded to client";
     }
-    
+
     public static function AddressDelivery($lang) {
         if ($lang == "fr") {
             return "Adresse de livraison";
         }
         return "Address delivery";
     }
-    
+
     public static function AddressInvoice($lang) {
         if ($lang == "fr") {
             return "Adresse de facturation";
         }
         return "Address invoice";
     }
-    
+
     public static function Letter($lang) {
         if ($lang == "fr") {
             return "Courrier";
         }
         return "Letter";
     }
-    
+
     public static function invoice_send_preference($lang) {
         if ($lang == "fr") {
             return "Préférence d'envoi facture";
         }
         return "invoice send preference";
     }
-    
+
     public static function ClientAccount($lang) {
         if ($lang == "fr") {
             return "Compte client";
         }
         return "Client account";
     }
-    
+
     public static function Identifier($lang) {
         if ($lang == "fr") {
             return "Identifiant";
         }
         return "Identifier";
     }
-    
+
     public static function clientsuseraccounts($lang) {
         if ($lang == "fr") {
             return "Comptes clients";
         }
         return "Client accounts";
     }
-    
+
     public static function ClientAccountsFor($lang) {
         if ($lang == "fr") {
             return "Comptes clients pour ";
         }
         return "Client accounts for ";
     }
-        
+
     public static function addClientAccountFor($lang) {
         if ($lang == "fr") {
-            return "Ajouter un comptes clients pour ";
+            return "Ajouter un compte clients pour ";
         }
-        return "add a client accounts for ";
+        return "add a client account for ";
     }
-    
-    
+
+
 }
