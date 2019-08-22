@@ -300,7 +300,7 @@ class FormHtml {
 
         $html .= "<div class=\"form-group row\">";
         $html .= "<div class=\"col-md-5\">";
-        $html .= "<input class=\"form-control\" type=\"number\" id=\"" . $name . "H" . "\" name=\"" . $name . "H" . "\"" . " value=\"" . $value[0] . "\"" . "/>";
+        $html .= "<input class=\"form-control\" type=\"number\" min=\"0\" max=\"23\" id=\"" . $name . "H" . "\" name=\"" . $name . "H" . "\"" . " value=\"" . $value[0] . "\"" . "/>";
         $html .= "</div><div class=\"col-md-1\">";
         $html .= ":";
         $html .= "</div><div class=\"col-md-5\">";
