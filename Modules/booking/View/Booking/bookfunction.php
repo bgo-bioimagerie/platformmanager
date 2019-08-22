@@ -142,11 +142,12 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 							if (count($he) == 1){$he[1] = "00";}
 							if ($he[1] == "25"){$he[1] = "15";}
 							if ($he[1] == "50"){$he[1] = "30";}
+							if ($he[1] == "5"){$he[1] = "30";}
 							if ($he[1] == "75"){$he[1] = "45";}
 							if ($he[0] < 10){$he[0] = "0". $he[0];}
 							$hed = $he[0] . "-" .$he[1];
 							if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-								$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$h2."_".$resourceID;
+								$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
 								?>
 						<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
 						<?php }}}?>
