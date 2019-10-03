@@ -21,7 +21,7 @@ class CoreusersController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->checkAuthorization(CoreStatus::$ADMIN);
+        // $this->checkAuthorization(CoreStatus::$ADMIN);
         //$this->checkAuthorizationMenu("users");
     }
 
@@ -30,7 +30,7 @@ class CoreusersController extends CoresecureController {
      * @see Controller::index()
      */
     public function indexAction() {
-
+        $this->checkAuthorization(CoreStatus::$ADMIN);
         $lang = $this->getLanguage();
 
         $table = new TableView();
@@ -64,7 +64,7 @@ class CoreusersController extends CoresecureController {
     }
 
     public function editAction($id) {
-
+        $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelUser = new CoreUser();
         if ($id > 0) {
             $user = $modelUser->getUser($id);
@@ -141,7 +141,7 @@ class CoreusersController extends CoresecureController {
     }
 
     protected function editPwdQuery($formPwd, $modelUser, $lang) {
-
+        $this->checkAuthorization(CoreStatus::$ADMIN);
         $pwd = $formPwd->getParameter("pwd");
         $pwdconfirm = $formPwd->getParameter("pwdconfirm");
         if ($pwd != $pwdconfirm) {
@@ -152,6 +152,7 @@ class CoreusersController extends CoresecureController {
     }
 
     protected function editQuery($form, $modelUser, $lang) {
+        $this->checkAuthorization(CoreStatus::$ADMIN);
         $id = $form->getParameter("id");
         if ($id == 0) {
 
@@ -172,14 +173,13 @@ class CoreusersController extends CoresecureController {
     }
 
     public function deleteAction($id) {
-
+        $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelUser = new CoreUser();
         $modelUser->delete($id);
         $this->redirect("coreusers");
     }
 
     public function myaccountAction() {
-
         $lang = $this->getLanguage();
         $id = $_SESSION["id_user"];
         $modelUser = new CoreUser();
