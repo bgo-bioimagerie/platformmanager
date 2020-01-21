@@ -150,7 +150,7 @@ class CoreUser extends Model {
     }
 
     public function getUserByEmail($email) {
-        $sql = "SELECT * FROM core_users WHERE email=?";
+        $sql = "SELECT * FROM core_users WHERE email=? AND is_active=1";
         $user = $this->runRequest($sql, array($email));
         //echo 'found ' . $user->rowCount() . "users <br/>";
         if ($user->rowCount() == 1) {
