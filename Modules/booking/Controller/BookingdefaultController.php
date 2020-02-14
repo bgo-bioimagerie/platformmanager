@@ -538,12 +538,20 @@ class BookingdefaultController extends BookingabstractController {
             $resourceName = $modelResource->getName($id_resource);
 
             // mail content
-            $from = $user["email"];
+            //$from = $user["email"];
+            $mail_from = getenv('MAIL_FROM');
+            if (!empty($mail_from)) {
+                $from = $mail_from;
+            }
+            else {
+                $from = "support@platform-manager.com";
+            }
+            $fromName = "Platform-Manager";
 
             $modelResoucesResp = new ReResps();
             $toAdress = $modelResoucesResp->getResourcesManagersEmails($id_resource);
             //$toAdress = $modelSpace->getEmailsSpaceManagers($id_space);
-            $subject = $resourceName . " has been booked";
+            $subject = "[". $space["name"] ."]" .$resourceName . " has been booked";
             $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
             if( !$BkUseRecurentBooking || $periodic_option == 1 ){
                 $content .= " with periodicity";
@@ -552,7 +560,7 @@ class BookingdefaultController extends BookingabstractController {
             //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
             // send the email
             $mailerModel = new MailerSend();
-            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
+            $mailerModel->sendEmail($from, $fromName, $toAdress, $subject, $content);
         }
 
         //echo 'message = ' . $_SESSION["message"] . '<br/';
@@ -846,15 +854,24 @@ class BookingdefaultController extends BookingabstractController {
             $user = $userModel->getInfo($_SESSION["id_user"]);
 
             // mail content
-            $from = $user["email"];
+            //$from = $user["email"];
+            $mail_from = getenv('MAIL_FROM');
+            if (!empty($mail_from)) {
+                $from = $mail_from;
+            }
+            else {
+                $from = "support@platform-manager.com";
+            }
+            $fromName = "Platform-Manager";
+
             $toAdress = $modelCalEntry->getEmailsBookerResource($id_resource);
-            $subject = $resourceName . " has been freed";
+            $subject = "[" . $space["name"] . "]" .$resourceName . " has been freed";
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
 
             //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
             // send the email
             $mailerModel = new MailerSend();
-            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
+            $mailerModel->sendEmail($from, $fromName, $toAdress, $subject, $content);
         }
 
         $modelConfig = new CoreConfig();
@@ -877,15 +894,24 @@ class BookingdefaultController extends BookingabstractController {
             $modelResource = new ReResps();
 
             // mail content
-            $from = $user["email"];
+            // $from = $user["email"];
+            $mail_from = getenv('MAIL_FROM');
+            if (!empty($mail_from)) {
+                $from = $mail_from;
+            }
+            else {
+                $from = "support@platform-manager.com";
+            }
+            $fromName = "Platform-Manager";
+
             $toAdress = $modelResource->getResourcesManagersEmails($id_resource);
-            $subject = $resourceName . " has been freed";
+            $subject = "[". $space["name"] ."]" . $resourceName . " has been freed";
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
 
             //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
             // send the email
             $mailerModel = new MailerSend();
-            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
+            $mailerModel->sendEmail($from, $fromName, $toAdress, $subject, $content);
 
         }
 
