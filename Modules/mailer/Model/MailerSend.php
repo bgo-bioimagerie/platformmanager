@@ -20,7 +20,7 @@ class MailerSend extends Model {
             }
         }
 
-    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true ){
+    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ){
 
         // send the email
         $mail = new PHPMailer();
