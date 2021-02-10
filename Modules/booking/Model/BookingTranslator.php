@@ -648,6 +648,21 @@ class BookingTranslator {
         return "Sunday";
     }
 
+    //ReservationCancelled_number
+    public static function ReservationCancelled_number($lang) {
+        if ($lang == "fr") {
+            return "Nombre de réservations annulées";
+        }
+        return "Cancelled reservation number";
+    }
+    //ReservationCancelled_time
+    public static function ReservationCancelled_time($lang) {
+        if ($lang == "fr") {
+            return "Temps de réservations annulées";
+        }
+        return "Cancelled reservation time";
+    }
+
     public static function Reservation_number($lang) {
         if ($lang == "fr") {
             return "Nombre de réservations";

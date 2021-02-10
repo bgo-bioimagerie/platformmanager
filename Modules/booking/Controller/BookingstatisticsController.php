@@ -639,6 +639,17 @@ class BookingstatisticsController extends CoresecureController {
             $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $objPHPExcel->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
         }
+        $num++;
+        $letter = $this->get_col_letter($num);
+        $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_number($lang));
+        $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        $objPHPExcel->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
+        $num++;
+        $letter = $this->get_col_letter($num);
+        $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_time($lang));
+        $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+        $objPHPExcel->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
+
 
         $resourcesids = $data['resourcesids'];
         $resources = $data['resource'];
@@ -659,6 +670,14 @@ class BookingstatisticsController extends CoresecureController {
                 $objWorkSheet->SetCellValue($letter . $curentLine, $timeColor);
                 $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
             }
+            $num++;
+            $letter = $this->get_col_letter($num);
+            $objWorkSheet->SetCellValue($letter . $curentLine, $data['countCancelled'][$i]);
+            $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            $num++;
+            $letter = $this->get_col_letter($num);
+            $objWorkSheet->SetCellValue($letter . $curentLine, $data['timeCancelled'][$i]);
+            $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
 
             $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
