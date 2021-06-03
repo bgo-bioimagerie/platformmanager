@@ -13,7 +13,6 @@ if (getenv('PFM_MODE') != 'dev') {
   echo "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
 }
 ?>
-<meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 
@@ -21,7 +20,7 @@ if (getenv('PFM_MODE') != 'dev') {
 <link href="externals/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Custom styles for this template -->
-<link href="signin.css" rel="stylesheet">
+<link href="Modules/core/Theme/signin.css" rel="stylesheet">
 
 <!-- Bootstrap core CSS -->
 <script src="Modules/core/Theme/caroussel/ie-emulation-modes-warning.js"></script>
