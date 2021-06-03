@@ -1,4 +1,17 @@
 <?php require_once 'Framework/ti.php' ?>
+<?php
+require_once 'Modules/core/Model/CoreInstall.php';
+use DebugBar\StandardDebugBar;
+use DebugBar\DataCollector\PDO\PDOCollector;
+
+$isdev = (getenv('PFM_MODE') == 'dev');
+if($isdev) {
+    CoreInstall::getDatabase();
+    $debugbar = new StandardDebugBar();
+    $debugbarRenderer = $debugbar->getJavascriptRenderer();
+    $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector(CoreInstall::getDatabase()));
+}
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -8,6 +21,11 @@
             <?php startblock('title') ?>
             <?php endblock() ?>
         </title>
+        <?php
+        if($isdev) {
+            echo $debugbarRenderer->renderHead();
+        }
+        ?>
 
         <?php startblock('stylesheet') ?>
         <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
@@ -28,5 +46,11 @@
 
         <?php startblock('footer') ?>
         <?php endblock() ?>
+
+        <?php
+        if($isdev) {
+            echo $debugbarRenderer->render();
+        }
+        ?>
     </body>
 </html>

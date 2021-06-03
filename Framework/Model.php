@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Configuration.php';
-
+use DebugBar\DataCollector\PDO\TraceablePDO;
 /**
  * Abstract class Model
  * A model define an access to the database
@@ -47,7 +47,7 @@ abstract class Model {
      * 
      * @return PDO Objet PDO of the database connections
      */
-    protected static function getDatabase() {
+    static function getDatabase() {
         if (self::$bdd === null) {
             // load the database informations
             $dsn = Configuration::get("dsn");
@@ -56,6 +56,9 @@ abstract class Model {
 
             // Create connection
             self::$bdd = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+            if (getenv('PFM_MODE') == 'dev') {
+                self::$bdd = new DebugBar\DataCollector\PDO\TraceablePDO(self::$bdd);
+            }
             self::$bdd->exec("SET CHARACTER SET utf8");
         }
         return self::$bdd;

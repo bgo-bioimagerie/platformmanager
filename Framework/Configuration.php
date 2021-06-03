@@ -30,6 +30,7 @@ class Configuration {
             $streamHandler = new StreamHandler('php://stderr', $level);
             $streamHandler->setFormatter($formatter);
             self::$logger->pushHandler($streamHandler);
+
         }
         return self::$logger;
     }

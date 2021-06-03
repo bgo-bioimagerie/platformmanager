@@ -9,7 +9,11 @@ Platform-Manager
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+<?php
+if (getenv('PFM_MODE') != 'dev') {
+  echo "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
+}
+?>
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -72,8 +76,8 @@ Platform-Manager
 
                             <form class="form-signin" action="corelogin" method="post">
                                 <input name="redirection" type="hidden" value="<?php echo $redirection ?>">
-                                <input name="login" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
-                                <input name="pwd" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
+                                <input name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
+                                <input name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
                                 <div class="checkbox">
                                     <label><input type="checkbox" name="remember" value=""><?php echo CoreTranslator::RememberMe($language) ?></label>
                                 </div>
