@@ -1,5 +1,10 @@
 Options +FollowSymLinks -MultiViews
 
+<Files "pfm-cli.php">
+  Order Deny,Allow
+  Deny from all
+</Files>
+
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
