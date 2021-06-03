@@ -56,6 +56,7 @@ class CoreconnectionController extends CorecookiesecureController {
             "urlCarousel2" => $urlCarousel2,
             "urlCarousel3" => $urlCarousel3,
             "language" => $language,
+            "metadesc" => 'platform manager login page',
             "viewCarousel" => $viewCarousel), "indexAction");
     }
 

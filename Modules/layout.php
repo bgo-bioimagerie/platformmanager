@@ -13,9 +13,13 @@ if($isdev) {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?php if(isset($lang)) {echo $lang;} else {echo "en";} ?>">
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php
+            if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
+        ?>
         <base href="<?php echo $rootWeb ?>" >
         <title>
             <?php startblock('title') ?>

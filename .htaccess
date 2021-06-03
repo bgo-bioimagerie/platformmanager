@@ -5,8 +5,12 @@ Options +FollowSymLinks -MultiViews
   Deny from all
 </Files>
 
+<FilesMatch "\.(css|jpe?g|gif|png|js|ico)$">
+  Header set Cache-Control "max-age=3600, public"
+</FilesMatch>
+
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} !^.*\.(css|jpe?g|gif|png|js|ico)$ [NC]
+RewriteCond %{REQUEST_URI} !^.*\.(css|jpe?g|gif|png|js|ico|txt)$ [NC]
 RewriteRule ^(.*)$ index.php?path=$1 [QSA,L]

@@ -41,7 +41,8 @@ class CorehomeController extends CoresecureController {
         }
         else{
             $this->render(array(
-                'lang' => $lang,    
+                'lang' => $lang,
+                'metadesc' => 'pfm space list'    
             ));
         }
     }
