@@ -81,20 +81,20 @@ class CoreconnectionController extends CorecookiesecureController {
             //print_r($connect);
             if ($connect == "allowed") {
 
-                $user = $this->initSession($login);
+                $loggedUser = $this->initSession($login);
 
                 // generate the remember me cookie
                 if ($this->request->isparameter("remember")) {
                     //throw new Exception("Set cookie <br/>");
                     $key = sha1($this->generateRandomKey());
                     //echo "set cookie with id = " . $key . "<br/>";
-                    $cookieSet = setcookie("auth", $user['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
+                    $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
                         //die("die failed to set cookie with key " . $key . "<br/>");
                         throw new Exception("failed to set cookie with key " . $key . "<br/>");
                     }
                     $modelUser = new CoreUser();
-                    $modelUser->setRememberKey($user['idUser'], $key);
+                    $modelUser->setRememberKey($loggedUser['idUser'], $key);
                 }
 
                 // redirect
@@ -157,7 +157,7 @@ class CoreconnectionController extends CorecookiesecureController {
         else {
             //echo "into LDap <br/>";
             $modelCoreConfig = new CoreConfig();
-            if ($modelCoreConfig->getParam("useLdap") == true) {
+            if ($modelCoreConfig->getParam("useLdap")) {
 
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
@@ -196,15 +196,15 @@ class CoreconnectionController extends CorecookiesecureController {
         if ($form->check()) {
             $email = $this->request->getParameter("email");
             $model = new CoreUser();
-            $user = $model->getUserByEmail($email);
-            if ($user) {
+            $userByEmail = $model->getUserByEmail($email);
+            if ($userByEmail) {
 
-                if ($user["source"] == "ext") {
+                if ($userByEmail["source"] == "ext") {
                     $_SESSION["message"] = CoreTranslator::ExtAccountMessage(lang);
                 } else {
 
                     $newPassWord = $this->randomPassword();
-                    $model->changePwd($user["id"], $newPassWord);
+                    $model->changePwd($userByEmail["id"], $newPassWord);
 
                     $mailer = new MailerSend();
                     $mail_from = getenv('MAIL_FROM');

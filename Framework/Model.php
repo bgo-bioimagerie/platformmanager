@@ -94,7 +94,7 @@ abstract class Model {
         $isColumn = $pdo->fetch();
         if ($isColumn == false) {
             $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType . " NOT NULL DEFAULT '" . $defaultValue . "'";
-            $pdo = $this->runRequest($sql);
+            $this->runRequest($sql);
         }
     }
 
@@ -253,7 +253,7 @@ abstract class Model {
             foreach ($columnsToSelect as $c) {
                 $cols .= $c . ",";
             }
-            $sql .= substr($c, 0, -1);
+            $sql .= substr($cols, 0, -1);
         }
         $sql .= " FROM " . $this->tableName . "WHERE ";
         $conds = "";

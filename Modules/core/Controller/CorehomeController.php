@@ -33,11 +33,8 @@ class CorehomeController extends CoresecureController {
         $modelMainMenu = new CoreMainMenu();
         $menus = $modelMainMenu->getAll();
         
-        if ( count($menus) > 0){
-           
-            $this->redirect("coretiles/1/" . $menus[0]["id"]);
-            return;
-            
+        if (!empty($menus)) {  
+            $this->redirect("coretiles/1/" . $menus[0]["id"]);            
         }
         else{
             $this->render(array(
