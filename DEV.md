@@ -8,4 +8,4 @@ composer install
 
 ## logs
 
-index.php disable error logs by default
+index.php disable error logs by default, if needed, update log setup in index.php
