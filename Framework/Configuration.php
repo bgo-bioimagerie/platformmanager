@@ -1,4 +1,6 @@
 <?php
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 /**
  * Class that manage the configuration parameters
@@ -9,6 +11,22 @@ class Configuration {
 
     /** Configuration parameters table */
     private static $parameters;
+
+    /** Logger */
+    private static $logger;
+
+    public static function getLogger() {
+        if (self::$logger == null) {
+            self::$logger = new Logger('pfm');
+            $level = Logger::INFO;
+            if(getenv('DEBUG') == '1') {
+                $level = Logger::DEBUG;
+            }
+            self::$logger->pushHandler(new StreamHandler('php://stderr', $level));
+            //self::$logger->info('set logger',['level' => $level]);
+        }
+        return self::$logger;
+    }
 
     /**
      * Return the value of a configuration parameter

@@ -4,6 +4,8 @@ require_once 'Controller.php';
 require_once 'Request.php';
 require_once 'View.php';
 require_once 'FCache.php';
+require_once 'Configuration.php';
+
 
 /**
  * Class that rout the input requests
@@ -12,11 +14,14 @@ require_once 'FCache.php';
  */
 class router {
 
+    private $logger;
+
     protected $modelCache;
     protected $useRouterController; 
 
     public function __construct() {
         $this->modelCache = new FCache();
+        $this->logger = Configuration::getLogger();
     }
 
     /**
@@ -37,6 +42,7 @@ class router {
                 $action = $urlInfo["pathInfo"]["action"];
                 $args = $this->getArgs($urlInfo);
                 //echo "args = "; print_r($args); echo "<br/>";
+                $this->logger->debug('[router] call', ["controller" => $controller, "action", $action]);
 
                 $this->runAction($controller, $urlInfo, $action, $args);
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);

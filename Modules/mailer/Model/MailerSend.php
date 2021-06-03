@@ -2,7 +2,8 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/mailer/Model/MailerTranslator.php';
-require("externals/PHPMailer/PHPMailerAutoload.php");
+//require("externals/PHPMailer/PHPMailerAutoload.php");
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Class defining methods to send an email
