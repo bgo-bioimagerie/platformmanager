@@ -5,14 +5,15 @@ require_once 'Request.php';
 require_once 'View.php';
 require_once 'FCache.php';
 require_once 'Configuration.php';
+require_once 'Errors.php';
 
 
 /**
- * Class that rout the input requests
+ * Class that routes the input requests
  * 
  * @author Sylvain Prigent
  */
-class router {
+class Router {
 
     private $logger;
 
@@ -98,15 +99,15 @@ class router {
 
             $dsn = Configuration::get('dsn', '');
             if ($dsn != '') {
-                throw new Exception("The database is already installed");
+                throw new PfmDbException("The database is already installed");
             }
 
             $controller = $this->createControllerImp("core", "coreinstall", 0, $request);
             $controller->runAction("core", "index");
             return true;
         } else if ($path == "caches") {
-            $modelCache = new FCache();
-            $modelCache->load();
+            $install_modelCache = new FCache();
+            $install_modelCache->load();
             echo "Caches are up to date";
             return true;
         }
@@ -126,14 +127,10 @@ class router {
             $path = $request->getParameter('path');
         } else {
             $path = "coretiles";
-            //throw new Exception("The URL is not valid: unable to find the path");
+            // throw new Exception("The URL is not valid: unable to find the path");
         }
 
-        //echo "path = " . $path . "<br/>";
         $pathData = explode("/", $path);
-        //echo "path data = ";
-        //print_r($pathData);
-        //echo "<br/>";
         $pathInfo = $this->modelCache->getURLInfos($pathData[0]);
         return array("pathData" => $pathData, "pathInfo" => $pathInfo);
     }
@@ -179,7 +176,6 @@ class router {
             $fileController = 'Modules/' . strtolower($module) . "/Controller/" . $classController . ".php";
         }
 
-        //echo "controller file = " . $fileController . "<br/>";
         if (file_exists($fileController)) {
             // Instantiate controler
             require ($fileController);
@@ -192,7 +188,7 @@ class router {
                 $rooterControllerArray = explode("::", "$rooterController");
                 if(count($rooterControllerArray) == 3){
                     $classController = $rooterControllerArray[2];
-                    $module = $moduleName;
+                    // $module = $moduleName;
                     $fileController = 'Modules/' . strtolower($rooterControllerArray[0]) . "/Controller/" . $rooterControllerArray[2] . ".php";
                     if(file_exists($fileController)){
                         
@@ -203,11 +199,11 @@ class router {
                     }
                 }
                 else{
-                    throw new Exception("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
+                    throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
                 }
             }
             else{
-                throw new Exception("Unable to find the controller file '$fileController' ");
+                throw new PfmRoutingException("Unable to find the controller file '$fileController' ");
             }
         }
     }
@@ -219,7 +215,6 @@ class router {
      * @return type
      */
     private function createController($urlInfo, Request $request) {
-        //print_r($urlInfo);
         return $this->createControllerImp($urlInfo["pathInfo"]["module"], $urlInfo["pathInfo"]["controller"], $urlInfo["pathInfo"]["isapi"], $request);
     }
 

@@ -51,7 +51,6 @@ class FCache extends Model {
     protected function addRoutsToDatabase($moduleName, $routingClassUrl) {
         require_once ($routingClassUrl);
         $className = ucfirst($moduleName) . "Routing";
-        //echo "rooting class name " . $className . "<br/>";
         $routingClass = new $className ();
         $routingClass->listRouts();
         for ($r = 0; $r < $routingClass->count(); $r++) {

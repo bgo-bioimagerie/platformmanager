@@ -3,6 +3,7 @@
 require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
+require_once 'Framework/Errors.php';
 
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -113,9 +114,10 @@ class CoreInstall extends Model {
 
         try {
             $dsn = 'mysql:host=' . $sql_host . ';dbname=' . $db_name . ';charset=utf8';
-            new PDO($dsn, $login, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+            $testdb = new PDO($dsn, $login, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+            $testdb->exec("SHOW TABLES");
             return 'success';
-        } catch (Exception $e) {
+        } catch (PfmDbException $e) {
             return $e->getMessage();
         }
     }

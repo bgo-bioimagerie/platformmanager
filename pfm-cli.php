@@ -26,7 +26,7 @@ $longopts = array(
 $options = getopt($shortopts, $longopts);
 
 
-if (count($options) == 0 || isset($options['h']) || isset($options['help'])) {
+if (empty($options) || isset($options['h']) || isset($options['help'])) {
     echo "Usage:\n";
     echo " --install: create and updates tables in database\n";
     echo " --version: show software version\n";
