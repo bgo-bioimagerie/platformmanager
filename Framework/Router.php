@@ -42,8 +42,15 @@ class router {
                 $action = $urlInfo["pathInfo"]["action"];
                 $args = $this->getArgs($urlInfo);
                 //echo "args = "; print_r($args); echo "<br/>";
+                $this->logger->pushProcessor(function ($entry) {
+                    $user = 'anonymous';
+                    if(isset($_SESSION["id_user"])) {
+                        $user = $_SESSION["id_user"];
+                    }
+                    $entry['extra']['user'] = $user;
+                    return $entry;
+                });
                 $this->logger->debug('[router] call', ["controller" => $controller, "action", $action]);
-
                 $this->runAction($controller, $urlInfo, $action, $args);
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }

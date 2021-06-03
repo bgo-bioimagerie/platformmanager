@@ -1,6 +1,8 @@
 <?php
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Processor\TagProcessor;
+use Monolog\Formatter\LineFormatter;
 
 /**
  * Class that manage the configuration parameters
@@ -22,8 +24,12 @@ class Configuration {
             if(getenv('DEBUG') == '1') {
                 $level = Logger::DEBUG;
             }
-            self::$logger->pushHandler(new StreamHandler('php://stderr', $level));
-            //self::$logger->info('set logger',['level' => $level]);
+            //$output = "[%datetime%] %channel%.%level_name%: %message%\n";
+            $formatter = new LineFormatter(LineFormatter::SIMPLE_FORMAT, LineFormatter::SIMPLE_DATE);
+            $formatter->includeStacktraces(true);
+            $streamHandler = new StreamHandler('php://stderr', $level);
+            $streamHandler->setFormatter($formatter);
+            self::$logger->pushHandler($streamHandler);
         }
         return self::$logger;
     }

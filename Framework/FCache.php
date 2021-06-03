@@ -49,7 +49,7 @@ class FCache extends Model {
      * @param type $routingClassUrl url of the controller
      */
     protected function addRoutsToDatabase($moduleName, $routingClassUrl) {
-        require ($routingClassUrl);
+        require_once ($routingClassUrl);
         $className = ucfirst($moduleName) . "Routing";
         //echo "rooting class name " . $className . "<br/>";
         $routingClass = new $className ();

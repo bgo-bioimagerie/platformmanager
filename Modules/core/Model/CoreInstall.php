@@ -2,6 +2,7 @@
 
 require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
+require_once 'Framework/FCache.php';
 
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';

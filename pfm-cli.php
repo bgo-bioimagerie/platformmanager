@@ -39,7 +39,7 @@ if (isset($options['v']) || isset($options['version'])) {
     return;
 }
 
-if (isset($options['install'])) {
+if (isset($options['install']) || isset($options['i'])) {
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
     $modelCreateDatabase = new CoreInstall();
