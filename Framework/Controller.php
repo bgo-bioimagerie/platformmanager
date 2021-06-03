@@ -83,6 +83,9 @@ abstract class Controller {
         $classController = get_class($this);
         $controllerView = str_replace("Controller", "", $classController);
 
+        if (getenv("PFM_MODE") == "test") {
+            return $dataView;
+        }
         // Geneate the view
         //echo "controllerView = " . $controllerView . "<br/>";
         //echo "parent = " . basename(__DIR__) . "<br/>"; 

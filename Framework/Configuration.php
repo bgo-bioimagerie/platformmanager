@@ -77,6 +77,9 @@ class Configuration {
      * @return string Configuration file
      */
     public static function getConfigFile() {
+        if(getenv("PFM_CONFIG")) {
+            return getenv("PFM_CONFIG");
+        }
         return "Config/conf.ini";
     }
 
