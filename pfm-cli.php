@@ -84,7 +84,11 @@ if (isset($options['install']) || isset($options['i'])) {
             $logger->error("Error", ["error" => $e->getMessage()]);
     }
 
+    $cdb = new CoreDB();
+    $cdb->createTable();
+
     $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
+
 }
 
 ?>

@@ -22,6 +22,90 @@ require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 
 
+define("DB_VERSION", 2);
+/**
+ * Class defining the database version installed
+ */
+class CoreDB extends Model {
+
+
+    public function upgrade_v0_v1() {
+        // nothing to do
+    }
+
+    public function upgrade_v1_v2() {
+        // nothing to do
+    }
+
+    /**
+     * Create the table
+     *
+     * @return PDOStatement
+     */
+    public function createTable() {
+
+        $sql = "CREATE TABLE IF NOT EXISTS `pfm_db` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+		    `version` varchar(255) NOT NULL DEFAULT ".DB_VERSION.",
+		    PRIMARY KEY (`id`)
+		);";
+
+        $this->runRequest($sql);
+
+        $sqlRelease = "SELECT * FROM `pfm_db`;";
+        $reqRelease = $this->runRequest($sqlRelease);
+
+        $isNewRelease = false;
+        $oldRelease = 0;
+        if ($reqRelease->rowCount() > 0){
+            $release = $reqRelease->fetch();
+            if($release[0]['version'] != DB_VERSION) {
+                $isNewRelease = true;
+                $oldRelease = $release[0]['version'];
+            }
+        } else {
+            Configuration::getLogger()->info("[db] database release not set, setting it...", ["release" => 0]);
+            $sql = "INSERT INTO pfm_db (version) VALUES(?)";
+            $this->runRequest($sql, array(DB_VERSION));
+            $isNewRelease = true;
+        }
+
+        if($isNewRelease) {
+            Configuration::getLogger()->info("[db] Need to migrate", ["oldrelease" => $oldRelease, "release" => DB_VERSION]);
+            $updateFromRelease = $oldRelease;
+            $updateToRelease = $updateFromRelease + 1;
+            $updateOK = true;
+            while ($updateFromRelease < DB_VERSION) {
+                Configuration::getLogger()->info("[db] Migrating", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+                $upgradeMethod = "upgrade_v".$updateFromRelease."_v".$updateToRelease;
+                if (method_exists($this, $upgradeMethod) && is_callable($this, $upgradeMethod)) {
+                    try {
+                        $this->$upgradeMethod();
+                    } catch(Exception $e) {
+                        $updateOK = false;
+                        Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+                        break;
+                    }
+                }
+
+                Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
+                $sql = "update pfm_db set version=? where id=?";
+                $this->runRequest($sql, array($updateToRelease, $release[0]['id']));
+
+                $updateFromRelease = $updateToRelease;
+                $updateToRelease = $updateFromRelease + 1;
+            }
+            if ($updateOK) {
+                Configuration::getLogger()->info("[db] database migration over");
+            } else {
+                Configuration::getLogger()->error("[db] database migration failed!");
+            }
+        }
+
+    }
+}
+
+
 /**
  * Class defining the Install model
  * to edit the config file and initialize de database
