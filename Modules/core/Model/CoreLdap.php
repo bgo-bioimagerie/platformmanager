@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Modules/core/Model/CoreLdapConfiguration.php';
+require_once 'Framework/Configuration.php';
 
 /**
  * Class defining the  LDAP model to connect 
@@ -17,7 +18,6 @@ class CoreLdap {
      * @return multitype: User informatins (name, firstname, login, email)
      */
     public function getUser($_login, $_password) {
-
         $user_dn = $this->grr_opensession($_login, $_password);
         //echo "grr_opensession user dn = " . $user_dn . "<br/>";
         $user_info = $this->grr_getinfo_ldap($user_dn, $_login, $_password);
@@ -114,28 +114,38 @@ class CoreLdap {
             $login_search = preg_replace("/[^\-@._[:space:]a-zA-Z0-9]/", "", $_login);
             // Tenter une recherche pour essayer de retrouver le DN
             reset($atts);
-            while (list (, $att ) = each($atts)) {
+            foreach ($atts as $att) {
+            //while (list (, $att ) = each($atts)) {
                 $dn = $this->grr_ldap_search_user($ds, $ldap_base, $att, $login_search, $ldap_filter);
                 //echo "grr_ldap_search_user, dn = " . $dn . "<br/>";
-                if (($dn == "error_1") or ( $dn == "error_2") or ( $dn == "error_3")){
+                if (($dn == "error_1") || ( $dn == "error_2") || ( $dn == "error_3")){
                     return $dn;
                 }
                 else if ($dn) {
+                    Configuration::getLogger()->debug("[ldap] search user", ["dn" => $dn]);
                     // on a le dn
-                    if (@ldap_bind($ds, $dn, $_password)) {
+                    if (ldap_bind($ds, $dn, $_password)) {
+                        Configuration::getLogger()->debug('[ldap] user bind ok', ["dn" => $dn]);
                         @ldap_unbind($ds);
                         return $dn;
+                    } else {
+                        Configuration::getLogger()->debug('[ldap] user bind failure', ["dn" => $dn]);
                     }
                 }
             }
             // Si echec, essayer de deviner le DN, dans le cas où il n'y a pas de filtre supplémentaires
             reset($atts);
             if (!isset($ldap_filter) or ( $ldap_filter = "")) {
-                while (list (, $att ) = each($atts)) {
+                foreach ($atts as $att) {
+                //while (list (, $att ) = each($atts)) {
                     $dn = $att . "=" . $login_search . "," . $ldap_base;
+                    Configuration::getLogger()->debug('[ldap] try to bind user', ["dn" => $dn]);
                     if (@ldap_bind($ds, $dn, $_password)) {
+                        Configuration::getLogger()->debug('[ldap] user bind ok', ["dn" => $dn]);
                         @ldap_unbind($ds);
                         return $dn;
+                    } else {
+                        Configuration::getLogger()->debug('[ldap] user bind failure', ["dn" => $dn]);
                     }
                 }
             }
@@ -156,10 +166,15 @@ class CoreLdap {
      * @return string|boolean error message or true/false if $msg_error=="no"
      */
     private function grr_connect_ldap($l_adresse, $l_port, $l_login, $l_pwd, $use_tls, $msg_error = "no") {
-
+        Configuration::getLogger()->debug('[ldap][grr_connect_ldap]');
         //echo "use tls = " . $use_tls . "<br/>";
         //echo "l_adresse = " . $l_adresse . "<br/>";
-        $ds = @ldap_connect($l_adresse, $l_port);
+        $ldap_dsn = "ldap://$l_adresse:$l_port";
+        if($use_tls) {
+            $ldap_dsn = "ldaps://$l_adresse:$l_port";
+        }
+        $ds = ldap_connect($ldap_dsn);
+        //$ds = @ldap_connect($l_adresse, $l_port);
         //echo "grr_connect_ldap ds="; print_r($ds); echo "<br/>";
         if ($ds) {
             
@@ -183,12 +198,15 @@ class CoreLdap {
             
             // Accès non anonyme
             if ($l_login != '') {
+                Configuration::getLogger()->debug('[ldap] user bind');
                 // On tente un bind
-                $b = @ldap_bind($ds, $l_login, $l_pwd);
+                $b = ldap_bind($ds, $l_login, $l_pwd);
             } else {
+                Configuration::getLogger()->debug('[ldap] anon bind');
                 // Accès anonyme
-                $b = @ldap_bind($ds);
+                $b = ldap_bind($ds, '', '');
             }
+            Configuration::getLogger()->debug('[ldap] bind ok');
             
             
             if ($b) {
@@ -220,6 +238,7 @@ class CoreLdap {
      * @return string|boolean
      */
     private function grr_ldap_search_user($ds, $basedn, $login_attr, $login, $filtre_sup = "", $diagnostic = "no") {
+        Configuration::getLogger()->debug('[ldap][grr_ldap_search_user]');
         /*
          * if (Settings::get("ActiveModeDiagnostic") == "y")
          * $diagnostic = "yes";
@@ -276,6 +295,7 @@ class CoreLdap {
      * @return string|multitype: User informations or error message
      */
     private function grr_getinfo_ldap($_dn, $_login, $_password) {
+        Configuration::getLogger()->debug('[ldap][grr_getinfo_ldap]');
 
         $modelCoreConfig = new CoreConfig();
         $m_setting_ldap_champ_nom = $modelCoreConfig->getParam("ldapNameAtt");
@@ -313,6 +333,11 @@ class CoreLdap {
         }
         $result = false;
         if ($ds) {
+            Configuration::getLogger()->debug('[ldap][get user info]', ["fields" => array(
+                $m_setting_ldap_champ_nom,
+                $m_setting_ldap_champ_prenom,
+                $m_setting_ldap_champ_email
+            )]);
             $result = @ldap_read($ds, $_dn, "objectClass=*", array(
                         $m_setting_ldap_champ_nom,
                         $m_setting_ldap_champ_prenom,
@@ -320,22 +345,25 @@ class CoreLdap {
             ));
         }
 
-        if (!$result)
+        if (!$result) {
             return "error";
+        }
         // Recuperer les donnees de l'utilisateur
         $info = @ldap_get_entries($ds, $result);
-        if (!is_array($info))
+        if (!is_array($info)) {
             return "error";
+        }
+        Configuration::getLogger()->debug('[ldap][user info]', ['fields' => $info]);
         for ($i = 0; $i < $info ["count"]; $i ++) {
             $val = $info [$i];
             if (is_array($val)) {
-                $l_nom = iconv("ISO-8859-1", "utf-8", "Nom à préciser");
+                //$l_nom = iconv("ISO-8859-1", "utf-8", "Nom à préciser");
                 $l_nom = ucfirst($val [$m_setting_ldap_champ_nom] [0]);
 
-                $l_prenom = iconv("ISO-8859-1", "utf-8", "Prénom à préciser");
+                //$l_prenom = iconv("ISO-8859-1", "utf-8", "Prénom à préciser");
                 $l_prenom = ucfirst($val [$m_setting_ldap_champ_prenom] [0]);
 
-                $l_email = '';
+                //$l_email = '';
                 $l_email = $val [$m_setting_ldap_champ_email] [0];
             }
         }
