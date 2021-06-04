@@ -342,7 +342,7 @@ class TableView {
                     else{
                         if (isset($this->colorIndexes["all"])){
                             $ccolor = $dat[$this->colorIndexes["all"]];
-	    		}
+	    		        }
                     }
                     
                     $val = $dat[$key];
@@ -371,7 +371,7 @@ class TableView {
                         }
                     }
                     else{
-                        if (count($dat[$key]) && $this->textMaxLength > 0) {
+                        if (strlen($dat[$key]) && $this->textMaxLength > 0) {
                             $val = substr($dat[$key], 0, $this->textMaxLength);
                         }
                         $html .= "<td style=\"background-color:" .$ccolor.";\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
