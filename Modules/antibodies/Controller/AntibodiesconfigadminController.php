@@ -56,7 +56,7 @@ class AntibodiesconfigadminController extends CoresecureController {
         // view
         $forms = array($formInstall->getHtml($lang)
                         );
-        $this->render(array("forms" => $forms, "lang" => $lang));
+        return $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
     protected function installForm($lang) {

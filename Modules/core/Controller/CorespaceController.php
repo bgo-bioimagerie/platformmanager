@@ -81,7 +81,7 @@ class CorespaceController extends CoresecureController {
                 $sections[$i]["items"] = $items;
             }
             
-            $this->render(array("lang" => $lang, "id_space" => $id_space, 
+            return $this->render(array("lang" => $lang, "id_space" => $id_space, 
                 "space" => $space, 
                 "sections" => $sections, 
                 "showAdmMenu" => $showAdmMenu), "viewcustomAction");
@@ -125,7 +125,7 @@ class CorespaceController extends CoresecureController {
                 $spaceMenuItems[$i]['color'] = $menuColor;
             }
 
-            $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "spaceMenuItems" => $spaceMenuItems, "showAdmMenu" => $showAdmMenu));
+            return $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "spaceMenuItems" => $spaceMenuItems, "showAdmMenu" => $showAdmMenu));
         }
     }
 
@@ -140,7 +140,7 @@ class CorespaceController extends CoresecureController {
         $lang = $this->getLanguage();
         $space = $this->spaceModel->getSpace($id_space);
         $modulesTable = $this->configModulesTable($lang, $id_space);
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "modulesTable" => $modulesTable));
+        return $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "modulesTable" => $modulesTable));
     }
 
     /**
@@ -168,7 +168,7 @@ class CorespaceController extends CoresecureController {
 
 
         $userTable = $this->configUsersTable($lang, $id_space);
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "userForm" => $userForm->getHtml($lang), "userTable" => $userTable));
+        return $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "userForm" => $userForm->getHtml($lang), "userTable" => $userTable));
     }
 
     /**

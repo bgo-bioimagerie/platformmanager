@@ -110,7 +110,7 @@ abstract class Model {
         $dbname = "";
         for ($i = 0; $i < count($dsnArray); $i++) {
             if (strpos($dsnArray[$i], "dbname") === false) {
-                
+
             } else {
                 $dbnameArray = explode("=", $dsnArray[$i]);
                 $dbname = $dbnameArray[1];

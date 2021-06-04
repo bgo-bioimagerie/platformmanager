@@ -56,7 +56,7 @@ class AntibodiesconfigController extends CoresecureController {
         // view
         $forms = array($formMenusactivation->getHtml($lang));
         
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
     protected function menusactivationForm($lang, $id_space) {

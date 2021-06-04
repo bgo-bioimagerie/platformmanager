@@ -33,7 +33,7 @@ class AciincController extends CoresecureController {
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($aciincsArray, $headers);
         
-        $this->render(array(
+        return $this->render(array(
             'lang' => $this->getLanguage(),
             'id_space' => $id_space,
             'tableHtml' => $tableHtml
@@ -63,7 +63,7 @@ class AciincController extends CoresecureController {
             $this->redirect("aciinc/".$id_space);
         }
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $this->getLanguage(),
             'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)

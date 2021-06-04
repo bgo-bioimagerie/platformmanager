@@ -54,7 +54,7 @@ class CorespaceadminController extends CoresecureController {
         $table->addDeleteButton("spaceadmindelete");
         $tableHtml = $table->view($data, $headers);
         
-        $this->render(array("lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml));
     }
     
     public function editAction($id){
@@ -117,7 +117,7 @@ class CorespaceadminController extends CoresecureController {
             return;
         }
         
-        $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        return $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang)));
         
     }
     

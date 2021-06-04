@@ -69,7 +69,7 @@ class CoreinstallController extends Controller {
             }
         }
         $formHtml = $form->getHtml($lang);
-        $this->render(array("formHtml" => $formHtml, "message" => $message));
+        return $this->render(array("formHtml" => $formHtml, "message" => $message));
     }
     
     /**

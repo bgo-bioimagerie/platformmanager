@@ -46,7 +46,7 @@ class CoresettingsController extends CoresecureController {
         }
 
         $lang = $this->getLanguage();
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             'modulesControllers' => $modulesControllers
         ));

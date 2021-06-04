@@ -37,7 +37,7 @@ class CorehomeController extends CoresecureController {
             $this->redirect("coretiles/1/" . $menus[0]["id"]);            
         }
         else{
-            $this->render(array(
+            return $this->render(array(
                 'lang' => $lang,
                 'metadesc' => 'pfm space list'    
             ));

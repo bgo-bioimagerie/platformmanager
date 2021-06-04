@@ -82,7 +82,7 @@ class CoretilesController extends CoresecureController {
         
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'iconType' => $modelCoreConfig->getParam("space_icon_type"),
             'showSubBar' => $showSubBar,
@@ -94,7 +94,7 @@ class CoretilesController extends CoresecureController {
     
     public function docAction(){
         
-        $this->render(array(
+        return $this->render(array(
             "lang" => $this->getLanguage()
         ));
     }

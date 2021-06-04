@@ -130,7 +130,7 @@ class CorespaceaccessController extends CoresecureController {
 
         $tableHtml = $table->view($usersArray, $tableContent);
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'tableHtml' => $tableHtml,
@@ -212,7 +212,7 @@ class CorespaceaccessController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'space' => $space,
@@ -269,7 +269,7 @@ class CorespaceaccessController extends CoresecureController {
             return;
         }
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang),
@@ -302,7 +302,7 @@ class CorespaceaccessController extends CoresecureController {
         );
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'tableHtml' => $tableHtml,
@@ -342,7 +342,7 @@ class CorespaceaccessController extends CoresecureController {
             $this->redirect("corespacependinguseredit/".$id_space."/".$id);
         }
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang),

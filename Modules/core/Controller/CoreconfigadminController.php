@@ -24,7 +24,7 @@ class CoreconfigadminController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 503: Permission denied");
         }
     }
 
@@ -171,7 +171,7 @@ class CoreconfigadminController extends CoresecureController {
             $formDeleteUser->getHtml($lang),
             $formEmail->getHtml($lang), $formNavbar->getHtml($lang), $formBackup->getHtml($lang));
 
-        $this->render(array("forms" => $forms, "lang" => $lang));
+        return $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
     /**

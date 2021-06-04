@@ -104,7 +104,7 @@ class CoremenusController extends CoresecureController {
         
         // view
         $formHtml = $form->getHtml($lang);
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'formHtml' => $formHtml
                 ));
@@ -137,7 +137,7 @@ class CoremenusController extends CoresecureController {
         $table->addDeleteButton("coremenusitemdelete");
         $tableHtml = $table->view($data, $headers);
         
-        $this->render(array("lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml));
         
     }
     
@@ -197,7 +197,7 @@ class CoremenusController extends CoresecureController {
         
         // view
         $formHtml = $form->getHtml($lang);
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'formHtml' => $formHtml
                 ));

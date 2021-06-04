@@ -81,7 +81,7 @@ class CoreldapconfigController extends CoresecureController {
             return;
         }
         
-        $this->render( array("formHtml" => $form->getHtml($lang)));
+        return $this->render( array("formHtml" => $form->getHtml($lang)));
         
     }
 

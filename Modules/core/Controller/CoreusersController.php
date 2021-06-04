@@ -60,7 +60,7 @@ class CoreusersController extends CoresecureController {
         }
 
         $tableHtml = $table->view($data, $header);
-        $this->render(array("tableHtml" => $tableHtml, "lang" => $lang));
+        return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang));
     }
 
     public function editAction($id) {
@@ -137,7 +137,7 @@ class CoreusersController extends CoresecureController {
         if ($id > 0) {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
-        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+        return $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
     }
 
     protected function editPwdQuery($formPwd, $modelUser, $lang) {
@@ -201,7 +201,7 @@ class CoreusersController extends CoresecureController {
             return;
         }
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "formHtml" => $formPwd->getHtml($lang)
         ));

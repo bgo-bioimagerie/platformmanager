@@ -32,7 +32,7 @@ class CoreupdateController extends Controller {
 
         $updateInfo = $this->updateAction(1);
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'updateInfo' => $updateInfo
         ));

@@ -34,7 +34,7 @@ class AciiController extends CoresecureController {
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($aciisArray, $headers);
         
-        $this->render(array(
+        return $this->render(array(
             'lang' => $this->getLanguage(),
             'id_space' => $id_space,
             'tableHtml' => $tableHtml
@@ -64,7 +64,7 @@ class AciiController extends CoresecureController {
             $this->redirect("acii/".$id_space);
         }
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $this->getLanguage(),
             'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)

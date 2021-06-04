@@ -81,7 +81,7 @@ class AntibodieslistController extends CoresecureController {
         $modelstatus = new Status();
         $status = $modelstatus->getStatus();
 
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space, 'anticorpsArray' => $anticorpsArray,
             'status' => $status, 'lang' => $this->getLanguage(), 'letter' => $letter
         ));
@@ -337,7 +337,7 @@ class AntibodieslistController extends CoresecureController {
         $ownerFormGenerator->setLang($lang);
         $ownerFormGenerator->render();
 
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space, "id" => $id,
             "lang" => $this->getLanguage(),
             "form" => $form->getHtml($lang),
@@ -639,7 +639,7 @@ class AntibodieslistController extends CoresecureController {
         $modelstatus = new Status();
         $status = $modelstatus->getStatus();
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space, 'anticorpsArray' => $anticorpsArray,
             'searchColumn' => $searchColumn, 'searchTxt' => $searchTxt,
@@ -686,7 +686,7 @@ class AntibodieslistController extends CoresecureController {
 
         $lang = $this->getLanguage();
 
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'anticorpsArray' => $anticorpsArray,
             'searchName' => $searchName,
@@ -708,7 +708,7 @@ class AntibodieslistController extends CoresecureController {
         $form->addComment(AntibodiesTranslator::ConfirmDeleteAntibody($lang));
         $form->setValidationButton(CoreTranslator::Save($lang), "antibodydeleteconfirmed/".$id_space.'/'.$id);
         
-        $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
+        return $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
         
     }
     

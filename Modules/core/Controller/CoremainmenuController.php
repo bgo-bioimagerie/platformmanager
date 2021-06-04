@@ -49,7 +49,7 @@ class CoremainmenuController extends CoresecureController {
         $table->addDeleteButton("coremainmenudelete");
         $tableHtml = $table->view($menus, $headers);
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "tableHtml" => $tableHtml
         ));
@@ -80,7 +80,7 @@ class CoremainmenuController extends CoresecureController {
             $this->redirect("coremainmenus");
         }
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang),
         ));
@@ -116,7 +116,7 @@ class CoremainmenuController extends CoresecureController {
         $table->addDeleteButton("coremainsubmenudelete", "id", "name");
         $tableHtml = $table->view($menus, $headers);
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "tableHtml" => $tableHtml
         ));
@@ -152,7 +152,7 @@ class CoremainmenuController extends CoresecureController {
             return;
         }
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang),
         ));
@@ -186,7 +186,7 @@ class CoremainmenuController extends CoresecureController {
         $table->addDeleteButton("coremainmenuitemdelete", "id", "name");
         $tableHtml = $table->view($items, $headers);
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "tableHtml" => $tableHtml
         ));
@@ -227,7 +227,7 @@ class CoremainmenuController extends CoresecureController {
             $this->redirect("coremainmenuitems");
         }
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang),
         ));

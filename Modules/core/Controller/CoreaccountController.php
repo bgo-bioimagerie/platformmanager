@@ -92,7 +92,7 @@ class CoreaccountController extends Controller {
         $home_message = $modelConfig->getParam("home_message");
 
 
-        $this->render(array("home_title" => $home_title,
+        return $this->render(array("home_title" => $home_title,
             "home_message" => $home_message,
             "formHtml" => $form->getHtml($lang)));
     }
@@ -106,7 +106,7 @@ class CoreaccountController extends Controller {
         $lang = $this->getLanguage();
         $message = CoreTranslator::CreatedAccountMessage($lang);
 
-        $this->render(array("home_title" => $home_title,
+        return $this->render(array("home_title" => $home_title,
             "home_message" => $home_message,
             "message" => $message
         ));
