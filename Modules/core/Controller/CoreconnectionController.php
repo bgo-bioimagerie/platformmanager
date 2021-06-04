@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Configuration.php';
 require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CorecookiesecureController.php';
@@ -21,6 +22,7 @@ require_once 'Modules/mailer/Model/MailerSend.php';
 class CoreconnectionController extends CorecookiesecureController {
 
     private $user;
+    private $logger;
 
     /**
      * Connstructor
@@ -28,6 +30,7 @@ class CoreconnectionController extends CorecookiesecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         $this->user = new CoreUser();
+        $this->logger = Configuration::getLogger();
     }
 
     /**
@@ -49,7 +52,7 @@ class CoreconnectionController extends CorecookiesecureController {
         $viewCarousel = $modelConfig->getParam("home_view_carousel");
 
 
-        $this->render(array("msgError" => $message, "admin_email" => $admin_email, "logo" => $logo,
+        return $this->render(array("msgError" => $message, "admin_email" => $admin_email, "logo" => $logo,
             "home_title" => $home_title, "home_message" => $home_message,
             "redirection" => $redirection,
             "urlCarousel1" => $urlCarousel1,
@@ -149,6 +152,7 @@ class CoreconnectionController extends CorecookiesecureController {
 
         // test if local account
         if ($this->user->isLocalUser($login)) {
+            $this->logger->debug('[auth] local user', ['user' => $login]);
             //echo "found local user <br/>";
             return $this->user->connect($login, $pwd);
         }
@@ -157,8 +161,9 @@ class CoreconnectionController extends CorecookiesecureController {
         else {
             //echo "into LDap <br/>";
             $modelCoreConfig = new CoreConfig();
+            $this->logger->debug('[auth] check ldap', ['ldap' => $modelCoreConfig->getParam("useLdap")]);
             if ($modelCoreConfig->getParam("useLdap")) {
-
+                $this->logger->debug('[auth] ldap user', ['user' => $login]);
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
                 if ($ldapResult == "error") {
@@ -233,7 +238,7 @@ class CoreconnectionController extends CorecookiesecureController {
         $home_message = $modelConfig->getParam("home_message");
 
 
-        $this->render(array("home_title" => $home_title,
+        return $this->render(array("home_title" => $home_title,
             "home_message" => $home_message,
             "formHtml" => $form->getHtml($lang)));
     }
