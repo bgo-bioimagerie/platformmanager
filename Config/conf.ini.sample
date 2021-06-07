@@ -7,6 +7,7 @@ rootWeb = /
 dsn = 'mysql:host=MYSQL_URL;dbname=MYSQL_DBNAME;charset=utf8'
 login = MYSQL_USER
 pwd = MYSQL_PASS
+debug_sql = true
 
 [Menu]
 headless = false

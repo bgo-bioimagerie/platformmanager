@@ -38,6 +38,9 @@ abstract class Model {
             //echo "class = " . get_class($this) . "<br/>";
             $result->execute($params);
         }
+        if (Configuration::get('debug_sql', false)) {
+            Configuration::getLogger()->debug('[sql] query', ['sql' => $sql, 'params' => $params]);
+        }
         //print_r( $result->errorInfo() );
         return $result;
     }
