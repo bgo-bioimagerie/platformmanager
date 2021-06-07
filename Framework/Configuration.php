@@ -30,6 +30,14 @@ class Configuration {
             $streamHandler = new StreamHandler('php://stderr', $level);
             $streamHandler->setFormatter($formatter);
             self::$logger->pushHandler($streamHandler);
+            self::$logger->pushProcessor(function ($entry) {
+                $user = 'anonymous';
+                if(isset($_SESSION["id_user"])) {
+                    $user = $_SESSION["id_user"];
+                }
+                $entry['extra']['user'] = $user;
+                return $entry;
+            });
 
         }
         return self::$logger;
