@@ -67,7 +67,7 @@ class CorespaceaccessController extends CoresecureController {
         // get user list
         $modelUser = new CoreUser();
         $usersArray = array();
-        $title = CoreTranslator::Users($lang);
+        
         if ($active == "active") {
             if($letter == "All"){
                 $usersArray = $modelUser->getActiveUsersInfo(1);
@@ -83,7 +83,6 @@ class CorespaceaccessController extends CoresecureController {
                 $usersArray = $modelUser->getActiveUsersInfoLetter($letter, 0);
             }
 
-            $title = CoreTranslator::Unactive_Users($lang);
         }
 
         //$modelStatus = new CoreStatus();

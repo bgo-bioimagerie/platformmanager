@@ -366,17 +366,12 @@ class CorespaceController extends CoresecureController {
             }
 
 
-            $open = "";
-            $colorMenu = "";
+            $colorMenu = 'style="background-color:#428bca; color: #fff;"';
             if (isset($_SESSION["openedNav"]) && $_SESSION["openedNav"] == $item["url"]) {
-                $open = "open";
                 if (isset($item["color"]) && $item["color"] != "") {
                     $colorMenu = 'style="background-color:' . $item["color"] . '; color: #fff;"';
-                } else {
-                    $colorMenu = 'style="background-color:#428bca; color: #fff;"';
                 }
             }
-            $colorMenu = 'style="background-color:' . $item["color"] . '; color: #fff;"';
 
             // replace if below
             $mainMenu .= '<li>';

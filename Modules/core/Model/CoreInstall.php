@@ -220,8 +220,7 @@ class CoreInstall extends Model {
         $dsn = '\'mysql:host=' . $sql_host . ';dbname=' . $db_name . ';charset=utf8\'';
 
         $fileURL = Configuration::getConfigFile();
-        $returnVal = $this->editConfFile($fileURL, $dsn, $login, $password);
-        return $returnVal;
+        return $this->editConfFile($fileURL, $dsn, $login, $password);
     }
 
     /**

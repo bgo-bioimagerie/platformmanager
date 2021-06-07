@@ -154,11 +154,9 @@ class CoreUser extends Model {
         $user = $this->runRequest($sql, array($email));
         //echo 'found ' . $user->rowCount() . "users <br/>";
         if ($user->rowCount() == 1) {
-            $userf = $user->fetch();
-            return $userf;
-        } else {
-            return false;
+            return $user->fetch();
         }
+        return false;
     }
 
     public function getUserInitiales($id) {
@@ -207,9 +205,8 @@ class CoreUser extends Model {
         $unit = $this->runRequest($sql, array($id));
         if ($unit->rowCount() == 1) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public function add($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $encrypte = true) {
@@ -274,8 +271,7 @@ class CoreUser extends Model {
 
     public function getpwd($id) {
         $sql = "select pwd from core_users where id=?";
-        $req = $this->runRequest($sql, array($id))->fetch();
-        return $req;
+        return $this->runRequest($sql, array($id))->fetch();
     }
 
     public function getEmpty() {
@@ -305,9 +301,8 @@ class CoreUser extends Model {
         ));
         if ($user->rowCount() == 1) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -401,9 +396,8 @@ class CoreUser extends Model {
         ));
         if ($user->rowCount() == 1) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -587,9 +581,8 @@ class CoreUser extends Model {
         $user = $this->runRequest($sql, array($login));
         if ($user->rowCount() == 1) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -734,15 +727,13 @@ class CoreUser extends Model {
 
     public function getActiveUsersInfo($active) {
         $sql = "SELECT * FROM core_users WHERE is_active=? ORDER BY name ASC;";
-        $users = $this->runRequest($sql, array($active))->fetchAll();
-        return $users;
+        return $this->runRequest($sql, array($active))->fetchAll();
     }
 
     public function getActiveUsersInfoLetter($letter, $active) {
 
         $sql = "SELECT * FROM core_users WHERE is_active=? AND name LIKE '" . $letter . "%' ORDER BY name ASC;";
-        $users = $this->runRequest($sql, array($active))->fetchAll();
-        return $users;
+        return $this->runRequest($sql, array($active))->fetchAll();
     }
 
     public function getAcivesForSelect($sortentry) {
@@ -774,10 +765,7 @@ class CoreUser extends Model {
 
 
         if ($req->rowCount() == 1) {
-            $userInfo = $req->fetch();
-            //$userInfo["id_resps"] = $this->getUserResponsibles($id);
-
-            return $userInfo;
+            return $req->fetch();
         } else {
             return array("id" => 0,
                 "login" => 'unknown',
