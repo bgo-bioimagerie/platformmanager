@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreInstall.php';
