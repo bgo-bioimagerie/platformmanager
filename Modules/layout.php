@@ -28,7 +28,10 @@ if($isdev) {
         </title>
         <?php
         if($isdev) {
+            echo '<script src="externals/vuejs/vue.js"></script>';
             echo $debugbarRenderer->renderHead();
+        } else {
+            echo '<script src="externals/vuejs/vue.min.js"></script>';
         }
         ?>
 
@@ -44,9 +47,10 @@ if($isdev) {
 
         <?php startblock('spacenavbar') ?>
         <?php endblock() ?>
-
+        <div id="app">
         <?php startblock('content') ?>
         <?php endblock() ?>
+        </div>
 
         <?php startblock('footer') ?>
         <?php endblock() ?>

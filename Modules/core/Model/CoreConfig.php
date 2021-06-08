@@ -85,8 +85,6 @@ class CoreConfig extends Model {
             }
             CoreConfig::$params[$param["id_space"]][$param["keyname"]] = $param["value"];
         }
-        //Configuration::getLogger()->debug('#######', ['config' => CoreConfig::$params]);
-
     }
 
     /**

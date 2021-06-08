@@ -115,13 +115,10 @@ if (getenv('PFM_MODE') != 'dev') {
                             <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
                          -->
                     </div>
-
-
-
-
                 </div>
             </div>
         </div>
     </div>
+
     <?php
     endblock();

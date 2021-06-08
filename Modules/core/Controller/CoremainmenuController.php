@@ -65,6 +65,9 @@ class CoremainmenuController extends CoresecureController {
 
         $modelMenu = new CoreMainMenu();
         $value = $modelMenu->get($id);
+        if(!$value) {
+            $value = ["name" => "", "display_order" => "0"];
+        }
 
         $form = new Form($this->request, "editmainmenuform");
         $form->setTitle(CoreTranslator::EditMainMenu($lang));
@@ -127,6 +130,9 @@ class CoremainmenuController extends CoresecureController {
 
         $modelMenu = new CoreMainSubMenu();
         $value = $modelMenu->get($id);
+        if(!$value) {
+            $value = ["name" => "", "display_order" => "0", "id_main_menu" => "0"];
+        }
 
         $modelMainMenus = new CoreMainMenu();
         $mainMenus = $modelMainMenus->getForList();
@@ -198,6 +204,10 @@ class CoremainmenuController extends CoresecureController {
 
         $modelItem = new CoreMainMenuItem();
         $item = $modelItem->get($id);
+        if(!$item) {
+            $item = [
+                "name" => "", "display_order" => "0", "id_sub_menu" => "0", "id_space" => "0"];
+        }
 
         $modelSpace = new CoreSpace();
         $spaceList = $modelSpace->getForList();
