@@ -99,6 +99,9 @@ class CorespaceaccessController extends CoresecureController {
             $usersArray[$i]['spaces'] = $modelSpace->getUserSpacesRolesSummary($usersArray[$i]['id']);
         }
 
+        // get only users of this space
+        $usersArray = $this->getUsersOfSpace($id_space, $usersArray);
+
         // table view
         $table = new TableView();
         $table->addLineButton("coreaccessuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
@@ -138,6 +141,25 @@ class CorespaceaccessController extends CoresecureController {
             'space' => $space
                 ), "indexAction");
 
+    }
+
+    /**
+     * gherve: function added for multi-tenant feature
+     * 
+     * @param int $id_space id of space
+     * @param array $usersArray users from different spaces
+     * @return array users from space of id $space_id
+     */
+    public function getUsersOfSpace($id_space, $usersArray) {
+        $result = array();
+        $modelSpaceUser = new CoreSpaceUser();
+        
+        for ($i = 0; $i < count($usersArray); $i++) {
+            if ($modelSpaceUser->exists($usersArray[$i]['id'], $id_space)) {
+                array_push($result, $usersArray[$i]);
+            }            
+        }
+        return $result;
     }
 
     public function usersAction($id_space, $letter = "") {
@@ -200,6 +222,10 @@ class CorespaceaccessController extends CoresecureController {
                 $subject = CoreTranslator::Account($lang);
                 $content = CoreTranslator::AccountCreatedEmail($lang, $form->getParameter("login"), $pwd);
                 $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+
+                // Add user to pending accounts for this space
+                $modelSpacePending = new CorePendingAccount();
+                $modelSpacePending->add($id_user, $id_space);
 
                 $_SESSION["message"] = CoreTranslator::AccountHasBeenCreated($lang);
 
