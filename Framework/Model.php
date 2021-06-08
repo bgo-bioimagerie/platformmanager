@@ -30,17 +30,25 @@ abstract class Model {
      * @return PDOStatement Result of the request
      */
     protected function runRequest($sql, $params = null) {
-        if ($params == null) {
-            $result = self::getDatabase()->query($sql);   // direct query
-        } else {
-            $result = self::getDatabase()->prepare($sql); // prepared request
-            //print_r($params);
-            //echo "class = " . get_class($this) . "<br/>";
-            $result->execute($params);
-        }
+        $result = null;
         if (Configuration::get('debug_sql', false)) {
             Configuration::getLogger()->debug('[sql] query', ['sql' => $sql, 'params' => $params]);
         }
+        
+        try {
+            if ($params == null) {
+                $result = self::getDatabase()->query($sql);   // direct query
+            } else {
+                $result = self::getDatabase()->prepare($sql); // prepared request
+                //print_r($params);
+                //echo "class = " . get_class($this) . "<br/>";
+                $result->execute($params);
+            }
+
+        } catch (\Throwable $th) {
+            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $result->errorInfo()]);
+        }
+
         //print_r( $result->errorInfo() );
         return $result;
     }
