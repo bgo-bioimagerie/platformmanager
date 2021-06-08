@@ -3,6 +3,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreInstall.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 function version()
     {
@@ -16,10 +17,12 @@ $logger = Configuration::getLogger();
 
 $shortopts = "";
 $shortopts .= "i";
+$shortopts .= "e";
 $shortopts .= "h";
 $shortopts .= "v";
 $longopts = array(
   "install",
+  "expire",
   "help",
   "version"
 );
@@ -29,6 +32,7 @@ $options = getopt($shortopts, $longopts);
 if (empty($options) || isset($options['h']) || isset($options['help'])) {
     echo "Usage:\n";
     echo " --install: create and updates tables in database\n";
+    echo " --expire: expire user not logged since 1 year or contract ended\n";
     echo " --version: show software version\n";
     return;
 }
@@ -36,6 +40,14 @@ if (empty($options) || isset($options['h']) || isset($options['help'])) {
 if (isset($options['v']) || isset($options['version'])) {
     $v = version();
     echo "Version: " . $v . "\n";
+    return;
+}
+
+if (isset($options['expire']) || isset($options['e'])) {
+    $logger->info("Expire old users");
+    $modelUser = new CoreUser();
+    $count = $modelUser->disableUsers(6);
+    $logger->info("Expired ".$count. " users");
     return;
 }
 
