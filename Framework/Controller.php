@@ -83,6 +83,16 @@ abstract class Controller {
         $classController = get_class($this);
         $controllerView = str_replace("Controller", "", $classController);
 
+        if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
+            header('Content-Type: application/json');
+            if(isset($dataView['data'])) {
+                echo json_encode($dataView['data']);
+                return $dataView['data'];
+            }
+            return null;
+
+        }
+
         if (getenv("PFM_MODE") == "test") {
             return $dataView;
         }
