@@ -96,7 +96,14 @@ abstract class Model {
         $pdo = $this->runRequest($sql);
         $isColumn = $pdo->fetch();
         if ($isColumn == false) {
-            $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType . " NOT NULL DEFAULT '" . $defaultValue . "'";
+            $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType . " NOT NULL";
+            if($defaultValue != "") {
+                if(is_string($defaultValue)) {
+                    $sql .= " DEFAULT '" . $defaultValue . "'";
+                } else {
+                    $sql .= " DEFAULT " . $defaultValue;
+                }
+            }
             $this->runRequest($sql);
         }
     }
@@ -151,7 +158,11 @@ abstract class Model {
         for ($i = 0; $i < count($this->columnsNames); $i++) {
             $sql .= "`" . $this->columnsNames[$i] . "` " . $this->columnsTypes[$i];
             if ($this->columnsDefaultValue[$i] != "") {
-                $sql .= " NOT NULL DEFAULT '" . $this->columnsDefaultValue[$i] . "' ";
+                if(is_string($this->columnsDefaultValue[$i])) {
+                    $sql .= " NOT NULL DEFAULT '" . $this->columnsDefaultValue[$i] . "' ";
+                } else {
+                    $sql .= " NOT NULL DEFAULT " . $this->columnsDefaultValue[$i] . " ";
+                }
             }
             if ($this->columnsNames[$i] == $this->primaryKey) {
                 $sql .= " AUTO_INCREMENT ";
@@ -166,7 +177,7 @@ abstract class Model {
         }
         $sql .= ");";
 
-        //echo "request = " . $sql . "<br/>";
+
         //return
         $this->runRequest($sql);
 
