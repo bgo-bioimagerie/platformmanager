@@ -17,7 +17,7 @@ class InInvoiceItem extends Model {
     public function __construct() {
 
         $this->tableName = "in_invoice_item";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_invoice", "int(11)", 0);
         $this->setColumnsInfo("module", "varchar(200)", 0);
         $this->setColumnsInfo("controller", "varchar(200)", 0);

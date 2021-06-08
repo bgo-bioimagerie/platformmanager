@@ -6,7 +6,7 @@ class ClClientUser extends Model {
 
     public function __construct() {
         $this->tableName = "cl_j_client_user";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_client", "int(11)", 0);
         $this->setColumnsInfo("id_user", "int(11)", 0);
         $this->primaryKey = "id";

@@ -18,7 +18,7 @@ class ReEventType extends Model {
     public function __construct() {
 
         $this->tableName = "re_event_type";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->primaryKey = "id";

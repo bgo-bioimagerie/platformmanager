@@ -11,7 +11,7 @@ class StockShelf extends Model {
 
     public function __construct() {
         $this->tableName = "stock_shelf";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(255)", "");
         $this->setColumnsInfo("id_cabinet", "int(11)", 0);
         $this->primaryKey = "id";

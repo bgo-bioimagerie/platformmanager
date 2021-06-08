@@ -17,7 +17,7 @@ class DbType extends Model {
     public function __construct() {
 
         $this->tableName = "db_types";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->primaryKey = "id";
     }

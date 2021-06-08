@@ -6,7 +6,7 @@ class ClAddress extends Model {
 
     public function __construct() {
         $this->tableName = "cl_addresses";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("institution", "varchar(255)", "");
         $this->setColumnsInfo("building_floor", "varchar(255)", "");
         $this->setColumnsInfo("service", "varchar(255)", "");

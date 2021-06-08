@@ -6,7 +6,7 @@ class ClCompany extends Model {
 
     public function __construct() {
         $this->tableName = "cl_company";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", 0);
         $this->setColumnsInfo("address", "text", ""); 

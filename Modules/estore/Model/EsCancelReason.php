@@ -6,7 +6,7 @@ class EsCancelReason extends Model {
 
     public function __construct() {
         $this->tableName = "es_cancel_reasons";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", "");
         $this->primaryKey = "id";

@@ -17,7 +17,7 @@ class ReResps extends Model {
     public function __construct() {
 
         $this->tableName = "re_resps";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_resource", "int(11)", 0);
         $this->setColumnsInfo("id_user", "int(11)", 0);
         $this->setColumnsInfo("id_status", "int(11)", 0);

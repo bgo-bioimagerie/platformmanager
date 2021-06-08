@@ -6,7 +6,7 @@ class BrSale extends Model {
 
     public function __construct() {
         $this->tableName = "br_sales";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("id_enterd_by", "int(11)", 0);
         $this->setColumnsInfo("id_client", "int(11)", 0);

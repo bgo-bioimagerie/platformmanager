@@ -12,7 +12,7 @@ class BkNightWE extends Model {
     public function __construct() {
 
         $this->tableName = "bk_nightwe";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_belonging", "int(11)", 0);
         $this->setColumnsInfo("tarif_unique", "int(11)", 1);
         $this->setColumnsInfo("tarif_night", "int(3)", 0);

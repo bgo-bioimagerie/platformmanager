@@ -6,7 +6,7 @@ class QuoteItem extends Model {
 
     public function __construct() {
         $this->tableName = "qo_quoteitems";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_quote", "int(11)", 0);
         $this->setColumnsInfo("id_content", "int(11)", 0);
         $this->setColumnsInfo("module", "varchar(255)", "");

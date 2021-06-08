@@ -17,7 +17,7 @@ class ReState extends Model {
     public function __construct() {
 
         $this->tableName = "re_state";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("color", "varchar(7)", "#ffffff");
         $this->setColumnsInfo("id_space", "int(11)", 0);

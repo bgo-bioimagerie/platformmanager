@@ -18,7 +18,7 @@ class BjTask extends Model {
     public function __construct() {
 
         $this->tableName = "bj_tasks";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_note", "int(11)", 0);
         $this->setColumnsInfo("priority", "int(5)", 0);
         $this->setColumnsInfo("deadline", "date", "");

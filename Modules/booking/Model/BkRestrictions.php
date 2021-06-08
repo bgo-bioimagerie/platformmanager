@@ -6,7 +6,7 @@ class BkRestrictions extends Model {
 
     public function __construct() {
         $this->tableName = "bk_restrictions";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_resource", "int(11)", 0);
         $this->setColumnsInfo("maxbookingperday", "int(11)", 0);
         $this->setColumnsInfo("bookingdelayusercanedit", "int(11)", 0);

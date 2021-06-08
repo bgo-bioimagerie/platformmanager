@@ -20,6 +20,7 @@ if($isdev) {
         <?php
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
+        <meta name="mode" description="{{$isdev}}">
         <base href="<?php echo $rootWeb ?>" >
         <title>
             <?php startblock('title') ?>
@@ -38,7 +39,6 @@ if($isdev) {
 
     </head>
     <body style="background-color: #e7ecf0;">
-
         <?php startblock('navbar') ?>
         <?php endblock() ?>
 

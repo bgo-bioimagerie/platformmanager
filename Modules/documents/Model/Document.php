@@ -17,7 +17,7 @@ class Document extends Model {
     public function __construct() {
 
         $this->tableName = "dc_documents";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("title", "varchar(250)", "");
         $this->setColumnsInfo("id_user", "int(11)", 0);

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Configuration.php';
 
 /**
  * Class defining the config model
@@ -8,6 +9,8 @@ require_once 'Framework/Model.php';
  * @author Sylvain Prigent
  */
 class CoreConfig extends Model {
+
+    private static $params = null;
 
     /**
      * Create the table
@@ -24,7 +27,7 @@ class CoreConfig extends Model {
 
         $this->runRequest($sql);
 
-        $sqlCol = "SHOW COLUMNS FROM `core_config` LIKE 'id';";
+        $sqlCol = "SHOW COLUMNS FROM `core_config` WHERE Field='id';";
         $reqCol = $this->runRequest($sqlCol);
 
         if ($reqCol->rowCount() > 0){
@@ -43,7 +46,9 @@ class CoreConfig extends Model {
      * @return PDOStatement
      */
     public function createDefaultConfig() {
-
+        if(getenv('PFM_ADMIN_EMAIL')) {
+            $this->setParam("admin_email", getenv('PFM_ADMIN_EMAIL'));
+        }
         $this->setParam("admin_email", "firstname.name@adress.com");
         $this->setParam("user_desactivate", "0");
         $this->setParam("logo", "Theme/logo.jpg");
@@ -55,13 +60,33 @@ class CoreConfig extends Model {
      * Check if a config key exists
      */
     public function isKey($key, $id_space) {
-        $sql = "SELECT keyname FROM core_config WHERE keyname=? AND id_space=?";
-        $unit = $this->runRequest($sql, array($key, $id_space));
-        if ($unit->rowCount() == 1) {
+        self::loadParams($id_space);
+        if(isset(CoreConfig::$params[$id_space]) && isset(CoreConfig::$params[$id_space][$key])) {
             return true;
-        } else {
-            return false;
         }
+        return false;
+    }
+
+    /**
+     * Load config parameters
+     * @param string $id_space
+     */
+    private function loadParams($id_space) {
+        if(CoreConfig::$params != null) {
+            return;
+        }
+        Configuration::getLogger()->debug('load config', ['space' => $id_space]);
+        $sql = "SELECT * FROM core_config where id_space=?";
+        $config_params = $this->runRequest($sql, array($id_space));
+        $dbconfig = $config_params->fetchAll();
+        foreach($dbconfig as $param) {
+            if(!isset(CoreConfig::$params[$param["id_space"]])) {
+                CoreConfig::$params[$param["id_space"]] = [];
+            }
+            CoreConfig::$params[$param["id_space"]][$param["keyname"]] = $param["value"];
+        }
+        //Configuration::getLogger()->debug('#######', ['config' => CoreConfig::$params]);
+
     }
 
     /**
@@ -72,6 +97,11 @@ class CoreConfig extends Model {
     public function addParam($key, $value, $id_space = 0) {
         $sql = "INSERT INTO core_config (keyname, value, id_space) VALUES(?,?,?)";
         $this->runRequest($sql, array($key, $value, $id_space));
+        self::loadParams($id_space);
+        if(!isset(CoreConfig::$params[$id_space])) {
+            CoreConfig::$params[$id_space] = [];
+        }
+        CoreConfig::$params[$id_space][$key] = $value;
     }
 
     /**
@@ -82,6 +112,11 @@ class CoreConfig extends Model {
     public function updateParam($key, $value, $id_space = 0) {
         $sql = "update core_config set value=?  where keyname=? AND id_space=?";
         $this->runRequest($sql, array($value, $key, $id_space));
+        self::loadParams($id_space);
+        if(!isset(CoreConfig::$params[$id_space])) {
+            CoreConfig::$params[$id_space] = [];
+        }
+        CoreConfig::$params[$id_space][$key] = $value;
     }
 
     /**
@@ -90,15 +125,7 @@ class CoreConfig extends Model {
      * @return string: value
      */
     public function getParam($key) {
-        $sql = "SELECT value FROM core_config WHERE keyname=?";
-        $req = $this->runRequest($sql, array($key));
-
-        if ($req->rowCount() == 1) {
-            $tmp = $req->fetch();
-            return $tmp[0];
-        } else {
-            return "";
-        }
+        return self::getParamSpace($key , 0);
     }
 
    /**
@@ -107,15 +134,14 @@ class CoreConfig extends Model {
      * @return string: value
      */
     public function getParamSpace($key, $id_space) {
-        $sql = "SELECT value FROM core_config WHERE keyname=? AND id_space=?";
-        $req = $this->runRequest($sql, array($key, $id_space));
-
-        if ($req->rowCount() == 1) {
-            $tmp = $req->fetch();
-            return $tmp[0];
-        } else {
+        self::loadParams($id_space);
+        if(!isset(CoreConfig::$params[$id_space])) {
             return "";
         }
+        if(!isset(CoreConfig::$params[$id_space][$key])) {
+            return "";
+        }
+        return CoreConfig::$params[$id_space][$key];
     }
 
     /**

@@ -17,7 +17,7 @@ class InInvoice extends Model {
     public function __construct() {
 
         $this->tableName = "in_invoice";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("number", "varchar(50)", "");
         $this->setColumnsInfo("id_space", "int(11)", "");
         $this->setColumnsInfo("period_begin", "date", "");

@@ -12,7 +12,7 @@ class SePurchase extends Model {
         public function __construct() {
 
         $this->tableName = "se_purchase";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("comment", "varchar(255)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("date", "date", "");

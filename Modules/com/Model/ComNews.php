@@ -17,7 +17,7 @@ class ComNews extends Model {
     public function __construct() {
 
         $this->tableName = "com_news";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("title", "varchar(250)", "");
         $this->setColumnsInfo("content", "TEXT", "");

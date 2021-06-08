@@ -8,7 +8,7 @@ class EsSale extends Model {
         $this->tableName = "es_sales";
 
         // entered (status is in EsSaleHistory)
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("id_client", "int(11)", 0);
         $this->setColumnsInfo("date_expected", "date", "0000-00-00");

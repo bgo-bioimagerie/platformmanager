@@ -6,7 +6,7 @@ class CoreMainMenuItem extends Model {
 
     public function __construct() {
         $this->tableName = "core_main_menu_items";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(100)", "");
         $this->setColumnsInfo("id_sub_menu", "int(11)", 0);
         $this->setColumnsInfo("id_space", "int(11)", 0);

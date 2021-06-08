@@ -17,7 +17,7 @@ class DbLang extends Model {
     public function __construct() {
 
         $this->tableName = "db_langs";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("short", "varchar(3)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->primaryKey = "id";

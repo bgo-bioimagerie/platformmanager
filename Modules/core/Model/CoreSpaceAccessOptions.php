@@ -18,7 +18,7 @@ class CoreSpaceAccessOptions extends Model {
     public function __construct() {
 
         $this->tableName = "core_space_access_options";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "varchar(100)", "");
         $this->setColumnsInfo("toolname", "varchar(100)", "");
         $this->setColumnsInfo("module", "varchar(100)", "");

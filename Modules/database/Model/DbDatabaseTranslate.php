@@ -17,7 +17,7 @@ class DbDatabaseTranslate extends Model {
     public function __construct() {
 
         $this->tableName = "db_database_translate";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_database", "int(11)", 0);
         $this->setColumnsInfo("lang", "varchar(3)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");

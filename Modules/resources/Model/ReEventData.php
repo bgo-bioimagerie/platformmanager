@@ -17,7 +17,7 @@ class ReEventData extends Model {
     public function __construct() {
         
         $this->tableName = "re_event_data";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_event", "int(11)", "");
         $this->setColumnsInfo("url", "varchar(255)", "");
         $this->primaryKey = "id";

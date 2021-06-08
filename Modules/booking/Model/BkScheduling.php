@@ -17,7 +17,7 @@ class BkScheduling extends Model {
     public function __construct() {
 
         $this->tableName = "bk_schedulings";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("is_monday", "int(1)", 1);
         $this->setColumnsInfo("is_tuesday", "int(1)", 1);
         $this->setColumnsInfo("is_wednesday", "int(1)", 1);

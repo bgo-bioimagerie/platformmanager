@@ -6,7 +6,7 @@ class EsSaleItem extends Model {
 
     public function __construct() {
         $this->tableName = "es_sale_items";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_sale", "int(11)", 0);
         $this->setColumnsInfo("id_batch", "int(11)", 0);
         $this->setColumnsInfo("quantity", "int(11)", 0);

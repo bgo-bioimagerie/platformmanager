@@ -17,7 +17,7 @@ class DbViewAttribut extends Model {
     public function __construct() {
         
         $this->tableName = "db_view_attributs";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_view", "int(11)", 0);
         $this->setColumnsInfo("id_attribut", "int(11)", 0);
         $this->setColumnsInfo("display_order", "int(5)", "");

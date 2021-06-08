@@ -6,7 +6,7 @@ class BrLosse extends Model {
 
     public function __construct() {
         $this->tableName = "br_losses";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("id_batch", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", "");

@@ -17,7 +17,7 @@ class ReEvent extends Model {
     public function __construct() {
         
         $this->tableName = "re_event";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_resource", "int(11)", 0);
         $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("id_user", "int(11)", 0);

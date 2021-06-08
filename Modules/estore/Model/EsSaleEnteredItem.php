@@ -7,7 +7,7 @@ class EsSaleEnteredItem extends Model {
 
     public function __construct() {
         $this->tableName = "es_sale_entered_items";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_sale", "int(11)", 0);
         $this->setColumnsInfo("id_product", "int(11)", "");
         $this->setColumnsInfo("quantity", "int(11)", "");

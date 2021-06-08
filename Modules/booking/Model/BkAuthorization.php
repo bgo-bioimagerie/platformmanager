@@ -18,7 +18,7 @@ class BkAuthorization extends Model {
     public function __construct() {
 
         $this->tableName = "bk_authorization";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("user_id", "int(11)", 0);
         $this->setColumnsInfo("resource_id", "int(11)", 0);
         $this->setColumnsInfo("visa_id", "int(11)", 0);

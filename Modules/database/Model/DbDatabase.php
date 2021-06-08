@@ -17,7 +17,7 @@ class DbDatabase extends Model {
     public function __construct() {
         
         $this->tableName = "db_database";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->primaryKey = "id";

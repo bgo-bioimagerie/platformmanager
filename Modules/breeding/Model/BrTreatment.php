@@ -6,7 +6,7 @@ class BrTreatment extends Model {
 
     public function __construct() {
         $this->tableName = "br_treatment";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_batch", "int(11)", 0);
         $this->setColumnsInfo("date", "date", "0000-00-00");
         $this->setColumnsInfo("antibiotic", "varchar(255)", "");

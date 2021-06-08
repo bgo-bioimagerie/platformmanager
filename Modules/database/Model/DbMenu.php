@@ -17,7 +17,7 @@ class DbMenu extends Model {
     public function __construct() {
         
         $this->tableName = "db_menu";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_database", "int(11)", 0);
         $this->setColumnsInfo("edit_or_view", "varchar(1)", "");
         $this->setColumnsInfo("table_id", "int(11)", 0);

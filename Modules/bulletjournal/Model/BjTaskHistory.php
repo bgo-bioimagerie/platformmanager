@@ -25,7 +25,7 @@ class BjTaskHistory extends Model {
     public function __construct() {
 
         $this->tableName = "bj_tasks_history";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_note", "int(11)", 0);
         $this->setColumnsInfo("status", "int(5)", 1);
         $this->setColumnsInfo("date", "int(11)", 0);

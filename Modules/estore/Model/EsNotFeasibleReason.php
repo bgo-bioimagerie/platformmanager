@@ -6,7 +6,7 @@ class EsNotFeasibleReason extends Model {
 
     public function __construct() {
         $this->tableName = "es_not_feasible_reason";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", "");
         $this->primaryKey = "id";

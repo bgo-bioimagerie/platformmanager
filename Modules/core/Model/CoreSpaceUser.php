@@ -18,7 +18,7 @@ class CoreSpaceUser extends Model {
     public function __construct() {
 
         $this->tableName = "core_j_spaces_user";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_user", "varchar(100)", "");
         $this->setColumnsInfo("id_space", "varchar(100)", "");
         $this->setColumnsInfo("status", "varchar(100)", "");

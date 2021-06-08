@@ -17,7 +17,7 @@ class DbView extends Model {
     public function __construct() {
         
         $this->tableName = "db_views";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_database", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("id_class", "int(11)", 0);

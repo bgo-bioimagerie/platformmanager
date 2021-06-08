@@ -8,7 +8,7 @@ class Quote extends Model {
 
     public function __construct() {
         $this->tableName = "qo_quotes";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("recipient", "varchar(100)", "");
         $this->setColumnsInfo("address", "text", "");

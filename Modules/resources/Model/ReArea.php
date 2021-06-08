@@ -17,7 +17,7 @@ class ReArea extends Model {
     public function __construct() {
 
         $this->tableName = "re_area";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("restricted", "int(1)", 0);

@@ -6,7 +6,7 @@ class EsProductUnitQ extends Model {
 
     public function __construct() {
         $this->tableName = "es_product_unit_q";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("id_product", "int(11)", 0);
         $this->setColumnsInfo("unit_quantity", "int(11)", 0);

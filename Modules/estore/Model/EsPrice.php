@@ -6,7 +6,7 @@ class EsPrice extends Model {
 
     public function __construct() {
         $this->tableName = "es_prices";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("id_product", "int(11)", 0);
         $this->setColumnsInfo("id_pricing", "int(11)", 0);

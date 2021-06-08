@@ -7,7 +7,7 @@ class EsSaleHistory extends Model {
 
     public function __construct() {
         $this->tableName = "es_sale_history";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_sale", "int(11)", 0);
         $this->setColumnsInfo("id_status", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", "");

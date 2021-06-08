@@ -16,7 +16,7 @@ class ResourceInfo extends Model {
     public function __construct() {
 
         $this->tableName = "re_info";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(150)", "");
         $this->setColumnsInfo("brand", "varchar(250)", "");
         $this->setColumnsInfo("type", "varchar(250)", "");

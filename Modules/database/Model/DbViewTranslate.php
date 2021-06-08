@@ -17,7 +17,7 @@ class DbViewTranslate extends Model {
     public function __construct() {
 
         $this->tableName = "db_views_translate";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_view", "int(11)", 0);
         $this->setColumnsInfo("lang", "varchar(3)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");

@@ -104,6 +104,8 @@ class BackupMySQL extends mysqli {
 			$this->message('Erreur de dossier &quot;' . htmlspecialchars($this->dossier) . '&quot;');
 			return;
 		}
+		Configuration::getLogger()->debug("[backup] start", ["dossier" => $dossier]);
+
 		
 		// Controle du fichier
 		$this->nom_fichier = $nom_fichier . date('Ymd-His') . '.sql.gz';

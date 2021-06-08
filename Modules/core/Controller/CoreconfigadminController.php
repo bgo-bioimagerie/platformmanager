@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Configuration.php';
+
 require_once 'Framework/Form.php';
 require_once 'Framework/Upload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';

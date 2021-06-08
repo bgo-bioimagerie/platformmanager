@@ -6,7 +6,7 @@ class UsersInfo extends Model {
 
     public function __construct() {
         $this->tableName = "users_info";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_core", "int(11)", 0);
         $this->setColumnsInfo("phone", "varchar(100)", "");
         $this->setColumnsInfo("unit", "varchar(255)", "");

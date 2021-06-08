@@ -10,7 +10,7 @@ class CoreUser extends Model {
 
     public function __construct() {
         $this->tableName = "core_users";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("login", "varchar(100)", "");
         $this->setColumnsInfo("pwd", "varchar(100)", "");
         $this->setColumnsInfo("name", "varchar(100)", "");
@@ -194,9 +194,17 @@ class CoreUser extends Model {
     }
 
     public function installDefault() {
+        $email = "admin@admin.com";
+        if(getenv("PFM_ADMIN_EMAIL")) {
+            $email = getenv("PFM_ADMIN_EMAIL");
+        }
+        $pwd = "admin";
+        if(getenv("PFM_ADMIN_PASSWORD")) {
+            $pwd = getenv("PFM_ADMIN_PASSWORD");
+        }
         if (!$this->exists(1)) {
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created) VALUES(?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array("admin", md5("admin"), "admin", "admin", "admin@admin.com", 5, "local", date("Y-m-d")));
+            $this->runRequest($sql, array("admin", md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d")));
         }
     }
 

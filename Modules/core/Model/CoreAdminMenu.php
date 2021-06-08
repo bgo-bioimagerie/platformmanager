@@ -17,7 +17,7 @@ class CoreAdminMenu extends Model {
     public function __construct() {
 
         $this->tableName = "core_adminmenu";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(40)", "");
         $this->setColumnsInfo("link", "varchar(150)", "");
         $this->setColumnsInfo("icon", "varchar(40)", "");

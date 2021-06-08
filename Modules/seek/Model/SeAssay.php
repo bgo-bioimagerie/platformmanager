@@ -17,7 +17,7 @@ class SeAssay extends Model {
     public function __construct() {
         /*
         $this->tableName = "se_assay";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_resa", "int(11)", 0);
         $this->setColumnsInfo("id_assay", "int(11)", 0);
         $this->setColumnsInfo("dataurl", "varchar(255)", "");

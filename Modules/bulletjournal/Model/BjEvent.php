@@ -17,7 +17,7 @@ class BjEvent extends Model {
     public function __construct() {
 
         $this->tableName = "bj_events";
-        $this->setColumnsInfo("id", "int(11)", 0);
+        $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_note", "int(11)", 0);
         $this->setColumnsInfo("start_time", "int(11)", 0);
         $this->setColumnsInfo("end_time", "int(11)", 0);

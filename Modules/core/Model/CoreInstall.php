@@ -57,17 +57,20 @@ class CoreDB extends Model {
 
         $isNewRelease = false;
         $oldRelease = 0;
+        $release = null;
         if ($reqRelease->rowCount() > 0){
             $release = $reqRelease->fetch();
-            if($release[0]['version'] != DB_VERSION) {
+            if($release['version'] != DB_VERSION) {
                 $isNewRelease = true;
-                $oldRelease = $release[0]['version'];
+                $oldRelease = $release['version'];
             }
         } else {
             Configuration::getLogger()->info("[db] database release not set, setting it...", ["release" => 0]);
             $sql = "INSERT INTO pfm_db (version) VALUES(?)";
             $this->runRequest($sql, array(DB_VERSION));
             $isNewRelease = true;
+            $reqRelease = $this->runRequest($sqlRelease);
+            $release = $reqRelease->fetch();
         }
 
         if($isNewRelease) {
@@ -90,7 +93,7 @@ class CoreDB extends Model {
 
                 Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
                 $sql = "update pfm_db set version=? where id=?";
-                $this->runRequest($sql, array($updateToRelease, $release[0]['id']));
+                $this->runRequest($sql, array($updateToRelease, $release['id']));
 
                 $updateFromRelease = $updateToRelease;
                 $updateToRelease = $updateFromRelease + 1;
