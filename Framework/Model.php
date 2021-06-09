@@ -46,7 +46,11 @@ abstract class Model {
             }
 
         } catch (\Throwable $th) {
-            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $result->errorInfo()]);
+            $msg = '';
+            if($result) {
+                $msg = $result->errorInfo();
+            }
+            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
         }
 
         //print_r( $result->errorInfo() );
