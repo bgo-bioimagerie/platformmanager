@@ -120,7 +120,7 @@ class CorespaceaccessController extends CoresecureController {
             "login" => CoreTranslator::Login($lang),
             "email" => CoreTranslator::Email($lang),
             "phone" => CoreTranslator::Phone($lang),
-            "spaces" => CoreTranslator::Spaces($lang),
+            // "spaces" => CoreTranslator::Spaces($lang),
             "date_convention" => CoreTranslator::Convention($lang),
             "date_contract_end" => CoreTranslator::Date_end_contract($lang),
             "convention_url" => array("title" => CoreTranslator::Convention($lang),
@@ -303,6 +303,7 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     public function pendingusersAction($id_space) {
+        Configuration::getLogger()->debug('in pendingusersAction', ["id_space" => $id_space]);
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -321,6 +322,10 @@ class CorespaceaccessController extends CoresecureController {
         $table = new TableView();
         $table->setTitle(CoreTranslator::PendingUserAccounts($lang));
         $table->addLineButton("corespacependinguseredit/".$id_space, "id", CoreTranslator::Activate($lang));
+
+        //multi-tenant feature: button for rejecting user requesting to join space
+        $table->addLineButton("corespacependinguserdelete", "id", CoreTranslator::Delete($lang));
+
         $headers = array(
             'fullname' => CoreTranslator::Name($lang),
             'date_created' => CoreTranslator::DateCreated($lang)
@@ -362,6 +367,8 @@ class CorespaceaccessController extends CoresecureController {
             $modelUser->validateAccount($pendingInfo["id_user"]);
             $modelSpace->setUserIfNotExist($pendingInfo["id_user"], $id_space, $form->getParameter("role"));
             $modelPending->validate($id, $_SESSION["id_user"]);
+            //multi-tenant feature: deleting user from core_pending_accounts table for this space in db
+            $modelPending->deleteByPendingAccountId($id);
 
             $_SESSION["message"] = CoreTranslator::UserAccountHasBeenActivated($lang);
             $this->redirect("corespacependinguseredit/".$id_space."/".$id);
@@ -373,6 +380,16 @@ class CorespaceaccessController extends CoresecureController {
             'formHtml' => $form->getHtml($lang),
             "space" => $space
         ));
+    }
+
+    //multi-tenant feature: rejecting user requesting to join space
+    public function pendinguserdeleteAction($id) {
+        // needs to delete this
+        Configuration::getLogger()->debug('in deleteAction', ["id" => $id]);
+        $this->checkAuthorization(CoreStatus::$ADMIN);
+        $modelPending = new CorePendingAccount();
+        $modelPending->deleteByPendingAccountId($id);
+        $this->redirect("corespaceaccess");
     }
 
 }

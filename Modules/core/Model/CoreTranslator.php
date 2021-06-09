@@ -295,6 +295,13 @@ class CoreTranslator {
         return "Save";
     }
 
+    public static function Reject($lang) {
+        if ($lang == "fr") {
+            return "Rejeter";
+        }
+        return "Reject";
+    }
+
     public static function Cancel($lang) {
         if ($lang == "fr") {
             return "Annuler";

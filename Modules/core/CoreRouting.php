@@ -55,11 +55,14 @@ class CoreRouting extends Routing{
         $this->addRoute("corespaceaccessusersinactifs", "corespaceaccessusersinactifs", "corespaceaccess", "usersinactif", array("id_space", "letter"), array("", ""));
         $this->addRoute("coreaccessuseredit", "coreaccessuseredit", "corespaceaccess", "useredit", array("id_space", "id"), array("", ""));
         $this->addRoute("corespaceaccessuseradd", "corespaceaccessuseradd", "corespaceaccess", "useradd", array("id_space"), array(""));
-        
-        
-        
-        
         $this->addRoute("spaceconfigdeleteuser", "spaceconfigdeleteuser", "corespace", "configdeleteuser", array("id_space", "id_user"), array("", ""));
+        // multi-tenant feature: route for rejecting user requesting to join space
+        $this->addRoute("corespacependinguserdelete", "corespacependinguserdelete", "corespaceaccess", "pendinguserdelete", array("id"), array(""));
+        
+        
+        
+        
+        
         
         // spaces admin
         $this->addRoute("spaceadmin", "spaceadmin", "corespaceadmin", "index");
