@@ -11,6 +11,8 @@ Platform-Manager
 <?php
 if (getenv('PFM_MODE') != 'dev') {
   echo "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
+} else {
+    echo "<meta http-equiv=\"Content-Security-Policy-Report-Only\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
 }
 ?>
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
