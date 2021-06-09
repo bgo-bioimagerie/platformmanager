@@ -197,11 +197,12 @@ class CoreUser extends Model {
     }
 
     public function installDefault() {
+        $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
         $pwd = Configuration::get('admin_password', 'admin');
         if (!$this->exists(1)) {
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created) VALUES(?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array("admin", md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d")));
+            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d")));
         }
     }
 

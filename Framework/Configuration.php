@@ -101,6 +101,9 @@ class Configuration {
         if(getenv('MAIL_FROM')) {
             self::$parameters['smtp_from'] = getenv('MAIL_FROM');
         }
+        if(getenv('PFM_ADMIN_USER')) {
+            self::$parameters['admin_user'] = getenv('PFM_ADMIN_USER');
+        }
         if(getenv('PFM_ADMIN_EMAIL')) {
             self::$parameters['admin_email'] = getenv('PFM_ADMIN_EMAIL');
         }
