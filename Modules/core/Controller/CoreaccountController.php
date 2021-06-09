@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Configuration.php';
 
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreSpace.php';
@@ -69,13 +70,7 @@ class CoreaccountController extends Controller {
                 $modelPeningAccounts->add($id_user, $form->getParameter("id_space"));
 
                 $mailer = new MailerSend();
-                $mail_from = getenv('MAIL_FROM');
-                if (!empty($mail_from)) {
-                    $from = $mail_from;
-                }
-                else {
-                    $from = "support@platform-manager.com";
-                }
+                $from = Configuration::get('smtp_from');
                 $fromName = "Platform-Manager";
                 $toAdress = $form->getParameter("email");
                 $subject = CoreTranslator::Account($lang);

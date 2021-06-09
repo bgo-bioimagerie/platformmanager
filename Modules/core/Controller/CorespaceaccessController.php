@@ -188,13 +188,7 @@ class CorespaceaccessController extends CoresecureController {
                 $modelCoreUser->validateAccount($id_user);
 
                 $mailer = new MailerSend();
-                $mail_from = getenv('MAIL_FROM');
-                if (!empty($mail_from)) {
-                    $from = $mail_from;
-                }
-                else {
-                    $from = "support@platform-manager.com";
-                }
+                $from = Configuration::get('smtp_from');
                 $fromName = "Platform-Manager";
                 $toAdress = $form->getParameter("email");
                 $subject = CoreTranslator::Account($lang);

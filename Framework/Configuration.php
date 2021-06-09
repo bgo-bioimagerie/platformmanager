@@ -21,7 +21,7 @@ class Configuration {
         if (self::$logger == null) {
             self::$logger = new Logger('pfm');
             $level = Logger::INFO;
-            if(getenv('DEBUG') == '1') {
+            if(Configuration::get('debug', false)) {
                 $level = Logger::DEBUG;
             }
             //$output = "[%datetime%] %channel%.%level_name%: %message%\n";
@@ -76,8 +76,67 @@ class Configuration {
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
+            self::override();
         }
         return self::$parameters;
+    }
+
+    /**
+     * Override some config with env variables
+     */
+    private static function override() {
+        self::$parameters['smtp_host'] = getenv('SMTP_HOST', '');
+        if(!isset(self::$parameters['smtp_port'])) {
+            self::$parameters['smtp_port'] = 25;
+        }
+        if(getenv('SMTP_PORT')) {
+            self::$parameters['smtp_port']= intval(getenv('SMTP_PORT'));
+        }
+        if(getenv('DEBUG')) {
+            self::$parameters['debug'] = boolval(getenv('DEBUG'));
+        }
+        if(!isset(self::$parameters['smtp_from'])) {
+            self::$parameters['smtp_from'] = 'donotreply@pfm.org';
+        }
+        if(getenv('MAIL_FROM')) {
+            self::$parameters['smtp_from'] = getenv('MAIL_FROM');
+        }
+        if(getenv('PFM_ADMIN_EMAIL')) {
+            self::$parameters['admin_email'] = getenv('PFM_ADMIN_EMAIL');
+        }
+        if(getenv('PFM_ADMIN_PASSWORD')) {
+            self::$parameters['admin_password'] = getenv('PFM_ADMIN_PASSWORD');
+        }
+        if(getenv('PFM_KEYCLOAK_OIC_SECRET')) {
+            self::$parameters['keycloak_oic_secret'] = getenv('PFM_KEYCLOAK_OIC_SECRET');
+        }
+        if(getenv('PFM_PUBLIC_URL')) {
+            self::$parameters['public_url'] = getenv('PFM_PUBLIC_URL');
+        }
+
+        if(getenv('PFM_LDAP_HOST')) {
+            self::$parameters['ldap_host'] = getenv('PFM_LDAP_HOST');
+        }
+        if(getenv('PFM_LDAP_PORT')) {
+            self::$parameters['ldap_port']= intval(getenv('PFM_LDAP_PORT'));
+        }
+        if(getenv('PFM_LDAP_USER')) {
+            self::$parameters['ldap_admin'] = getenv('PFM_LDAP_USER');
+        }
+        if(getenv('PFM_LDAP_PASSWORD')) {
+            self::$parameters['ldap_password'] = getenv('PFM_LDAP_PASSWORD');
+        }
+        if(getenv('PFM_LDAP_BASEDN')) {
+            self::$parameters['ldap_dn'] = getenv('PFM_LDAP_BASEDN');
+        }
+        if(getenv('PFM_LDAP_BASESEARCH')) {
+            self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_BASESEARCH');
+        }
+
+
+
+
+
     }
 
     /**

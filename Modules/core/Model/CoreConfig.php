@@ -46,10 +46,8 @@ class CoreConfig extends Model {
      * @return PDOStatement
      */
     public function createDefaultConfig() {
-        if(getenv('PFM_ADMIN_EMAIL')) {
-            $this->setParam("admin_email", getenv('PFM_ADMIN_EMAIL'));
-        }
-        $this->setParam("admin_email", "firstname.name@adress.com");
+        $admin_email = Configuration::get('admin_email', 'admin@pfm.org');
+        $this->setParam("admin_email", $admin_email);
         $this->setParam("user_desactivate", "0");
         $this->setParam("logo", "Theme/logo.jpg");
         $this->setParam("home_title", "Database");

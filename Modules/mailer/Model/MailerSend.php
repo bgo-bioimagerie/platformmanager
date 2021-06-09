@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Configuration.php';
+
 require_once 'Modules/mailer/Model/MailerTranslator.php';
 //require("externals/PHPMailer/PHPMailerAutoload.php");
 use PHPMailer\PHPMailer\PHPMailer;
@@ -26,11 +28,8 @@ class MailerSend extends Model {
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
-        $smtp_host = getenv('SMTP_HOST');
-        $smtp_port = 25;
-        if(getenv('SMTP_PORT')) {
-            $smtp_port= intval(getenv('SMTP_PORT'));
-        }
+        $smtp_host = Configuration::get('smtp_host');
+        $smtp_port = Configuration::get('smtp_port');
         if (!empty($smtp_host)) {
             $mail->isSMTP();
             $mail->Host = $smtp_host;

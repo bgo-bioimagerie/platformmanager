@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Configuration.php';
 require_once 'Modules/booking/Controller/BookingabstractController.php';
 
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
@@ -538,14 +539,7 @@ class BookingdefaultController extends BookingabstractController {
             $resourceName = $modelResource->getName($id_resource);
 
             // mail content
-            //$from = $user["email"];
-            $mail_from = getenv('MAIL_FROM');
-            if (!empty($mail_from)) {
-                $from = $mail_from;
-            }
-            else {
-                $from = "support@platform-manager.com";
-            }
+            $from = Configuration::get('smtp_from');
             $fromName = "Platform-Manager";
 
             $modelResoucesResp = new ReResps();
@@ -850,18 +844,12 @@ class BookingdefaultController extends BookingabstractController {
             $space = $modelSpace->getSpace($id_space);
 
             // user info
-            $userModel = new CoreUser();
-            $user = $userModel->getInfo($_SESSION["id_user"]);
+            // $userModel = new CoreUser();
+            // $user = $userModel->getInfo($_SESSION["id_user"]);
 
             // mail content
             //$from = $user["email"];
-            $mail_from = getenv('MAIL_FROM');
-            if (!empty($mail_from)) {
-                $from = $mail_from;
-            }
-            else {
-                $from = "support@platform-manager.com";
-            }
+            $from = Configuration::get('smtp_from');
             $fromName = "Platform-Manager";
 
             $toAdress = $modelCalEntry->getEmailsBookerResource($id_resource);
@@ -887,21 +875,15 @@ class BookingdefaultController extends BookingabstractController {
             $resourceName = $resourceModel->getName($id_resource);
 
             // user info
-            $userModel = new CoreUser();
-            $user = $userModel->getInfo($_SESSION["id_user"]);
+            // $userModel = new CoreUser();
+            // $user = $userModel->getInfo($_SESSION["id_user"]);
 
             // get the resource responsibles
             $modelResource = new ReResps();
 
             // mail content
             // $from = $user["email"];
-            $mail_from = getenv('MAIL_FROM');
-            if (!empty($mail_from)) {
-                $from = $mail_from;
-            }
-            else {
-                $from = "support@platform-manager.com";
-            }
+            $from = Configuration::get('smtp_from');
             $fromName = "Platform-Manager";
 
             $toAdress = $modelResource->getResourcesManagersEmails($id_resource);

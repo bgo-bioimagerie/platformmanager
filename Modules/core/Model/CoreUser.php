@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Configuration.php';
 
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreLdap.php';
@@ -107,7 +108,7 @@ class CoreUser extends Model {
 
         $date = date('Y-m-d', time());
         $oneyearago = date('Y-m-d', strtotime($date . ' -1 year'));
-
+        $nbUsers = 0;
 
         if ($desactivateSetting == 6) {
             $sql = "SELECT * FROM core_users WHERE (date_last_login!=? "
@@ -119,8 +120,10 @@ class CoreUser extends Model {
             foreach ($req as $r) {
                 $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
                 $this->runRequest($sql, array($r['id']));
+                $nbUsers += 1;
             }
         }
+        return $nbUsers;
         /// \todo implement other cases
     }
 
@@ -194,14 +197,8 @@ class CoreUser extends Model {
     }
 
     public function installDefault() {
-        $email = "admin@admin.com";
-        if(getenv("PFM_ADMIN_EMAIL")) {
-            $email = getenv("PFM_ADMIN_EMAIL");
-        }
-        $pwd = "admin";
-        if(getenv("PFM_ADMIN_PASSWORD")) {
-            $pwd = getenv("PFM_ADMIN_PASSWORD");
-        }
+        $email = Configuration::get('admin_email', 'admin@pfm.org');
+        $pwd = Configuration::get('admin_password', 'admin');
         if (!$this->exists(1)) {
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created) VALUES(?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array("admin", md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d")));

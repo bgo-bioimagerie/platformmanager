@@ -103,6 +103,8 @@ class CoreDB extends Model {
             } else {
                 Configuration::getLogger()->error("[db] database migration failed!");
             }
+        } else {
+            Configuration::getLogger()->info("[db] no migration needed");
         }
 
     }

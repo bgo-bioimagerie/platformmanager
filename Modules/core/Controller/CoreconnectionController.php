@@ -212,13 +212,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     $model->changePwd($userByEmail["id"], $newPassWord);
 
                     $mailer = new MailerSend();
-                    $mail_from = getenv('MAIL_FROM');
-                    if (!empty($mail_from)) {
-                        $from = $mail_from;
-                    }
-                    else {
-                        $from = "support@platform-manager.com";
-                    }
+                    $from = Configuration::get('smtp_from');
                     $fromName = "Platform-Manager";
                     $toAdress = $email;
                     $subject = CoreTranslator::AccountPasswordReset($lang);
