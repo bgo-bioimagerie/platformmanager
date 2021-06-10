@@ -34,7 +34,6 @@ class Router {
         try {
             // Merge parameters GET and POST
             $request = new Request(array_merge($_GET, $_POST));
-            $this->logger->debug("in Router.php");
 
             if (!$this->install($request)) {
                 $urlInfo = $this->getUrlData($request);

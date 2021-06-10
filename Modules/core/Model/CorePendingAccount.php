@@ -29,6 +29,16 @@ class CorePendingAccount extends Model {
         $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND validated=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+
+    public function getSpaceIdsForPending($id_user){
+        $sql = "SELECT id_space FROM core_pending_accounts WHERE id_user=? AND validated=0";
+        return $this->runRequest($sql, array($id_user))->fetchAll();
+    }
+
+    public function getBySpaceIdAndUserId($id_space, $id_user){
+        $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND id_user=?";
+        return $this->runRequest($sql, array($id_space, $id_user))->fetch();
+    }
     
     public function get($id){
         $sql = "SELECT * FROM core_pending_accounts WHERE id=?";

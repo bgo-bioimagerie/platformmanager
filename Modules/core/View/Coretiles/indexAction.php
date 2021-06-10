@@ -44,8 +44,6 @@ if (!$headless) {
 
 <div class="col-xs-12 pm-tile-container"  >
 
-            
-    
     <div class="container">
 
         
@@ -92,14 +90,39 @@ if (!$headless) {
                                 <?php echo $item["description"] ?>
                             </p>
 
-
+                            <!-- JOIN BUTTON -->
+                            <?php    
+                                if (!in_array($item["id"], $userSpaces)) {
+                            ?>
+                                <div style="position: absolute; bottom: 10px; right: 10px">
+                                    <a href="<?php echo "coretilesjoinspace/". $item["id"]."/", $_SESSION["id_user"] ?>">
+                                        <input type="button" value="Join">
+                                    </a>
+                                </div>
+                            <?php
+                                }
+                            ?>
                         </div>   
                         <?php
                     }
                 }
                 ?>
-                <ul/>
+            </ul>
         </div>
+    </div>
+        
+    <!-- Alert message => TODO: find a cleaner way to do that? -->
+    <div class="col-md-12"> 
+        <?php if (isset($_SESSION["message"])) { ?>
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <?php echo $_SESSION["message"] ?>
+            </div>
+        <?php 
+            unset($_SESSION["message"]);
+        } ?>
     </div>
 
 </div> <!-- /container -->

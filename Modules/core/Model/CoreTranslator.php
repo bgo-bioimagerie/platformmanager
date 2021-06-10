@@ -1780,5 +1780,10 @@ class CoreTranslator {
         return "Account has been created";        
     }   
     
-    
+    public static function JoinRequest($lang){
+        if ($lang == "fr") {
+            return "Votre demande a bien été prise en compte";
+        }
+        return "Your request has been taken into account"; 
+    }
 }
