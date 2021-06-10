@@ -61,6 +61,27 @@ class Configuration {
         return $value;
     }
 
+        /**
+     * Return the value of a configuration parameter
+     * 
+     * @param string $name Name of the parameter
+     * @param string $defaultValue Value returned by default
+     * @return boolean Value of the configuration parameter
+     */
+    public static function getbool($name, $defaultValue = null) {
+        $parameters = self::getParameters();
+        if (isset($parameters[$name])) {
+            $value = $parameters[$name];
+            if($value == '1' || $value == 'true' || $value == 'TRUE' || $value == true || $value == 1) {
+                return true;
+            }
+            return false;
+        } else {
+            $value = $defaultValue;
+        }
+        return $value;
+    }
+
     /**
      * Return the table of the parametres by loading the configuration file.
      * 
@@ -95,6 +116,9 @@ class Configuration {
         if(getenv('DEBUG')) {
             self::$parameters['debug'] = boolval(getenv('DEBUG'));
         }
+        if(getenv('DEBUG_SQL')) {
+            self::$parameters['debug_sql'] = boolval(getenv('DEBUG_SQL'));
+        }
         if(!isset(self::$parameters['smtp_from'])) {
             self::$parameters['smtp_from'] = 'donotreply@pfm.org';
         }
@@ -110,11 +134,9 @@ class Configuration {
         if(getenv('PFM_ADMIN_PASSWORD')) {
             self::$parameters['admin_password'] = getenv('PFM_ADMIN_PASSWORD');
         }
-        if(getenv('PFM_KEYCLOAK_OIC_SECRET')) {
-            self::$parameters['keycloak_oic_secret'] = getenv('PFM_KEYCLOAK_OIC_SECRET');
-        }
-        if(getenv('PFM_PUBLIC_URL')) {
-            self::$parameters['public_url'] = getenv('PFM_PUBLIC_URL');
+
+        if(getenv('PFM_WEB_URL')) {
+            self::$parameters['public_url'] = getenv('PFM_WEB_URL');
         }
 
         if(getenv('PFM_LDAP_HOST')) {
@@ -134,6 +156,20 @@ class Configuration {
         }
         if(getenv('PFM_LDAP_BASESEARCH')) {
             self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_BASESEARCH');
+        }
+
+        if(getenv('KEYCLOAK_URL')) {
+            self::$parameters['keycloak_url'] = getenv('KEYCLOAK_URL');
+        }
+        if(getenv('KEYCLOAK_ADMIN_USER')) {
+            self::$parameters['keycloak_user'] = getenv('KEYCLOAK_ADMIN_USER');
+        }
+        if(getenv('KEYCLOAK_ADMIN_PASSWORD')) {
+            self::$parameters['keycloak_password'] = getenv('KEYCLOAK_ADMIN_PASSWORD');
+        }
+
+        if(getenv('PFM_KEYCLOAK_OIC_SECRET')) {
+            self::$parameters['keycloak_oic_secret'] = getenv('PFM_KEYCLOAK_OIC_SECRET');
         }
 
 

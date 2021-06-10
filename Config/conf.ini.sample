@@ -1,5 +1,18 @@
 ; Configuration
 
+[General]
+public_url = http://127.0.0.1:4000
+debug = 0
+debug_sql = 0
+admin_user = admin
+admin_password =
+admin_email = admin@pfm.org
+
+[Mail]
+smtp_from =
+smtp_host =
+smtp_port =
+
 [Installation]
 rootWeb = /
 
@@ -33,3 +46,18 @@ modules[] = "estore"
 
 [Company]
 name = "Platform-Manager"
+
+[Ldap]
+ldap_host = "openldap"
+ldap_port = 389
+ldap_user = "cn=admin,dc=pfm,dc=org"
+ldap_password = "pfm"
+ldap_dn = "dc=pfm,dc=org"
+ldap_search_dn = "ou=people,dc=pfm,dc=org"
+
+[Keycloak]
+keycloak_url =
+keycloak_user =
+keycloak_password =
+keycloak_oic_secret =
+

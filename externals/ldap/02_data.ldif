@@ -1,0 +1,19 @@
+dn: cn=test,ou=Groups,dc=pfm,dc=org
+cn: test
+gidnumber: 500
+objectclass: posixGroup
+objectclass: top
+
+dn: cn=pfmtest,ou=People,dc=pfm,dc=org
+cn: pfmtest
+gidnumber: 500
+givenname: test 
+homedirectory: /home/users/test
+loginshell: /bin/sh
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: pfmtest
+uid: test
+uidnumber: 1000
+userpassword: {MD5}CY9rzUYh03PK3k6DJie09g==

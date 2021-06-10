@@ -1,0 +1,7 @@
+dn: ou=People,dc=pfm,dc=org
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=pfm,dc=org
+objectClass: organizationalUnit
+ou: Groups

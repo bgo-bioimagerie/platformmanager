@@ -1,0 +1,23 @@
+dn: ou=policies,dc=pfm,dc=org
+objectClass: top
+objectClass: organizationalUnit
+ou: pwpolicies
+
+dn: cn=default,ou=policies,dc=pfm,dc=org
+objectClass: pwdPolicy
+objectClass: organizationalRole
+cn: default
+pwdMaxAge: 0
+pwdAttribute: userPassword
+pwdExpireWarning: 0
+pwdInHistory: 0
+pwdCheckQuality: 0
+pwdMaxFailure: 0
+pwdLockout: FALSE
+pwdLockoutDuration: 0
+pwdGraceAuthNLimit: 0
+pwdFailureCountInterval: 0
+pwdMustChange: FALSE
+pwdMinLength: 0
+pwdAllowUserChange: TRUE
+pwdSafeModify: FALSE
