@@ -1,17 +1,28 @@
 <?php
+/**
+* TODO Use command line parser https://github.com/vanilla/garden-cli
+*/
+
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Keycloak.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 
-function version()
-    {
+function version() {
+    $commitHash = "unknown";
+    $commitDate = new \DateTime();
+    $commitDate->setTimezone(new \DateTimeZone('UTC'));
+    try {
         $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
         $commitDate = new \DateTime(trim(exec('git log -n1 --pretty=%ci HEAD')));
         $commitDate->setTimezone(new \DateTimeZone('UTC'));
-        return sprintf('%s (%s)', $commitHash, $commitDate->format('Y-m-d H:i:s'));
+    } catch (Exception $e) {
+        // No git, that's fine
     }
+    return sprintf('%s (%s)', $commitHash, $commitDate->format('Y-m-d H:i:s'));
+}
 
 $logger = Configuration::getLogger();
 
@@ -100,6 +111,9 @@ if (isset($options['install']) || isset($options['i'])) {
     $cdb->createTable();
 
     $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
+
+    $kc = new Keycloak(Configuration::get('keycloak_url'), Configuration::get('keycloak_admin_user', 'keycloak_admin_password'), Configuration::get('admin_password', 'admin'));
+    $kc->setup();
 
 }
 
