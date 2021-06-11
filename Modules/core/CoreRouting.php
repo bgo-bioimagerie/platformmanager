@@ -28,7 +28,7 @@ class CoreRouting extends Routing{
         $this->addRoute("coretiles", "coretiles", "coretiles", "index", array("level", "id"), array("", ""));
         $this->addRoute("coretilesdoc", "coretilesdoc", "coretiles", "doc");
         // multi-tenant feature: route for adding a user to space pending users
-        $this->addRoute("coretilesjoinspace", "coretilesjoinspace", "coretiles", "joinspace", array("space_id", "id"), array("", ""));
+        $this->addRoute("coretilesjoinspace", "coretilesjoinspace", "coretiles", "joinspace", array("space_id"), array(""));
         
         
         // Update

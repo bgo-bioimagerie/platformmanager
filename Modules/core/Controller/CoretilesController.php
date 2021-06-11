@@ -85,7 +85,7 @@ class CoretilesController extends CoresecureController {
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
 
-        $userSpaces = $this->getUserSpaces($_SESSION["id_user"]);
+        $userSpaces = $this->getUserSpaces();
 
         return $this->render(array(
             'lang' => $lang,
@@ -94,8 +94,8 @@ class CoretilesController extends CoresecureController {
             'items' => $items,
             'mainSubMenus' => $mainSubMenus,
             'title' => $title,
-            // multi-tenant feature: used as a condition to display or not a join button within a space tile
-            'userSpaces' => $userSpaces
+            'userSpaces' => $userSpaces['userSpaceIds'],
+            'userPendingSpaces' => $userSpaces['userPendingSpaceIds']
         ), "indexAction");
     }
     
@@ -108,55 +108,69 @@ class CoretilesController extends CoresecureController {
 
 
     /**
-     * gherve: function added for multi-tenant feature
+     * Get spaces of which user is member or has a pending request to join
      * 
-     * @param int $id_user
-     * @return array of space ids from which user is a member
+     * @return array of space ids
      */
-    public function getUserSpaces($id_user) {
-        /*
-        To be improved:
-        problem: CoreSpaceUser()->getUserSpaceInfo($id_user) returns only one line from core_j_spaces_user!
-        hypothesis: because there's no primary (composite in this case) key?
-        Temporary solution: we had to use CoreSpaceUser()->getUserSpaceInfo2($id_space, $id_user))
-        */
-        $spaceUser = new CoreSpaceUser();
-        $coreSpace = new CoreSpace();
+    public function getUserSpaces() {
         $modelSpacePending = new CorePendingAccount();
-        $existingSpaces = $coreSpace->getSpaces("id");
-        $userSpaceIds = array();
-        foreach ($existingSpaces as $space) {
-            try {
-                if (
-                    $spaceUser->getUserSpaceInfo2($space["id"], $id_user)
-                    || $modelSpacePending->getBySpaceIdAndUserId($space["id"], $id_user)
-                ) {
-                    array_push($userSpaceIds, $space["id"]);
-                }
-            } catch (exception $e) {
-                Configuration::getLogger()->debug('CoretilesController', ["exception" => $e]);
-                continue;
+        $data = $modelSpacePending->getSpaceIdsForPending($_SESSION["id_user"]);
+        $userPendingSpaceIds = array();
+
+        if ($data && count($data) > 0) {
+            foreach ($data as $space) {
+                array_push($userPendingSpaceIds, $space["id_space"]);
             }
         }
-        return $userSpaceIds;
+        array_push($result, ["userPendingSpaceIds" => $userPendingSpaceIds]);
+
+        $modelSpaceUser = new CoreSpaceUser();
+        $data = $modelSpaceUser->getUserSpaceInfo($_SESSION["id_user"]);
+        $userSpaceIds = array();
+
+        if ($data && count($data) > 0) { 
+            foreach ($data as $space) {
+                array_push($userSpaceIds, $space["id_space"]);
+            }
+        }
+        $result = array("userSpaceIds" => $userSpaceIds, "userPendingSpaceIds" => $userPendingSpaceIds);
+
+        return $result;
     }
 
     /**
-     * gherve: function added for multi-tenant feature
      * 
      * Manage actions resulting from user request to join a space
      *
      * @param int $id_space 
-     * @param int $id_user
      */
-    public function joinSpaceAction($id_space, $id_user) { 
-        // missing feature: send an email to space admin ?
-        Configuration::getLogger()->debug('JOINING', ["space" => $id_space]);
-        $lang = $this->getLanguage();
+    public function joinSpaceAction($id_space) {
         $modelSpacePending = new CorePendingAccount();
-        $modelSpacePending->add($id_user, $id_space);
-        $_SESSION["message"] = CoreTranslator::JoinRequest($lang);
+        $modelSpacePending->add($_SESSION["id_user"], $id_space);
+        $this->NotifyAdminForJoinRequest($id_space);
         $this->redirect("coretiles");
     }
 
+    /**
+     * 
+     * Send an Email to space managers (status > 2) notifying that logged user requested to join space
+     *
+     * @param int $id_space 
+     */
+    public function NotifyAdminForJoinRequest($id_space) {
+        $lang = $this->getLanguage();
+        $spaceModel = new CoreSpace();
+        $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($id_space);
+        
+        $mailer = new MailerSend();
+        $from = "support@platform-manager.com";
+        $fromName = "Platform-Manager";
+        $subject = CoreTranslator::JoinRequestSubject($spaceModel->getSpace($id_space), $lang);
+        $content = CoreTranslator::JoinRequestEmail($lang, $_SESSION['login'], $id_space);
+        Configuration::getLogger()->debug("DEBUG", ["EMAIL" => $emailSpaceManagers]);
+        foreach ($emailSpaceManagers as $emailSpaceManager) {
+            $toAdress = $emailSpaceManager["email"];
+            $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+        }  
+    }
 }

@@ -1,0 +1,45 @@
+version: "3"
+services:
+  pfm:
+    image: gherve/pfm
+    environment:
+      MYSQL_HOST: mysql # Full URL to the mysql server
+      MYSQL_DBNAME: platform_manager # name of the database on the mysql server
+      MYSQL_USER: platform_manager # Admin account to connect to mysql
+      MYSQL_PASS: platform_manager # Password to connect to mysql
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      MAIL_FROM: support@genouest.org
+      DEBUG: 1
+      PFM_MODE: dev
+    links:
+      - mysql
+    volumes:
+      - ./data/:/var/www/platformmanager/data/ # Mount the application data directory
+      - ./Framework/:/var/www/platformmanager/Framework/:ro
+      - ./Modules/:/var/www/platformmanager/Modules/:ro
+    ports:
+      - "4000:80"
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      #- "1025:1025"
+
+  adminer:
+    image: adminer
+    ports:
+      - 8182:8080
+
+  mysql:
+    image: mysql:5.5
+    environment:
+      MYSQL_DATABASE: platform_manager
+      MYSQL_USER: platform_manager
+      MYSQL_PASSWORD: platform_manager
+      MYSQL_ROOT_PASSWORD: platform_manager
+    volumes:
+      - ${PWD}/backup/mysql:/var/lib/mysql
+    # ports:
+    #  - "4001:330

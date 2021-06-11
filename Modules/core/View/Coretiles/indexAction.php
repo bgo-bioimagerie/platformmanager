@@ -92,12 +92,22 @@ if (!$headless) {
 
                             <!-- JOIN BUTTON -->
                             <?php    
-                                if (!in_array($item["id"], $userSpaces)) {
+                                if (!in_array($item["id"], array_merge($userSpaces, $userPendingSpaces))) {
                             ?>
                                 <div style="position: absolute; bottom: 10px; right: 10px">
-                                    <a href="<?php echo "coretilesjoinspace/". $item["id"]."/", $_SESSION["id_user"] ?>">
-                                        <input type="button" value="Join">
+                                    <a href="<?php echo "coretilesjoinspace/". $item["id"] ?>">
+                                        <button type="button" class="btn btn-md btn-success">
+                                            <?php echo CoreTranslator::RequestJoin($lang) ?>
+                                        </button>
                                     </a>
+                                </div>
+                            <?php
+                                } else if (in_array($item["id"], $userPendingSpaces)) {
+                            ?>
+                                <div style="position: absolute; bottom: 10px; right: 10px">
+                                    <button type="button" class="btn btn-md btn-info" disabled>
+                                        <?php echo CoreTranslator::JoinRequested($lang) ?>
+                                    </button>
                                 </div>
                             <?php
                                 }
@@ -110,21 +120,6 @@ if (!$headless) {
             </ul>
         </div>
     </div>
-        
-    <!-- Alert message => TODO: find a cleaner way to do that? -->
-    <div class="col-md-12"> 
-        <?php if (isset($_SESSION["message"])) { ?>
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <?php echo $_SESSION["message"] ?>
-            </div>
-        <?php 
-            unset($_SESSION["message"]);
-        } ?>
-    </div>
-
 </div> <!-- /container -->
 <?php
 endblock();

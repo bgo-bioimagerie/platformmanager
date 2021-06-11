@@ -1780,10 +1780,31 @@ class CoreTranslator {
         return "Account has been created";        
     }   
     
-    public static function JoinRequest($lang){
+    public static function RequestJoin($lang){
         if ($lang == "fr") {
-            return "Votre demande a bien été prise en compte";
+            return "Rejoindre";
         }
-        return "Your request has been taken into account"; 
+        return "Join"; 
+    }
+
+    public static function JoinRequested($lang){
+        if ($lang == "fr") {
+            return "Demande envoyée...";
+        }
+        return "Join requested..."; 
+    }
+
+    public static function JoinRequestEmail($lang, $login, $space_name){
+        if ($lang == "fr") {
+            return $login." demande à rejoindre l'espace " . $space_name;
+        }
+        return $login." requests to join space " . $space_name;
+    }
+
+    public static function JoinRequestSubject($space_name, $lang){
+        if ($lang == "fr") {
+            return "Demande d'accès à L'espace ".$space_name;
+        }
+        return "Join request for space ".$space_name;
     }
 }
