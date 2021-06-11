@@ -3,6 +3,7 @@
         "monolog/monolog": "^2.2",
         "phpmailer/phpmailer": "^6.4",
         "maximebf/debugbar": "^1.16",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^7.0",
+        "altorouter/altorouter": "^2.0"
     }
 }

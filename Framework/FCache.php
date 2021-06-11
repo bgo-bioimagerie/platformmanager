@@ -233,6 +233,9 @@ class FCache extends Model {
     public function getURLInfos($path) {
         $sql = "SELECT * FROM cache_urls WHERE url=?";
         $urlInfo = $this->runRequest($sql, array($path))->fetch();
+        if (!$urlInfo) {
+            return null;
+        }
 
         $sqlg = "SELECT * FROM cache_urls_gets WHERE url_id=?";
         $urlInfo["gets"] = $this->runRequest($sqlg, array($urlInfo["id"]))->fetchAll();

@@ -120,6 +120,21 @@ if (getenv('PFM_MODE') != 'dev') {
                 </div>
             </div>
         </div>
+
+        <div class="col-md-12" style="text-align:center;">
+            <h2>Log with external connection providers</h2>
+            <p><small>You must have link provier with your account before in account settings.</small></p>
+        <?php
+        foreach ($providers as $provider) {
+        ?>
+            <a href="<?php echo $provider['login']; ?>?client_id=<?php echo $provider['client_id']; ?>&response_type=code&scope=openid&redirect_uri=<?php echo $provider['callback']; ?>">
+                <button type="button" class="btn btn-primary"><?php echo $provider['name']; ?></button>
+            </a>
+        <?php
+        }
+        ?>
+        </div>
+
     </div>
 
     <?php

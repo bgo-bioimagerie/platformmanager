@@ -20,6 +20,7 @@ require_once 'Modules/core/Model/CoreMainMenuPatch.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
+require_once 'Modules/core/Model/CoreOpenId.php';
 
 
 define("DB_VERSION", 2);
@@ -184,6 +185,9 @@ class CoreInstall extends Model {
 
         $modelMainMenuPatch = new CoreMainMenuPatch();
         $modelMainMenuPatch->patch();
+
+        $modelOpenid = new CoreOpenId();
+        $modelOpenid-> createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

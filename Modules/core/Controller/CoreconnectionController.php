@@ -51,6 +51,29 @@ class CoreconnectionController extends CorecookiesecureController {
         $urlCarousel3 = $modelConfig->getParam("connection_carousel3");
         $viewCarousel = $modelConfig->getParam("home_view_carousel");
 
+        if(isset($_SESSION['message'])) {
+            $message =  $_SESSION['message'];
+        }
+        unset($_SESSION['message']);
+
+        $openid_providers = Configuration::get("openid", []);
+        $providers = [];
+        if(!empty($openid_providers)) {
+            foreach ($openid_providers as $openid_provider) {
+                $provider = [
+                    "name" => $openid_provider,
+                    "url" => Configuration::get("openid_${openid_provider}_url"),
+                    "icon" => Configuration::get("openid_${openid_provider}_icon"),
+                    "login" => Configuration::get("openid_${openid_provider}_login"),
+                    "client_id" => Configuration::get("openid_${openid_provider}_client_id"),
+                    "client_secret" => Configuration::get("openid_${openid_provider}_client_secret"),
+                    "callback" => Configuration::get("public_url")."/ooc/$openid_provider/authorized"
+                ];
+                $providers[] = $provider;
+            }
+        }
+        $_SESSION["redirect"] = "coretiles";
+
 
         return $this->render(array("msgError" => $message, "admin_email" => $admin_email, "logo" => $logo,
             "home_title" => $home_title, "home_message" => $home_message,
@@ -60,6 +83,7 @@ class CoreconnectionController extends CorecookiesecureController {
             "urlCarousel3" => $urlCarousel3,
             "language" => $language,
             "metadesc" => 'platform manager login page',
+            "providers" => $providers,
             "viewCarousel" => $viewCarousel), "indexAction");
     }
 

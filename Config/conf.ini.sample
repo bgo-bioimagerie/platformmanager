@@ -33,3 +33,12 @@ modules[] = "estore"
 
 [Company]
 name = "Platform-Manager"
+
+[Openid]
+openid[] = "orcid"
+openid_orcid_url = "https://sandbox.orcid.org"
+openid_orcid_client_id = "APP-XXXXX"
+openid_orcid_client_secret = "XXXXXXXXX"
+openid_orcid_login = "https://sandbox.orcid.org/oauth/authorize"
+openid_orcid_icon = ""
+
