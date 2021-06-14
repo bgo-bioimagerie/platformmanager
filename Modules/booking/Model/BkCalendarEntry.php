@@ -36,6 +36,8 @@ class BkCalendarEntry extends Model {
 		`responsible_id` int(11) NOT NULL DEFAULT 0,
         `invoice_id` int(11) NOT NULL DEFAULT 0,
         `period_id` int(11) NOT NULL DEFAULT 0,
+        `all_day_long` int(1) NOT NULL DEFAULT 0,
+        `deleted` int(1) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 

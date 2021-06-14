@@ -17,7 +17,7 @@ class BkPackage extends Model {
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_packages` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_package` int(11) NOT NULL,
+        `id_package` int(11) NOT NULL,
 		`id_resource` int(11) NOT NULL,
 		`duration` decimal(10,2) NOT NULL,
 		`name` varchar(100) NOT NULL,			

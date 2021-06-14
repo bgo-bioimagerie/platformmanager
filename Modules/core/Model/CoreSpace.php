@@ -34,11 +34,11 @@ class CoreSpace extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `core_spaces` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(30) NOT NULL DEFAULT '',
-            `status` int(1) NOT NULL DEFAULT 0,
-            `color` varchar(7) NOT NULL DEFAULT '',
-            `description` text NOT NULL DEFAULT '',
-            `image` varchar(255) NOT NULL DEFAULT '',
-            `shortname` varchar(30) NOT NULL DEFAULT '',
+        `status` int(1) NOT NULL DEFAULT 0,
+        `color` varchar(7) NOT NULL DEFAULT '',
+        `description` text NOT NULL DEFAULT '',
+        `image` varchar(255) NOT NULL DEFAULT '',
+        `shortname` varchar(30) NOT NULL DEFAULT '',
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);

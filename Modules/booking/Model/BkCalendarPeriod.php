@@ -20,7 +20,7 @@ class BkCalendarPeriod extends Model {
 		`id` int(11) NOT NULL AUTO_INCREMENT,	
 		`choice` varchar(50) NOT NULL,	
 		`optionval` varchar(50) NOT NULL,
-                `enddate` DATE NOT NULL,
+        `enddate` DATE NOT NULL,
 		PRIMARY KEY (`id`)
 		);";
 

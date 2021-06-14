@@ -20,9 +20,9 @@ class CoreConfig extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_config` (
-                `keyname` varchar(30) NOT NULL DEFAULT '',
+        `keyname` varchar(30) NOT NULL DEFAULT '',
 		`value` text NOT NULL,
-                `id_space` int(11) NOT NULL DEFAULT 0
+        `id_space` int(11) NOT NULL DEFAULT 0
 		);";
 
         $this->runRequest($sql);

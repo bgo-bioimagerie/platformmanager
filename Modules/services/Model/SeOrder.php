@@ -14,17 +14,17 @@ class SeOrder extends Model {
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_order` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_resp` int(11) NOT NULL,
-                `id_space` int(11) NOT NULL,
-                `id_user` int(11) NOT NULL,
+        `id_resp` int(11) NOT NULL,
+        `id_space` int(11) NOT NULL,
+        `id_user` int(11) NOT NULL,
 		`id_status` int(1) NOT NULL,
 		`date_open` DATE,
 		`date_last_modified` DATE,
 		`date_close` DATE,
-                `no_identification` varchar(150) NOT NULL DEFAULT '',
-                `id_invoice` int(11) NOT NULL DEFAULT 0,
-                `created_by_id` int(11) NOT NULL DEFAULT 0,
-                `modified_by_id` int(11) NOT NULL DEFAULT 0,
+        `no_identification` varchar(150) NOT NULL DEFAULT '',
+        `id_invoice` int(11) NOT NULL DEFAULT 0,
+        `created_by_id` int(11) NOT NULL DEFAULT 0,
+        `modified_by_id` int(11) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
