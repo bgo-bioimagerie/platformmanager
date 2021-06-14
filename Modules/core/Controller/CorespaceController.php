@@ -253,7 +253,8 @@ class CorespaceController extends CoresecureController {
      */
     public function configdeleteuserAction($id_space, $id_user) {
         $this->spaceModel->deleteUser($id_space, $id_user);
-        $this->redirect("spaceconfiguser/" . $id_space);
+        //$this->redirect("spaceconfiguser/" . $id_space); corespaceaccess
+        $this->redirect("corespaceaccess/" . $id_space);
     }
 
     /**
