@@ -121,9 +121,10 @@ if (getenv('PFM_MODE') != 'dev') {
             </div>
         </div>
 
+        <?php if (!empty($providers)) { ?>
         <div class="col-md-12" style="text-align:center;">
             <h2>Log with external connection providers</h2>
-            <p><small>You must have link provier with your account before in account settings.</small></p>
+            <p><small>You must have link provider with your account before in account settings.</small></p>
         <?php
         foreach ($providers as $provider) {
         ?>
@@ -134,6 +135,7 @@ if (getenv('PFM_MODE') != 'dev') {
         }
         ?>
         </div>
+        <?php } ?>
 
     </div>
 
