@@ -34,10 +34,11 @@ class CoreSpace extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `core_spaces` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(30) NOT NULL DEFAULT '',
-                `status` int(1) NOT NULL DEFAULT 0,
-                `color` varchar(7) NOT NULL DEFAULT '',
-                `description` text NOT NULL DEFAULT '',
-                `image` varchar(255) NOT NULL DEFAULT '',
+            `status` int(1) NOT NULL DEFAULT 0,
+            `color` varchar(7) NOT NULL DEFAULT '',
+            `description` text NOT NULL DEFAULT '',
+            `image` varchar(255) NOT NULL DEFAULT '',
+            `shortname` varchar(30) NOT NULL DEFAULT '',
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -45,12 +46,14 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
 
+        /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
 		`id_user` int(11) NOT NULL DEFAULT 1,
 		`id_space` int(11) NOT NULL DEFAULT 1,
                 `status` int(1) NOT NULL DEFAULT 1
 		);";
         $this->runRequest($sql2);
+        */
 
         // name = module
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
@@ -286,12 +289,12 @@ class CoreSpace extends Model {
         return $this->runRequest($sql)->fetchAll();
     }
 
-    public function setSpace($id, $name, $status, $color) {
+    public function setSpace($id, $name, $status, $color, $shortname) {
         if ($this->isSpace($id)) {
-            $this->editSpace($id, $name, $status, $color);
+            $this->editSpace($id, $name, $status, $color, $shortname);
             return $id;
         } else {
-            $this->addSpace($name, $status, $color);
+            $this->addSpace($name, $status, $color, $shortname);
             return $this->getDatabase()->lastInsertId();
         }
     }
@@ -299,6 +302,11 @@ class CoreSpace extends Model {
     public function setDescription($id, $description){
         $sql = "UPDATE core_spaces SET description=? WHERE id=?";
         $this->runRequest($sql, array($description, $id));
+    }
+
+    public function setShortname($id, $shortname){
+        $sql = "UPDATE core_spaces SET shortname=? WHERE id=?";
+        $this->runRequest($sql, array($shortname, $id));
     }
     
     public function setImage($id, $image){
@@ -325,15 +333,15 @@ class CoreSpace extends Model {
         return $users;
     }
 
-    public function addSpace($name, $status, $color) {
-        $sql = "INSERT INTO core_spaces (name, status, color) VALUES (?,?,?)";
-        $this->runRequest($sql, array($name, $status, $color));
+    public function addSpace($name, $status, $color, $shortname) {
+        $sql = "INSERT INTO core_spaces (name, status, color, shortname) VALUES (?,?,?, ?)";
+        $this->runRequest($sql, array($name, $status, $color, $shortname));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function editSpace($id, $name, $status, $color) {
-        $sql = "UPDATE core_spaces SET name=?, status=?, color=? WHERE id=?";
-        $this->runRequest($sql, array($name, $status, $color, $id));
+    public function editSpace($id, $name, $status, $color, $shortname) {
+        $sql = "UPDATE core_spaces SET name=?, status=?, color=?, shortname=? WHERE id=?";
+        $this->runRequest($sql, array($name, $status, $color, $id, $shortname));
     }
 
     public function setUserIfNotExist($id_user, $id_space, $status) {

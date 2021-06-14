@@ -92,11 +92,14 @@ class CorespaceadminController extends CoresecureController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
         
         if ($form->check()){
-            
+            $shortname = $this->request->getParameter("name");
+            $shortname = strtolower($shortname);
+            $shortname = str_replace(" ", "", $shortname);
             // set base informations
             $id = $modelSpace->setSpace($id, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
-                    $this->request->getParameter("color")
+                    $this->request->getParameter("color"),
+                    $shortname
                     );
             
             $modelSpace->setDescription($id, $this->request->getParameter("description"));

@@ -36,6 +36,20 @@ class CoreDB extends Model {
 
     public function upgrade_v1_v2() {
         // nothing to do
+        Configuration::getLogger()->debug("[db] Add core_spaces shortname");
+        $cp = new CoreSpace();
+        $cp->addColumn('core_spaces', 'shortname', "varchar(30)", '');
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            if(!$space['shortname']) {
+                $shortname = $space['name'];
+                $shortname = strtolower($shortname);
+                $shortname = str_replace(" ", "", $shortname);
+                $cp->setShortname($space['id'], $shortname);
+            }
+        }
+        // TODO migrate existings
+
     }
 
     /**
@@ -82,7 +96,7 @@ class CoreDB extends Model {
             while ($updateFromRelease < DB_VERSION) {
                 Configuration::getLogger()->info("[db] Migrating", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                 $upgradeMethod = "upgrade_v".$updateFromRelease."_v".$updateToRelease;
-                if (method_exists($this, $upgradeMethod) && is_callable($this, $upgradeMethod)) {
+                if (method_exists($this, $upgradeMethod)) {
                     try {
                         $this->$upgradeMethod();
                     } catch(Exception $e) {
@@ -90,6 +104,8 @@ class CoreDB extends Model {
                         Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                         break;
                     }
+                } else {
+                    Configuration::getLogger()->info("[db] No migration available", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                 }
 
                 Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
