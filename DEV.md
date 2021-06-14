@@ -24,3 +24,8 @@ Example:
     ldapBaseDN = "ou=people,dc=pfm,dc=org"
     ldapUseTls = "FALSE"
 
+# php imap support
+
+install libs libc-client2007e-dev libkrb5-dev
+docker-php-ext-configure imap --with-imap-ssl --with-kerberos
+docker-php-ext-install imap
