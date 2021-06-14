@@ -87,6 +87,7 @@ class CoretilesController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
 
         $userSpaces = $this->getUserSpaces();
+        Configuration::getLogger()->debug("IN CONTROLLER", ["adminOf" => $userSpaces['spacesUserIsAdminOf']]);  
 
         return $this->render(array(
             'lang' => $lang,
@@ -96,7 +97,8 @@ class CoretilesController extends CoresecureController {
             'mainSubMenus' => $mainSubMenus,
             'title' => $title,
             'userSpaces' => $userSpaces['userSpaceIds'],
-            'userPendingSpaces' => $userSpaces['userPendingSpaceIds']
+            'userPendingSpaces' => $userSpaces['userPendingSpaceIds'],
+            'spacesUserIsAdminOf' => $userSpaces['spacesUserIsAdminOf']
         ), "indexAction");
     }
     
@@ -109,9 +111,12 @@ class CoretilesController extends CoresecureController {
 
 
     /**
-     * Get spaces of which user is member or has a pending request to join
+     * Distinctly list spaces:
+     * - of which user is member
+     * - in which user has a pending request to join
+     * - of which user is admin
      * 
-     * @return array of space ids
+     * @return array of arrays: [userSpaceIds, userPendingSpaceIds, SpacesUserIsAdminOf]
      */
     public function getUserSpaces() {
         $modelSpacePending = new CorePendingAccount();
@@ -123,32 +128,48 @@ class CoretilesController extends CoresecureController {
                 array_push($userPendingSpaceIds, $space["id_space"]);
             }
         }
-        array_push($result, ["userPendingSpaceIds" => $userPendingSpaceIds]);
 
         $modelSpaceUser = new CoreSpaceUser();
         $data = $modelSpaceUser->getUserSpaceInfo($_SESSION["id_user"]);
         $userSpaceIds = array();
+        $spacesUserIsAdminOf = array();
 
-        if ($data && count($data) > 0) { 
+        if ($data && count($data) > 0) {
             foreach ($data as $space) {
                 array_push($userSpaceIds, $space["id_space"]);
+                if ($space["status"] === "4") {
+                    array_push($spacesUserIsAdminOf, $space["id_space"]);
+                }
             }
         }
-        $result = array("userSpaceIds" => $userSpaceIds, "userPendingSpaceIds" => $userPendingSpaceIds);
+        $result = array(
+            "userSpaceIds" => $userSpaceIds,
+            "userPendingSpaceIds" => $userPendingSpaceIds,
+            "spacesUserIsAdminOf" => $spacesUserIsAdminOf
+        );
 
         return $result;
     }
 
     /**
      * 
-     * Manage actions resulting from user request to join a space
+     * Manage actions resulting from user request to join or leave a space
      *
-     * @param int $id_space 
+     * @param int $id_space
+     * @param bool $isMemberOfSpace
      */
-    public function joinSpaceAction($id_space) {
-        $modelSpacePending = new CorePendingAccount();
-        $modelSpacePending->add($_SESSION["id_user"], $id_space);
-        $this->NotifyAdminForJoinRequest($id_space);
+    public function joinSpaceAction($id_space, $isMemberOfSpace) {
+        Configuration::getLogger()->debug("in DELETING", ["isMemberOfSpace: " => $isMemberOfSpace, "id_space: " => $id_space]);
+        if ($isMemberOfSpace) {
+            $modelSpaceUser = new CoreSpaceUser();
+            Configuration::getLogger()->debug("in deleting", ["id_user: " => $_SESSION["id_user"], "id_space: " => $id_space]);
+            // delete user from space
+            $modelSpaceUser->delete($_SESSION["id_user"], $id_space);
+        } else {
+            $modelSpacePending = new CorePendingAccount();
+            $modelSpacePending->add($_SESSION["id_user"], $id_space);
+            $this->NotifyAdminForJoinRequest($id_space);
+        } 
         $this->redirect("coretiles");
     }
 

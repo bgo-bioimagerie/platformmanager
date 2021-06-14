@@ -48,7 +48,7 @@ class CorespaceaccessController extends CoresecureController {
                 $letter = $_SESSION["user_last_letter"];
             }
             else{
-                $letter = "A";
+                $letter = "All";
             }
         }
 
@@ -247,8 +247,6 @@ class CorespaceaccessController extends CoresecureController {
 
         $modelUserSpace = new CoreSpaceUser();
         $spaceUserInfo = $modelUserSpace->getUserSpaceInfo2($id_space, $id);
-        //echo 'space user info: <br/>';
-        //print_r($spaceUserInfo);
 
         $roles = $modelSpace->roles($lang);
 
@@ -260,6 +258,7 @@ class CorespaceaccessController extends CoresecureController {
         $form->addUpload("convention", CoreTranslator::Convention($lang), $spaceUserInfo["convention_url"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreaccessuseredit/".$id_space."/".$id);
+        // $form->setDeleteButton(CoreTranslator::Delete($lang), "spaceconfigdeleteuser/".$id_space, $id);
         if ( $form->check() ){
 
             $modelUserSpace->setRole($id, $id_space, $form->getParameter("role"));

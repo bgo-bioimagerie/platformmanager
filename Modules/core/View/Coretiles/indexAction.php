@@ -91,25 +91,30 @@ if (!$headless) {
                             </p>
 
                             <!-- JOIN BUTTON -->
-                            <?php    
-                                if (!in_array($item["id"], array_merge($userSpaces, $userPendingSpaces))) {
-                            ?>
-                                <div style="position: absolute; bottom: 10px; right: 10px">
-                                    <a href="<?php echo "coretilesjoinspace/". $item["id"] ?>">
-                                        <button type="button" class="btn btn-md btn-success">
-                                            <?php echo CoreTranslator::RequestJoin($lang) ?>
-                                        </button>
-                                    </a>
-                                </div>
+                            <!-- TODO: Add disabled button "admin"? -->
                             <?php
-                                } else if (in_array($item["id"], $userPendingSpaces)) {
+                                if (!in_array($item["id"], $spacesUserIsAdminOf)) {
+                                    Configuration::getLogger()->debug("IN VIEW", ["item" => $item["id"], "adminOf" => $spacesUserIsAdminOf]);  
+                                    if (!in_array($item["id"], $userPendingSpaces)) {
+                                        $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                             ?>
-                                <div style="position: absolute; bottom: 10px; right: 10px">
-                                    <button type="button" class="btn btn-md btn-info" disabled>
-                                        <?php echo CoreTranslator::JoinRequested($lang) ?>
-                                    </button>
-                                </div>
+                                        <div style="position: absolute; bottom: 10px; right: 10px">
+                                            <a href="<?php echo "coretilesjoinspace/". $item["id"] . "/" . $isMemberOfSpace ?>">
+                                                <button type="button" class="btn btn-md btn-success">
+                                                    <?php echo CoreTranslator::RequestJoin($isMemberOfSpace, $lang) ?>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    <?php
+                                        } else {
+                                    ?>
+                                        <div style="position: absolute; bottom: 10px; right: 10px">
+                                            <button type="button" class="btn btn-md btn-info" disabled>
+                                                <?php echo CoreTranslator::JoinRequested($lang) ?>
+                                            </button>
+                                        </div>
                             <?php
+                                    }
                                 }
                             ?>
                         </div>   

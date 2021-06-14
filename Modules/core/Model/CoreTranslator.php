@@ -1780,11 +1780,11 @@ class CoreTranslator {
         return "Account has been created";        
     }   
     
-    public static function RequestJoin($lang){
+    public static function RequestJoin($isMemberOfSpace, $lang){
         if ($lang == "fr") {
-            return "Rejoindre";
+            return $isMemberOfSpace ? "Quitter" : "Rejoindre";
         }
-        return "Join"; 
+        return $isMemberOfSpace ? "Leave" : "Join"; 
     }
 
     public static function JoinRequested($lang){
