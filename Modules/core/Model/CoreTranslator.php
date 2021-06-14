@@ -1794,16 +1794,42 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($lang, $login, $space_name){
+    public static function JoinRequestEmail($login, $space_name, $lang){
         if ($lang == "fr") {
-            return $login." demande à rejoindre l'espace " . $space_name;
+            return "Bonjour, <br><br>" . $login . " demande à rejoindre votre espace " . $space_name. " sur Platform-Manager";
         }
-        return $login." requests to join space " . $space_name;
+        return "Hi, <br><br>" . $login . " requests to join your space " . $space_name. " on Platform-Manager";
     }
 
     public static function JoinRequestSubject($space_name, $lang){
         if ($lang == "fr") {
-            return "Demande d'accès à L'espace ".$space_name;
+            return "Demande d'accès à votre'espace ".$space_name;
+        }
+        return "Join request for your space ".$space_name;
+    }
+
+    public static function JoinResponseEmail($user_name, $space_name, $accepted, $lang){
+        if ($lang == "fr") {
+            $message = "Bonjour " . $user_name . ", <br><br> votre demande à rejoindre l'espace " . $space_name. " sur Platform-Manager ";
+            if ($accepted) {
+                $message = $message . " a bien été acceptée.";
+            } else {
+                $message = $message . " a été refusée.";
+            }
+            return $message;
+        }
+        $message = "Hi " . $user_name . ", <br><br> your request to join space " . $space_name. " on Platform-Manager ";
+        if ($accepted) {
+            $message = $message . " has been accepted.";
+        } else {
+            $message = $message . " has been rejected.";
+        }
+        return $message;
+    }
+
+    public static function JoinResponseSubject($space_name, $lang){
+        if ($lang == "fr") {
+            return "Demande d'accès à l'espace ".$space_name;
         }
         return "Join request for space ".$space_name;
     }

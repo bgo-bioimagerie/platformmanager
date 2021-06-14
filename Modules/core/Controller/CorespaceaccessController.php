@@ -208,20 +208,9 @@ class CorespaceaccessController extends CoresecureController {
                 );
                 $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
                 $modelCoreUser->validateAccount($id_user);
-
-                $mailer = new MailerSend();
-                $mail_from = getenv('MAIL_FROM');
-                if (!empty($mail_from)) {
-                    $from = $mail_from;
-                }
-                else {
-                    $from = "support@platform-manager.com";
-                }
-                $fromName = "Platform-Manager";
-                $toAdress = $form->getParameter("email");
-                $subject = CoreTranslator::Account($lang);
-                $content = CoreTranslator::AccountCreatedEmail($lang, $form->getParameter("login"), $pwd);
-                $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+                
+                $mailParams = ["email" => $form->getParameter("email"), "login" => $form->getParameter("login"), "pwd" => $pwd];
+                $this->notifyUserByEmail($mailParams, "add account");
 
                 $modelSpacePending = new CorePendingAccount();
                 $modelSpacePending->add($id_user, $id_space);
@@ -364,6 +353,9 @@ class CorespaceaccessController extends CoresecureController {
             $modelSpace->setUserIfNotExist($pendingInfo["id_user"], $id_space, $form->getParameter("role"));
             $modelPending->validate($id, $_SESSION["id_user"]);
 
+            $mailParams = ["id_space" => $id_space, "id_user" => $pendingInfo["id_user"]];
+            $this->notifyUserByEmail($mailParams, "accept");
+
             $_SESSION["message"] = CoreTranslator::UserAccountHasBeenActivated($lang);
             $this->redirect("corespacependinguseredit/".$id_space."/".$id);
         }
@@ -377,7 +369,7 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     /**
-     * Rejects a pending user
+     * Reject a pending user
      * (sets validate=0 && validated_by=<logged user id> in core_pending_accounts)
      * 
      * @param int $id_space
@@ -387,7 +379,46 @@ class CorespaceaccessController extends CoresecureController {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelPending = new CorePendingAccount();
         $modelPending->invalidate($id_pendingAccount, $_SESSION["id_user"]);
+        $mailParams = ["id_space" => $id_space, "id_user" => $modelPending->get($id_pendingAccount)["id_user"]];
+        $this->notifyUserByEmail($mailParams, "reject");
         $this->redirect("corespacependingusers/".$id_space);
+    }
+
+    /**
+     * 
+     * Send an Email to user. Manage the following cases :
+     * - user account has been created
+     * - user is accepted as a member of space
+     * - user request to join a space is rejected
+     *
+     * @param array $params required to fill sendEmail() parameters. Depends on why we want to notify user
+     * @param string $origin determines how to get sendEmail() paramters from $params
+     * @param bool $accepted
+     */
+    public function notifyUserByEmail($params, $origin) {
+        $lang = $this->getLanguage();
+        $fromName = "Platform-Manager";
+        $mail_from = getenv('MAIL_FROM');
+        $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
+        if ($origin === "add account") {
+            $fromName = "Platform-Manager";
+            $toAdress = $params["email"];
+            $subject = CoreTranslator::Account($lang);
+            $content = CoreTranslator::AccountCreatedEmail($lang, $params["login"], $params["pwd"]);
+        } else {
+            $accepted = ($origin === "accept") ? true : false;
+            $spaceModel = new CoreSpace();
+            $userModel = new CoreUser();
+            $pendingUser = $userModel->getInfo($params["id_user"]);
+            $userFullName = $pendingUser["firstname"] . " " . $pendingUser["name"];
+            $spaceName = $spaceModel->getSpace($params["id_space"])["name"];
+            $subject = CoreTranslator::JoinResponseSubject($spaceName, $lang);
+            $content = CoreTranslator::JoinResponseEmail($userFullName, $spaceName, $accepted, $lang);
+            $toAdress = $pendingUser["email"];
+        }
+
+        $mailer = new MailerSend();
+        $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
     }
 
 }

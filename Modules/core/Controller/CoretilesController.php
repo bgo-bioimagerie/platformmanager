@@ -7,6 +7,7 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
+require_once 'Modules/mailer/Model/MailerSend.php';
 
 
 /**
@@ -163,11 +164,12 @@ class CoretilesController extends CoresecureController {
         $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($id_space);
         
         $mailer = new MailerSend();
-        $from = "support@platform-manager.com";
+        $mail_from = getenv('MAIL_FROM');
+        $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
         $fromName = "Platform-Manager";
-        $subject = CoreTranslator::JoinRequestSubject($spaceModel->getSpace($id_space), $lang);
-        $content = CoreTranslator::JoinRequestEmail($lang, $_SESSION['login'], $id_space);
-        Configuration::getLogger()->debug("DEBUG", ["EMAIL" => $emailSpaceManagers]);
+        $spaceName = $spaceModel->getSpace($id_space)["name"];
+        $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
+        $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
         foreach ($emailSpaceManagers as $emailSpaceManager) {
             $toAdress = $emailSpaceManager["email"];
             $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
