@@ -16,8 +16,6 @@ class UsersPatch extends Model {
     }
 
     public function patch() {
-
-
         $sqlcl = "SELECT * FROM cl_clients";
         $client_count = $this->runRequest($sqlcl)->rowCount();
 

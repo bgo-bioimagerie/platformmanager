@@ -21,6 +21,7 @@ require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
+require_once 'Modules/users/Model/UsersPatch.php';
 
 
 define("DB_VERSION", 2);
@@ -31,11 +32,14 @@ class CoreDB extends Model {
 
 
     public function upgrade_v0_v1() {
-        // nothing to do
+        $modelMainMenuPatch = new CoreMainMenuPatch();
+        $modelMainMenuPatch->patch();
+
+        $model2 = new UsersPatch();
+        $model2->patch();
     }
 
     public function upgrade_v1_v2() {
-        // nothing to do
         Configuration::getLogger()->debug("[db] Add core_spaces shortname");
         $cp = new CoreSpace();
         $cp->addColumn('core_spaces', 'shortname', "varchar(30)", '');
@@ -48,8 +52,20 @@ class CoreDB extends Model {
                 $cp->setShortname($space['id'], $shortname);
             }
         }
-        // TODO migrate existings
+    }
 
+    /**
+     * Get current database version
+     */
+    public function getRelease() {
+        $sqlRelease = "SELECT * FROM `pfm_db`;";
+        $reqRelease = $this->runRequest($sqlRelease);
+        $release = null;
+        if ($reqRelease->rowCount() > 0){
+            $release = $reqRelease->fetch();
+            return $release['version'];
+        }
+        return 0;
     }
 
     /**
@@ -66,7 +82,9 @@ class CoreDB extends Model {
 		);";
 
         $this->runRequest($sql);
+    }
 
+    public function upgrade() {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
 
@@ -197,10 +215,6 @@ class CoreInstall extends Model {
 
         $modelCoreSpaceAccessOptions = new CoreSpaceAccessOptions();
         $modelCoreSpaceAccessOptions->createTable();
-
-
-        $modelMainMenuPatch = new CoreMainMenuPatch();
-        $modelMainMenuPatch->patch();
 
         $modelOpenid = new CoreOpenId();
         $modelOpenid-> createTable();

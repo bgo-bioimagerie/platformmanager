@@ -32,7 +32,7 @@ class Anticorps extends Model {
  				`lot` varchar(30) NOT NULL DEFAULT '',
 				`id_isotype` int(11) NOT NULL DEFAULT '0',
 				`stockage` varchar(30) NOT NULL DEFAULT '',
-                                `id_space` INT(11) NOT NULL,
+                `id_space` INT(11) NOT NULL,
   				PRIMARY KEY (`id`)
 				);
 				

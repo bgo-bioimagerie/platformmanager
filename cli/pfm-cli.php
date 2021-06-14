@@ -54,14 +54,20 @@ if (isset($options['expire']) || isset($options['e'])) {
 if (isset($options['install']) || isset($options['i'])) {
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
+    // Create db release table if not exists
+    $cdb = new CoreDB();
+    $cdb->createTable();
+
     $modelCreateDatabase = new CoreInstall();
+    /*
     $dsn = Configuration::get('dsn');
     $login = Configuration::get('login');
     $password = Configuration::get('pwd');
     $modelCreateDatabase->setDatabase($dsn, $login, $password);
+    */
     $modelCreateDatabase->createDatabase();
-
     $logger->info("Database installed");
+    
 
     $logger->info("Upgrading modules");
 
@@ -96,8 +102,8 @@ if (isset($options['install']) || isset($options['i'])) {
             $logger->error("Error", ["error" => $e->getMessage()]);
     }
 
-    $cdb = new CoreDB();
-    $cdb->createTable();
+    // update db release and launch upgrade
+    $cdb->upgrade();
 
     $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 

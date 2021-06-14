@@ -20,8 +20,8 @@ class Status extends Model {
 				`id` int(11) NOT NULL AUTO_INCREMENT,
 				`nom` varchar(30) NOT NULL,
 				`color` varchar(7) NOT NULL,
-                                `display_order` INT(11) NOT NULL,
-                                `id_space` INT(11) NOT NULL,
+                `display_order` INT(11) NOT NULL,
+                `id_space` INT(11) NOT NULL,
 				PRIMARY KEY (`id`)
 				);";
 
