@@ -104,6 +104,8 @@ abstract class Controller {
                 $dataView['flash']['class'] = $_SESSION['flashClass'];
                 unset($_SESSION['flashClass']);
             }
+        } else {
+            $dataView['flash'] = null;
         }
         // Geneate the view
         //echo "controllerView = " . $controllerView . "<br/>";
