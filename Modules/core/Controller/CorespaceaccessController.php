@@ -48,7 +48,7 @@ class CorespaceaccessController extends CoresecureController {
                 $letter = $_SESSION["user_last_letter"];
             }
             else{
-                $letter = "All";
+                $letter = "A";
             }
         }
 
@@ -85,21 +85,15 @@ class CorespaceaccessController extends CoresecureController {
 
         }
 
-        //$modelStatus = new CoreStatus();
         $modelSpaceUser = new CoreSpaceUser();
         for ($i = 0; $i < count($usersArray); $i++) {
-
-            //$usersArray[$i]["status"] = $modelStatus->getStatusName($usersArray[$i]["status_id"]);
-
             $userSpaceInfo = $modelSpaceUser->getUserSpaceInfo2($id_space, $usersArray[$i]["id"]);
             $usersArray[$i]["date_convention"] = CoreTranslator::dateFromEn($userSpaceInfo["date_convention"], $lang);
             $usersArray[$i]["convention_url"] = $userSpaceInfo["convention_url"];
             $usersArray[$i]["date_contract_end"] = CoreTranslator::dateFromEn($userSpaceInfo["date_contract_end"], $lang);
-
             $usersArray[$i]['spaces'] = $modelSpace->getUserSpacesRolesSummary($usersArray[$i]['id']);
         }
 
-        // multi-tenant feature: get only users of this space
         $usersArray = $this->getUsersOfSpace($id_space, $usersArray);
 
         // table view
@@ -210,7 +204,7 @@ class CorespaceaccessController extends CoresecureController {
                 $modelCoreUser->validateAccount($id_user);
                 
                 $mailParams = ["email" => $form->getParameter("email"), "login" => $form->getParameter("login"), "pwd" => $pwd];
-                $this->notifyUserByEmail($mailParams, "add account");
+                $this->notifyUserByEmail($mailParams, "add_new_user_to_space");
 
                 $modelSpacePending = new CorePendingAccount();
                 $modelSpacePending->add($id_user, $id_space);
@@ -336,8 +330,6 @@ class CorespaceaccessController extends CoresecureController {
 
         $modelUser = new CoreUser();
         $fullname = $modelUser->getUserFUllName($pendingInfo["id_user"]);
-        //$date_created = $modelUser->getDateCreated($id_user);
-
         $modelStatus = new CoreSpace();
         $roles = $modelStatus->roles($lang);
 
@@ -353,7 +345,7 @@ class CorespaceaccessController extends CoresecureController {
             $modelPending->validate($id, $_SESSION["id_user"]);
 
             $mailParams = ["id_space" => $id_space, "id_user" => $pendingInfo["id_user"]];
-            $this->notifyUserByEmail($mailParams, "accept");
+            $this->notifyUserByEmail($mailParams, "accept_pending_user");
 
             $_SESSION["message"] = CoreTranslator::UserAccountHasBeenActivated($lang);
             $this->redirect("corespacependinguseredit/".$id_space."/".$id);
@@ -379,7 +371,7 @@ class CorespaceaccessController extends CoresecureController {
         $modelPending = new CorePendingAccount();
         $modelPending->invalidate($id_pendingAccount, $_SESSION["id_user"]);
         $mailParams = ["id_space" => $id_space, "id_user" => $modelPending->get($id_pendingAccount)["id_user"]];
-        $this->notifyUserByEmail($mailParams, "reject");
+        $this->notifyUserByEmail($mailParams, "reject_pending_user");
         $this->redirect("corespacependingusers/".$id_space);
     }
 
@@ -392,20 +384,20 @@ class CorespaceaccessController extends CoresecureController {
      *
      * @param array $params required to fill sendEmail() parameters. Depends on why we want to notify user
      * @param string $origin determines how to get sendEmail() paramters from $params
-     * @param bool $accepted
      */
     public function notifyUserByEmail($params, $origin) {
         $lang = $this->getLanguage();
         $fromName = "Platform-Manager";
-        $mail_from = getenv('MAIL_FROM');
+        $mail_from = Configuration::get('smtp_from');
         $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
-        if ($origin === "add account") {
+
+        if ($origin === "add_new_user_to_space") {
             $fromName = "Platform-Manager";
             $toAdress = $params["email"];
             $subject = CoreTranslator::Account($lang);
             $content = CoreTranslator::AccountCreatedEmail($lang, $params["login"], $params["pwd"]);
-        } else {
-            $accepted = ($origin === "accept") ? true : false;
+        } else if ($origin === "accept_pending_user" || $origin === "reject_pending_user") {
+            $accepted = ($origin === "accept_pending_user") ? true : false;
             $spaceModel = new CoreSpace();
             $userModel = new CoreUser();
             $pendingUser = $userModel->getInfo($params["id_user"]);
@@ -414,6 +406,8 @@ class CorespaceaccessController extends CoresecureController {
             $subject = CoreTranslator::JoinResponseSubject($spaceName, $lang);
             $content = CoreTranslator::JoinResponseEmail($userFullName, $spaceName, $accepted, $lang);
             $toAdress = $pendingUser["email"];
+        } else {
+            Configuration::getLogger()->debug("notifyUserByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
         }
 
         $mailer = new MailerSend();

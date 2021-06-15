@@ -159,16 +159,14 @@ class CoretilesController extends CoresecureController {
      * @param bool $isMemberOfSpace
      */
     public function joinSpaceAction($id_space, $isMemberOfSpace) {
-        Configuration::getLogger()->debug("in DELETING", ["isMemberOfSpace: " => $isMemberOfSpace, "id_space: " => $id_space]);
         if ($isMemberOfSpace) {
             $modelSpaceUser = new CoreSpaceUser();
-            Configuration::getLogger()->debug("in deleting", ["id_user: " => $_SESSION["id_user"], "id_space: " => $id_space]);
-            // delete user from space
             $modelSpaceUser->delete($_SESSION["id_user"], $id_space);
         } else {
             $modelSpacePending = new CorePendingAccount();
             $modelSpacePending->add($_SESSION["id_user"], $id_space);
-            $this->NotifyAdminForJoinRequest($id_space);
+            $params = array($id_space);
+            $this->NotifyAdminsByEmail($params, "new_join_request");
         } 
         $this->redirect("coretiles");
     }
@@ -177,23 +175,27 @@ class CoretilesController extends CoresecureController {
      * 
      * Send an Email to space managers (status > 2) notifying that logged user requested to join space
      *
-     * @param int $id_space 
+     * @param array $params required to fill sendEmail() parameters. Depends on why we want to notify space admins
+     * @param string $origin determines how to get sendEmail() paramters from $params
      */
-    public function NotifyAdminForJoinRequest($id_space) {
+    public function NotifyAdminsByEmail($params, $origin) {
         $lang = $this->getLanguage();
-        $spaceModel = new CoreSpace();
-        $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($id_space);
-        
-        $mailer = new MailerSend();
-        $mail_from = getenv('MAIL_FROM');
-        $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
-        $fromName = "Platform-Manager";
-        $spaceName = $spaceModel->getSpace($id_space)["name"];
-        $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
-        $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
-        foreach ($emailSpaceManagers as $emailSpaceManager) {
-            $toAdress = $emailSpaceManager["email"];
-            $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
-        }  
+        if ($origin === "new_join_request") {
+            $spaceModel = new CoreSpace();
+            $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($params["id_space"]);
+            $mailer = new MailerSend();
+            $mail_from = Configuration::get('smtp_from');
+            $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
+            $fromName = "Platform-Manager";
+            $spaceName = $spaceModel->getSpace($params["id_space"])["name"];
+            $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
+            $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
+            foreach ($emailSpaceManagers as $emailSpaceManager) {
+                $toAdress = $emailSpaceManager["email"];
+                $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+            }
+        } else {
+            Configuration::getLogger()->debug("notifyAdminsByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
+        }
     }
 }
