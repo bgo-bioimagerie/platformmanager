@@ -3,6 +3,11 @@
 require_once 'Configuration.php';
 require_once 'Request.php';
 require_once 'View.php';
+require_once 'Modules/core/Model/CoreInstall.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
+
+use DebugBar\StandardDebugBar;
+use DebugBar\DataCollector\PDO\PDOCollector;
 
 /**
  * Abstract class defining a controller. 
@@ -18,8 +23,17 @@ abstract class Controller {
     /** recieved request */
     protected $request;
 
+    protected $twig;
+
     public function __construct(Request $request) {
         $this->request = $request;
+        $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/..');
+        if(!is_dir('/tmp/pfm')) {
+            mkdir('/tmp/pfm');
+        }
+        $this->twig = new \Twig\Environment($loader, [
+            'cache' => '/tmp/pfm'
+        ]);
     }
 
     /**
@@ -107,11 +121,27 @@ abstract class Controller {
         } else {
             $dataView['flash'] = null;
         }
+        $isdev = (getenv('PFM_MODE') == 'dev');
+        $dataView['_isdev'] = $isdev;
+        if($isdev) {
+            $debugbar = new StandardDebugBar();
+            $debugbarRenderer = $debugbar->getJavascriptRenderer();
+            $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector(CoreInstall::getDatabase()));
+            $dataView['_debugbarRenderer'] = $debugbarRenderer;
+        }
+        $dataView['_translator'] = new CoreTranslator();
         // Geneate the view
         //echo "controllerView = " . $controllerView . "<br/>";
         //echo "parent = " . basename(__DIR__) . "<br/>"; 
-        $view = new View($actionView, $controllerView, $this->module);
-        $view->generate($dataView);
+        //$view = new View($actionView, $controllerView, $this->module);
+        //$view->generate($dataView);
+        try {
+            echo $this->twig->render("Modules/core/View/$controllerView/$actionView.html", $dataView);
+        } catch(Exception $e) {
+            Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
+            $view = new View($actionView, $controllerView, $this->module);
+            $view->generate($dataView);
+        }
     }
 
     /**

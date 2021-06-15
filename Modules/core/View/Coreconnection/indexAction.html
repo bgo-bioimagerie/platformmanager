@@ -1,0 +1,102 @@
+{% extends "Modules/layout.html" %}
+
+{% block title %}
+Platform-Manager
+{% endblock %}
+
+{% block stylesheet %}
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+{% if dev %}
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+{% else %}
+    <meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+{% endif %}
+
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+<!-- Bootstrap core CSS -->
+<link href="externals/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Custom styles for this template -->
+<link href="Modules/core/Theme/signin.css" rel="stylesheet">
+
+<!-- Bootstrap core CSS -->
+<script src="Modules/core/Theme/caroussel/ie-emulation-modes-warning.js"></script>
+<link href="Modules/core/Theme/caroussel/carousel.css" rel="stylesheet"> 
+{% endblock %}
+
+{% block content %}
+
+<div class="col-md-12" style="background-color: #fff; height:100%">
+    <div class="row">
+        <!-- Title -->
+        <div class="col-sm-12">
+            <h1 class="text-center login-title">{{ home_title }}</h1>
+        </div>
+
+        <!-- Message -->
+        <div class="col-sm-10 col-sm-offset-1 text-center">
+            <p></p>
+            <h3 style="text-align:center;">{{ home_message }}</h3>
+            <p></p>
+        </div>
+
+        <!-- Carousel and Login -->
+        <div class="col-md-12">
+            <div class="col-xs-12 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+
+                <div class="col-xs-12" style="height:100px;">
+                    <p></p>
+                </div>
+                <div class="col-xs-12">
+                    <div class="account-wall">
+                    {% if msgError %}
+                        <div class="alert alert-danger">
+                            <p>{{msgError}}</p>
+                        </div>
+                    {% endif %}
+                    </div>
+                    <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+                        <br/>
+                        <form class="form-signin" action="corelogin" method="post">
+                            <input name="redirection" type="hidden" value="{{redirection}}">
+                            <input name="login" autocomplete="username" type="text" class="form-control" placeholder="{{_translator.Login(language)}}" required autofocus>
+                            <input name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="{{_translator.Password(language)}}" required>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="remember" value="">{{_translator.RememberMe(language)}}</label>
+                            </div>
+
+                            <button class="btn btn-lg btn-primary btn-block" type="submit"> {{_translator.Ok(language)}} </button>
+                        </form>
+
+                    </div>
+                    <br/>
+                    <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+                        <a href="corepasswordforgotten" class="text-center new-account">{{_translator.PasswordForgotten(language)}}</a>
+                    </div>
+
+                    <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+                        <a href="mailto:{{admin_email }}" class="text-center new-account">{{_translator.Contact_the_administrator(language)}}</a>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        {% if providers %}
+        <div class="col-md-12" style="text-align:center;">
+            <h2>Log with external connection providers</h2>
+            <p><small>You must have link provider with your account before in account settings.</small></p>
+        {% for provider in providers %}
+            <a href="{{provider['login']}}?client_id={{provider['client_id']}}&response_type=code&scope=openid&redirect_uri={{provider['callback']}}">
+                <button type="button" class="btn btn-primary">{{provider['name']}}</button>
+            </a>
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

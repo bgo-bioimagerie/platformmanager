@@ -4,6 +4,7 @@
         "phpmailer/phpmailer": "^6.4",
         "maximebf/debugbar": "^1.16",
         "guzzlehttp/guzzle": "^7.0",
-        "altorouter/altorouter": "^2.0"
+        "altorouter/altorouter": "^2.0",
+        "twig/twig": "^3.0"
     }
 }
