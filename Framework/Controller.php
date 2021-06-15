@@ -96,6 +96,15 @@ abstract class Controller {
         if (getenv("PFM_MODE") == "test") {
             return $dataView;
         }
+
+        if(isset($_SESSION['flash'])) {
+            $dataView['flash'] = ['msg' => $_SESSION['flash'], 'class' => 'warning'];
+            unset($_SESSION['flash']);
+            if(isset($_SESSION['flashClass'])) {
+                $dataView['flash']['class'] = $_SESSION['flashClass'];
+                unset($_SESSION['flashClass']);
+            }
+        }
         // Geneate the view
         //echo "controllerView = " . $controllerView . "<br/>";
         //echo "parent = " . basename(__DIR__) . "<br/>"; 
