@@ -36,6 +36,9 @@ class Configuration {
                     $user = $_SESSION["id_user"];
                 }
                 $entry['extra']['user'] = $user;
+                if(isset($_SESSION["id_space"])) {
+                    $entry['extra']['space'] = $_SESSION["id_space"];
+                }
                 return $entry;
             });
 

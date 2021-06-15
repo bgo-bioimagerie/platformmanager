@@ -27,6 +27,9 @@ class Router {
     }
 
     private function call($target, $args, $request) {
+        if(isset($args['id_space'])){
+            $_SESSION['id_space'] = $args['id_space'];
+        }
         $route_info = explode("/", $target);
         $module = $route_info[0];
         $controller_name = $route_info[1];
@@ -71,6 +74,7 @@ class Router {
                 if ($this->route($request)) {
                     return;
                 }
+
                 $urlInfo = $this->getUrlData($request);
                 if(!$urlInfo['pathInfo']) {
                     $this->logger->error('no route found, redirect to homepage', [
@@ -82,6 +86,9 @@ class Router {
                 $controller = $this->createController($urlInfo, $request);
                 $action = $urlInfo["pathInfo"]["action"];
                 $args = $this->getArgs($urlInfo);
+                if(isset($args['id_space'])){
+                    $_SESSION['id_space'] = $args['id_space'];
+                }
 
                 $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
                 $this->runAction($controller, $urlInfo, $action, $args);
