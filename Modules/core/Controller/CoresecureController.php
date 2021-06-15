@@ -254,4 +254,25 @@ abstract class CoresecureController extends CorecookiesecureController {
         }
     }
 
+        /**
+     * 
+     * @param type $id_space
+     * @param type $id_user
+     * @return boolean
+     */
+    public function isSpaceAdmin($id_space, $id_user) {
+
+        $modelUser = new CoreUser();
+        $userAppStatus = $modelUser->getStatus($id_user);
+        if ($userAppStatus > 1) {
+            return true;
+        }
+        $modelSpace = new CoreSpace();
+        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
+        if ($spaceRole < 4) {
+            return false;
+        }
+        return true;
+    }
+
 }

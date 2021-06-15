@@ -40,9 +40,11 @@ class CoreDB extends Model {
     }
 
     public function upgrade_v1_v2() {
-        Configuration::getLogger()->debug("[db] Add core_spaces shortname");
+        Configuration::getLogger()->debug("[db] Add core_spaces shortname, contact, support");
         $cp = new CoreSpace();
         $cp->addColumn('core_spaces', 'shortname', "varchar(30)", '');
+        $cp->addColumn('core_spaces', 'contact', "varchar(100)", '');
+        $cp->addColumn('core_spaces', 'support', "varchar(100)", '');
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
             if(!$space['shortname']) {

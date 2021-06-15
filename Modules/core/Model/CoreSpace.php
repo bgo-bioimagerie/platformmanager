@@ -39,6 +39,8 @@ class CoreSpace extends Model {
         `description` text NOT NULL DEFAULT '',
         `image` varchar(255) NOT NULL DEFAULT '',
         `shortname` varchar(30) NOT NULL DEFAULT '',
+        `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
+        `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -289,12 +291,12 @@ class CoreSpace extends Model {
         return $this->runRequest($sql)->fetchAll();
     }
 
-    public function setSpace($id, $name, $status, $color, $shortname) {
+    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact) {
         if ($this->isSpace($id)) {
-            $this->editSpace($id, $name, $status, $color, $shortname);
+            $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact);
             return $id;
         } else {
-            $this->addSpace($name, $status, $color, $shortname);
+            $this->addSpace($name, $status, $color, $shortname, $support, $contact);
             return $this->getDatabase()->lastInsertId();
         }
     }
@@ -333,15 +335,15 @@ class CoreSpace extends Model {
         return $users;
     }
 
-    public function addSpace($name, $status, $color, $shortname) {
-        $sql = "INSERT INTO core_spaces (name, status, color, shortname) VALUES (?,?,?, ?)";
-        $this->runRequest($sql, array($name, $status, $color, $shortname));
+    public function addSpace($name, $status, $color, $shortname, $support, $contact) {
+        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support) VALUES (?,?,?,?,?,?)";
+        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function editSpace($id, $name, $status, $color, $shortname) {
-        $sql = "UPDATE core_spaces SET name=?, status=?, color=?, shortname=? WHERE id=?";
-        $this->runRequest($sql, array($name, $status, $color, $id, $shortname));
+    public function editSpace($id, $name, $status, $color, $shortname, $support, $contact) {
+        $sql = "UPDATE core_spaces SET name=?, status=?, color=?, shortname=?, contact=?, support=? WHERE id=?";
+        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $id));
     }
 
     public function setUserIfNotExist($id_user, $id_space, $status) {
