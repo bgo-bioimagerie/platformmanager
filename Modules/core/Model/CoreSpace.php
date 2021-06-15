@@ -16,6 +16,10 @@ class CoreSpace extends Model {
     public static $MANAGER = 3;
     public static $ADMIN = 4;
 
+    public function __construct() {
+        $this->tableName = 'core_spaces';
+    }
+
     public static function roles($lang) {
 
         $names = array(CoreTranslator::Inactive($lang), CoreTranslator::Visitor($lang), CoreTranslator::User($lang),
@@ -296,6 +300,9 @@ class CoreSpace extends Model {
             $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact);
             return $id;
         } else {
+            if ($this->alreadyExists('name', $name)) {
+                throw new PfmDbException("Space name already exists", 1);
+            }
             $this->addSpace($name, $status, $color, $shortname, $support, $contact);
             return $this->getDatabase()->lastInsertId();
         }

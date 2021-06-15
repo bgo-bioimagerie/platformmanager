@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Configuration.php';
+require_once 'Errors.php';
+
 use DebugBar\DataCollector\PDO\TraceablePDO;
 /**
  * Abstract class Model
@@ -21,6 +23,27 @@ abstract class Model {
     private $columnsTypes;
     private $columnsDefaultValue;
     protected $primaryKey;
+
+    /**
+     * Check if table already contains a value for column
+     * 
+     * @param string $columnName name of the column
+     * @param mixed  $value value to search
+     * @throws PfmDbException
+     */
+    protected function alreadyExists($columnName, $value) {
+        if(!isset($this->tableName) || empty($this->tableName)) {
+            throw new PfmDbException("Table name not defined", 1);
+            
+        }
+        $table = $this->tableName;
+        $sql = "SELECT $columnName FROM $table WHERE $columnName=?";
+        $req = $this->runRequest($sql, array($value));
+        if ($req->rowCount() > 0){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Run a SQL request
