@@ -85,9 +85,7 @@ class CoretilesController extends CoresecureController {
         
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
-
         $userSpaces = $this->getUserSpaces();
-        Configuration::getLogger()->debug("IN CONTROLLER", ["adminOf" => $userSpaces['spacesUserIsAdminOf']]);  
 
         return $this->render(array(
             'lang' => $lang,

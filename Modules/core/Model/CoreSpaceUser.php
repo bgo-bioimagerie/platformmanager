@@ -83,4 +83,9 @@ class CoreSpaceUser extends Model {
         $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($id_user, $id_space));
     }
+
+    public function getUsersOfSpace($id_space) {
+        $sql = "SELECT core_users.* FROM core_users INNER JOIN core_j_spaces_user ON core_users.id = core_j_spaces_user.id_user WHERE core_j_spaces_user.id_space=? AND core_users.validated=1";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
 }

@@ -94,7 +94,7 @@ class CorespaceaccessController extends CoresecureController {
             $usersArray[$i]['spaces'] = $modelSpace->getUserSpacesRolesSummary($usersArray[$i]['id']);
         }
 
-        $usersArray = $this->getUsersOfSpace($id_space, $usersArray);
+        $usersArray = $this->getUsersOfSpace($id_space);
 
         // table view
         $table = new TableView();
@@ -134,24 +134,20 @@ class CorespaceaccessController extends CoresecureController {
             'letter' => $letter,
             'space' => $space
                 ), "indexAction");
-
     }
 
     /**
-     * gherve: function added for multi-tenant feature
+     * Get all users for one space
      * 
      * @param int $id_space id of space
-     * @param array $usersArray users from different spaces
      * @return array users from space of id $space_id
      */
-    public function getUsersOfSpace($id_space, $usersArray) {
+    public function getUsersOfSpace($id_space) {
         $result = array();
         $modelSpaceUser = new CoreSpaceUser();
-        
-        for ($i = 0; $i < count($usersArray); $i++) {
-            if ($modelSpaceUser->exists($usersArray[$i]['id'], $id_space)) {
-                array_push($result, $usersArray[$i]);
-            }            
+        $users = $modelSpaceUser->getUsersOfSpace($id_space);
+        foreach ($users as $user) {
+            array_push($result, $user);
         }
         return $result;
     }
@@ -252,7 +248,7 @@ class CorespaceaccessController extends CoresecureController {
         $form->addUpload("convention", CoreTranslator::Convention($lang), $spaceUserInfo["convention_url"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreaccessuseredit/".$id_space."/".$id);
-        $form->setDeleteButton(CoreTranslator::Delete($lang), "spaceconfigdeleteuser/".$id_space, $id);
+        $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id);
         if ( $form->check() ){
 
             $modelUserSpace->setRole($id, $id_space, $form->getParameter("role"));
@@ -279,6 +275,30 @@ class CorespaceaccessController extends CoresecureController {
             'lang' => $lang,
             'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang),
+            "space" => $space
+        ));
+    }
+
+    /**
+     * 
+     * Delete user account from a given space
+     * 
+     * @param type $id_space
+     * @param type $id_user
+     */
+    public function userdeleteAction($id_space, $id_user) {
+        $this->checkAuthorization(CoreStatus::$ADMIN);
+        $lang = $this->getLanguage();
+        $spaceModel = new CoreSpace();
+        $spaceModel->deleteUser($id_space, $id_user);
+        $_SESSION["message"] = CoreTranslator::UserAccountHasBeenDeleted($lang);
+
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+        return $this->render(array(
+            'lang' => $lang,
+            'id_space' => $id_space,
+            'formHtml' => "",
             "space" => $space
         ));
     }
@@ -360,6 +380,7 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     /**
+     * 
      * Reject a pending user
      * (sets validate=0 && validated_by=<logged user id> in core_pending_accounts)
      * 

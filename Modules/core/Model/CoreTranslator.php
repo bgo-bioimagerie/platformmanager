@@ -1744,6 +1744,13 @@ class CoreTranslator {
         }
         return "User account has been activated";        
     }
+
+    public static function UserAccountHasBeenDeleted($lang){
+        if ($lang == "fr") {
+            return "Le compte utilisateur a bien été désactivé";
+        }
+        return "User account has been deleted";        
+    }
     
     public static function AccessFor($lang){
         if ($lang == "fr") {
