@@ -32,11 +32,20 @@ class CoreDB extends Model {
 
 
     public function upgrade_v0_v1() {
+
+        Configuration::getLogger()->debug("[db] Old existing db patch");
         $modelMainMenuPatch = new CoreMainMenuPatch();
         $modelMainMenuPatch->patch();
 
         $model2 = new UsersPatch();
         $model2->patch();
+
+        Configuration::getLogger()->debug("[db] Old existing db did not set id as primary/auto-increment");
+        $modelSpaceUser = new CoreSpaceUser();
+        $sql = "alter table core_j_spaces_user drop column id";
+        $modelSpaceUser->runRequest($sql);
+        $sql = "alter table core_j_spaces_user add column id int not null auto_increment primary key";
+        $modelSpaceUser->runRequest($sql);
     }
 
     public function upgrade_v1_v2() {
