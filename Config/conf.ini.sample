@@ -42,3 +42,8 @@ openid_orcid_client_secret = "XXXXXXXXX"
 openid_orcid_login = "https://sandbox.orcid.org/oauth/authorize"
 openid_orcid_icon = ""
 
+[Amqp]
+amqp_host = "localhost"
+amqp_port = 5672
+amqp_user = "pfm"
+amqp_password = "pfm"
