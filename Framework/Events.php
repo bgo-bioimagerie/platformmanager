@@ -7,6 +7,11 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class Events {
 
+    public const ACTION_SPACE_CREATE = 0;
+    public const ACTION_SPACE_DELETE = 1;
+    public const ACTION_SPACE_USER_JOIN = 2;
+    public const ACTION_SPACE_USER_UNJOIN = 3; 
+
     private static $connection;
     private static $channel;
 
@@ -22,7 +27,6 @@ class Events {
             $amqpPort = Configuration::get('amqp_port', 5672);
             $amqpUser = Configuration::get('amqp_user');
             $amqpPassword = Configuration::get('amqp_password');
-            Configuration::getLogger()->error('CONNECT TO', ["host" => $amqpHost, "port" => $amqpPort, "u" => $amqpUser, "p" => $amqpPassword]);
             self::$connection = new AMQPStreamConnection($amqpHost, intval($amqpPort), $amqpUser, $amqpPassword);
             self::$channel = self::$connection->channel();
             self::$channel->exchange_declare('pfm_events', 'fanout', false, false, false);
