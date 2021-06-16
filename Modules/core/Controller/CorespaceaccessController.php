@@ -61,12 +61,12 @@ class CorespaceaccessController extends CoresecureController {
         // get user list
         $usersArray = array();
         $isActive = ($active === "active") ? 1 : 0;
-        $usersArray = $this->getUsersOfSpace($id_space, $letter, $isActive);
-
-        foreach ($usersArray as $i => $user) {
-            $usersArray[$i]["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
-            $usersArray[$i]["convention_url"] = $user["convention_url"];
-            $usersArray[$i]["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
+        $modelSpaceUser = new CoreSpaceUser();
+        $users = $modelSpaceUser->getUsersOfSpaceByLetter($id_space, $letter, $isActive);
+        foreach ($users as $user) {
+            $user["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
+            $user["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
+            array_push($usersArray, $user);
         }
 
         // table view
@@ -107,22 +107,6 @@ class CorespaceaccessController extends CoresecureController {
             'letter' => $letter,
             'space' => $space
                 ), "indexAction");
-    }
-
-    /**
-     * Get all users for one space
-     * 
-     * @param int $id_space id of space
-     * @return array users from space of id $space_id
-     */
-    public function getUsersOfSpace($id_space, $letter, $active) {
-        $result = array();
-        $modelSpaceUser = new CoreSpaceUser();
-        $users = $modelSpaceUser->getUsersOfSpaceByLetter($id_space, $letter, $active);
-        foreach ($users as $user) {
-            array_push($result, $user);
-        }
-        return $result;
     }
 
     public function usersAction($id_space, $letter = "") {
@@ -169,7 +153,12 @@ class CorespaceaccessController extends CoresecureController {
                 $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
                 $modelCoreUser->validateAccount($id_user);
                 
-                $mailParams = ["email" => $form->getParameter("email"), "login" => $form->getParameter("login"), "pwd" => $pwd];
+                $mailParams = [
+                    "email" => $form->getParameter("email"),
+                    "login" => $form->getParameter("login"),
+                    "pwd" => $pwd,
+                    "id_space" => $id_space
+                ];
                 $this->notifyUserByEmail($mailParams, "add_new_user_to_space");
 
                 $modelSpacePending = new CorePendingAccount();
@@ -191,8 +180,6 @@ class CorespaceaccessController extends CoresecureController {
             'space' => $space,
             "formHtml" => $form->getHtml($lang)
         ));
-
-
     }
 
     public function usereditAction($id_space, $id){
@@ -381,24 +368,24 @@ class CorespaceaccessController extends CoresecureController {
         $fromName = "Platform-Manager";
         $mail_from = Configuration::get('smtp_from');
         $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
+        $spaceModel = new CoreSpace();
+        $spaceName = $spaceModel->getSpace($params["id_space"])["name"];
 
         if ($origin === "add_new_user_to_space") {
             $fromName = "Platform-Manager";
             $toAdress = $params["email"];
-            $subject = CoreTranslator::Account($lang);
+            $subject = CoreTranslator::Account($lang, $spaceName);
             $content = CoreTranslator::AccountCreatedEmail($lang, $params["login"], $params["pwd"]);
         } else if ($origin === "accept_pending_user" || $origin === "reject_pending_user") {
             $accepted = ($origin === "accept_pending_user") ? true : false;
-            $spaceModel = new CoreSpace();
             $userModel = new CoreUser();
             $pendingUser = $userModel->getInfo($params["id_user"]);
             $userFullName = $pendingUser["firstname"] . " " . $pendingUser["name"];
-            $spaceName = $spaceModel->getSpace($params["id_space"])["name"];
             $subject = CoreTranslator::JoinResponseSubject($spaceName, $lang);
             $content = CoreTranslator::JoinResponseEmail($userFullName, $spaceName, $accepted, $lang);
             $toAdress = $pendingUser["email"];
         } else {
-            Configuration::getLogger()->debug("notifyUserByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
+            Configuration::getLogger()->error("notifyUserByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
         }
 
         $mailer = new MailerSend();

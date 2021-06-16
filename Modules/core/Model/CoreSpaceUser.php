@@ -84,23 +84,13 @@ class CoreSpaceUser extends Model {
         $this->runRequest($sql, array($id_user, $id_space));
     }
 
-    public function getUsersOfSpace($id_space) {
-        $sql = "SELECT core_users.* FROM core_users
-        INNER JOIN core_j_spaces_user
-        ON core_users.id = core_j_spaces_user.id_user
-        WHERE core_j_spaces_user.id_space=?
-        AND core_users.is_active=1
-        AND core_users.validated=1";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
-    }
-
     /**
      * 
-     * TODO: document this function
+     * Fetch users for a space filtered by name and role
      * 
      * @param int $id_space
      * @param string $letter
-     * @param int $active => supprimer ça pour filtrer après ?
+     * @param int $active
      * 
      * @return array of users for the selected space 
      */
@@ -110,7 +100,8 @@ class CoreSpaceUser extends Model {
         $sql =
             "SELECT core_users.*,
                 core_j_spaces_user.date_convention,
-                core_j_spaces_user.date_contract_end
+                core_j_spaces_user.date_contract_end,
+                convention_url
             FROM core_users
             INNER JOIN core_j_spaces_user
             ON core_users.id = core_j_spaces_user.id_user

@@ -193,7 +193,7 @@ class CoretilesController extends CoresecureController {
                 $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
             }
         } else {
-            Configuration::getLogger()->debug("notifyAdminsByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
+            Configuration::getLogger()->error("notifyAdminsByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
         }
     }
 }

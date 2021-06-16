@@ -109,11 +109,14 @@ class CoreTranslator {
         return "My Account";
     }
     
-    public static function Account($lang = "") {
+    public static function Account($lang = "", $spaceName = "") {
+        $str = ($spaceName !== "")
+            ? ": " . $spaceName
+            : "";
         if ($lang == "fr") {
-            return "Compte utilisateur";
+            return "[pfm " . $str . "] Compte utilisateur";
         }
-        return "Account";
+        return "[pfm" . $str . "] User account";
     }
 
     public static function Settings($lang = "") {
@@ -1810,9 +1813,9 @@ class CoreTranslator {
 
     public static function JoinRequestSubject($space_name, $lang){
         if ($lang == "fr") {
-            return "Demande d'accès à votre'espace ".$space_name;
+            return "[pfm : " .$space_name. "] Demande d'accès à votre espace ".$space_name;
         }
-        return "Join request for your space ".$space_name;
+        return "[pfm: " .$space_name. "] Join request for your space ".$space_name;
     }
 
     public static function JoinResponseEmail($user_name, $space_name, $accepted, $lang){
@@ -1836,8 +1839,8 @@ class CoreTranslator {
 
     public static function JoinResponseSubject($space_name, $lang){
         if ($lang == "fr") {
-            return "Demande d'accès à l'espace ".$space_name;
+            return "[pfm : " .$space_name. "] Demande d'accès à l'espace ".$space_name;
         }
-        return "Join request for space ".$space_name;
+        return "[pfm: " .$space_name. "] Join request for space ".$space_name;
     }
 }
