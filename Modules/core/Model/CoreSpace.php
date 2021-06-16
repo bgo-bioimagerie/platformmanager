@@ -412,6 +412,11 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
+    public function countUsers($id_space) {
+        $sql = "SELECT count(*) FROM core_j_spaces_user WHERE id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetch();
+    }
+
     public function setAdmins($id, $id_admins) {
 
         // remove existing admins
@@ -450,7 +455,10 @@ class CoreSpace extends Model {
     public function delete($id) {
         $sql = "DELETE FROM core_spaces WHERE id=?";
         $this->runRequest($sql, array($id));
-        Events::send(["action" => Events::ACTION_SPACE_DELETE, "space" => ["id" => intval($id)]]);
+        Events::send([
+            "action" => Events::ACTION_SPACE_DELETE,
+            "space" => ["id" => intval($id)]
+        ]);
     }
 
 }

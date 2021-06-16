@@ -47,3 +47,8 @@ amqp_host = "localhost"
 amqp_port = 5672
 amqp_user = "pfm"
 amqp_password = "pfm"
+
+[Influxdb]
+influxdb_url = ""
+influxdb_token = "XXXX"
+influxdb_org = "pfm"

@@ -155,6 +155,13 @@ class Configuration {
             self::$parameters['amqp_password'] = getenv('PFM_AMQP_PASSWORD');
         }
 
+        if(getenv('PFM_INFLUXDB_URL')) {
+            self::$parameters['influxdb_url'] = getenv('PFM_INFLUXDB_URL');
+        }
+        if(getenv('PFM_INFLUXDB_TOKEN')) {
+            self::$parameters['influxdb_token'] = getenv('PFM_INFLUXDB_TOKEN');
+        }
+
 
     }
 

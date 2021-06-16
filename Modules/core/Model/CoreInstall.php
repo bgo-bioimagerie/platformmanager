@@ -4,6 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Statistics.php';
 
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -229,6 +230,9 @@ class CoreInstall extends Model {
 
         $modelOpenid = new CoreOpenId();
         $modelOpenid-> createTable();
+
+        $modelStatistics = new BucketStatistics();
+        $modelStatistics->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);
