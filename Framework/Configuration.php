@@ -142,8 +142,18 @@ class Configuration {
             self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_BASESEARCH');
         }
 
-
-
+        if(getenv('PFM_AMQP_HOST')) {
+            self::$parameters['amqp_host'] = getenv('PFM_AMQP_HOST');
+        }
+        if(getenv('PFM_AMQP_PORT')) {
+            self::$parameters['amqp_port'] = intval(getenv('PFM_AMQP_PORT'));
+        }
+        if(getenv('PFM_AMQP_USER')) {
+            self::$parameters['amqp_user'] = getenv('PFM_AMQP_USER');
+        }
+        if(getenv('PFM_AMQP_PASSWORD')) {
+            self::$parameters['amqp_password'] = getenv('PFM_AMQP_PASSWORD');
+        }
 
 
     }

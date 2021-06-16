@@ -2,6 +2,7 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Framework/Events.php';
 
 /**
  * Class defining the Status model
@@ -345,7 +346,9 @@ class CoreSpace extends Model {
     public function addSpace($name, $status, $color, $shortname, $support, $contact) {
         $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support) VALUES (?,?,?,?,?,?)";
         $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact));
-        return $this->getDatabase()->lastInsertId();
+        $id = $this->getDatabase()->lastInsertId();
+        Events::send(["action" => "space_new", "space" => ["id" => intval($id)]]);
+        return $id;
     }
 
     public function editSpace($id, $name, $status, $color, $shortname, $support, $contact) {
@@ -357,6 +360,11 @@ class CoreSpace extends Model {
         if (!$this->isUser($id_user, $id_space)) {
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $status));
+            Events::send([
+                "action" => "space_join",
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
+            ]);
         }
     }
 
@@ -367,6 +375,11 @@ class CoreSpace extends Model {
         } else {
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $status));
+            Events::send([
+                "action" => "space_join",
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
+            ]);
         }
     }
 
@@ -427,11 +440,17 @@ class CoreSpace extends Model {
     public function deleteUser($id_space, $id_user) {
         $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $this->runRequest($sql, array($id_space, $id_user));
+        Events::send([
+            "action" => "space_unjoin",
+            "space" => ["id" => intval($id_space)],
+            "user" => ["id" => intval($id_user)]
+        ]);
     }
 
     public function delete($id) {
         $sql = "DELETE FROM core_spaces WHERE id=?";
         $this->runRequest($sql, array($id));
+        Events::send(["action" => "space_delete", "space" => ["id" => intval($id)]]);
     }
 
 }
