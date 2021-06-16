@@ -1,5 +1,8 @@
 <?php
 /**
+ * Handle InfluxDB v2 stats recording and bucket/token creation
+ * 
+ * 
  * Example usage
  * 
  * Create a space db (bucket): Statistics::createDB('test8');
