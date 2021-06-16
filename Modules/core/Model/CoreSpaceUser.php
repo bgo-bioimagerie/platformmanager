@@ -85,7 +85,45 @@ class CoreSpaceUser extends Model {
     }
 
     public function getUsersOfSpace($id_space) {
-        $sql = "SELECT core_users.* FROM core_users INNER JOIN core_j_spaces_user ON core_users.id = core_j_spaces_user.id_user WHERE core_j_spaces_user.id_space=? AND core_users.validated=1";
+        $sql = "SELECT core_users.* FROM core_users
+        INNER JOIN core_j_spaces_user
+        ON core_users.id = core_j_spaces_user.id_user
+        WHERE core_j_spaces_user.id_space=?
+        AND core_users.is_active=1
+        AND core_users.validated=1";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
+    /**
+     * 
+     * TODO: document this function
+     * 
+     * @param int $id_space
+     * @param string $letter
+     * @param int $active => supprimer ça pour filtrer après ?
+     * 
+     * @return array of users for the selected space 
+     */
+
+    public function getUsersOfSpaceByLetter($id_space, $letter, $active) {
+        $letter = ($letter === "All") ? "" : $letter;
+        $sql =
+            "SELECT core_users.*,
+                core_j_spaces_user.date_convention,
+                core_j_spaces_user.date_contract_end
+            FROM core_users
+            INNER JOIN core_j_spaces_user
+            ON core_users.id = core_j_spaces_user.id_user
+            WHERE core_j_spaces_user.id_space=?
+            AND core_users.is_active=1
+            AND core_users.validated=1";
+
+        $sql .= ($active === 0)
+            ? " AND core_j_spaces_user.status=0"
+            : " AND core_j_spaces_user.status>0";
+
+        $sql .= " AND name LIKE '" . $letter . "%' ORDER BY name ASC";
+
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 }

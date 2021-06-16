@@ -43,58 +43,31 @@ class CorespaceaccessController extends CoresecureController {
         $space = $modelSpace->getSpace($id_space);
 
         // check input letter
-        if( $letter == ""){
-            if (isset($_SESSION["user_last_letter"])){
-                $letter = $_SESSION["user_last_letter"];
-            }
-            else{
-                $letter = "A";
-            }
+        if ($letter == "") {
+            $letter = isset($_SESSION["user_last_letter"])
+                ? $_SESSION["user_last_letter"]
+                : "A";
         }
 
-         // check input active
+        // check input active
         $_SESSION["user_last_letter"] = $letter;
         $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
-
         if ($active == "") {
-            if (isset($_SESSION["users_lastvisited"])) {
-                $active = $_SESSION["users_lastvisited"];
-            } else {
-                $active = "active";
-            }
+            $active = isset($_SESSION["users_lastvisited"])
+                ? $_SESSION["users_lastvisited"]
+                : "active";
         }
 
         // get user list
-        $modelUser = new CoreUser();
         $usersArray = array();
-        
-        if ($active == "active") {
-            if($letter == "All"){
-                $usersArray = $modelUser->getActiveUsersInfo(1);
-            }
-            else{
-                $usersArray = $modelUser->getActiveUsersInfoLetter($letter, 1);
-            }
-        } else {
-            if($letter == "All"){
-                $usersArray = $modelUser->getActiveUsersInfo(0);
-            }
-            else{
-                $usersArray = $modelUser->getActiveUsersInfoLetter($letter, 0);
-            }
+        $isActive = ($active === "active") ? 1 : 0;
+        $usersArray = $this->getUsersOfSpace($id_space, $letter, $isActive);
 
+        foreach ($usersArray as $i => $user) {
+            $usersArray[$i]["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
+            $usersArray[$i]["convention_url"] = $user["convention_url"];
+            $usersArray[$i]["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
         }
-
-        $modelSpaceUser = new CoreSpaceUser();
-        for ($i = 0; $i < count($usersArray); $i++) {
-            $userSpaceInfo = $modelSpaceUser->getUserSpaceInfo2($id_space, $usersArray[$i]["id"]);
-            $usersArray[$i]["date_convention"] = CoreTranslator::dateFromEn($userSpaceInfo["date_convention"], $lang);
-            $usersArray[$i]["convention_url"] = $userSpaceInfo["convention_url"];
-            $usersArray[$i]["date_contract_end"] = CoreTranslator::dateFromEn($userSpaceInfo["date_contract_end"], $lang);
-            $usersArray[$i]['spaces'] = $modelSpace->getUserSpacesRolesSummary($usersArray[$i]['id']);
-        }
-
-        $usersArray = $this->getUsersOfSpace($id_space);
 
         // table view
         $table = new TableView();
@@ -142,10 +115,10 @@ class CorespaceaccessController extends CoresecureController {
      * @param int $id_space id of space
      * @return array users from space of id $space_id
      */
-    public function getUsersOfSpace($id_space) {
+    public function getUsersOfSpace($id_space, $letter, $active) {
         $result = array();
         $modelSpaceUser = new CoreSpaceUser();
-        $users = $modelSpaceUser->getUsersOfSpace($id_space);
+        $users = $modelSpaceUser->getUsersOfSpaceByLetter($id_space, $letter, $active);
         foreach ($users as $user) {
             array_push($result, $user);
         }
@@ -153,19 +126,16 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     public function usersAction($id_space, $letter = "") {
-
         $_SESSION["users_lastvisited"] = "active";
         $this->indexAction($id_space, $letter, "active");
     }
 
     public function usersinactifAction($id_space, $letter = "") {
-
         $_SESSION["users_lastvisited"] = "unactive";
         $this->indexAction($id_space, $letter, "unactive");
     }
 
     public function useraddAction($id_space){
-
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
