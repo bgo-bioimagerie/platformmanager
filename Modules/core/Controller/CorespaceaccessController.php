@@ -152,12 +152,15 @@ class CorespaceaccessController extends CoresecureController {
                 );
                 $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
                 $modelCoreUser->validateAccount($id_user);
+                $spaceModel = new CoreSpace();
+                $spaceName = $spaceModel->getSpaceName($id_space);
                 
                 $mailParams = [
                     "email" => $form->getParameter("email"),
                     "login" => $form->getParameter("login"),
                     "pwd" => $pwd,
-                    "id_space" => $id_space
+                    "id_space" => $id_space,
+                    "space_name" => $spaceName
                 ];
                 $this->notifyUserByEmail($mailParams, "add_new_user_to_space");
 
@@ -321,7 +324,11 @@ class CorespaceaccessController extends CoresecureController {
             $modelSpace->setUserIfNotExist($pendingInfo["id_user"], $id_space, $form->getParameter("role"));
             $modelPending->validate($id, $_SESSION["id_user"]);
 
-            $mailParams = ["id_space" => $id_space, "id_user" => $pendingInfo["id_user"]];
+            $mailParams = [
+                "id_space" => $id_space,
+                "id_user" => $pendingInfo["id_user"],
+                "space_name" => $space["name"]
+            ];
             $this->notifyUserByEmail($mailParams, "accept_pending_user");
 
             $_SESSION["message"] = CoreTranslator::UserAccountHasBeenActivated($lang);
@@ -364,17 +371,16 @@ class CorespaceaccessController extends CoresecureController {
      * @param string $origin determines how to get sendEmail() paramters from $params
      */
     public function notifyUserByEmail($params, $origin) {
+        Configuration::getLogger()->debug("notifyUserByEmail", ["params" => $params]);
         $lang = $this->getLanguage();
         $fromName = "Platform-Manager";
-        $mail_from = Configuration::get('smtp_from');
-        $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
-        $spaceModel = new CoreSpace();
-        $spaceName = $spaceModel->getSpace($params["id_space"])["name"];
+        $from = Configuration::get('smtp_from');
+        $spaceName = $params["space_name"];
 
         if ($origin === "add_new_user_to_space") {
             $fromName = "Platform-Manager";
             $toAdress = $params["email"];
-            $subject = CoreTranslator::Account($lang, $spaceName);
+            $subject = CoreTranslator::AccountCreatedSubject($lang, $spaceName);
             $content = CoreTranslator::AccountCreatedEmail($lang, $params["login"], $params["pwd"]);
         } else if ($origin === "accept_pending_user" || $origin === "reject_pending_user") {
             $accepted = ($origin === "accept_pending_user") ? true : false;

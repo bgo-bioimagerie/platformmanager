@@ -97,7 +97,7 @@ if (!$headless) {
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                             ?>
                                         <div style="position: absolute; bottom: 10px; right: 10px">
-                                            <a href="<?php echo "coretilesjoinspace/". $item["id"] . "/" . $isMemberOfSpace ?>">
+                                            <a href="<?php echo "coretilesselfjoinspace/". $item["id"] ?>">
                                                 <button type="button" class="btn btn-md btn-success">
                                                     <?php echo CoreTranslator::RequestJoin($isMemberOfSpace, $lang) ?>
                                                 </button>

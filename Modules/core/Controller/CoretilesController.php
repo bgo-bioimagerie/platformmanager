@@ -156,15 +156,22 @@ class CoretilesController extends CoresecureController {
      * @param int $id_space
      * @param bool $isMemberOfSpace
      */
-    public function joinSpaceAction($id_space, $isMemberOfSpace) {
+    public function selfJoinSpaceAction($id_space) {
+        $modelSpaceUser = new CoreSpaceUser();
+        $isMemberOfSpace = $modelSpaceUser->exists($_SESSION["id_user"], $id_space);
         if ($isMemberOfSpace) {
             $modelSpaceUser = new CoreSpaceUser();
             $modelSpaceUser->delete($_SESSION["id_user"], $id_space);
-        } else {
+        } else if (!$isMemberOfSpace) {
+            $spaceModel = new CoreSpace();
+            $spaceName = $spaceModel->getSpaceName($id_space);
             $modelSpacePending = new CorePendingAccount();
             $modelSpacePending->add($_SESSION["id_user"], $id_space);
-            $params = array($id_space);
-            $this->NotifyAdminsByEmail($params, "new_join_request");
+            $mailParams = [
+                "id_space" => $id_space,
+                "space_name" => $spaceName
+            ];
+            $this->NotifyAdminsByEmail($mailParams, "new_join_request");
         } 
         $this->redirect("coretiles");
     }
@@ -182,10 +189,9 @@ class CoretilesController extends CoresecureController {
             $spaceModel = new CoreSpace();
             $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($params["id_space"]);
             $mailer = new MailerSend();
-            $mail_from = Configuration::get('smtp_from');
-            $from = (!empty($mail_from)) ? $mail_from : "support@platform-manager.com";
+            $from = Configuration::get('smtp_from');
             $fromName = "Platform-Manager";
-            $spaceName = $spaceModel->getSpace($params["id_space"])["name"];
+            $spaceName = $params["space_name"];
             $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
             $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
             foreach ($emailSpaceManagers as $emailSpaceManager) {

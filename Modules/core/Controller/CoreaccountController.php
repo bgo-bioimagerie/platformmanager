@@ -69,16 +69,10 @@ class CoreaccountController extends Controller {
                 $modelPeningAccounts->add($id_user, $form->getParameter("id_space"));
 
                 $mailer = new MailerSend();
-                $mail_from = getenv('MAIL_FROM');
-                if (!empty($mail_from)) {
-                    $from = $mail_from;
-                }
-                else {
-                    $from = "support@platform-manager.com";
-                }
+                $from = Configuration::get('smtp_from');
                 $fromName = "Platform-Manager";
                 $toAdress = $form->getParameter("email");
-                $subject = CoreTranslator::Account($lang);
+                $subject = CoreTranslator::AccountCreatedSubject($lang);
                 $content = CoreTranslator::AccountCreatedEmail($lang, $form->getParameter("login"), $pwd);
                 $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
 
