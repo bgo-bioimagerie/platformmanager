@@ -161,6 +161,9 @@ class Configuration {
         if(getenv('PFM_INFLUXDB_TOKEN')) {
             self::$parameters['influxdb_token'] = getenv('PFM_INFLUXDB_TOKEN');
         }
+        if(getenv('PFM_INFLUXDB_ORG')) {
+            self::$parameters['influxdb_org'] = getenv('PFM_INFLUXDB_ORG');
+        }
 
 
     }
