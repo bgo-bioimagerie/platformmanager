@@ -19,29 +19,32 @@ class Backend {
 		$this->logger = Configuration::getLogger();
 	}
 
+
+	private function spaceCount($msg) {
+		$model = new CoreSpace();
+		$nbSpaces = $model->countSpaces();
+		$stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
+		Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
+	}
+
 	private function spaceCreate($msg) {
 		$this->logger->debug('[spaceCreate]', ['space_id' => $msg['space']['id']]);
 		$model = new CoreSpace();
 		$space = $model->getSpace($msg['space']['id']);
-		$spaces = $model->getSpaces('id');
 		Statistics::createDB($space['shortname']);
-		$stat = ['name' => 'spaces', 'fields' => ['value' => count($spaces)]];
-		Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
+		$this->spaceCount($msg);
 	}
 
 	private function spaceDelete($msg) {
 		$this->logger->debug('[spaceDelete]', ['space_id' => $msg['space']['id']]);
-		$model = new CoreSpace();
-		$spaces = $model->getSpaces('id');
-		$stat = ['name' => 'spaces', 'fields' => ['value' => count($spaces)]];
-		Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
+		$this->spaceCount($msg);
 	}
 
 	private function spaceUserCount($msg){
 		$model = new CoreSpace();
 		$space = $model->getSpace($msg['space']['id']);
-		$users = $model->countUsers($msg['space']['id']);
-		$stat = ['name' => 'users', 'fields' => ['value' => $users[0]]];
+		$nbUsers = $model->countUsers($msg['space']['id']);
+		$stat = ['name' => 'users', 'fields' => ['value' => $nbUsers]];
 		Statistics::stat($space['shortname'], $stat);
 	}
 	private function spaceUserJoin($msg) {

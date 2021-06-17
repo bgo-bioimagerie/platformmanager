@@ -296,6 +296,12 @@ class CoreSpace extends Model {
         return $this->runRequest($sql)->fetchAll();
     }
 
+    public function countSpaces() {
+        $sql = "SELECT count(*) FROM core_spaces";
+        $res = $this->runRequest($sql)->fetch();
+        return $res[0];
+    }
+
     public function setSpace($id, $name, $status, $color, $shortname, $support, $contact) {
         if ($this->isSpace($id)) {
             $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact);
@@ -414,7 +420,8 @@ class CoreSpace extends Model {
 
     public function countUsers($id_space) {
         $sql = "SELECT count(*) FROM core_j_spaces_user WHERE id_space=?";
-        return $this->runRequest($sql, array($id_space))->fetch();
+        $res = $this->runRequest($sql, array($id_space))->fetch();
+        return $res[0];
     }
 
     public function setAdmins($id, $id_admins) {
