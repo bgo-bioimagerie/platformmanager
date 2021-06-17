@@ -4,6 +4,9 @@ require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Statistics.php';
+require_once 'Framework/Events.php';
+
 
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -63,6 +66,22 @@ class CoreDB extends Model {
                 $cp->setShortname($space['id'], $shortname);
             }
         }
+
+        Configuration::getLogger()->debug("[stats] import stats");
+        $cp = new CoreSpace();
+        $statHandler = new EventHandler();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
+            $spaceUsers = $cp->getUsers($space['id']);
+            foreach ($spaceUsers as $spaceUser) {
+                $statHandler->spaceUserJoin([
+                    'space' => ['id' => $space['id']],
+                    'user' => ['id' => $spaceUser['id']]
+                ]);
+            }
+        }
+
     }
 
     /**
@@ -229,6 +248,9 @@ class CoreInstall extends Model {
 
         $modelOpenid = new CoreOpenId();
         $modelOpenid-> createTable();
+
+        $modelStatistics = new BucketStatistics();
+        $modelStatistics->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);
