@@ -65,8 +65,6 @@ class BucketStatistics extends Model {
 
 class Statistics {
 
-    
-
     protected static function client($space){
         if (Configuration::get('influxdb_url', '') === '') {
                 Configuration::getLogger()->debug('[stats] disabled');
@@ -89,6 +87,8 @@ class Statistics {
      * $stats =
      *  ['name' => 'measure_name', 'tags' =>['key1' => 'tag1', 'key2' => 'tag2'], 'time' => timestamp, 'fields' => ['value' => 123]]
      * 
+     * value key in fields is mandary and must be numeric
+     * 
      * fields and ts are optional, in this case current timestamp is used and fields are empty
      */
     private static function getPoint($stat) {
@@ -100,10 +100,19 @@ class Statistics {
      * 
      * @param string $space space shortname
      * @param array input stat
+     * @return boolean success/failure indication
      * 
     */
     public static function stat($space, $stat) {
         try {
+            if (!isset($stat['fields']['value'])) {
+                Configuration::getLogger()->error('[stats] missing value in fields', ['stat' => $stat]);
+                return false;
+            }
+            if (!is_int($stat['fields']['value'])) {
+                // not an int, try to convert
+                $stat['fields']['value'] = intval($stat['fields']['value']);
+            }
             $point = self::getPoint($stat);
             $client = self::client($space);
             $writeApi = $client->createWriteApi();
@@ -111,7 +120,9 @@ class Statistics {
             $client->close();
         } catch(Exception $e) {
             Configuration::getLogger()->error('[stats] stat error', ['message' => e.getMessage()]);
+            return false;
         }
+        return true;
     }
 
     /**
