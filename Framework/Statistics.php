@@ -109,9 +109,9 @@ class Statistics {
                 Configuration::getLogger()->error('[stats] missing value in fields', ['stat' => $stat]);
                 return false;
             }
-            if (!is_int($stat['fields']['value'])) {
+            if (!is_int($stat['fields']['value'] && !is_float($stat['fields']['value']))) {
                 // not an int, try to convert
-                $stat['fields']['value'] = intval($stat['fields']['value']);
+                $stat['fields']['value'] = floatval($stat['fields']['value']);
             }
             $point = self::getPoint($stat);
             $client = self::client($space);

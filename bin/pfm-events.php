@@ -15,9 +15,12 @@ $channel->queue_bind($queue_name, 'pfm_events');
 echo " [*] Waiting for logs. To exit press CTRL+C\n";
 
 $callback = function ($msg) {
-	echo ' [x] Received ', $msg->body, "\n";
-	$backend = new EventHandler();
-	$backend->message($msg);
+	try {
+		$backend = new EventHandler();
+		$backend->message($msg);
+	} catch(Exception $e) {
+		Configuration::getLogger()->error('something went wrong', ['error' => $e->getMessage()]);
+	}
 	$msg->ack();
 };
 
