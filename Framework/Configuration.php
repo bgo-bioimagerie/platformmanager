@@ -168,6 +168,9 @@ class Configuration {
             self::$parameters['influxdb_org'] = getenv('PFM_INFLUXDB_ORG');
         }
 
+        if(getenv('PFM_SENTRY_DSN')) {
+            self::$parameters['sentry_dsn'] = getenv('PFM_SENTRY_DSN');
+        }
 
     }
 

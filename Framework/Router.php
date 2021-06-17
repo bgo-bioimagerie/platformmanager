@@ -265,6 +265,10 @@ class Router {
      */
     private function manageError(Exception $exception, $type = '') {
 
+        if(Configuration::get('sentry_dsn', '')) {
+            \Sentry\captureException($exception);
+        }
+
         $view = new View('error');
         $view->setFile('Modules/error.php');
         $view->generate(array(

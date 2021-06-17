@@ -20,6 +20,9 @@ $callback = function ($msg) {
 		$backend->message($msg);
 	} catch(Exception $e) {
 		Configuration::getLogger()->error('something went wrong', ['error' => $e->getMessage()]);
+		if(Configuration::get('sentry_dsn', '')) {
+            \Sentry\captureException($e);
+        }
 	}
 	$msg->ack();
 };
