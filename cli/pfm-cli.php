@@ -5,6 +5,8 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 
+use Garden\Cli\Cli;
+
 function version()
     {
         $commitHash = trim(exec('git log --pretty="%h" -n1 HEAD'));
@@ -13,45 +15,43 @@ function version()
         return sprintf('%s (%s)', $commitHash, $commitDate->format('Y-m-d H:i:s'));
     }
 
-$logger = Configuration::getLogger();
+$cli = Cli::create()
+    ->command('install')
+    ->description('Install/upgrade database and routes')
+    ->command('expire')
+    ->description('Expire old users (not logged for a year)')
+    ->command('version')
+    ->description('Show version')
+    ->opt('db:d', 'Show installed and expected db version', false, 'boolean');
 
-$shortopts = "";
-$shortopts .= "i";
-$shortopts .= "e";
-$shortopts .= "h";
-$shortopts .= "v";
-$longopts = array(
-  "install",
-  "expire",
-  "help",
-  "version"
-);
-$options = getopt($shortopts, $longopts);
+$args = $cli->parse($argv);
 
-
-if (empty($options) || isset($options['h']) || isset($options['help'])) {
-    echo "Usage:\n";
-    echo " --install: create and updates tables in database\n";
-    echo " --expire: expire user not logged since 1 year or contract ended\n";
-    echo " --version: show software version\n";
-    return;
+switch ($args->getCommand()) {
+    case 'install':
+        cliInstall();
+        break;
+    case 'expire':
+        $logger = Configuration::getLogger();
+        $logger->info("Expire old users");
+        $modelUser = new CoreUser();
+        $count = $modelUser->disableUsers(6);
+        $logger->info("Expired ".$count. " users");
+        break;
+    case 'version':
+        echo "Version: ".version()."\n";
+        if ($args->getOpt('db')) {
+            $cdb = new CoreDB();
+            $crel = $cdb->getRelease();
+            echo "DB installed version: ".$crel."\n";
+            echo "DB expected version: ".$cdb->getVersion()."\n";
+        }
+        break;
+    default:
+        break;
 }
 
-if (isset($options['v']) || isset($options['version'])) {
-    $v = version();
-    echo "Version: " . $v . "\n";
-    return;
-}
-
-if (isset($options['expire']) || isset($options['e'])) {
-    $logger->info("Expire old users");
-    $modelUser = new CoreUser();
-    $count = $modelUser->disableUsers(6);
-    $logger->info("Expired ".$count. " users");
-    return;
-}
-
-if (isset($options['install']) || isset($options['i'])) {
+function cliInstall() {
+    $logger = Configuration::getLogger();
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
     // Create db release table if not exists
@@ -59,12 +59,6 @@ if (isset($options['install']) || isset($options['i'])) {
     $cdb->createTable();
 
     $modelCreateDatabase = new CoreInstall();
-    /*
-    $dsn = Configuration::get('dsn');
-    $login = Configuration::get('login');
-    $password = Configuration::get('pwd');
-    $modelCreateDatabase->setDatabase($dsn, $login, $password);
-    */
     $modelCreateDatabase->createDatabase();
     $logger->info("Database installed");
     

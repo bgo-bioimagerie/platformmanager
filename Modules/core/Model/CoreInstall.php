@@ -91,11 +91,18 @@ class CoreDB extends Model {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
         $release = null;
-        if ($reqRelease->rowCount() > 0){
+        if ($reqRelease && $reqRelease->rowCount() > 0){
             $release = $reqRelease->fetch();
             return $release['version'];
         }
         return 0;
+    }
+
+    /**
+     * Get expected database version
+     */
+    public function getVersion() {
+        return DB_VERSION;
     }
 
     /**

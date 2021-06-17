@@ -7,7 +7,8 @@
         "altorouter/altorouter": "^2.0",
         "php-amqplib/php-amqplib": "^3.0",
         "influxdata/influxdb-client-php": "^1.13",
-        "sentry/sdk": "^3.1"
+        "sentry/sdk": "^3.1",
+        "vanilla/garden-cli": "^3.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

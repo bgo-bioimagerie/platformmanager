@@ -10,11 +10,11 @@ class CoreTest extends TestCase
 {
     public function testInstallAndCoreAccess()
     {
-    new CoreDB();
-	$req = new Request(["path" => "install"], true);
-	$c = new CoreconnectionController($req);
-	$res = $c->indexAction();
-	$this->assertTrue(isset($res['metadesc']));
+        new CoreDB();
+        $req = new Request(["path" => "install"], true);
+        $c = new CoreconnectionController($req);
+        $res = $c->indexAction();
+        $this->assertTrue(isset($res['metadesc']));
     }
 }
 
