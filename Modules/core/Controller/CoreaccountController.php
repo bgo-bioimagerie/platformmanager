@@ -8,7 +8,7 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 
-require_once 'Modules/mailer/Model/MailerSend.php';
+require_once 'Framework/Email.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 
@@ -68,14 +68,14 @@ class CoreaccountController extends Controller {
                 $modelPeningAccounts = new CorePendingAccount();
                 $modelPeningAccounts->add($id_user, $form->getParameter("id_space"));
 
-                $mailer = new MailerSend();
-                $from = Configuration::get('smtp_from');
-                $fromName = "Platform-Manager";
-                $toAdress = $form->getParameter("email");
-                $subject = CoreTranslator::AccountCreatedSubject($lang);
-                $content = CoreTranslator::AccountCreatedEmail($lang, $form->getParameter("login"), $pwd);
-                $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
-
+                $email = new Email();
+                $mailParams = [
+                    "email" => $form->getParameter("email"),
+                    "login" => $form->getParameter("login"),
+                    "pwd" => $pwd
+                ];
+                Configuration::getLogger()->debug("sending EMAIL", ["mailParams" => $mailParams]);
+                $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
                 $this->redirect("coreaccountcreated");
                 return;
             }
