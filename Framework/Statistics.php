@@ -76,7 +76,7 @@ class Statistics {
             "bucket" => $space,
             "org" => Configuration::get('influxdb_org', 'pfm'),
             "precision" => InfluxDB2\Model\WritePrecision::S,
-            "debug" => Configuration::get('debug', false)
+            "debug" => Configuration::get('debug_influxdb', false)
 
         ]);
     }

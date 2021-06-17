@@ -101,6 +101,9 @@ class Configuration {
         if(getenv('DEBUG_SQL')) {
             self::$parameters['debug_sql'] = boolval(getenv('DEBUG_SQL'));
         }
+        if(getenv('DEBUG_INFLUXDB')) {
+            self::$parameters['debug_influxdb'] = boolval(getenv('DEBUG_INFLUXDB'));
+        }
         if(!isset(self::$parameters['smtp_from'])) {
             self::$parameters['smtp_from'] = 'donotreply@pfm.org';
         }
