@@ -109,14 +109,12 @@ class CoreTranslator {
         return "My Account";
     }
     
-    public static function AccountCreatedSubject($lang = "", $spaceName = "") {
-        $str = ($spaceName !== "")
-            ? ": " . $spaceName
-            : "";
+    public static function AccountCreatedSubject($spaceName = "", $lang = "") {
+        $str = ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
         if ($lang == "fr") {
-            return "[pfm " . $str . "] Compte utilisateur";
+            return $str . "Compte utilisateur créé";
         }
-        return "[pfm" . $str . "] User account";
+        return $str . "User account created";
     }
 
     public static function Settings($lang = "") {
@@ -1804,23 +1802,24 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $space_name, $lang){
+    public static function JoinRequestEmail($login, $spaceName, $lang){
         if ($lang == "fr") {
-            return "Bonjour, <br><br>" . $login . " demande à rejoindre votre espace " . $space_name. " sur Platform-Manager";
+            return "Bonjour, <br><br>" . $login . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
         }
-        return "Hi, <br><br>" . $login . " requests to join your space " . $space_name. " on Platform-Manager";
+        return "Hi, <br><br>" . $login . " requests to join your space " . $spaceName. " on Platform-Manager";
     }
 
-    public static function JoinRequestSubject($space_name, $lang){
+    public static function JoinRequestSubject($spaceName, $lang){
+        $str = ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
         if ($lang == "fr") {
-            return "[pfm : " .$space_name. "] Demande d'accès à votre espace";
+            return $str . "Nouvelle demande d'accès à votre espace";
         }
-        return "[pfm: " .$space_name. "] Join request for your space";
+        return $str . "New join request for your space";
     }
 
-    public static function JoinResponseEmail($user_name, $space_name, $accepted, $lang){
+    public static function JoinResponseEmail($userName, $spaceName, $accepted, $lang){
         if ($lang == "fr") {
-            $message = "Bonjour " . $user_name . ", <br><br> votre demande à rejoindre l'espace " . $space_name. " sur Platform-Manager ";
+            $message = "Bonjour " . $userName . ", <br><br> votre demande à rejoindre l'espace " . $spaceName . " sur Platform-Manager ";
             if ($accepted) {
                 $message = $message . " a bien été acceptée.";
             } else {
@@ -1828,7 +1827,7 @@ class CoreTranslator {
             }
             return $message;
         }
-        $message = "Hi " . $user_name . ", <br><br> your request to join space " . $space_name. " on Platform-Manager ";
+        $message = "Hi " . $userName . ", <br><br> your request to join space " . $spaceName . " on Platform-Manager ";
         if ($accepted) {
             $message = $message . " has been accepted.";
         } else {
@@ -1837,10 +1836,10 @@ class CoreTranslator {
         return $message;
     }
 
-    public static function JoinResponseSubject($space_name, $lang){
+    public static function JoinResponseSubject($spaceName, $lang){
         if ($lang == "fr") {
-            return "[pfm : " .$space_name. "] Demande d'accès à l'espace ".$space_name;
+            return "[pfm : " . $spaceName . "] Votre demande d'accès à l'espace " . $spaceName;
         }
-        return "[pfm: " .$space_name. "] Join request for space ".$space_name;
+        return "[pfm: " . $spaceName . "] Your join request for space " . $spaceName;
     }
 }

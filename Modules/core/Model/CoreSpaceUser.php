@@ -113,7 +113,11 @@ class CoreSpaceUser extends Model {
             ? " AND core_j_spaces_user.status=0"
             : " AND core_j_spaces_user.status>0";
 
-        $sql .= " AND name LIKE '" . $letter . "%' ORDER BY name ASC";
+        if ($letter !== "") {
+            $sql .= " AND name LIKE '" . $letter . "%'";
+        }
+
+        $sql .= " ORDER BY name ASC";
 
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }

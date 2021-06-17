@@ -1,13 +1,14 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Email.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorenavbarController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
-require_once 'Modules/mailer/Model/MailerSend.php';
 
 
 /**
@@ -140,66 +141,59 @@ class CoretilesController extends CoresecureController {
                 }
             }
         }
-        $result = array(
+
+        return array(
             "userSpaceIds" => $userSpaceIds,
             "userPendingSpaceIds" => $userPendingSpaceIds,
             "spacesUserIsAdminOf" => $spacesUserIsAdminOf
         );
-
-        return $result;
     }
 
     /**
      * 
      * Manage actions resulting from user request to join or leave a space
+     * If user is a member of space, then leaves, else join
      *
      * @param int $id_space
      * @param bool $isMemberOfSpace
      */
     public function selfJoinSpaceAction($id_space) {
         $modelSpaceUser = new CoreSpaceUser();
-        $isMemberOfSpace = $modelSpaceUser->exists($_SESSION["id_user"], $id_space);
+        $id_user = $_SESSION["id_user"];
+        $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
+
         if ($isMemberOfSpace) {
+            // User is already member of space
             $modelSpaceUser = new CoreSpaceUser();
-            $modelSpaceUser->delete($_SESSION["id_user"], $id_space);
-        } else if (!$isMemberOfSpace) {
-            $spaceModel = new CoreSpace();
-            $spaceName = $spaceModel->getSpaceName($id_space);
+            $modelSpaceUser->delete($id_user, $id_space);
+        } else {
+            // User is not member of space
             $modelSpacePending = new CorePendingAccount();
-            $modelSpacePending->add($_SESSION["id_user"], $id_space);
-            $mailParams = [
-                "id_space" => $id_space,
-                "space_name" => $spaceName
-            ];
-            $this->NotifyAdminsByEmail($mailParams, "new_join_request");
+            $isPending = $modelSpacePending->isActuallyPending($id_user, $id_space);
+
+            if (!$isPending) {
+                // User hasn't already an unanswered request to join
+                $spaceModel = new CoreSpace();
+                $spaceName = $spaceModel->getSpaceName($id_space);
+
+                if ($modelSpacePending->exists($id_space, $id_user)) {
+                    // This user is already associated to this space in database
+                    $pendingId = $modelSpacePending->getBySpaceIdAndUserId($id_space, $id_user)["id"];
+                    $modelSpacePending->invalidate($pendingId, NULL);
+                } else {
+                    // This user is not associated to this space in database
+                    $modelSpacePending->add($id_user, $id_space);
+                }
+
+                $mailParams = [
+                    "id_space" => $id_space,
+                    "space_name" => $spaceName
+                ];
+                $email = new Email();
+                $email->NotifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());
+            }
         } 
         $this->redirect("coretiles");
     }
 
-    /**
-     * 
-     * Send an Email to space managers (status > 2) notifying that logged user requested to join space
-     *
-     * @param array $params required to fill sendEmail() parameters. Depends on why we want to notify space admins
-     * @param string $origin determines how to get sendEmail() paramters from $params
-     */
-    public function NotifyAdminsByEmail($params, $origin) {
-        $lang = $this->getLanguage();
-        if ($origin === "new_join_request") {
-            $spaceModel = new CoreSpace();
-            $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($params["id_space"]);
-            $mailer = new MailerSend();
-            $from = Configuration::get('smtp_from');
-            $fromName = "Platform-Manager";
-            $spaceName = $params["space_name"];
-            $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
-            $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
-            foreach ($emailSpaceManagers as $emailSpaceManager) {
-                $toAdress = $emailSpaceManager["email"];
-                $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
-            }
-        } else {
-            Configuration::getLogger()->error("notifyAdminsByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
-        }
-    }
 }

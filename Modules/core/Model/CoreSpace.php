@@ -130,7 +130,7 @@ class CoreSpace extends Model {
             $tmp = $req->fetch();
             return $tmp[0];
         }
-        return 0;
+        return null;
     }
 
     public function getEmailsSpaceManagers($id_space) {
