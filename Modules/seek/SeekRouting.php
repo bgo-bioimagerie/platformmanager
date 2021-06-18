@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class SeekRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("seekconfigadmin", "seekconfigadmin", "seekconfigadmin", "index");

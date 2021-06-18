@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class EstoreRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("estoreconfig", "estoreconfig", "estoreconfig", "index", array("id_space"), array(""));

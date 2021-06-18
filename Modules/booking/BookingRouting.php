@@ -5,7 +5,7 @@ require_once 'Framework/Routing.php';
 class BookingRouting extends Routing{
    
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("bookingconfig", "bookingconfig", "bookingconfig", "index", array("id_space"), array(""));

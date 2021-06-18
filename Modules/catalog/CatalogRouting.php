@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class CatalogRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("catalogconfigadmin", "catalogconfigadmin", "catalogconfigadmin", "index");

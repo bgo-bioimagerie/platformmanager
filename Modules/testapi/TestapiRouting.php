@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class TestapiRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("testapiconfigadmin", "testapiconfigadmin", "testapiconfigadmin", "index");

@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class QuoteRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("quoteconfigadmin", "quoteconfigadmin", "quoteconfigadmin", "index");

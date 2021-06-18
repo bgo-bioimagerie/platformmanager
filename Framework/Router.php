@@ -51,9 +51,27 @@ class Router {
     }
 
     private function route($request) {
+
+        $modulesNames = Configuration::get("modules");
+        foreach ($modulesNames as $moduleName) {
+            // get the routing class
+            $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
+            if (file_exists($routingClassUrl)) {
+                require_once ($routingClassUrl);
+                $className = ucfirst($moduleName) . "Routing";
+                $routingClass = new $className ();
+                if(method_exists($routingClass, "routes")){
+                    Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
+                    $routingClass->routes($this->router);
+                }
+            }
+        }
+
         $this->router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
+        //Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
         $match = $this->router->match();
         if(!$match) {
+            Configuration::getLogger()->debug('No route match, check old way');
             return false;
         }
         $this->call($match['target'], $match['params'], $request);

@@ -10,7 +10,7 @@ class BookingInvoices extends Routing {
         $this->id_space = $id_space;
     }
 
-    public function listRouts() {
+    public function listRoutes() {
         // statistics
         $this->addRoute("bookinginvoice", "bookinginvoice", "bookinginvoice", "index", array("id_space"), array(""));
         $this->addRoute("bookingprices", "bookingprices", "bookingprices", "index", array("id_space"), array(""));

@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class DevRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
            
         // config
         $this->addRoute("devconfigadmin", "devconfigadmin", "devconfigadmin", "index");

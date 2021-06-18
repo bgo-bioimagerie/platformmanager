@@ -84,7 +84,7 @@ class InvoicesController extends CoresecureController {
                 $translator = new $classTranslator();
                 $model = new $className();
                 $model->setSpace($id_space);
-                $model->listRouts();
+                $model->listRoutes();
                 if ($model->count() > 0) {
                     $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);
                     //echo "donfigTitle = " . $donfigTitle . "<br/>";

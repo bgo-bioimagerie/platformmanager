@@ -10,7 +10,7 @@ class ServicesInvoices extends Routing {
         $this->id_space = $id_space;
     }
 
-    public function listRouts() {
+    public function listRoutes() {
 
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $this->id_space);
