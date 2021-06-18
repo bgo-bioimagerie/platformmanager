@@ -103,7 +103,7 @@ class CoreUser extends Model {
         }
     }
 
-    public function disableUsers($desactivateSetting) {
+    public function disableUsers($desactivateSetting, $remove=false) {
 
         $date = date('Y-m-d', time());
         $nbUsers = 0;
@@ -163,6 +163,9 @@ class CoreUser extends Model {
 
         foreach ($req as $r) {
             $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
+            if($remove) {
+                $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
+            }
             $this->runRequest($sql, array($r['id']));
             $nbUsers += 1;
         }

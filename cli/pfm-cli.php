@@ -20,6 +20,7 @@ $cli = Cli::create()
     ->description('Install/upgrade database and routes')
     ->command('expire')
     ->description('Expire in spaces old users (not logged for a year or contract ended)')
+    ->opt('del:d', 'Remove use from space, else just set as inactive', false, 'boolean')
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean');
@@ -34,7 +35,7 @@ switch ($args->getCommand()) {
         $logger = Configuration::getLogger();
         $logger->info("Expire old users");
         $modelUser = new CoreUser();
-        $count = $modelUser->disableUsers(6);
+        $count = $modelUser->disableUsers(6, $args->getOpt('del'));
         $logger->info("Expired ".$count. " users");
         break;
     case 'version':
