@@ -3,7 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
-require_once 'Framework/Upload.php';
+require_once 'Framework/FileUpload.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 
@@ -187,7 +187,7 @@ class CoremenusController extends CoresecureController {
             $target_dir = "data/core/menu/";
             if ($_FILES["icon"]["name"] != "") {
                 $ext = pathinfo($_FILES["icon"]["name"], PATHINFO_EXTENSION);
-                Upload::uploadFile($target_dir, "icon", $id . "." . $ext);
+                FileUpload::uploadFile($target_dir, "icon", $id . "." . $ext);
                 $modelMenu->setDataMenuIcon($id, $target_dir . $id . "." . $ext);
             }
             

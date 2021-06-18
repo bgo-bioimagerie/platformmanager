@@ -52,7 +52,7 @@ class FCache extends Model {
         require_once ($routingClassUrl);
         $className = ucfirst($moduleName) . "Routing";
         $routingClass = new $className ();
-        $routingClass->listRouts();
+        $routingClass->listRoutes();
         for ($r = 0; $r < $routingClass->count(); $r++) {
             $identifier = $routingClass->getIdentifier($r);
             $url = $routingClass->getUrl($r);

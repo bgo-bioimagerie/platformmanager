@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class DatabaseRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("databaseconfigadmin", "databaseconfigadmin", "databaseconfigadmin", "index");

@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class ComRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("comconfigadmin", "comconfigadmin", "comconfigadmin", "index");

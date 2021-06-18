@@ -1,8 +1,13 @@
 <?php
-
+require_once 'Framework/Errors.php';
 /**
  * Implement static function to manage file exange
+ * 
+ *
  */
+
+define("FILE_MAX_SIZE", 500_000_000);
+
 class FileUpload {
 
     /**
@@ -13,25 +18,17 @@ class FileUpload {
      */
     public static function uploadFile($target_dir, $uploadFile_id, $targetName) {
         $target_file = $target_dir . $targetName;
+        if ($target_file == "") {
+            $target_file = $target_dir . $_FILES[$uploadFile_id]["name"];
+        }
+        if ($_FILES[$uploadFile_id]["size"] > FILE_MAX_SIZE) {
+            throw new PfmFileException("File size too large: ".FILE_MAX_SIZE, 1);
+        }
 
-        $uploadOk = 1;
-        //$imageFileType = pathinfo($_FILES[$uploadFile_id]["name"], PATHINFO_EXTENSION);
-        // Check file size
-        if ($_FILES[$uploadFile_id]["size"] > 500000000) {
-            return "Error: your file is too large.";
-            //$uploadOk = 0;
+        if(!move_uploaded_file($_FILES[$uploadFile_id]["tmp_name"], $target_file)) {
+            throw new PfmFileException("Error, there was an error uploading your file");
         }
-        // Check if $uploadOk is set to 0 by an error
-        if ($uploadOk == 0) {
-            return "Error: your file was not uploaded.";
-            // if everything is ok, try to upload file
-        } else {
-            if (move_uploaded_file($_FILES[$uploadFile_id]["tmp_name"], $target_file)) {
-                return "The file file" . basename($_FILES[$uploadFile_id]["name"]) . " has been uploaded.";
-            } else {
-                return "Error, there was an error uploading your file.";
-            }
-        }
+        return "The file" . basename($_FILES[$uploadFile_id]["name"]) . " has been uploaded.";
     }
 
 }

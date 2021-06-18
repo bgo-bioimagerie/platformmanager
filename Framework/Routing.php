@@ -26,7 +26,7 @@ abstract class Routing {
     /**
      * 
      */
-    public abstract function listRouts();
+    public abstract function listRoutes();
 
     /**
      * Add one route

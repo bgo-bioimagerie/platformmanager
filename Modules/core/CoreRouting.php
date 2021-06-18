@@ -3,8 +3,12 @@
 require_once 'Framework/Routing.php';
 
 class CoreRouting extends Routing{
+
+    public function routes($router) {
+        $router->map('GET', '/corefiles/[i:id_space]/[i:id_file]', 'core/corefiles/download', 'files_download');
+    }
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("coreconfigadmin", "coreconfigadmin", "coreconfigadmin", "index");

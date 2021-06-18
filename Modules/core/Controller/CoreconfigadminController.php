@@ -4,7 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 
 require_once 'Framework/Form.php';
-require_once 'Framework/Upload.php';
+require_once 'Framework/FileUpload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreBackupDatabase.php';
@@ -91,7 +91,7 @@ class CoreconfigadminController extends CoresecureController {
             for ($i = 1; $i < 4; $i++) {
                 $target_dir = "data/core/";
                 if ($_FILES["image_url" . $i]["name"] != "") {
-                    Upload::uploadFile($target_dir, "image_url" . $i);
+                    FileUpload::uploadFile($target_dir, "image_url" . $i);
                     $modelCoreConfig->setParam("connection_carousel" . strval($i), $target_dir . $_FILES["image_url" . $i]["name"]);
                 }
             }

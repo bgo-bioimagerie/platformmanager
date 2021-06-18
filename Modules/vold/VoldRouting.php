@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class VoldRouting extends Routing{ 
     
-    public function listRouts(){
+    public function listRoutes(){
         
         $this->addRoute("vold", "vold", "vold", "index", array(), array());
         

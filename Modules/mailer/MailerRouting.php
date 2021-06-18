@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class MailerRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("mailerconfigadmin", "mailerconfigadmin", "mailerconfigadmin", "index");

@@ -57,7 +57,7 @@ class StatisticsController extends CoresecureController {
                 $translator = new $classTranslator();
                 $model = new $className();
                 $model->setSpace($id_space);
-                $model->listRouts();
+                $model->listRoutes();
 
                 if ($model->count() > 0) {
                     //echo "module = " . $module . "<br/>";

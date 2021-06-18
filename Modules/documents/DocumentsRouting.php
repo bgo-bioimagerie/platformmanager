@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class DocumentsRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("documentsconfigadmin", "documentsconfigadmin", "documentsconfigadmin", "index");

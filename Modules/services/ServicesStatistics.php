@@ -10,7 +10,7 @@ class ServicesStatistics extends Routing {
         $this->id_space = $id_space;
     }
 
-    public function listRouts() {
+    public function listRoutes() {
 
         // statistics
         $modelCoreConfig = new CoreConfig();

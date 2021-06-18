@@ -10,7 +10,7 @@ class BookingStatistics extends Routing{
         $this->id_space = $id_space;
     }
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // statistics
         $this->addRoute("bookingstatisticauthorizations", "bookingstatisticauthorizations", "bookingstatisticauthorizations", "index", array("id_space"), array(""));

@@ -10,6 +10,7 @@ require_once 'Framework/Events.php';
 
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreFiles.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
@@ -258,6 +259,9 @@ class CoreInstall extends Model {
 
         $modelStatistics = new BucketStatistics();
         $modelStatistics->createTable();
+
+        $modelCoreFiles = new CoreFiles();
+        $modelCoreFiles->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class ResourcesRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("resourcesconfig", "resourcesconfig", "resourcesconfig", "index", array("id_space"), array(""));
