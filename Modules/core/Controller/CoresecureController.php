@@ -37,7 +37,7 @@ abstract class CoresecureController extends CorecookiesecureController {
                     return 1;
                 }
 
-                $key = $modelUser->getRemeberKey($authArray[0]);
+                $key = $modelUser->getRememberKey($authArray[0]);
                 //echo "database key = " . $key . "<br/>"; 
                 if ($key == $authArray[1]) {
                     //echo "cookie good<br/>";

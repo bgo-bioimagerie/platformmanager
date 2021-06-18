@@ -19,7 +19,7 @@ $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
     ->command('expire')
-    ->description('Expire old users (not logged for a year)')
+    ->description('Expire in spaces old users (not logged for a year or contract ended)')
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean');

@@ -105,29 +105,72 @@ class CoreUser extends Model {
 
     public function disableUsers($desactivateSetting) {
 
-
         $date = date('Y-m-d', time());
-        $oneyearago = date('Y-m-d', strtotime($date . ' -1 year'));
         $nbUsers = 0;
 
-        if ($desactivateSetting == 6) {
-            $sql = "SELECT * FROM core_users WHERE (date_last_login!=? "
-                    . "AND date_last_login<? ) "
-                    . "OR (date_end_contract!=? AND date_end_contract < ?)";
+        $expireDelay = null;
+        $expireContract = false;
 
-            $req = $this->runRequest($sql, array('0000-00-00', $oneyearago, '0000-00-00', $date))->fetchAll();
-
-            foreach ($req as $r) {
-                $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
-                $this->runRequest($sql, array($r['id']));
-                $nbUsers += 1;
-            }
+        switch ($desactivateSetting) {
+            case 6:
+                $expireDelay = date('Y-m-d', strtotime($date . ' -1 year'));
+                $expireContract = true;
+                break;
+            case 5:
+                $expireDelay = date('Y-m-d', strtotime($date . ' -3 year'));
+                break;
+            case 4:
+                $expireDelay = date('Y-m-d', strtotime($date . ' -2 year'));
+                break;
+            case 3:
+                $expireDelay = date('Y-m-d', strtotime($date . ' -1 year'));
+                break;
+            case 2:
+                $expireContract = true;
+                break;
+            default:
+                $expireDelay = null;
+                $expireContract = false;        
         }
+        if($expireDelay == null && !$expireContract) {
+            Configuration::getLogger()->info('[deactivate] nothing to do');
+            return 0;
+        }
+
+
+        $sql = null;
+        $req = [];
+        $nodate = '0000-00-00';
+        if($expireDelay!=null && $expireContract) {
+            $sql = "SELECT * FROM core_users WHERE".
+                " (date_last_login!=? AND date_last_login<? ) "
+                . "OR (date_end_contract!=? AND date_end_contract < ?)";
+            $req = $this->runRequest($sql, array($nodate, $expireDelay, $nodate, $date))->fetchAll();
+
+        } else if($expireDelay!=null && !$expireContract) {
+            $sql = "SELECT * FROM core_users WHERE ".
+                "(date_last_login!=? AND date_last_login<? ) ";
+            $req = $this->runRequest($sql, array($nodate, $expireDelay))->fetchAll();
+        } else if($expireDelay==null && $expireContract) {
+            $sql = "SELECT * FROM core_users WHERE ".
+                "(date_end_contract!=? AND date_end_contract < ?)";
+            $req = $this->runRequest($sql, array($nodate, $date))->fetchAll();
+        }
+
+        if($sql == null) {
+            throw new Exception('something went wrong!');
+        }
+
+        foreach ($req as $r) {
+            $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
+            $this->runRequest($sql, array($r['id']));
+            $nbUsers += 1;
+        }
+
         return $nbUsers;
-        /// \todo implement other cases
     }
 
-    public function getRemeberKey($id) {
+    public function getRememberKey($id) {
         $sql = "SELECT remember_key FROM core_users WHERE id=?";
         $req = $this->runRequest($sql, array($id));
         $data = $req->fetch();
@@ -155,7 +198,6 @@ class CoreUser extends Model {
     public function getUserByEmail($email) {
         $sql = "SELECT * FROM core_users WHERE email=? AND is_active=1";
         $user = $this->runRequest($sql, array($email));
-        //echo 'found ' . $user->rowCount() . "users <br/>";
         if ($user->rowCount() == 1) {
             return $user->fetch();
         }
@@ -230,18 +272,6 @@ class CoreUser extends Model {
     }
 
     public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
-
-        /*
-          $sqla = "SELECT is_active FROM core_users WHERE id=?";
-          $req = $this->runRequest($sqla, array($id))->fetch();
-          if ($req[0] != $is_active) {
-          $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, date_last_login=?, is_active=? WHERE id=?";
-          $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, "0000-00-00", $is_active, $id));
-          } else {
-          $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
-          $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
-          }
-         */
         $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }
@@ -258,7 +288,6 @@ class CoreUser extends Model {
     public function importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source) {
         $sql = "SELECT id FROM core_users WHERE login=?";
         $req = $this->runRequest($sql, array($login));
-        //echo "import user " . $login . "row count " . $req->rowCount();
         if ($req->rowCount() == 0) {
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, source) VALUES(?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source));
