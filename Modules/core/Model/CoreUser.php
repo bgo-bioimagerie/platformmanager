@@ -167,6 +167,12 @@ class CoreUser extends Model {
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
             }
             $this->runRequest($sql, array($r['id']));
+
+            if($expireContract) {
+                $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
+                $this->runRequest($sql, array(date("Y-m-s"), $r['id']));
+            }
+
             $nbUsers += 1;
         }
 
@@ -467,6 +473,7 @@ class CoreUser extends Model {
 
     /**
      * Update user to active or unactive depending on the settings criteria
+     * @deprecated
      */
     public function updateUsersActive() {
 
@@ -514,6 +521,7 @@ class CoreUser extends Model {
 
     /**
      * Set unactive user who contract ended
+     * @deprecated
      */
     private function updateUserActiveContract() {
         $sql = "select id, date_end_contract from core_users where is_active=1";
@@ -538,6 +546,8 @@ class CoreUser extends Model {
 
     /**
      * Unactivate users who did not login for a number of year given in $numberYear
+     * @deprecated
+     * 
      * @param number $numberYear Number of years
      */
     private function updateUserActiveLastLogin($numberYear) {
@@ -572,30 +582,8 @@ class CoreUser extends Model {
                         $changedUsers [] = $user ['id'];
                     }
                 }
-            } else {
-                /*
-                  //echo 'try to desactivate ' . $user ['id'] . " with authorizations <br>";
-                  $sql = "SELECT * FROM bk_authorization WHERE user_id=? ORDER BY date DESC";
-                  $req = $this->runRequest($sql, array($user ['id']));
-                  if ($req->rowCount() > 0) {
-                  $data = $req->fetch();
-
-                  $date_y = date('Y', time()) - $numberYear;
-                  $dateref = $date_y . "-" . date("m-d", time());
-                  if ($data["date"] != "0000-00-00" && $data["date"] < $dateref) {
-                  echo 'desactivate ' . $user ['id'] . " with authorizations <br>";
-                  $this->setactive($user ['id'], 0);
-
-                  // desactivate authorizations
-                  $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
-                  $this->runRequest($sql, array(date("Y-m-d", time()), $user ['id']));
-                  }
-                  }
-
-                 */
             }
         }
-        //echo "updateUserActiveLastLogin ends <br/>";
     }
 
     /**
@@ -788,7 +776,7 @@ class CoreUser extends Model {
         return array("names" => $names, "ids" => $ids);
     }
 
-        /**
+    /**
      * get the informations of a user from it's id
      *
      * @param int $id

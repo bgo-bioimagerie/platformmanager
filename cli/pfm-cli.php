@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 
 use Garden\Cli\Cli;
 
@@ -19,7 +20,7 @@ $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
     ->command('expire')
-    ->description('Expire in spaces old users (not logged for a year or contract ended)')
+    ->description('Expire in spaces old users (according to global config)')
     ->opt('del:d', 'Remove use from space, else just set as inactive', false, 'boolean')
     ->command('version')
     ->description('Show version')
@@ -35,7 +36,9 @@ switch ($args->getCommand()) {
         $logger = Configuration::getLogger();
         $logger->info("Expire old users");
         $modelUser = new CoreUser();
-        $count = $modelUser->disableUsers(6, $args->getOpt('del'));
+        $modelSettings = new CoreConfig();
+        $desactivateSetting = $modelSettings->getParam("user_desactivate", 6);
+        $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
         $logger->info("Expired ".$count. " users");
         break;
     case 'version':
