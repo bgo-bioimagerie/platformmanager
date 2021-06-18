@@ -18,6 +18,9 @@ class FileUpload {
      */
     public static function uploadFile($target_dir, $uploadFile_id, $targetName) {
         $target_file = $target_dir . $targetName;
+        if ($target_file == "") {
+            $target_file = $target_dir . $_FILES[$uploadFile_id]["name"];
+        }
         if ($_FILES[$uploadFile_id]["size"] > FILE_MAX_SIZE) {
             throw new PfmFileException("File size too large: ".FILE_MAX_SIZE, 1);
         }
@@ -25,7 +28,7 @@ class FileUpload {
         if(!move_uploaded_file($_FILES[$uploadFile_id]["tmp_name"], $target_file)) {
             throw new PfmFileException("Error, there was an error uploading your file");
         }
-        return "The file file" . basename($_FILES[$uploadFile_id]["name"]) . " has been uploaded.";
+        return "The file" . basename($_FILES[$uploadFile_id]["name"]) . " has been uploaded.";
     }
 
 }
