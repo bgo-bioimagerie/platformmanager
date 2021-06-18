@@ -2,4 +2,6 @@
 nbproject/
 tmp/
 vendor/
+docker-compose.yml
 Config/conf.ini
+data/

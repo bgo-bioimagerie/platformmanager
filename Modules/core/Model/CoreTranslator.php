@@ -109,11 +109,12 @@ class CoreTranslator {
         return "My Account";
     }
     
-    public static function Account($lang = "") {
+    public static function AccountCreatedSubject($spaceName = "", $lang = "") {
+        $str = ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
         if ($lang == "fr") {
-            return "Compte utilisateur";
+            return $str . "Compte utilisateur créé";
         }
-        return "Account";
+        return $str . "User account created";
     }
 
     public static function Settings($lang = "") {
@@ -293,6 +294,13 @@ class CoreTranslator {
             return "Valider";
         }
         return "Save";
+    }
+
+    public static function Reject($lang) {
+        if ($lang == "fr") {
+            return "Rejeter";
+        }
+        return "Reject";
     }
 
     public static function Cancel($lang) {
@@ -1737,6 +1745,13 @@ class CoreTranslator {
         }
         return "User account has been activated";        
     }
+
+    public static function UserAccountHasBeenDeleted($lang){
+        if ($lang == "fr") {
+            return "Le compte utilisateur a bien été désactivé";
+        }
+        return "User account has been deleted";        
+    }
     
     public static function AccessFor($lang){
         if ($lang == "fr") {
@@ -1773,6 +1788,60 @@ class CoreTranslator {
         return "Account has been created";        
     }   
     
+    public static function RequestJoin($isMemberOfSpace, $lang){
+        if ($lang == "fr") {
+            return $isMemberOfSpace ? "Quitter" : "Rejoindre";
+        }
+        return $isMemberOfSpace ? "Leave" : "Join"; 
+    }
+
+    public static function JoinRequested($lang){
+        if ($lang == "fr") {
+            return "Demande envoyée...";
+        }
+        return "Join requested..."; 
+    }
+
+    public static function JoinRequestEmail($login, $spaceName, $lang){
+        if ($lang == "fr") {
+            return "Bonjour, <br><br>" . $login . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+        }
+        return "Hi, <br><br>" . $login . " requests to join your space " . $spaceName. " on Platform-Manager";
+    }
+
+    public static function JoinRequestSubject($spaceName, $lang){
+        $str = ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
+        if ($lang == "fr") {
+            return $str . "Nouvelle demande d'accès à votre espace";
+        }
+        return $str . "New join request for your space";
+    }
+
+    public static function JoinResponseEmail($userName, $spaceName, $accepted, $lang){
+        if ($lang == "fr") {
+            $message = "Bonjour " . $userName . ", <br><br> votre demande à rejoindre l'espace " . $spaceName . " sur Platform-Manager ";
+            if ($accepted) {
+                $message = $message . " a bien été acceptée.";
+            } else {
+                $message = $message . " a été refusée.";
+            }
+            return $message;
+        }
+        $message = "Hi " . $userName . ", <br><br> your request to join space " . $spaceName . " on Platform-Manager ";
+        if ($accepted) {
+            $message = $message . " has been accepted.";
+        } else {
+            $message = $message . " has been rejected.";
+        }
+        return $message;
+    }
+
+    public static function JoinResponseSubject($spaceName, $lang){
+        if ($lang == "fr") {
+            return "[pfm : " . $spaceName . "] Votre demande d'accès à l'espace " . $spaceName;
+        }
+        return "[pfm: " . $spaceName . "] Your join request for space " . $spaceName;
+    }
     public static function Contact($lang = "") {
         return "Contact";
     }

@@ -96,7 +96,7 @@ class MailerTranslator {
 
     public static function Send_email($lang) {
         if ($lang == "fr") {
-            return "Envoie d'email";
+            return "Envoi d'email";
         }
         return "Send email";
     }

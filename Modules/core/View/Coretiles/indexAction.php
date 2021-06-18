@@ -44,8 +44,6 @@ if (!$headless) {
 
 <div class="col-xs-12 pm-tile-container"  >
 
-            
-    
     <div class="container">
 
         
@@ -92,16 +90,39 @@ if (!$headless) {
                                 <?php echo $item["description"] ?>
                             </p>
 
-
+                            <!-- JOIN BUTTON -->
+                            <?php
+                                if (!in_array($item["id"], $spacesUserIsAdminOf)) {
+                                    if (!in_array($item["id"], $userPendingSpaces)) {
+                                        $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
+                            ?>
+                                        <div style="position: absolute; bottom: 10px; right: 10px">
+                                            <a href="<?php echo "coretilesselfjoinspace/". $item["id"] ?>">
+                                                <button type="button" class="btn btn-md btn-success">
+                                                    <?php echo CoreTranslator::RequestJoin($isMemberOfSpace, $lang) ?>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    <?php
+                                        } else {
+                                    ?>
+                                        <div style="position: absolute; bottom: 10px; right: 10px">
+                                            <button type="button" class="btn btn-md btn-info" disabled>
+                                                <?php echo CoreTranslator::JoinRequested($lang) ?>
+                                            </button>
+                                        </div>
+                            <?php
+                                    }
+                                }
+                            ?>
                         </div>   
                         <?php
                     }
                 }
                 ?>
-                <ul/>
+            </ul>
         </div>
     </div>
-
 </div> <!-- /container -->
 <?php
 endblock();

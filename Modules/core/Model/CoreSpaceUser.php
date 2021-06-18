@@ -71,7 +71,7 @@ class CoreSpaceUser extends Model {
     
     public function getUserSpaceInfo($id_user){
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=?";
-        return $this->runRequest($sql, array($id_user))->fetch();
+        return $this->runRequest($sql, array($id_user))->fetchAll();
     }
    
     /**
@@ -80,5 +80,48 @@ class CoreSpaceUser extends Model {
     public function getUserSpaceInfo2($id_space, $id_user){
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         return $this->runRequest($sql, array($id_space, $id_user))->fetch();
+    }
+
+    public function delete($id_user, $id_space){
+        $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+        $this->runRequest($sql, array($id_user, $id_space));
+    }
+
+    /**
+     * 
+     * Fetch users for a space filtered by name and role
+     * 
+     * @param int $id_space
+     * @param string $letter
+     * @param int $active
+     * 
+     * @return array of users for the selected space 
+     */
+
+    public function getUsersOfSpaceByLetter($id_space, $letter, $active) {
+        $letter = ($letter === "All") ? "" : $letter;
+        $sql =
+            "SELECT core_users.*,
+                core_j_spaces_user.date_convention,
+                core_j_spaces_user.date_contract_end,
+                convention_url
+            FROM core_users
+            INNER JOIN core_j_spaces_user
+            ON core_users.id = core_j_spaces_user.id_user
+            WHERE core_j_spaces_user.id_space=?
+            AND core_users.is_active=1
+            AND core_users.validated=1";
+
+        $sql .= ($active === 0)
+            ? " AND core_j_spaces_user.status=0"
+            : " AND core_j_spaces_user.status>0";
+
+        if ($letter !== "") {
+            $sql .= " AND name LIKE '" . $letter . "%'";
+        }
+
+        $sql .= " ORDER BY name ASC";
+
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 }

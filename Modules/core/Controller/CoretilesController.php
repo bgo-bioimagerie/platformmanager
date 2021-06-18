@@ -1,10 +1,14 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Email.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorenavbarController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
+require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 
 /**
@@ -72,7 +76,7 @@ class CoretilesController extends CoresecureController {
             $items = $modelMainMenuItem->getSpacesFromSingleItemList($mainSubMenus);
             $title = $modelSubMenu->getMainMenuName($id);
         }
-        else{
+        else {
             if (count($mainSubMenus) > 1){
                 $showSubBar = true;
             }
@@ -82,13 +86,18 @@ class CoretilesController extends CoresecureController {
         
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
+        $userSpaces = $this->getUserSpaces();
+
         return $this->render(array(
             'lang' => $lang,
             'iconType' => $modelCoreConfig->getParam("space_icon_type"),
             'showSubBar' => $showSubBar,
             'items' => $items,
             'mainSubMenus' => $mainSubMenus,
-            'title' => $title
+            'title' => $title,
+            'userSpaces' => $userSpaces['userSpaceIds'],
+            'userPendingSpaces' => $userSpaces['userPendingSpaceIds'],
+            'spacesUserIsAdminOf' => $userSpaces['spacesUserIsAdminOf']
         ), "indexAction");
     }
     
@@ -97,6 +106,94 @@ class CoretilesController extends CoresecureController {
         return $this->render(array(
             "lang" => $this->getLanguage()
         ));
+    }
+
+
+    /**
+     * Distinctly list spaces:
+     * - of which user is member
+     * - in which user has a pending request to join
+     * - of which user is admin
+     * 
+     * @return array of arrays: [userSpaceIds, userPendingSpaceIds, SpacesUserIsAdminOf]
+     */
+    public function getUserSpaces() {
+        $modelSpacePending = new CorePendingAccount();
+        $data = $modelSpacePending->getSpaceIdsForPending($_SESSION["id_user"]);
+        $userPendingSpaceIds = array();
+
+        if ($data && count($data) > 0) {
+            foreach ($data as $space) {
+                array_push($userPendingSpaceIds, $space["id_space"]);
+            }
+        }
+
+        $modelSpaceUser = new CoreSpaceUser();
+        $data = $modelSpaceUser->getUserSpaceInfo($_SESSION["id_user"]);
+        $userSpaceIds = array();
+        $spacesUserIsAdminOf = array();
+
+        if ($data && count($data) > 0) {
+            foreach ($data as $space) {
+                array_push($userSpaceIds, $space["id_space"]);
+                if ($space["status"] === "4") {
+                    array_push($spacesUserIsAdminOf, $space["id_space"]);
+                }
+            }
+        }
+
+        return array(
+            "userSpaceIds" => $userSpaceIds,
+            "userPendingSpaceIds" => $userPendingSpaceIds,
+            "spacesUserIsAdminOf" => $spacesUserIsAdminOf
+        );
+    }
+
+    /**
+     * 
+     * Manage actions resulting from user request to join or leave a space
+     * If user is a member of space, then leaves, else join
+     *
+     * @param int $id_space
+     * @param bool $isMemberOfSpace
+     */
+    public function selfJoinSpaceAction($id_space) {
+        $modelSpaceUser = new CoreSpaceUser();
+        $id_user = $_SESSION["id_user"];
+        $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
+
+        if ($isMemberOfSpace) {
+            // User is already member of space
+            $modelSpaceUser = new CoreSpaceUser();
+            $modelSpaceUser->delete($id_user, $id_space);
+        } else {
+            // User is not member of space
+            $modelSpacePending = new CorePendingAccount();
+            $isPending = $modelSpacePending->isActuallyPending($id_user, $id_space);
+
+            if (!$isPending) {
+                // User hasn't already an unanswered request to join
+                $spaceModel = new CoreSpace();
+                $spaceName = $spaceModel->getSpaceName($id_space);
+
+                if ($modelSpacePending->exists($id_space, $id_user)) {
+                    // This user is already associated to this space in database
+                    $pendingId = $modelSpacePending->getBySpaceIdAndUserId($id_space, $id_user)["id"];
+                    $modelSpacePending->invalidate($pendingId, NULL);
+                } else {
+                    // This user is not associated to this space in database
+                    $modelSpacePending->add($id_user, $id_space);
+                }
+
+                $mailParams = [
+                    "id_space" => $id_space,
+                    "space_name" => $spaceName
+                ];
+                $email = new Email();
+                $email->NotifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());
+            }
+        } 
+        $this->redirect("coretiles");
     }
 
 }

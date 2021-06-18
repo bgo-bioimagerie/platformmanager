@@ -229,7 +229,7 @@ class CoreconnectionController extends CorecookiesecureController {
             if ($userByEmail) {
 
                 if ($userByEmail["source"] == "ext") {
-                    $_SESSION["message"] = CoreTranslator::ExtAccountMessage(lang);
+                    $_SESSION["message"] = CoreTranslator::ExtAccountMessage($lang);
                 } else {
 
                     $newPassWord = $this->randomPassword();
