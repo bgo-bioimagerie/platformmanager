@@ -12,8 +12,14 @@ class Email extends Model {
 
     /**
      * 
+     * Use configuration parameters to send an email
      * 
-     * 
+     * @param string $from email address from which the email is sent
+     * @param string $fromName name of the sender displayed in mail header
+     * @param string || array $toAddress the recipients email or array of email addresses. If an array, the first one is set as main recipient, the others as BCC
+     * @param string $subject
+     * @param string $content
+     * @param string $sentCopyToFrom
      */
     public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ) {
         // send the email
@@ -38,9 +44,7 @@ class Email extends Model {
 
         if (is_array($toAdress)){
             foreach($toAdress as $address){
-                if ($address[0] && $address[0] != ""){
-                    $mail->addBCC($address);
-                }
+                $mail->addBCC($address);
             }
         } else if ( $toAdress != "" ) {
             $mail->addBCC($toAdress);
