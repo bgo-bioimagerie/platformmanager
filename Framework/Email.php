@@ -10,30 +10,18 @@ use PHPMailer\PHPMailer\PHPMailer;
  */
 class Email extends Model {
 
-    public function sendEmailSimulate($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true) {
-        echo "send email from " .$fromName. "(" . $from . ") to ";
-        print_r($toAdress);
-        echo " subject = " . $subject . " content = " . $content. "<br/>";
-        if($sentCopyToFrom){
-            echo " use copy to from <br/>";
-        }
-    }
-
+    /**
+     * 
+     * 
+     * 
+     */
     public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ) {
-
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
-        $smtp_host = getenv('SMTP_HOST');
-        $smtp_port = 25;
-        if(getenv('SMTP_PORT')) {
-            $smtp_port= intval(getenv('SMTP_PORT'));
-        }
-        if (!empty($smtp_host)) {
-            $mail->isSMTP();
-            $mail->Host = $smtp_host;
-            $mail->Port = $smtp_port;
-        }
+        $mail->isSMTP();
+        $mail->Host = Configuration::get('smtp_host');
+        $mail->Port = Configuration::get('smtp_port');
         $mail->CharSet = "utf-8";
         $mail->SetFrom($from, $fromName);
         $mail->Subject = $subject;
@@ -51,7 +39,7 @@ class Email extends Model {
         if (is_array($toAdress)){
             foreach($toAdress as $address){
                 if ($address[0] && $address[0] != ""){
-                    $mail->addBCC($address[0]);
+                    $mail->addBCC($address);
                 }
             }
         } else if ( $toAdress != "" ) {
@@ -84,15 +72,15 @@ class Email extends Model {
             $spaceModel = new CoreSpace();
             $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($params["id_space"]);
             $from = Configuration::get('smtp_from');
-            $from = "support@platform-manager.org";
             $spaceName = ($params["space_name"] !== null) ? $params["space_name"] : "";
             $fromName = "Platform-Manager";
             $subject = CoreTranslator::JoinRequestSubject($params["space_name"], $lang);
             $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
+            $toAdress = array();
             foreach ($emailSpaceManagers as $emailSpaceManager) {
-                $toAdress = $emailSpaceManager["email"];
-                $this->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+                array_push($toAdress, $emailSpaceManager["email"]);
             }
+            $this->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
         } else {
             Configuration::getLogger()->error("notifyAdminsByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
         }
@@ -112,7 +100,6 @@ class Email extends Model {
     public function notifyUserByEmail($params, $origin, $lang = "") {
         $fromName = "Platform-Manager";
         $from = Configuration::get('smtp_from');
-        $from = "support@platform-manager.org";
         $spaceName = ($params["space_name"] !== null) ? $params["space_name"] : "";
 
         if ($origin === "add_new_user") {

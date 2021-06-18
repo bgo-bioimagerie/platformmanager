@@ -76,8 +76,99 @@ class Configuration {
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
+            self::override();
         }
         return self::$parameters;
+    }
+
+    /**
+     * Override some config with env variables
+     */
+    private static function override() {
+        self::$parameters['smtp_host'] = getenv('SMTP_HOST', '');
+        if(!isset(self::$parameters['smtp_port'])) {
+            self::$parameters['smtp_port'] = 25;
+        }
+        if(getenv('SMTP_PORT')) {
+            self::$parameters['smtp_port']= intval(getenv('SMTP_PORT'));
+        }
+        if(getenv('DEBUG')) {
+            self::$parameters['debug'] = boolval(getenv('DEBUG'));
+        }
+        if(getenv('DEBUG_SQL')) {
+            self::$parameters['debug_sql'] = boolval(getenv('DEBUG_SQL'));
+        }
+        if(getenv('DEBUG_INFLUXDB')) {
+            self::$parameters['debug_influxdb'] = boolval(getenv('DEBUG_INFLUXDB'));
+        }
+        if(!isset(self::$parameters['smtp_from'])) {
+            self::$parameters['smtp_from'] = 'donotreply@pfm.org';
+        }
+        if(getenv('MAIL_FROM')) {
+            self::$parameters['smtp_from'] = getenv('MAIL_FROM');
+        }
+        if(getenv('PFM_ADMIN_USER')) {
+            self::$parameters['admin_user'] = getenv('PFM_ADMIN_USER');
+        }
+        if(getenv('PFM_ADMIN_EMAIL')) {
+            self::$parameters['admin_email'] = getenv('PFM_ADMIN_EMAIL');
+        }
+        if(getenv('PFM_ADMIN_PASSWORD')) {
+            self::$parameters['admin_password'] = getenv('PFM_ADMIN_PASSWORD');
+        }
+        if(getenv('PFM_KEYCLOAK_OIC_SECRET')) {
+            self::$parameters['keycloak_oic_secret'] = getenv('PFM_KEYCLOAK_OIC_SECRET');
+        }
+        if(getenv('PFM_PUBLIC_URL')) {
+            self::$parameters['public_url'] = getenv('PFM_PUBLIC_URL');
+        }
+
+        if(getenv('PFM_LDAP_HOST')) {
+            self::$parameters['ldap_host'] = getenv('PFM_LDAP_HOST');
+        }
+        if(getenv('PFM_LDAP_PORT')) {
+            self::$parameters['ldap_port']= intval(getenv('PFM_LDAP_PORT'));
+        }
+        if(getenv('PFM_LDAP_USER')) {
+            self::$parameters['ldap_admin'] = getenv('PFM_LDAP_USER');
+        }
+        if(getenv('PFM_LDAP_PASSWORD')) {
+            self::$parameters['ldap_password'] = getenv('PFM_LDAP_PASSWORD');
+        }
+        if(getenv('PFM_LDAP_BASEDN')) {
+            self::$parameters['ldap_dn'] = getenv('PFM_LDAP_BASEDN');
+        }
+        if(getenv('PFM_LDAP_BASESEARCH')) {
+            self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_BASESEARCH');
+        }
+
+        if(getenv('PFM_AMQP_HOST')) {
+            self::$parameters['amqp_host'] = getenv('PFM_AMQP_HOST');
+        }
+        if(getenv('PFM_AMQP_PORT')) {
+            self::$parameters['amqp_port'] = intval(getenv('PFM_AMQP_PORT'));
+        }
+        if(getenv('PFM_AMQP_USER')) {
+            self::$parameters['amqp_user'] = getenv('PFM_AMQP_USER');
+        }
+        if(getenv('PFM_AMQP_PASSWORD')) {
+            self::$parameters['amqp_password'] = getenv('PFM_AMQP_PASSWORD');
+        }
+
+        if(getenv('PFM_INFLUXDB_URL')) {
+            self::$parameters['influxdb_url'] = getenv('PFM_INFLUXDB_URL');
+        }
+        if(getenv('PFM_INFLUXDB_TOKEN')) {
+            self::$parameters['influxdb_token'] = getenv('PFM_INFLUXDB_TOKEN');
+        }
+        if(getenv('PFM_INFLUXDB_ORG')) {
+            self::$parameters['influxdb_org'] = getenv('PFM_INFLUXDB_ORG');
+        }
+
+        if(getenv('PFM_SENTRY_DSN')) {
+            self::$parameters['sentry_dsn'] = getenv('PFM_SENTRY_DSN');
+        }
+
     }
 
     /**
