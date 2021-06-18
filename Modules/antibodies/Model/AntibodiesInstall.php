@@ -96,10 +96,10 @@ class AntibodiesInstall extends Model {
 		$model = new Enzyme();
 		$model->createTable();
                 
-                $modelApp = new AcApplication();
+        $modelApp = new AcApplication();
 		$modelApp->createTable();
                 
-                $modelStaining = new AcStaining();
+        $modelStaining = new AcStaining();
 		$modelStaining->createTable();
 		 
                 //mkdir("/data/antibodies");

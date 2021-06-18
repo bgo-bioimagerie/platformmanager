@@ -80,6 +80,12 @@ if ($space['color'] == "") {
                 <div class="pm-tiles bs-glyphicons">
                     <ul class="pm-tiles bs-glyphicons-list">
                         <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="<?php echo "spaceadminedit/" . $space["id"] ?>">
+                                <span class="pm-tiles glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Space($lang) ?></span>
+                            </a>
+                        </li>
+                        <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "spaceconfig/" . $space["id"] ?>">
                                 <span class="pm-tiles glyphicon glyphicon-cog" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Configuration($lang) ?></span>

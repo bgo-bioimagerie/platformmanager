@@ -183,15 +183,10 @@ class FCache extends Model {
      * Remove all the cache
      */
     protected function freeTableURL() {
-
-        //if ($this->isTable("cache_urls")){
         $sql = "TRUNCATE TABLE cache_urls";
         $this->runRequest($sql);
-        //}
-        //if ($this->isTable("cache_urls_gets")){
         $sqlg = "TRUNCATE TABLE cache_urls_gets";
         $this->runRequest($sqlg);
-        //}
     }
 
     /**
@@ -233,6 +228,9 @@ class FCache extends Model {
     public function getURLInfos($path) {
         $sql = "SELECT * FROM cache_urls WHERE url=?";
         $urlInfo = $this->runRequest($sql, array($path))->fetch();
+        if (!$urlInfo) {
+            return null;
+        }
 
         $sqlg = "SELECT * FROM cache_urls_gets WHERE url_id=?";
         $urlInfo["gets"] = $this->runRequest($sqlg, array($urlInfo["id"]))->fetchAll();

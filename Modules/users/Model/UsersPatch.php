@@ -16,15 +16,17 @@ class UsersPatch extends Model {
     }
 
     public function patch() {
-
-
         $sqlcl = "SELECT * FROM cl_clients";
         $client_count = $this->runRequest($sqlcl)->rowCount();
 
         $sqlresp_count = 0;
         try {
             $sqlresp = "SELECT * FROM ec_j_user_responsible";
-            $sqlresp_count = $this->runRequest($sqlresp)->rowCount();
+            $sqlresp_res = $this->runRequest($sqlresp);
+            $sqlresp_count = 0;
+            if($sqlresp_res) {
+                $sqlresp_count = $sqlresp_res->rowCount();
+            }
         }
         catch (Exception $e) {
             echo "ec_j_user_responsible not present, skipping existing accounts migration\n";

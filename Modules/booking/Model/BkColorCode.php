@@ -23,8 +23,8 @@ class BkColorCode extends Model {
 		`color` varchar(7) NOT NULL DEFAULT '',
 		`text` varchar(7) NOT NULL DEFAULT '',		
 		`display_order` int(11) NOT NULL DEFAULT 0,
-                `id_space` int(11) NOT NULL DEFAULT 1,
-                `who_can_use` int(11) NOT NULL DEFAULT 1,
+        `id_space` int(11) NOT NULL DEFAULT 1,
+        `who_can_use` int(11) NOT NULL DEFAULT 1,
 		PRIMARY KEY (`id`)
 		);";
 

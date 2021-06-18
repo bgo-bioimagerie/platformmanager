@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Configuration.php';
+
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Framework/FileUpload.php';
@@ -10,6 +12,7 @@ require_once 'Modules/users/Model/UsersTranslator.php';
 require_once 'Modules/users/Model/UsersInfo.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreOpenId.php';
 
 
 /**
@@ -52,13 +55,50 @@ class UseraccountController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $userCore["name"]);
         $form->addEmail("email", CoreTranslator::Email($lang), true, $userCore["email"]);
         
-        $form->addText("unit", UsersTranslator::Unit($lang), false, $userInfo["unit"]);
-        $form->addText("phone", UsersTranslator::Phone($lang), false, $userInfo["phone"]);
-        $form->addUpload("avatar", UsersTranslator::Avatar($lang), $userInfo["avatar"]);
-        $form->addTextArea("bio", UsersTranslator::Bio($lang), false, $userInfo["bio"]);
+        $form->addText("unit", UsersTranslator::Unit($lang), false, $userInfo["unit"] ?? "");
+        $form->addText("phone", UsersTranslator::Phone($lang), false, $userInfo["phone"] ?? "");
+        $form->addUpload("avatar", UsersTranslator::Avatar($lang), $userInfo["avatar"] ?? "");
+        $form->addTextArea("bio", UsersTranslator::Bio($lang), false, $userInfo["bio"] ?? "");
         
         $form->setValidationButton(CoreTranslator::Save($lang), "usersmyaccount");
         
+        $openid_providers = Configuration::get("openid", []);
+        $providers = [];
+        if(!empty($openid_providers)) {
+            foreach ($openid_providers as $openid_provider) {
+                $provider = [
+                    "name" => $openid_provider,
+                    "url" => Configuration::get("openid_${openid_provider}_url"),
+                    "icon" => Configuration::get("openid_${openid_provider}_icon"),
+                    "login" => Configuration::get("openid_${openid_provider}_login"),
+                    "client_id" => Configuration::get("openid_${openid_provider}_client_id"),
+                    "client_secret" => Configuration::get("openid_${openid_provider}_client_secret"),
+                    "callback" => Configuration::get("public_url")."/ooc/$openid_provider/authorized"
+                ];
+                $providers[] = $provider;
+                # list $providers
+            }
+        }
+        $linked = [];
+        try {
+            $openidModel = new CoreOpenId();
+            $linked = $openidModel->list($_SESSION['id_user']);
+            if($linked == null) {
+                $linked = [];
+            }
+        } catch(Exception $e) {
+            Configuration::getLogger()->error('[openid][providers] could not get linked providers', ['error' => $e->getMessage()]);
+        }
+
+        Configuration::getLogger()->debug('[openid][providers]', [
+            'providers' => $providers,
+            'linked' => $linked,
+            'id_user' => $_SESSION['id_user']
+        ]);
+
+        // get user linked providers and display them with unlink
+
+
         if ( $form->check() ){
             
             $modelCoreUser->editBaseInfo($id_user,
@@ -87,10 +127,13 @@ class UseraccountController extends CoresecureController {
             
         }
         
+        $_SESSION["redirect"] = "usersmyaccount";
         // render the View
         $this->render(array(
             'lang' => $lang,
-            'formHtml' => $form->getHtml($lang)
+            'formHtml' => $form->getHtml($lang),
+            'providers' => $providers,
+            'linked' => $linked
         ));
     }
 

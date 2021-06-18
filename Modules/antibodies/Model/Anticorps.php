@@ -32,19 +32,23 @@ class Anticorps extends Model {
  				`lot` varchar(30) NOT NULL DEFAULT '',
 				`id_isotype` int(11) NOT NULL DEFAULT '0',
 				`stockage` varchar(30) NOT NULL DEFAULT '',
-                                `id_space` INT(11) NOT NULL,
+                `id_staining` FLOAT(11) NOT NULL DEFAULT 1,
+                `id_application` FLOAT(11) NOT NULL DEFAULT 1,
+                `export_calatog` int(1) NOT NULL DEFAULT 0,
+                `image_url` varchar(250) NOT NULL DEFAULT '',
+                `image_desc` varchar(250) NOT NULL DEFAULT '',
+				`id_space` int(11) NOT NULL DEFAULT 0,
   				PRIMARY KEY (`id`)
-				);
+				)";
+        $this->runRequest($sql);
 				
-				CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
+		$sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
   				`id_anticorps` int(11) NOT NULL,
   				`id_utilisateur` int(11) NOT NULL,	
 				`disponible` int(2) NOT NULL,		
 				`date_recept` DATE NOT NULL,
 				`no_dossier` varchar(12) NOT NULL
-				);
-				";
-
+				)";
         $this->runRequest($sql);
 
         // add new column

@@ -4,6 +4,9 @@ require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Statistics.php';
+require_once 'Framework/Events.php';
+
 
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -20,6 +23,8 @@ require_once 'Modules/core/Model/CoreMainMenuPatch.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
+require_once 'Modules/core/Model/CoreOpenId.php';
+require_once 'Modules/users/Model/UsersPatch.php';
 
 
 define("DB_VERSION", 2);
@@ -30,11 +35,74 @@ class CoreDB extends Model {
 
 
     public function upgrade_v0_v1() {
-        // nothing to do
+
+        Configuration::getLogger()->debug("[db] Old existing db patch");
+        $modelMainMenuPatch = new CoreMainMenuPatch();
+        $modelMainMenuPatch->patch();
+
+        $model2 = new UsersPatch();
+        $model2->patch();
+
+        Configuration::getLogger()->debug("[db] Old existing db did not set id as primary/auto-increment");
+        $modelSpaceUser = new CoreSpaceUser();
+        $sql = "alter table core_j_spaces_user drop column id";
+        $modelSpaceUser->runRequest($sql);
+        $sql = "alter table core_j_spaces_user add column id int not null auto_increment primary key";
+        $modelSpaceUser->runRequest($sql);
     }
 
     public function upgrade_v1_v2() {
-        // nothing to do
+        Configuration::getLogger()->debug("[db] Add core_spaces shortname, contact, support");
+        $cp = new CoreSpace();
+        $cp->addColumn('core_spaces', 'shortname', "varchar(30)", '');
+        $cp->addColumn('core_spaces', 'contact', "varchar(100)", '');
+        $cp->addColumn('core_spaces', 'support', "varchar(100)", '');
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            if(!$space['shortname']) {
+                $shortname = $space['name'];
+                $shortname = strtolower($shortname);
+                $shortname = str_replace(" ", "", $shortname);
+                $cp->setShortname($space['id'], $shortname);
+            }
+        }
+
+        Configuration::getLogger()->debug("[stats] import stats");
+        $cp = new CoreSpace();
+        $statHandler = new EventHandler();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
+            $spaceUsers = $cp->getUsers($space['id']);
+            foreach ($spaceUsers as $spaceUser) {
+                $statHandler->spaceUserJoin([
+                    'space' => ['id' => $space['id']],
+                    'user' => ['id' => $spaceUser['id']]
+                ]);
+            }
+        }
+
+    }
+
+    /**
+     * Get current database version
+     */
+    public function getRelease() {
+        $sqlRelease = "SELECT * FROM `pfm_db`;";
+        $reqRelease = $this->runRequest($sqlRelease);
+        $release = null;
+        if ($reqRelease && $reqRelease->rowCount() > 0){
+            $release = $reqRelease->fetch();
+            return $release['version'];
+        }
+        return 0;
+    }
+
+    /**
+     * Get expected database version
+     */
+    public function getVersion() {
+        return DB_VERSION;
     }
 
     /**
@@ -51,7 +119,9 @@ class CoreDB extends Model {
 		);";
 
         $this->runRequest($sql);
+    }
 
+    public function upgrade() {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
 
@@ -81,7 +151,7 @@ class CoreDB extends Model {
             while ($updateFromRelease < DB_VERSION) {
                 Configuration::getLogger()->info("[db] Migrating", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                 $upgradeMethod = "upgrade_v".$updateFromRelease."_v".$updateToRelease;
-                if (method_exists($this, $upgradeMethod) && is_callable($this, $upgradeMethod)) {
+                if (method_exists($this, $upgradeMethod)) {
                     try {
                         $this->$upgradeMethod();
                     } catch(Exception $e) {
@@ -89,6 +159,8 @@ class CoreDB extends Model {
                         Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                         break;
                     }
+                } else {
+                    Configuration::getLogger()->info("[db] No migration available", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                 }
 
                 Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
@@ -103,6 +175,8 @@ class CoreDB extends Model {
             } else {
                 Configuration::getLogger()->error("[db] database migration failed!");
             }
+        } else {
+            Configuration::getLogger()->info("[db] no migration needed");
         }
 
     }
@@ -179,9 +253,11 @@ class CoreInstall extends Model {
         $modelCoreSpaceAccessOptions = new CoreSpaceAccessOptions();
         $modelCoreSpaceAccessOptions->createTable();
 
+        $modelOpenid = new CoreOpenId();
+        $modelOpenid-> createTable();
 
-        $modelMainMenuPatch = new CoreMainMenuPatch();
-        $modelMainMenuPatch->patch();
+        $modelStatistics = new BucketStatistics();
+        $modelStatistics->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

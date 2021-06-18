@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Configuration.php';
+require_once 'Errors.php';
+
 use DebugBar\DataCollector\PDO\TraceablePDO;
 /**
  * Abstract class Model
@@ -21,6 +23,27 @@ abstract class Model {
     private $columnsTypes;
     private $columnsDefaultValue;
     protected $primaryKey;
+
+    /**
+     * Check if table already contains a value for column
+     * 
+     * @param string $columnName name of the column
+     * @param mixed  $value value to search
+     * @throws PfmDbException
+     */
+    protected function alreadyExists($columnName, $value) {
+        if(!isset($this->tableName) || empty($this->tableName)) {
+            throw new PfmDbException("Table name not defined", 1);
+            
+        }
+        $table = $this->tableName;
+        $sql = "SELECT $columnName FROM $table WHERE $columnName=?";
+        $req = $this->runRequest($sql, array($value));
+        if ($req->rowCount() > 0){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Run a SQL request
@@ -45,11 +68,10 @@ abstract class Model {
                 $result->execute($params);
             }
 
-        } catch (\Throwable $th) {
-            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $result->errorInfo()]);
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
         }
-
-        //print_r( $result->errorInfo() );
         return $result;
     }
 
@@ -100,10 +122,13 @@ abstract class Model {
      */
     public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
 
-        $sql = "SHOW COLUMNS FROM `" . $tableName . "` LIKE '" . $columnName . "'";
-        $pdo = $this->runRequest($sql);
+        //$sql = "SHOW COLUMNS FROM `" . $tableName . "` LIKE '" . $columnName . "'";
+        //$pdo = $this->runRequest($sql);
+        $sql = "SHOW COLUMNS FROM `" . $tableName . "` WHERE Field=?";
+        $pdo = $this->runRequest($sql, array($columnName));
         $isColumn = $pdo->fetch();
-        if ($isColumn == false) {
+        if ($isColumn === false) {
+            Configuration::getLogger()->debug('[db] add column', ['table' => $tableName, 'col' => $columnName]);
             $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType . " NOT NULL";
             if($defaultValue != "") {
                 if(is_string($defaultValue)) {
@@ -113,6 +138,8 @@ abstract class Model {
                 }
             }
             $this->runRequest($sql);
+        } else {
+            Configuration::getLogger()->debug('[db] column already exists, skipping', ['table' => $tableName, 'col' => $columnName]);
         }
     }
 
@@ -127,15 +154,12 @@ abstract class Model {
         $dsnArray = explode(";", $dsn);
         $dbname = "";
         for ($i = 0; $i < count($dsnArray); $i++) {
-            if (strpos($dsnArray[$i], "dbname") === false) {
-
-            } else {
+            if (strpos($dsnArray[$i], "dbname") !== false) {
                 $dbnameArray = explode("=", $dsnArray[$i]);
                 $dbname = $dbnameArray[1];
                 break;
             }
         }
-
 
         $sql = 'SHOW TABLES FROM ' . $dbname . ' LIKE \'' . $table . '\'';
         $req = $this->runRequest($sql);
@@ -216,14 +240,11 @@ abstract class Model {
         $keyString = "";
         $valuesString = "";
         foreach ($data as $key => $value) {
-            //echo "key = " . $key . "<br/>";
-            //echo "value = " . $value . "<br/>";
             $keyString .= $key . ",";
             $valuesString .= "'" . $value . "'" . ",";
         }
         $sql .= " (" . substr($keyString, 0, -1) . ") VALUES (" . substr($valuesString, 0, -1) . ");";
 
-        //echo "query = " . $sql . "<br/>";
         $this->runRequest($sql);
         $this->getDatabase()->lastInsertId();
     }

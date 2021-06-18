@@ -2,11 +2,11 @@
 
 require_once 'Framework/Routing.php';
 
-class V1tov2Routing extends Routing{ 
+class VoldRouting extends Routing{ 
     
     public function listRouts(){
         
-        $this->addRoute("v1tov2", "v1tov2", "v1tov2", "index", array(), array());
+        $this->addRoute("vold", "vold", "vold", "index", array(), array());
         
         $this->addRoute("importgrr", "importgrr", "importgrr", "index", array(), array());
         $this->addRoute("importbiosit", "importbiosit", "importbiosit", "index", array(), array());

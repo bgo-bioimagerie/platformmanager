@@ -74,6 +74,9 @@ class CoreSpaceUser extends Model {
         return $this->runRequest($sql, array($id_user))->fetchAll();
     }
    
+    /**
+     * Get user specific space info and role
+     */
     public function getUserSpaceInfo2($id_space, $id_user){
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         return $this->runRequest($sql, array($id_space, $id_user))->fetch();

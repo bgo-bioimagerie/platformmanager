@@ -12,8 +12,9 @@ class CaCategory extends Model {
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `ca_categories` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `name` varchar(50) NOT NULL,	
-                `id_space` int(11) NOT NULL DEFAULT 0,
+        `name` varchar(50) NOT NULL,	
+        `id_space` int(11) NOT NULL DEFAULT 0,
+        `display_order` int(4) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 

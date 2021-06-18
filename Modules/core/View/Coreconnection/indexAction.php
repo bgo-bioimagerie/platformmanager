@@ -11,6 +11,8 @@ Platform-Manager
 <?php
 if (getenv('PFM_MODE') != 'dev') {
   echo "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
+} else {
+    echo "<meta http-equiv=\"Content-Security-Policy-Report-Only\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
 }
 ?>
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -118,6 +120,23 @@ if (getenv('PFM_MODE') != 'dev') {
                 </div>
             </div>
         </div>
+
+        <?php if (!empty($providers)) { ?>
+        <div class="col-md-12" style="text-align:center;">
+            <h2>Log with external connection providers</h2>
+            <p><small>You must have link provider with your account before in account settings.</small></p>
+        <?php
+        foreach ($providers as $provider) {
+        ?>
+            <a href="<?php echo $provider['login']; ?>?client_id=<?php echo $provider['client_id']; ?>&response_type=code&scope=openid&redirect_uri=<?php echo $provider['callback']; ?>">
+                <button type="button" class="btn btn-primary"><?php echo $provider['name']; ?></button>
+            </a>
+        <?php
+        }
+        ?>
+        </div>
+        <?php } ?>
+
     </div>
 
     <?php

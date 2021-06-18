@@ -3,6 +3,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreInstall.php';
+require_once 'Modules/core/Model/CoreUser.php';
+
+use Garden\Cli\Cli;
 
 function version()
     {
@@ -12,44 +15,53 @@ function version()
         return sprintf('%s (%s)', $commitHash, $commitDate->format('Y-m-d H:i:s'));
     }
 
-$logger = Configuration::getLogger();
+$cli = Cli::create()
+    ->command('install')
+    ->description('Install/upgrade database and routes')
+    ->command('expire')
+    ->description('Expire old users (not logged for a year)')
+    ->command('version')
+    ->description('Show version')
+    ->opt('db:d', 'Show installed and expected db version', false, 'boolean');
 
-$shortopts = "";
-$shortopts .= "i";
-$shortopts .= "h";
-$shortopts .= "v";
-$longopts = array(
-  "install",
-  "help",
-  "version"
-);
-$options = getopt($shortopts, $longopts);
+$args = $cli->parse($argv);
 
-
-if (empty($options) || isset($options['h']) || isset($options['help'])) {
-    echo "Usage:\n";
-    echo " --install: create and updates tables in database\n";
-    echo " --version: show software version\n";
-    return;
+switch ($args->getCommand()) {
+    case 'install':
+        cliInstall();
+        break;
+    case 'expire':
+        $logger = Configuration::getLogger();
+        $logger->info("Expire old users");
+        $modelUser = new CoreUser();
+        $count = $modelUser->disableUsers(6);
+        $logger->info("Expired ".$count. " users");
+        break;
+    case 'version':
+        echo "Version: ".version()."\n";
+        if ($args->getOpt('db')) {
+            $cdb = new CoreDB();
+            $crel = $cdb->getRelease();
+            echo "DB installed version: ".$crel."\n";
+            echo "DB expected version: ".$cdb->getVersion()."\n";
+        }
+        break;
+    default:
+        break;
 }
 
-if (isset($options['v']) || isset($options['version'])) {
-    $v = version();
-    echo "Version: " . $v . "\n";
-    return;
-}
-
-if (isset($options['install']) || isset($options['i'])) {
+function cliInstall() {
+    $logger = Configuration::getLogger();
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
-    $modelCreateDatabase = new CoreInstall();
-    $dsn = Configuration::get('dsn');
-    $login = Configuration::get('login');
-    $password = Configuration::get('pwd');
-    $modelCreateDatabase->setDatabase($dsn, $login, $password);
-    $modelCreateDatabase->createDatabase();
+    // Create db release table if not exists
+    $cdb = new CoreDB();
+    $cdb->createTable();
 
+    $modelCreateDatabase = new CoreInstall();
+    $modelCreateDatabase->createDatabase();
     $logger->info("Database installed");
+    
 
     $logger->info("Upgrading modules");
 
@@ -84,8 +96,8 @@ if (isset($options['install']) || isset($options['i'])) {
             $logger->error("Error", ["error" => $e->getMessage()]);
     }
 
-    $cdb = new CoreDB();
-    $cdb->createTable();
+    // update db release and launch upgrade
+    $cdb->upgrade();
 
     $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 

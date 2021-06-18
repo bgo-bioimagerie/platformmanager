@@ -2,6 +2,7 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Framework/Events.php';
 
 /**
  * Class defining the Status model
@@ -15,6 +16,10 @@ class CoreSpace extends Model {
     public static $USER = 2;
     public static $MANAGER = 3;
     public static $ADMIN = 4;
+
+    public function __construct() {
+        $this->tableName = 'core_spaces';
+    }
 
     public static function roles($lang) {
 
@@ -34,10 +39,13 @@ class CoreSpace extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `core_spaces` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(30) NOT NULL DEFAULT '',
-                `status` int(1) NOT NULL DEFAULT 0,
-                `color` varchar(7) NOT NULL DEFAULT '',
-                `description` text NOT NULL DEFAULT '',
-                `image` varchar(255) NOT NULL DEFAULT '',
+        `status` int(1) NOT NULL DEFAULT 0,
+        `color` varchar(7) NOT NULL DEFAULT '',
+        `description` text NOT NULL DEFAULT '',
+        `image` varchar(255) NOT NULL DEFAULT '',
+        `shortname` varchar(30) NOT NULL DEFAULT '',
+        `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
+        `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -45,12 +53,14 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
 
+        /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
 		`id_user` int(11) NOT NULL DEFAULT 1,
 		`id_space` int(11) NOT NULL DEFAULT 1,
                 `status` int(1) NOT NULL DEFAULT 1
 		);";
         $this->runRequest($sql2);
+        */
 
         // name = module
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
@@ -296,12 +306,21 @@ class CoreSpace extends Model {
         return $this->runRequest($sql)->fetchAll();
     }
 
-    public function setSpace($id, $name, $status, $color) {
+    public function countSpaces() {
+        $sql = "SELECT count(*) FROM core_spaces";
+        $res = $this->runRequest($sql)->fetch();
+        return intval($res[0]);
+    }
+
+    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact) {
         if ($this->isSpace($id)) {
-            $this->editSpace($id, $name, $status, $color);
+            $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact);
             return $id;
         } else {
-            $this->addSpace($name, $status, $color);
+            if ($this->alreadyExists('name', $name)) {
+                throw new PfmDbException("Space name already exists", 1);
+            }
+            $this->addSpace($name, $status, $color, $shortname, $support, $contact);
             return $this->getDatabase()->lastInsertId();
         }
     }
@@ -309,6 +328,11 @@ class CoreSpace extends Model {
     public function setDescription($id, $description){
         $sql = "UPDATE core_spaces SET description=? WHERE id=?";
         $this->runRequest($sql, array($description, $id));
+    }
+
+    public function setShortname($id, $shortname){
+        $sql = "UPDATE core_spaces SET shortname=? WHERE id=?";
+        $this->runRequest($sql, array($shortname, $id));
     }
     
     public function setImage($id, $image){
@@ -335,21 +359,28 @@ class CoreSpace extends Model {
         return $users;
     }
 
-    public function addSpace($name, $status, $color) {
-        $sql = "INSERT INTO core_spaces (name, status, color) VALUES (?,?,?)";
-        $this->runRequest($sql, array($name, $status, $color));
-        return $this->getDatabase()->lastInsertId();
+    public function addSpace($name, $status, $color, $shortname, $support, $contact) {
+        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support) VALUES (?,?,?,?,?,?)";
+        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact));
+        $id = $this->getDatabase()->lastInsertId();
+        Events::send(["action" => Events::ACTION_SPACE_CREATE, "space" => ["id" => intval($id)]]);
+        return $id;
     }
 
-    public function editSpace($id, $name, $status, $color) {
-        $sql = "UPDATE core_spaces SET name=?, status=?, color=? WHERE id=?";
-        $this->runRequest($sql, array($name, $status, $color, $id));
+    public function editSpace($id, $name, $status, $color, $shortname, $support, $contact) {
+        $sql = "UPDATE core_spaces SET name=?, status=?, color=?, shortname=?, contact=?, support=? WHERE id=?";
+        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $id));
     }
 
     public function setUserIfNotExist($id_user, $id_space, $status) {
         if (!$this->isUser($id_user, $id_space)) {
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $status));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_JOIN,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
+            ]);
         }
     }
 
@@ -360,6 +391,11 @@ class CoreSpace extends Model {
         } else {
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $status));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_JOIN,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
+            ]);
         }
     }
 
@@ -392,6 +428,12 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
+    public function countUsers($id_space) {
+        $sql = "SELECT count(*) FROM core_j_spaces_user WHERE id_space=?";
+        $res = $this->runRequest($sql, array($id_space))->fetch();
+        return intval($res[0]);
+    }
+
     public function setAdmins($id, $id_admins) {
 
         // remove existing admins
@@ -420,11 +462,20 @@ class CoreSpace extends Model {
     public function deleteUser($id_space, $id_user) {
         $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $this->runRequest($sql, array($id_space, $id_user));
+        Events::send([
+            "action" => Events::ACTION_SPACE_USER_UNJOIN,
+            "space" => ["id" => intval($id_space)],
+            "user" => ["id" => intval($id_user)]
+        ]);
     }
 
     public function delete($id) {
         $sql = "DELETE FROM core_spaces WHERE id=?";
         $this->runRequest($sql, array($id));
+        Events::send([
+            "action" => Events::ACTION_SPACE_DELETE,
+            "space" => ["id" => intval($id)]
+        ]);
     }
 
 }

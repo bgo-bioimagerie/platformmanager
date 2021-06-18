@@ -165,21 +165,8 @@
                 interface to initialize the database
             </p>
             <ul>
-                <li> open the URL <i> http://your_url.com/caches </i></li>
-                <li>
-                    open the URL <i> http://your_url.com/install </i>
-                    <br/>
-                    <img alt="screenshot1" src="resources/install/install1.png" style="width: 100%;">
-                </li>
-                <li>
-                    Fill the form with your mysql server information:
-                    <ul>
-                        <li> In most of the case sql address should be <i>localhost</i> or <i>127.0.0.1</i> </li>
-                        <li> Login to the sql database with read and write authorizations </li>
-                        <li> Password </li>
-                        <li> Name of the database you created in the section <a href="install.html#initdatabasePM">Initialization of the database</a> </li>
-                    </ul>
-                </li>
+                <li>Update Config/conf.ini with database info and other setup (some vars can also be set via environment variables).</li>
+                <li> Run <code>php cli/pfm-cli.php --install</code> to install/upgrade database and routes</i></li>
                 <li>
                     If everything goes correctly you will be directed to the default login page of platform-manager.
                     If not, make sure that the php rewrite engine is on, the .htaccess is on (see section <a href="install.html#quesquePM">Prerequisites</a> ) and that the file system authorizations are correct (see section <a href="install.html#copySourcesPM">Copy of sources</a>)
@@ -198,13 +185,13 @@
                 The goal of this section is to explain the basic configuration of Platform-Manager that
                 the administrator can do.
             </p>
-            <h3>First: change the admin password!</h3>
+            <h3>First: change the admin password if you not set a default and complex one at install</h3>
             <ul>
                 <li>
                     go to the root URL of your Platform-Manager <i> http://your_url.com </i>
                 </li>
                 <li>
-                    Connect to your new instance of Platform-Manager using the <b>login:</b><i>admin</i>
+                    Connect to your new instance of Platform-Manager using the <b>login:</b><i>admin</i> (or the admin user you set by default in config)
                     and the <b>password:</b><i>admin</i>
                     <img alt="screenshot1" src="resources/install/install3.png" style="width: 100%;">
                 </li>

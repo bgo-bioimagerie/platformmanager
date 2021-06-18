@@ -46,26 +46,26 @@ class CoreLdap {
         // -> LDAP sans SSO
         // -> Imap
         $passwd_md5 = md5($_password);
-        if ((@function_exists("ldap_connect"))) {
+        if (@function_exists("ldap_connect")) {
             // $login_search = ereg_replace("[^-@._[:space:][:alnum:]]", "", $_login);
             $login_search = preg_replace("/[^\-@._[:space:]a-zA-Z0-9]/", "", $_login);
             if ($login_search != $_login){
                 return "6";
             }
             $user_dn = $this->grr_verif_ldap($_login, $_password);
-            //echo 'user_dn = ' . $user_dn . '<br/>';
-            //print_r($user_dn);
-            if ($user_dn == "error_1")
+
+            if ($user_dn == "error_1") {
                 return "7";
-            else if ($user_dn == "error_2")
+            } else if ($user_dn == "error_2") {
                 return "8";
-            else if ($user_dn == "error_3")
+            } else if ($user_dn == "error_3") {
                 return "9";
-            else if ($user_dn) {
+            } else if ($user_dn) {
                 $auth_ldap = 'yes';
                 return $user_dn;
-            } else
+            } else {
                 return "4";
+            }
         }
     }
 
@@ -181,17 +181,19 @@ class CoreLdap {
             // On dit qu'on utilise LDAP V3, sinon la V2 par défaut est utilisé et le bind ne passe pas.
             if (!(ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3))) {
                 //echo "msg_error = " . $msg_error . "<br/>";
-                if ($msg_error != "no")
+                if ($msg_error != "no") {
                     return "error_1";
-                die();
+                }
+                return false;
             }
             
             // Option LDAP_OPT_REFERRALS à désactiver dans le cas d'active directory
             @ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
             if ($use_tls) {
                 if (!@ldap_start_tls($ds)) {
-                    if ($msg_error != "no")
+                    if ($msg_error != "no") {
                         return "error_2";
+                    }
                     return false;
                 }
             }

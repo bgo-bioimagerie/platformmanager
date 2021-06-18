@@ -7,7 +7,6 @@ require_once 'FCache.php';
 require_once 'Configuration.php';
 require_once 'Errors.php';
 
-
 /**
  * Class that routes the input requests
  * 
@@ -19,10 +18,46 @@ class Router {
 
     protected $modelCache;
     protected $useRouterController; 
+    protected $router;
 
     public function __construct() {
         $this->modelCache = new FCache();
         $this->logger = Configuration::getLogger();
+        $this->router = new AltoRouter();
+    }
+
+    private function call($target, $args, $request) {
+        if(isset($args['id_space'])){
+            $_SESSION['id_space'] = $args['id_space'];
+        }
+        $route_info = explode("/", $target);
+        $module = $route_info[0];
+        $controller_name = $route_info[1];
+        $controller = null;
+        $action = $route_info[2];
+        try {
+            $controller = $this->createControllerImp($module, $controller_name, false, $request);
+        } catch (PfmRoutingException $e) {
+            $this->logger->error('no controller found, redirect to homepage', [
+                'url' => $request->getParameter('path'),
+                'controller' => $controller_name,
+                'module' => $module
+            ]);
+            $controller = $this->createControllerImp('core', 'coretiles', false, $request);
+            $action = 'index';
+        }
+        $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
+        $controller->runAction($module, $action, $args);   
+    }
+
+    private function route($request) {
+        $this->router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
+        $match = $this->router->match();
+        if(!$match) {
+            return false;
+        }
+        $this->call($match['target'], $match['params'], $request);
+        return true;
     }
 
     /**
@@ -36,14 +71,26 @@ class Router {
             $request = new Request(array_merge($_GET, $_POST));
 
             if (!$this->install($request)) {
-                $urlInfo = $this->getUrlData($request);
+                if ($this->route($request)) {
+                    return;
+                }
 
-                //print_r($urlInfo);
+                $urlInfo = $this->getUrlData($request);
+                if(!$urlInfo['pathInfo']) {
+                    $this->logger->error('no route found, redirect to homepage', [
+                        'url' => $request->getParameter('path'),
+                    ]);
+                    $this->call('core/coretiles/index', [], $request);
+                    return;
+                }
                 $controller = $this->createController($urlInfo, $request);
                 $action = $urlInfo["pathInfo"]["action"];
                 $args = $this->getArgs($urlInfo);
+                if(isset($args['id_space'])){
+                    $_SESSION['id_space'] = $args['id_space'];
+                }
 
-                $this->logger->debug('[router] call', ["controller" => $controller, "action", $action]);
+                $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
                 $this->runAction($controller, $urlInfo, $action, $args);
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
@@ -217,6 +264,10 @@ class Router {
      *        	Thrown exception
      */
     private function manageError(Exception $exception, $type = '') {
+
+        if(Configuration::get('sentry_dsn', '')) {
+            \Sentry\captureException($exception);
+        }
 
         $view = new View('error');
         $view->setFile('Modules/error.php');

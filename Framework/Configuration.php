@@ -21,7 +21,7 @@ class Configuration {
         if (self::$logger == null) {
             self::$logger = new Logger('pfm');
             $level = Logger::INFO;
-            if(getenv('DEBUG') == '1') {
+            if(Configuration::get('debug', false)) {
                 $level = Logger::DEBUG;
             }
             //$output = "[%datetime%] %channel%.%level_name%: %message%\n";
@@ -36,6 +36,9 @@ class Configuration {
                     $user = $_SESSION["id_user"];
                 }
                 $entry['extra']['user'] = $user;
+                if(isset($_SESSION["id_space"])) {
+                    $entry['extra']['space'] = $_SESSION["id_space"];
+                }
                 return $entry;
             });
 

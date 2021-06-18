@@ -40,7 +40,7 @@ require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 
-class v1tov2Controller extends Controller {
+class VoldController extends Controller {
 
     public function indexAction() {
 

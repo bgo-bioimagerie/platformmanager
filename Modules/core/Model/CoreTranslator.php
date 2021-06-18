@@ -1842,4 +1842,17 @@ class CoreTranslator {
         }
         return "[pfm: " . $spaceName . "] Your join request for space " . $spaceName;
     }
+    public static function Contact($lang = "") {
+        return "Contact";
+    }
+
+    public static function Support($lang = "") {
+        if ($lang == "fr") {
+            return "Email de support";
+        }
+        return "Support email";
+    }
+
+
+    
 }

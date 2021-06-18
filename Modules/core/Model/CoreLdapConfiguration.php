@@ -1,5 +1,7 @@
 <?php
 
+require_once 'Framework/Configuration.php';
+
 /**
  * Class that manage the LDAP configuration file
  * 
@@ -41,6 +43,7 @@ class CoreLdapConfiguration
 
         	$urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
+                Configuration::getLogger()->error('[ldap] no config file found');
                 throw new Exception("Unable to find the configuration file");
             }
             else {
@@ -51,8 +54,7 @@ class CoreLdapConfiguration
     }
     
     public static function getConfigFile(){
-    	$urlFile = "Config/ldap.ini";
-    	return $urlFile;
+    	return "Config/ldap.ini";
     }
 
 }

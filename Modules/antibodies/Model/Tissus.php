@@ -29,7 +29,7 @@ class Tissus extends Model {
   				`ref_protocol` varchar(11) NOT NULL,
 				`prelevement` int(1) NOT NULL,
 				`comment` text NOT NULL,
-                                `image_url` varchar(512) NOT NULL,
+                `image_url` varchar(512) NOT NULL,
   				PRIMARY KEY (`id`)
 				);";
 
