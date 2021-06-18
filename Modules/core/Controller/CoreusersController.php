@@ -80,7 +80,11 @@ class CoreusersController extends CoresecureController {
             $form->setTitle(CoreTranslator::Add_User($lang));
         }
         $form->addHidden("id", $user["id"]);
-        $form->addText("login", CoreTranslator::Login($lang), true, $user["login"]);
+        // #105: add condition and disabled argument
+        $isLoginLocked = ($id == 0) ? false : true;
+        Configuration::getLogger()->debug('INPUTLOGIN', ["isLoginLocked" => $isLoginLocked]);
+
+        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], disabled: $isLoginLocked);
         if ($id == 0) {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
             $form->addPassword("pwdconfirm", CoreTranslator::Password($lang));
@@ -117,7 +121,7 @@ class CoreusersController extends CoresecureController {
         }
         $script = "";
         if ($form->check()) {
-            if ($modelUser->isLogin($this->request->getParameter('login'))) {
+            if ($modelUser->isAnotherUserLogin($this->request->getParameter('login'), $user["login"])) {
                 $script .= '<script language="javascript">';
                 $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
                 $script .= '</script>';

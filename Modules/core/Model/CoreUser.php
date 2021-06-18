@@ -591,6 +591,16 @@ class CoreUser extends Model {
         return false;
     }
 
+    public function isAnotherUserLogin($login, $actualUserLogin) {
+        $sql = "select * from core_users where login=? AND login <>?";
+        $user = $this->runRequest($sql, array($login, $actualUserLogin));
+        Configuration::getLogger()->debug("SQLRESPONSE", ["user" => $user]);
+        if ($user->rowCount() == 1) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Get the users information
      *

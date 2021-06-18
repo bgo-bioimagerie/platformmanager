@@ -30,6 +30,8 @@ class Form {
     private $labels;
     private $isMandatory;
     private $enabled;
+    #105 add $disabled
+    private $disabled;
     private $choices;
     private $choicesid;
     private $validated;
@@ -313,7 +315,9 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "") {
+    // #105: add disabled
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $disabled = "") {
+        Configuration::getLogger()->debug("DISABLED FORM.PHP addText", ["disabled" => $disabled]);
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -323,6 +327,7 @@ class Form {
         $this->choicesid[] = array();
         $this->validated[] = true;
         $this->enabled[] = $enabled;
+        $this->disabled[] = $disabled;
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
     }
@@ -607,7 +612,17 @@ class Form {
         $html .= $formHtml->id($this->id);
 
         // fields
+        $j = 0;
         for ($i = 0; $i < count($this->types); $i++) {
+            // ça fonctionne en soi, mais bricolage. Trouver une meilleure solution
+            if ($this->types[$i] === "text") {
+                $disabledElem = $this->disabled[$j];
+                $j++;
+                // Configuration::getLogger()->debug("DISABLED IN FORM.PHP getHtml", ["index" => $i, "disabled" => $disabledElem]);
+            }
+            
+            
+            
 
             $required = "";
             if ($this->isMandatory[$i]) {
@@ -631,7 +646,8 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
+                // #105: add disabled
+            $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $disabledElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
