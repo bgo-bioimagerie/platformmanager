@@ -125,7 +125,11 @@ abstract class Controller {
         foreach ($args as $key => $val) {
             $path .= "?" . $key . "=" . $val;
         }
-        header_remove();
+        if(!headers_sent($filename, $filenum)) {
+            header_remove();
+        } else {
+            Configuration::getLogger()->debug('headers already sent', ['file' => $filename, 'line' => $filenum]);
+        }
         header("Location:" . $rootWeb . $path);
     }
     

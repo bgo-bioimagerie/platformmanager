@@ -708,29 +708,10 @@ class Form {
     public function check() {
 
         $formID = $this->request->getParameterNoException("formid");
-        //echo "this id = " . $this->id . ", formID = " . $formID . "<br/>";
         if ($formID == $this->id) {
-            for ($i = 0; $i < count($this->types); $i++) {
-                /*
-                if ($this->types[$i] == "email") {
-                   
-                    if ($this->request->getParameter($this->names[$i]) == "") {
-                        return 1;
-                    }
-                    //echo "check email " . $this->request->getParameter($this->names[$i]) . " <br/>";
-
-                    if (!preg_match('#^[\w.-]+@[\w.-]+\.[a-z]{2,6}$#i', $this->request->getParameter($this->names[$i]))) {
-                        $this->validated[$i] = false;
-                        $this->errorMessage = "The email address is not valid";
-                        return 0;
-                    }
-                }
-                 */
-            }
-
             return 1;
         }
-
+        Configuration::getLogger()->error('[form=check] failed', ['form' => $this->id]);
         return 0;
     }
 
