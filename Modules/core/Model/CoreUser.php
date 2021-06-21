@@ -591,10 +591,20 @@ class CoreUser extends Model {
         return false;
     }
 
+    /**
+     * 
+     * Check if an existing user, excluding actual user, already has this login
+     * 
+     * @param string $login
+     *          the login on which we are looking for existing entries in database
+     * @param string $actualUserLogin
+     *          excluded login
+     * 
+     * @return bool
+     */
     public function isAnotherUserLogin($login, $actualUserLogin) {
         $sql = "select * from core_users where login=? AND login <>?";
         $user = $this->runRequest($sql, array($login, $actualUserLogin));
-        Configuration::getLogger()->debug("SQLRESPONSE", ["user" => $user]);
         if ($user->rowCount() == 1) {
             return true;
         }

@@ -143,9 +143,8 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    // #105: add $disabled
-    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $disabled = false) {
-        Configuration::getLogger()->debug("DISABLED IN TEXT", ["disabled" => $disabled]);
+    // #105: add readonly
+    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
@@ -156,9 +155,9 @@ class FormHtml {
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"text\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\" " . $required . " " . $enabled;
-        // #105: add $disabled
-        if ($disabled) {
-            $html .= " disabled";
+        // #105: add readonly
+        if ($readonly) {
+            $html .= " readonly";
         }
         $html .= "/>";
         $html .= "</div>";
