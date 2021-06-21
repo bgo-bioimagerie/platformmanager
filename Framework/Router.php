@@ -118,6 +118,7 @@ class Router {
     }
 
     protected function runAction($controller, $urlInfo, $action, $args) {
+        Configuration::getLogger()->debug("Router.php", ["args" => $args]);
         if ($urlInfo["pathInfo"]["isapi"]) {
             try {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
