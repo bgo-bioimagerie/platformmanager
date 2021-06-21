@@ -60,6 +60,7 @@ class CoreconnectionController extends CorecookiesecureController {
         $providers = [];
         if(!empty($openid_providers)) {
             foreach ($openid_providers as $openid_provider) {
+                $nonce = uniqid("pfm");
                 $provider = [
                     "name" => $openid_provider,
                     "url" => Configuration::get("openid_${openid_provider}_url"),
@@ -67,7 +68,8 @@ class CoreconnectionController extends CorecookiesecureController {
                     "login" => Configuration::get("openid_${openid_provider}_login"),
                     "client_id" => Configuration::get("openid_${openid_provider}_client_id"),
                     "client_secret" => Configuration::get("openid_${openid_provider}_client_secret"),
-                    "callback" => Configuration::get("public_url")."/ooc/$openid_provider/authorized"
+                    "callback" => Configuration::get("public_url")."/ooc/$openid_provider/authorized",
+                    "nonce" => $nonce,
                 ];
                 $providers[] = $provider;
             }

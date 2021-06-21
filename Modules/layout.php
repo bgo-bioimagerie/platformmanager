@@ -48,7 +48,7 @@ if($isdev) {
         <?php startblock('spacenavbar') ?>
         <?php endblock() ?>
         <div id="app">
-        <?php if ($flash) { ?>
+        <?php if (isset($flash) && $flash) { ?>
             <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
                 <?php echo $flash['msg']; ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">

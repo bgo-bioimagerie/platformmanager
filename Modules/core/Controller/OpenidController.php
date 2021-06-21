@@ -17,6 +17,106 @@ use GuzzleHttp\Client;
  */
 class OpenidController extends CorecookiesecureController {
 
+/**
+     * Check ORCID code for user authentication
+     */
+    private function google($code) {
+        Configuration::getLogger()->debug('[openid][google] check');
+        $client = new Client([
+            // Base URI is used with relative requests
+            'base_uri' => Configuration::get('openid_google_url'),
+            // You can set any number of default request options.
+            'timeout'  => 2.0,
+        ]);
+        $req = [
+            'client_id' =>  Configuration::get('openid_google_client_id'),
+            'client_secret' =>  Configuration::get('openid_google_client_secret'),
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'redirect_uri' => Configuration::get("public_url")."/ooc/google/authorized",
+        ];
+        $response = $client->request('POST',
+            '/token',
+            [
+                'headers' => ['Accept' => 'application/json'],
+                'form_params' => $req
+            ]
+        );
+        
+        $status = $response->getStatusCode();
+        if ($status != 200) {
+            Configuration::getLogger()->error('[oid][google] error', ['code' => $status, 'error' => $response->getMessage()]);
+            return null;
+        }
+        $body = $response->getBody();
+        $json = json_decode($body, true);
+        Configuration::getLogger()->debug('google auth answer', ['data' => $json]);
+        $token = $json['access_token'];
+
+        $client = new Client([
+            // Base URI is used with relative requests
+            'base_uri' => 'https://openidconnect.googleapis.com',
+            // You can set any number of default request options.
+            'timeout'  => 2.0,
+        ]);
+
+        $response = $client->request('GET',
+            '/v1/userinfo',
+            [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer '.$token
+                ],
+            ]
+        );
+
+        $status = $response->getStatusCode();
+        if ($status != 200) {
+            Configuration::getLogger()->error('[oid][google] error', ['code' => $status, 'error' => $response->getMessage()]);
+            return null;
+        }
+
+        $body = $response->getBody();
+        $json = json_decode($body, true);
+        Configuration::getLogger()->debug('google userinfo answer', ['data' => $json]);
+
+        $oid = $json['sub'];
+
+        $login = "";
+        // if authenticated add or update link
+        if( $_SESSION["redirect"] == "usersmyaccount") {
+            Configuration::getLogger()->debug('[oid][google] session', ['session' => $_SESSION]);
+            $login = $_SESSION['login'];
+            Configuration::getLogger()->debug('[oid][google] add oid link for user', ['oid' => $oid]);
+            $openidModel = new CoreOpenId();
+            $openidModel->add('google', $oid, $_SESSION['id_user']);
+        } else {
+            // Find login user
+            $openidModel = new CoreOpenId();
+            try {
+                $oidUser = $openidModel->getByOid('google', $oid);
+                $userModel = new CoreUser();
+                $relUser = $userModel->getInfo($oidUser['user']);
+                if($relUser) {
+                    $login = $relUser['login'];
+                }
+                Configuration::getLogger()->debug('[oid][google] load oid', ['oid' => $oidUser, 'user' => $relUser]);
+
+            } catch(Exception $e) {
+                Configuration::getLogger()->error('[oid][google] no link found', ['oid' => $oid]);
+            }
+        }
+
+        if($login != "") {
+            $user = $this->initSession($login);
+            Configuration::getLogger()->debug('[oid][google] open session for user', ['oid' => $oid, 'user' => $user, 'login' => $login]);
+            $this->request->getSession()->setAttribut("oid", $oid);
+            $login = $user['login'];
+        }
+        return $login;
+    }
+
+
     /**
      * Check ORCID code for user authentication
      */
@@ -101,8 +201,16 @@ class OpenidController extends CorecookiesecureController {
             $redirect = $_SESSION['redirect'];
         }
         $user = '';
-        if($provider == 'orcid') {
-            $user = $this->orcid($_GET['code']);
+        switch ($provider) {
+            case 'orcid':
+                $user = $this->orcid($_GET['code']);
+                break;
+            case 'google':
+                $user = $this->google($_GET['code']);
+                break;
+            default:
+                $_SESSION['message'] = "unknown provider";
+                break;
         }
         if($user == '') {
             $_SESSION['message'] = "$provider connection failed or no link set for this provider in your account settings";

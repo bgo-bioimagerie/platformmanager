@@ -172,6 +172,28 @@ class Configuration {
             self::$parameters['sentry_dsn'] = getenv('PFM_SENTRY_DSN');
         }
 
+        if(getenv('PFM_OPENID')) {
+            self::$parameters['openid'] = explode(',', getenv('PFM_OPENID'));
+        }
+        foreach (self::$parameters['openid'] as $openid) {
+            $envopenid = strtoupper($openid);
+            if(getenv("PFM_OPENID_".$envopenid."_URL")) {
+                self::$parameters['openid_'.$openid."_url"] = getenv("PFM_OPENID_".$envopenid."_URL");
+            }
+            if(getenv("PFM_OPENID_".$envopenid."_LOGIN")) {
+                self::$parameters['openid_'.$openid."_login"] = getenv("PFM_OPENID_".$envopenid."_LOGIN");
+            }
+            if(getenv("PFM_OPENID_".$envopenid."_ICON")) {
+                self::$parameters['openid_'.$openid."_icon"] = getenv("PFM_OPENID_".$envopenid."_ICON");
+            }
+            if(getenv("PFM_OPENID_".$envopenid."_CLIENT_ID")) {
+                self::$parameters['openid_'.$openid."_client_id"] = getenv("PFM_OPENID_".$envopenid."_CLIENT_ID");
+            }
+            if(getenv("PFM_OPENID_".$envopenid."_CLIENT_SECRET")) {
+                self::$parameters['openid_'.$openid."_client_secret"] = getenv("PFM_OPENID_".$envopenid."_CLIENT_SECRET");
+            }
+        }
+
     }
 
     /**

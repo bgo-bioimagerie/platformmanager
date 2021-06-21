@@ -65,6 +65,7 @@ class UseraccountController extends CoresecureController {
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
         if(!empty($openid_providers)) {
+            $nonce = uniqid("pfm");
             foreach ($openid_providers as $openid_provider) {
                 $provider = [
                     "name" => $openid_provider,
@@ -73,7 +74,8 @@ class UseraccountController extends CoresecureController {
                     "login" => Configuration::get("openid_${openid_provider}_login"),
                     "client_id" => Configuration::get("openid_${openid_provider}_client_id"),
                     "client_secret" => Configuration::get("openid_${openid_provider}_client_secret"),
-                    "callback" => Configuration::get("public_url")."/ooc/$openid_provider/authorized"
+                    "callback" => Configuration::get("public_url")."/ooc/$openid_provider/authorized",
+                    "nonce" => $nonce,
                 ];
                 $providers[] = $provider;
                 # list $providers
