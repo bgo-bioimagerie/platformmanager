@@ -75,7 +75,6 @@ class CoreaccountController extends Controller {
                     "login" => $form->getParameter("login"),
                     "pwd" => $pwd
                 ];
-                Configuration::getLogger()->debug("sending EMAIL", ["mailParams" => $mailParams]);
                 $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
                 $this->redirect("coreaccountcreated");
                 return;

@@ -101,7 +101,6 @@ abstract class CoresecureController extends CorecookiesecureController {
             //$connect = $modelUser->connect2($login, $pwd);
             //echo "connect = " . $connect . "</br>";
             if ($modelUser->isUser($login) && Configuration::get("name") == $company) {
-                Configuration::getLogger()->debug("CoresecureController", ["args" => $args]);
                 parent::runAction($module, $action, $args);
                 return;
             } else {

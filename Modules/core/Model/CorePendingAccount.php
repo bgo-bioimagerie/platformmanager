@@ -27,7 +27,6 @@ class CorePendingAccount extends Model {
     }
 
     public function invalidate($id, $validated_by){
-        Configuration::getLogger()->debug("INVALIDATE", ["validated" => $validated_by, "pendingId" => $id]);
         $sql = "UPDATE core_pending_accounts SET validated=?, date=?, validated_by=? WHERE id=?";
         $this->runRequest($sql, array(0, date('Y-m-d'), $validated_by, $id));
     }

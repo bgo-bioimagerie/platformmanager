@@ -55,7 +55,6 @@ abstract class Controller {
         if (method_exists($this, $actionName)) {
             $this->action = $action;
             //print_r($args);
-            Configuration::getLogger()->debug("Controller.php", ["args" => $args]);
             call_user_func_array(array($this, $actionName), $args);
             //$this->{$this->action}();
         } else {
