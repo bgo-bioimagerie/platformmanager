@@ -157,36 +157,36 @@ class CoretilesController extends CoresecureController {
      * @param int $id_space
      * @param bool $isMemberOfSpace
      */
-    public function selfJoinSpaceAction($space_id) {
+    public function selfJoinSpaceAction($id_space) {
         $modelSpaceUser = new CoreSpaceUser();
         $id_user = $_SESSION["id_user"];
-        $isMemberOfSpace = $modelSpaceUser->exists($id_user, $space_id);
+        $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
 
         if ($isMemberOfSpace) {
             // User is already member of space
             $modelSpaceUser = new CoreSpaceUser();
-            $modelSpaceUser->delete($id_user, $space_id);
+            $modelSpaceUser->delete($id_user, $id_space);
         } else {
             // User is not member of space
             $modelSpacePending = new CorePendingAccount();
-            $isPending = $modelSpacePending->isActuallyPending($id_user, $space_id);
+            $isPending = $modelSpacePending->isActuallyPending($id_user, $id_space);
 
             if (!$isPending) {
                 // User hasn't already an unanswered request to join
                 $spaceModel = new CoreSpace();
-                $spaceName = $spaceModel->getSpaceName($space_id);
+                $spaceName = $spaceModel->getSpaceName($id_space);
 
-                if ($modelSpacePending->exists($space_id, $id_user)) {
+                if ($modelSpacePending->exists($id_space, $id_user)) {
                     // This user is already associated to this space in database
-                    $pendingId = $modelSpacePending->getBySpaceIdAndUserId($space_id, $id_user)["id"];
+                    $pendingId = $modelSpacePending->getBySpaceIdAndUserId($id_space, $id_user)["id"];
                     $modelSpacePending->invalidate($pendingId, NULL);
                 } else {
                     // This user is not associated to this space in database
-                    $modelSpacePending->add($id_user, $space_id);
+                    $modelSpacePending->add($id_user, $id_space);
                 }
 
                 $mailParams = [
-                    "id_space" => $space_id,
+                    "id_space" => $id_space,
                     "space_name" => $spaceName
                 ];
                 $email = new Email();
