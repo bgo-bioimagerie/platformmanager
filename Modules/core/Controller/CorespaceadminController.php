@@ -75,11 +75,11 @@ class CorespaceadminController extends CoresecureController {
         $form = new Form($this->request, "corespaceadminedit");
         $form->setTitle(CoreTranslator::Edit_space($lang));
         
-        $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
-        $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
-        $form->addColor("color", CoreTranslator::color($lang), false, $space["color"]);
-        $form->addUpload("image", CoreTranslator::Image($lang), $space["image"]);
-        $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
+        $form->addText("name", CoreTranslator::Name($lang), true, $space["name"] ?? "");
+        $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"] ?? 0);
+        $form->addColor("color", CoreTranslator::color($lang), false, $space["color"] ?? "");
+        $form->addUpload("image", CoreTranslator::Image($lang), $space["image"] ?? null);
+        $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"] ?? "");
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"] ?? "");
         $form->addText("support", CoreTranslator::Support($lang), false, $space["support"] ?? "");
         
@@ -99,7 +99,6 @@ class CorespaceadminController extends CoresecureController {
         $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
         $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
-        
         if ($form->check()){ 
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
@@ -111,7 +110,7 @@ class CorespaceadminController extends CoresecureController {
             // set base informations
             if($isSuperAdmin) {
                 // Only super admin can create
-                Configuration::getLogger()->debug('[admin][space] edit space', ["space" => $id, "name" => $space['name']]);
+                Configuration::getLogger()->debug('[admin][space] edit space', ["space" => $id, "name" => $this->request->getParameter("name")]);
                 $id = $modelSpace->setSpace($id, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
@@ -136,7 +135,7 @@ class CorespaceadminController extends CoresecureController {
             
             // upload image
             $target_dir = "data/core/menu/";
-            if ($_FILES["image"]["name"] != "") {
+            if ($_FILES && $_FILES["image"]["name"] != "") {
                 $ext = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
 
                 $url = $id . "." . $ext;

@@ -40,8 +40,8 @@
         <?php
         foreach ($providers as $provider) {
         ?>
-            <a href="<?php echo $provider['login']; ?>?client_id=<?php echo $provider['client_id']; ?>&response_type=code&scope=openid&redirect_uri=<?php echo $provider['callback']; ?>">
-                <button type="button" class="btn btn-primary"><?php echo $provider['name']; ?></button>
+            <a href="<?php echo $provider['login']; ?>?client_id=<?php echo $provider['client_id']; ?>&response_type=code&scope=openid&redirect_uri=<?php echo $provider['callback']; ?>&nonce=<?php echo $provider['nonce']; ?>">
+                <button type="button" class="btn btn-primary"><?php if ($provider['icon']){echo '<img style="width:200px" src="'.$provider['icon'].'"/>';} else{echo $provider['name'];} ?></button>
             </a>
         <?php
         }
