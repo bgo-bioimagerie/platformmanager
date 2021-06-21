@@ -614,6 +614,7 @@ class Form {
         $textFieldsIndex = 0;
         for ($i = 0; $i < count($this->types); $i++) {
             // #105: add readonly
+            $readonlyElem = "";
             if ($this->types[$i] === "text") {
                 $readonlyElem = $this->readonly[$textFieldsIndex];
                 $textFieldsIndex++;

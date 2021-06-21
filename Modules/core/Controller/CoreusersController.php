@@ -119,7 +119,7 @@ class CoreusersController extends CoresecureController {
         }
         $script = "";
         if ($form->check()) {
-            if ($modelUser->isAnotherUserLogin($this->request->getParameter('login'), $user["login"])) {
+            if ($id == 0 && $modelUser->isLogin($this->request->getParameter('login'))) {
                 $script .= '<script language="javascript">';
                 $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
                 $script .= '</script>';
