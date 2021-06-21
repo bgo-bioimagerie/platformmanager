@@ -3,9 +3,9 @@
 require_once 'Framework/Model.php';
 
 /**
- * case validated=0 and validated_by IS NULL => request is pending 
- * case validated=0 and validated_by NOT NULL => space admin has rejected the join request
- * case validated=1 and validated_by NOT NULL => space admin has accepted the join request
+ * case validated=0 and validated_by=0 => request is pending 
+ * case validated=0 and validated_by>0 => space admin has rejected the join request
+ * case validated=1 and validated_by>0 => space admin has accepted the join request
  * 
  */
 class CorePendingAccount extends Model {
@@ -27,7 +27,6 @@ class CorePendingAccount extends Model {
     }
 
     public function invalidate($id, $validated_by){
-        Configuration::getLogger()->debug("INVALIDATE", ["validated" => $validated_by, "pendingId" => $id]);
         $sql = "UPDATE core_pending_accounts SET validated=?, date=?, validated_by=? WHERE id=?";
         $this->runRequest($sql, array(0, date('Y-m-d'), $validated_by, $id));
     }
@@ -65,7 +64,7 @@ class CorePendingAccount extends Model {
      * @return bool
      */
     public function isActuallyPending($id_space, $id_user){
-        $sql = "SELECT id FROM core_pending_accounts WHERE id_user=? AND id_space=? AND validated=0 AND validated_by IS NULL";
+        $sql = "SELECT id FROM core_pending_accounts WHERE id_user=? AND id_space=? AND validated=0 AND validated_by=0";
         $req = $this->runRequest($sql, array($id_user, $id_space));
         if ($req->rowCount() > 0){
             return true;
@@ -74,12 +73,12 @@ class CorePendingAccount extends Model {
     }
  
     public function getPendingForSpace($id_space){
-        $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND validated=0 AND validated_by IS NULL";
+        $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND validated=0 AND validated_by=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
     public function getSpaceIdsForPending($id_user){
-        $sql = "SELECT id_space FROM core_pending_accounts WHERE id_user=? AND validated=0 AND validated_by IS NULL";
+        $sql = "SELECT id_space FROM core_pending_accounts WHERE id_user=? AND validated=0 AND validated_by=0";
         return $this->runRequest($sql, array($id_user))->fetchAll();
     }
 

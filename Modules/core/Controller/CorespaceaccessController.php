@@ -350,16 +350,17 @@ class CorespaceaccessController extends CoresecureController {
      * (sets validate=0 && validated_by=<logged user id> in core_pending_accounts)
      * 
      * @param int $id_space
-     * @param int $id_pendingAccount
+     * @param int $id pending account id
      */
-    public function pendinguserdeleteAction($id_space, $id_pendingAccount) {
+    public function pendinguserdeleteAction($id_space, $id) {
+        Configuration::getLogger()->debug("in pendinguserdeleteAction", ["id_space" => $id_space, "id_pending" => $id]);
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelPending = new CorePendingAccount();
-        $modelPending->invalidate($id_pendingAccount, $_SESSION["id_user"]);
+        $modelPending->invalidate($id, $_SESSION["id_user"]);
         $modelSpace = new CoreSpace();
         $mailParams = [
             "id_space" => $id_space,
-            "id_user" => $modelPending->get($id_pendingAccount)["id_user"],
+            "id_user" => $modelPending->get($id)["id_user"],
             "space_name" => $modelSpace->getSpaceName($id_space),
         ];
         $email = new Email();
