@@ -175,6 +175,8 @@ class BkAuthorization extends Model {
 
     /**
      * Export authorization minimal sttistics
+     * @deprecated
+     * 
      * @param date $searchDate_start
      * @param date $searchDate_end
      * @param number $user_id
