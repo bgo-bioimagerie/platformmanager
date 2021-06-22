@@ -32,7 +32,7 @@ class CoreRouting extends Routing{
         $this->addRoute("coretiles", "coretiles", "coretiles", "index", array("level", "id"), array("", ""));
         $this->addRoute("coretilesdoc", "coretilesdoc", "coretiles", "doc");
         // multi-tenant feature: route for adding a user to space pending users
-        $this->addRoute("coretilesselfjoinspace", "coretilesselfjoinspace", "coretiles", "selfjoinspace", array("space_id"), array(""));
+        $this->addRoute("coretilesselfjoinspace", "coretilesselfjoinspace", "coretiles", "selfjoinspace", array("id_space"), array(""));
         
         
         // Update
@@ -63,7 +63,7 @@ class CoreRouting extends Routing{
         $this->addRoute("corespaceaccessuseradd", "corespaceaccessuseradd", "corespaceaccess", "useradd", array("id_space"), array(""));
         $this->addRoute("spaceconfigdeleteuser", "spaceconfigdeleteuser", "corespace", "configdeleteuser", array("id_space", "id_user"), array("", ""));
         // multi-tenant feature: route for rejecting user requesting to join space
-        $this->addRoute("corespacependinguserdelete", "corespacependinguserdelete", "corespaceaccess", "pendinguserdelete", array("space_id", "id"), array("", ""));
+        $this->addRoute("corespacependinguserdelete", "corespacependinguserdelete", "corespaceaccess", "pendinguserdelete", array("id_space", "id"), array("", ""));
         $this->addRoute("corespaceuserdelete", "corespaceuserdelete", "corespaceaccess", "userdelete", array("id_space", "id_user"), array("", ""));
         
         
