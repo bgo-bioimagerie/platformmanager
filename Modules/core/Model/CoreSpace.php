@@ -87,6 +87,7 @@ class CoreSpace extends Model {
         return [
             "id" => 0,
             "name" => "",
+            "shortname" => "",
             "contact" => "",
             "status" => 0,
             "color" => "",
