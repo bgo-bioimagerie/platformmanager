@@ -14,6 +14,7 @@ require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
 require_once 'Modules/core/Model/CoreMainSubMenu.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 
 class CoreTest extends TestCase
@@ -137,7 +138,37 @@ class CoreTest extends TestCase
             }
         }
         $this->assertTrue($userId > 0);
-        self::$allUsers[] = ["name" => "user1", "id" => $userId, "role" => "user"];
+        self::$allUsers[] = ["name" => "user1", "id" => intval($userId), "role" => -1];
+
+        $sm = new CoreSpace();
+        $role = $sm->getUserSpaceRole($space['id'], $userId);
+        $this->assertEquals(-1, $role);
+        $pm = new CorePendingAccount();
+        $this->assertTrue($pm->isActuallyPending($space['id'], $userId));
+    }
+
+    public function testActivatePendingUserAsUser() {
+        $this->asAdmin();
+
+        $space = self::$allSpaces[0];
+        $user = self::$allUsers[0];
+        $pm = new CorePendingAccount();
+        $pendings = $pm->getBySpaceIdAndUserId($space['id'], $user['id']);
+
+        $req = new Request([
+            "path" => "corespacependinguseredit/".$space['id']."/".$pendings['id'],
+            "formid" => "pendingusereditactionform",
+            "role" => 2
+        ], true);
+
+
+        $c = new CorespaceaccessController($req);
+        $c->pendingusereditAction($space['id'], $pendings['id']);
+        $sm = new CoreSpace();
+        $role = $sm->getUserSpaceRole($space['id'], $user['id']);
+        $this->assertEquals(2, $role);
+        $pm = new CorePendingAccount();
+        $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
     }
 }
 

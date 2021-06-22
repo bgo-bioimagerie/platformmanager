@@ -297,6 +297,12 @@ class CorespaceaccessController extends CoresecureController {
         ));
     }
 
+    /**
+     * Activate a user with a role in space
+     * 
+     * @param int $id_space id of the space
+     * @param int $id id of core_pending_accounts
+     */
     public function pendingusereditAction($id_space, $id) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
