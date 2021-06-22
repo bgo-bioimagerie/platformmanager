@@ -42,9 +42,9 @@ if($isdev) {
 
     </head>
     <body style="background-color: #e7ecf0;">
+
         <?php startblock('navbar') ?>
         <?php endblock() ?>
-
         <?php startblock('spacenavbar') ?>
         <?php endblock() ?>
         <div id="app">

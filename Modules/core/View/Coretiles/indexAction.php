@@ -65,7 +65,7 @@ if (!$headless) {
                         <li style="background-color:<?php echo $color ?>">
                             <a href="<?php echo $key ?>">
 
-                                <img src="<?php echo $icon ?>" alt="logo" style="margin-top: -10px;width:100px;height:75px">
+                                <?php if(isset($icon)) {?><img src="<?php echo $icon ?>" alt="logo" style="margin-top: -10px;width:100px;height:75px"><?php } ?>
                                 <span class="glyphicon-class"><?php echo $value ?></span>
                             </a>
                         </li>
@@ -76,7 +76,7 @@ if (!$headless) {
                         <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
                             <!-- IMAGE -->
                             <a href="<?php echo "corespace/" . $item["id"] ?>">
-                                <img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px">
+                            <?php if(isset($icon)) {?><img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
                             </a>
                             <p>
                             </p>

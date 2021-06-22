@@ -5,8 +5,8 @@ $margin = "";
 if ($menuUrl != ""){
     $margin = "style=\"margin-top: 50px;\"";
 }
+
 ?>
-    
 <!-- Fixed navbar -->
 <nav class="navbar navbar-inverse navbar-fixed-top" <?php echo $margin ?> role="navigation" style="z-index: 999;">
 	<div class="container">
@@ -18,16 +18,31 @@ if ($menuUrl != ""){
 				<span class="icon-bar"></span>
 			</button>
 		</div>
-		<div id="navbar" class="navbar-collapse collapse">
+		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
 				<li><a href="coretiles"><span class="glyphicon glyphicon-th"></span></a></li>
-                            <?php 
+                            <?php
+							if(count($toolMenu) > 5) {
+							?>
+								<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo  CoreTranslator::Menus($lang) ?> <span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+								  <?php 
+									foreach ($toolMenu as $tool) {
+										echo '<li><a href="coretiles/1/'.$tool["id"].'" > '.$tool["name"].'</a></li>';
+									}
+								  ?>
+								</ul>
+							</li>
+							<?php
+							} else {
                             for($i = 0 ; $i < count($toolMenu) ; $i++){
                                 ?>
 				<li>
                                     <a href="coretiles/1/<?php echo $toolMenu[$i]["id"] ?>" > <?php echo $toolMenu[$i]["name"] ?></a>
 				</li>
                                 <?php
+							}
                             }
                             ?>
 				
