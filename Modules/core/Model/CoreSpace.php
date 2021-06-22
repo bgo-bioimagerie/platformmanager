@@ -79,6 +79,22 @@ class CoreSpace extends Model {
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
     }
+
+    /**
+     * Get an empty space
+     */
+    public static function new() {
+        return [
+            "id" => 0,
+            "name" => "",
+            "contact" => "",
+            "status" => 0,
+            "color" => "",
+            "support" => "",
+            "description" => "",
+            "admins" => []
+        ];
+    }
     
     public function getForList(){
         $sql = "SELECT * FROM core_spaces ORDER BY name ASC";

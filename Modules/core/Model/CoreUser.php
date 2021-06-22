@@ -318,6 +318,26 @@ class CoreUser extends Model {
         return $this->runRequest($sql, array($id))->fetch();
     }
 
+    /**
+     * Get an empty user
+     * 
+     * Dup of getEmpty, keep getEmpty for compatibility
+     */
+    public static function new() {
+        return array("id" => 0,
+        "login" => "",
+        "pwd" => "",
+        "name" => "",
+        "firstname" => "",
+        "email" => "",
+        "status_id" => 0,
+        "source" => "local",
+        "is_active" => 1,
+        "date_last_login" => "",
+        "date_end_contract" => "",
+        "date_created" => "");
+    }
+
     public function getEmpty() {
         return array("id" => 0,
             "login" => "",

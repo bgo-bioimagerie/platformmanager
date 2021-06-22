@@ -4,7 +4,7 @@ require_once 'Framework/Routing.php';
 
 class TemplateRouting extends Routing{
     
-    public function listRouts(){
+    public function listRoutes(){
         
         // config
         $this->addRoute("templateconfig", "templateconfig", "templateconfig", "index", array("id_space"), array(""));

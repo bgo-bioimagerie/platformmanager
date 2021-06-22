@@ -67,21 +67,23 @@ class CorespaceadminController extends CoresecureController {
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id);
+        if(!$space) {
+            $space = CoreSpace::new();
+        }
+
         $spaceAdmins = $modelSpace->spaceAdmins($id);
-        
-        //print_r($space);
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "corespaceadminedit");
         $form->setTitle(CoreTranslator::Edit_space($lang));
         
-        $form->addText("name", CoreTranslator::Name($lang), true, $space["name"] ?? "");
-        $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"] ?? 0);
-        $form->addColor("color", CoreTranslator::color($lang), false, $space["color"] ?? "");
+        $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
+        $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
+        $form->addColor("color", CoreTranslator::color($lang), false, $space["color"]);
         $form->addUpload("image", CoreTranslator::Image($lang), $space["image"] ?? null);
-        $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"] ?? "");
-        $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"] ?? "");
-        $form->addText("support", CoreTranslator::Support($lang), false, $space["support"] ?? "");
+        $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
+        $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
+        $form->addText("support", CoreTranslator::Support($lang), false, $space["support"]);
         
         
         $modelUser = new CoreUser();
