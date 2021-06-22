@@ -209,6 +209,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -227,6 +228,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -245,6 +247,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -265,6 +268,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -286,7 +290,7 @@ class Form {
         $this->setValue($name, $value);
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
-        
+        $this->readonly[] = false;
     }
 
     /**
@@ -306,6 +310,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->setValue($name, $url);
+        $this->readonly[] = false;
     }
 
     /**
@@ -326,9 +331,9 @@ class Form {
         $this->choicesid[] = array();
         $this->validated[] = true;
         $this->enabled[] = $enabled;
-        $this->readonly[] = $readonly;
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = $readonly;
     }
 
     /**
@@ -349,6 +354,7 @@ class Form {
         $this->enabled[] = true;
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -371,6 +377,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
@@ -386,6 +393,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
@@ -401,6 +409,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -422,6 +431,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -443,6 +453,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -464,6 +475,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -486,6 +498,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = $submitOnChange;
+        $this->readonly[] = false;
     }
     
         /**
@@ -508,6 +521,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = $submitOnChange;
+        $this->readonly[] = false;
     }
     
 
@@ -531,6 +545,7 @@ class Form {
         $this->isTextArea = $userichtxt;
         $this->useJavascript[] = $userichtxt;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -551,6 +566,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -572,6 +588,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->isFormAdd = true;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -611,14 +628,14 @@ class Form {
         $html .= $formHtml->id($this->id);
 
         // fields
-        $textFieldsIndex = 0;
         for ($i = 0; $i < count($this->types); $i++) {
+
             // #105: add readonly
-            $readonlyElem = "";
-            if ($this->types[$i] === "text") {
-                $readonlyElem = $this->readonly[$textFieldsIndex];
-                $textFieldsIndex++;
-            }       
+            $readonlyElem = false;
+            if ($this->readonly[$i]) {
+                $readonlyElem = true;
+            }
+            
             $required = "";
             if ($this->isMandatory[$i]) {
                 $required = "required";
