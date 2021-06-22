@@ -3,12 +3,23 @@ use PHPUnit\Framework\TestCase;
 require './vendor/autoload.php';
 require_once 'Modules/core/Controller/CoreconnectionController.php';
 require_once 'Framework/Request.php';
-require_once 'Modules/core/Model/CoreInstall.php';
+require_once 'Framework/Configuration.php';
+
 require_once 'Modules/core/Controller/CorespaceadminController.php';
+require_once 'Modules/core/Controller/CorespaceaccessController.php';
+require_once 'Modules/core/Controller/CoremainmenuController.php';
+
+require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreInstall.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreMainSubMenu.php';
+require_once 'Modules/core/Model/CoreMainMenuItem.php';
+
 
 class CoreTest extends TestCase
 {
     private static $allSpaces = [];
+    private static $allUsers = [];
 
     private function asAdmin($id_space=0) {
         $_SESSION['id_user'] = 1;
@@ -50,8 +61,83 @@ class CoreTest extends TestCase
             }
         }
         $this->assertTrue($spaceId > 0);
-        self::$allSpaces['test1'] = $spaceId;
+        self::$allSpaces[] = ["name" => $spaceName, "id" => $spaceId];
+    }
 
+    public function testCreateMenus() {
+        $this->asAdmin();
+
+        $menuName = uniqid();
+        $req = new Request([
+            "path" => "coremainmenuedit/0",
+            "formid" => "editmainmenuform",
+            "name" => $menuName,
+            "display_order" => 0
+        ], true);
+        $c = new CoremainmenuController($req);
+        $c->editAction(0);
+
+        $menuModel = new CoreMainMenu();
+        $menus = $menuModel->getAll();
+
+        $subMenuName = uniqid();
+        $req = new Request([
+            "path" => "coresubmenuedit/0",
+            "formid" => "editmainsubmenuform",
+            "name" => $subMenuName,
+            "id_main_menu" => $menus[0]['id'],
+            "display_order" => 0
+        ], true);
+        $c = new CoremainmenuController($req);
+        $c->submenueditAction(0);
+
+        $subMenuModel = new CoreMainSubMenu();
+        $subMenus = $subMenuModel->getAll();
+
+        foreach (self::$allSpaces as $space) {
+            $itemMenuName = uniqid();
+            $req = new Request([
+                "path" => "coremainmenuitemedit/0",
+                "formid" => "editmenuitemform",
+                "name" => $itemMenuName,
+                "id_sub_menu" => $subMenus[0]['id'],
+                "id_space" => $space['id'],
+                "display_order" => 0
+            ], true);
+            $c = new CoremainmenuController($req);
+            $c->itemeditAction(0);
+        }
+        $itemMenuModel = new CoreMainMenuItem();
+        $itemMenus = $itemMenuModel->getAll();
+        $this->assertFalse(empty($itemMenus));
+    }
+
+    public function testCreateUser() {
+        $space = self::$allSpaces[0];
+        $userName = uniqid();
+        $this->asAdmin();
+        $req = new Request([
+            "path" => "corespaceaccessuseradd/".$space['id'],
+            "formid" => "createuseraccountform",
+            "name" => $userName,
+            "firstname" => $userName,
+            "login" =>  $userName,
+            "email" => "",
+            "phone" => ""
+        ], true);
+        $c = new CorespaceaccessController($req);
+        $c->useraddAction($space['id']);
+        $userId = 0;
+        $m = new CoreUser();
+        $users = $m->getAll();
+        $userId = 0;
+        foreach($users as $user){
+            if ($user['name'] == $userName) {
+                $userId = $user['id'];
+            }
+        }
+        $this->assertTrue($userId > 0);
+        self::$allUsers[] = ["name" => "user1", "id" => $userId, "role" => "user"];
     }
 }
 
