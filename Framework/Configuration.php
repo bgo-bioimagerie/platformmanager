@@ -55,7 +55,6 @@ class Configuration {
      */
     public static function get($name, $defaultValue = null) {
         $parameters = self::getParameters();
-        //print_r($parameters);
         if (isset($parameters[$name])) {
             $value = $parameters[$name];
         } else {
