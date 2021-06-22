@@ -135,7 +135,7 @@ class CoreLdap {
             }
             // Si echec, essayer de deviner le DN, dans le cas où il n'y a pas de filtre supplémentaires
             reset($atts);
-            if (!isset($ldap_filter) or ( $ldap_filter = "")) {
+            if (!isset($ldap_filter) || ( $ldap_filter = "")) {
                 foreach ($atts as $att) {
                 //while (list (, $att ) = each($atts)) {
                     $dn = $att . "=" . $login_search . "," . $ldap_base;
@@ -265,7 +265,7 @@ class CoreLdap {
         if ($res) {
 
             $info = @ldap_get_entries($ds, $res);
-            if ((!is_array($info)) or ( $info ['count'] == 0)) {
+            if ((!is_array($info)) || ( $info ['count'] == 0)) {
                 // Mode diagnostic
                 if ($diagnostic != "no")
                     return "error_2";
@@ -316,15 +316,6 @@ class CoreLdap {
         else{
             $use_tls = false;
         }
-        
-        /*
-        if($use_tls){
-            echo "use tls = true";
-        }
-        else{
-            echo "use tls = false";
-        }
-         */
 
         // Lire les infos sur l'utilisateur depuis LDAP
         // Connexion à l'annuaire
@@ -348,6 +339,7 @@ class CoreLdap {
         }
 
         if (!$result) {
+            Configuration::getLogger()->debug('[ldap][get user info] failed to read ldap fields');
             return "error";
         }
         // Recuperer les donnees de l'utilisateur
