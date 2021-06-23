@@ -344,11 +344,11 @@ class UsersPatch extends Model {
             // get id_space
             $sql = "SELECT id_space FROM re_info WHERE id=?";
             $id_space = $this->runRequest($sql, array($price["id_resource"]))->fetch();
-
-            $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
-
-            $sql2 = "UPDATE bk_prices SET id_belonging=? WHERE id=?";
-            $this->runRequest($sql2, array($newBelID, $price["id"]));
+            if($id_space) {
+                $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
+                $sql2 = "UPDATE bk_prices SET id_belonging=? WHERE id=?";
+		$this->runRequest($sql2, array($newBelID, $price["id"]));
+            }
         }
 
         // change se_prices belongings
