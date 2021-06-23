@@ -287,6 +287,15 @@ class Router {
             \Sentry\captureException($exception);
         }
 
+        $errCode = 500;
+        if($exception instanceof PfmException) {
+            $errCode = $exception->getCode();
+            if($errCode == 0) {
+                $errCode = 500;
+            }
+        }
+        http_response_code($errCode);
+
         $view = new View('error');
         $view->setFile('Modules/error.php');
         $view->generate(array(

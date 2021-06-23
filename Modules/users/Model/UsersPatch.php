@@ -234,7 +234,8 @@ class UsersPatch extends Model {
 
         // booking
         $sql = "SELECT * FROM bk_calendar_entry";
-        $reservations = $this->runRequest($sql)->fetchAll();
+        //$reservations = $this->runRequest($sql)->fetchAll();
+        $reservations = $this->runRequest($sql);
         foreach ($reservations as $res) {
             $resp_name = $modelUser->getUserFUllName($res["responsible_id"]);
             $resource = $modelResource->get($res["resource_id"]);

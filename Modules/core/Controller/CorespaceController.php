@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Configuration.php';
+
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
@@ -26,7 +28,7 @@ class CorespaceController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
         $this->spaceModel = new CoreSpace ();
     }
@@ -88,8 +90,6 @@ class CorespaceController extends CoresecureController {
       
             
         } else {
-
-            
             $showAdmMenu = false;
             if ($_SESSION['user_status'] > CoreStatus::$USER) {
                 $spaceMenuItems = $this->spaceModel->getSpaceMenus($space["id"], CoreSpace::$ADMIN);
@@ -104,17 +104,23 @@ class CorespaceController extends CoresecureController {
             $configModel = new CoreConfig();
             for ($i = 0; $i < count($spaceMenuItems); $i++) {
                 $item = $spaceMenuItems[$i];
-                $classTranslator = ucfirst($item["module"]) . "Translator";
-                $TranslatorFile = "Modules/" . $item["module"] . "/Model/" . $classTranslator . ".php";
-                require_once $TranslatorFile;
-                $translator = new $classTranslator();
                 $url = $item["url"];
                 $donfigTitle = $configModel->getParamSpace($url . "menuname", $id_space);
-                if ($donfigTitle != "") {
-                    $name = $donfigTitle;
-                } else {
-                    $name = $translator->$url($lang);
+
+                $name = $donfigTitle;
+                if ($donfigTitle == "") {
+                    try {
+                        $classTranslator = ucfirst($item["module"]) . "Translator";
+                        $TranslatorFile = "Modules/" . $item["module"] . "/Model/" . $classTranslator . ".php";
+                        require_once $TranslatorFile;
+                        $translator = new $classTranslator();
+                        $name = $translator->$url($lang);
+                    } catch (Throwable $e) {
+                        Configuration::getLogger()->error('[import] error', ['file' => $TranslatorFile]);
+                    }
                 }
+
+
                 $spaceMenuItems[$i]['name'] = $name;
 
                 $menuColor = $item["color"];
@@ -347,17 +353,22 @@ class CorespaceController extends CoresecureController {
             //print_r($item);
 
             if (!$this->useCustomDaskBoard) {
-                $classTranslator = ucfirst($item["module"]) . "Translator";
-                $TranslatorFile = "Modules/" . $item["module"] . "/Model/" . $classTranslator . ".php";
-                require_once $TranslatorFile;
-                $translator = new $classTranslator();
                 $url = $item["url"];
                 $donfigTitle = $configModel->getParamSpace($url . "menuname", $id_space);
-                if ($donfigTitle != "") {
-                    $name = $donfigTitle;
-                } else {
-                    $name = $translator->$url($lang);
+
+                $name = $donfigTitle;
+                if ($donfigTitle == "") {
+                    try {
+                        $classTranslator = ucfirst($item["module"]) . "Translator";
+                        $TranslatorFile = "Modules/" . $item["module"] . "/Model/" . $classTranslator . ".php";
+                        require_once $TranslatorFile;
+                        $translator = new $classTranslator();
+                        $name = $translator->$url($lang);
+                    } catch (Throwable $e) {
+                            Configuration::getLogger()->error('[import] error', ['file' => $TranslatorFile]);
+                    }
                 }
+
                 $url = $item["url"] . '/' . $space["id"];
             } else {
                 $name = $item["name"];

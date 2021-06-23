@@ -3,14 +3,17 @@
 /**
  * Pfm exceptions
  */
-class PfmRoutingException extends Exception {
+class PfmException extends Exception {
 }
 
-class PfmDbException extends Exception {
+class PfmRoutingException extends PfmException {
 }
 
-class PfmAuthException extends Exception {
+class PfmDbException extends PfmException {
 }
 
-class PfmFileException extends Exception {
+class PfmAuthException extends PfmException {
+}
+
+class PfmFileException extends PfmException {
 }

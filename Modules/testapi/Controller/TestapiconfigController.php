@@ -21,7 +21,7 @@ class TestapiconfigController extends CoresecureController {
         parent::__construct($request);
         
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
     }
     

@@ -27,7 +27,7 @@ class DatabaseconfigController extends CoresecureController {
         parent::__construct();
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
     }
 

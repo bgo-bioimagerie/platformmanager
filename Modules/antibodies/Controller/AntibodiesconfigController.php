@@ -23,7 +23,7 @@ class AntibodiesconfigController extends CoresecureController {
         $_SESSION["openedNav"] = "antibodies";
         
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
     }
     

@@ -25,7 +25,7 @@ class CoremenusController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
     }
 

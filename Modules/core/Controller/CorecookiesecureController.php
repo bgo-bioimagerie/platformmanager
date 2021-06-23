@@ -103,7 +103,7 @@ abstract class CorecookiesecureController extends Controller {
     public function checkAuthorization($minimumStatus) {
         $auth = $this->isUserAuthorized($minimumStatus);
         if ($auth == 0) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
         if ($auth == -1) {
             $this->redirect("coreconnection");
@@ -130,7 +130,7 @@ abstract class CorecookiesecureController extends Controller {
     public function checkAuthorizationMenu($menuName) {
         $auth = $this->isUserMenuAuthorized($menuName);
         if ($auth == 0) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
         if ($auth == -1) {
             $this->redirect("coreconnection");
@@ -148,7 +148,7 @@ abstract class CorecookiesecureController extends Controller {
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
     }
 
@@ -228,7 +228,7 @@ abstract class CorecookiesecureController extends Controller {
         $modelSpace = new CoreSpace();
         $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
         if ($spaceRole < 4) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
     }
 

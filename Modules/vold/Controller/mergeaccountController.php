@@ -43,7 +43,7 @@ class mergeaccountController extends CoresecureController {
         parent::__construct($request);
         
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
     }
     
@@ -51,7 +51,7 @@ class mergeaccountController extends CoresecureController {
         
         // secure
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new Exception("Error 403: Permission denied");
         }
         
         $modelUser = new CoreUser();
