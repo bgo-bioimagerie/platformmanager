@@ -156,6 +156,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM core_belongings";
         $result = $pdo_old->query($sql);
         $bel_old = $result->fetchAll();
+        if($bel_old == null) {
+            return array();
+        }
 
         $model = new EcBelonging();
         $unitMap = array();
@@ -177,6 +180,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM core_units";
         $result = $pdo_old->query($sql);
         $units_old = $result->fetchAll();
+        if($units_old == null) {
+            return array();
+        }
 
         $modelUnit = new EcUnit();
         $unitMap = array();
@@ -211,6 +217,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM core_users";
         $result = $pdo_old->query($sql);
         $users_old = $result->fetchAll();
+        if($users_old ==null) {
+            return array();
+        }
 
         $modelSpace = new CoreSpace();
         $modelCoreUser = new CoreUser();
@@ -273,6 +282,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_areas";
         $result = $pdo_old->query($sql);
         $areas_old = $result->fetchAll();
+        if($areas_old ==null) {
+            return array();
+        }
 
         $modelArea = new ReArea();
         $areasMap = array();
@@ -287,6 +299,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_resourcescategory";
         $result = $pdo_old->query($sql);
         $resCat_old = $result->fetchAll();
+        if($resCat_old ==null) {
+            return array();
+        }
 
         $modelResCat = new ReCategory();
         $catMap = array();
@@ -302,6 +317,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_resources";
         $result = $pdo_old->query($sql);
         $resources_old = $result->fetchAll();
+        if($resources_old ==null) {
+            return array();
+        }
 
         $modelResources = new ResourceInfo();
         $resourcesMap = array();
@@ -336,6 +354,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_visas";
         $result = $pdo_old->query($sql);
         $visas_old = $result->fetchAll();
+        if($visas_old ==null) {
+            return array();
+        }
 
         $modelVisas = new ReVisa();
         $visasMap = array();
@@ -356,6 +377,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_resources";
         $result = $pdo_old->query($sql);
         $res_old = $result->fetchAll();
+        if($res_old ==null) {
+            return;
+        }
 
         $modelAccess = new BkAccess();
         foreach ($res_old as $d) {
@@ -372,6 +396,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_authorization";
         $result = $pdo_old->query($sql);
         $auth_old = $result->fetchAll();
+        if($auth_old ==null) {
+            return;
+        }
 
         $modelAuth = new BkAuthorization();
         foreach ($auth_old as $d) {
@@ -402,6 +429,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_booking_settings";
         $result = $pdo_old->query($sql);
         $bookingsettings_old = $result->fetchAll();
+        if($bookingsettings_old ==null) {
+            return;
+        }
 
         $modelBkS = new BkBookingSettings();
         foreach ($bookingsettings_old as $d) {
@@ -413,6 +443,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_bookingcss";
         $result = $pdo_old->query($sql);
         $bookingCSS_old = $result->fetchAll();
+        if($bookingCSS_old ==null) {
+            return;
+        }
 
         $model = new BkBookingTableCSS();
         foreach ($bookingCSS_old as $d) {
@@ -426,6 +459,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_resources_calendar";
         $result = $pdo_old->query($sql);
         $res_old = $result->fetchAll();
+        if($res_old ==null) {
+            return;
+        }
 
         $model = new BkCalQuantities();
         foreach ($res_old as $d) {
@@ -445,6 +481,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_color_codes";
         $result = $pdo_old->query($sql);
         $color_old = $result->fetchAll();
+        if($color_old ==null) {
+            return array();
+        }
 
         $model = new BkColorCode();
         $colorMap = array();
@@ -460,6 +499,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_calendar_entry";
         $result = $pdo_old->query($sql);
         $calentry_old = $result->fetchAll();
+        if($calentry_old ==null) {
+            return;
+        }
 
         $model = new BkCalendarEntry();
         foreach ($calentry_old as $d) {
@@ -510,6 +552,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_pricing";
         $result = $pdo_old->query($sql);
         $pricing_old = $result->fetchAll();
+        if($pricing_old ==null) {
+            return;
+        }
 
         $model = new BkNightWE();
         foreach ($pricing_old as $d) {
@@ -527,6 +572,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_packages";
         $result = $pdo_old->query($sql);
         $package_old = $result->fetchAll();
+        if($package_old ==null) {
+            return;
+        }
 
         $model = new BkPackage();
         $packagesMap = array();
@@ -538,7 +586,7 @@ class VoldController extends Controller {
                 $idResource = $resourcesMap[$d["id_resource"]];
             }
 
-            $id_package = 0;
+            //$id_package = 0;
             if(isset($d["id_package"])){
                 $id_package = $d["id_package"];
 
@@ -553,6 +601,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_j_packages_prices";
         $result = $pdo_old->query($sql);
         $prices_old = $result->fetchAll();
+        if($prices_old ==null) {
+            return;
+        }
 
         $modelPrices = new BkPackage();
         foreach ($prices_old as $d) {
@@ -568,6 +619,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_j_resource_pricing";
         $result = $pdo_old->query($sql);
         $prices_old = $result->fetchAll();
+        if($prices_old ==null) {
+            return;
+        }
 
         $modelPrices = new BkPrice();
         foreach ($prices_old as $d) {
@@ -586,6 +640,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sy_areas";
         $result = $pdo_old->query($sql);
         $resources_old = $result->fetchAll();
+        if($resources_old ==null) {
+            return;
+        }
 
         $model = new BkScheduling();
         foreach ($resources_old as $d) {
@@ -612,6 +669,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sp_items";
         $result = $pdo_old->query($sql);
         $services_old = $result->fetchAll();
+        if($services_old ==null) {
+            return array();
+        }
 
         $model = new SeService();
         $servicesMap = array();
@@ -626,6 +686,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sp_j_item_pricing";
         $result = $pdo_old->query($sql);
         $prices_old = $result->fetchAll();
+        if($prices_old ==null) {
+            return;
+        }
 
         $modelPrice = new SePrice();
         foreach ($prices_old as $d) {
@@ -645,6 +708,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sp_bills";
         $result = $pdo_old->query($sql);
         $bills_old = $result->fetchAll();
+        if($bills_old ==null) {
+            return;
+        }
 
         $model = new InInvoice();
         $modelItem = new InInvoiceItem();
@@ -686,6 +752,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM sp_projects";
         $result = $pdo_old->query($sql);
         $projects_old = $result->fetchAll();
+        if($projects_old ==null) {
+            return;
+        }
 
         $modelProject = new SeProject();
         $projectMap = array();
@@ -742,6 +811,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM su_items";
         $result = $pdo_old->query($sql);
         $services_old = $result->fetchAll();
+        if($services_old ==null) {
+            return array();
+        }
 
         $model = new SeService();
         $servicesMap = array();
@@ -756,6 +828,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM su_j_item_pricing";
         $result = $pdo_old->query($sql);
         $prices_old = $result->fetchAll();
+        if($prices_old ==null) {
+            return;
+        }
 
         $modelPrice = new SePrice();
         foreach ($prices_old as $d) {
@@ -777,6 +852,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM su_bills";
         $result = $pdo_old->query($sql);
         $bills_old = $result->fetchAll();
+        if($bills_old ==null) {
+            return;
+        }
 
         $model = new InInvoice();
         $invoicesMap = array();
@@ -804,6 +882,9 @@ class VoldController extends Controller {
         $sql = "SELECT * FROM su_entries";
         $result = $pdo_old->query($sql);
         $order_old = $result->fetchAll();
+        if($order_old ==null) {
+            return array();
+        }
 
         $modelOrder = new SeOrder();
         $orderMap = array();

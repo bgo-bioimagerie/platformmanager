@@ -16,6 +16,7 @@ class UsersPatch extends Model {
     }
 
     public function patch() {
+        Configuration::getLogger()->info('[users] patch old users');
         $sqlcl = "SELECT * FROM cl_clients";
         $client_count = $this->runRequest($sqlcl)->rowCount();
 
@@ -29,9 +30,11 @@ class UsersPatch extends Model {
             }
         }
         catch (Exception $e) {
-            echo "ec_j_user_responsible not present, skipping existing accounts migration\n";
+            Configuration::getLogger()->warning('[users] ec_j_user_responsible not present, skipping existing accounts migration');
+            // echo "ec_j_user_responsible not present, skipping existing accounts migration\n";
         }
 
+        Configuration::getLogger()->warning('[users] migrating', ['resp' => $sqlresp_count, 'users' => $client_count]);
         if ($sqlresp_count > 0 && $client_count == 0) {
 
             $this->removeEcosystemFromSpaceTools();
@@ -43,10 +46,12 @@ class UsersPatch extends Model {
             $this->updateInvoicesRespIDs(false);
         }
         $this->copyPhones();
+        Configuration::getLogger()->info('[users] patch old users done');
+
     }
 
     public function copyPhones(){
-
+        Configuration::getLogger()->info('[user][patch] copy phones');
         $sql = "SELECT id_core, phone FROM users_info";
         $data = $this->runRequest($sql)->fetchAll();
 
@@ -54,23 +59,26 @@ class UsersPatch extends Model {
             $sql0 = "SELECT phone FROM core_users WHERE id=?";
             $oldPhone = $this->runRequest($sql0, array($d["id_core"]))->fetch();
 
-            //echo 'old phone = ' . $oldPhone . "<br/>";
+            // echo 'old phone = ' . $oldPhone . "<br/>";
 
-            if ($oldPhone[0] == ""){
+            if ($oldPhone && $oldPhone[0] == ""){
                 $sql = "UPDATE core_users SET phone=? WHERE id=?";
                 $this->runRequest($sql, array($d["phone"], $d["id_core"]));
             }
         }
-
+        Configuration::getLogger()->info('[user][patch] copy phones done');
     }
 
     public function removeEcosystemFromSpaceTools() {
+        Configuration::getLogger()->info('[user][patch] remove ecosystem from space tools');
         $sql = "DELETE FROM core_space_menus WHERE module=?";
         $this->runRequest($sql, array("ecosystem"));
+        Configuration::getLogger()->info('[user][patch] remove ecosystem from space tools done');
+
     }
 
     public function importBelonging() {
-
+        Configuration::getLogger()->info('[user][patch] import belongings');
         $modelSpaces = new CoreSpace();
         $spaces = $modelSpaces->getSpaces('id');
 
@@ -84,10 +92,12 @@ class UsersPatch extends Model {
                     $belonging["color"], $belonging["type"], $belonging["display_order"]));
             }
         }
+        Configuration::getLogger()->info('[user][patch] import belongings done');
+
     }
 
     public function copyResponsiblesToClients() {
-
+        Configuration::getLogger()->info('[user][patch] copy responsibles to clients');
         $sql = "SELECT * FROM ec_users WHERE is_responsible=?";
         $ecusers = $this->runRequest($sql, array(1))->fetchAll();
 
@@ -100,7 +110,8 @@ class UsersPatch extends Model {
 
         $spaces = $modelSpaces->getSpaces('id');
 
-        echo "resps number = " . count($ecusers) . "<br/>";
+        // echo "resps number = " . count($ecusers) . "<br/>";
+        Configuration::getLogger()->debug('[users][patch]', ['responsibles' => count($ecusers)]);
         foreach ($ecusers as $ecuser) {
 
             $name = $modelUser->getUserFUllName($ecuser["id"]);
@@ -126,6 +137,8 @@ class UsersPatch extends Model {
                 $modelClient->setAddressInvoice($id_client, $id_address);
             }
         }
+        Configuration::getLogger()->info('[user][patch] copy responsibles to clients done');
+
     }
 
     protected function getEcUnitAddress($id) {
@@ -169,13 +182,13 @@ class UsersPatch extends Model {
             return $tmp[0];
         }
         if ($warning) {
-            echo 'Warning unit name not found for ' . $id . "<br/>";
+            Configuration::getLogger()->warning('[user][patch] unit name not found', ['id' => $id]);
         }
         return "";
     }
 
     public function joinUsersToClients() {
-
+        Configuration::getLogger()->info('[user][patch] join users to clients');
         $modelCoreUsers = new CoreUser();
         $modelClientUSer = new ClClientUser();
         $modelSpaces = new CoreSpace();
@@ -192,8 +205,7 @@ class UsersPatch extends Model {
                 }
             }
         }
-
-        echo 'joint user to client done -------------------------------- <br/>';
+        Configuration::getLogger()->info('[user][patch] join users to clients done');
     }
 
     protected function getEcResponsibles($id_user) {
@@ -221,16 +233,19 @@ class UsersPatch extends Model {
                 $tmp = $req->fetch();
                 return $tmp[0];
             }
-            echo "Warning getResponsibleNewClientId: no id for " . $resp_fullname . " and space " . $id_space . "<br/>";
+            Configuration::getLogger()->debug('[users][patch] getResponsibleNewClientId: no id', ['responsible' => $resp_fullname, 'space' => $id_space]);
+            // echo "Warning getResponsibleNewClientId: no id for " . $resp_fullname . " and space " . $id_space . "<br/>";
             return 0;
         }
         return 0;
     }
 
     protected function changeRespIdsToClientIdsInBookingAndServices($warning = true) {
-
+        Configuration::getLogger()->info('[user][patch] changeRespIdsToClientIdsInBookingAndServices');
         $modelUser = new CoreUser();
         $modelResource = new ResourceInfo();
+
+        $unknownResp = [];
 
         // booking
         $sql = "SELECT * FROM bk_calendar_entry";
@@ -242,12 +257,12 @@ class UsersPatch extends Model {
 
             if ($resource) {
                 $idClient = $this->getResponsibleNewClientId($resp_name, $resource["id_space"]);
-
                 $sql = "UPDATE bk_calendar_entry SET responsible_id=? WHERE id=?";
                 $this->runRequest($sql, array($idClient, $res["id"]));
             } else {
                 if ($warning) {
-                    echo "resource info not found for resource_id=" . $res["resource_id"] . "<br/>";
+                    Configuration::getLogger()->warning('[user][patch] resource info not found ', ['resource' => $res["resource_id"]]);
+                    // echo "resource info not found for resource_id=" . $res["resource_id"] . "<br/>";
                 }
             }
         }
@@ -274,11 +289,11 @@ class UsersPatch extends Model {
             $this->runRequest($sql, array($idClient, $project["id"]));
         }
 
-        echo 'changeRespIdsToClientIdsInBookingAndServices done ---------<br/>';
+        Configuration::getLogger()->info('[user][patch] changeRespIdsToClientIdsInBookingAndServices done');
     }
 
     protected function copyEcUsersToUsers() {
-
+        Configuration::getLogger()->info('[user][patch] copy ecusers to users');
         $modelUserInfo = new UsersInfo();
 
         $sql = "SELECT * FROM ec_users";
@@ -289,10 +304,11 @@ class UsersPatch extends Model {
             $modelUserInfo->set($ecuser["id"], $ecuser["phone"], $unit);
         }
 
-        echo 'copyEcUsersToUsers done -----------------------------------<br/>';
+        Configuration::getLogger()->info('[user][patch] copy ecusers to users done');
     }
 
     protected function updateInvoicesRespIDs($warning = false){
+        Configuration::getLogger()->info('[user][patch] updateInvoicesRespIDs');
 
         // invoices
         $sql = "SELECT * FROM in_invoice";
@@ -344,12 +360,17 @@ class UsersPatch extends Model {
             // get id_space
             $sql = "SELECT id_space FROM se_services WHERE id=?";
             $id_space = $this->runRequest($sql, array($price["id_service"]))->fetch();
-
-            $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
-
-            $sql2 = "UPDATE se_prices SET id_belonging=? WHERE id=?";
-            $this->runRequest($sql2, array($newBelID, $price["id"]));
+            if($id_space) {
+                $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
+                $sql2 = "UPDATE se_prices SET id_belonging=? WHERE id=?";
+                $this->runRequest($sql2, array($newBelID, $price["id"]));
+            } else {
+                Configuration::getLogger()->warning('[user][patch] space not found for service', ['id' => $price["id_service"]]);
+            }
         }
+
+        Configuration::getLogger()->info('[user][patch] updateInvoicesRespIDs done');
+
 
     }
 

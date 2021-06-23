@@ -266,7 +266,7 @@ class BookingdefaultController extends BookingabstractController {
                 $choicesid[] = $r["id"];
                 $choices[] = $modelUser->getUserFUllName($r["id"]);
             }
-            $form->addSelect("responsible_id", EcosystemTranslator::Responsible($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
+            $form->addSelect("responsible_id", CoreTranslator::Responsible($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
         } else {
             $resps = $modelUserClient->getUserClientAccounts($_SESSION["id_user"], $id_space);
             if (count($resps) > 1) {
@@ -277,7 +277,7 @@ class BookingdefaultController extends BookingabstractController {
                     $choicesid[] = $r["id"];
                     $choices[] = $modelUser->getUserFUllName($r["id"]);
                 }
-                $form->addSelect("responsible_id", EcosystemTranslator::Responsible($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
+                $form->addSelect("responsible_id", CoreTranslator::Responsible($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
             } else {
                 $form->addHidden("responsible_id", $resaInfo["responsible_id"]);
             }

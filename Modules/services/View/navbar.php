@@ -1,8 +1,8 @@
 <?php
 require_once 'Modules/core/Model/CoreConfig.php';
 $modelCoreConfig = new CoreConfig();
-$ecmenucolor = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolor", $id_space);
-$ecmenucolortxt = "";//$modelCoreConfig->getParamSpace("ecosystemmenucolortxt", $id_space);
+$ecmenucolor = "";
+$ecmenucolortxt = "";
 if ($ecmenucolor == "") {
     $ecmenucolor = "#f1f1f1";
 }
