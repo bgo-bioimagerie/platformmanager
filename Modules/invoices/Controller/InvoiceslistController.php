@@ -36,6 +36,13 @@ class InvoiceslistController extends CoresecureController {
         $projectperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space);
         $projectperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $id_space);
 
+        if(!$projectperiodbegin) {
+            $projectperiodbegin = "0000-01-01";
+        }
+        if(!$projectperiodend) {
+            $projectperiodend = "0000-12-31";
+        }
+
         $projectperiodbeginArray = explode("-", $projectperiodbegin);
         $previousYear = $year - 1;
         $yearBegin = $previousYear . "-" . $projectperiodbeginArray[1] . "-" . $projectperiodbeginArray[2];
