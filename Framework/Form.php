@@ -30,6 +30,8 @@ class Form {
     private $labels;
     private $isMandatory;
     private $enabled;
+    #105 add readonly
+    private $readonly;
     private $choices;
     private $choicesid;
     private $validated;
@@ -207,6 +209,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -225,6 +228,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -243,6 +247,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -263,6 +268,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -284,7 +290,7 @@ class Form {
         $this->setValue($name, $value);
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
-        
+        $this->readonly[] = false;
     }
 
     /**
@@ -304,6 +310,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->setValue($name, $url);
+        $this->readonly[] = false;
     }
 
     /**
@@ -313,7 +320,8 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "") {
+    // #105: add readonly
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "") {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -325,6 +333,7 @@ class Form {
         $this->enabled[] = $enabled;
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = $readonly;
     }
 
     /**
@@ -345,6 +354,7 @@ class Form {
         $this->enabled[] = true;
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -367,6 +377,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
@@ -382,6 +393,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
@@ -397,6 +409,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -418,6 +431,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -439,6 +453,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -460,6 +475,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -482,6 +498,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = $submitOnChange;
+        $this->readonly[] = false;
     }
     
         /**
@@ -504,6 +521,7 @@ class Form {
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = $submitOnChange;
+        $this->readonly[] = false;
     }
     
 
@@ -527,6 +545,7 @@ class Form {
         $this->isTextArea = $userichtxt;
         $this->useJavascript[] = $userichtxt;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -547,6 +566,7 @@ class Form {
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -568,6 +588,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->isFormAdd = true;
         $this->submitOnChange[] = false;
+        $this->readonly[] = false;
     }
 
     /**
@@ -609,6 +630,12 @@ class Form {
         // fields
         for ($i = 0; $i < count($this->types); $i++) {
 
+            // #105: add readonly
+            $readonlyElem = false;
+            if ($this->readonly[$i]) {
+                $readonlyElem = true;
+            }
+            
             $required = "";
             if ($this->isMandatory[$i]) {
                 $required = "required";
@@ -617,7 +644,6 @@ class Form {
             if ($this->validated[$i] == false) {
                 $validated = "alert alert-danger";
             }
-
             if ($this->types[$i] == "separator") {
                 $html .= $formHtml->separator($this->names[$i], 3);
             }
@@ -631,7 +657,8 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
+                // #105: add readonly
+            $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);

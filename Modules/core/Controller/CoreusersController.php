@@ -80,7 +80,9 @@ class CoreusersController extends CoresecureController {
             $form->setTitle(CoreTranslator::Add_User($lang));
         }
         $form->addHidden("id", $user["id"]);
-        $form->addText("login", CoreTranslator::Login($lang), true, $user["login"]);
+        // #105: add readonly
+        $isLoginLocked = ($id == 0) ? false : true;
+        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked);
         if ($id == 0) {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
             $form->addPassword("pwdconfirm", CoreTranslator::Password($lang));
@@ -117,7 +119,7 @@ class CoreusersController extends CoresecureController {
         }
         $script = "";
         if ($form->check()) {
-            if ($modelUser->isLogin($this->request->getParameter('login'))) {
+            if ($id == 0 && $modelUser->isLogin($this->request->getParameter('login'))) {
                 $script .= '<script language="javascript">';
                 $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
                 $script .= '</script>';
@@ -155,15 +157,13 @@ class CoreusersController extends CoresecureController {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $id = $form->getParameter("id");
         if ($id == 0) {
-
             $pwd = $form->getParameter("pwd");
             $pwdconfirm = $form->getParameter("pwdconfirm");
             if ($pwd != $pwdconfirm) {
                 throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
             }
-
             $modelUser->add(
-                    $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
+                $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
             );
         } else {
             $modelUser->edit(

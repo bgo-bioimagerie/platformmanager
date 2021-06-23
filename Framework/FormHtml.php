@@ -143,8 +143,8 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9) {
-
+    // #105: add readonly
+    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
@@ -155,6 +155,10 @@ class FormHtml {
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"text\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\" " . $required . " " . $enabled;
+        // #105: add readonly
+        if ($readonly) {
+            $html .= " readonly";
+        }
         $html .= "/>";
         $html .= "</div>";
         $html .= "</div>";
