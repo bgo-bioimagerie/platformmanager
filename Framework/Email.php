@@ -43,7 +43,7 @@ class Email extends Model {
         }
 
         if (is_array($toAdress)){
-            foreach($toAdress as $address){
+            foreach($toAdress as $address){                
                 $mail->addBCC($address);
             }
         } else if ( $toAdress != "" ) {
@@ -65,28 +65,85 @@ class Email extends Model {
 
     /**
      * 
+     * Send an Email to all users or all managers within a space
+     *
+     * @param array $params
+     *          required to fill sendEmail() parameters. Depends on why we want to notify space admins
+     * @param string $lang
+     * 
+     * @return string result of call to function sendMail() telling if mail was sent or not
+     */
+    public Function sendEmailToSpaceMembers($params, $lang = "") {
+        $modelSpace = new CoreSpace();
+        $spaceId = $params["id_space"];
+        $from = Configuration::get('smtp_from') /* $params["from"] */;
+        $spaceName = $modelSpace->getSpaceName($spaceId);
+        $subject = $params["subject"];
+        $fromName = "Platform-Manager";
+        $subject = CoreTranslator::MailSubjectPrefix($spaceName, $lang) . " " . $subject;
+
+        // get the emails
+        $toAddress = array(); 
+        switch ($params["to"]) {
+            case "all":
+                $toAddress =
+                    $this->formatAddresses($modelSpace->getEmailsSpaceActiveUsers($spaceId));
+                break;
+            case "managers":
+                $toAddress =
+                    $this->formatAddresses($modelSpace->getEmailsSpaceManagers($spaceId));
+                break;
+            default:
+                // TODO: test that! => linked to booking module. Create a dedicated function ?
+                $modelCalEntry = new BkCalendarEntry();
+                $toEx = explode("_", $params["to"]);
+                if ($toEx[0] == "a") { // area
+                    // get all the adresses of users who book in this area
+                    $toAddress =
+                        $this->formatAddresses($modelCalEntry->getEmailsBookerArea($toEx[1]));
+                } elseif ($toEx[0] == "r") { // resource
+                    // get all the adresses of users who book in this resource
+                    $toAddress =
+                    $this->formatAddresses($modelCalEntry->getEmailsBookerResource($toEx[1]));
+                }
+                break;
+        }
+
+        return $this->sendEmail(
+            $from,
+            $fromName,
+            $toAddress,
+            $subject,
+            $params["content"],
+            $params["mailerSetCopyToFromBool"]
+        );
+    }
+
+    /**
+     * 
      * Send an Email to space managers (status > 2) notifying that logged user requested to join space
      *
-     * @param array $params required to fill sendEmail() parameters. Depends on why we want to notify space admins
+     * @param array
+     *          $params required to fill sendEmail() parameters. Depends on why we want to notify space admins
      * @param string $origin determines how to get sendEmail() paramters from $params
      * @param string $lang
      */
-    public function NotifyAdminsByEmail($params, $origin, $lang = "") {
+    public function notifyAdminsByEmail($params, $origin, $lang = "") {
         if ($origin === "new_join_request") {
-            $spaceModel = new CoreSpace();
-            $emailSpaceManagers = $spaceModel->getEmailsSpaceManagers($params["id_space"]);
+            $modelSpace = new CoreSpace();
             $from = Configuration::get('smtp_from');
             $spaceName = ($params["space_name"] !== null) ? $params["space_name"] : "";
             $fromName = "Platform-Manager";
             $subject = CoreTranslator::JoinRequestSubject($params["space_name"], $lang);
             $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
-            $toAdress = array();
-            foreach ($emailSpaceManagers as $emailSpaceManager) {
-                array_push($toAdress, $emailSpaceManager["email"]);
-            }
-            $this->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+            $toAddress = array();
+            $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($params["id_space"]));
+            $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {
-            Configuration::getLogger()->error("notifyAdminsByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
+            Configuration::getLogger()->error(
+                "notifyAdminsByEmail",
+                ["message" => "origin parameter is not set properly", "origin" => $origin]
+            );
         }
     }
 
@@ -97,7 +154,8 @@ class Email extends Model {
      * - user is accepted as a member of space
      * - user request to join a space is rejected
      *
-     * @param array $params required to fill sendEmail() parameters. Depends on why we want to notify user
+     * @param array
+     *          $params required to fill sendEmail() parameters. Depends on why we want to notify user
      * @param string $origin determines how to get sendEmail() paramters from $params
      * @param string $lang
      */
@@ -120,9 +178,27 @@ class Email extends Model {
             $content = CoreTranslator::JoinResponseEmail($userFullName, $spaceName, $accepted, $lang);
             $toAdress = $pendingUser["email"];
         } else {
-            Configuration::getLogger()->error("notifyUserByEmail", ["message" => "origin parameter is not set properly", "origin" => $origin]);
+            Configuration::getLogger()->error(
+                "notifyUserByEmail",
+                ["message" => "origin parameter is not set properly", "origin" => $origin]
+            );
         }
         $this->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+    }
+
+    /**
+     * 
+     * Transforms array of objects with an "email" attribute into a list of email strings
+     * 
+     * @param $recipients
+     * @return array of strings (emails)
+     */
+    public function formatAddresses($arrayOfObjectsWithEmailAttr) {
+        $result = array();
+        foreach ($arrayOfObjectsWithEmailAttr as $objectWithEmailAttr) {
+            array_push($result, $objectWithEmailAttr["email"]);
+        }
+        return $result;
     }
 
 }

@@ -160,8 +160,30 @@ class CoreSpace extends Model {
         return null;
     }
 
+    /**
+     * 
+     * Return a list of all managers' emails for a given space
+     * 
+     * @param int $id_space
+     *          id of the space for which we want to get all managers' emails
+     * @return array list of strings
+     */
     public function getEmailsSpaceManagers($id_space) {
         $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>2)";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+
+    /**
+     * 
+     * Return a list of all users' emails for a given space
+     * 
+     * @param int $id_space
+     *          id of the space for which we want to get all users' emails
+     * @return array list of strings
+     */
+    public function getEmailsSpaceActiveUsers($id_space) {
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status=2)";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }

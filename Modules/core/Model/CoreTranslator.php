@@ -1853,6 +1853,10 @@ class CoreTranslator {
         return "Support email";
     }
 
+    public static function MailSubjectPrefix($spaceName = "") {
+        return ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
+    }
+
 
     
 }
