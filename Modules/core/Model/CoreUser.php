@@ -251,7 +251,11 @@ class CoreUser extends Model {
         $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
         $pwd = Configuration::get('admin_password', 'admin');
-        if (!$this->exists(1)) {
+        try {
+            $this->getUserByLogin($admin_user);
+            Configuration::getLogger()->info('Admin user already exists, skipping creation');
+        } catch (Exception $e) {
+            Configuration::getLogger()->info('Create admin user', ['admin' => $admin_user]);
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created) VALUES(?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d")));
         }
