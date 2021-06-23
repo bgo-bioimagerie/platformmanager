@@ -3,6 +3,8 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Errors.php';
+
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 
@@ -26,7 +28,7 @@ class CoremainmenuController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 403: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 

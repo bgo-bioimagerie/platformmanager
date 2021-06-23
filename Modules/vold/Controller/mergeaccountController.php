@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Errors.php';
+
 
 // resources
 require_once 'Modules/resources/Model/ReArea.php';
@@ -43,7 +45,7 @@ class mergeaccountController extends CoresecureController {
         parent::__construct($request);
         
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 403: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
     
@@ -51,7 +53,7 @@ class mergeaccountController extends CoresecureController {
         
         // secure
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 403: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         
         $modelUser = new CoreUser();

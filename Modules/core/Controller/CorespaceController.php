@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Errors.php';
 
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -28,7 +29,7 @@ class CorespaceController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 403: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $this->spaceModel = new CoreSpace ();
     }

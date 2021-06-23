@@ -167,6 +167,9 @@ abstract class CoresecureController extends CorecookiesecureController {
      * @throws Exception
      */
     public function checkAuthorizationMenuSpace($menuName, $id_space, $id_user) {
+        if($this->isUserAuthorized(5)) {
+            return true;
+        }
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
@@ -182,6 +185,9 @@ abstract class CoresecureController extends CorecookiesecureController {
      * @throws Exception
      */
     public function checkAuthorizationMenuSpaceNoException($menuName, $id_space, $id_user) {
+        if($this->isUserAuthorized(5)) {
+            return true;
+        }
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {

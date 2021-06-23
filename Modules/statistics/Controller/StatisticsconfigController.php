@@ -22,7 +22,7 @@ class StatisticsconfigController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 403: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 

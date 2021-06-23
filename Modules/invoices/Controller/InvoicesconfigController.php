@@ -4,6 +4,8 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Framework/FileUpload.php';
+require_once 'Framework/Errors.php';
+
 
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
@@ -25,7 +27,7 @@ class InvoicesconfigController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 403: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 
