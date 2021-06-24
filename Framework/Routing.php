@@ -59,6 +59,9 @@ abstract class Routing {
      * @return type
      */
     public function count() {
+        if($this->identifiers == null) {
+            return 0;
+        }
         //echo "count urls = " . count($this->identifiers) . "<br/>";
         return count($this->identifiers);
     }

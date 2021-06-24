@@ -24,7 +24,8 @@ class Helpdesk extends Model {
             `id_space` int(11) NOT NULL,
             `status` int(11) NOT NULL,
             `queue` varchar(30),
-            `created_by` varchar(30),
+            `created_by` varchar(30),  /* email of user */
+            `created_by_user` int(11), /* if user is a customer get its id */
             `created_at` DATETIME,
             `assigned` int(11),  /* user id ticket is assigned to */
             `reminder` TIMESTAMP
@@ -68,13 +69,13 @@ class Helpdesk extends Model {
      * @param array $files  list of CoreFiles
      * @return int id of ticket
      */
-    public function createTicket($id_space, $from, $to, $subject, $body, $files=[]) {
+    public function createTicket($id_space, $from, $to, $subject, $body, $files=[], $id_user=0) {
         // create ticket
         // create message
         // create attachements
         // TODO notify followers
-        $sql = 'INSERT INTO hp_tickets (id_space, status, created_by, created_at)  VALUES (?,?,?, NOW())';
-        $this->runRequest($sql, array($id_space, self::$STATUS_RAW, $from));
+        $sql = 'INSERT INTO hp_tickets (id_space, status, created_by, created_by_user, created_at)  VALUES (?,?,?,?, NOW())';
+        $this->runRequest($sql, array($id_space, self::$STATUS_RAW, $from, $id_user));
         $id_ticket = $this->getDatabase()->lastInsertId();
 
         $sql = 'INSERT INTO hp_ticket_message (id_ticket, from, to, subject, body, type, created_at)  VALUES (?,?,?,?, NOW())';
@@ -153,7 +154,7 @@ class Helpdesk extends Model {
     public function list($id_space, $status=0, $id_user=0) {
         $sql = "SELECT * FROM hp_tickets WHERE status=?";
         if($id_user) {
-            $sql .= " AND assigned=?";
+            $sql .= " AND (assigned=? OR created_by_user=?)";
             return $this->runRequest($sql, array($status, $id_user))->fetchAll();
         }
         return $this->runRequest($sql, array($status))->fetchAll();

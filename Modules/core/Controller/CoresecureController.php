@@ -90,6 +90,16 @@ abstract class CoresecureController extends CorecookiesecureController {
             return;
         }
 
+        // Check by API Key
+        if(isset($_SERVER["HTTP_X_API_KEY"])) {
+            $modelUser = new CoreUser();
+            $apiUser = $modelUser->getByApiKey($_SERVER["HTTP_X_API_KEY"]);
+            if($apiUser != null) {
+                $this->initSession($apiUser['login']);
+                parent::runAction($module, $action, $args);
+            }
+        }
+
         // check if there is a session    
         if ($this->request->getSession()->isAttribut("id_user")) {
 
