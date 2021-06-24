@@ -179,6 +179,9 @@ class CoreSpace extends Model {
     public function getSpaceMenusRole($id_space, $url) {
         $sql = "SELECT user_role FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
+        if(!$req) {
+            return null;
+        }
         return $req[0];
     }
 
@@ -190,12 +193,18 @@ class CoreSpace extends Model {
     public function getSpaceMenusDisplay($id_space, $url) {
         $sql = "SELECT display_order FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
+        if(!$req) {
+            return null;
+        }
         return $req[0];
     }
 
     public function getSpaceMenusColor($id_space, $url) {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
+        if(!$req) {
+            return null;
+        }
         return $req[0];
     }
 
@@ -236,6 +245,9 @@ class CoreSpace extends Model {
         for ($i = 0; $i < count($roles); $i++) {
             $sql = "SELECT name FROM core_spaces WHERE id=?";
             $name = $this->runRequest($sql, array($roles[$i]["id_space"]))->fetch();
+            if(!$name) {
+                continue;
+            }
             $spacesNames .= $name[0];
             if ($i < count($roles) - 1) {
                 $spacesNames .= ", ";
@@ -252,6 +264,7 @@ class CoreSpace extends Model {
         for ($i = 0; $i < count($roles); $i++) {
             $sql = "SELECT name FROM core_spaces WHERE id=?";
             $name = $this->runRequest($sql, array($roles[$i]["id_space"]))->fetch();
+            if(!$name) { continue; }
             $roles[$i]["space_name"] = $name[0];
             if ($roles[$i]["status"] == 1) {
                 $roles[$i]["role_name"] = CoreTranslator::Visitor($lang);
@@ -313,6 +326,9 @@ class CoreSpace extends Model {
     public function isSpacePublic($id_space) {
         $sql = "SELECT status FROM core_spaces WHERE id=?";
         $req = $this->runRequest($sql, array($id_space))->fetch();
+        if(!$req) {
+            return null;
+        }
         return $req[0];
     }
 
