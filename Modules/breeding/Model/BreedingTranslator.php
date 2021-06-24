@@ -140,7 +140,7 @@ class BreedingTranslator {
         if ($lang == "fr") {
             return "Informations société";
         }
-        return "Conpany infos";
+        return "Company infos";
     }
 
     public static function Edit_Pricing($lang) {

@@ -122,7 +122,7 @@ class Router {
             try {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             } 
-            catch (Exception $ex) {
+            catch (Throwable $ex) {
                 echo json_encode(array(
                     'error' => array(
                         'msg' => $ex->getMessage(),

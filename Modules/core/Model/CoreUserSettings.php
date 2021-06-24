@@ -88,10 +88,7 @@ class CoreUserSettings extends Model {
     protected function isSetting($user_id, $setting) {
         $sql = "select * from core_users_settings where user_id=? and setting=?";
         $req = $this->runRequest($sql, array($user_id, $setting));
-        if ($req->rowCount() == 1)
-            return true;
-        else
-            return false;
+        return ($req->rowCount() == 1) ? true : false;
     }
 
     /**
