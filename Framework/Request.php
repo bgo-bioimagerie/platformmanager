@@ -32,6 +32,10 @@ class Request {
         }
     }
 
+    public function params() {
+        return $this->parameters;
+    }
+
     /**
      * Return the session object
      *

@@ -86,7 +86,16 @@ class Router {
 
         try {
             // Merge parameters GET and POST
-            $request = new Request(array_merge($_GET, $_POST));
+            $params = array();
+            if(isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] == 'application/json')  {
+                $json = file_get_contents('php://input');
+                if(!empty($json)) {
+                    $params = json_decode($json, true);
+                }
+            } else {
+                $params = array_merge($_GET, $_POST);
+            }
+            $request = new Request($params);
 
             if (!$this->install($request)) {
                 if ($this->route($request)) {
@@ -245,7 +254,6 @@ class Router {
                 $rooterControllerArray = explode("::", "$rooterController");
                 if(count($rooterControllerArray) == 3){
                     $classController = $rooterControllerArray[2];
-                    // $module = $moduleName;
                     $fileController = 'Modules/' . strtolower($rooterControllerArray[0]) . "/Controller/" . $rooterControllerArray[2] . ".php";
                     if(file_exists($fileController)){
                         
@@ -295,6 +303,14 @@ class Router {
             }
         }
         http_response_code($errCode);
+
+        if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
+            echo json_encode(array(
+                'type' => $type,
+                'message' => $exception->getMessage()
+            ));
+            return;
+        }
 
         $view = new View('error');
         $view->setFile('Modules/error.php');

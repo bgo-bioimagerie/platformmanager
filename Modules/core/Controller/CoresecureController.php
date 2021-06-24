@@ -1,6 +1,8 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Configuration.php';
+
 require_once 'Framework/Errors.php';
 
 require_once 'Modules/core/Controller/CorecookiesecureController.php';
@@ -80,7 +82,7 @@ abstract class CoresecureController extends CorecookiesecureController {
         $modelConfig = new CoreConfig();
         if ($modelConfig->getParam("is_maintenance")) {
             if ($this->request->getSession()->getAttribut("user_status") < 4) {
-                throw new Exception($modelConfig->getParam("maintenance_message"));
+                throw new PfmException($modelConfig->getParam("maintenance_message"), 503);
             }
         }
 
@@ -91,6 +93,8 @@ abstract class CoresecureController extends CorecookiesecureController {
         } else if ($cookieCheck == 1) {
             return;
         }
+
+        Configuration::getLogger()->debug('check session');
 
         // check if there is a session    
         if ($this->request->getSession()->isAttribut("id_user")) {
@@ -111,6 +115,10 @@ abstract class CoresecureController extends CorecookiesecureController {
                 return;
             }
         } else {
+            Configuration::getLogger()->debug('no session');
+            if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
+                throw new PfmAuthException('not connected', 401);
+            }
             $this->redirect("coreconnection");
             //$this->callAction("connection");
             return;
