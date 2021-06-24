@@ -38,7 +38,7 @@ class ReEvent extends Model {
                 . " INNER JOIN re_state ON re_event.id_state = re_state.id"
                 . " WHERE id_resource=? ORDER BY date DESC;";
         $data = $this->runRequest($sql, array($id_resource))->fetch();
-        return $data[0];
+        return  $data ? $data[0] : null;
         
     }
     

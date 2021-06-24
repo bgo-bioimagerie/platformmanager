@@ -223,8 +223,8 @@ class BookingdefaultController extends BookingabstractController {
         $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
     }
 
-    private function editreservation($id_space, $resaInfo, $param) {
-
+    private function editreservation($id_space, $resaInfo, $param = "") {
+        
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);

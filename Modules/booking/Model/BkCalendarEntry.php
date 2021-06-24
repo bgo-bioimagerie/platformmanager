@@ -180,7 +180,7 @@ class BkCalendarEntry extends Model {
     public function getPeriod($id) {
         $sql = "SELECT period_id FROM bk_calendar_entry WHERE id=?";
         $tmp = $this->runRequest($sql, array($id))->fetch();
-        return $tmp[0];
+        return  $tmp ? $tmp[0] : null;
     }
 
     public function setPeriod($id, $period_id) {
@@ -227,7 +227,7 @@ class BkCalendarEntry extends Model {
         
         $resps = $modelAccount->getUserClientAccounts($id_user, $resourceInfo["id_space"]);
         //print_r($resps);
-
+        $resps = $resps ? $resps[0] : null;
         return array("id" => 0,
             "start_time" => $start_time,
             "end_time" => $end_time,
@@ -241,7 +241,7 @@ class BkCalendarEntry extends Model {
             "quantities" => "",
             "supplementaries" => "",
             "package_id" => 0,
-            "responsible_id" => $resps[0]['id'],
+            "responsible_id" => $resps['id'],
             "invoice_id" => 0,
             "all_day_long" => 0);
     }

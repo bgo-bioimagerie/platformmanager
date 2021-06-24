@@ -126,11 +126,7 @@ $dayNumStream = date("d", $time);
 $yearStream = date("Y", $time);
 $sufixStream = date("S", $time);
 $day_position = date("w", $time); // 0 for sunday, 6 for saturday
-for ($p = 0 ; $p < count($day_position) ; $p++){
-	if ($day_position[$p] == 0){
-		$day_position[$p] = 7;
-	}
-}
+$day_position = ($day_position === "0") ? 7 : (int)$day_position;
 ?>
 <b><?php echo  BookingTranslator::DateFromTime($time, $lang) ?></b>
 </div>
