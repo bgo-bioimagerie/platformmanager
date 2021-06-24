@@ -101,6 +101,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             if($apiUser != null) {
                 $this->initSession($apiUser['login']);
                 parent::runAction($module, $action, $args);
+                return;
             }
         }
 

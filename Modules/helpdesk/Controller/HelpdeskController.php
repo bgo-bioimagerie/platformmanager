@@ -21,7 +21,6 @@ class HelpdeskController extends CoresecureController {
         // if user status >= 4 list all 
         // Else get user customer ones (created_by)
 
-
         $this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
     }
 
