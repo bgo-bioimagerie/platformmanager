@@ -268,8 +268,12 @@ class CoreUser extends Model {
         $bytes = random_bytes(10);
         $apikey = bin2hex($bytes);
 
-        if (!$this->exists(1)) {
-            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created, apikey) VALUES(?,?,?,?,?,?,?,?, ?)";
+        try {
+            $this->getUserByLogin($admin_user);
+            Configuration::getLogger()->info('Admin user already exists, skipping creation');
+        } catch (Exception $e) {
+            Configuration::getLogger()->info('Create admin user', ['admin' => $admin_user]);
+            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d"), $apikey));
         }
     }

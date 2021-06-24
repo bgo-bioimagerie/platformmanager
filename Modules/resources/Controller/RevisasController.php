@@ -180,7 +180,7 @@ class RevisasController extends CoresecureController {
 
                         $instructorStatus = ResourcesTranslator::Instructor($lang);
                         if ($visa["instructor_status"] == 2) {
-                            $instructorStatus = EcosystemTranslator::Responsible($lang);
+                            $instructorStatus = CoreTranslator::Responsible($lang);
                         }
                         $content .= $instructorStatus . ";";
                         $found = 1;

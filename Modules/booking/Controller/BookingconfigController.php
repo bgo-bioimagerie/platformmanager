@@ -2,6 +2,8 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Errors.php';
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/booking/Model/BookingInstall.php';
@@ -24,7 +26,7 @@ class BookingconfigController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 

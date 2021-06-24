@@ -2,6 +2,8 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Errors.php';
+
 
 require_once 'Framework/TableView.php';
 require_once 'Framework/Form.php';
@@ -28,7 +30,7 @@ class CorespaceadminController extends CoresecureController {
         parent::__construct($request);
         
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            //throw new Exception("Error 503: Permission denied");
+            //throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
     
@@ -38,7 +40,7 @@ class CorespaceadminController extends CoresecureController {
      */
     public function indexAction() {
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $lang = $this->getLanguage();
         
@@ -158,7 +160,7 @@ class CorespaceadminController extends CoresecureController {
     
     public function deleteAction($id){
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $model = new CoreSpace();
         $model->delete($id);

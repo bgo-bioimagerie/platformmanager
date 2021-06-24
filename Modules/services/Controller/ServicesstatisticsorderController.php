@@ -15,8 +15,8 @@ require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SePrice.php';
 //require_once 'Modules/services/Model/SeStats.php';
 
-require_once 'Modules/ecosystem/Model/EcosystemTranslator.php';
-require_once 'Modules/ecosystem/Model/EcUnit.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
+// require_once 'Modules/ecosystem/Model/EcUnit.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -85,9 +85,6 @@ class ServicesstatisticsorderController extends CoresecureController {
         // get all the opened projects informations
         $modelOrders = new SeOrder();
         $openedOrders = $modelOrders->getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd);
-        
-        //echo "opened orders = <br/>";
-        //print_r($openedOrders);
 
         // get all the priced projects details
         $ordersBalance = $modelOrders->getPeriodeServicesBalancesOrders($id_space, $periodStart, $periodEnd);

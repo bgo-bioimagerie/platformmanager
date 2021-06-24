@@ -22,7 +22,7 @@ class ComconfigController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 
