@@ -143,6 +143,7 @@ class BookingController extends BookingabstractController {
 
             if ($id_resource == 0) {
                 $this->render(array(
+                    'lang' => $lang,
                     'id_space' => $id_space,
                     'menuData' => $menuData
                 ));
