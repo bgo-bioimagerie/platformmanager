@@ -83,6 +83,13 @@ class CoreDB extends Model {
             }
         }
 
+        Configuration::getLogger()->debug("[users] add apikey");
+        $cu = new CoreUser();
+        $allUsers = $cu->getAll();
+        foreach ($allUsers as $user) {
+            $cu->newApiKey($user['id']);
+        }
+
     }
 
     /**
