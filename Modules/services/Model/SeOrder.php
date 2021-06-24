@@ -325,11 +325,7 @@ class SeOrder extends Model {
         for ($i = 0; $i < count($orders); $i++) {
 
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
-                //echo "id user = " . $orders[$i]["id_user"] . "<br/>";
                 $resps = $modelUserClient->getUserClientAccounts($orders[$i]["id_user"], $id_space);
-                //$resps = $modelUser->getUserResponsibles($orders[$i]["id_user"]);
-                //echo "coucou 1 <br/>";echo "resps = <br/>";
-                //print_r($resps);
                 if (count($resps) > 0){
 
                     $orders[$i]["id_resp"] = $resps[0]["id"];
@@ -340,7 +336,6 @@ class SeOrder extends Model {
             }
             $sql = "SELECT * FROM se_order_service WHERE id_order=?";
             $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"]));
-            //print_r($itemsSummary);
 
             $orders[$i]["entries"] = $itemsSummary;
 

@@ -63,7 +63,6 @@ class View {
         if (file_exists($file)) {
             // sent the $data table elements accessibles in the view
             extract($data);
-
             ob_start();
 
             require $file;

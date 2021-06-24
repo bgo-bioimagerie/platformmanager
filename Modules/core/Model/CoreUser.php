@@ -26,6 +26,7 @@ class CoreUser extends Model {
         $this->setColumnsInfo("date_last_login", "date", "");
         $this->setColumnsInfo("remember_key", "varchar(255)", "");
         $this->setColumnsInfo("validated", "int(1)", 1);
+        $this->setColumnsInfo("apikey", "varchar(30)", "");
         $this->primaryKey = "id";
     }
 
@@ -88,6 +89,18 @@ class CoreUser extends Model {
     public function validateAccount($id) {
         $sql = "UPDATE core_users SET validated=1 WHERE id=?";
         $this->runRequest($sql, array($id));
+    }
+
+    public function newApiKey($id) {
+        $bytes = random_bytes(10);
+        $apikey = bin2hex($bytes);
+        $sql = "UPDATE core_users SET apikey=? WHERE id=?";
+        $this->runRequest($sql, array($apikey, $id));
+    }
+
+    public function getByApiKey($apikey) {
+        $sql = "SELECT * FROM core_users WHERE apikey=?";
+        return $this->runRequest($sql, array($apikey))->fetch();
     }
 
     public function getDateCreated($id) {
@@ -251,9 +264,15 @@ class CoreUser extends Model {
         $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
         $pwd = Configuration::get('admin_password', 'admin');
-        if (!$this->exists(1)) {
-            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created) VALUES(?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d")));
+        $bytes = random_bytes(10);
+        $apikey = bin2hex($bytes);
+        try {
+            $this->getUserByLogin($admin_user);
+            Configuration::getLogger()->info('Admin user already exists, skipping creation');
+        } catch (Exception $e) {
+            Configuration::getLogger()->info('Create admin user', ['admin' => $admin_user]);
+            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d"), $apikey));
         }
     }
 
@@ -273,10 +292,13 @@ class CoreUser extends Model {
             $pwde = md5($pwd);
         }
 
+        $bytes = random_bytes(10);
+        $apikey = bin2hex($bytes);
+
         $datecreated = date("Y-m-d", time());
 
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created) VALUES(?,?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated));
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?, ?)";
+        $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated, $apikey));
         return $this->getDatabase()->lastInsertId();
     }
 

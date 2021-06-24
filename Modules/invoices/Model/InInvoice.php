@@ -204,6 +204,13 @@ class InInvoice extends Model {
     public function allPeriodYears($id_space, $periodBegin, $periodEnd){
         $sql = "SELECT date_generated FROM in_invoice WHERE id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
+
+        if(!$periodBegin) {
+            $periodBegin = "0000-01-01";
+        }
+        if(!$periodEnd) {
+            $periodEnd = "0000-12-31";
+        }
         
         // extract years
         if (count($data) > 0) {

@@ -1,6 +1,10 @@
 <?php
 
 require_once 'Framework/Controller.php';
+require_once 'Framework/Configuration.php';
+
+require_once 'Framework/Errors.php';
+
 require_once 'Modules/core/Controller/CorecookiesecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
@@ -78,7 +82,7 @@ abstract class CoresecureController extends CorecookiesecureController {
         $modelConfig = new CoreConfig();
         if ($modelConfig->getParam("is_maintenance")) {
             if ($this->request->getSession()->getAttribut("user_status") < 4) {
-                throw new Exception($modelConfig->getParam("maintenance_message"));
+                throw new PfmException($modelConfig->getParam("maintenance_message"), 503);
             }
         }
 
@@ -88,6 +92,17 @@ abstract class CoresecureController extends CorecookiesecureController {
             return;
         } else if ($cookieCheck == 1) {
             return;
+        }
+
+        // Check by API Key
+        if(isset($_SERVER["HTTP_X_API_KEY"])) {
+            $modelUser = new CoreUser();
+            $apiUser = $modelUser->getByApiKey($_SERVER["HTTP_X_API_KEY"]);
+            if($apiUser != null) {
+                $this->initSession($apiUser['login']);
+                parent::runAction($module, $action, $args);
+                return;
+            }
         }
 
         // check if there is a session    
@@ -109,6 +124,10 @@ abstract class CoresecureController extends CorecookiesecureController {
                 return;
             }
         } else {
+            Configuration::getLogger()->debug('no session');
+            if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
+                throw new PfmAuthException('not connected', 401);
+            }
             $this->redirect("coreconnection");
             //$this->callAction("connection");
             return;
@@ -123,7 +142,7 @@ abstract class CoresecureController extends CorecookiesecureController {
     public function checkAuthorization($minimumStatus) {
         $auth = $this->isUserAuthorized($minimumStatus);
         if ($auth == 0) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         if ($auth == -1) {
             $this->redirect("coreconnection");
@@ -150,7 +169,7 @@ abstract class CoresecureController extends CorecookiesecureController {
     public function checkAuthorizationMenu($menuName) {
         $auth = $this->isUserMenuAuthorized($menuName);
         if ($auth == 0) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         if ($auth == -1) {
             $this->redirect("coreconnection");
@@ -165,10 +184,13 @@ abstract class CoresecureController extends CorecookiesecureController {
      * @throws Exception
      */
     public function checkAuthorizationMenuSpace($menuName, $id_space, $id_user) {
+        if($this->isUserAuthorized(5)) {
+            return true;
+        }
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 
@@ -180,6 +202,9 @@ abstract class CoresecureController extends CorecookiesecureController {
      * @throws Exception
      */
     public function checkAuthorizationMenuSpaceNoException($menuName, $id_space, $id_user) {
+        if($this->isUserAuthorized(5)) {
+            return true;
+        }
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
@@ -250,7 +275,7 @@ abstract class CoresecureController extends CorecookiesecureController {
         $modelSpace = new CoreSpace();
         $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
         if ($spaceRole < 4) {
-            throw new Exception("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 

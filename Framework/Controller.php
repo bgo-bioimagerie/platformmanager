@@ -90,7 +90,6 @@ abstract class Controller {
                 return $dataView['data'];
             }
             return null;
-
         }
 
         if (getenv("PFM_MODE") == "test") {

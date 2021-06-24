@@ -26,7 +26,7 @@ class CoreconfigadminController extends CoresecureController {
         parent::__construct($request);
 
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new PfmAuthException("Error 503: Permission denied");
+            throw new PfmAuthException("Error 403: Permission denied");
         }
     }
 

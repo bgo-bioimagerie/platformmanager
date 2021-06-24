@@ -293,7 +293,7 @@ class BookingpricesController extends CoresecureController {
 
         $formAdd = new FormAdd($this->request, "bookingPricesFormAdd");
         $formAdd->addSelect("resource", ResourcesTranslator::resources($lang), $resources["names"], $resources["ids"], $dataResources);
-        $formAdd->addSelect("unit", EcosystemTranslator::Units($lang), $units["names"], $units["ids"], $dataUnits);
+        $formAdd->addSelect("unit", CoreTranslator::Units($lang), $units["names"], $units["ids"], $dataUnits);
         $formAdd->addNumber("price", InvoicesTranslator::Price_HT($lang), $dataPrice);
 
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));

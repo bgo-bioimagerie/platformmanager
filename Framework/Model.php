@@ -89,7 +89,7 @@ abstract class Model {
 
             // Create connection
             self::$bdd = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-            if (getenv('PFM_MODE') == 'dev') {
+            if (getenv('PFM_MODE') == 'dev' && Configuration::get('debug_sql', false)) {
                 self::$bdd = new DebugBar\DataCollector\PDO\TraceablePDO(self::$bdd);
             }
             self::$bdd->exec("SET CHARACTER SET utf8");

@@ -118,7 +118,7 @@ class Statistics {
             $writeApi = $client->createWriteApi();
             $writeApi->write($point);
             $client->close();
-        } catch(Exception $e) {
+        } catch(Throwable $e) {
             Configuration::getLogger()->error('[stats] stat error', ['message' => e.getMessage()]);
             return false;
         }
@@ -132,6 +132,9 @@ class Statistics {
         try {
             // check if a database exists then create it if it doesn't
             $client = self::client(Configuration::get('influxdb_org', 'pfm'));
+            if($client == null) {
+                return;
+            }
             $org = self::getOrg($client);
             if($org === null) {
                 Configuration::getLogger()->error('[stats] org not found');
@@ -165,13 +168,16 @@ class Statistics {
             $sm->add($space, $bucket->getId(), $token);
             Configuration::getLogger()->debug('[stats] bucket created', ['bucket' => $bucket->getId(), 'token' => $token]);
             $client->close();
-        } catch(Exception $e) {
+        } catch(Throwable $e) {
             Configuration::getLogger()->error('[stats] createdb error', ['message' => $e->getMessage()]);
         } 
 
     }
 
     public static function getOrg($client) {
+        if($client == null) {
+            return null;
+        }
         $orgService = $client->createService(OrganizationsService::class);
         $orgs = $orgService->getOrgs()->getOrgs();
         foreach ($orgs as $org) {
