@@ -28,7 +28,7 @@ class Helpdesk extends Model {
             `created_by_user` int(11), /* if user is a customer get its id */
             `created_at` DATETIME,
             `assigned` int(11),  /* user id ticket is assigned to */
-            `reminder` TIMESTAMP
+            `reminder` TIMESTAMP,
             `reminder_sent`int(1) DEFAULT 0,
             PRIMARY KEY (`id`)
             );";
@@ -74,16 +74,16 @@ class Helpdesk extends Model {
         // create message
         // create attachements
         // TODO notify followers
-        $sql = 'INSERT INTO hp_tickets (id_space, status, created_by, created_by_user, created_at)  VALUES (?,?,?,?, NOW())';
+        $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `created_by`, `created_by_user`, `created_at`)  VALUES (?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_space, self::$STATUS_RAW, $from, $id_user));
         $id_ticket = $this->getDatabase()->lastInsertId();
 
-        $sql = 'INSERT INTO hp_ticket_message (id_ticket, from, to, subject, body, type, created_at)  VALUES (?,?,?,?, NOW())';
+        $sql = 'INSERT INTO `hp_ticket_message` (`id_ticket`, `from`, `to`, `subject`, `body`, `type`, `created_at`)  VALUES (?,?,?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $to, $subject, $body, self::$TYPE_EMAIL));
         $id_message = $this->getDatabase()->lastInsertId();
 
         foreach($files as $attachment) {
-            $sql = 'INSERT INTO hp_ticket_attachment (id_ticket, id_message, id_file, name_file)  VALUES (?,?,?, ?)';
+            $sql = 'INSERT INTO `hp_ticket_attachment` (id_ticket, id_message, id_file, name_file)  VALUES (?,?,?, ?)';
             $this->runRequest($sql, array($id_ticket, $id_message, $attachment['id'], $attachment['name']));
         }
 

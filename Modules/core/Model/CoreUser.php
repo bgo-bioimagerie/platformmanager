@@ -9,6 +9,9 @@ require_once 'Modules/core/Model/CoreSpaceUser.php';
 
 class CoreUser extends Model {
 
+    public static $USER = 1;
+    public static $ADMIN = 5;
+
     public function __construct() {
         $this->tableName = "core_users";
         $this->setColumnsInfo("id", "int(11)", "");
