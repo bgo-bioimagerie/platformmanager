@@ -121,7 +121,10 @@ class Router {
                 $this->runAction($controller, $urlInfo, $action, $args);
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            if ($e instanceof Error) {
+                Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage()]);
+            }
             $this->manageError($e);
         }
     }
@@ -289,7 +292,7 @@ class Router {
      * @param Exception $exception
      *        	Thrown exception
      */
-    private function manageError(Exception $exception, $type = '') {
+    private function manageError(Throwable $exception, $type = '') {
 
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($exception);
