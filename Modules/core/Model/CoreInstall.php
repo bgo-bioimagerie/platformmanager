@@ -87,6 +87,9 @@ class CoreDB extends Model {
         $cu = new CoreUser();
         $allUsers = $cu->getAll();
         foreach ($allUsers as $user) {
+            if($user['login'] == Configuration::get('admin_user') && $user['apikey'] != "") {
+                continue;
+            }
             $cu->newApiKey($user['id']);
         }
     }

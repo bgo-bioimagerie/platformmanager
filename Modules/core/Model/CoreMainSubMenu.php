@@ -98,9 +98,11 @@ class CoreMainSubMenu extends Model {
         if ($id > 0) {
             $sql = "UPDATE core_main_sub_menus SET name=?, id_main_menu=?, display_order=? WHERE id=?";
             $this->runRequest($sql, array($name, $id_main_menu, $display_order, $id));
+            return $id;
         } else {
             $sql = "INSERT INTO core_main_sub_menus (name, id_main_menu, display_order) VALUES (?,?,?)";
             $this->runRequest($sql, array($name, $id_main_menu, $display_order));
+            return $this->getDatabase()->lastInsertId(); 
         }
     }
 

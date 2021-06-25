@@ -33,6 +33,7 @@ abstract class CorecookiesecureController extends Controller {
         
         $this->request->getSession()->setAttribut("id_user", $sessuser['idUser']);
         $this->request->getSession()->setAttribut("login", $sessuser['login']);
+        $this->request->getSession()->setAttribut("email", $sessuser['email']);
         $this->request->getSession()->setAttribut("company", Configuration::get("name"));
         $this->request->getSession()->setAttribut("user_status", $sessuser['status_id']);
         

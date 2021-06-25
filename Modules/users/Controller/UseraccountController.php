@@ -60,6 +60,9 @@ class UseraccountController extends CoresecureController {
         $form->addUpload("avatar", UsersTranslator::Avatar($lang), $userInfo["avatar"] ?? "");
         $form->addTextArea("bio", UsersTranslator::Bio($lang), false, $userInfo["bio"] ?? "");
         
+        $form->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
+
+
         $form->setValidationButton(CoreTranslator::Save($lang), "usersmyaccount");
         
         $openid_providers = Configuration::get("openid", []);

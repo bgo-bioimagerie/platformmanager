@@ -79,9 +79,11 @@ class CoremainmenuController extends CoresecureController {
 
         if ($form->check()) {
 
-            $modelMenu->set($id, $form->getParameter("name"), $form->getParameter("display_order"));
+            $id = $modelMenu->set($id, $form->getParameter("name"), $form->getParameter("display_order"));
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
-            $this->redirect("coremainmenus");
+            $menu = $modelMenu->get($id);
+            $this->redirect("coremainmenus", data: ['menu' => $menu]);
+            return;
         }
 
         return $this->render(array(
@@ -148,14 +150,14 @@ class CoremainmenuController extends CoresecureController {
 
         if ($form->check()) {
 
-            $modelMenu->set(
+            $id = $modelMenu->set(
                     $id,
                     $form->getParameter("name"),
                     $form->getParameter("id_main_menu"),
                     $form->getParameter("display_order"));
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
-            $this->redirect("coremainsubmenus");
-
+            $menu = $modelMenu->get($id);
+            $this->redirect("coremainsubmenus", data: ['menu' => $menu]);
             return;
         }
 
@@ -227,7 +229,7 @@ class CoremainmenuController extends CoresecureController {
 
         if ($form->check()) {
 
-            $modelItem->set(
+            $id = $modelItem->set(
                     $id,
                     $form->getParameter("name"),
                     $form->getParameter("id_sub_menu"),
@@ -235,7 +237,9 @@ class CoremainmenuController extends CoresecureController {
                     $form->getParameter("display_order")
             );
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
-            $this->redirect("coremainmenuitems");
+            $menu = $modelItem->get($id);
+            $this->redirect("coremainmenuitems", data: ['menu' => $menu]);
+            return;
         }
 
         return $this->render(array(

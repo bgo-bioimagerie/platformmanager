@@ -269,7 +269,9 @@ class CoreUser extends Model {
         $pwd = Configuration::get('admin_password', 'admin');
 
         $bytes = random_bytes(10);
-        $apikey = bin2hex($bytes);
+        // $apikey = bin2hex($bytes);
+        $apikey = Configuration::get('admin_apikey', bin2hex($bytes));
+        
 
         try {
             $this->getUserByLogin($admin_user);
@@ -430,7 +432,7 @@ class CoreUser extends Model {
      * @return array User info (id, login, pwd, id_status, is_active)
      */
     public function getUserByLogin($login) {
-        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active
+        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email 
             from core_users where login=?";
         $user = $this->runRequest($sql, array(
             $login
