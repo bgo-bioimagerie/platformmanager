@@ -2,13 +2,14 @@
 
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 class Helpdesk extends Model {
 
     public static $TYPE_EMAIL = 0;
     public static $TYPE_NOTE = 1;
 
-    public static $STATUS_RAW = 0;
+    public static $STATUS_NEW = 0;
     public static $STATUS_OPEN = 1;
     public static $STATUS_REMINDER = 2;
     public static $STATUS_CLOSED = 3;
@@ -22,13 +23,15 @@ class Helpdesk extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `hp_tickets` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_space` int(11) NOT NULL,
+            `subject` varchar(200) NOT NULL,
             `status` int(11) NOT NULL,
             `queue` varchar(30),
             `created_by` varchar(30),  /* email of user */
             `created_by_user` int(11), /* if user is a customer get its id */
             `created_at` DATETIME,
             `assigned` int(11),  /* user id ticket is assigned to */
-            `reminder` TIMESTAMP,
+            `assigned_name` varchar(30),  /* name of assignee */
+            `reminder` DATE,
             `reminder_sent`int(1) DEFAULT 0,
             PRIMARY KEY (`id`)
             );";
@@ -74,9 +77,12 @@ class Helpdesk extends Model {
         // create message
         // create attachements
         // TODO notify followers
-        $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `created_by`, `created_by_user`, `created_at`)  VALUES (?,?,?,?, NOW())';
-        $this->runRequest($sql, array($id_space, self::$STATUS_RAW, $from, $id_user));
-        $id_ticket = $this->getDatabase()->lastInsertId();
+        $id_ticket = $this->ticketFromSubject($subject);
+        if($id_ticket == 0) {
+            $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `subject`,  `created_by`, `created_by_user`, `created_at`)  VALUES (?,?,?, ?,?, NOW())';
+            $this->runRequest($sql, array($id_space, self::$STATUS_NEW, $subject, $from, $id_user));
+            $id_ticket = $this->getDatabase()->lastInsertId();
+        }
 
         $sql = 'INSERT INTO `hp_ticket_message` (`id_ticket`, `from`, `to`, `subject`, `body`, `type`, `created_at`)  VALUES (?,?,?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $to, $subject, $body, self::$TYPE_EMAIL));
@@ -93,20 +99,24 @@ class Helpdesk extends Model {
     public function addEmail($id_ticket, $body, $from, $files=[]) {
         // create message
         // TODO notify followers
-        $sql = 'INSERT INTO hp_ticket_message (id_ticket, from, body, type, created_at)  VALUES (?,?,?,?, NOW())';
+        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_EMAIL));
+        $id = $this->getDatabase()->lastInsertId();
 
         foreach($files as $attachment) {
             $sql = 'INSERT INTO hp_ticket_attachment (id_ticket, id_file, name_file)  VALUES (?,?, ?)';
             $this->runRequest($sql, array($id_ticket, $attachment['id'], $attachment['name']));
         }
+        return $id;
     }
 
     public function addNote($id_ticket, $body, $from) {
         // create message
         // TODO notify followers
-        $sql = 'INSERT INTO hp_ticket_message (id_ticket, from, body, type, created_at)  VALUES (?,?,?,?, NOW())';
+        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE));
+        return $this->getDatabase()->lastInsertId();
+
     }
 
     /**
@@ -116,8 +126,8 @@ class Helpdesk extends Model {
      * @return int id of ticket, else 0
      */
     public function ticketFromSubject($subject) {
-        preg_match('/[Ticket (\d+)]/', $subject, $matches, PREG_OFFSET_CAPTURE);
-        if(!matches) {
+        preg_match('/[Ticket #(\d+)]/', $subject, $matches, PREG_OFFSET_CAPTURE);
+        if(!$matches) {
             return 0;
         }
         foreach($matches as $match) {
@@ -137,22 +147,24 @@ class Helpdesk extends Model {
     }
 
     public function assign($id_ticket, $id_user) {
-        $sql = "UPDATE hp_tickets set assigned=? WHERE id=?";
-        $this->runRequest($sql, array($id_user, $id_ticket));
+        $um = new CoreUser();
+        $login = $um->getUserLogin($id_user);
+        $sql = "UPDATE hp_tickets set assigned=?, assigned_name=? WHERE id=?";
+        $this->runRequest($sql, array($id_user, $login, $id_ticket));
 
     }
 
-    public function setStatus($id_ticket, $status, $reminder_date=0) {
+    public function setStatus($id_ticket, $status, $reminder_date=null) {
         if($status === self::$STATUS_REMINDER) {
-            $sql = "UPDATE hp_tickets set status=?, reminder=?, reminder_set=0 WHERE id=?";
+            $sql = "UPDATE hp_tickets set `status`=?, reminder=?, reminder_set=0 WHERE id=?";
             $this->runRequest($sql, array($status, $reminder_date, $id_ticket));
         }
-        $sql = "UPDATE hp_tickets set status=? WHERE id=?";
+        $sql = "UPDATE hp_tickets SET `status`=? WHERE id=?";
         $this->runRequest($sql, array($status, $id_ticket));
     }
 
     public function list($id_space, $status=0, $id_user=0) {
-        $sql = "SELECT * FROM hp_tickets WHERE status=?";
+        $sql = "SELECT * FROM hp_tickets WHERE `status`=?";
         if($id_user) {
             $sql .= " AND (assigned=? OR created_by_user=?)";
             return $this->runRequest($sql, array($status, $id_user))->fetchAll();
@@ -190,7 +202,7 @@ class Helpdesk extends Model {
     }
 
     public function move($id_ticket, $queue) {
-        $sql = "UPDATE hp_tickets set queue=? WHERE id=?";
+        $sql = "UPDATE hp_tickets SET `queue`=? WHERE id=?";
         $this->runRequest($sql, array($queue, $id_ticket));
     }
 
