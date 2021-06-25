@@ -124,7 +124,6 @@ abstract class Controller {
             echo json_encode($data);
             return null;
         }
-
         $rootWeb = Configuration::get("rootWeb", "/");
         foreach ($args as $key => $val) {
             $path .= "?" . $key . "=" . $val;

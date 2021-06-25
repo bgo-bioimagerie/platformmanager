@@ -59,9 +59,8 @@ class UseraccountController extends CoresecureController {
         $form->addText("phone", UsersTranslator::Phone($lang), false, $userInfo["phone"] ?? "");
         $form->addUpload("avatar", UsersTranslator::Avatar($lang), $userInfo["avatar"] ?? "");
         $form->addTextArea("bio", UsersTranslator::Bio($lang), false, $userInfo["bio"] ?? "");
-        
-        $form->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
 
+        $form->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "usersmyaccount");
         
