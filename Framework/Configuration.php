@@ -118,6 +118,9 @@ class Configuration {
         if(getenv('PFM_ADMIN_PASSWORD')) {
             self::$parameters['admin_password'] = getenv('PFM_ADMIN_PASSWORD');
         }
+        if(getenv('PFM_ADMIN_APIKEY')) {
+            self::$parameters['admin_apikey'] = getenv('PFM_ADMIN_APIKEY');
+        }
         if(getenv('PFM_KEYCLOAK_OIC_SECRET')) {
             self::$parameters['keycloak_oic_secret'] = getenv('PFM_KEYCLOAK_OIC_SECRET');
         }
@@ -192,6 +195,13 @@ class Configuration {
                 if(getenv("PFM_OPENID_".$envopenid."_CLIENT_SECRET")) {
                     self::$parameters['openid_'.$openid."_client_secret"] = getenv("PFM_OPENID_".$envopenid."_CLIENT_SECRET");
                 }
+            }
+        }
+
+        if(getenv('PFM_MODULES')) {
+            $extras = explode(',', getenv('PFM_MODULES'));
+            foreach ($extras as $extra) {
+                self::$parameters['modules'][] = $extra;
             }
         }
 

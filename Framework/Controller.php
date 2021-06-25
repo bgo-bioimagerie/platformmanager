@@ -106,8 +106,8 @@ abstract class Controller {
             $dataView['flash'] = null;
         }
         // Geneate the view
-        //echo "controllerView = " . $controllerView . "<br/>";
-        //echo "parent = " . basename(__DIR__) . "<br/>"; 
+        // echo "controllerView = " . $controllerView . "<br/>";
+        //echo "parent = " . basename(__DIR__) . "<br/>";
         $view = new View($actionView, $controllerView, $this->module);
         $view->generate($dataView);
     }
@@ -118,7 +118,13 @@ abstract class Controller {
      * @param string $path Path to the controller adn action
      * @param type $args Get arguments
      */
-    protected function redirect($path, $args = array()) {
+    protected function redirect($path, $args = array(), $data = array()) {
+        if(!empty($data) && isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
+            header('Content-Type: application/json');
+            echo json_encode($data);
+            return null;
+        }
+
         $rootWeb = Configuration::get("rootWeb", "/");
         foreach ($args as $key => $val) {
             $path .= "?" . $key . "=" . $val;
@@ -130,7 +136,7 @@ abstract class Controller {
         }
         header("Location:" . $rootWeb . $path);
     }
-    
+
     protected function redirectNoRemoveHeader($path, $args = array()){
         $rootWeb = Configuration::get("rootWeb", "/");
         foreach ($args as $key => $val) {
