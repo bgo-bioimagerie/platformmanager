@@ -119,7 +119,12 @@ abstract class Controller {
      * @param string $path Path to the controller adn action
      * @param type $args Get arguments
      */
-    protected function redirect($path, $args = array()) {
+    protected function redirect($path, $args = array(), $data = array()) {
+        if(!empty($data) && isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
+            header('Content-Type: application/json');
+            echo json_encode($data);
+            return null;
+        }
         $rootWeb = Configuration::get("rootWeb", "/");
         foreach ($args as $key => $val) {
             $path .= "?" . $key . "=" . $val;

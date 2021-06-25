@@ -282,6 +282,12 @@ class CoreSpace extends Model {
     }
 
     public function getUserSpaceRole($id_space, $id_user) {
+        // is super admin?
+        $um = new CoreUser();
+        if($um->getStatus($id_user) == CoreUser::$ADMIN) {
+            return CoreSpace::$ADMIN;
+        }
+        // else check roles in space
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $req = $this->runRequest($sql, array($id_space, $id_user));
         if ($req->rowCount() == 1) {

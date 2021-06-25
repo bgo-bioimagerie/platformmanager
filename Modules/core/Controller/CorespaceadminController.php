@@ -148,8 +148,9 @@ class CorespaceadminController extends CoresecureController {
                 $modelSpace->setImage($id, $target_dir . $url);
             }
             
+            $newSpace = $modelSpace->getSpace($id);
             if($isSuperAdmin) {
-                $this->redirect("spaceadmin");
+                $this->redirect("spaceadmin", data: ['space' => $newSpace]);
                 return;
             }
         }

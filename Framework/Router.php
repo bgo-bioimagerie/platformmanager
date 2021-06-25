@@ -92,6 +92,7 @@ class Router {
                 if(!empty($json)) {
                     $params = json_decode($json, true);
                 }
+                $params['path'] = $_GET['path'];
             } else {
                 $params = array_merge($_GET, $_POST);
             }

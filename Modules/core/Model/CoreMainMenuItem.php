@@ -42,10 +42,12 @@ class CoreMainMenuItem extends Model {
         if ( $id > 0 ){
             $sql = "UPDATE core_main_menu_items SET name=?, id_sub_menu=?, id_space=?, display_order=? WHERE id=?";
             $this->runRequest($sql, array($name, $id_sub_menu, $id_space, $display_order, $id));
+            return $id;
         }
         else{
             $sql = "INSERT INTO core_main_menu_items (name, id_sub_menu, id_space, display_order) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($name, $id_sub_menu, $id_space, $display_order));
+            return $this->getDatabase()->lastInsertId();
         }
     }
     

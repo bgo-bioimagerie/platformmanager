@@ -49,7 +49,7 @@ abstract class CoresecureController extends CorecookiesecureController {
                     $key = sha1($this->generateRandomKey());
                     $cookieSet = setcookie("auth", $authArray[0] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
-                        throw new Exception('cannot set the cookie in coresecure <br>');
+                        throw new PfmAuthException('cannot set the cookie in coresecure <br>', 403);
                     }
                     $modelUser->setRememberKey($authArray[0], $key);
 
@@ -99,6 +99,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             $modelUser = new CoreUser();
             $apiUser = $modelUser->getByApiKey($_SERVER["HTTP_X_API_KEY"]);
             if($apiUser != null) {
+                Configuration::getLogger()->debug('[api][auth]', ['login' => $apiUser['login']]);
                 $this->initSession($apiUser['login']);
                 parent::runAction($module, $action, $args);
                 return;
