@@ -123,6 +123,7 @@ class BookingconfigController extends CoresecureController {
        
         $formEditBookingMailing = $this->editBookingMailingForm($id_space, $lang);
         if($formEditBookingMailing->check()){
+            Configuration::getLogger()->debug("BookingMailingForm", ["mailing" => $this->request->getParameter("BkEditBookingMailing")]);
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("BkEditBookingMailing", $this->request->getParameter("BkEditBookingMailing"), $id_space);
             $modelConfig->setParam("BkBookingMailingAdmins", $this->request->getParameter("BkBookingMailingAdmins"), $id_space);

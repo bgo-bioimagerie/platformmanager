@@ -227,7 +227,8 @@ class BkCalendarEntry extends Model {
         
         $resps = $modelAccount->getUserClientAccounts($id_user, $resourceInfo["id_space"]);
         //print_r($resps);
-        $resps = $resps ? $resps[0] : null;
+        Configuration::getLogger()->debug("RESPS", ["resps" => $resps]);
+        $resps_id = $resps ? $resps[0]["id"] : null;
         return array("id" => 0,
             "start_time" => $start_time,
             "end_time" => $end_time,
@@ -241,7 +242,7 @@ class BkCalendarEntry extends Model {
             "quantities" => "",
             "supplementaries" => "",
             "package_id" => 0,
-            "responsible_id" => $resps['id'],
+            "responsible_id" => $resps_id,
             "invoice_id" => 0,
             "all_day_long" => 0);
     }
