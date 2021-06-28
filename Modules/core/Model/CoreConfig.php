@@ -71,6 +71,7 @@ class CoreConfig extends Model {
      */
     private function loadParams($id_space) {
         if(CoreConfig::$params != null) {
+            Configuration::getLogger()->debug("CORECONFIGPARAMS", ["params != null" => CoreConfig::$params]);
             return;
         }
         Configuration::getLogger()->debug('load config', ['space' => $id_space]);
@@ -83,6 +84,7 @@ class CoreConfig extends Model {
             }
             CoreConfig::$params[$param["id_space"]][$param["keyname"]] = $param["value"];
         }
+        Configuration::getLogger()->debug("CORECONFIGPARAMS", ["params was null" => CoreConfig::$params]);
     }
 
     /**

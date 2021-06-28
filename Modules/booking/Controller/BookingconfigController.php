@@ -174,6 +174,8 @@ class BookingconfigController extends CoresecureController {
     protected function bookingAuthorisationUseVisa($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
         $BkAuthorisationUseVisa = $modelCoreConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
+        Configuration::getLogger()->debug("VISAPARAM", ["visa" => $BkAuthorisationUseVisa]);
+        Configuration::getLogger()->debug("CONFIGURATION", ["parameters" => Configuration::read()['modules']]);
         
         $form = new Form($this->request, "BkAuthorisationUseVisaForm");
         $form->addSeparator(BookingTranslator::Use_Auth_Visa($lang));
