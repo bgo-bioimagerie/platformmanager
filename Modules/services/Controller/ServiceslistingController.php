@@ -56,7 +56,7 @@ class ServiceslistingController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        if ($id == 0) {
+        if (!$id) {
             $value = array("name" => "", "description" => "", "display_order" => "", "type_id" => "");
         } else {
             $value = $this->serviceModel->getItem($id);

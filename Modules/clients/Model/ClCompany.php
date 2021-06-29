@@ -42,7 +42,7 @@ class ClCompany extends Model {
             $county, $country, $tel, $fax, $email, $approval_number) {
         
         $id = $this->exists($id_space);
-        if ( $id == 0 ) {
+        if ( !$id ) {
             $sql = 'INSERT INTO cl_company (id_space, name, address, zipcode, city, 
             county, country, tel, fax, email, approval_number) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
             $this->runRequest($sql, array( $id_space, $name, $address, $zipcode, $city, 

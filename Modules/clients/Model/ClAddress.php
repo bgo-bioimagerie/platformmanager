@@ -18,7 +18,7 @@ class ClAddress extends Model {
     }
     
     public function get($id){
-        if ($id == 0){
+        if (!$id){
             return array(
                 "id" => 0,
                 "institution" => "",
@@ -36,7 +36,7 @@ class ClAddress extends Model {
     }
 
     public function set($id, $institution, $building_floor, $service, $address, $zip_code, $city, $country) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO cl_addresses (institution, building_floor, service, address, zip_code, city, country) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country));
             return $this->getDatabase()->lastInsertId();

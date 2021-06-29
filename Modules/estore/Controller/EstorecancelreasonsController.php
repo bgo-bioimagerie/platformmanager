@@ -68,7 +68,7 @@ class EstorecancelreasonsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // default empy provider
-        if ($id == 0) {
+        if (!$id) {
             $pricing = array("id" => 0, "name" => "");
         }
         else{

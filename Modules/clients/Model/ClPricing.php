@@ -45,7 +45,7 @@ class ClPricing extends Model {
     
     
     public function set($id, $id_space, $name, $color, $type, $display_order) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO cl_pricings (id_space, name, color, type, display_order) VALUES (?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order));
             return $this->getDatabase()->lastInsertId();

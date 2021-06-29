@@ -70,7 +70,7 @@ class BreedinglossetypesController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // default empy provider
-        if ($id == 0) {
+        if (!$id) {
             $lossetype = array("id" => 0, "name" => "");
         }
         else{
