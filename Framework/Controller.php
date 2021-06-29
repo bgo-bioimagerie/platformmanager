@@ -3,6 +3,7 @@
 require_once 'Configuration.php';
 require_once 'Request.php';
 require_once 'View.php';
+require_once 'Errors.php';
 
 /**
  * Abstract class defining a controller. 
@@ -59,7 +60,7 @@ abstract class Controller {
             //$this->{$this->action}();
         } else {
             $classController = get_class($this);
-            throw new Exception("Action '$action'Action in not defined in the class '$classController'");
+            throw new PfmException("Action '$action'Action in not defined in the class '$classController'", 500);
         }
     }
 
