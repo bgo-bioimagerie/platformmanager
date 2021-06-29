@@ -40,7 +40,6 @@ class BkAccess extends Model {
     }
 
     public function get($id) {
-
         $sql = "SELECT * FROM bk_access WHERE id_resource=?";
         $user = $this->runRequest($sql, array($id));
         return $user->fetch();

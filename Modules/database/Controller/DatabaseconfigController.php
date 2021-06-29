@@ -84,7 +84,7 @@ class DatabaseconfigController extends CoresecureController {
             return;
         }
 
-        if ($id == 0) {
+        if (!$id) {
             $menuCode = array(1, 1, 1, 1, 1, 1, 1);
         } else {
             $menuCode = array(1, 0, 0, 0, 0, 0, 0);

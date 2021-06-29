@@ -201,7 +201,11 @@ class CoreSpace extends Model {
     public function getSpaceMenusRole($id_space, $url) {
         $sql = "SELECT user_role FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
-        return $req ? $req[0] : null;
+
+        if(!$req) {
+            return null;
+        }
+        return $req[0];
     }
 
     public function getSpaceMenuFromUrl($url, $id_space) {
@@ -212,13 +216,19 @@ class CoreSpace extends Model {
     public function getSpaceMenusDisplay($id_space, $url) {
         $sql = "SELECT display_order FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
-        return $req ? $req[0] : null;
+        if(!$req) {
+            return null;
+        }
+        return $req[0];
     }
 
     public function getSpaceMenusColor($id_space, $url) {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
-        return $req ? $req[0] : null;
+        if(!$req) {
+            return null;
+        }
+        return $req[0];
     }
 
     public function isSpaceMenu($id_space, $url) {
@@ -260,6 +270,9 @@ class CoreSpace extends Model {
         for ($i = 0; $i < count($roles); $i++) {
             $sql = "SELECT name FROM core_spaces WHERE id=?";
             $name = $this->runRequest($sql, array($roles[$i]["id_space"]))->fetch();
+            if(!$name) {
+                continue;
+            }
             $spacesNames .= $name[0];
             if ($i < count($roles) - 1) {
                 $spacesNames .= ", ";
@@ -276,6 +289,7 @@ class CoreSpace extends Model {
         for ($i = 0; $i < count($roles); $i++) {
             $sql = "SELECT name FROM core_spaces WHERE id=?";
             $name = $this->runRequest($sql, array($roles[$i]["id_space"]))->fetch();
+            if(!$name) { continue; }
             $roles[$i]["space_name"] = $name[0];
             if ($roles[$i]["status"] == 1) {
                 $roles[$i]["role_name"] = CoreTranslator::Visitor($lang);
@@ -293,6 +307,12 @@ class CoreSpace extends Model {
     }
 
     public function getUserSpaceRole($id_space, $id_user) {
+        // is super admin?
+        $um = new CoreUser();
+        if($um->getStatus($id_user) == CoreUser::$ADMIN) {
+            return CoreSpace::$ADMIN;
+        }
+        // else check roles in space
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $req = $this->runRequest($sql, array($id_space, $id_user));
         if ($req->rowCount() == 1) {
@@ -337,6 +357,9 @@ class CoreSpace extends Model {
     public function isSpacePublic($id_space) {
         $sql = "SELECT status FROM core_spaces WHERE id=?";
         $req = $this->runRequest($sql, array($id_space))->fetch();
+        if(!$req) {
+            return null;
+        }
         return $req[0];
     }
 

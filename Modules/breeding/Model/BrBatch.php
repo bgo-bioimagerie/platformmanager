@@ -126,7 +126,7 @@ class BrBatch extends Model {
     }
 
     public function set($id, $id_space, $reference, $created, $id_male_spawner, $id_female_spawner, $id_destination, $id_product, $chipped, $comment) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_batchs (id_space, reference, created, id_male_spawner, id_female_spawner, 
             id_destination, id_product,  chipped, comment) VALUES (?,?,?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $reference, $created, $id_male_spawner, $id_female_spawner,

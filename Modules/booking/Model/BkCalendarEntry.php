@@ -258,7 +258,7 @@ class BkCalendarEntry extends Model {
     }
 
     public function setEntry($id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO bk_calendar_entry (start_time, end_time, resource_id, booked_by_id, recipient_id, 
                     last_update, color_type_id, short_description, full_description, quantities, 
                     supplementaries, package_id, responsible_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";

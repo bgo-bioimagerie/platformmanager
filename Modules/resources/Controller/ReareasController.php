@@ -60,7 +60,7 @@ class ReareasController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         
         // get belonging info
-        if ($id == 0){
+        if (!$id){
             $area = array("id" => 0, "name" => "", "id_space" => $id_space, "restricted" => 0);
         }
         else{

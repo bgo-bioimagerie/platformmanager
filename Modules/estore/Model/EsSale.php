@@ -70,7 +70,7 @@ class EsSale extends Model {
     }
 
     public function setEntered($id, $id_space, $id_client, $date_expected, $id_contact_type, $further_information) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO es_sales (id_space, id_client, date_expected, id_contact_type, further_information) VALUES (?,?,?,?,?)";
             $this->runRequest($sql, array($id_space, $id_client, $date_expected, $id_contact_type, $further_information));
             return $this->getDatabase()->lastInsertId();

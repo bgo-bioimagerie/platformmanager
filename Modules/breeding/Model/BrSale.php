@@ -69,7 +69,7 @@ class BrSale extends Model {
     }
 
     public function set($id, $id_space, $id_enterd_by, $id_client, $id_delivery_method, $id_status, $delivery_expected, $purchase_order_num, $id_contact_type, $further_information) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_sales (id_space, id_enterd_by, id_client, id_delivery_method, id_status,
                     delivery_expected, purchase_order_num, id_contact_type, further_information) VALUES (?,?,?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $id_enterd_by, $id_client, $id_delivery_method, $id_status,

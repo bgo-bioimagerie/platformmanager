@@ -81,9 +81,9 @@ class CoreusersController extends CoresecureController {
         }
         $form->addHidden("id", $user["id"]);
         // #105: add readonly
-        $isLoginLocked = ($id == 0) ? false : true;
+        $isLoginLocked = (!$id) ? false : true;
         $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked);
-        if ($id == 0) {
+        if (!$id) {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
             $form->addPassword("pwdconfirm", CoreTranslator::Password($lang));
         }
@@ -119,7 +119,7 @@ class CoreusersController extends CoresecureController {
         }
         $script = "";
         if ($form->check()) {
-            if ($id == 0 && $modelUser->isLogin($this->request->getParameter('login'))) {
+            if (!$id && $modelUser->isLogin($this->request->getParameter('login'))) {
                 $script .= '<script language="javascript">';
                 $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
                 $script .= '</script>';
@@ -156,7 +156,7 @@ class CoreusersController extends CoresecureController {
     protected function editQuery($form, $modelUser, $lang) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $id = $form->getParameter("id");
-        if ($id == 0) {
+        if (!$id) {
             $pwd = $form->getParameter("pwd");
             $pwdconfirm = $form->getParameter("pwdconfirm");
             if ($pwd != $pwdconfirm) {

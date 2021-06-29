@@ -3,6 +3,7 @@
 require_once 'Configuration.php';
 require_once 'Request.php';
 require_once 'View.php';
+require_once 'Errors.php';
 
 /**
  * Abstract class defining a controller. 
@@ -59,7 +60,7 @@ abstract class Controller {
             //$this->{$this->action}();
         } else {
             $classController = get_class($this);
-            throw new Exception("Action '$action'Action in not defined in the class '$classController'");
+            throw new PfmException("Action '$action'Action in not defined in the class '$classController'", 500);
         }
     }
 
@@ -119,7 +120,12 @@ abstract class Controller {
      * @param string $path Path to the controller adn action
      * @param type $args Get arguments
      */
-    protected function redirect($path, $args = array()) {
+    protected function redirect($path, $args = array(), $data = array()) {
+        if(!empty($data) && isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
+            header('Content-Type: application/json');
+            echo json_encode($data);
+            return null;
+        }
         $rootWeb = Configuration::get("rootWeb", "/");
         foreach ($args as $key => $val) {
             $path .= "?" . $key . "=" . $val;
