@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Email.php';
 require_once 'Framework/Configuration.php';
 require_once 'Modules/booking/Controller/BookingabstractController.php';
 
@@ -555,6 +556,13 @@ class BookingdefaultController extends BookingabstractController {
             // send the email
             $mailerModel = new MailerSend();
             $mailerModel->sendEmail($from, $fromName, $toAdress, $subject, $content);
+            // NEW MAIL SENDER
+            $params = array();
+            $params = [
+
+            ];
+            $email = new Email();
+            $email->sendEmailToSpaceMembers($params, $lang);
         }
 
         //echo 'message = ' . $_SESSION["message"] . '<br/';

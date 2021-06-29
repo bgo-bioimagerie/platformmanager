@@ -833,6 +833,7 @@ class BookingController extends BookingabstractController {
 
         $modelSettings = new CoreConfig();
         $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $id_space);
+        Configuration::getLogger()->debug("bkReservationPlugin", ["editResaFunction" => $editResaFunction]);
         
         //echo "editResaFunction = " . $editResaFunction . "<br/>";
         

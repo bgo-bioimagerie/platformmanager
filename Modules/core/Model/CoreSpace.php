@@ -201,7 +201,7 @@ class CoreSpace extends Model {
     public function getSpaceMenusRole($id_space, $url) {
         $sql = "SELECT user_role FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
-        return $req[0];
+        return $req ? $req[0] : null;
     }
 
     public function getSpaceMenuFromUrl($url, $id_space) {
@@ -212,13 +212,13 @@ class CoreSpace extends Model {
     public function getSpaceMenusDisplay($id_space, $url) {
         $sql = "SELECT display_order FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
-        return $req[0];
+        return $req ? $req[0] : null;
     }
 
     public function getSpaceMenusColor($id_space, $url) {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
-        return $req[0];
+        return $req ? $req[0] : null;
     }
 
     public function isSpaceMenu($id_space, $url) {
@@ -231,7 +231,9 @@ class CoreSpace extends Model {
     }
 
     public function getSpaceMenus($id_space, $user_role) {
-        $sql = "SELECT * FROM core_space_menus WHERE id_space=? AND user_role<=? ORDER BY display_order";
+
+        // CHECK HERE => uncomment to test
+        $sql = "SELECT * FROM core_space_menus WHERE id_space=? /* AND user_role>0 */AND user_role<=? ORDER BY display_order";
         return $this->runRequest($sql, array($id_space, $user_role))->fetchAll();
     }
 
