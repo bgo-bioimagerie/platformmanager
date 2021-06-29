@@ -551,22 +551,18 @@ class BookingdefaultController extends BookingabstractController {
             if( !$BkUseRecurentBooking || $periodic_option == 1 ){
                 $content .= " with periodicity";
             }
-
-            //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
-            // send the email
-            $mailerModel = new MailerSend();
-            $mailerModel->sendEmail($from, $fromName, $toAdress, $subject, $content);
             // NEW MAIL SENDER
             $params = array();
             $params = [
-
+                "id_space" => $id_space,
+                "subject" => $subject,
+                "to" => $toAdress,
+                "content" => $content,
+                "mailerSetCopyToFromBool" => false
             ];
             $email = new Email();
             $email->sendEmailToSpaceMembers($params, $lang);
         }
-
-        //echo 'message = ' . $_SESSION["message"] . '<br/';
-        //echo "redirect <br/>";
         $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
     }
 

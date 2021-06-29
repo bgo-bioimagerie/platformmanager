@@ -23,6 +23,7 @@ class Email extends Model {
      */
     public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ) {
         // send the email
+        Configuration::getLogger()->debug("[email]", ["sending email to" => $toAdress]);
         $mail = new PHPMailer();
         $mail->IsHTML(true);
         $mail->isSMTP();
@@ -76,7 +77,7 @@ class Email extends Model {
     public Function sendEmailToSpaceMembers($params, $lang = "") {
         $modelSpace = new CoreSpace();
         $spaceId = $params["id_space"];
-        $from = Configuration::get('smtp_from') /* $params["from"] */;
+        $from = Configuration::get('smtp_from');
         $spaceName = $modelSpace->getSpaceName($spaceId);
         $subject = $params["subject"];
         $fromName = "Platform-Manager";
@@ -94,21 +95,10 @@ class Email extends Model {
                     $this->formatAddresses($modelSpace->getEmailsSpaceManagers($spaceId));
                 break;
             default:
-                // TODO: test that! => linked to booking module. Create a dedicated function ?
-                $modelCalEntry = new BkCalendarEntry();
-                $toEx = explode("_", $params["to"]);
-                if ($toEx[0] == "a") { // area
-                    // get all the adresses of users who book in this area
-                    $toAddress =
-                        $this->formatAddresses($modelCalEntry->getEmailsBookerArea($toEx[1]));
-                } elseif ($toEx[0] == "r") { // resource
-                    // get all the adresses of users who book in this resource
-                    $toAddress =
-                    $this->formatAddresses($modelCalEntry->getEmailsBookerResource($toEx[1]));
-                }
+            $toAddress = $params["to"];
                 break;
         }
-
+        
         return $this->sendEmail(
             $from,
             $fromName,

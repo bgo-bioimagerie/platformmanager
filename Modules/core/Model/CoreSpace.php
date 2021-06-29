@@ -241,9 +241,7 @@ class CoreSpace extends Model {
     }
 
     public function getSpaceMenus($id_space, $user_role) {
-
-        // CHECK HERE => uncomment to test
-        $sql = "SELECT * FROM core_space_menus WHERE id_space=? /* AND user_role>0 */AND user_role<=? ORDER BY display_order";
+        $sql = "SELECT * FROM core_space_menus WHERE id_space=? AND user_role>0 AND user_role<=? ORDER BY display_order";
         return $this->runRequest($sql, array($id_space, $user_role))->fetchAll();
     }
 
@@ -309,7 +307,7 @@ class CoreSpace extends Model {
     public function getUserSpaceRole($id_space, $id_user) {
         // is super admin?
         $um = new CoreUser();
-        if($um->getStatus($id_user) == CoreUser::$ADMIN) {
+        if($um->getStatus($id_user) == CoreSpace::$ADMIN) {
             return CoreSpace::$ADMIN;
         }
         // else check roles in space

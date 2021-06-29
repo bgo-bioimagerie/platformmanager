@@ -32,8 +32,6 @@ class CoresettingsController extends CoresecureController {
         $modulesControllers = array();
         $i = -1;
         foreach ($modules as $module) {
-            Configuration::getLogger()->debug("Modules configuration?", ["MODULE" => $module]);
-
             $controllerName = $module . "usersettings";
             $controllerName = ucfirst(strtolower($controllerName));
 

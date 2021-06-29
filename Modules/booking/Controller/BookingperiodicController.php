@@ -487,9 +487,19 @@ class BookingdefaultController extends BookingabstractController {
             //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
             
             // send the email
-            $mailerModel = new MailerSend();
-            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
-
+            /* $mailerModel = new MailerSend();
+            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content); */
+            // NEW MAIL SENDER
+            $params = array();
+            $params = [
+                "id_space" => $id_space,
+                "subject" => $subject,
+                "to" => $toAdress,
+                "content" => $content,
+                "mailerSetCopyToFromBool" => false
+            ];
+            $email = new Email();
+            $email->sendEmailToSpaceMembers($params, $this->getLanguage());
         }
         
         $modelCalEntry = new BkCalendarEntry();

@@ -123,7 +123,6 @@ class BookingconfigController extends CoresecureController {
        
         $formEditBookingMailing = $this->editBookingMailingForm($id_space, $lang);
         if($formEditBookingMailing->check()){
-            Configuration::getLogger()->debug("BookingMailingForm", ["mailing" => $this->request->getParameter("BkEditBookingMailing")]);
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("BkEditBookingMailing", $this->request->getParameter("BkEditBookingMailing"), $id_space);
             $modelConfig->setParam("BkBookingMailingAdmins", $this->request->getParameter("BkBookingMailingAdmins"), $id_space);
@@ -174,9 +173,6 @@ class BookingconfigController extends CoresecureController {
     protected function bookingAuthorisationUseVisa($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
         $BkAuthorisationUseVisa = $modelCoreConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
-        Configuration::getLogger()->debug("VISAPARAM", ["visa" => $BkAuthorisationUseVisa]);
-        Configuration::getLogger()->debug("CONFIGURATION", ["parameters" => Configuration::read()['modules']]);
-        
         $form = new Form($this->request, "BkAuthorisationUseVisaForm");
         $form->addSeparator(BookingTranslator::Use_Auth_Visa($lang));
         

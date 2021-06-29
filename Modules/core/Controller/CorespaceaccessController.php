@@ -73,9 +73,7 @@ class CorespaceaccessController extends CoresecureController {
 
         $modelOptions = new CoreSpaceAccessOptions();
         $options = $modelOptions->getAll($id_space);
-        Configuration::getLogger()->debug("CoreSpaceController", ["options" => $options]);
         foreach($options as $option){
-            Configuration::getLogger()->debug("CoreSpaceController loop", ["option" => $option]);
             $translatorName = ucfirst($option["module"]).'Translator';
             require_once 'Modules/'.$option["module"].'/Model/'.$translatorName.'.php';
             $toolname = $option["toolname"];
@@ -362,7 +360,6 @@ class CorespaceaccessController extends CoresecureController {
      * @param int $id pending account id
      */
     public function pendinguserdeleteAction($id_space, $id) {
-        Configuration::getLogger()->debug("in pendinguserdeleteAction", ["id_space" => $id_space, "id_pending" => $id]);
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelPending = new CorePendingAccount();
         $modelPending->invalidate($id, $_SESSION["id_user"]);
