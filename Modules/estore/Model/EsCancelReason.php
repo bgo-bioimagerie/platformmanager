@@ -40,7 +40,7 @@ class EsCancelReason extends Model {
     }
 
     public function set($id, $id_space, $name) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO es_cancel_reasons (id_space, name) VALUES (?,?)';
             $this->runRequest($sql, array($id_space, $name));
             return $this->getDatabase()->lastInsertId();

@@ -53,7 +53,7 @@ class OptionController extends CoresecureController {
         
         if($form->check()){
             $name = $this->request->getParameter("nom");
-            if ($id == 0){
+            if (!$id){
                 $this->model->add($name, $id_space);
             }
             else{

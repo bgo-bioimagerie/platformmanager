@@ -81,7 +81,7 @@ class Document extends Model {
     }
     
     public function get($id){
-        if ($id == 0){
+        if (!$id){
             return array(
                 "id" =>  0,
                 "id_space" => 0,

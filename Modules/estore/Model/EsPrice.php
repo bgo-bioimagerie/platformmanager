@@ -60,7 +60,7 @@ class EsPrice extends Model {
 
     public function set($id_space, $id_product, $id_pricing, $price) {
         $id = $this->exists($id_product, $id_pricing);
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO es_prices (id_space, id_product, id_pricing, price) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id_space, $id_product, $id_pricing, $price));
         } else {

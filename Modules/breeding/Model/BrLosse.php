@@ -34,7 +34,7 @@ class BrLosse extends Model {
     }
 
     public function set($id, $id_space, $id_batch, $date, $id_user, $quantity, $comment, $id_type ) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_losses (id_space, id_batch, date, id_user, quantity, comment, id_type) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array( $id_space, $id_batch, $date, $id_user, $quantity, $comment, $id_type ));
             return $this->getDatabase()->lastInsertId();

@@ -43,7 +43,7 @@ class SeVisa extends Model {
      * @param type $name
      */
     public function set($id, $id_user, $id_space) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO se_visa (id_user, id_space) VALUES (?,?)";
             $this->runRequest($sql, array($id_user, $id_space));
         } else {

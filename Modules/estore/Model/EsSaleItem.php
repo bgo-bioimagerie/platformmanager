@@ -20,7 +20,7 @@ class EsSaleItem extends Model {
     }
     
     public function set($id, $id_sale, $id_batch, $quantity, $price = -1) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO es_sale_items (id_sale, id_batch, quantity, price) VALUES (?,?,?,?)';
             $this->runRequest($sql, array($id_sale, $id_batch, $quantity, $price));
             return $this->getDatabase()->lastInsertId();

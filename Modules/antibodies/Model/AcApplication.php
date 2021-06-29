@@ -70,7 +70,7 @@ class AcApplication extends Model {
      * @return mixed array
      */
     public function get($id) {
-        if ($id == 0) {
+        if (!$id) {
             return array("name" => "");
         }
         $sql = "select * from ac_applications where id=?";

@@ -96,7 +96,7 @@ class ClClient extends Model {
     }
 
     public function get($id) {
-        if ($id == 0) {
+        if (!$id) {
             return array(
                 "id" => 0,
                 "name" => "",
@@ -115,7 +115,7 @@ class ClClient extends Model {
     }
 
     public function set($id, $id_space, $name, $contact_name, $phone, $email, $pricing, $invoice_send_preference) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO cl_clients (id_space, name, contact_name, phone, email, pricing, invoice_send_preference) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $contact_name, $phone, $email, $pricing, $invoice_send_preference));
             return $this->getDatabase()->lastInsertId();

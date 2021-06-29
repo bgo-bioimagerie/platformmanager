@@ -50,7 +50,7 @@ class Tissus extends Model {
 
     public function setTissus($id, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "") {
 
-        if ($id == 0) {
+        if (!$id) {
             $sql = "insert into ac_j_tissu_anticorps(id_anticorps, espece, 
                                                      organe, status, ref_bloc,
                                                      dilution, temps_incubation, 

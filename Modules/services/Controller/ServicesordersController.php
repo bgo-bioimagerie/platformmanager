@@ -185,7 +185,7 @@ class ServicesordersController extends CoresecureController {
             $servicesQuantities = $this->request->getParameter("quantities");
 
             for ($i = 0; $i < count($servicesQuantities); $i++) {
-                if ($id == 0) {
+                if (!$id) {
                     $qOld = 0;
                 } else {
                     $qOld = $modelOrder->getOrderServiceQuantity($id, $servicesIds[$i]);

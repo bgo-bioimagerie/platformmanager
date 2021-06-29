@@ -36,7 +36,7 @@ class BjnotesApi extends CoresecureController {
         $modelNote = new BjNote();
         $id = $this->request->getParameter("formnoteid");
         $isedit = 1;
-        if($id == 0){
+        if(!$id){
             $isedit = 0;
         }
         
@@ -75,7 +75,7 @@ class BjnotesApi extends CoresecureController {
         $modelTask = new BjTask();
         $id = $this->request->getParameter("formtaskid");
         $isedit = 1;
-        if($id == 0){
+        if(!$id){
             $isedit = 0;
         }
         $name = $this->request->getParameter("formtaskname");
@@ -170,7 +170,7 @@ class BjnotesApi extends CoresecureController {
         $modelNote = new BjNote();
         $id = $this->request->getParameter("formeventid");
         $isedit = 1;
-        if($id == 0){
+        if(!$id){
             $isedit = 0;
         }
         $name = $this->request->getParameter("formeventname");
