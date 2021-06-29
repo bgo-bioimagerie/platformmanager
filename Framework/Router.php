@@ -74,6 +74,7 @@ class Router {
             Configuration::getLogger()->debug('No route match, check old way');
             return false;
         }
+
         $this->call($match['target'], $match['params'], $request);
         return true;
     }
@@ -118,14 +119,12 @@ class Router {
                     $_SESSION['id_space'] = $args['id_space'];
                 }
 
-                $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
+                $this->logger->debug('[router][old] call', ["controller" => $controller, "action" => $action, "args" => $args]);
                 $this->runAction($controller, $urlInfo, $action, $args);
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         } catch (Throwable $e) {
-            if ($e instanceof Error) {
-                Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage()]);
-            }
+            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage()]);
             $this->manageError($e);
         }
     }
@@ -135,7 +134,7 @@ class Router {
             try {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             } 
-            catch (Exception $ex) {
+            catch (Throwable $ex) {
                 echo json_encode(array(
                     'error' => array(
                         'msg' => $ex->getMessage(),
