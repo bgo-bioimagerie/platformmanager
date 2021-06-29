@@ -37,9 +37,29 @@ class HelpdeskController extends CoresecureController {
         }
         $hm->assign($id_ticket, $_SESSION['id_user']);
         $this->render(['data' => ['ticket' => $ticket]]);
-
     }
 
+    /**
+     * Update ticket info/status/...
+     */
+    public function statusAction($id_space, $id_ticket, $status) {
+        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $sm = new CoreSpace();
+        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if(!$role || $role < CoreSpace::$MANAGER) {
+            throw new PfmAuthException('not authorized', 403);
+        }
+        $hm = new Helpdesk();
+        $ticket = $hm->get($id_ticket);
+        if(!$ticket) {
+            throw new PfmException('ticket not found', 404);
+        }
+        if($ticket['id_space'] != $id_space) {
+            throw new PfmAuthException('not authorized', 403);
+        }
+        $hm->setStatus($id_ticket, $status);
+        $this->render(['data' => ['ticket' => $ticket]]);
+    }
 
     /**
      * reply or add note

@@ -43,6 +43,10 @@ h3.panel-title {
 .btn {
     font-size: 1em;
 }
+
+pre {
+    all: unset;
+}
 </style>
 
 <?php endblock() ?>
@@ -155,7 +159,7 @@ if (!$headless) {
                     <div class="form-group">
                     <label for="tstatus" class="col-sm-2">Status</label>
                     <div >
-                        <select id="tstatus" class="form-control" v-model:value="ticket.ticket.status">
+                        <select id="tstatus" class="form-control" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
                             <option value="0">New</option>
                             <option value="1">Open</option>
                             <option value="2">Reminder</option>
@@ -175,7 +179,6 @@ if (!$headless) {
                     </form>
                     <div v-if="!ticket.ticket.assigned"><button type="button" class="btn btn-primary" @click="assign"><small>Assign to myself</small></button></div>
                     <div><small>Created: {{ticket.ticket.created_at}}</small></div>
-                    <div><button type="button" class="btn btn-primary" @click="update">Update</button></div>
                 </div>
             </div>
             </div>
@@ -227,16 +230,16 @@ var app = new Vue({
     },
     created () { this.fetchTickets() },
     methods: {
-        update() {
+        updateStatus(event) {
+            console.log('status', event.target.value);
             let headers = new Headers()
             headers.append('Content-Type','application/json')
             headers.append('Accept', 'application/json')
             let cfg = {
                 headers: headers,
                 method: 'POST',
-                body: JSON.stringify(this.ticket.ticket)
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/${id}`, cfg).
+            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}/status/${event.target.value}`, cfg).
             then(() => {
                 console.debug('ticket updated')
             })
@@ -253,11 +256,12 @@ var app = new Vue({
                 headers: headers,
                 method: 'POST'
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/${id}/assign`, cfg).
+            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}/assign`, cfg).
             then(() => this.fetchTicket(this.ticket.ticket.id))
         },
         back() {
             this.ticket = null;
+            this.fetchTickets();
         },
         save() {
             let headers = new Headers()
