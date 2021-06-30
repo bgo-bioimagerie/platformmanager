@@ -47,7 +47,7 @@ class SeOrigin extends Model {
      * @param type $name
      */
     public function set($id, $name, $display_order, $id_space) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO se_origin (id, name, display_order, id_space) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id, $name, $display_order, $id_space));
         } else {

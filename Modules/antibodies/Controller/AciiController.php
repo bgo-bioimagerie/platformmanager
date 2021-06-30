@@ -54,7 +54,7 @@ class AciiController extends CoresecureController {
         
         if($form->check()){
             $name = $this->request->getParameter("nom");
-            if ($id == 0){
+            if (!$id){
                 $this->aciiModel->add($name, $id_space);
             }
             else{

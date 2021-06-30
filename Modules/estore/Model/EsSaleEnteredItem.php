@@ -30,7 +30,7 @@ class EsSaleEnteredItem extends Model {
     }
     
     public function set($id, $id_sale, $id_product, $quantity) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO es_sale_entered_items (id_sale, id_product, quantity) VALUES (?,?,?)';
             $this->runRequest($sql, array($id_sale, $id_product, $quantity));
             return $this->getDatabase()->lastInsertId();

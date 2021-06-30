@@ -20,7 +20,7 @@ class BrChipping extends Model {
     }
 
     public function get($id) {
-        if($id == 0){
+        if(!$id){
             return array(
                 "date" => date("Y-m-d", time()),
                 "chip_number" => "",
@@ -32,7 +32,7 @@ class BrChipping extends Model {
     }
 
     public function set($id, $id_batch, $date, $chip_number, $comment) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_chipping (id_batch, date, chip_number, '
                     . 'comment) VALUES (?,?,?,?)';
             $this->runRequest($sql, array($id_batch, $date, $chip_number, $comment));

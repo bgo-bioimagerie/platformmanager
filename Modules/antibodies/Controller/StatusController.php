@@ -57,7 +57,7 @@ class StatusController extends CoresecureController {
             $name = $this->request->getParameter("nom");
             $color = $this->request->getParameter("color");
             $display_order = $this->request->getParameter("display_order");
-            if ($id == 0){
+            if (!$id){
                 $this->model->add($name, $color, $display_order, $id_space);
             }
             else{

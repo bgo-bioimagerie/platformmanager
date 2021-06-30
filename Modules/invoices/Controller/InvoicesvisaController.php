@@ -64,7 +64,7 @@ class InvoicesvisaController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        if ($id == 0) {
+        if (!$id) {
             $value = array("id" => 0,  "id_user" => 0);
         } else {
             $value = $this->visaModel->get($id);

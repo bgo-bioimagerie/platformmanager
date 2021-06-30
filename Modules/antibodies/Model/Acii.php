@@ -54,7 +54,7 @@ class Acii extends Model {
      * @return mixed array
      */
     public function get($id) {
-        if($id == 0){
+        if(!$id){
             return array( "id" => 0, "nom" => "");
         }
         

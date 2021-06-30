@@ -51,7 +51,7 @@ class Quote extends Model {
 
     public function set($id, $id_space, $recipient, $address, $id_belonging, $id_user, $date_open) {
         $date_last_modified = date('Y-m-d');
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $recipient, $address, $id_belonging, $id_user, $date_open, $date_last_modified));
             return $this->getDatabase()->lastInsertId();

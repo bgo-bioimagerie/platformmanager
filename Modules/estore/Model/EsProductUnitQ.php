@@ -21,7 +21,7 @@ class EsProductUnitQ extends Model {
 
     public function set($id_space, $id_product, $unit_quantity) {
         $id = $this->exists($id_product);
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO es_product_unit_q (id_space, id_product, unit_quantity) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_space, $id_product, $unit_quantity));
         } else {
