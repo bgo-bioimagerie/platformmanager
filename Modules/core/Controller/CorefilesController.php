@@ -23,10 +23,13 @@ class CorefilesController extends CoresecureController {
             if(!isset($_SESSION['id_user'])) {  // not connected
                 throw new PfmFileException("Not authorized", 1);
             }
-            $modelSpace = new CoreSpace();
-            $userRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION['id_user']);
-            if(intval($f['role']) > intval($userRole)) {
-                throw new PfmFileException("Not authorized", 1);
+            if($_SESSION['id_user'] != $f['id_user']) {
+                // If user not owner of file, check role
+                $modelSpace = new CoreSpace();
+                $userRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION['id_user']);
+                if(intval($f['role']) > intval($userRole)) {
+                    throw new PfmFileException("Not authorized", 1);
+                }
             }
         }
         $modelFiles->download($f);        

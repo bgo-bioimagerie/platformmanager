@@ -72,7 +72,7 @@ class Helpdesk extends Model {
      * @param array $files  list of CoreFiles
      * @return int id of ticket
      */
-    public function createTicket($id_space, $from, $to, $subject, $body, $files=[], $id_user=0) {
+    public function createTicket($id_space, $from, $to, $subject, $body, $id_user=0) {
         // create ticket
         // create message
         // create attachements
@@ -88,12 +88,20 @@ class Helpdesk extends Model {
         $this->runRequest($sql, array($id_ticket, $from, $to, $subject, $body, self::$TYPE_EMAIL));
         $id_message = $this->getDatabase()->lastInsertId();
 
+        return ['ticket' => $id_ticket, 'message' => $id_message];
+    }
+
+    /**
+     * Add a file to a ticket message
+     */
+    public function attach($id_ticket, $id_message, $files=[]) {
+        $attachments = [];
         foreach($files as $attachment) {
             $sql = 'INSERT INTO `hp_ticket_attachment` (id_ticket, id_message, id_file, name_file)  VALUES (?,?,?, ?)';
             $this->runRequest($sql, array($id_ticket, $id_message, $attachment['id'], $attachment['name']));
+            $attachments[] = $this->getDatabase()->lastInsertId();
         }
-
-        return $id_ticket;
+        return ['ticket_attachements' => $attachments];
     }
 
     public function addEmail($id_ticket, $body, $from, $files=[]) {
@@ -104,8 +112,8 @@ class Helpdesk extends Model {
         $id = $this->getDatabase()->lastInsertId();
 
         foreach($files as $attachment) {
-            $sql = 'INSERT INTO hp_ticket_attachment (id_ticket, id_file, name_file)  VALUES (?,?, ?)';
-            $this->runRequest($sql, array($id_ticket, $attachment['id'], $attachment['name']));
+            $sql = 'INSERT INTO hp_ticket_attachment (id_ticket, id_message, id_file, name_file)  VALUES (?,?,?,?)';
+            $this->runRequest($sql, array($id_ticket, $id, $attachment['id'], $attachment['name']));
         }
         return $id;
     }
@@ -167,7 +175,7 @@ class Helpdesk extends Model {
         $sql = "SELECT * FROM hp_tickets WHERE `status`=?";
         if($id_user) {
             $sql .= " AND (assigned=? OR created_by_user=?)";
-            return $this->runRequest($sql, array($status, $id_user))->fetchAll();
+            return $this->runRequest($sql, array($status, $id_user, $id_user))->fetchAll();
         }
         return $this->runRequest($sql, array($status))->fetchAll();
     }

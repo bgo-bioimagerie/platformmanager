@@ -87,7 +87,15 @@ abstract class Controller {
         if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
             header('Content-Type: application/json');
             if(isset($dataView['data'])) {
-                echo json_encode($dataView['data']);
+                ob_start();
+                // Configuration::getLogger()->debug('[api] response', ['data' => json_encode($dataView['data'])]);
+                try {
+                    echo json_encode($dataView['data']);
+                } catch(Exception $e) {
+                    Configuration::getLogger()->error('[api] json error', ['error', $e->getMessage()]);
+                }
+                ob_end_flush();
+                flush();
             }
             return null;
         }
@@ -122,7 +130,10 @@ abstract class Controller {
     protected function redirect($path, $args = array(), $data = array()) {
         if(!empty($data) && isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
             header('Content-Type: application/json');
+            ob_start();
             echo json_encode($data);
+            ob_end_flush();
+            flush();
             return null;
         }
         $rootWeb = Configuration::get("rootWeb", "/");

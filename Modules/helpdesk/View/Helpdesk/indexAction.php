@@ -121,6 +121,11 @@ if (!$headless) {
                     </div>
                     <div class="panel-body" v-html="message.md"></div>
                     <div class="panel-footer" v-if="message.type=='0'">
+                        <div>
+                            <div v-for="attach in message.attachements" :key="attach.id">
+                            <a v-bind:href="'/corefiles/<?php echo $id_space ?>/' + attach.id_file" target="_blank" rel="noopener noreferrer" >{{attach.name_file}}</a>
+                            </div>
+                        </div>
                         <button type="button" class="btn btn-primary" @click="reply(ticket.ticket.id, message.id)"><small>reply</small></button>
                     </div>
                 </div>
@@ -138,6 +143,7 @@ if (!$headless) {
                         <div class="form-group">
                         <textarea v-model="mdText" class="form-control" rows="5">
                         </textarea>
+                        <input type="file" id="mailFiles" multiple v-if="addType==0" class="form-control">Attachments</h3>
                         </div>
                     </form>
                     <div v-if="textPreview" class="panel-body" v-html="text"></div>
@@ -185,7 +191,13 @@ if (!$headless) {
         </div>
         </div>
         <div v-if="ticket === null" class="col-sm-10 col-sm-offset-1 text-center">
-        <div><span v-if="filter!=0" class="badge" @click="setFilter(0)">New</span><span v-if="filter!=1" class="badge" @click="setFilter(1)">Open</span><span v-if="filter!=2" class="badge" @click="setFilter(2)">Reminder</span><span v-if="filter!=3" class="badge" @click="setFilter(3)">Closed</span></div>
+        <div>
+            <span class="badge" @click="setMy()">My tickets</span>
+            <span v-if="filter!=0" class="badge" @click="setFilter(0)">New</span>
+            <span v-if="filter!=1" class="badge" @click="setFilter(1)">Open</span>
+            <span v-if="filter!=2" class="badge" @click="setFilter(2)">Reminder</span>
+            <span v-if="filter!=3" class="badge" @click="setFilter(3)">Closed</span>
+        </div>
         <table aria-describedby="list of tickets" class="table table-striped table-sm">
             <thead class="thead-dark">
                 <tr>
@@ -195,6 +207,7 @@ if (!$headless) {
                 <th scope="col">Author</th>
                 <th scope="col">Status</th>
                 <th scope="col">Queue</th>
+                <th scope="col">Assigned</th>
                 </tr>
             </thead>
             <tbody>
@@ -205,6 +218,7 @@ if (!$headless) {
                <td>{{ticket.created_by}}</td>
                <td>{{status(ticket.status)}}</td>
                <td>{{ticket.queue}}</td>
+               <td>{{ticket.assigned_name}}</td>
             </tr>
             </tbody>
         </table>
@@ -220,6 +234,7 @@ var app = new Vue({
         return {
             filter: 0,  // ticket status filter
             addType: 1,  // note
+            my: false,
             message: '',
             tickets: [],
             ticket: null,
@@ -244,6 +259,10 @@ var app = new Vue({
                 console.debug('ticket updated')
             })
         },
+        setMy() {
+            this.my = !this.my;
+            this.fetchTickets();
+        },
         setFilter(f) {
             this.filter = f;
             this.fetchTickets();
@@ -264,19 +283,40 @@ var app = new Vue({
             this.fetchTickets();
         },
         save() {
+            console.debug('save ticket', this.ticket.ticket);
             let headers = new Headers()
             headers.append('Content-Type','application/json')
             headers.append('Accept', 'application/json')
             let cfg = {
                 headers: headers,
-                method: 'PUT',
+                method: 'POST',
                 body: JSON.stringify({
                     'type': this.addType,
                     'body': this.mdText,
                     'to': this.ticket.ticket.created_by
                 })
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/${id}`, cfg).
+            if(this.addType == 0) {
+                const inputFiles = document.getElementById('mailFiles');
+                let f = new FormData();
+                f.append('type', this.addType);
+                f.append('body', this.mdText);
+                f.append('to', this.ticket.ticket.created_by);
+                let fileIndex = 0;
+                for (const file of inputFiles.files) {
+                    f.append('file' + fileIndex,file,file.name)
+                    fileIndex++;
+                }
+                headers = new Headers()
+                headers.append('Accept', 'application/json')
+                cfg = {
+                    headers: headers,
+                    method: 'POST',
+                    body: f
+                }
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}`, cfg).
+            then(response => response.json()).
             then(() => {
                 this.fetchTicket(this.ticket.ticket.id)
                 this.addType = 1;
@@ -338,7 +378,7 @@ var app = new Vue({
             then((response) => response.json()).
             then(data => {
                 for(let i=0;i<data.messages.length;i++) {
-                    data.messages[i].md = marked(data.messages[i].body, { sanitize: true });
+                    data.messages[i].md = marked(data.messages[i].body, { sanitize: true }) || "";
                 }
                 this.ticket = data;
                 console.debug('get ticket', data);
@@ -351,7 +391,13 @@ var app = new Vue({
             let cfg = {
                 headers: headers
             }
-            fetch('/helpdesk/<?php echo $id_space ?>/list/' + this.filter, cfg).
+            let params = '';
+            if(this.my) {
+                params = new URLSearchParams({
+                    mine: 1
+                })
+            }
+            fetch('/helpdesk/<?php echo $id_space ?>/list/' + this.filter + '?' + params, cfg).
             then((response) => response.json()).
             then(data => {
                 this.tickets = data.tickets;

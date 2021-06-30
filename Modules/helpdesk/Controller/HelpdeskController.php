@@ -1,11 +1,13 @@
 <?php
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Controller.php';
+require_once 'Framework/Errors.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreFiles.php';
 
 
 class HelpdeskController extends CoresecureController {
@@ -87,11 +89,30 @@ class HelpdeskController extends CoresecureController {
         }
         $params = $this->request->params();
         $id = 0;
-        if($params['type'] == Helpdesk::$TYPE_EMAIL) {
+        if(intval($params['type']) == Helpdesk::$TYPE_EMAIL) {
             // TODO manage attachements
-            $id = $hm->addEmail($id_ticket, $params['body'], $_SESSION['email']);
+            Configuration::getLogger()->debug('[helpdesk] mail reply', ['params' => $params, 'files' => $_FILES]);
+            $attachments = [];
+            foreach($_FILES as $fid => $f) {
+                $c = new CoreFiles();
+                $role = CoreSpace::$MANAGER;
+                $module = "helpdesk";
+                $name = $_FILES[$fid]['name'];
+                $attachId = $c->set(0, $id_space, $name, $role, $module, $_SESSION['id_user']);
+                $file = $c->get($attachId);
+                $filePath = $c->path($file);
+                if(!move_uploaded_file($_FILES[$fid]["tmp_name"], $filePath)) {
+                    Configuration::getLogger()->error('[helpdesk] file upload error', ['file' => $_FILES[$fid], 'to' => $filePath]);
+                    throw new PfmFileException("Error, there was an error uploading your file", 500);
+                }
+                $attachments[] = ['id' => $attachId, 'name' => $name];
+            }
+            $id = $hm->addEmail($id_ticket, $params['body'], $_SESSION['email'], $attachments);
+
+
             // TODO send email to users (param *to*, comma separated)
             // need to convert body to html
+            // TODO manage attachements
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
 
@@ -135,6 +156,20 @@ class HelpdeskController extends CoresecureController {
             $filteredMessages = $messages;
         }
 
+        $attachements = $hm->getAttachments($id_ticket);
+        $attachementsPerMessage = [];
+        foreach ($attachements as $attachement) {
+            if(!isset($attachementsPerMessage[$attachement['id_message']])) {
+                $attachementsPerMessage[$attachement['id_message']] = array();
+            }
+            $attachementsPerMessage[$attachement['id_message']][] = $attachement;
+        }
+        foreach ($filteredMessages as $index => $msg) {
+            $filteredMessages[$index]['attachements'] = [];
+            if(isset($attachementsPerMessage[$msg['id']])) {
+                $filteredMessages[$index]['attachements'] = $attachementsPerMessage[$msg['id']];
+            }
+        }
 
         $this->render(['data' => ['ticket' => $ticket, 'messages' => $filteredMessages]]);
     }
@@ -159,7 +194,6 @@ class HelpdeskController extends CoresecureController {
         if(!$id_user && isset($_GET['mine'])) {
             $id_user = $_SESSION['id_user'];
         }
-
         $tickets = $hm->list($id_space, $status, $id_user);
 
         //$this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
