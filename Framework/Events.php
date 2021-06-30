@@ -96,6 +96,7 @@ class Events {
     public const ACTION_SPACE_DELETE = 1;
     public const ACTION_SPACE_USER_JOIN = 2;
     public const ACTION_SPACE_USER_UNJOIN = 3;
+    public const HELPDESK_TICKET = 100;
 
     private static $connection;
     private static $channel;

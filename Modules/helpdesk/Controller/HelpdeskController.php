@@ -3,6 +3,7 @@ require_once 'Framework/Configuration.php';
 require_once 'Framework/Controller.php';
 require_once 'Framework/Errors.php';
 require_once 'Framework/Email.php';
+require_once 'Framework/Events.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
@@ -134,6 +135,9 @@ class HelpdeskController extends CoresecureController {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
 
         }
+
+        Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+
         
         $this->render(['data' => ['message' => ['id' => $id]]]);
 
