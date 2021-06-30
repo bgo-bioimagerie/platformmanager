@@ -88,9 +88,8 @@ $monthStream = date("F", $time);
 $dayNumStream = date("d", $time);
 $yearStream = date("Y", $time);
 $sufixStream = date("S", $time);
-$day_position = "";
 $day_position = date("w", $time); // 0 for sunday, 6 for saturday
-$day_position = ($day_position === "0") ? 7 : (int)$day_position;
+$day_position = ($day_position === "0") ? 7 : intval($day_position);
 ?>
 <b><?php echo  BookingTranslator::DateFromTime($time, $lang) ?></b>
 </div>

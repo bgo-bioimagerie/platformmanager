@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Email.php';
 require_once 'Modules/booking/Controller/BookingabstractController.php';
 
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
@@ -18,8 +19,6 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReArea.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
-
-require_once 'Modules/mailer/Model/MailerSend.php';
 
 
 /**
@@ -154,8 +153,8 @@ class BookingdefaultController extends BookingabstractController {
             $end_time = $start_time + 3600*$pk_duration;
         }
 
-        $modelResp = new EcResponsible();
-        $userResps = $modelResp->getUserResponsibles($recipient_id);
+        $modelResp = new ClClientUser();
+        $userResps = $modelResp->getUserClientAccounts($recipient_id, $id_space);
         $foundResp = false;
         foreach($userResps as $uresp){
             if($uresp["id"] == $responsible_id){
@@ -163,6 +162,7 @@ class BookingdefaultController extends BookingabstractController {
                 break;
             }
         }
+        Configuration::getLogger()->debug(["TEST"], ["after new EcResponsible" => "var2"]);
         
         if( !$foundResp ){
             $resaInfo = array(
@@ -421,20 +421,13 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     private function canBookForOthers($id_space, $id_user) {
-
         $modelSpace = new CoreSpace();
         $userRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($userRole < 3) {
-            return false;
-        } else {
-            return true;
-        }
+        return ($userRole >= 3);
     }
 
     private function editReservationInfo($param) {
-        //echo "param = " . $param . "<br/>";
         $contentAction = explode("_", $param);
-        //print_r($contentAction);
         $id = $contentAction[1];
         
         $modelCalEntry = new BkCalendarEntry();
@@ -457,46 +450,27 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id){
+        $sendEmail = $this->request->getParameter("sendmail");
         
-        $sendmail = $this->request->getParameter("sendmail");
-        
-        if( $sendmail == 1){
+        if( $sendEmail == 1){
             // get the resource
             $modelCalEntry = new BkCalendarEntry();
             $entryInfo = $modelCalEntry->getEntry($id);
             $id_resource = $entryInfo["resource_id"];
-            
-            
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_resource);
             
-            // get the space name
-            $modelSpace = new CoreSpace();
-            $space = $modelSpace->getSpace($id_space);
-        
-            // user info
-            $userModel = new CoreUser();
-            $user = $userModel->getInfo($_SESSION["id_user"]);
-            
             // mail content
-            $from = $user["email"];
-            $toAdress = $modelCalEntry->getEmailsBookerResource($id_resource);
+            $toAddress = $modelCalEntry->getEmailsBookerResource($id_resource);
             $subject = $resourceName . " has been freed"; 
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]); 
-            
-            //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
-            
-            // send the email
-            /* $mailerModel = new MailerSend();
-            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content); */
-            // NEW MAIL SENDER
-            $params = array();
+     
+           // NEW MAIL SENDER
             $params = [
                 "id_space" => $id_space,
                 "subject" => $subject,
-                "to" => $toAdress,
-                "content" => $content,
-                "mailerSetCopyToFromBool" => false
+                "to" => $toAddress,
+                "content" => $content
             ];
             $email = new Email();
             $email->sendEmailToSpaceMembers($params, $this->getLanguage());

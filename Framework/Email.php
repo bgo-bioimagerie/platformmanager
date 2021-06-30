@@ -36,8 +36,10 @@ class Email extends Model {
         // parse content
         $content = preg_replace("/\r\n|\r/", "<br />", $content);
         $content = trim($content);
+        Configuration::getLogger()->debug("content", ["content" => $content]);
 
         $mail->Body = $content;
+        Configuration::getLogger()->debug("content", ["content" => $content]);
 
         if ($sentCopyToFrom){
             $mail->AddCC($from);
@@ -82,9 +84,9 @@ class Email extends Model {
         $subject = $params["subject"];
         $fromName = "Platform-Manager";
         $subject = CoreTranslator::MailSubjectPrefix($spaceName, $lang) . " " . $subject;
+        $mailerSetCopyToFrom = $this->getMailerSetCopyToFrom($spaceId);
 
         // get the emails
-        $toAddress = array(); 
         switch ($params["to"]) {
             case "all":
                 $toAddress =
@@ -95,17 +97,20 @@ class Email extends Model {
                     $this->formatAddresses($modelSpace->getEmailsSpaceManagers($spaceId));
                 break;
             default:
-            $toAddress = $params["to"];
+                try {
+                    $toAddress = $this->formatAddresses($params["to"]);
+                } catch (Exception $e) {
+                    Configuration::getLogger()->error('something went wrong getting email addresses', ['error' => $e->getMessage()]);
+                } 
                 break;
         }
-        
         return $this->sendEmail(
             $from,
             $fromName,
             $toAddress,
             $subject,
             $params["content"],
-            $params["mailerSetCopyToFromBool"]
+            $mailerSetCopyToFrom
         );
     }
 
@@ -126,7 +131,6 @@ class Email extends Model {
             $fromName = "Platform-Manager";
             $subject = CoreTranslator::JoinRequestSubject($params["space_name"], $lang);
             $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
-            $toAddress = array();
             $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($params["id_space"]));
             $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {
@@ -189,6 +193,12 @@ class Email extends Model {
             array_push($result, $objectWithEmailAttr["email"]);
         }
         return $result;
+    }
+
+    public function getMailerSetCopyToFrom($spaceId) {
+        $modelConfig = new CoreConfig();
+        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId);
+        return ($mailerSetCopyToFrom == 1);
     }
 
 }

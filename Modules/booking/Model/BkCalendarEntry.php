@@ -226,7 +226,6 @@ class BkCalendarEntry extends Model {
         $resourceInfo = $modelResources->get($resource_id);
         
         $resps = $modelAccount->getUserClientAccounts($id_user, $resourceInfo["id_space"]);
-        //print_r($resps);
         $resps_id = $resps ? $resps[0]["id"] : null;
         return array("id" => 0,
             "start_time" => $start_time,

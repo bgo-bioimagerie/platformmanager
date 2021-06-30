@@ -77,11 +77,17 @@ class MailerController extends CoresecureController {
         $subject = $this->request->getParameter("subject");
         $content = $this->request->getParameter("content");
 
-        $modelConfig = new CoreConfig();
-        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space);
-        $mailerSetCopyToFromBool = false;
-        if($mailerSetCopyToFrom == 1){
-            $mailerSetCopyToFromBool = true;
+        if (!in_array($to, array("all", "managers"))) {
+            $toEx = explode("_", $to);
+            if ($toEx[0] == "a") { // area
+                // get all the adresses of users who book in this area
+                $modelCalEntry = new BkCalendarEntry();
+                $to = $modelCalEntry->getEmailsBookerArea($toEx[1]);
+            } elseif ($toEx[0] == "r") { // resource
+                // get all the adresses of users who book in this resource
+                $modelCalEntry = new BkCalendarEntry();
+                $to = $modelCalEntry->getEmailsBookerResource($toEx[1]);
+            }
         }
 
         $email = new Email();
@@ -91,7 +97,6 @@ class MailerController extends CoresecureController {
             "subject" => $subject,
             "from" => $from,
             "to" => $to,
-            "mailerSetCopyToFromBool" => $mailerSetCopyToFromBool
         ];
         $message = $email->sendEmailToSpaceMembers($mailParams, $this->getLanguage());
 
