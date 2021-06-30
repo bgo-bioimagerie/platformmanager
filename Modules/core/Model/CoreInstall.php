@@ -27,6 +27,7 @@ require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
+require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 
 
@@ -95,6 +96,9 @@ class CoreDB extends Model {
             $cu->newApiKey($user['id']);
         }
 
+        Configuration::getLogger()->debug("[adminmenu] remove update");
+        $cam = CoreAdminMenu();
+        $cam->removeAdminMenu("Update");
     }
 
     /**
