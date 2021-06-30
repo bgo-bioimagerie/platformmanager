@@ -129,12 +129,13 @@ class HelpdeskController extends CoresecureController {
             $toAddress = explode(',', $params['to']);
             // TODO add file attachments
             $e = new Email();
-            $e->sendEmail($from, $fromName, $toAddress, $subject, $content);
+            $e->sendEmail($from, $fromName, $toAddress, $subject, $content, $attachementFiles);
 
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
-
         }
+
+        // TODO manage user pref to receive notifications
 
         Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
 
