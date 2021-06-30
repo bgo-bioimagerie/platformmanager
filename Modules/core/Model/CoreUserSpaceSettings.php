@@ -86,7 +86,7 @@ class CoreUserSpaceSettings extends Model {
     protected function isSetting($id_space, $user_id, $setting) {
         $sql = "select * from core_users_settings where user_id=? and setting=? and id_space=?";
         $req = $this->runRequest($sql, array($user_id, $setting, $id_space));
-        return $req->rowCount() == 1
+        return $req->rowCount() == 1;
     }
 
     /**
