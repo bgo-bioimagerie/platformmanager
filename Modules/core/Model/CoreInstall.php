@@ -14,6 +14,8 @@ require_once 'Modules/core/Model/CoreFiles.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
+
 require_once 'Modules/core/Model/CoreProjects.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
@@ -227,6 +229,9 @@ class CoreInstall extends Model {
 
         $modelUserS = new CoreUserSettings();
         $modelUserS->createTable();
+
+        $moduleUserSpaceS = new CoreUserSpaceSettings();
+        $moduleUserSpaceS->createTable();
 
         $modelMenu = new CoreAdminMenu();
         $modelMenu->createTable();
