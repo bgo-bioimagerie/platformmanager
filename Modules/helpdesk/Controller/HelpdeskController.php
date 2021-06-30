@@ -129,7 +129,7 @@ class HelpdeskController extends CoresecureController {
             $toAddress = explode(',', $params['to']);
             // TODO add file attachments
             $e = new Email();
-            $e->sendEmail($from, $fromName, $toAddress, $subject, $content, $attachementFiles);
+            $e->sendEmail($from, $fromName, $toAddress, $subject, $content, false, $attachementFiles);
 
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
