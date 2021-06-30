@@ -52,7 +52,7 @@ class BrProduct extends Model {
     }
 
     public function set($id, $id_space, $id_category, $name, $description) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_products (id_space, id_category, name, description) VALUES (?,?,?,?)';
             $this->runRequest($sql, array($id_space, $id_category, $name, $description));
             return $this->getDatabase()->lastInsertId();

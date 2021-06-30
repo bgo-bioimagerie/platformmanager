@@ -30,7 +30,7 @@ class BrSaleItem extends Model {
 
     public function set($id, $id_sale, $date, $id_batch, $requested_product, 
             $requested_quantity, $quantity, $comment) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_sale_items (id_sale, date, id_batch, '
                     . 'requested_product, requested_quantity, quantity, comment ) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_sale, $date, $id_batch, $requested_product, 

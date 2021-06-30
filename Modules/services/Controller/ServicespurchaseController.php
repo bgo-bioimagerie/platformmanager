@@ -62,7 +62,7 @@ class ServicespurchaseController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelItem = new SePurchaseItem();
-        if ($id == 0) {
+        if (!$id) {
             $value = array("comment" => "", "date" => CoreTranslator::dateFromEn(date("Y-m-d", time()), $lang));
             $items = array("services" => array(), "quantities" => array());
         } else {
@@ -97,7 +97,7 @@ class ServicespurchaseController extends CoresecureController {
             $servicesQuantities = $this->request->getParameter("quantities");
 
             for ($i = 0; $i < count($servicesQuantities); $i++) {
-                if ($id == 0){
+                if (!$id){
                    $qOld = 0; 
                 }
                 else{

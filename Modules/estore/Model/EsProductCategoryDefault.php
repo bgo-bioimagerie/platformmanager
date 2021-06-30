@@ -46,7 +46,7 @@ class EsProductCategoryDefault extends Model {
     }
 
     public function set($id, $id_space, $name, $description) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO es_product_categories (id_space, name, description) VALUES (?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $description));
             return $this->getDatabase()->lastInsertId();

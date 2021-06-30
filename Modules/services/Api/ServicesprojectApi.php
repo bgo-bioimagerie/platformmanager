@@ -31,7 +31,7 @@ class ServicesprojectApi extends CoresecureController {
         $modelProject = new SeProject();
         $id = $this->request->getParameter("formnoteid");
         $isedit = 1;
-        if($id == 0){
+        if(!$id){
             $isedit = 0;
         }
         

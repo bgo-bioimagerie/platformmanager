@@ -65,7 +65,7 @@ class Source extends Model {
      * @return mixed array
      */
     public function get($id) {
-        if ($id == 0) {
+        if (!$id) {
             return array("nom" => "");
         }
 

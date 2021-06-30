@@ -47,7 +47,7 @@ class BkRestrictions extends Model {
 
     public function add($id_resource, $maxbookingperday, $bookingdelayusercanedit) {
         $id = $this->exists($id_resource);
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO bk_restrictions (id_resource, maxbookingperday, bookingdelayusercanedit) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit));
         }

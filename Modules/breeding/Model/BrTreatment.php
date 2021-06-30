@@ -23,7 +23,7 @@ class BrTreatment extends Model {
     }
 
     public function get($id) {
-        if($id == 0){
+        if(!$id){
             return array(
                 "date" => date("Y-m-d", time()),
                 "antibiotic" => "",
@@ -38,7 +38,7 @@ class BrTreatment extends Model {
     }
 
     public function set($id, $id_batch, $date, $antibiotic, $suppressor, $water, $food, $comment) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_treatment (id_batch, date, antibiotic, '
                     . 'suppressor, water, food, comment) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_batch, $date, $antibiotic, $suppressor, $water, $food, $comment));

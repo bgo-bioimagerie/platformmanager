@@ -50,7 +50,7 @@ class ServicesoriginsController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        if ($id == 0) {
+        if (!$id) {
             $value = array("name" => "", "display_order" => 1);
         } else {
             $value = $this->originModel->get($id);

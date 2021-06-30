@@ -35,7 +35,7 @@ class AcOwner extends Model {
     }
 
     public function setOwner($id, $id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = "INSERT INTO ac_j_user_anticorps (id_anticorps, id_utilisateur, disponible, date_recept, no_dossier) VALUES (?,?,?,?,?);";
             $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier));
         } else {

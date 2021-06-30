@@ -52,7 +52,7 @@ class BrCategory extends Model {
     }
 
     public function set($id, $id_space, $name, $description, $vat) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO br_categories (id_space, name, description, vat) VALUES (?,?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $description, $vat));
             return $this->getDatabase()->lastInsertId();

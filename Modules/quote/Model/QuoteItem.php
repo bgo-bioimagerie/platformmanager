@@ -48,7 +48,7 @@ class QuoteItem extends Model {
     }
 
     public function setItem($id, $id_quote, $id_content, $module, $quantity, $comment) {
-        if ($id == 0) {
+        if (!$id) {
             $sql = 'INSERT INTO qo_quoteitems (id_quote, id_content, module, quantity, comment) VALUES (?,?,?,?,?)';
             $this->runRequest($sql, array($id_quote, $id_content, $module, $quantity, $comment));
             return $this->getDatabase()->lastInsertId();

@@ -135,8 +135,8 @@ class CoreFiles extends Model {
      * Create/update a new file entry
      */
     public function set($id, $id_space, $name, $role, $module, $id_user) {
-        if ($id == 0) {
-            $sql = 'INSERT INTO core_files(id_space, `name`, module,  `role`, id_user) VALUES (?,?,?,?,?)';
+        if (!$id) {
+            $sql = 'INSERT INTO core_files (id_space, `name`, module, `role`, id_user) VALUES (?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user));
             return $this->getDatabase()->lastInsertId();
         } else {
