@@ -47,6 +47,10 @@ h3.panel-title {
 pre {
     all: unset;
 }
+
+blockquote {
+    all: unset;
+}
 </style>
 
 <?php endblock() ?>
@@ -333,7 +337,7 @@ var app = new Vue({
                     let lines = this.ticket.messages[i].body.split("\n");
                     let resp = '';
                     lines.forEach(line => {
-                        resp += '>'+line;
+                        resp += '>'+line + "\n";
                     })
                     body = resp;
                 }

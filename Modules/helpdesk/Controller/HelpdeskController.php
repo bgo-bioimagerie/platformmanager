@@ -2,6 +2,7 @@
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Controller.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Email.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
@@ -9,6 +10,7 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreFiles.php';
 
+use League\CommonMark\CommonMarkConverter;
 
 class HelpdeskController extends CoresecureController {
     
@@ -68,7 +70,6 @@ class HelpdeskController extends CoresecureController {
      */
     public function messageAction($id_space, $id_ticket) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
-
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
         if(!$ticket) {
@@ -87,12 +88,14 @@ class HelpdeskController extends CoresecureController {
             // user not manager not creator of ticket
             throw new PfmAuthException('not authorized', 403);
         }
+        $space = $sm->getSpace($id_space);
         $params = $this->request->params();
         $id = 0;
         if(intval($params['type']) == Helpdesk::$TYPE_EMAIL) {
             // TODO manage attachements
             Configuration::getLogger()->debug('[helpdesk] mail reply', ['params' => $params, 'files' => $_FILES]);
             $attachments = [];
+            $attachementFiles = [];
             foreach($_FILES as $fid => $f) {
                 $c = new CoreFiles();
                 $role = CoreSpace::$MANAGER;
@@ -100,6 +103,7 @@ class HelpdeskController extends CoresecureController {
                 $name = $_FILES[$fid]['name'];
                 $attachId = $c->set(0, $id_space, $name, $role, $module, $_SESSION['id_user']);
                 $file = $c->get($attachId);
+                $attachementFiles[] = $file;
                 $filePath = $c->path($file);
                 if(!move_uploaded_file($_FILES[$fid]["tmp_name"], $filePath)) {
                     Configuration::getLogger()->error('[helpdesk] file upload error', ['file' => $_FILES[$fid], 'to' => $filePath]);
@@ -109,10 +113,23 @@ class HelpdeskController extends CoresecureController {
             }
             $id = $hm->addEmail($id_ticket, $params['body'], $_SESSION['email'], $attachments);
 
+            $converter = new CommonMarkConverter([
+                'html_input' => 'strip',
+                'allow_unsafe_links' => false,
+            ]);
+            
+            $content = $converter->convertToHtml($params['body']);
+            Configuration::getLogger()->debug('should send email', ['body' => $content, 'files' => $attachementFiles]);
+            $from = Configuration::get('smtp_from');
+            $fromInfo = explode('@', $from);
+            $from = $fromInfo[0]. '+' . $space['shortname'] . '@' . $fromInfo[1];
+            $fromName = $fromInfo[0]. '+' . $space['shortname'];
+            $subject = '[Ticket #' . $ticket['id'] . '] '.$ticket['subject'];
+            $toAddress = explode(',', $params['to']);
+            // TODO add file attachments
+            $e = new Email();
+            $e->sendEmail($from, $fromName, $toAddress, $subject, $content);
 
-            // TODO send email to users (param *to*, comma separated)
-            // need to convert body to html
-            // TODO manage attachements
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
 
