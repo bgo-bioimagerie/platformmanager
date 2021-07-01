@@ -14,6 +14,8 @@ require_once 'Modules/core/Model/CoreFiles.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
+
 require_once 'Modules/core/Model/CoreProjects.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
@@ -25,6 +27,7 @@ require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
+require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 
 
@@ -93,6 +96,9 @@ class CoreDB extends Model {
             $cu->newApiKey($user['id']);
         }
 
+        Configuration::getLogger()->debug("[adminmenu] remove update");
+        $cam = CoreAdminMenu();
+        $cam->removeAdminMenu("Update");
     }
 
     /**
@@ -227,6 +233,9 @@ class CoreInstall extends Model {
 
         $modelUserS = new CoreUserSettings();
         $modelUserS->createTable();
+
+        $moduleUserSpaceS = new CoreUserSpaceSettings();
+        $moduleUserSpaceS->createTable();
 
         $modelMenu = new CoreAdminMenu();
         $modelMenu->createTable();

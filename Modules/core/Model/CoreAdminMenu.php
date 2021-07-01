@@ -41,10 +41,6 @@ class CoreAdminMenu extends Model {
      * Add the default menus
      */
     public function addCoreDefaultMenus() {
-        if (!$this->isAdminMenu("Update")) {
-            $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
-            $this->runRequest($sql, array("Update", "coreupdate", "glyphicon-th-large"));
-        }
 
         if (!$this->isAdminMenu("Menus")) {
             $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";

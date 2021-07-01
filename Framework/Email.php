@@ -2,6 +2,8 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/mailer/Model/MailerTranslator.php';
+require_once 'Modules/core/Model/CoreFiles.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -20,8 +22,9 @@ class Email extends Model {
      * @param string $subject
      * @param string $content
      * @param string $sentCopyToFrom
+     * @param array  list of CoreFiles to attach to email
      */
-    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ) {
+    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false, $files = [] ) {
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -47,6 +50,16 @@ class Email extends Model {
             }
         } else if ( $toAdress != "" ) {
             $mail->addBCC($toAdress);
+        }
+
+        $fm = new CoreFiles();
+        foreach ($files as $file) {
+            try {
+                    $filePath = $fm->path($file);
+                    $mail->AddAttachment($filePath, basename($file['name']));
+            } catch(Exception $e) {
+                Configuration::getLogger()->error('[mail] failed to attach file', ['file' => $file]);
+            }
         }
 
         // get the language
