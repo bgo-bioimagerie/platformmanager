@@ -284,8 +284,9 @@ class BookingdefaultController extends BookingabstractController {
             }
         } else {
             $periodicEndDate = CoreTranslator::dateToEn($this->request->getParameter("periodic_enddate"), $lang);
-            $periodicEndDateArray = explode("/", $periodicEndDate);
-            $last_start_time = mktime($hour_startH, $hour_startM, 0, $periodicEndDateArray[1], $periodicEndDateArray[0], $periodicEndDateArray[2]);
+            $periodicEndDateArray = explode("-", $periodicEndDate);
+            // check parameters order here !!!
+            $last_start_time = mktime($hour_startH, $hour_startM, 0, $periodicEndDateArray[1], $periodicEndDateArray[2], $periodicEndDateArray[0]);
             $modelPeriodic = new BkCalendarPeriod();
             $id_period = $modelCalEntry->getPeriod($id);
             $id_period = $modelPeriodic->setPeriod($id_period, $periodic_option, 0); // initialize with default option updated later
@@ -686,7 +687,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->addHidden("id_reservation", 0);
 
         $sendEmailWhenDelete = $modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space);
-        if ($sendEmailWhenDelete == 1) {
+        if ($sendEmailWhenDelete == "1") {
             $formDelete->addSelect("sendmail", BookingTranslator::SendEmailsToUsers($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), 1);
         } else {
             $formDelete->addHidden("sendmail", 0);
@@ -768,7 +769,7 @@ class BookingdefaultController extends BookingabstractController {
 
     public function deleteAction($id_space, $id) {
         $sendEmail = $this->request->getParameter("sendmail");
-        if ($sendEmail == 1) {
+        if ($sendEmail == "1") {
             $modelCalEntry = new BkCalendarEntry();
             $entryInfo = $modelCalEntry->getEntry($id);
             $id_resource = $entryInfo["resource_id"];
@@ -778,8 +779,7 @@ class BookingdefaultController extends BookingabstractController {
             $toAddress = $modelCalEntry->getEmailsBookerResource($id_resource);
 
             $modelConfig = new CoreConfig();
-            $sendMailResponsibles = $modelConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
-            
+            $sendMailResponsibles = intval($modelConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
             if ($sendMailResponsibles > 0) {
                 $modelResp = new ReResps();
                 $resourceManagersEmails = $modelResp->getResourcesManagersEmails($id_resource);

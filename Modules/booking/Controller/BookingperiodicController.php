@@ -162,7 +162,6 @@ class BookingdefaultController extends BookingabstractController {
                 break;
             }
         }
-        Configuration::getLogger()->debug(["TEST"], ["after new EcResponsible" => "var2"]);
         
         if( !$foundResp ){
             $resaInfo = array(
@@ -394,7 +393,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->addHidden("id_reservation", 0);
         
         $sendEmailWhenDelete = $modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space);
-        if($sendEmailWhenDelete == 1){
+        if($sendEmailWhenDelete == "1"){
             $formDelete->addSelect("sendmail", BookingTranslator::SendEmailsToUsers($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), 1);
         }
         else{
@@ -443,7 +442,7 @@ class BookingdefaultController extends BookingabstractController {
 
     private function isNew($param) {
         $contentAction = explode("_", $param);
-        if ($contentAction[0] == "t"){
+        if ($contentAction[0] == "t") {
             return true;
         }
         return false;
@@ -451,8 +450,7 @@ class BookingdefaultController extends BookingabstractController {
 
     public function deleteAction($id_space, $id){
         $sendEmail = $this->request->getParameter("sendmail");
-        
-        if( $sendEmail == 1){
+        if ($sendEmail == "1") {
             // get the resource
             $modelCalEntry = new BkCalendarEntry();
             $entryInfo = $modelCalEntry->getEntry($id);

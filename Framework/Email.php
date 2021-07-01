@@ -23,7 +23,6 @@ class Email extends Model {
      */
     public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ) {
         // send the email
-        Configuration::getLogger()->debug("[email]", ["sending email to" => $toAdress]);
         $mail = new PHPMailer();
         $mail->IsHTML(true);
         $mail->isSMTP();
@@ -36,10 +35,7 @@ class Email extends Model {
         // parse content
         $content = preg_replace("/\r\n|\r/", "<br />", $content);
         $content = trim($content);
-        Configuration::getLogger()->debug("content", ["content" => $content]);
-
         $mail->Body = $content;
-        Configuration::getLogger()->debug("content", ["content" => $content]);
 
         if ($sentCopyToFrom){
             $mail->AddCC($from);
@@ -99,10 +95,12 @@ class Email extends Model {
             default:
                 try {
                     $toAddress = $this->formatAddresses($params["to"]);
+                    Configuration::getLogger()->error('In try');
                 } catch (Exception $e) {
-                    Configuration::getLogger()->error('something went wrong getting email addresses', ['error' => $e->getMessage()]);
-                } 
+                    return Configuration::getLogger()->error('something went wrong getting email addresses', ['error' => $e->getMessage()]);
+                }
                 break;
+                
         }
         return $this->sendEmail(
             $from,

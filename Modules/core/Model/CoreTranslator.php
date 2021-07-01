@@ -10,7 +10,7 @@ class CoreTranslator {
 
     public static function dateToEn($date, $lang) {
         //echo "to translate = " . $date . "<br/>";
-        if ($lang == "fr") {
+        if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
             if (count($dateArray) == 3) {
                 //print_r($dateArray);
