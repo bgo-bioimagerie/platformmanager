@@ -2,6 +2,13 @@
 
 [Installation]
 rootWeb = /
+public_url = 'http://localhost:4000'
+
+[Admin]
+admin_user =
+admin_password = 
+admin_email = 
+admin_apikey =
 
 [BD]
 dsn = 'mysql:host=MYSQL_URL;dbname=MYSQL_DBNAME;charset=utf8'
