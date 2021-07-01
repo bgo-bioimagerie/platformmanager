@@ -124,7 +124,7 @@ class Router {
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         } catch (Throwable $e) {
-            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage()]);
+            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
             $this->manageError($e);
         }
     }

@@ -6,6 +6,7 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CoreStatus.php';
 
 class CoreUser extends Model {
 
@@ -70,9 +71,11 @@ class CoreUser extends Model {
     }
 
     public function createAccount($login, $pwd, $name, $firstname, $email) {
-
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id) VALUES (?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d"), 1));
+        $bytes = random_bytes(10);
+        $apikey = bin2hex($bytes);
+        
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id, apikey) VALUES (?,?,?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d"), CoreStatus::$USER, $apikey));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -273,7 +276,7 @@ class CoreUser extends Model {
         } catch (Exception $e) {
             Configuration::getLogger()->info('Create admin user', ['admin' => $admin_user]);
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d"), $apikey));
+            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, CoreStatus::$ADMIN, "local", date("Y-m-d"), $apikey));
         }
     }
 
@@ -298,7 +301,7 @@ class CoreUser extends Model {
 
         $datecreated = date("Y-m-d", time());
 
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?, ?)";
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated, $apikey));
         return $this->getDatabase()->lastInsertId();
     }
