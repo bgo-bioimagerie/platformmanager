@@ -108,9 +108,9 @@ class Email extends Model {
             default:
                 try {
                     $toAddress = $this->formatAddresses($params["to"]);
-                    Configuration::getLogger()->error('In try');
                 } catch (Exception $e) {
-                    return Configuration::getLogger()->error('something went wrong getting email addresses', ['error' => $e->getMessage()]);
+                    Configuration::getLogger()->error('something went wrong getting email addresses', ['error' => $e->getMessage()]);
+                    return;
                 }
                 break;
                 

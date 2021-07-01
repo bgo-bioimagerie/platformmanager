@@ -92,10 +92,8 @@ class BookingdefaultController extends BookingabstractController {
         if ($role >= 3){
             return true;
         }
-        if ($id_recipient == $id_user){
-            if ($start_date > time()){
-                return true;
-            }
+        if ($id_recipient == $id_user && $start_date > time()){
+            return true;
         }
         return false;
     }
@@ -284,7 +282,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // description
         $modelCoreConfig = new CoreConfig();
-        $BkDescriptionFields = $modelCoreConfig->getParam("BkDescriptionFields");
+        $BkDescriptionFields = intval($modelCoreConfig->getParam("BkDescriptionFields"));
         if ($BkDescriptionFields == 1 || $BkDescriptionFields == 3) {
             $form->addText("short_description", BookingTranslator::Short_desc($lang), false, $resaInfo["short_description"]);
         }
@@ -392,8 +390,8 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->addComment(BookingTranslator::RemoveReservation($lang));
         $formDelete->addHidden("id_reservation", 0);
         
-        $sendEmailWhenDelete = $modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space);
-        if($sendEmailWhenDelete == "1"){
+        $sendEmailWhenDelete = intval($modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space));
+        if($sendEmailWhenDelete == 1){
             $formDelete->addSelect("sendmail", BookingTranslator::SendEmailsToUsers($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), 1);
         }
         else{
@@ -449,8 +447,8 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id){
-        $sendEmail = $this->request->getParameter("sendmail");
-        if ($sendEmail == "1") {
+        $sendEmail = intval($this->request->getParameter("sendmail"));
+        if ($sendEmail == 1) {
             // get the resource
             $modelCalEntry = new BkCalendarEntry();
             $entryInfo = $modelCalEntry->getEntry($id);

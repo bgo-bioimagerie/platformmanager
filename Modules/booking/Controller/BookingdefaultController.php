@@ -109,13 +109,11 @@ class BookingdefaultController extends BookingabstractController {
 
         if ($id_recipient == $id_user) {
 
-            if( $limitHours >= 0){
-                if ($start_date - 3600*$limitHours > time()) {
-                    return true;
-                }
+            if ($limitHours >= 0 && ($start_date - 3600*$limitHours > time())) {
+                return true;
             }
             $modelConfig = new CoreConfig();
-            $canEdit = $modelConfig->getParamSpace("BkCanUserEditStartedResa", $id_space);
+            $canEdit = intval($modelConfig->getParamSpace("BkCanUserEditStartedResa", $id_space));
             if($canEdit == 1){
                 return true;
             }
@@ -135,7 +133,7 @@ class BookingdefaultController extends BookingabstractController {
         $color_type_id = $this->request->getParameter("color_type_id");
         $short_description = $this->request->getParameterNoException("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
-        $all_day_long = $this->request->getParameterNoException("all_day_long");
+        $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
 
         $lang = $this->getLanguage();
         $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
@@ -254,7 +252,7 @@ class BookingdefaultController extends BookingabstractController {
         $modelCoreConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
         $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
-        $periodic_option = $this->request->getParameterNoException("periodic_radio");
+        $periodic_option = intval($this->request->getParameterNoException("periodic_radio"));
 
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
             // test if a resa already exists on this periode
@@ -353,7 +351,7 @@ class BookingdefaultController extends BookingabstractController {
             }
             // every month
             else if ($periodic_option == 4) {
-                $periodic_month = $this->request->getParameter("periodic_month");
+                $periodic_month = intval($this->request->getParameter("periodic_month"));
                 $id_period = $modelPeriodic->setPeriod($id_period, $periodic_option, $periodic_month);
                 // same date
                 $last_start = date('Y-m-d', $last_start_time);
@@ -487,11 +485,8 @@ class BookingdefaultController extends BookingabstractController {
             }
         }
 
-        $emailSpaceAdmins = $modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
+        $emailSpaceAdmins = intval($modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
         if($emailSpaceAdmins == 2){
-            $modelSpace = new CoreSpace();
-            $space = $modelSpace->getSpace($id_space);
-        
             // get resource name
             $modelResource = new ResourceInfo();
             $resourceName = $modelResource->getName($id_resource);
@@ -577,7 +572,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // description
         $modelCoreConfig = new CoreConfig();
-        $BkDescriptionFields = $modelCoreConfig->getParamSpace("BkDescriptionFields", $id_space);
+        $BkDescriptionFields = intval($modelCoreConfig->getParamSpace("BkDescriptionFields", $id_space));
         if ($BkDescriptionFields == 1 || $BkDescriptionFields == 2) {
             $form->addText("short_description", BookingTranslator::Short_desc($lang), false, $resaInfo["short_description"]);
         }
@@ -686,8 +681,8 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->addComment(BookingTranslator::RemoveReservation($lang));
         $formDelete->addHidden("id_reservation", 0);
 
-        $sendEmailWhenDelete = $modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space);
-        if ($sendEmailWhenDelete == "1") {
+        $sendEmailWhenDelete = intval($modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space));
+        if ($sendEmailWhenDelete == 1) {
             $formDelete->addSelect("sendmail", BookingTranslator::SendEmailsToUsers($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), 1);
         } else {
             $formDelete->addHidden("sendmail", 0);
@@ -768,8 +763,8 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id) {
-        $sendEmail = $this->request->getParameter("sendmail");
-        if ($sendEmail == "1") {
+        $sendEmail = intval($this->request->getParameter("sendmail"));
+        if ($sendEmail == 1) {
             $modelCalEntry = new BkCalendarEntry();
             $entryInfo = $modelCalEntry->getEntry($id);
             $id_resource = $entryInfo["resource_id"];
