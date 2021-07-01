@@ -124,8 +124,9 @@ class CoreusersController extends CoresecureController {
                 $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
                 $script .= '</script>';
             } else {
-                $this->editQuery($form, $modelUser, $lang);
-                $this->redirect("coreusers");
+                $id_user = $this->editQuery($form, $modelUser, $lang);
+                $user = $modelUser->getInfo($id_user);
+                $this->redirect("coreusers", [], ['user' => $user]);
                 return;
             }
         }
@@ -162,7 +163,7 @@ class CoreusersController extends CoresecureController {
             if ($pwd != $pwdconfirm) {
                 throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
             }
-            $modelUser->add(
+            $id = $modelUser->add(
                 $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
             );
         } else {
@@ -170,6 +171,7 @@ class CoreusersController extends CoresecureController {
                     $id, $form->getParameter("login"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
             );
         }
+        return $id;
     }
 
     public function deleteAction($id) {
