@@ -74,9 +74,14 @@ class CorespaceaccessController extends CoresecureController {
         $modelOptions = new CoreSpaceAccessOptions();
         $options = $modelOptions->getAll($id_space);
         foreach($options as $option){
-            $translatorName = ucfirst($option["module"]).'Translator';
-            require_once 'Modules/'.$option["module"].'/Model/'.$translatorName.'.php';
-            $table->addLineButton($option["url"]."/" . $id_space, "id", $translatorName::$option["toolname"]($lang));
+            try {
+                $translatorName = ucfirst($option["module"]).'Translator';
+                require_once 'Modules/'.$option["module"].'/Model/'.$translatorName.'.php';
+                $toolname = $option["toolname"];
+                $table->addLineButton($option["url"]."/" . $id_space, "id", $translatorName::$toolname($lang));
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error('Option not found', ['option' => $option, 'error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+            }
         }
 
         $tableContent = array(
