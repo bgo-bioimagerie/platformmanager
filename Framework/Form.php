@@ -628,7 +628,7 @@ class Form {
         $html .= $formHtml->id($this->id);
 
         // fields
-        for ($i = 0; $i < count($this->types); $i++) {
+        for ($i = 0; $i < count($this->types ?? []); $i++) {
 
             // #105: add readonly
             $readonlyElem = false;
