@@ -27,6 +27,26 @@
     <?php }
     $_SESSION["message"] = "";
     } ?>
+
+    <?php
+    if($fromAddress) {
+    ?>
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <div class="alert alert-info" role="alert">
+            <p><?php echo  'Helpdesk email: '.$fromAddress ?></p>
+            </div>
+        </div>
+    <?php
+    } else {
+    ?>
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <div class="alert alert-danger" role="alert">
+            <p><?php echo  'Helpdesk email not configured, please contact administrator!' ?></p>
+            </div>
+        </div>
+    <?php
+    }
+    ?>
     
     <?php foreach($forms as $form){ ?>
     <div class="col-xs-12 col-md-10 col-md-offset-1" style="height: 7px;">

@@ -120,14 +120,11 @@ class HelpdeskController extends CoresecureController {
             ]);
             
             $content = $converter->convertToHtml($params['body']);
-            Configuration::getLogger()->debug('should send email', ['body' => $content, 'files' => $attachementFiles]);
-            $from = Configuration::get('smtp_from');
-            $fromInfo = explode('@', $from);
-            $from = $fromInfo[0]. '+' . $space['shortname'] . '@' . $fromInfo[1];
-            $fromName = $fromInfo[0]. '+' . $space['shortname'];
+            Configuration::getLogger()->debug('send email', ['body' => $content, 'files' => $attachementFiles]);
+            $from = $hm->fromAddress($space);
+            $fromName = 'pfm-' . $space['shortname'];
             $subject = '[Ticket #' . $ticket['id'] . '] '.$ticket['subject'];
             $toAddress = explode(',', $params['to']);
-            // TODO add file attachments
             $e = new Email();
             $e->sendEmail($from, $fromName, $toAddress, $subject, $content, false, $attachementFiles);
 

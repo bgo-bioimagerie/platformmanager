@@ -223,6 +223,21 @@ class Helpdesk extends Model {
         $sql = "DELETE FROM hp_tickets WHERE id=?";
         $this->runRequest($sql, array($id_ticket));
     }
+
+    /**
+     * Get helpdesk email for space
+     * 
+     * @param CoreSpace $space current space object
+     * @return string email for space helpdesk
+     */
+    public function fromAddress($space) {
+        $from = Configuration::get('helpdesk_email', null);
+        if(!$from) {
+            return null;
+        }
+        $fromInfo = explode('@', $from);
+        return $fromInfo[0]. '+' . $space['shortname'] . '@' . $fromInfo[1];
+    }
 }
 
 ?>

@@ -7,6 +7,8 @@ require_once 'Framework/Errors.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/helpdesk/Model/HelpdeskTranslator.php';
+require_once 'Modules/helpdesk/Model/Helpdesk.php';
+
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 
@@ -66,8 +68,18 @@ class HelpdeskconfigController extends CoresecureController {
         $forms = array($formMenusactivation->getHtml($lang),
                        $menuNameForm->getHtml($lang)
             );
+
+       
+        $space = $modelSpace->getSpace($id_space);
+        $hm = new Helpdesk();
+        $fromAddress = $hm->fromAddress($space);
         
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        $this->render(array(
+            "id_space" => $id_space,
+            "forms" => $forms,
+            "lang" => $lang,
+            "fromAddress" => $fromAddress
+        ));
     }
 
     protected function menusactivationForm($lang, $id_space) {

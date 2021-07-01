@@ -205,6 +205,10 @@ class Configuration {
             }
         }
 
+        if(getenv('PFM_HELPDESK_EMAIL')) {
+            self::$parameters['helpdesk_email'] = getenv('PFM_HELPDESK_EMAIL');
+        }
+
     }
 
     /**
