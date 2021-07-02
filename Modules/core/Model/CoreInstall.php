@@ -97,7 +97,7 @@ class CoreDB extends Model {
         }
 
         Configuration::getLogger()->debug("[adminmenu] remove update");
-        $cam = CoreAdminMenu();
+        $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
     }
 
