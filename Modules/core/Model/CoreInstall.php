@@ -197,6 +197,17 @@ class CoreDB extends Model {
             Configuration::getLogger()->info("[db] no migration needed");
         }
 
+        Configuration::getLogger()->info("[db] set base columns if not present");
+        $sql = "show tables";
+        $tables = $this->runRequest($sql)->fetchAll();
+        foreach($tables as $t) {
+            $table = $t[0];
+            $this->addColumn($table, "deleted", "int(1)", 0);
+            $this->addColumn($table, "deleted_at", "DATETIME", "", true);
+            $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
+            $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
+        }
+        Configuration::getLogger()->info("[db] set base columns if not present, done!");
     }
 }
 
