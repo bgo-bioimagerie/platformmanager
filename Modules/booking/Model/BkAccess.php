@@ -50,7 +50,7 @@ class BkAccess extends Model {
         $sql = "SELECT id_access FROM bk_access WHERE id_resource=?";
         $user = $this->runRequest($sql, array($id));
         $tmp = $user->fetch();
-        return $tmp[0];
+        return  $tmp ? $tmp[0] : null;
     }
     
     
@@ -63,11 +63,7 @@ class BkAccess extends Model {
     public function exists($id) {
         $sql = "select * from bk_access where id_resource=?";
         $req = $this->runRequest($sql, array($id));
-        if ($req->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($req->rowCount() == 1);
     }
 
     /**

@@ -91,7 +91,6 @@ class ReArea extends Model {
             $this->runRequest($sql, array($name, $restricted, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
-        return $id;
     }
 
     public function exists($id) {

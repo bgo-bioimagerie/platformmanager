@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Email.php';
 require_once 'Modules/booking/Controller/BookingabstractController.php';
 
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
@@ -18,8 +19,6 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReArea.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
-
-require_once 'Modules/mailer/Model/MailerSend.php';
 
 
 /**
@@ -93,10 +92,8 @@ class BookingdefaultController extends BookingabstractController {
         if ($role >= 3){
             return true;
         }
-        if ($id_recipient == $id_user){
-            if ($start_date > time()){
-                return true;
-            }
+        if ($id_recipient == $id_user && $start_date > time()){
+            return true;
         }
         return false;
     }
@@ -154,8 +151,8 @@ class BookingdefaultController extends BookingabstractController {
             $end_time = $start_time + 3600*$pk_duration;
         }
 
-        $modelResp = new EcResponsible();
-        $userResps = $modelResp->getUserResponsibles($recipient_id);
+        $modelResp = new ClClientUser();
+        $userResps = $modelResp->getUserClientAccounts($recipient_id, $id_space);
         $foundResp = false;
         foreach($userResps as $uresp){
             if($uresp["id"] == $responsible_id){
@@ -223,8 +220,8 @@ class BookingdefaultController extends BookingabstractController {
         $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
     }
 
-    private function editreservation($id_space, $resaInfo, $param) {
-
+    private function editreservation($id_space, $resaInfo, $param = "") {
+        
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
@@ -285,7 +282,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // description
         $modelCoreConfig = new CoreConfig();
-        $BkDescriptionFields = $modelCoreConfig->getParam("BkDescriptionFields");
+        $BkDescriptionFields = intval($modelCoreConfig->getParam("BkDescriptionFields"));
         if ($BkDescriptionFields == 1 || $BkDescriptionFields == 3) {
             $form->addText("short_description", BookingTranslator::Short_desc($lang), false, $resaInfo["short_description"]);
         }
@@ -393,7 +390,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->addComment(BookingTranslator::RemoveReservation($lang));
         $formDelete->addHidden("id_reservation", 0);
         
-        $sendEmailWhenDelete = $modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space);
+        $sendEmailWhenDelete = intval($modelCoreConfig->getParamSpace('BkBookingMailingDelete', $id_space));
         if($sendEmailWhenDelete == 1){
             $formDelete->addSelect("sendmail", BookingTranslator::SendEmailsToUsers($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), 1);
         }
@@ -421,20 +418,13 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     private function canBookForOthers($id_space, $id_user) {
-
         $modelSpace = new CoreSpace();
         $userRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($userRole < 3) {
-            return false;
-        } else {
-            return true;
-        }
+        return ($userRole >= 3);
     }
 
     private function editReservationInfo($param) {
-        //echo "param = " . $param . "<br/>";
         $contentAction = explode("_", $param);
-        //print_r($contentAction);
         $id = $contentAction[1];
         
         $modelCalEntry = new BkCalendarEntry();
@@ -450,46 +440,36 @@ class BookingdefaultController extends BookingabstractController {
 
     private function isNew($param) {
         $contentAction = explode("_", $param);
-        if ($contentAction[0] == "t"){
+        if ($contentAction[0] == "t") {
             return true;
         }
         return false;
     }
 
     public function deleteAction($id_space, $id){
-        
-        $sendmail = $this->request->getParameter("sendmail");
-        
-        if( $sendmail == 1){
+        $sendEmail = intval($this->request->getParameter("sendmail"));
+        if ($sendEmail == 1) {
             // get the resource
             $modelCalEntry = new BkCalendarEntry();
             $entryInfo = $modelCalEntry->getEntry($id);
             $id_resource = $entryInfo["resource_id"];
-            
-            
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_resource);
             
-            // get the space name
-            $modelSpace = new CoreSpace();
-            $space = $modelSpace->getSpace($id_space);
-        
-            // user info
-            $userModel = new CoreUser();
-            $user = $userModel->getInfo($_SESSION["id_user"]);
-            
             // mail content
-            $from = $user["email"];
-            $toAdress = $modelCalEntry->getEmailsBookerResource($id_resource);
+            $toAddress = $modelCalEntry->getEmailsBookerResource($id_resource);
             $subject = $resourceName . " has been freed"; 
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]); 
-            
-            //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
-            
-            // send the email
-            $mailerModel = new MailerSend();
-            $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
-
+     
+           // NEW MAIL SENDER
+            $params = [
+                "id_space" => $id_space,
+                "subject" => $subject,
+                "to" => $toAddress,
+                "content" => $content
+            ];
+            $email = new Email();
+            $email->sendEmailToSpaceMembers($params, $this->getLanguage());
         }
         
         $modelCalEntry = new BkCalendarEntry();
