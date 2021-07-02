@@ -88,6 +88,7 @@ class CoreDB extends Model {
 
         Configuration::getLogger()->debug("[users] add apikey");
         $cu = new CoreUser();
+        $cu->addColumn("core_users", "apikey", "varchar(30)", "");
         $allUsers = $cu->getAll();
         foreach ($allUsers as $user) {
             if($user['login'] == Configuration::get('admin_user') && $user['apikey'] != "") {
