@@ -112,6 +112,12 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelCategory = new ReCategory();
 
+        $recat = $modelCategory->get($id_resource_category);
+        if(!$recat || $recat['id_space'] != $id_space) {
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+
         $table = new TableView();
         $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName);
         $table->setColorIndexes(array("active" => "authorised_color"));
@@ -171,7 +177,15 @@ class BookingauthorisationsController extends CoresecureController {
 
 
         $modelResourcesCategories = new ReCategory();
-        $categoryName = $modelResourcesCategories->getName($id_resource_category);
+        // $categoryName = $modelResourcesCategories->getName($id_resource_category);
+
+        $recat = $modelResourcesCategories->get($id_resource_category);
+        if($recat && $recat['id'] && $recat['id_space'] != $id_space) {
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+        $categoryName = $recat['name'];
+
 
         $modelVisa = new ReVisa();
         $visa_select = $modelVisa->getForListByCategory($id_resource_category);
@@ -189,7 +203,6 @@ class BookingauthorisationsController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsadd/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-
             $modelAuth = new BkAuthorization();
             $modelAuth->add($id_user, $id_resource_category, $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang)
             );
@@ -221,7 +234,15 @@ class BookingauthorisationsController extends CoresecureController {
 
 
         $modelResourcesCategories = new ReCategory();
-        $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
+        // $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
+        $recat = $modelResourcesCategories->get($id_resource_category);
+        if($recat && $recat['id'] && $recat['id_space'] != $id_space) {
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+        $categoryName = $recat['name'];
+
+
 
         $modelVisa = new ReVisa();
         $visa_select = $modelVisa->getForListByCategory($data["resource_id"]);

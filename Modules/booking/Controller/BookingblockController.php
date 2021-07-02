@@ -51,6 +51,8 @@ class BookingblockController extends CoresecureController {
 
     /**
      * Query to make several resources unavailable
+     * 
+     * @deprecated
      */
     public function blockresourcesqueryAction($id_space) {
         $lang = $this->getLanguage();
@@ -77,9 +79,9 @@ class BookingblockController extends CoresecureController {
         if ($end_time <= $start_time) {
             $errormessage = "Error: The begin time must be before the end time";
             //echo "error message = " . $errormessage . "<br/>";
-            $modelResources = new SyResource();
-            $resources = $modelResources->resources("name");
-            $modelColor = new SyColorCode();
+            $modelResources = new ResourceInfo();
+            $resources = $modelResources->getBySpace($id_space);
+            $modelColor = new BkColorCode();
             $colorCodes = $modelColor->getColorCodes();
             $this->render(array(
                 'id_space' => $id_space,
@@ -100,7 +102,6 @@ class BookingblockController extends CoresecureController {
 
             if ($conflict) {
                 $errormessage = "Error: There is already a reservation for the given slot, please remove it before booking";
-                //echo "error message = " . $errormessage . "<br/>";
                 $modelResources = new ResourceInfo();
                 $resources = $modelResources->getBySpace($id_space);
                 $modelColor = new BkColorCode();

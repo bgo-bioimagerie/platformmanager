@@ -24,7 +24,7 @@ class BkBookingSettings extends Model {
 		`is_tag_visible` int(1) NOT NULL,
 		`display_order` int(5) NOT NULL,
 		`font` varchar(20) NOT NULL,
-                `id_space` int(11) NOT NULL,
+        `id_space` int(11) NOT NULL,
 		PRIMARY KEY (`id`)
 		);";
 

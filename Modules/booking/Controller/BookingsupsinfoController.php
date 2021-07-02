@@ -100,16 +100,24 @@ class BookingsupsinfoController extends CoresecureController {
                         $curentID = $lastID;
                         $supID[$p] = $lastID;
                     }
+                    if(! in_array($supResource[$p], $choicesRid)) {
+                        continue;
+                    }
                     //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
                     $modelSups->setCalSupInfo($curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
                     $count++;
                 }
             }
 
-            //echo "sups ids = ". print_r($supID) . "<br/>";
-            //echo "sup Resource ids = ". print_r($supResource) . "<br/>";
+            $sups = $modelSups->getForSpace($id_space, "id_resource");
+            // If package in db is not listed in provided package list, delete them
+            foreach ($sups as $s) {
+                if($s['id_supinfo'] && !in_array($s['id_supinfo'], $supID)) {
+                    $modelSups->delete($s['id']);
+                }
+            }
 
-            $modelSups->removeUnlistedSupInfos($supID);
+            //  $modelSups->removeUnlistedSupInfos($supID);
             $_SESSION["message"] = BookingTranslator::Supplementaries_saved($lang);
             $this->redirect("bookingsupsinfo/".$id_space);
             return;

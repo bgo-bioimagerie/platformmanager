@@ -66,6 +66,10 @@ class BookingcolorcodesController extends CoresecureController {
         $model = new BkColorCode();
         if ($id > 0){
             $data = $model->getColorCode($id);
+            if($data['id_space'] != $id_space) {
+                Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+                throw new PfmAuthException('access denied to this resource', 403);
+            }
         }
         else{
             $data = $model->getDefault();
@@ -99,6 +103,13 @@ class BookingcolorcodesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         
         $model = new BkColorCode();
+
+        $data = $model->getColorCode($id);
+        if($data['id_space'] != $id_space) {
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied to this resource', 403);
+        }
+
         $model->delete($id);
         $this->redirect("bookingcolorcodes/".$id_space);
     }

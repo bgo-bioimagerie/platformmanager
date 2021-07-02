@@ -100,6 +100,18 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug("[adminmenu] remove update");
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
+
+        Configuration::getLogger()->debug('[bk_schedulings] add link to re_area');
+        $bkm = new BkScheduling();
+        $ream = new ReArea();
+        $bks = $bkm->getAll('id');
+        foreach ($bks as $bk) {
+            if(!$ream->get($bk['id'])) {
+                continue;
+            }
+            $bkm->setReArea($bk['id'], $bk['id']);
+        }
+        Configuration::getLogger()->debug('[bk_schedulings] add link to re_area, done!');
     }
 
     /**

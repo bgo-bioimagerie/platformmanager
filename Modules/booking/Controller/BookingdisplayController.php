@@ -55,7 +55,13 @@ class BookingdisplayController extends CoresecureController {
         $data = $modelCSS->getAreaCss($id);
 
         $modelArea = new ReArea();
-        $name = $modelArea->getName($id);
+        // $name = $modelArea->getName($id);
+        $area = $modelArea->get($id);
+        if($area && $area['id'] && $area['id_space'] != $id_space){
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+        $name = $area['name'];
 
         $form = new Form($this->request, "bookingschedulingedit");
         $form->setTitle(BookingTranslator::Display($lang) . ": " . $name, 3);

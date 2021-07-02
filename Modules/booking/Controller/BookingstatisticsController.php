@@ -194,6 +194,9 @@ class BookingstatisticsController extends CoresecureController {
         ));
     }
 
+    /**
+     * @deprecated
+     */
     public function statreservationsqueryAction($id_space) {
 
         $lang = $this->getLanguage();

@@ -46,6 +46,9 @@ class BookingdefaultController extends BookingabstractController {
         //$this->checkAuthorizationMenu("booking");
     }
 
+    /**
+     * @deprecated
+     */
     public function indexAction() {
 
     }
@@ -99,11 +102,11 @@ class BookingdefaultController extends BookingabstractController {
         }
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($role >= 3) {
+        if ($role >= CoreSpace::$MANAGER) {
             return true;
         }
 
-        $modelConfig = new CoreConfig();
+        // $modelConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
         $limitHours = $modelRestrictions->getBookingDelayUserCanEdit($id_resource);
         //$limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
@@ -143,6 +146,16 @@ class BookingdefaultController extends BookingabstractController {
         $lang = $this->getLanguage();
         $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
         $dateResaStartArray = explode("-", $dateResaStart);
+
+
+        $modelResource = new ResourceInfo();
+        $ri = $modelResource->get($id_resource);
+        if(!$ri || $ri['id_space'] != $id_space){
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+
+
         if($all_day_long == 1){
             $modelResource = new ResourceInfo();
             $modelScheduling = new BkScheduling();
@@ -569,7 +582,7 @@ class BookingdefaultController extends BookingabstractController {
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
         $canEditReservation = false;
-        if ($role > 2) {
+        if ($role > CoreSpace::$USER) {
             $canEditReservation = true;
         }
 
@@ -787,11 +800,10 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelSpace = new CoreSpace();
         $userRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($userRole < 3) {
+        if ($userRole < CoreSpace::$MANAGER) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     private function editReservationInfo($param) {
@@ -828,16 +840,19 @@ class BookingdefaultController extends BookingabstractController {
 
     public function deleteAction($id_space, $id) {
 
+        $modelCalEntry = new BkCalendarEntry();
+        $entryInfo = $modelCalEntry->getEntry($id);
+        $id_resource = $entryInfo["resource_id"];
+        $resourceModel = new ResourceInfo();
+        $re = $resourceModel->get($id_resource);
+        if(!$re || $re['id_space'] != $id_space) {
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+        $resourceName = $re['name'];
+
         $sendmail = $this->request->getParameter("sendmail");
         if ($sendmail == 1) {
-            // get the resource
-            $modelCalEntry = new BkCalendarEntry();
-            $entryInfo = $modelCalEntry->getEntry($id);
-            $id_resource = $entryInfo["resource_id"];
-
-
-            $resourceModel = new ResourceInfo();
-            $resourceName = $resourceModel->getName($id_resource);
 
             // get the space name
             $modelSpace = new CoreSpace();
@@ -865,19 +880,6 @@ class BookingdefaultController extends BookingabstractController {
         $modelConfig = new CoreConfig();
         $sendMailResponsibles = $modelConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
         if ( $sendMailResponsibles > 0){
-
-            // get the resource
-            $modelCalEntry = new BkCalendarEntry();
-            $entryInfo = $modelCalEntry->getEntry($id);
-            $id_resource = $entryInfo["resource_id"];
-
-            $resourceModel = new ResourceInfo();
-            $resourceName = $resourceModel->getName($id_resource);
-
-            // user info
-            // $userModel = new CoreUser();
-            // $user = $userModel->getInfo($_SESSION["id_user"]);
-
             // get the resource responsibles
             $modelResource = new ReResps();
 
@@ -897,7 +899,6 @@ class BookingdefaultController extends BookingabstractController {
 
         }
 
-        $modelCalEntry = new BkCalendarEntry();
         $modelCalEntry->removeEntry($id);
 
         $this->redirect("booking/" . $id_space);

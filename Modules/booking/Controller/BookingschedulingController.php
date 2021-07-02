@@ -56,12 +56,18 @@ class BookingschedulingController extends CoresecureController {
         
         $lang = $this->getLanguage();
         
-        $modelScheduling = new BkScheduling();
-        $data = $modelScheduling->get($id);
-        
         $modelArea = new ReArea();
-        $name = $modelArea->getName($id);
+        $area = $modelArea->get($id);
+        if($area && $area['id'] && $area['id_space'] != $id_space){
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+        $name = $area['name'];
         
+        $modelScheduling = new BkScheduling();
+        $data = $modelScheduling->getByReArea($id);
+
+
         $form = new Form($this->request, "bookingschedulingedit");
         $form->setTitle(BookingTranslator::Edit_scheduling($lang) . ": " . $name, 3);
         $form->addChoicesList(BookingTranslator::Availables_days($lang), 
@@ -96,7 +102,7 @@ class BookingschedulingController extends CoresecureController {
         $form->setButtonsWidth(3, 9);
         if ($form->check()){
            
-            $modelScheduling->edit($id, 
+            $modelScheduling->edit($data['id'], 
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 

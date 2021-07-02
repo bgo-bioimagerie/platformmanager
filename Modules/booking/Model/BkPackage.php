@@ -181,6 +181,7 @@ class BkPackage extends Model {
         $this->runRequest($sql, array($id_package, $id_pricing, $price));
     }
 
+    /*
     public function removeUnlistedPackages($packageID) {
 
         $sql = "select id, id_package from bk_packages";
@@ -202,6 +203,7 @@ class BkPackage extends Model {
             }
         }
     }
+    */
 
     public function deletePackage($id) {
         $sql = "DELETE FROM bk_packages WHERE id = ?";

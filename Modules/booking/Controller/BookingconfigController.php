@@ -285,7 +285,7 @@ class BookingconfigController extends CoresecureController {
     protected function editBookingMailingForm($id_space, $lang){
         
         $modelCoreConfig = new CoreConfig();
-	$BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $id_space);
+	    $BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $id_space);
         $BkBookingMailingAdmins = $modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
         $BkBookingMailingDelete = $modelCoreConfig->getParamSpace("BkBookingMailingDelete", $id_space);
         if ($BkBookingMailingDelete == ""){
@@ -327,7 +327,7 @@ class BookingconfigController extends CoresecureController {
     
     protected function menuNameForm($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
-	$bookingmenuname = $modelCoreConfig->getParamSpace("bookingmenuname", $id_space);
+	    $bookingmenuname = $modelCoreConfig->getParamSpace("bookingmenuname", $id_space);
         
         $form = new Form($this->request, "bookingmenunameForm");
         $form->addSeparator(CoreTranslator::MenuName($lang));

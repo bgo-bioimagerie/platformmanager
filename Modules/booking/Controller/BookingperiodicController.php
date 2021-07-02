@@ -90,7 +90,7 @@ class BookingdefaultController extends BookingabstractController {
         }
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($role >= 3){
+        if ($role >= CoreSpace::$MANAGER){
             return true;
         }
         if ($id_recipient == $id_user){
@@ -237,6 +237,12 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getAllForSelect($id_space, "name");
+
+        $res = $modelResource->get($id_resource);
+        if($res && $res['id'] && $res['id_space'] != $id_space) {
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
 
         $modelUser = new CoreUser();
         $users = $modelUser->getAcivesForSelect("name");
@@ -424,11 +430,10 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelSpace = new CoreSpace();
         $userRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($userRole < 3) {
+        if ($userRole < CoreSpace::$MANAGER) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     private function editReservationInfo($param) {
@@ -460,16 +465,21 @@ class BookingdefaultController extends BookingabstractController {
         
         $sendmail = $this->request->getParameter("sendmail");
         
+
+        $modelCalEntry = new BkCalendarEntry();
+        $entryInfo = $modelCalEntry->getEntry($id);
+        $id_resource = $entryInfo["resource_id"];
+        // Check calentry resource is in space
+        $resourceModel = new ResourceInfo();
+        $res = $resourceModel->get($id_resource);
+        if($res && $res['id'] && $res['id_space'] != $id_space) {
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+        $resourceName = $res['name'];
+
+
         if( $sendmail == 1){
-            // get the resource
-            $modelCalEntry = new BkCalendarEntry();
-            $entryInfo = $modelCalEntry->getEntry($id);
-            $id_resource = $entryInfo["resource_id"];
-            
-            
-            $resourceModel = new ResourceInfo();
-            $resourceName = $resourceModel->getName($id_resource);
-            
             // get the space name
             $modelSpace = new CoreSpace();
             $space = $modelSpace->getSpace($id_space);
@@ -484,15 +494,12 @@ class BookingdefaultController extends BookingabstractController {
             $subject = $resourceName . " has been freed"; 
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]); 
             
-            //echo "send email: from " . $from . ", subject " . $subject . ", content: " . $content;
-            
             // send the email
             $mailerModel = new MailerSend();
             $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content);
 
         }
         
-        $modelCalEntry = new BkCalendarEntry();
         $modelCalEntry->removeEntry($id);
         
         $this->redirect("booking/".$id_space);

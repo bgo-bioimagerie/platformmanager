@@ -43,8 +43,10 @@ class BookingquantitiesController extends CoresecureController {
         
         $modelSups = new BkCalQuantities();
         $sups = $modelSups->getForSpace($id_space, "id_resource");
-        $supsIds = array(); $supsIdsRes = array();
-        $supsNames = array(); $supsMandatories = array();
+        $supsIds = array();
+        $supsIdsRes = array();
+        $supsNames = array();
+        $supsMandatories = array();
         foreach($sups as $p){
             $supsIds[] = $p["id_quantity"];
             $supsIdsRes[] = $p["id_resource"];
@@ -98,6 +100,9 @@ class BookingquantitiesController extends CoresecureController {
                         $curentID = $lastID;
                         $supID[$p] = $lastID;
                     }
+                    if(! in_array($supResource[$p], $choicesRid)) {
+                        continue;
+                    }
                     //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
                     $modelSups->setCalQuantity($curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
                     $count++;
@@ -107,7 +112,15 @@ class BookingquantitiesController extends CoresecureController {
             //echo "sups ids = ". print_r($supID) . "<br/>";
             //echo "sup Resource ids = ". print_r($supResource) . "<br/>";
             
-            $modelSups->removeUnlistedQuantities($supID);
+            $sups = $modelSups->getForSpace($id_space, "id_resource");
+            // If package in db is not listed in provided package list, delete them
+            foreach ($sups as $s) {
+                if($s['id_quantity'] && !in_array($s['id_quantity'], $supID)) {
+                    $modelSups->delete($s['id']);
+                }
+            } 
+
+            // $modelSups->removeUnlistedQuantities($supID);
             $_SESSION["message"] = BookingTranslator::Quantities_saved($lang);
             $this->redirect("bookingquantities/".$id_space);
             return;

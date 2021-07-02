@@ -70,7 +70,13 @@ class BookingrestrictionsController extends CoresecureController {
         $data = $model->get($id);
         
         $modelResource = new ResourceInfo();
-        $resourceName = $modelResource->getName($data["id_resource"]);
+        $resource = $modelResource->get($data['id_resource']);
+        if($resource && $resource['id'] && $resource['id_space'] != $id_space){
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+        $resourceName = $resource['name'];
+        // $resourceName = $modelResource->getName($data["id_resource"]);
         
         $form = new Form($this->request, "restrictioneditform");
         $form->setTitle(BookingTranslator::RestrictionsFor($lang) . ": " . $resourceName);

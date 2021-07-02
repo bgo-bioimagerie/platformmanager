@@ -78,6 +78,28 @@ class BookingpackagesController extends CoresecureController {
 
             $count = 0;
 
+            $rem = new ResourceInfo();
+            $spaceResources = $rem->getForSpace($id_space);
+            $spaceResourcesIDs = [];
+            foreach ($spaceResources as $spaceResource) {
+                $spaceResourcesIDs[] = $spaceResource['id'];
+            }
+
+            // Check resources are in space
+            foreach ($packageResource as $id) {
+                if(!in_array($id, $spaceResourcesIDs)) {
+                    Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+                    throw new PfmAuthException('access denied for this resource', 403);
+                }
+            }
+
+            // If package specified, check it exists in space
+            foreach ($packageID as $id) {
+                if($id && !in_array($id, $packagesIds)) {
+                    Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+                    throw new PfmAuthException('access denied for this resource', 403);                }
+            }
+
             // get the last package id
             $lastID = 0;
             for ($p = 0; $p < count($packageID); $p++) {
@@ -102,12 +124,22 @@ class BookingpackagesController extends CoresecureController {
                         $curentID = $lastID;
                         $packageID[$p] = $lastID;
                     }
+
                     //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
                     $modelPackages->setPackage($curentID, $packageResource[$p], $packageName[$p], $packageDuration[$p]);
                     $count++;
                 }
             }
-            $modelPackages->removeUnlistedPackages($packageID);
+
+            // Refresh packages
+            $packages = $modelPackages->getForSpace($id_space, "id_resource");
+            // If package in db is not listed in provided package list, delete them
+            foreach ($packages as $p) {
+                if($p['id_package'] && !in_array($p['id_package'], $packageID)) {
+                    $modelPackages->deletePackage($p['id']);
+                }
+            }   
+            // $modelPackages->removeUnlistedPackages($packageID);
             $_SESSION["message"] = BookingTranslator::Packages_saved($lang);
             $this->redirect("bookingpackages/".$id_space);
             return;

@@ -31,6 +31,8 @@ class BkScheduling extends Model {
         $this->setColumnsInfo("booking_time_scale", "int(5)", 1);
         $this->setColumnsInfo("resa_time_setting", "int(1)", 1);
         $this->setColumnsInfo("default_color_id", "int(11)", 1);
+        
+        $this->setColumnsInfo("id_rearea", "int(11)", 0);
         $this->primaryKey = "id";
     }
 
@@ -102,6 +104,12 @@ class BkScheduling extends Model {
         $sql = "SELECT * FROM bk_schedulings WHERE id=?";
         $user = $this->runRequest($sql, array($id));
         return $user->fetch();
+    }
+
+    public function getByReArea($id_rearea) {
+        $sql = "SELECT * FROM bk_schedulings WHERE id_rearea=?";
+        $user = $this->runRequest($sql, array($id_rearea));
+        return $user->fetch();        
     }
 
     /**
@@ -183,6 +191,11 @@ class BkScheduling extends Model {
     public function delete($id) {
         $sql = "DELETE FROM bk_schedulings WHERE id = ?";
         $this->runRequest($sql, array($id));
+    }
+
+    public function setReArea($id, $id_rearea) {
+        $sql = "UPDATE bk_schedulings SET id_rearea=? WHERE id=?";
+        $this->runRequest($sql, array($id_rearea, $id));
     }
 
 }

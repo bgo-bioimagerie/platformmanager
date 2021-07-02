@@ -93,6 +93,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
         $modelInvoice = new InInvoice();
         $invoice = $modelInvoice->get($id_invoice);
+        if($invoice && $invoice['id'] && $invoice['id_space'] != $id_space){
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_invoice]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
 
         $modelInvoiceItem = new InInvoiceItem();
         $id_items = $modelInvoiceItem->getInvoiceItems($id_invoice);
@@ -161,6 +165,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
+        $modelInvoice = new InInvoice();
+        $invoice = $modelInvoice->get($id_invoice);
+        if($invoice && $invoice['id'] && $invoice['id_space'] != $id_space){
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_invoice]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+
         // get items
         require_once 'Modules/booking/Model/BkCalendarEntry.php';
         $model = new BkCalendarEntry();
@@ -181,9 +192,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         //$modelUser = new CoreUser();
         $modelClient = new ClClient();
         
-
-        //print_r($id_item);
         $invoiceInfo = $modelInvoice->get($id_invoice);
+
         $clientInfo = $modelClient->get($invoiceInfo["id_responsible"]);
         $id_belonging = $clientInfo["id_pricing"];
         
@@ -787,6 +797,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoice = new InInvoice();
         $invoiceInfo = $modelInvoice->get($id_invoice);
 
+        if($invoiceInfo && $invoiceInfo['id'] && $invoiceInfo['id_space'] != $id_space){
+            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_invoice]);
+            throw new PfmAuthException('access denied for this resource', 403);
+        }
+
         $table = new TableView();
         $table->setTitle(BookinginvoiceTranslator::Details($lang) . ": " . $invoiceInfo["number"], 3);
 
@@ -796,43 +811,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
         );
 
         $tableHtml = $table->view($data, $headers);
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml));
-    }
-
-    public function detailsActionOld($id_space, $id_invoice) {
-
-        require_once 'Modules/booking/Model/BkCalendarEntry.php';
-        require_once 'Modules/booking/Model/BkPackage.php';
-
-        $lang = $this->getLanguage();
-        $modelCalEntry = new BkCalendarEntry();
-        $modelInvoice = new InInvoice();
-        $modelPackage = new BkPackage();
-        $modelResource = new ResourceInfo();
-        $invoiceInfo = $modelInvoice->get($id_invoice);
-
-        $entries = $modelCalEntry->getInvoiceEntries($id_invoice);
-        $modelUser = new CoreUser();
-        for ($i = 0; $i < count($entries); $i++) {
-            $entries[$i]["recipient"] = $modelUser->getUserFUllName($entries[$i]["recipient_id"]);
-            $entries[$i]["resource"] = $modelResource->getName($entries[$i]["resource_id"]);
-            $entries[$i]["date_begin"] = date("Y-m-d H:i", $entries[$i]["start_time"]);
-            $entries[$i]["date_end"] = date("Y-m-d H:i", $entries[$i]["end_time"]);
-            $entries[$i]["package"] = $modelPackage->getName("package_id");
-        }
-
-        $table = new TableView();
-        $table->setTitle(BookinginvoiceTranslator::Details($lang) . ":" . $invoiceInfo["number"], 3);
-
-        $headers = array("id" => BookinginvoiceTranslator::Number($lang),
-            "recipient" => BookinginvoiceTranslator::Recipient($lang),
-            "resource" => BookinginvoiceTranslator::Resource($lang),
-            "date_begin" => BookinginvoiceTranslator::Date_Begin($lang),
-            "date_end" => BookinginvoiceTranslator::Date_End($lang),
-            "package" => BookinginvoiceTranslator::Package($lang)
-        );
-
-        $tableHtml = $table->view($entries, $headers);
         $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml));
     }
 
