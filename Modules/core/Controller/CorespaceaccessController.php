@@ -174,8 +174,7 @@ class CorespaceaccessController extends CoresecureController {
                 $_SESSION["message"] = CoreTranslator::AccountHasBeenCreated($lang);
 
                 $user = $modelCoreUser->getInfo($id_user);
-
-                $this->redirect("corespaceaccessuseradd/".$id_space, ['user' => $user, 'pending' => $pid]);
+                $this->redirect("corespaceaccessuseradd/".$id_space, [], ['user' => $user, 'pending' => $pid]);
                 return;
             }
         }
