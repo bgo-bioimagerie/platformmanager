@@ -1748,9 +1748,16 @@ class CoreTranslator {
 
     public static function UserAccountHasBeenDeleted($lang){
         if ($lang == "fr") {
-            return "Le compte utilisateur a bien été désactivé";
+            return "L'utilisateur n'a plus acces à votre espace";
         }
-        return "User account has been deleted";        
+        return "This user has no longer access to your space";
+    }
+
+    public static function UserIsMemberOfSpace($lang){
+        if ($lang == "fr") {
+            return "Impossible de supprimer cet utilisateur, car il est lié ,à un espace";
+        }
+        return "You are not allowed to delete this user as he is member of a space";
     }
     
     public static function AccessFor($lang){

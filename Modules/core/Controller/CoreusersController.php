@@ -5,9 +5,9 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
-//require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 /**
  *
@@ -176,9 +176,30 @@ class CoreusersController extends CoresecureController {
 
     public function deleteAction($id) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
-        $modelUser = new CoreUser();
-        $modelUser->delete($id);
+        if (!$this->isLinkedToAnySpace($id)) {
+            $modelUser = new CoreUser();
+            $modelUser->delete($id);
+        } else {
+            $_SESSION["message"] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
+        }
         $this->redirect("coreusers");
+    }
+
+    /**
+     * 
+     * Returns true if user is pending or active in any space
+     * 
+     * @param int $id_user
+     * 
+     * @return bool
+     */
+    public function isLinkedToAnySpace($idUser) {
+        $coreSpaceModel = new CoreSpaceUser();
+        $corePendingModel = new CorePendingAccount();
+        return (
+            $coreSpaceModel->isActiveMemberOfAnySpace($idUser) ||
+            $corePendingModel->isActuallyPendingInAnySpace($idUser)
+        );
     }
 
     public function myaccountAction() {

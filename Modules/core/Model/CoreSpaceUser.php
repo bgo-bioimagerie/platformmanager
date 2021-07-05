@@ -54,6 +54,20 @@ class CoreSpaceUser extends Model {
         return false;
     }
     
+    /**
+     * 
+     * Returns true if user is an active member of any space
+     * 
+     * @param int $id_user
+     * 
+     * @return bool
+     */
+    public function isActiveMemberOfAnySpace($id_user){
+        $sql = "SELECT id FROM core_j_spaces_user WHERE id_user=?";
+        $req = $this->runRequest($sql, array($id_user));
+        return ($req->rowCount() >0);
+    }
+
     public function setDateEndContract($id_user, $id_space, $date_contract_end){
         $sql = "UPDATE core_j_spaces_user SET date_contract_end=? WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($date_contract_end, $id_user, $id_space));
