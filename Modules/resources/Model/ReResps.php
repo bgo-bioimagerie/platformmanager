@@ -24,6 +24,7 @@ class ReResps extends Model {
         $this->primaryKey = "id";
     }
 
+    // [multi_-tenant] : filter by id_space ?
     public function getResourcesManagersEmails($id_resource) {
 
         $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM re_resps WHERE id_resource=? AND id_status>0)";

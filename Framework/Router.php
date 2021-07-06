@@ -98,7 +98,6 @@ class Router {
                 $params = array_merge($_GET, $_POST);
             }
             $request = new Request($params);
-
             if (!$this->install($request)) {
                 if ($this->route($request)) {
                     return;

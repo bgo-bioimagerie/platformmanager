@@ -190,7 +190,7 @@ class CoretilesController extends CoresecureController {
                     "space_name" => $spaceName
                 ];
                 $email = new Email();
-                $email->NotifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());
+                $email->notifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());
             }
         } 
         $this->redirect("coretiles");

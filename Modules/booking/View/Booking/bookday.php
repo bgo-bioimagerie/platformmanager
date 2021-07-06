@@ -89,15 +89,10 @@ $dayNumStream = date("d", $time);
 $yearStream = date("Y", $time);
 $sufixStream = date("S", $time);
 $day_position = date("w", $time); // 0 for sunday, 6 for saturday
-for ($p = 0 ; $p < count($day_position) ; $p++){
-	if ($day_position[$p] == 0){
-		$day_position[$p] = 7;
-	}
-}
+$day_position = ($day_position === "0") ? 7 : intval($day_position);
 ?>
 <b><?php echo  BookingTranslator::DateFromTime($time, $lang) ?></b>
 </div>
-
 
 <div class="col-md-6 text-right">
     <div class="btn-group" role="group" aria-label="...">
@@ -189,7 +184,6 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
         $available_days = $scheduling["is_monday"] . "," . $scheduling["is_tuesday"]. "," . $scheduling["is_wednesday"]. "," . $scheduling["is_thursday"]. "," . $scheduling["is_friday"]. "," . $scheduling["is_saturday"]. "," . $scheduling["is_sunday"];
 	//$available_days = $this->clean($scheduling['available_days']);
 	$available_days = explode(",", $available_days);
-	
 	if ($available_days[$day_position-1] == 1){
 		$isAvailableDay = true;
 	}

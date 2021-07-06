@@ -49,7 +49,7 @@ class BkAccess extends Model {
         $sql = "SELECT id_access FROM bk_access WHERE id_resource=? AND id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id, $id_space));
         $tmp = $user->fetch();
-        return $tmp[0];
+        return  $tmp ? $tmp[0] : null;
     }
     
     

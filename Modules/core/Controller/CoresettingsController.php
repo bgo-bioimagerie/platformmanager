@@ -32,7 +32,6 @@ class CoresettingsController extends CoresecureController {
         $modulesControllers = array();
         $i = -1;
         foreach ($modules as $module) {
-
             $controllerName = $module . "usersettings";
             $controllerName = ucfirst(strtolower($controllerName));
 

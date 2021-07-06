@@ -390,7 +390,7 @@ class FormHtml {
         $html = "<div class=\"form-group " . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"text\" id=\"" . $name . "\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control\" type=\"email\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         $html .= "</div>";
