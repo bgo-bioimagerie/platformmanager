@@ -145,7 +145,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelResource = new ResourceInfo();
         $ri = $modelResource->get($id_space ,$id_resource);
-        if(!$ri || $ri['id_space'] != $id_space){
+        if(!$ri){
             Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
             throw new PfmAuthException('access denied for this resource', 403);
         }

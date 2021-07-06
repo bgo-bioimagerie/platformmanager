@@ -41,7 +41,7 @@ class BookingrestrictionsController extends CoresecureController {
         $model->init($id_space);
         $data = $model->getForSpace($id_space);
         for($i = 0 ; $i < count($data); $i++){
-            $data[$i]["resource"] = $modelResource->getName($data[$i]["id_resource"]);
+            $data[$i]["resource"] = $modelResource->getName($id_space, $data[$i]["id_resource"]);
         }
         
         //print_r($data);
@@ -67,14 +67,10 @@ class BookingrestrictionsController extends CoresecureController {
         $lang = $this->getLanguage();
         
         $model = new BkRestrictions();
-        $data = $model->get($id);
+        $data = $model->get($id_space, $id);
         
         $modelResource = new ResourceInfo();
-        $resource = $modelResource->get($data['id_resource']);
-        if($resource && $resource['id'] && $resource['id_space'] != $id_space){
-            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
-            throw new PfmAuthException('access denied for this resource', 403);
-        }
+        $resource = $modelResource->get($id_space, $data['id_resource']);
         $resourceName = $resource['name'];
         // $resourceName = $modelResource->getName($data["id_resource"]);
         
@@ -95,7 +91,7 @@ class BookingrestrictionsController extends CoresecureController {
             //echo 'id = ' . $id . "<br/>";
             //echo 'maxbookingperday = ' . $maxbookingperday . "<br/>";
             //echo 'bookingdelayusercanedit = ' . $bookingdelayusercanedit . "<br/>";
-            $model->set($id, $maxbookingperday, $bookingdelayusercanedit);
+            $model->set($id_space, $id, $maxbookingperday, $bookingdelayusercanedit);
             
             $this->redirect("bookingrestrictions/".$id_space);
             return;

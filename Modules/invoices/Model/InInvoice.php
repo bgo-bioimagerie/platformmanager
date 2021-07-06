@@ -162,6 +162,7 @@ class InInvoice extends Model {
         return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
     }
 
+    // @bug, should get unique ids, no increment (parallel requests will result in conflicts)
     public function getNextNumber($previousNumber = "") {
 
         if ($previousNumber == "") {

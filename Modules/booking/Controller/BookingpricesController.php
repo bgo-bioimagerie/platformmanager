@@ -72,29 +72,29 @@ class BookingpricesController extends CoresecureController {
             $count++;
             // day
             for ($b = 0; $b < count($belongings); $b++) {
-                $data[$belongings[$b]["id"]] = $modelPrice->getDayPrice($resources[$i]["id"], $belongings[$b]["id"]);
+                $data[$belongings[$b]["id"]] = $modelPrice->getDayPrice($id_space, $resources[$i]["id"], $belongings[$b]["id"]);
             }
             $data['id_resource'] = $resources[$i]["id"] . "-day";
             $data['resource'] = $resources[$i]["name"];
             $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
             $prices[] = $data;
             // add night we
-            $isNight = $modelPNightWe->isNight($belongings[0]["id"]);
+            $isNight = $modelPNightWe->isNight($id_space, $belongings[0]["id"]);
             if ($isNight) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
-                    $data[$belongings[$b]["id"]] = $modelPrice->getNightPrice($resources[$i]["id"], $belongings[$b]["id"]);
+                    $data[$belongings[$b]["id"]] = $modelPrice->getNightPrice($id_space, $resources[$i]["id"], $belongings[$b]["id"]);
                 }
                 $data['id_resource'] = $resources[$i]["id"] . "-night";
                 $data['resource'] = $resources[$i]["name"] . " " . BookingTranslator::night($lang);
                 $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
                 $prices[] = $data;
             }
-            $isWe = $modelPNightWe->isWe($belongings[0]["id"]);
+            $isWe = $modelPNightWe->isWe($id_space, $belongings[0]["id"]);
             if ($isWe) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
-                    $data[$belongings[$b]["id"]] = $modelPrice->getWePrice($resources[$i]["id"], $belongings[$b]["id"]);
+                    $data[$belongings[$b]["id"]] = $modelPrice->getWePrice($id_space, $resources[$i]["id"], $belongings[$b]["id"]);
                 }
                 $data['id_resource'] = $resources[$i]["id"] . "-we";
                 $data['resource'] = $resources[$i]["name"] . " " . BookingTranslator::WE($lang);
@@ -103,11 +103,11 @@ class BookingpricesController extends CoresecureController {
             }
 
             // add forfaits
-            $packages = $modelPackage->getByResource($resources[$i]["id"]);
+            $packages = $modelPackage->getByResource($id_space, $resources[$i]["id"]);
             foreach ($packages as $package) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
-                    $data[$belongings[$b]["id"]] = $modelPrice->getPackagePrice($package["id"], $resources[$i]["id"], $belongings[$b]["id"]);
+                    $data[$belongings[$b]["id"]] = $modelPrice->getPackagePrice($id_space, $package["id"], $resources[$i]["id"], $belongings[$b]["id"]);
                 }
                 $data['id_resource'] = $resources[$i]["id"] . "-pk-" . $package["id"];
                 $data['resource'] = $resources[$i]["name"] . " " . $package["name"];
@@ -146,8 +146,8 @@ class BookingpricesController extends CoresecureController {
 
 
         $resourceModel = new ResourceInfo();
-        $res = $resourceModel->get($residArray[0]);
-        if($res && $res['id'] && $res['id_space'] != $id_space) {
+        $res = $resourceModel->get($id_space, $residArray[0]);
+        if(!$res) {
             Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
             throw new PfmAuthException('access denied for this resource', 403);
         }
@@ -155,22 +155,22 @@ class BookingpricesController extends CoresecureController {
         if ($residArray[1] == "day") {
             foreach($belongings as $bel){
                 $price = $this->request->getParameter('bel_' . $bel['id']);
-                $modelPrice->setPriceDay($residArray[0], $bel["id"], $price);
+                $modelPrice->setPriceDay($id_space, $residArray[0], $bel["id"], $price);
             }
         } else if ($residArray[1] == "night") {
             foreach($belongings as $bel){
                 $price = $this->request->getParameter('bel_' . $bel['id']);
-                $modelPrice->setPriceNight($residArray[0], $bel["id"], $price);
+                $modelPrice->setPriceNight($id_space, $residArray[0], $bel["id"], $price);
             }
         } else if ($residArray[1] == "we") {
             foreach($belongings as $bel){
                 $price = $this->request->getParameter('bel_' . $bel['id']);
-                $modelPrice->setPriceWe($residArray[0], $bel["id"], $price);
+                $modelPrice->setPriceWe($id_space, $residArray[0], $bel["id"], $price);
             }
         } else if ($residArray[1] == "pk") {
             foreach($belongings as $bel){
                 $price = $this->request->getParameter('bel_' . $bel['id']);
-                $modelPrice->setPricePackage($residArray[0], $bel['id'], $residArray[2], $price);
+                $modelPrice->setPricePackage($id_space, $residArray[0], $bel['id'], $residArray[2], $price);
             }
         }
         
@@ -247,6 +247,9 @@ class BookingpricesController extends CoresecureController {
         $this->render(array('lang' => $lang, "id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
     }
 
+    /**
+     * @deprecated
+     */
     protected function getResourcesListing($id_space) {
 
         $lang = $this->getLanguage();

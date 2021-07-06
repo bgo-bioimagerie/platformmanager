@@ -101,6 +101,7 @@ class BookingpackagesController extends CoresecureController {
             }
 
             // get the last package id
+            // @bug, should get from an increment in table, risk of conflict
             $lastID = 0;
             for ($p = 0; $p < count($packageID); $p++) {
                 if ($packageName[$p] != "") {
@@ -126,20 +127,12 @@ class BookingpackagesController extends CoresecureController {
                     }
 
                     //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelPackages->setPackage($curentID, $packageResource[$p], $packageName[$p], $packageDuration[$p]);
+                    $modelPackages->setPackage($id_space, $curentID, $packageResource[$p], $packageName[$p], $packageDuration[$p]);
                     $count++;
                 }
             }
-
-            // Refresh packages
-            $packages = $modelPackages->getForSpace($id_space, "id_resource");
-            // If package in db is not listed in provided package list, delete them
-            foreach ($packages as $p) {
-                if($p['id_package'] && !in_array($p['id_package'], $packageID)) {
-                    $modelPackages->deletePackage($p['id']);
-                }
-            }   
-            // $modelPackages->removeUnlistedPackages($packageID);
+   
+            $modelPackages->removeUnlistedPackages($id_space, $packageID);
             $_SESSION["message"] = BookingTranslator::Packages_saved($lang);
             $this->redirect("bookingpackages/".$id_space);
             return;

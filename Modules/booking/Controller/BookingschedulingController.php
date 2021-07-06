@@ -57,15 +57,12 @@ class BookingschedulingController extends CoresecureController {
         $lang = $this->getLanguage();
         
         $modelArea = new ReArea();
-        $area = $modelArea->get($id);
-        if($area && $area['id'] && $area['id_space'] != $id_space){
-            Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
-            throw new PfmAuthException('access denied for this resource', 403);
-        }
+        $area = $modelArea->get($id_space, $id);
+
         $name = $area['name'];
         
         $modelScheduling = new BkScheduling();
-        $data = $modelScheduling->getByReArea($id);
+        $data = $modelScheduling->getByReArea($id_space, $id);
 
 
         $form = new Form($this->request, "bookingschedulingedit");
@@ -102,7 +99,7 @@ class BookingschedulingController extends CoresecureController {
         $form->setButtonsWidth(3, 9);
         if ($form->check()){
            
-            $modelScheduling->edit($data['id'], 
+            $modelScheduling->edit($id_space, $data['id'], 
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 

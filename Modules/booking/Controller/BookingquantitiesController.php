@@ -104,7 +104,7 @@ class BookingquantitiesController extends CoresecureController {
                         continue;
                     }
                     //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelSups->setCalQuantity($curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
+                    $modelSups->setCalQuantity($id_space, $curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
                     $count++;
                 }
             }
@@ -116,7 +116,7 @@ class BookingquantitiesController extends CoresecureController {
             // If package in db is not listed in provided package list, delete them
             foreach ($sups as $s) {
                 if($s['id_quantity'] && !in_array($s['id_quantity'], $supID)) {
-                    $modelSups->delete($s['id']);
+                    $modelSups->delete($id_space, $s['id']);
                 }
             } 
 

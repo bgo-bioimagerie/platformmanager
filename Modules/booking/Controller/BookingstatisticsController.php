@@ -207,8 +207,8 @@ class BookingstatisticsController extends CoresecureController {
 
         // get data
         $modelGraph = new BkGraph();
-        $graphArray = $modelGraph->getYearNumResGraph($month_start, $year_start, $month_end, $year_end);
-        $graphTimeArray = $modelGraph->getYearNumHoursResGraph($month_start, $year_start, $month_end, $year_end);
+        $graphArray = $modelGraph->getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
+        $graphTimeArray = $modelGraph->getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getForSpace($id_space);
@@ -390,7 +390,7 @@ class BookingstatisticsController extends CoresecureController {
             //print_r($text);
 
             $reportModel = new BkReport();
-            $table = $reportModel->reportstats($searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
+            $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
 
             //print_r($table);
 
@@ -689,6 +689,8 @@ class BookingstatisticsController extends CoresecureController {
         return $objPHPExcel;
     }
 
+
+    // @bug refers to EcUnit
     public function statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
 
         // get data
