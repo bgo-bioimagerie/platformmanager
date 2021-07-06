@@ -37,7 +37,7 @@ abstract class InvoiceAbstractController extends CoresecureController {
         $date = CoreTranslator::dateFromEn($date, 'fr');
         
         $modelInvoice = new InInvoice();
-        $invoiceInfo = $modelInvoice->getByNumber($number);
+        $invoiceInfo = $modelInvoice->getByNumber($id_space, $number);
         
         ob_start();
         include('data/invoices/'.$id_space.'/template.php');

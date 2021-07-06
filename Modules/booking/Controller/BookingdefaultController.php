@@ -539,7 +539,7 @@ class BookingdefaultController extends BookingabstractController {
         $resources = $modelResource->getAllForSelect($id_space, "name");
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
 
         $form = new Form($this->request, "editReservationDefault");
         $form->addHidden("id", $resaInfo["id"]);

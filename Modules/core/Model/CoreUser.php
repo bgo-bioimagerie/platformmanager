@@ -816,10 +816,31 @@ class CoreUser extends Model {
         $names[] = "";
         $ids[] = "";
         foreach ($users as $res) {
+            if(!$res['is_active']) {
+                continue;
+            }
             $names[] = $res["name"] . " " . $res["firstname"];
             $ids[] = $res["id"];
         }
         return array("names" => $names, "ids" => $ids);
+    }
+
+    public function getSpaceActiveUsersForSelect($id_space, $sortentry) {
+            $sql = "SELECT core_j_spaces_user.id_user AS id,"
+                    . "core_users.name AS name,core_users.firstname AS firstname "
+                    . "FROM core_j_spaces_user "
+                    . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                    . "WHERE id_space=? AND is_active=1";
+            $users = $this->runRequest($sql, array($id_space))->fetchAll();
+            $names = array();
+            $ids = array();
+            $names[] = "";
+            $ids[] = "";
+            foreach ($users as $res) {
+                $names[] = $res["name"] . " " . $res["firstname"];
+                $ids[] = $res["id"];
+            }
+            return array("names" => $names, "ids" => $ids);
     }
 
     /**

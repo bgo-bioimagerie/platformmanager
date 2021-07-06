@@ -106,7 +106,7 @@ class RevisasController extends CoresecureController {
         $form->addSelect("id_resource_category", ResourcesTranslator::Categories($lang), $rcchoices, $rcchoicesid, $visaInfo["id_resource_category"]);
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
 
         

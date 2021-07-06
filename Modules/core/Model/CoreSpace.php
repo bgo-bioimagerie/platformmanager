@@ -495,6 +495,8 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
+    
+
     public function countUsers($id_space) {
         $sql = "SELECT count(*) FROM core_j_spaces_user WHERE id_space=?";
         $res = $this->runRequest($sql, array($id_space))->fetch();
