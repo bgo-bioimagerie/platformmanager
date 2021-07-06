@@ -237,6 +237,7 @@ class CoreInstall extends Model {
     public function createDatabase(){
 
         $modelCache = new FCache();
+        $modelCache->freeTableURL();
         $modelCache->load();
 
         $modelConfig = new CoreConfig();
