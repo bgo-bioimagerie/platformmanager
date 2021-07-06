@@ -28,20 +28,8 @@ class BkBookingSettings extends Model {
 		PRIMARY KEY (`id`)
 		);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        return $this->runRequest($sql);
     }
-
-    /**
-     * Set the default entries
-     
-    public function defaultEntries() {
-        $this->setEntry("User", 1, 1, 1, "normal");
-        $this->setEntry("Phone", 1, 1, 2, "normal");
-        $this->setEntry("Short desc", 1, 1, 3, "normal");
-        $this->setEntry("Desc", 0, 0, 4, "normal");
-    }
-    */
     
     /**
      * Get the list of all entries
@@ -51,26 +39,12 @@ class BkBookingSettings extends Model {
     public function entries($id_space, $sortEntry) {
 
         try {
-            $sql = "select * from bk_booking_settings WHERE id_space=? order by " . $sortEntry;
+            $sql = "select * from bk_booking_settings WHERE id_space=? AND deleted=0 order by " . $sortEntry;
             $req = $this->runRequest($sql, array($id_space));
             if($req->rowCount() > 0){
                 return $req->fetchAll();
             }
             else{
-                
-                //echo "---------------------------- <br>";
-                //echo " reininitlize the booking settings <br/>"; 
-                //echo "---------------------------- <br>";
-                /*
-                $this->setEntry("User", 1, 1, 1, "normal", $id_space);
-                $this->setEntry("Phone", 1, 1, 2, "normal", $id_space);
-                $this->setEntry("Short desc", 1, 1, 3, "normal", $id_space);
-                $this->setEntry("Desc", 0, 0, 4, "normal", $id_space);
-                
-                $sql = "select * from bk_booking_settings WHERE id_space=? order by " . $sortEntry;
-                $req = $this->runRequest($sql, array($id_space));
-                return $req->fetchAll();
-                 */
                 return array();
             }
         } 
@@ -103,15 +77,11 @@ class BkBookingSettings extends Model {
      * @return boolean
      */
     public function isEntry1($tag_name, $id_space) {
-        $sql = "select id from bk_booking_settings where tag_name=? and id_space=?";
+        $sql = "select id from bk_booking_settings where tag_name=? and id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array(
             $tag_name, $id_space
                 ));
-        if ($data->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($data->rowCount() == 1);
     }
 
     /**
@@ -137,7 +107,7 @@ class BkBookingSettings extends Model {
      * @return number
      */
     public function getEntryID($tag_name, $id_space) {
-        $sql = "select id from bk_booking_settings where tag_name=? and id_space=?";
+        $sql = "select id from bk_booking_settings where tag_name=? and id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($tag_name, $id_space));
         $tmp = $req->fetch();
         return $tmp[0];
@@ -148,9 +118,9 @@ class BkBookingSettings extends Model {
      * @param number $id
      * @return array entry info
      */
-    public function getEntry($id) {
-        $sql = "select * from bk_booking_settings where id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function getEntry($id_space, $id) {
+        $sql = "select * from bk_booking_settings where id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         return $req->fetch();
     }
 
@@ -165,8 +135,8 @@ class BkBookingSettings extends Model {
      */
     public function updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space) {
         $sql = "update bk_booking_settings set tag_name=?, is_visible=?, is_tag_visible=?, 
-			                 display_order=?, font=?, id_space=?
-			                 where id=?";
+			                 display_order=?, font=?
+			                 where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($tag_name, $is_visible, $is_tag_visible,
             $display_order, $font, $id_space, $id));
     }

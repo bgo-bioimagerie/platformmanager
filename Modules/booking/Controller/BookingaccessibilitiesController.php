@@ -47,7 +47,7 @@ class BookingaccessibilitiesController extends CoresecureController {
         $modelResources = new ResourceInfo();
         $resources = $modelResources->getForSpace($id_space);
         foreach ($resources as $resource) {
-            $accessId = $model->getAccessId($resource["id"]);
+            $accessId = $model->getAccessId($id_space, $resource["id"]);
             $form->addSelect("r_" . $resource["id"], $resource["name"], $choices, $choicesid, $accessId);
         }
 

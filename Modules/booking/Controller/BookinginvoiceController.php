@@ -37,6 +37,9 @@ class BookinginvoiceController extends InvoiceAbstractController {
     }
 
     
+    /**
+     * @deprecated
+     */
     public function updateResaResponsiblesAction(){
         
         require_once 'Modules/booking/Model/BkCalendarEntry.php';

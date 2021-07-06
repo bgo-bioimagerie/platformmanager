@@ -218,6 +218,7 @@ class CoreDB extends Model {
             $this->addColumn($table, "deleted_at", "DATETIME", "", true);
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
+            $this->addColumn($table, "id_space", "int(11)", 0);
         }
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
     }
