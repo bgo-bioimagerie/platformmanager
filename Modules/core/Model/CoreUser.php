@@ -843,6 +843,14 @@ class CoreUser extends Model {
             return array("names" => $names, "ids" => $ids);
     }
 
+    public function getSpaceActiveUsers($id_space) {
+        $sql = "SELECT core_users.*"
+                . "FROM core_j_spaces_user "
+                . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                . "WHERE id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+}
+
     /**
      * get the informations of a user from it's id
      *

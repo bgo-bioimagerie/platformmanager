@@ -43,9 +43,9 @@ class SeServiceType extends Model {
         $this->add("Journée", "Journée");
     }
 
-    public function getIdFromName($name){
-        $sql = "SELECT id FROM se_service_types WHERE name=?";
-        $req = $this->runRequest($sql, array($name));
+    public function getIdFromName($id_space, $name){
+        $sql = "SELECT id FROM se_service_types WHERE name=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($name, $id_space));
         if($req->rowCount() > 0){
             $temp = $req->fetch();
             return $temp[0];
@@ -53,15 +53,15 @@ class SeServiceType extends Model {
         return 0;
     }
     
-    public function getAll() {
-        $sql = "SELECT * FROM se_service_types ORDER BY local_name ASC;";
-        $req = $this->runRequest($sql);
+    public function getAll($id_space) {
+        $sql = "SELECT * FROM se_service_types WHERE id_space=? AND deleted=0 ORDER BY local_name ASC;";
+        $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
     
-    public function getAllForSelect(){
-        $sql = "SELECT * FROM se_service_types ORDER BY local_name ASC;";
-        $req = $this->runRequest($sql)->fetchAll();
+    public function getAllForSelect($id_space){
+        $sql = "SELECT * FROM se_service_types WHERE id_space=? AND deleted=0 ORDER BY local_name ASC;";
+        $req = $this->runRequest($sql, array($id_space))->fetchAll();
         $names = array(); $ids = array();
         foreach($req as $d){
            $names[] = $d["local_name"];
@@ -70,24 +70,24 @@ class SeServiceType extends Model {
         return array("names" => $names, "ids" => $ids);
     }
 
-    public function getLocalName($id) {
-        $sql = "SELECT local_name FROM se_service_types WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function getLocalName($id_space, $id) {
+        $sql = "SELECT local_name FROM se_service_types WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         $f = $req->fetch();
         return $f[0];
     }
 
-    public function add($name, $local_name) {
+    public function add($id_space, $name, $local_name) {
 
         if (!$this->exists($name)) {
-            $sql = "INSERT INTO se_service_types (name, local_name) VALUES(?, ?)";
-            $this->runRequest($sql, array($name, $local_name));
+            $sql = "INSERT INTO se_service_types (name, local_name, id_space) VALUES(?,?,?)";
+            $this->runRequest($sql, array($name, $local_name, $id_space));
         }
     }
 
-    public function exists($name) {
-        $sql = "select * from se_service_types where name=?";
-        $req = $this->runRequest($sql, array($name));
+    public function exists($id_space, $name) {
+        $sql = "select * from se_service_types where name=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($name, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         } else {

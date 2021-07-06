@@ -306,7 +306,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($openedProjects as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelClient->getName($proj["id_resp"]);
+            $unitName = $modelClient->getName($id_space ,$proj["id_resp"]);
 
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -437,7 +437,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelClient->getInstitution($invoice["id_responsible"]);
+            $unitName = $modelClient->getInstitution($id_space ,$invoice["id_responsible"]);
             
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -447,7 +447,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($invoice["visa_send"]));
+            $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($id_space ,$invoice["visa_send"]));
 
             //echo "invoice controller = " . $invoice["controller"] . '<br/>';
             if ($invoice["controller"] == "servicesinvoiceproject") {
@@ -483,7 +483,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
                     //$originName = $modelOrigin->getName($proj["id_origin"]);
                     
-                    $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
+                    $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($id_space ,$proj["id_origin"]));
                     $objPHPExcel->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
 
@@ -657,7 +657,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item);
+            $name = $modelItem->getItemName($id_space, $item);
             $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -667,7 +667,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space ,$proj["id_resp"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
@@ -752,7 +752,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item[0]);
+            $name = $modelItem->getItemName($id_space ,$item[0]);
             $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -774,7 +774,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($projects as $proj) {
             $curentLine++;
             
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space ,$proj["id_resp"]);
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));

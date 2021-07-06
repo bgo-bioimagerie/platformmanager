@@ -42,7 +42,7 @@ class ServicesbalanceController extends CoresecureController {
         if ($form->check()){
             $date_start = CoreTranslator::dateToEn($form->getParameter("period_begin"), $lang);
             $date_end = CoreTranslator::dateToEn($form->getParameter("period_end"), $lang);
-            $this->generateBalance($date_start, $date_end);
+            $this->generateBalance($id_space, $date_start, $date_end);
             return;
         }
         
@@ -50,25 +50,26 @@ class ServicesbalanceController extends CoresecureController {
         $this->render(array("htmlForm" => $htmlForm, "id_space" => $id_space, "lang" => $lang));
     }
     
-    private function generateBalance($periodStart, $periodEnd) {
+    private function generateBalance($id_space, $periodStart, $periodEnd) {
 
         //echo "not yet implemented <br/> " . $periodStart . "<br/>" . $periodEnd . "<br/>";
         // get all the opened projects informations
         $modelProjects = new SeProject();
-        $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd);
+        $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $id_space);
         
         // get all the priced projects details
-        $projectsBalance = $modelProjects->getPeriodeServicesBalances($periodStart, $periodEnd);
-        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($periodStart, $periodEnd);
+        $projectsBalance = $modelProjects->getPeriodeServicesBalances($id_space, $periodStart, $periodEnd);
+        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($id_space, $periodStart, $periodEnd);
 
         // get the stats
         $modelStats = new SeStats();
-        $stats = $modelStats->computeStatsProjects($periodStart, $periodEnd);
+        $stats = $modelStats->computeStatsProjects($id_space, $periodStart, $periodEnd);
 
-        $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats);
+        $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats);
     }
     
-    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats) {
+    // @bug unknown object SPItem
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats) {
 
         $modelUser = new CoreUser();
 
@@ -212,7 +213,7 @@ class ServicesbalanceController extends CoresecureController {
         foreach ($openedProjects as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
 
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
@@ -436,7 +437,7 @@ class ServicesbalanceController extends CoresecureController {
         
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item);
+            $name = $modelItem->getItemName($id_space, $item);
             $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
             
         }
@@ -457,7 +458,7 @@ class ServicesbalanceController extends CoresecureController {
         $projects = $projectsBalance["projects"];
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);

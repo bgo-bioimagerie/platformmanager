@@ -13,11 +13,11 @@ require_once("externals/PHPExcel/Classes/PHPExcel.php");
  */
 class SeStats extends Model {
 
-    public function computeStatsProjects($startDate_min, $startDate_max) {
+    public function computeStatsProjects($id_space, $startDate_min, $startDate_max) {
 
         // total number of projects 
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
 
@@ -32,8 +32,8 @@ class SeStats extends Model {
         foreach ($projects as $project) {
 
             // get the responsible unit
-            $clientInfo = $modelClient->get($project["id_resp"]);
-            $pricingInfo = $modelPricing->get($clientInfo["pricing"]);
+            $clientInfo = $modelClient->get($id_space, $project["id_resp"]);
+            $pricingInfo = $modelPricing->get($id_space, $clientInfo["pricing"]);
             if ($pricingInfo["type"] == 1) {
 
                 $numberAccademicProjects++;
@@ -43,26 +43,26 @@ class SeStats extends Model {
         }
 
         // number of new academic projects
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicProject = $req->rowCount();
 
         //echo "numberNewAccademicProject = " . $numberNewAccademicProject . "<br/>";
         // number of new academic team
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicTeam = $req->rowCount();
 
         //echo "numberNewAccademicTeam = " . $numberNewAccademicTeam . "<br/>";
         // number of new industry projects
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryProject = $req->rowCount();
 
         //echo "numberNewIndustryProject = " . $numberNewIndustryProject . "<br/>";
         // number of new industry team
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryTeam = $req->rowCount();
 
         //echo "numberNewIndustryTeam = " . $numberNewIndustryTeam . "<br/>";
@@ -98,7 +98,7 @@ class SeStats extends Model {
     
     public function computeDelayStats($id_space, $periodStart, $periodEnd){
         // total number of projects 
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=?";
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
@@ -129,8 +129,8 @@ class SeStats extends Model {
         foreach ($projects as $project) {
             
             // get the responsible unit
-            $clientInfo = $modelClient->get($project["id_resp"]);
-            $pricingInfo = $modelPricing->get($clientInfo["pricing"]);
+            $clientInfo = $modelClient->get($id_space, $project["id_resp"]);
+            $pricingInfo = $modelPricing->get($id_space, $clientInfo["pricing"]);
             
             $onTime = true;
             if ($project["date_close"] != "" && $project["date_close"] != "0000-00-00"
@@ -184,9 +184,9 @@ class SeStats extends Model {
             );
     }
 
-    public function getResponsiblesCsv($startDate_min, $startDate_max, $lang) {
-        $sql = "select distinct id_resp from se_project where date_open >= ? AND date_open <= ?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max));
+    public function getResponsiblesCsv($id_space, $startDate_min, $startDate_max, $lang) {
+        $sql = "select distinct id_resp from se_project where date_open >= ? AND date_open <= ?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
 
@@ -218,11 +218,11 @@ class SeStats extends Model {
         
         $stats = array();
         
-        $sql = "SELECT * FROM se_origin WHERE id_space = ? ORDER BY display_order ASC;";
+        $sql = "SELECT * FROM se_origin WHERE id_space = ? AND deleted=0 ORDER BY display_order ASC;";
         $origins = $this->runRequest($sql, array($id_space))->fetchAll();
         
         foreach ($origins as $origin){
-            $sql = "SELECT * FROM se_project WHERE date_open >= ? AND date_open <= ? AND id_space=? AND new_project=? AND id_origin=?";
+            $sql = "SELECT * FROM se_project WHERE date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0 AND new_project=? AND id_origin=?";
             $req = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space, $academic_private, $origin["id"]));
             
             $stats[] = array("id_origin" => $origin["id"], "origin" => $origin["name"], "count" => $req->rowCount());
@@ -234,7 +234,7 @@ class SeStats extends Model {
     public function computeStats($id_space, $startDate_min, $startDate_max) {
 
         // total number of projects 
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=?";
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
@@ -250,9 +250,9 @@ class SeStats extends Model {
         foreach ($projects as $project) {
 
             // get the responsible unit
-            $clientInfo = $modelClient->get($project["id_resp"]);
+            $clientInfo = $modelClient->get($id_space, $project["id_resp"]);
 
-            $pricingInfo = $modelPricing->get($clientInfo["pricing"]);
+            $pricingInfo = $modelPricing->get($id_space, $clientInfo["pricing"]);
             
             if ($pricingInfo["type"] == 1) {
 
@@ -263,26 +263,26 @@ class SeStats extends Model {
         }
 
         // number of new academic projects
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicProject = $req->rowCount();
 
         //echo "numberNewAccademicProject = " . $numberNewAccademicProject . "<br/>";
         // number of new academic team
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicTeam = $req->rowCount();
 
         //echo "numberNewAccademicTeam = " . $numberNewAccademicTeam . "<br/>";
         // number of new industry projects
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryProject = $req->rowCount();
 
         //echo "numberNewIndustryProject = " . $numberNewIndustryProject . "<br/>";
         // number of new industry team
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3));
+        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryTeam = $req->rowCount();
 
         //echo "numberNewIndustryTeam = " . $numberNewIndustryTeam . "<br/>";

@@ -17,17 +17,17 @@ class ClPricing extends Model {
     }
 
     public function getAll($id_space) {
-        $sql = "SELECT * FROM cl_pricings WHERE id_space=?";
+        $sql = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM cl_pricings WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM cl_pricings WHERE id=?  AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
     public function getIdFromName($name, $id_space) {
-        $sql = "SELECT id FROM cl_pricings WHERE name=? AND id_space=?";
+        $sql = "SELECT id FROM cl_pricings WHERE name=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($name, $id_space));
         if ( $tmp->rowCount() > 0 ){
             $tm = $tmp->fetch();
@@ -36,9 +36,9 @@ class ClPricing extends Model {
         return 0;
     }
 
-    public function getName($id) {
-        $sql = "SELECT name FROM cl_pricings WHERE id=?";
-        $d = $this->runRequest($sql, array($id))->fetch();
+    public function getName($id_space, $id) {
+        $sql = "SELECT name FROM cl_pricings WHERE id=? AND id_space=? AND deleted=0";
+        $d = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $d[0];
     }
 
@@ -50,14 +50,14 @@ class ClPricing extends Model {
             $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE cl_pricings SET id_space=?, name=?, color=?, type=?, display_order=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order, $id));
+            $sql = 'UPDATE cl_pricings SET name=?, color=?, type=?, display_order=? WHERE id=? AND id_space=? AND deleted=0';
+            $this->runRequest($sql, array($name, $color, $type, $display_order, $id, $id_space));
             return $id;
         }
     }
 
     public function getForList($id_space) {
-        $sql = "SELECT * FROM cl_pricings WHERE id_space=?";
+        $sql = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $names = array();
         $ids = array();
@@ -68,8 +68,9 @@ class ClPricing extends Model {
         return array("names" => $names, "ids" => $ids);
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM cl_pricings WHERE id=?";
+    public function delete($id_space, $id) {
+        $sql = "UPDATE cl_pricings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        // $sql = "DELETE FROM cl_pricings WHERE id=?  AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id));
     }
 
