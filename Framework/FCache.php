@@ -182,7 +182,7 @@ class FCache extends Model {
     /**
      * Remove all the cache
      */
-    protected function freeTableURL() {
+    public function freeTableURL() {
         $sql = "TRUNCATE TABLE cache_urls";
         $this->runRequest($sql);
         $sqlg = "TRUNCATE TABLE cache_urls_gets";
