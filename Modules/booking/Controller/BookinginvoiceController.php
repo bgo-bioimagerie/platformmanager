@@ -110,7 +110,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         //print_r($id_items);
         // unparse details
         $detailsData = array();
-        if (count($id_items) > 0) {
+        if (!empty($id_items)) {
             $item = $modelInvoiceItem->getItem($id_items[0]["id"]);
             $details = $item["details"];
             
@@ -125,13 +125,14 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         // create edit form
         $idItem = 0;
-        if (count($id_items) > 0) {
+        if (!empty($id_items)) {
             $idItem = $id_items[0]["id"];
         }
         $form = $this->editForm($idItem, $id_space, $id_invoice, $lang);
         if ($form->check()) {
             $total_ht = 0;
             $id_services = $this->request->getParameter("id_service");
+            $id_services = is_array($id_services) ? $id_services : array($id_services);
             $quantity = $this->request->getParameter("quantity");
             $unit_price = $this->request->getParameter("unit_price");
             $content = "";
@@ -139,7 +140,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 $content .= $id_services[$i] . "=" . $quantity[$i] . "=" . $unit_price[$i] . ";";
                 $total_ht += $quantity[$i] * $unit_price[$i];
             }
-            if (count($id_items) > 0) {
+            if (!empty($id_items)) {
                 $modelInvoiceItem->editItemContent($id_items[0]["id"], $content, $total_ht);
             }
             // apply discount
@@ -178,18 +179,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $itemPrices = array();
         $modelInvoiceItem = new InInvoiceItem();
         $modelInvoice = new InInvoice();
-        //$modelUser = new CoreUser();
         $modelClient = new ClClient();
         
-
-        //print_r($id_item);
         $invoiceInfo = $modelInvoice->get($id_invoice);
         $clientInfo = $modelClient->get($invoiceInfo["id_responsible"]);
-        $id_belonging = $clientInfo["id_pricing"];
+        $id_belonging = $clientInfo["pricing"];
         
-        $item = $modelInvoiceItem->getItem($id_item);
-        
-        
+        $item = $modelInvoiceItem->getItem($id_item); 
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         foreach ($contentArray as $content) {
@@ -204,13 +200,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
         }
 
         $listResources = $this->getResourcesList($id_space, $id_belonging, $lang);
-        //echo "id_belonging = " . $id_belonging . "<br/>";
-        //print_r($listResources);
-
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
-        $formAdd->addText("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addText("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addNumber("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addNumber("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
@@ -440,33 +433,58 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
             $packagesPrices[$resource["id"]] = $pricesPackages;
         }
-
-        //print_r($packagesPrices);
         return $packagesPrices;
     }
 
     protected function getUnitTimePricesForEachResource($resources, $LABpricingid, $id_cient, $id_space) {
-
-        
-        
         // get the pricing informations
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
-        //echo "getUnitTimePricesForEachResource 1 <br>";
-        //$tarif_name = $pricingInfo['tarif_name'];
-        $tarif_unique = $pricingInfo['tarif_unique'];
-        $tarif_nuit = $pricingInfo['tarif_night'];
-        $tarif_we = $pricingInfo['tarif_we'];
-        $night_start = $pricingInfo['night_start'];
-        $night_end = $pricingInfo['night_end'];
-        $we_array1 = explode(",", $pricingInfo['choice_we']);
-        $we_array = array();
-        for ($s = 0; $s < count($we_array1); $s++) {
-            if ($we_array1[$s] > 0) {
-                $we_array[] = $s + 1;
+        Configuration::getLogger()->debug("[TEST]", ["pricingInfo" => $pricingInfo]);
+        if (!empty($pricingInfo)) {
+            $tarif_unique = $pricingInfo['tarif_unique'];
+            $tarif_nuit = $pricingInfo['tarif_night'];
+            $tarif_we = $pricingInfo['tarif_we'];
+            $night_start = $pricingInfo['night_start'];
+            $night_end = $pricingInfo['night_end'];
+            $we_array1 = explode(",", $pricingInfo['choice_we']);
+            $we_array = array();
+            for ($s = 0; $s < count($we_array1); $s++) {
+                if ($we_array1[$s] > 0) {
+                    $we_array[] = $s + 1;
+                }
             }
-        }
+        } else {
+            // Set default values for invoice generation
+            Configuration::getLogger()->debug("[TEST]", ["Set default values for invoice generation"]);
+            $tarif_unique = 1;
+            $tarif_nuit = 0;
+            $tarif_we = 0;
+            $night_start = 19;
+            $night_end = 8;
+            $we_array = array(0, 0, 0, 0, 0, 1, 1);
 
+            // Insert default values in bk_nightwe table
+            Configuration::getLogger()->debug("[TEST]", ["Insert default values in bk_nightwe table"]);
+            $bkNightWeModel = new BkNightWE();
+            $we_char = "";
+            foreach ($we_array as $day) {
+                $we_char .= $day . ",";
+            }
+            $we_char = substr($we_char, 0, -1);
+            $bkNightWeModel->addPricing(
+                $LABpricingid,
+                $id_space,
+                $tarif_unique,
+                $tarif_nuit,
+                $night_start,
+                $night_end,
+                $tarif_we,
+                $we_char
+            );
+        }
+        
+        Configuration::getLogger()->debug("[TEST]", ["pricingInfo" => $pricingInfo]);
         $timePrices = array();
         $modelRessourcePricing = new BkPrice();
         $modelRessourcePricingOwner = new BkOwnerPrice();
