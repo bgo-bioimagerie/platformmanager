@@ -834,43 +834,29 @@ class BookingController extends BookingabstractController {
         $modelSettings = new CoreConfig();
         $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $id_space);
         
-        //echo "editResaFunction = " . $editResaFunction . "<br/>";
-        
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
             $modelDefault = new BookingdefaultController($this->request);
-            //$modelDefault->setRequest($this->request);
             $modelDefault->editreservationdefault($id_space, $param);
             return;
         } else {
-
             /// todo run plugin
             $modelCache = new FCache();
             $pathInfo = $modelCache->getURLInfos($editResaFunction);
-            //print_r($pathInfo);
             $path = $this->request->getParameter('path');
-            //echo "path = " . $path . "<br/>";
             $pathData = explode("/", $path);
-        
             $urlInfo = array("pathData" => $pathData, "pathInfo" => $pathInfo);
 
-            //print_r($urlInfo);
             $controllerName = $urlInfo["pathInfo"]["controller"];
             $classController = ucfirst(strtolower($controllerName)) . "Controller";
             $module = $urlInfo["pathInfo"]["module"];
             $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
+
             if (file_exists($fileController)) {
                 // Instantiate controler
                 require_once ($fileController);
                 $controller = new $classController ($this->request);
-                //$controller->setRequest($this->request);
-
                 $action = $urlInfo["pathInfo"]["action"];
-                //echo "action = " . $action . "<br/>";
-                //echo 'url info = ';
-                //print_r($urlInfo);
-                //echo '<br/>';
                 $args = $this->getArgs($urlInfo);
-                //echo "args = "; print_r($args); echo "<br/>";
 
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
                 return;

@@ -618,7 +618,7 @@ class BookingdefaultController extends BookingabstractController {
         $quantitiesInfo = $modelQuantities->calQuantitiesByResource($id_resource);
         $qData = explode(";", $resaInfo["quantities"]);
         $qDataId = array();
-        $qDataValue = array();
+        $qDataValue = array(); // sets the default quantity to 1 ?
         foreach ($qData as $sup) {
             $sd = explode("=", $sup);
             if (count($sd) == 2) {
@@ -626,16 +626,14 @@ class BookingdefaultController extends BookingabstractController {
                 $qDataValue[] = $sd[1];
             }
         }
+        Configuration::getLogger()->debug("[TEST]", ["quantitiesInfo" => $quantitiesInfo]);
         foreach ($quantitiesInfo as $q) {
             $name = $q["name"];
             if ($q["mandatory"] == 1) {
                 $name .= "*";
             }
             $key = array_search($q["id"], $qDataId);
-            $value = "";
-            if ($key !== false) {
-                $value = $qDataValue[$key];
-            }
+            $value = ($key!==false) ? $qDataValue[$key] : 1;
             $form->addNumber("q" . $q["id"], $q["name"], $q["mandatory"], $value);
         }
 
