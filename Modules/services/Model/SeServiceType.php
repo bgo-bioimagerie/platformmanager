@@ -32,15 +32,13 @@ class SeServiceType extends Model {
      * 
      * @return PDOStatement
      */
-    public function createDefault() {
-
-
-        $this->add("Quantity", "Quantité");
-        $this->add("Time minutes", "Temps en minutes");
-        $this->add("Time hours", "Temps en heures");
-        $this->add("Price", "Prix");
-        $this->add("Half day", "Demi journée");
-        $this->add("Journée", "Journée");
+    public function createDefault($id_space) {
+        $this->add($id_space, "Quantity", "Quantité");
+        $this->add($id_space, "Time minutes", "Temps en minutes");
+        $this->add($id_space, "Time hours", "Temps en heures");
+        $this->add($id_space, "Price", "Prix");
+        $this->add($id_space, "Half day", "Demi journée");
+        $this->add($id_space, "Journée", "Journée");
     }
 
     public function getIdFromName($id_space, $name){
