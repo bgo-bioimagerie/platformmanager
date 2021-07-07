@@ -29,7 +29,7 @@ class SeAssay extends Model {
         $modelConfig = new CoreConfig();
         $seekURL = $modelConfig->getParam("seekurl");
         
-        $assaysUrl = $seekURL . "/assays_".$id_space.".xml";
+        $assaysUrl = $seekURL . "/assays.xml";
         
         $assays = array();
 
