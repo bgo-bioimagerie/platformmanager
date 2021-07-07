@@ -78,7 +78,7 @@ class EstoreproductController extends CoresecureController {
         // default empy provider
         $data = $this->model->get($id_space ,$id);
         
-        $modelCategory = new EsProductCategory();
+        $modelCategory = new EsProductCategory($id_space);
         $categories = $modelCategory->getForList($id_space);
         
         // form
@@ -109,6 +109,7 @@ class EstoreproductController extends CoresecureController {
             
             // after the provider is saved we redirect to the providers list page
             $this->redirect("esproductedit/" . $id_space . "/" . $id);
+            return;
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

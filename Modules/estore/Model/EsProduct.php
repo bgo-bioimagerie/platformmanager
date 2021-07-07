@@ -46,8 +46,8 @@ class EsProduct extends Model {
         return $this->productClass->getName($id_space, $id);
     }
 
-    public function set($id, $id_space, $id_category, $name, $description, $vat) {
-        return $this->productClass->set($id, $id_space, $id_category, $name, $description, $vat);
+    public function set($id, $id_space, $id_category, $name, $description) {
+        return $this->productClass->set($id, $id_space, $id_category, $name, $description);
     }
 
     public function setQuantity($id_space ,$id, $quantity) {

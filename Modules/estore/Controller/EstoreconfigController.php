@@ -118,8 +118,8 @@ class EstoreconfigController extends CoresecureController {
 
     protected function menusproductclassForm($lang, $id_space) {
 
-        $productList = Configuration::get("estoreproductclass");
-        $productCategoryList = Configuration::get("estoreproductCategoryclass");
+        $productList = Configuration::get("estoreproductclass", []);
+        $productCategoryList = Configuration::get("estoreproductCategoryclass", []);
 
         $modelConfig = new CoreConfig();
         $estoreProductClass = $modelConfig->getParamSpace("estoreProductClass", $id_space);

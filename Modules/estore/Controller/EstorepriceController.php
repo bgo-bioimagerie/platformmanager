@@ -80,7 +80,8 @@ class EstorepriceController extends CoresecureController {
     /**
      * Edit a provider form
      */
-    public function editAction($id_space, $id_product) {
+    public function editAction($id_space, $id) {
+        $id_product = $id;
         // security
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         //lang

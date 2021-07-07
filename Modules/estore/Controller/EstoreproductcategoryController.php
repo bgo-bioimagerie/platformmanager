@@ -24,7 +24,6 @@ class EstoreproductcategoryController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->model = new EsProductCategory();
         $_SESSION["openedNav"] = "estore";
     }
 
@@ -39,6 +38,7 @@ class EstoreproductcategoryController extends CoresecureController {
         // security
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         // lang
+        $this->model = new EsProductCategory($id_space);
         $lang = $this->getLanguage();
 
         // Query to the database
@@ -67,7 +67,7 @@ class EstoreproductcategoryController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         //lang
         $lang = $this->getLanguage();
-
+        $this->model = new EsProductCategory($id_space);
         $data = $this->model->get($id_space ,$id);
 
         // form
@@ -92,6 +92,7 @@ class EstoreproductcategoryController extends CoresecureController {
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
             // after the provider is saved we redirect to the providers list page
             $this->redirect("esproductcategoryedit/" . $id_space . "/" . $newId);
+            return;
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -110,7 +111,7 @@ class EstoreproductcategoryController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         // security
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
-
+        $this->model = new EsProductCategory($id_space);
         // query to delete the provider
         $this->model->delete($id_space ,$id);
 
