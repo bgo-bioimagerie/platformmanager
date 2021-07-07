@@ -1,7 +1,8 @@
 <?php
 
 require_once 'Framework/FormGenerator.php';
-require_once 'Modules/breeding/Model/BreedingTranslator.php';
+// require_once 'Modules/breeding/Model/BreedingTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/clients/Model/ClAddress.php';
 

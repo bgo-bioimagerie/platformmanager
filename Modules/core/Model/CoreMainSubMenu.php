@@ -75,6 +75,7 @@ class CoreMainSubMenu extends Model {
     }
 
     public function getForMenu($id_main_menu) {
+        /*
         $sql = "SELECT * FROM core_main_sub_menus WHERE id_main_menu=? ORDER BY display_order ASC;";
         $data = $this->runRequest($sql, array($id_main_menu))->fetchAll();
         for($i = 0 ; $i < count($data) ; $i++){
@@ -91,6 +92,19 @@ class CoreMainSubMenu extends Model {
                 $data[$i]["link"] = "";
             }
         }
+        */
+
+        $sql = "SELECT core_main_sub_menus.*, core_main_menu_items.id_space FROM core_main_menu_items INNER JOIN core_main_sub_menus ON core_main_sub_menus.id=core_main_menu_items.id_sub_menu WHERE core_main_sub_menus.id_main_menu=?";
+        $data = $this->runRequest($sql, array($id_main_menu))->fetchAll();
+        for($i=0;$i<count($data);$i++){
+            if ( $data[$i]['id_space']){
+                $data[$i]["link"] = "coretile/" . $data[$i]['id']; 
+            }
+            else {
+                $data[$i]["link"] = "";
+            }
+        }
+
         return $data;
     }
 

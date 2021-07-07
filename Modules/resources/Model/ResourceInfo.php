@@ -96,7 +96,7 @@ class ResourceInfo extends Model {
         $sql = "SELECT re_info.*, re_category.name as category "
                 . "FROM re_info "
                 . "INNER JOIN re_category ON re_info.id_category = re_category.id "
-                . "WHERE re_info.id_space=? AND deleted=0";
+                . "WHERE re_info.id_space=? AND re_info.deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     

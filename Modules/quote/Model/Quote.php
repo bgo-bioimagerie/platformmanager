@@ -25,6 +25,17 @@ class Quote extends Model {
     }
 
     public function get($id_space, $id) {
+        if(!$id) {
+            return [
+                "id" => 0,
+                "recipient" => "",
+                "address" => "",
+                "id_belonging" => 0,
+                "id_user" => 0,
+                "date_open" => "",
+                "date_last_modified" => ""
+            ];
+        }
         $sql = "SELECT * FROM qo_quotes WHERE id=? AND id_space=0 AND deleted=0";
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
