@@ -102,17 +102,20 @@ class CoreDB extends Model {
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
 
+        /*
         Configuration::getLogger()->debug('[bk_schedulings] add link to re_area');
         $bkm = new BkScheduling();
         $ream = new ReArea();
-        $bks = $bkm->getAll('id');
+        $sql = "SELECT * FROM bk_schedulings";
+        $bks = $this->runRequest($sql, array()).fetchAll();
         foreach ($bks as $bk) {
             if(!$ream->get($bk['id'])) {
                 continue;
             }
-            $bkm->setReArea($bk['id'], $bk['id']);
+            $bkm->setReArea($bk['id'], $bk['id_rearea']);
         }
         Configuration::getLogger()->debug('[bk_schedulings] add link to re_area, done!');
+        */
 
         Configuration::getLogger()->debug('[id_space] set space identifier on objects');
 
@@ -121,7 +124,7 @@ class CoreDB extends Model {
         foreach ($resdb as $res) {
             $sql = "UPDATE bk_access SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bk_authorization SET id_space=? WHERE id_resource=?";
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calendar_entry SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -134,6 +137,8 @@ class CoreDB extends Model {
             $sql = "UPDATE bk_prices SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_restrictions SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_calsupinfo SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE re_event SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -149,8 +154,9 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `bk_calendar_entry`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
+        // $resdb = $this->runRequest($sql)->fetchAll();
+        $resdb = $this->runRequest($sql);
+        while($res = $resdb->fetch()) {
             if($res['period_id']) {
                 $sql = "UPDATE bk_calendar_period SET id_space=? WHERE id=?";
                 $this->runRequest($sql, array($res['id_space'], $res['period_id']));
@@ -174,8 +180,9 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `bj_notes`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
+        // $resdb = $this->runRequest($sql)->fetchAll();
+        $resdb = $this->runRequest($sql);
+        while($res = $resdb->fetch()) {
             $sql = "UPDATE bj_events SET id_space=? WHERE id_note=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bj_tasks SET id_space=? WHERE id_note=?";
@@ -202,22 +209,25 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `in_invoice`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
+        // $resdb = $this->runRequest($sql)->fetchAll();
+        $resdb = $this->runRequest($sql);
+        while($res = $resdb->fetch()) {
             $sql = "UPDATE in_invoice_item SET id_space=? WHERE id_invoice=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
         $sql = "SELECT * FROM `qo_quotes`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
+        // $resdb = $this->runRequest($sql)->fetchAll();
+        $resdb = $this->runRequest($sql);
+        while($res = $resdb->fetch()) {
             $sql = "UPDATE qo_quoteitems SET id_space=? WHERE id_quote=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
         $sql = "SELECT * FROM `re_event`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
+        // $resdb = $this->runRequest($sql)->fetchAll();
+        $resdb = $this->runRequest($sql);
+        while($res = $resdb->fetch()) {
             $sql = "UPDATE re_event_data SET id_space=? WHERE id_event=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
@@ -229,7 +239,6 @@ class CoreDB extends Model {
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
-
         $sql = "SELECT * FROM `se_services`;";
         $resdb = $this->runRequest($sql)->fetchAll();
         foreach ($resdb as $res) {
@@ -239,6 +248,8 @@ class CoreDB extends Model {
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE se_service_types SET id_space=? WHERE id=?";
             $this->runRequest($sql, array($res['id_space'], $res['type_id']));
+            $sql = "UPDATE se_order_service SET id_space=? WHERE id_service=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
         $sql = "SELECT * FROM `stock_cabinets`;";
@@ -246,6 +257,32 @@ class CoreDB extends Model {
         foreach ($resdb as $res) {
             $sql = "UPDATE stock_shelf SET id_space=? WHERE id_cabinet=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `es_sales`;";
+        $resdb = $this->runRequest($sql);
+        while($res = $resdb->fetch()) {
+            $sql = "UPDATE es_sale_entered_items SET id_space=? WHERE id_sale=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE es_sale_history SET id_space=? WHERE id_sale=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE es_sale_items SET id_space=? WHERE id_sale=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE es_sale_invoice_items SET id_space=? WHERE id_sale=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+
+        // Check
+        $sql = "show tables";
+        $tables = $this->runRequest($sql)->fetchAll();
+        foreach($tables as $t) {
+            $table = $t[0];
+            $sql = "SELECT COUNT(*) as total FROM ".$table." WHERE id_space=0";
+            $null_spaces = $this->runRequest($sql)->fetch();
+            if($null_spaces && intval($null_spaces) > 0) {
+                Configuration::getLogger()->warning('[id_space] found null space references', ['table' => $table, 'total' => $null_spaces]);
+            }
         }
 
         Configuration::getLogger()->debug('[id_space] set space identifier on objects, done!');
@@ -330,6 +367,19 @@ class CoreDB extends Model {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
 
+        Configuration::getLogger()->info("[db] set base columns if not present");
+        $sql = "show tables";
+        $tables = $this->runRequest($sql)->fetchAll();
+        foreach($tables as $t) {
+            $table = $t[0];
+            $this->addColumn($table, "deleted", "int(1)", 0);
+            $this->addColumn($table, "deleted_at", "DATETIME", "", true);
+            $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
+            $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
+            $this->addColumn($table, "id_space", "int(11)", 0);
+        }
+        Configuration::getLogger()->info("[db] set base columns if not present, done!");
+
         $isNewRelease = false;
         $oldRelease = 0;
         $release = null;
@@ -384,18 +434,6 @@ class CoreDB extends Model {
             Configuration::getLogger()->info("[db] no migration needed");
         }
 
-        Configuration::getLogger()->info("[db] set base columns if not present");
-        $sql = "show tables";
-        $tables = $this->runRequest($sql)->fetchAll();
-        foreach($tables as $t) {
-            $table = $t[0];
-            $this->addColumn($table, "deleted", "int(1)", 0);
-            $this->addColumn($table, "deleted_at", "DATETIME", "", true);
-            $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
-            $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
-            $this->addColumn($table, "id_space", "int(11)", 0);
-        }
-        Configuration::getLogger()->info("[db] set base columns if not present, done!");
     }
 }
 
