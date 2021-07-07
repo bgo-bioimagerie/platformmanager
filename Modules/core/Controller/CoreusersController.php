@@ -197,7 +197,7 @@ class CoreusersController extends CoresecureController {
         $coreSpaceModel = new CoreSpaceUser();
         $corePendingModel = new CorePendingAccount();
         return (
-            $coreSpaceModel->isActiveMemberOfAnySpace($idUser) ||
+            $coreSpaceModel->getUserSpaceInfo($idUser) ||
             $corePendingModel->isActuallyPendingInAnySpace($idUser)
         );
     }
