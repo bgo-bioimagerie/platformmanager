@@ -226,7 +226,7 @@ class SeekbookingController extends BookingabstractController {
         
         // set the assay information
         $modelAssay = new SeResaAssay();
-        $modelAssay->set($id, $this->request->getParameter("assay"), $recipient_id);
+        $modelAssay->set($id_space, $id, $this->request->getParameter("assay"), $recipient_id);
         
         $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
     }

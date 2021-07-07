@@ -28,6 +28,7 @@ require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 
 
@@ -112,6 +113,180 @@ class CoreDB extends Model {
             $bkm->setReArea($bk['id'], $bk['id']);
         }
         Configuration::getLogger()->debug('[bk_schedulings] add link to re_area, done!');
+
+        Configuration::getLogger()->debug('[id_space] set space identifier on objects');
+
+        $sql = "SELECT * FROM `re_info`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_access SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_calendar_entry SET id_space=? WHERE resource_id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_calquantities SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_owner_prices SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_packages SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_prices SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_restrictions SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE re_event SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE re_resps SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `bk_packages`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach($resdb as $res) {
+            $sql = "UPDATE bk_j_packages_prices SET id_space=? WHERE id_package=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id_package']));
+        }
+
+        $sql = "SELECT * FROM `bk_calendar_entry`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            if($res['period_id']) {
+                $sql = "UPDATE bk_calendar_period SET id_space=? WHERE id=?";
+                $this->runRequest($sql, array($res['id_space'], $res['period_id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `re_area`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_bookingcss SET id_space=? WHERE id_area=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_schedulings SET id_space=? WHERE id_area=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `bj_collections`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bj_j_collections_notes SET id_space=? WHERE id_collection=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `bj_notes`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bj_events SET id_space=? WHERE id_note=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bj_tasks SET id_space=? WHERE id_note=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bj_tasks_history SET id_space=? WHERE id_note=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `ca_categories`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE ca_entries SET id_space=? WHERE id_category=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `cl_clients`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE cl_addresses SET id_space=? WHERE id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['address_invoice']));
+            $this->runRequest($sql, array($res['id_space'], $res['address_delivery']));
+            $sql = "UPDATE cl_j_client_user SET id_space=? WHERE id_client=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `in_invoice`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE in_invoice_item SET id_space=? WHERE id_invoice=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `qo_quotes`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE qo_quoteitems SET id_space=? WHERE id_quote=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `re_event`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE re_event_data SET id_space=? WHERE id_event=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE re_visas SET id_space=? WHERE id_resource_category=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+
+        $sql = "SELECT * FROM `se_services`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE se_prices SET id_space=? WHERE id_service=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE se_service_types SET id_space=? WHERE id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['type_id']));
+        }
+
+        $sql = "SELECT * FROM `stock_cabinets`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE stock_shelf SET id_space=? WHERE id_cabinet=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        Configuration::getLogger()->debug('[id_space] set space identifier on objects, done!');
+
+        Configuration::getLogger()->debug('[virtual counter] init virtual counter');
+        $counter = 0;
+        $sql = "SELECT max(id_package) as counter FROM bk_owner_prices";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && $resdb['counter']) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_package) as counter FROM bk_packages";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_package) as counter FROM bk_prices";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_supinfo) as counter FROM bk_calsupinfo";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_quantity) as counter FROM bk_calquantities";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+        $i = 0;
+        while($i <= $counter) {
+            $cvm = new CoreVirtual();
+            $cvm->new('import');
+            $i++;
+        }
+
+        Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
+
+
     }
 
     /**
@@ -307,6 +482,9 @@ class CoreInstall extends Model {
 
         $modelCoreFiles = new CoreFiles();
         $modelCoreFiles->createTable();
+
+        $modelVirtual = new CoreVirtual();
+        $modelVirtual->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

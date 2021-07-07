@@ -100,8 +100,32 @@ class BookingpackagesController extends CoresecureController {
                     throw new PfmAuthException('access denied for this resource', 403);                }
             }
 
+
+            $packs = [];
+            for ($p = 0; $p < count($packageID); $p++) {
+                if ($packageName[$p] != "" && $packageID[$p]) {
+                   $packs[$packageName[$p]] = $packageID[$p];
+                }
+            }
+            for ($p = 0; $p < count($packageID); $p++) {
+                if (!$packageID[$p]) {
+                    // If package id not set, use from known packages
+                    if(isset($packs[$packageName[$p]])) {
+                        $packageID[$p] = $packs[$packageName[$p]];
+                    } else {
+                        // Or create a new package
+                       $cvm = new CoreVirtual();
+                       $vid = $cvm->new('package');
+                       $packageID[$p] = $vid;
+                       $packs[$packageName[$p]] = $vid;
+                   }
+                }
+                $modelPackages->setPackage($id_space, $packageID[$p], $packageResource[$p], $packageName[$p], $packageDuration[$p]);
+            }
+
             // get the last package id
             // @bug, should get from an increment in table, risk of conflict
+            /*            
             $lastID = 0;
             for ($p = 0; $p < count($packageID); $p++) {
                 if ($packageName[$p] != "") {
@@ -131,6 +155,7 @@ class BookingpackagesController extends CoresecureController {
                     $count++;
                 }
             }
+            */
    
             $modelPackages->removeUnlistedPackages($id_space, $packageID);
             $_SESSION["message"] = BookingTranslator::Packages_saved($lang);

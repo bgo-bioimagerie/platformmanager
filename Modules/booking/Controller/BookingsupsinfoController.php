@@ -74,8 +74,30 @@ class BookingsupsinfoController extends CoresecureController {
             $supName = $this->request->getParameterNoException("names");
             $supMandatory = $this->request->getParameterNoException("mandatory");
 
-            $count = 0;
+            $packs = [];
+            for ($p = 0; $p < count($supID); $p++) {
+                if ($supName[$p] != "" && $supID[$p]) {
+                   $packs[$supName[$p]] = $supID[$p];
+                }
+            }
+            for ($p = 0; $p < count($supID); $p++) {
+                if (!$supID[$p]) {
+                    // If package id not set, use from known packages
+                    if(isset($packs[$supName[$p]])) {
+                        $supID[$p] = $packs[$supName[$p]];
+                    } else {
+                        // Or create a new package
+                       $cvm = new CoreVirtual();
+                       $vid = $cvm->new('supinfo');
+                       $supID[$p] = $vid;
+                       $packs[$supName[$p]] = $vid;
+                   }
+                }
+                $modelSups->setCalSupInfo($id_space, $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
+            }
 
+            /* bug possible conflict on getting id
+            $count = 0;
             // get the last package id
             $lastID = 0;
             for ($p = 0; $p < count($supID); $p++) {
@@ -108,6 +130,7 @@ class BookingsupsinfoController extends CoresecureController {
                     $count++;
                 }
             }
+            */
 
             $modelSups->removeUnlistedSupInfos($id_space, $supID);
             $_SESSION["message"] = BookingTranslator::Supplementaries_saved($lang);

@@ -57,7 +57,7 @@ class BookingaccessibilitiesController extends CoresecureController {
         if ($form->check()) {
             foreach ($resources as $resource) {
                 $id_access = $this->request->getParameter("r_" . $resource["id"]);
-                $model->set($resource["id"], $id_access);
+                $model->set($id_space ,$resource["id"], $id_access);
             }
             $this->redirect("bookingaccessibilities/".$id_space);
         }
