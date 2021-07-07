@@ -21,30 +21,31 @@ class EsProductDefault extends Model {
         $sql .= "FROM es_products ";     
         $sql .= "INNER JOIN es_product_categories "; 
         $sql .= "ON es_products.id_category = es_product_categories.id "; 
-        $sql .= "WHERE es_products.id_space=?";
+        $sql .= "WHERE es_products.id_space=? AND es_products.deleted=0";
         
         return $this->runRequest($sql, array($id_space))->fetchAll();
         
     }
     
-    public function getByCategory($id_category){
-                $sql = "SELECT * FROM es_products WHERE id_category=?";
-        return $this->runRequest($sql, array($id_category))->fetchAll();
+    public function getByCategory($id_space, $id_category){
+            $sql = "SELECT * FROM es_products WHERE id_category=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_category, $id_space))->fetchAll();
     }
 
-    public function getForCategory($id_category) {
-        $sql = "SELECT * FROM es_products WHERE id_category=?";
-        return $this->runRequest($sql, array($id_category))->fetchAll();
+    public function getForCategory($id_space, $id_category) {
+        return $this->getByCategory($id_space, $id_category);
+        // $sql = "SELECT * FROM es_products WHERE id_category=? AND id_space=? AND deleted=0";
+        // return $this->runRequest($sql, array($id_category, $id_space))->fetchAll();
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM es_products WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space ,$id) {
+        $sql = "SELECT * FROM es_products WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
     
-    public function getName($id){
-        $sql = "SELECT name FROM es_products WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function getName($id_space, $id){
+        $sql = "SELECT name FROM es_products WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount()){
             $tmp = $req->fetch();
             return $tmp[0];
@@ -58,25 +59,26 @@ class EsProductDefault extends Model {
             $this->runRequest($sql, array($id_space, $id_category, $name, $description));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE es_products SET id_space=?, id_category=?, name=?, description=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $id_category, $name, $description, $id));
+            $sql = 'UPDATE es_products SET id_category=?, name=?, description=? WHERE id=? AND id_space=? AND deleted=0';
+            $this->runRequest($sql, array($id_category, $name, $description, $id, $id_space));
             return $id;
         }
     }
 
-    public function setQuantity($id, $quantity) {
-        $sql = 'UPDATE es_products SET quantity=? WHERE id=?';
-        $this->runRequest($sql, array($quantity, $id));
+    public function setQuantity($id_space, $id, $quantity) {
+        $sql = 'UPDATE es_products SET quantity=? WHERE id=? AND id_space=? AND deleted=0';
+        $this->runRequest($sql, array($quantity, $id, $id_space));
     }
 
-    public function setImage($id, $url) {
-        $sql = 'UPDATE es_products SET url_image=? WHERE id=?';
-        $this->runRequest($sql, array($url, $id));
+    public function setImage($id_space, $id, $url) {
+        $sql = 'UPDATE es_products SET url_image=? WHERE id=? AND id_space=? AND deleted=0';
+        $this->runRequest($sql, array($url, $id, $id_space));
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM es_products WHERE id=?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE es_products SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        // $sql = "DELETE FROM es_products WHERE id=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

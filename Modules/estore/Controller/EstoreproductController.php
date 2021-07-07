@@ -76,7 +76,7 @@ class EstoreproductController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // default empy provider
-        $data = $this->model->get($id);
+        $data = $this->model->get($id_space ,$id);
         
         $modelCategory = new EsProductCategory();
         $categories = $modelCategory->getForList($id_space);
@@ -129,7 +129,7 @@ class EstoreproductController extends CoresecureController {
             $url = $id_space . "_" . $id . "." . $ext;
             FileUpload::uploadFile($target_dir, "image", $url);
             
-            $this->model->setImage($id, $target_dir . $url);
+            $this->model->setImage($id_space ,$id, $target_dir . $url);
         }
     }
     
@@ -143,7 +143,7 @@ class EstoreproductController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         
         // query to delete the provider
-        $this->model->delete($id);
+        $this->model->delete($id_space ,$id);
         
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("esproducts/" . $id_space);

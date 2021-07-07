@@ -25,11 +25,11 @@ class SeAssay extends Model {
          */
     }
     
-    public function getAssays(){
+    public function getAssays($id_space){
         $modelConfig = new CoreConfig();
         $seekURL = $modelConfig->getParam("seekurl");
         
-        $assaysUrl = $seekURL . '/assays.xml';
+        $assaysUrl = $seekURL . "/assays_".$id_space.".xml";
         
         $assays = array();
 
@@ -64,8 +64,8 @@ class SeAssay extends Model {
         return $assays;
     }
 
-    public function getAssaysForList(){
-        $assays = $this->getAssays();
+    public function getAssaysForList($id_space){
+        $assays = $this->getAssays($id_space);
         $names = array();
         $ids = array();
         $names[] = "";

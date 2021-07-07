@@ -54,10 +54,10 @@ class EstorecatalogController extends CoresecureController {
 
         // Query to the database
         $categories = $this->modelCategories->getAll($id_space);
-        $products = $this->modelProducts->getByCategory($id_category);
+        $products = $this->modelProducts->getByCategory($id_space ,$id_category);
         $modelUnitQ = new EsProductUnitQ();
         for ($i = 0; $i < count($products); $i++) {
-            $products[$i]["unit_quantity"] = $modelUnitQ->getquantity($products[$i]["id"]);
+            $products[$i]["unit_quantity"] = $modelUnitQ->getquantity($id_space ,$products[$i]["id"]);
         }
 
 

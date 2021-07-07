@@ -30,36 +30,36 @@ class EsProduct extends Model {
         return $this->productClass->getAll($id_space);
     }
     
-    public function getByCategory($id_category){
-        return $this->productClass->getByCategory($id_category);
+    public function getByCategory($id_space, $id_category){
+        return $this->productClass->getByCategory($id_space ,$id_category);
     }
 
-    public function getForCategory($id_category) {
-        return $this->productClass->getForCategory($id_category);
+    public function getForCategory($id_space, $id_category) {
+        return $this->productClass->getForCategory($id_space, $id_category);
     }
 
-    public function get($id) {
-        return $this->productClass->get($id);
+    public function get($id_space, $id) {
+        return $this->productClass->get($id_space ,$id);
     }
     
-    public function getName($id){
-        return $this->productClass->getName($id);
+    public function getName($id_space, $id){
+        return $this->productClass->getName($id_space, $id);
     }
 
     public function set($id, $id_space, $id_category, $name, $description, $vat) {
         return $this->productClass->set($id, $id_space, $id_category, $name, $description, $vat);
     }
 
-    public function setQuantity($id, $quantity) {
-        return $this->productClass->setQuantity($id, $quantity);
+    public function setQuantity($id_space ,$id, $quantity) {
+        return $this->productClass->setQuantity($id_space, $id, $quantity);
     }
 
-    public function setImage($id, $url) {
-        return $this->productClass->setImage($id, $url);
+    public function setImage($id_space, $id, $url) {
+        return $this->productClass->setImage($id_space, $id, $url);
     }
 
-    public function delete($id) {
-        return $this->productClass->delete($id);
+    public function delete($id_space, $id) {
+        return $this->productClass->delete($id_space, $id);
     }
 
 }

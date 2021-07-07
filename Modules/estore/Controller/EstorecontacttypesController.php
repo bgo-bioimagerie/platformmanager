@@ -73,7 +73,7 @@ class EstorecontacttypesController extends CoresecureController {
             $pricing = array("id" => 0, "name" => "");
         }
         else{
-            $pricing = $this->model->get($id);
+            $pricing = $this->model->get($id_space ,$id);
         }
 
         // form
@@ -118,7 +118,7 @@ class EstorecontacttypesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         
         // query to delete the provider
-        $this->model->delete($id);
+        $this->model->delete($id_space ,$id);
         
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("escontacttypes/" . $id_space);

@@ -15,19 +15,19 @@ class EsPrice extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getProductFullName($id_product) {
+    public function getProductFullName($id_space, $id_product) {
 
-        $sql2 = "SELECT name FROM es_products WHERE id=?";
-        $pname = $this->runRequest($sql2, array($id_product))->fetch();
+        $sql2 = "SELECT name FROM es_products WHERE id=? AND id_space=? AND deleted=0";
+        $pname = $this->runRequest($sql2, array($id_product, $id_space))->fetch();
 
         return $pname[0];
     }
 
     public function getAll($id_space) {
-        $sql = "SELECT * FROM es_products WHERE id_space=?";
+        $sql = "SELECT * FROM es_products WHERE id_space=? AND deleted=0";
         $products = $this->runRequest($sql, array($id_space))->fetchAll();
 
-        $sql2 = "SELECT * FROM cl_pricings WHERE id_space=?";
+        $sql2 = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=0";
         $pricings = $this->runRequest($sql2, array($id_space))->fetchAll();
 
         $data = array();
@@ -38,13 +38,13 @@ class EsPrice extends Model {
             $d["name"] = $product["name"];
             
             // get unit quantity
-            $sql2 = "SELECT unit_quantity FROM es_product_unit_q WHERE id_product=?";
+            $sql2 = "SELECT unit_quantity FROM es_product_unit_q WHERE id_product=? AND deleted=0";
             $q = $this->runRequest($sql2, array($product["id"]))->fetch();
             $d["unit_quantity"] = $q[0];
 
             // get prices
             foreach ($pricings as $p) {
-                $sql3 = "SELECT price FROM es_prices WHERE id_product=? AND id_pricing=?";
+                $sql3 = "SELECT price FROM es_prices WHERE id_product=? AND id_pricing=? AND deleted=0";
                 $price = $this->runRequest($sql3, array($product["id"], $p["id"]))->fetch();
                 $d["pricing_" . $p["id"]] = $price[0];
             }
@@ -53,25 +53,25 @@ class EsPrice extends Model {
         return $data;
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM es_prices WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM es_prices WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
     public function set($id_space, $id_product, $id_pricing, $price) {
-        $id = $this->exists($id_product, $id_pricing);
+        $id = $this->exists($id_space, $id_product, $id_pricing);
         if (!$id) {
             $sql = "INSERT INTO es_prices (id_space, id_product, id_pricing, price) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id_space, $id_product, $id_pricing, $price));
         } else {
-            $sql = "UPDATE es_prices SET id_space=?, id_product=?, id_pricing=?, price=? WHERE id=?";
-            $this->runRequest($sql, array($id_space, $id_product, $id_pricing, $price, $id));
+            $sql = "UPDATE es_prices SET id_product=?, id_pricing=?, price=? WHERE id=?  AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_product, $id_pricing, $price, $id, $id_space));
         }
     }
 
-    public function exists($id_product, $id_pricing) {
-        $sql = "SELECT id FROM es_prices WHERE id_product=? AND id_pricing=?";
-        $req = $this->runRequest($sql, array($id_product, $id_pricing));
+    public function exists($id_space, $id_product, $id_pricing) {
+        $sql = "SELECT id FROM es_prices WHERE id_product=? AND id_pricing=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id_product, $id_pricing, $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -79,9 +79,9 @@ class EsPrice extends Model {
         return 0;
     }
 
-    public function getPrice($id_product, $id_pricing) {
-        $sql = "SELECT price FROM es_prices WHERE id_product=? AND id_pricing=?";
-        $req = $this->runRequest($sql, array($id_product, $id_pricing));
+    public function getPrice($id_space, $id_product, $id_pricing) {
+        $sql = "SELECT price FROM es_prices WHERE id_product=? AND id_pricing=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id_product, $id_pricing, $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -89,9 +89,10 @@ class EsPrice extends Model {
         return 0;
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM es_prices WHERE id=?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE es_prices SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        //$sql = "DELETE FROM es_prices WHERE id=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

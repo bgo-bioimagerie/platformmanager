@@ -90,16 +90,16 @@ class EstorepriceController extends CoresecureController {
         $pricings = $modelPricing->getAll($id_space);
         
         $modelUnitQuantity = new EsProductUnitQ();
-        $unitQuantity = $modelUnitQuantity->getquantity($id_product);
+        $unitQuantity = $modelUnitQuantity->getquantity($id_space ,$id_product);
         
         // form
         // build the form
         $form = new Form($this->request, "pricing/edit");
-        $form->setTitle(EstoreTranslator::Edit_Price($lang) . ": " . $this->priceModel->getProductFullName($id_product), 3);
+        $form->setTitle(EstoreTranslator::Edit_Price($lang) . ": " . $this->priceModel->getProductFullName($id_space ,$id_product), 3);
         
         $form->addNumber("unit_quantity", EstoreTranslator::UnitQuantity($lang), true, $unitQuantity);
         foreach($pricings as $p){
-            $price = $this->priceModel->getPrice($id_product, $p["id"]);
+            $price = $this->priceModel->getPrice($id_space ,$id_product, $p["id"]);
             $form->addText("pricing_" . $p["id"], $p["name"], true, $price);
         }
         

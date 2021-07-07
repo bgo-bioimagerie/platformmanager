@@ -28,47 +28,47 @@ class SeResaAssay extends Model {
      * @param type $id
      * @param type $name
      */
-    public function set($id_resa, $id_assay, $id_user) {
-        $dataurl = $this->getFolderUrl($id_user, $id_assay);
+    public function set($id_space, $id_resa, $id_assay, $id_user) {
+        $dataurl = $this->getFolderUrl($id_space, $id_user, $id_assay);
         
-        if (!$this->isResaAssay($id_resa)) {
-            $sql = "INSERT INTO se_resaassay (id_resa, id_assay, dataurl) VALUES (?,?,?)";
-            $this->runRequest($sql, array($id_resa, $id_assay, $dataurl));
+        if (!$this->isResaAssay($id_space, $id_resa)) {
+            $sql = "INSERT INTO se_resaassay (id_resa, id_assay, dataurl, id_space) VALUES (?,?,?,?)";
+            $this->runRequest($sql, array($id_resa, $id_assay, $dataurl, $id_space));
         } else {
-            $sql = "UPDATE se_resaassay SET id_assay=?, dataurl=? WHERE id_resa=?";
-            $this->runRequest($sql, array($id_assay, $dataurl, $id_resa));
+            $sql = "UPDATE se_resaassay SET id_assay=?, dataurl=? WHERE id_resa=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_assay, $dataurl, $id_resa, $id_space));
         }
     }
     
-    public function isResaAssay($id_resa){
-        $sql = "SELECT * FROM se_resaassay WHERE id_resa=?";
-        $req = $this->runRequest($sql, array($id_resa));
+    public function isResaAssay($id_space, $id_resa){
+        $sql = "SELECT * FROM se_resaassay WHERE id_resa=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id_resa, $id_space));
         if($req->rowCount() > 0){
             return true;
         }
         return false;
     }
 
-    private function getFolderUrl($id_user, $id_assay){
+    private function getFolderUrl($id_space, $id_user, $id_assay){
         $modelUser = new CoreUser();
         $userInfo = $modelUser->getUser($id_user);
         return "data/".$userInfo['login']."/assay_".$id_assay;
     }
     
 
-    public function getResaAssay($id_resa) {
-        $sql = "SELECT * FROM se_resaassay WHERE id_resa=?";
-        return $this->runRequest($sql, array($id_resa))->fetch();
+    public function getResaAssay($id_space, $id_resa) {
+        $sql = "SELECT * FROM se_resaassay WHERE id_resa=? AND id_space=?";
+        return $this->runRequest($sql, array($id_resa, $id_space))->fetch();
     }
 
     /**
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($id) {
+    public function delete($id_space, $id) {
 
-        $sql = "DELETE FROM se_resaassay WHERE id = ?";
-        $this->runRequest($sql, array($id));
+        $sql = "DELETE FROM se_resaassay WHERE id = ? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

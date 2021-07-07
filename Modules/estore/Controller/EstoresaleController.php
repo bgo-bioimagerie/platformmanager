@@ -87,7 +87,7 @@ class EstoresaleController extends CoresecureController {
 
             $id_product = $p["id"];
             $quantity = $p["quantity"];//*$p["price"];
-            $modelEnteredItems->set(0, $id_sale, $id_product, $quantity);
+            $modelEnteredItems->set($id_space ,0, $id_sale, $id_product, $quantity);
         }
 
         // render the View
@@ -102,7 +102,7 @@ class EstoresaleController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $saleInfo = $this->modelSales->get($id);
+        $saleInfo = $this->modelSales->get($id_space ,$id);
 
         $modelClients = new ClClient();
         $id_user = $_SESSION["id_user"];
@@ -129,9 +129,9 @@ class EstoresaleController extends CoresecureController {
             $this->modelSales->setEntered($id, $id_space, $form->getParameter("id_client"), CoreTranslator::dateToEn($form->getParameter("date_expected"), $lang), $form->getParameter("id_contact_type"), $form->getParameter("further_information")
             );
 
-            $modelSaleHistory = new EsSaleHistory();
-            $modelSaleHistory->set($id, EsSaleStatus::$Feasibility, $_SESSION["id_user"], date('Y-m-d'), time());
-            $this->modelSales->updateStatus($id);
+            $newmodelSaleHistory = new EsSaleHistory();
+            $newmodelSaleHistory->set($id_space ,$id, EsSaleStatus::$Feasibility, $_SESSION["id_user"], date('Y-m-d'), time());
+            $this->modelSales->updateStatus($id_space ,$id);
 
             $_SESSION["message"] = EstoreTranslator::Sale_entered_saved($lang);
             $this->redirect("essalefeasibility/" . $id_space . "/" . $id);
@@ -220,15 +220,15 @@ class EstoresaleController extends CoresecureController {
 
         $modelClient = new ClClient();
         $modelContact = new EsContactType();
-        $saleInfo = $this->modelSales->get($id);
-        $saleInfo["client"] = $modelClient->getName($saleInfo["id_client"]);
-        $saleInfo["contacttype"] = $modelContact->getName($saleInfo["id_contact_type"]);
+        $saleInfo = $this->modelSales->get($id_space ,$id);
+        $saleInfo["client"] = $modelClient->getName($id_space ,$saleInfo["id_client"]);
+        $saleInfo["contacttype"] = $modelContact->getName($id_space, $saleInfo["id_contact_type"]);
 
         $modelItems = new EsSaleEnteredItem();
         $items = $modelItems->getitemsDesc($id_space, $id);
 
         $modelHistory = new EsSaleHistory();
-        $history = $modelHistory->getEntered($id);
+        $history = $modelHistory->getEntered($id_space, $id);
 
         // table
         $table = new TableView();
@@ -288,7 +288,7 @@ class EstoresaleController extends CoresecureController {
         $batchs = $modelBatch->getForList($id_space);
 
         $modelSaleItems = new EsSaleItem();
-        $items = $modelSaleItems->getitems($id_sale);
+        $items = $modelSaleItems->getitems($id_space ,$id_sale);
         $ids = array();
         $id_batchs = array();
         $quantities = array();
@@ -298,7 +298,7 @@ class EstoresaleController extends CoresecureController {
             $quantities[] = $it['quantity'];
         }
 
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space, $id_sale);
         
         $modelNotFeasibleReasons = new EsNotFeasibleReason();
         $notFeasibleReasons = $modelNotFeasibleReasons->getForList($id_space);
@@ -328,16 +328,16 @@ class EstoresaleController extends CoresecureController {
         
         if ($form->check()) {
             
-            $this->modelSales->setInProgress($id_sale, CoreTranslator::dateToEn($form->getParameter("date_validated"), $lang) );
+            $this->modelSales->setInProgress($id_space, $id_sale, CoreTranslator::dateToEn($form->getParameter("date_validated"), $lang) );
             $nids = $form->getParameter("id");
             $nid_batch = $form->getParameter("id_batch");
             $nquantities = $form->getParameter("quantity");
             for ($i = 0; $i < count($nids); $i++) {
-                $modelSaleItems->set($nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i]);
+                $modelSaleItems->set($id_space, $nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i]);
             }
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$TodoQuote, $_SESSION["id_user"], date('Y-m-d', time()) );
-            $this->modelSales->updateStatus($id_sale);
+            $this->modelSaleHistory->set($id_space, $id_sale, EsSaleStatus::$TodoQuote, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_space, $id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
             $this->redirect("essaletodoquote/" . $id_space . "/" . $id_sale);
@@ -363,7 +363,7 @@ class EstoresaleController extends CoresecureController {
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
             'tableHtml' => $tableHtml,
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Feasibility)
+            "saleHist" => $this->getSaleStatus($id_space ,$id_sale, EsSaleStatus::$Feasibility)
         ));
     }
     
@@ -400,7 +400,7 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         $modelBatch = new BrBatch();
         $batchs = $modelBatch->getForList($id_space);
@@ -409,9 +409,9 @@ class EstoresaleController extends CoresecureController {
         $modelPrice = new EsPrice();
         
         $modelClient = new ClClient();
-        $id_pricing = $modelClient->getPricingID( $sale["id_client"] );
+        $id_pricing = $modelClient->getPricingID($id_space, $sale["id_client"] );
         
-        $items = $modelSaleItems->getitems($id_sale);
+        $items = $modelSaleItems->getitems($id_space, $id_sale);
         $ids = array();
         $id_batchs = array();
         $quantities = array();
@@ -421,7 +421,7 @@ class EstoresaleController extends CoresecureController {
             $id_batchs[] = $it['id_batch'];
             $quantities[] = $it['quantity'];
             if ( $it['price'] == -1 ){
-                $prices[] = $modelPrice->getPrice($modelBatch->getProductID( $it['id_batch'] ), $id_pricing);
+                $prices[] = $modelPrice->getPrice($id_space, $modelBatch->getProductID( $it['id_batch'] ), $id_pricing);
             }
             else{
                 $prices[] = $it['price'];
@@ -446,7 +446,7 @@ class EstoresaleController extends CoresecureController {
         $form->addDate("quote_send_date", EstoreTranslator::QuoteSentDate($lang), false, CoreTranslator::dateFromEn($sale["quote_sent_date"], $lang) );
         
 
-//$form->addText("quote_totalht", EstoreTranslator::DeliveryPrice($lang), true, $sale["quote_totalht"] );
+        //$form->addText("quote_totalht", EstoreTranslator::DeliveryPrice($lang), true, $sale["quote_totalht"] );
         
         $form->addExternalButton("PDF", "essalequotepdf/" . $id_space . "/" . $id_sale, "danger");
         //$form->addExternalButton(CoreTranslator::Next($lang), "essalequotesent/" . $id_space . "/" . $id_sale, "default");
@@ -461,19 +461,21 @@ class EstoresaleController extends CoresecureController {
             $nquantities = $form->getParameter("quantity");
             $nprices = $form->getParameter("prices");
             
-            $this->modelSales->setTodoQuote($id_sale, 
+            $this->modelSales->setTodoQuote(
+                    $id_space,
+                    $id_sale, 
                     CoreTranslator::dateToEn($form->getParameter("quote_delivery_date"), $lang), 
                     $form->getParameter("quote_delivery_price"),
                     $form->getParameter("quote_packing_price"),
                     CoreTranslator::dateToEn($form->getParameter("quote_send_date"), $lang)
                     );
             for ($i = 0; $i < count($nids); $i++) {
-                $modelSaleItems->set($nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i], $nprices[$i]);
+                $modelSaleItems->set($id_space ,$nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i], $nprices[$i]);
                 $totalht += $nquantities[$i]*$nprices[$i];
             }
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$QuoteSent, $_SESSION["id_user"], date('Y-m-d', time()) );
-            $this->modelSales->updateStatus($id_sale);
+            $this->modelSaleHistory->set($id_space, $id_sale, EsSaleStatus::$QuoteSent, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_space ,$id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
             $this->redirect("essalequotesent/" . $id_space . "/" . $id_sale);
@@ -487,7 +489,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$TodoQuote)
+            "saleHist" => $this->getSaleStatus($id_space ,$id_sale, EsSaleStatus::$TodoQuote)
         ));
         
     }
@@ -499,17 +501,17 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         $modelDelivery = new EsDeliveryMethod();
-        $deliveryName = $modelDelivery->getName($sale["id_delivery_method"]);
+        $deliveryName = $modelDelivery->getName($id_space, $sale["id_delivery_method"]);
         
         $modelClient = new ClClient();
-        $client = $modelClient->get($sale["id_client"]);
+        $client = $modelClient->get($id_space ,$sale["id_client"]);
         
-        $history = $this->modelSaleHistory->getDelivery($id_sale);
+        $history = $this->modelSaleHistory->getDelivery($id_space ,$id_sale);
         $modelItems = new EsSaleItem();
-        $items = $modelItems->getitems($id_sale);
+        $items = $modelItems->getitems($id_space, $id_sale);
         
         $table = "<table class=\"table\" style=\"width: 100%;\" font-site: 14px; font-family: times;\">
             <thead>
@@ -531,11 +533,11 @@ class EstoresaleController extends CoresecureController {
         $totalVAT = 0;
         foreach($items as $item){
             
-            $batchName = $modelBatch->getName($item["id_batch"]);
-            $batchInfo = $modelBatch->get($item["id_batch"]);
-            $productInfo = $modelProduct->get($batchInfo["id_product"]);
+            $batchName = $modelBatch->getName($id_space ,$item["id_batch"]);
+            $batchInfo = $modelBatch->get($id_space ,$item["id_batch"]);
+            $productInfo = $modelProduct->get($id_space ,$batchInfo["id_product"]);
             
-            $vat = $modelProductCategory->getVat($productInfo["id_category"]);
+            $vat = $modelProductCategory->getVat($id_space ,$productInfo["id_category"]);
             
             $table .= "<tr>";
             $table .= "<td style=\"width: 25%; \">" . $productInfo["name"] . "</td>";
@@ -590,7 +592,7 @@ class EstoresaleController extends CoresecureController {
         
         $resp = $client["contact_name"];
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($sale["id_client"]);
+        $adress = $modelClient->getAddressInvoice($id_space ,$sale["id_client"]);
         $date = CoreTranslator::dateFromEn($sale["quote_sent_date"], $lang);
         $invoiceInfo["title"] = "";
         $useTTC = false;
@@ -653,7 +655,7 @@ class EstoresaleController extends CoresecureController {
         
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space, $id_sale);
         
         // form
         $form = new Form($this->request, "estorequotesent");
@@ -672,7 +674,7 @@ class EstoresaleController extends CoresecureController {
         
         if ($form->check()){
             
-            $this->modelSales->setQuoteSent($id_sale, $form->getParameter("purchase_order_num"));
+            $this->modelSales->setQuoteSent($id_space ,$id_sale, $form->getParameter("purchase_order_num"));
             
             // upload file
             $target_dir = "data/estore/purchaseorders/";
@@ -682,12 +684,12 @@ class EstoresaleController extends CoresecureController {
                 $url = $id_space . "_" . $id_sale . "." . $ext;
                 FileUpload::uploadFile($target_dir, "purchase_order_file", $url);
 
-                $this->modelSales->setQuoteSentFile($id_sale, $url);
+                $this->modelSales->setQuoteSentFile($id_space ,$id_sale, $url);
             }
             
             // history
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$ToSendSale, $_SESSION["id_user"], date('Y-m-d', time()) );
-            $this->modelSales->updateStatus($id_sale);
+            $this->modelSaleHistory->set($id_space ,$id_sale, EsSaleStatus::$ToSendSale, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_space ,$id_sale);
             
             // redirect
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
@@ -702,7 +704,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$QuoteSent)
+            "saleHist" => $this->getSaleStatus($id_space ,$id_sale, EsSaleStatus::$QuoteSent)
         ));
     }
     
@@ -710,7 +712,7 @@ class EstoresaleController extends CoresecureController {
 
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
 
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         $file = "data/estore/purchaseorders/" . $sale["purchase_order_file"];
         
         header("Cache-Control: public");
@@ -757,7 +759,7 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         $modelDeliveries = new EsDeliveryMethod();
         $deliveries = $modelDeliveries->getForList($id_space);
@@ -776,11 +778,11 @@ class EstoresaleController extends CoresecureController {
         $form->setButtonsWidth(6, 6);
         
         if ( $form->check() ){
-            $this->modelSales->setDelivery($id_sale, $form->getParameter("delivery_type"), CoreTranslator::dateToEn($form->getParameter("delivery_date_expected"), $lang));
+            $this->modelSales->setDelivery($id_space ,$id_sale, $form->getParameter("delivery_type"), CoreTranslator::dateToEn($form->getParameter("delivery_date_expected"), $lang));
         
             // history
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Invoicing, $_SESSION["id_user"], date('Y-m-d', time()) );
-            $this->modelSales->updateStatus($id_sale);
+            $this->modelSaleHistory->set($id_space ,$id_sale, EsSaleStatus::$Invoicing, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_space ,$id_sale);
             
             // redirect
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
@@ -795,7 +797,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$ToSendSale)
+            "saleHist" => $this->getSaleStatus($id_space ,$id_sale, EsSaleStatus::$ToSendSale)
         ));
         
     }
@@ -806,18 +808,18 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         $modelDelivery = new EsDeliveryMethod();
-        $deliveryName = $modelDelivery->getName($sale["delivery_type"]);
+        $deliveryName = $modelDelivery->getName($id_space, $sale["delivery_type"]);
         //echo "deliveryName = " . $deliveryName . "<br/>";
         
         $modelClient = new ClClient();
-        $client = $modelClient->get($sale["id_client"]);
+        $client = $modelClient->get($id_space, $sale["id_client"]);
         
-        $history = $this->modelSaleHistory->getDelivery($id_sale);
+        $history = $this->modelSaleHistory->getDelivery($id_space ,$id_sale);
         $modelItems = new EsSaleItem();
-        $items = $modelItems->getitems($id_sale);
+        $items = $modelItems->getitems($id_space ,$id_sale);
         
         $table = "<table class=\"table\" style=\"width: 100%;\" font-site: 14px; font-family: times;\">
             <thead>
@@ -836,11 +838,11 @@ class EstoresaleController extends CoresecureController {
         $modelProductCategory = new EsProductCategory($id_space);
         foreach($items as $item){
             
-            $batchName = $modelBatch->getName($item["id_batch"]);
-            $batchInfo = $modelBatch->get($item["id_batch"]);
-            $productInfo = $modelProduct->get($batchInfo["id_product"]);
+            $batchName = $modelBatch->getName($id_space, $item["id_batch"]);
+            $batchInfo = $modelBatch->get($id_space, $item["id_batch"]);
+            $productInfo = $modelProduct->get($id_space ,$batchInfo["id_product"]);
             
-            $category = $modelProductCategory->getName($productInfo["id"]);
+            $category = $modelProductCategory->getName($id_space ,$productInfo["id"]);
             
             $table .= "<tr>";
             $table .= "<td style=\"width: 25%; text-align: left; \">" . $category . "</td>";
@@ -907,7 +909,7 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         $modelBatch = new BrBatch();
         $batchs = $modelBatch->getForList($id_space);
@@ -916,13 +918,13 @@ class EstoresaleController extends CoresecureController {
         $modelPrice = new EsPrice();
         
         $modelClient = new ClClient();
-        $id_pricing = $modelClient->getPricingID( $sale["id_client"] );
+        $id_pricing = $modelClient->getPricingID($id_space, $sale["id_client"] );
         
         
-        $items = $modelSaleItemsInovice->getitems($id_sale);
+        $items = $modelSaleItemsInovice->getitems($id_space, $id_sale);
         if (count($items) == 0){
             $modelSaleItems = new EsSaleItem();
-            $items = $modelSaleItems->getitems($id_sale);
+            $items = $modelSaleItems->getitems($id_space ,$id_sale);
         }
         
         $ids = array();
@@ -934,7 +936,7 @@ class EstoresaleController extends CoresecureController {
             $id_batchs[] = $it['id_batch'];
             $quantities[] = $it['quantity'];
             if ( $it['price'] == -1 ){
-                $prices[] = $modelPrice->getPrice($modelBatch->getProductID( $it['id_batch'] ), $id_pricing);
+                $prices[] = $modelPrice->getPrice($id_space ,$modelBatch->getProductID( $it['id_batch'] ), $id_pricing);
             }
             else{
                 $prices[] = $it['price'];
@@ -979,16 +981,19 @@ class EstoresaleController extends CoresecureController {
             $nquantities = $form->getParameter("quantity");
             $nprices = $form->getParameter("prices");
             
-            $this->modelSales->setInvoice($id_sale, $form->getParameter("invoice_packing_price"), 
+            $this->modelSales->setInvoice(
+                    $id_space,
+                    $id_sale,
+                    $form->getParameter("invoice_packing_price"), 
                     $form->getParameter("invoice_delivery_price"), 
                     CoreTranslator::dateToEn($form->getParameter("invoice_sent_date"), $lang));
             for ($i = 0; $i < count($nids); $i++) {
-                $modelSaleItemsInovice->set($nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i], $nprices[$i]);
+                $modelSaleItemsInovice->set($id_space ,$nids[$i], $id_sale, $nid_batch[$i], $nquantities[$i], $nprices[$i]);
                 $totalht += $nquantities[$i]*$nprices[$i];
             }
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$PaymentPending, $_SESSION["id_user"], date('Y-m-d', time()) );
-            $this->modelSales->updateStatus($id_sale);
+            $this->modelSaleHistory->set($id_space ,$id_sale, EsSaleStatus::$PaymentPending, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_space ,$id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
             $this->redirect("essalepaymentpending/" . $id_space . "/" . $id_sale);
@@ -1002,7 +1007,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Invoicing)
+            "saleHist" => $this->getSaleStatus($id_space, $id_sale, EsSaleStatus::$Invoicing)
         ));
         
     }
@@ -1015,17 +1020,17 @@ class EstoresaleController extends CoresecureController {
         
         // data
         $title = "FACTURE";
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space, $id_sale);
         
         $modelDelivery = new EsDeliveryMethod();
-        $deliveryName = $modelDelivery->getName($sale["id_delivery_method"]);
+        $deliveryName = $modelDelivery->getName($id_space, $sale["id_delivery_method"]);
         
         $modelClient = new ClClient();
-        $client = $modelClient->get($sale["id_client"]);
+        $client = $modelClient->get($id_space, $sale["id_client"]);
         
-        $history = $this->modelSaleHistory->getDelivery($id_sale);
+        $history = $this->modelSaleHistory->getDelivery($id_space, $id_sale);
         $modelItems = new EsSaleItemInvoice();
-        $items = $modelItems->getitems($id_sale);
+        $items = $modelItems->getitems($id_space ,$id_sale);
         
         $table = "<table class=\"table\" style=\"width: 100%;\" font-site: 14px; font-family: times;\">
             <thead>
@@ -1047,12 +1052,11 @@ class EstoresaleController extends CoresecureController {
         $totalVAT = 0;
         foreach($items as $item){
             
-            $batchName = $modelBatch->getName($item["id_batch"]);
-            $batchInfo = $modelBatch->get($item["id_batch"]);
-            $productInfo = $modelProduct->get($batchInfo["id_product"]);
-            
-            $vat = $modelProductCategory->getVat($productInfo["id_category"]);
-            
+            $batchName = $modelBatch->getName($id_space, $item["id_batch"]);
+            $batchInfo = $modelBatch->get($id_space, $item["id_batch"]);
+            $productInfo = $modelProduct->get($id_space ,$batchInfo["id_product"]);
+            $vat = $modelProductCategory->getVat($id_space, $productInfo["id_category"]);
+
             $table .= "<tr>";
             $table .= "<td style=\"width: 25%; \">" . $productInfo["name"] . "</td>";
             $table .= "<td style=\"width: 25%; text-align: left; \">" . $item["quantity"] . " </td>";
@@ -1103,7 +1107,7 @@ class EstoresaleController extends CoresecureController {
         
         $resp = $client["contact_name"];
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($sale["id_client"]);
+        $adress = $modelClient->getAddressInvoice($id_space ,$sale["id_client"]);
         $date = CoreTranslator::dateFromEn($sale["invoice_sent_date"], $lang);
         $invoiceInfo["title"] = "";
         $useTTC = false;
@@ -1164,7 +1168,7 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         // form
         $form = new Form($this->request, "esalepaymentpendingForm");
@@ -1177,12 +1181,14 @@ class EstoresaleController extends CoresecureController {
         $form->setButtonsWidth(4, 8);
         
         if ($form->check()) {
-            $this->modelSales->setPaid($id_sale, 
+            $this->modelSales->setPaid(
+                    $id_space,
+                    $id_sale, 
                     $form->getParameter("paid_amount"),
                     CoreTranslator::dateToEn($form->getParameter("paid_date"), $lang));
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Ended, $_SESSION["id_user"], date('Y-m-d', time()) );
-            $this->modelSales->updateStatus($id_sale);
+            $this->modelSaleHistory->set($id_space, $id_sale, EsSaleStatus::$Ended, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_space ,$id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
             $this->redirect("essaleended/" . $id_space . "/" . $id_sale);
@@ -1196,7 +1202,7 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$PaymentPending)
+            "saleHist" => $this->getSaleStatus($id_space, $id_sale, EsSaleStatus::$PaymentPending)
         ));
         
     }
@@ -1233,7 +1239,7 @@ class EstoresaleController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("estore", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         $data = "";
         if ( $sale["id_status"] == EsSaleStatus::$Ended ){
@@ -1244,7 +1250,7 @@ class EstoresaleController extends CoresecureController {
             "id_space" => $id_space,
             "lang" => $lang,
             "data" => $data, 
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Ended)
+            "saleHist" => $this->getSaleStatus($id_space, $id_sale, EsSaleStatus::$Ended)
         ));
         
     }
@@ -1282,7 +1288,7 @@ class EstoresaleController extends CoresecureController {
         $lang = $this->getLanguage();
         
         // data
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space ,$id_sale);
         
         $modelCancelReason = new EsCancelReason();
         $cancelReasons = $modelCancelReason->getForList($id_space);
@@ -1299,13 +1305,15 @@ class EstoresaleController extends CoresecureController {
         
         if ($form->check()) {
             
-            $this->modelSales->setCanceled($id_sale, 
+            $this->modelSales->setCanceled(
+                    $id_space,
+                    $id_sale, 
                     $form->getParameter("cancel_reason"), 
                     $form->getParameter("cancel_description")
                     );
             
-            $this->modelSaleHistory->set($id_sale, EsSaleStatus::$Canceled, $_SESSION["id_user"], date('Y-m-d', time()) );
-            $this->modelSales->updateStatus($id_sale);
+            $this->modelSaleHistory->set($id_space, $id_sale, EsSaleStatus::$Canceled, $_SESSION["id_user"], date('Y-m-d', time()) );
+            $this->modelSales->updateStatus($id_space, $id_sale);
             
             $_SESSION["message"] = EstoreTranslator::Data_has_been_saved($lang);
             $this->redirect("esalescancel/" . $id_space . "/" . $id_sale);
@@ -1319,22 +1327,22 @@ class EstoresaleController extends CoresecureController {
             'id_sale' => $sale["id"],
             'salestatus' => $sale["id_status"],
             'formHtml' => $form->getHtml($lang),
-            "saleHist" => $this->getSaleStatus($id_sale, EsSaleStatus::$Canceled)
+            "saleHist" => $this->getSaleStatus($id_space, $id_sale, EsSaleStatus::$Canceled)
         ));
         
         
         
     }
     
-    public function getSaleStatus($id_sale, $id_status){
+    public function getSaleStatus($id_space, $id_sale, $id_status){
         
         $lang = $this->getLanguage();
-        $sale = $this->modelSales->get($id_sale);
+        $sale = $this->modelSales->get($id_space, $id_sale);
         
         $modelUser = new CoreUser();
         
         $modelHistory = new EsSaleHistory();
-        $history = $modelHistory->getHistoryStatus($id_sale, $id_status);
+        $history = $modelHistory->getHistoryStatus($id_space, $id_sale, $id_status);
         
         $saleStatus["name"] = EsSaleStatus::getName($sale["id_status"], $lang);
         $saleStatus["historyname"] = EsSaleStatus::getName($id_status, $lang);

@@ -25,24 +25,24 @@ class EsProductCategory extends Model {
         }
     }
     
-    public function getFirstId($id_sapce){
-        return $this->productCategoryClass->getFirstId($id_sapce);
+    public function getFirstId($id_space){
+        return $this->productCategoryClass->getFirstId($id_space);
     }
 
     public function getAll($id_space) {
         return $this->productCategoryClass->getAll($id_space);
     }
     
-    public function get($id) {
-       return $this->productCategoryClass->get($id);
+    public function get($id_space, $id) {
+       return $this->productCategoryClass->get($id_space, $id);
     }
     
-    public function getName($id) {
-        return $this->productCategoryClass->getName($id);
+    public function getName($id_space ,$id) {
+        return $this->productCategoryClass->getName($id_space ,$id);
     }
 
-    public function getVat($id){
-        return $this->productCategoryClass->getVat($id);
+    public function getVat($id_space ,$id){
+        return $this->productCategoryClass->getVat($id_space, $id);
     }
     
     public function set($id, $id_space, $name, $description) {
@@ -53,8 +53,8 @@ class EsProductCategory extends Model {
         return $this->productCategoryClass->getForList($id_space);
     }
     
-    public function delete($id) {
-        return $this->productCategoryClass->delete($id);
+    public function delete($id_space ,$id) {
+        return $this->productCategoryClass->delete($id_space, $id);
     }
 
 }

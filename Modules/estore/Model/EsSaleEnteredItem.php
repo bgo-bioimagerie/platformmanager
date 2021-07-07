@@ -14,35 +14,36 @@ class EsSaleEnteredItem extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getitems($id_sale) {
-        $sql = "SELECT * FROM es_sale_entered_items WHERE id_sale=?";
-        return $this->runRequest($sql, array($id_sale))->fetchAll();
+    public function getitems($id_space, $id_sale) {
+        $sql = "SELECT * FROM es_sale_entered_items WHERE id_sale=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_sale, $id_space))->fetchAll();
     }
     
     public function getitemsDesc($id_space, $id_sale) {
-        $sql = "SELECT * FROM es_sale_entered_items WHERE id_sale=?";
-        $data = $this->runRequest($sql, array($id_sale))->fetchAll();
+        $sql = "SELECT * FROM es_sale_entered_items WHERE id_sale=? AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id_sale, $id_space))->fetchAll();
         $modelProduct = new EsProduct($id_space);
         for($i = 0 ; $i < count($data) ; $i++){
-            $data[$i]["product"] = $modelProduct->getName($data[$i]["id_product"]);
+            $data[$i]["product"] = $modelProduct->getName($id_space, $data[$i]["id_product"]);
         }
         return $data;
     }
     
-    public function set($id, $id_sale, $id_product, $quantity) {
+    public function set($id_space, $id, $id_sale, $id_product, $quantity) {
         if (!$id) {
-            $sql = 'INSERT INTO es_sale_entered_items (id_sale, id_product, quantity) VALUES (?,?,?)';
-            $this->runRequest($sql, array($id_sale, $id_product, $quantity));
+            $sql = 'INSERT INTO es_sale_entered_items (id_sale, id_product, quantity, id_space) VALUES (?,?,?,?)';
+            $this->runRequest($sql, array($id_sale, $id_product, $quantity, $id_space));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE es_sale_entered_items SET id_sale=?, id_product=?, quantity=? WHERE id=?';
-            $this->runRequest($sql, array($id_sale, $id_product, $quantity, $id));
+            $sql = 'UPDATE es_sale_entered_items SET id_sale=?, id_product=?, quantity=? WHERE id=? AND id_space=? AND deleted=0';
+            $this->runRequest($sql, array($id_sale, $id_product, $quantity, $id, $id_space));
         }
     }
     
-    public function delete($id) {
-        $sql = "DELETE FROM es_sale_entered_items WHERE id=?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE es_sale_entered_items SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        //$sql = "DELETE FROM es_sale_entered_items WHERE id=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }
