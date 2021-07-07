@@ -35,7 +35,6 @@ modules[] = "documents"
 modules[] = "antibodies"
 modules[] = "quote"
 modules[] = "com"
-modules[] = "estore"
 
 [Company]
 name = "Platform-Manager"
