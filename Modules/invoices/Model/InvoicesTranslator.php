@@ -145,9 +145,9 @@ class InvoicesTranslator {
 
     public static function Quantity($lang) {
         if ($lang == "fr") {
-            return "Quantité (ressources x heures)";
+            return "Quantité";
         }
-        return "Quantity (resources x hours)";
+        return "Quantity";
     }
 
     public static function Price_HT($lang) {

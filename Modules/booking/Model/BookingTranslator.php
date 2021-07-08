@@ -725,6 +725,13 @@ class BookingTranslator {
         return "Is mandatory";
     }
 
+    public static function Is_invoicing_unit($lang) {
+        if ($lang == "fr") {
+            return "Utiliser comme unité de facturation";
+        }
+        return "Use as invoicing unit";
+    }
+
     public static function Supplementaries_saved($lang) {
         if ($lang == "fr") {
             return "Les suppléments ont été sauvegardés";

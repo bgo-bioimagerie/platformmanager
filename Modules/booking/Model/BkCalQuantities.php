@@ -21,7 +21,8 @@ class BkCalQuantities extends Model {
                 `id_quantity` int(11) NOT NULL,
                 `id_resource` int(11) NOT NULL,
                 `name` varchar(30) NOT NULL DEFAULT '',
-		`mandatory` int(1) NOT NULL,
+		        `mandatory` int(1) NOT NULL,
+                `is_invoicing_unit` int(1) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
@@ -104,11 +105,11 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function addCalQuantity($id_quantity, $id_resource, $name, $mandatory) {
+    public function addCalQuantity($id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
 
-        $sql = "insert into bk_calquantities(id_quantity, id_resource, name, mandatory)"
-                . " values(?,?,?,?)";
-        $this->runRequest($sql, array($id_quantity, $id_resource, $name, $mandatory));
+        $sql = "insert into bk_calquantities(id_quantity, id_resource, name, mandatory, is_invoicing_unit)"
+                . " values(?,?,?,?, ?)";
+        $this->runRequest($sql, array($id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit));
     }
 
     /**
@@ -117,12 +118,12 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function setCalQuantity($id_quantity, $id_resource, $name, $mandatory) {
+    public function setCalQuantity($id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
 
         if ($this->isCalQuantityId($id_quantity, $id_resource)) {
-            $this->updateCalQuantity($id_quantity, $id_resource, $name, $mandatory);
+            $this->updateCalQuantity($id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
         } else {
-            $this->addCalQuantity($id_quantity, $id_resource, $name, $mandatory);
+            $this->addCalQuantity($id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
         }
     }
 
@@ -147,9 +148,9 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function updateCalQuantity($id_quantity, $id_resource, $name, $mandatory) {
-        $sql = "update bk_calquantities set name= ?, mandatory=? where id_quantity=? AND id_resource=?";
-        $this->runRequest($sql, array($name, $mandatory, $id_quantity, $id_resource));
+    public function updateCalQuantity($id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
+        $sql = "update bk_calquantities set name= ?, mandatory=?, is_invoicing_unit = ? where id_quantity=? AND id_resource=?";
+        $this->runRequest($sql, array($name, $mandatory, $is_invoicing_unit, $id_quantity, $id_resource));
     }
 
     /**

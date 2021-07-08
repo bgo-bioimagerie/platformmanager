@@ -97,6 +97,10 @@ class CoreDB extends Model {
             $cu->newApiKey($user['id']);
         }
 
+        Configuration::getLogger()->debug("[booking] add is_invoicing_unit");
+        $bkqte = new BkCalQuantities();
+        $bkqte->addColumn("bk_calquantities", "is_invoicing_unit", "int(1)", 0);
+
         Configuration::getLogger()->debug("[adminmenu] remove update");
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");

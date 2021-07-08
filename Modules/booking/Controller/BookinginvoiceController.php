@@ -91,6 +91,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
         $modelInvoice = new InInvoice();
         $invoice = $modelInvoice->get($id_invoice);
+        Configuration::getLogger()->debug("[TEST]", ["invoice" => $invoice]);
 
         $modelInvoiceItem = new InInvoiceItem();
         $id_items = $modelInvoiceItem->getInvoiceItems($id_invoice);
@@ -351,34 +352,48 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $userTime["nb_hours_day"] = 0;
             $userTime["nb_hours_night"] = 0;
             $userTime["nb_hours_we"] = 0;
-            $userTime["res_quantity"] = 0;
-            foreach ($reservations as $reservation) {
 
-                // count: day night we, packages
+            $userTime["ratio_bookings_day"] = 0;
+            $userTime["ratio_bookings_night"] = 0;
+            $userTime["ratio_bookings_we"] = 0;            
+            $totalQte = 0; // $totalQte = total number of items booked
+            foreach ($reservations as $reservation) {
+                Configuration::getLogger()->debug("[TEST]", ["reservation" => $reservation]);
+
+                // count: day night we, packages, quantity
                 if ($reservation["package_id"] > 0) {
-                    $userPackages[$reservation["package_id"]] ++;
+                    $userPackages[$reservation["package_id"]] ++;  
                 } else {
                     $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
-                    
-                    /* without taking resource quantity into account
-                    * $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
-                    * $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
-                    * $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
-                    */
-
-                    // taking resource quantity into account
-                    $qte = $resaDayNightWe["res_quantity"];
-                    $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"] * $qte;
-                    $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"] * $qte;
-                    $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"] * $qte;
+                    Configuration::getLogger()->debug("[TEST]", ["resaDayNightWe" => $resaDayNightWe]);
+                    // TODO: use "is_invoicing_unit" condition !!!
+                    if ($reservation["quantities"] && $reservation["quantities"] !=null) {
+                        // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
+                        // get number of resources booked
+                        // refactor that in a if statement
+                        $qte = ($reservation["quantities"] && $reservation["quantities"] !=null)
+                            ? intval(explode("=", explode(";", $reservation["quantities"])[0])[1])
+                            : 0;
+                        $isQteMandatory = ($reservation["quantities"] && $reservation["quantities"] !=null)
+                            ? intval(explode("=", explode(";", $reservation["quantities"])[0])[0])
+                            : 0;
+                        $totalQte += $qte;
+                        $userTime["ratio_bookings_day"] += $resaDayNightWe["ratio_bookings_day"];
+                        $userTime["ratio_bookings_night"] += $resaDayNightWe["ratio_bookings_night"];
+                        $userTime["ratio_bookings_we"] += $resaDayNightWe["ratio_bookings_we"];
+                    } else {
+                        $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
+                        $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
+                        $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
+                    }
                 }
-                
+                // Record that an invoice was generated for this reservation (so that we can't re-invoice still existing)
                 $modelCal->setReservationInvoice($reservation["id"], $invoice_id);
             }
+            // TODO: here make it replace $userTime
+            Configuration::getLogger()->debug("[TEST]", ["totalQte" => $totalQte]);
             // fill content
             if (count($reservations) > 0) {
-                //echo "<br/> user time day = " . $userTime["nb_hours_day"] . "<br/>";
-
                 if ($userTime["nb_hours_day"] > 0) {
                     $content .= $res["id"] . "_day=" . $userTime["nb_hours_day"] . "=" . $timePrices[$res["id"]]["price_day"] . ";";
                     $total_ht += floatval($userTime["nb_hours_day"]) * floatval($timePrices[$res["id"]]["price_day"]);
@@ -397,6 +412,26 @@ class BookinginvoiceController extends InvoiceAbstractController {
                         $total_ht += floatval($userPackages[$p["id"]]) * floatval($p["price"]);
                     }
                 }
+                // manage quantity
+                if ($totalQte > 0) {
+                    if ($userTime["ratio_bookings_day"] > 0) {
+                        $dayQte = $totalQte * $userTime["ratio_bookings_day"];
+                        $content .= $res["id"] . "_day=" . $dayQte . "=" . $timePrices[$res["id"]]["price_day"] . ";";
+                        $total_ht += floatval($dayQte) * floatval($timePrices[$res["id"]]["price_day"]);
+                    }
+                    if ($userTime["ratio_bookings_night"] > 0) {
+                        $nightQte = $totalQte * $userTime["ratio_bookings_night"];
+                        $content .= $res["id"] . "_night=" . $nightQte . "=" . $timePrices[$res["id"]]["price_night"] . ";";
+                        $total_ht += floatval($nightQte) * floatval($timePrices[$res["id"]]["price_night"]);
+                    }
+                    if ($userTime["ratio_bookings_we"] > 0) {
+                        $weQte = $totalQte * $userTime["ratio_bookings_we"];
+                        $content .= $res["id"] . "_we=" . $weQte . "=" . $timePrices[$res["id"]]["price_we"] . ";";
+                        $total_ht += floatval($weQte) * floatval($timePrices[$res["id"]]["price_we"]);
+                    }
+                }
+                Configuration::getLogger()->debug("[TEST]", ["content" => $content]);
+                Configuration::getLogger()->debug("[TEST]", ["total_ht" => $total_ht]);
             }
             //echo "<br/> content: $content <br/>";
         }
@@ -519,6 +554,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $timePrices;
     }
 
+    // TODO: comment here
     protected function calculateTimeResDayNightWe($reservation, $timePrices) {
 
         // initialize output
@@ -533,12 +569,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $searchDate_start = $reservation["start_time"];
         $searchDate_end = $reservation["end_time"];
-
-        // varchar formatted like "$mandatory=quantity;" in bk_calendar_entry
-        // get number of resources booked
-        $qte = ($reservation["quantities"] && $reservation["quantities"] !=null)
-            ? explode("=", explode(";", $reservation["quantities"])[0])[1]
-            : 1;
 
         // calulate pricing
         if (intval($timePrices["tarif_unique"]) === 1) { // unique pricing
@@ -566,7 +596,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resaDayNightWe["nb_hours_day"] = round($nb_hours_day / 3600, 1);
         $resaDayNightWe["nb_hours_night"] = round($nb_hours_night / 3600, 1);
         $resaDayNightWe["nb_hours_we"] = round($nb_hours_we / 3600, 1);
-        $resaDayNightWe["res_quantity"] = $qte;
+
+        $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
+        $resaDayNightWe["ratio_bookings_day"] = round($nb_hours_day / $totalHours, 2);
+        $resaDayNightWe["ratio_bookings_night"] = round($nb_hours_night / $totalHours, 2);
+        $resaDayNightWe["ratio_bookings_we"] = round($nb_hours_we / $totalHours, 2);
         return $resaDayNightWe;
     }
 
