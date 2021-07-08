@@ -32,7 +32,7 @@ class ReArea extends Model {
     public function getSpace($id){
         $sql = "SELECT id_space FROM re_area WHERE id=? AND deleted=0";
         $d = $this->runRequest($sql, array($id))->fetch();
-        return $d[0];
+        return $d? $d[0]:0;
     }
     
     public function getDefaultArea($id_space){
@@ -72,13 +72,13 @@ class ReArea extends Model {
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM re_area WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp?$tmp[0]:0;
     }
 
     public function getIdFromName($name) {
         $sql = "SELECT id FROM re_area WHERE name=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($name))->fetch();
-        return $tmp[0];
+        return $tmp?$tmp[0]:0;
     }
 
     public function set($id, $name, $restricted, $id_space) {
@@ -106,7 +106,7 @@ class ReArea extends Model {
         $sql = "SELECT id_space from re_area WHERE id=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_area));
         $tmp = $req->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]:0;
     }
 
     /**
@@ -117,7 +117,7 @@ class ReArea extends Model {
         $sql = "SELECT id FROM re_area WHERE restricted=0 AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql);
         $tmp = $req->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]:0;
     }
 
     /**
@@ -128,7 +128,7 @@ class ReArea extends Model {
         $sql = "SELECT id FROM re_area WHERE id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_space));
         $tmp = $req->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]:0;
     }
 
     /**

@@ -6,6 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
  * 

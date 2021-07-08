@@ -7,6 +7,7 @@ require_once 'Framework/FileUpload.php';
 require_once 'Framework/Errors.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 //require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUser.php';
