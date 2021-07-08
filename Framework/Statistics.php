@@ -69,6 +69,13 @@ class Statistics {
     private $clients = [];
     private $wapis = [];
 
+    /**
+     * Checks if stats are enabled (influxdb configured)
+     */
+    public static function enabled() {
+        return Configuration::get('influxdb_url', '') !== '';
+    }
+
     public function getClient($space) {
         if(!isset($this->clients[$space])) {
             if (Configuration::get('influxdb_url', '') === '') {

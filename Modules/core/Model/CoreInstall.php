@@ -88,21 +88,6 @@ class CoreDB extends Model {
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
 
-        /*
-        Configuration::getLogger()->debug('[bk_schedulings] add link to re_area');
-        $bkm = new BkScheduling();
-        $ream = new ReArea();
-        $sql = "SELECT * FROM bk_schedulings";
-        $bks = $this->runRequest($sql, array()).fetchAll();
-        foreach ($bks as $bk) {
-            if(!$ream->get($bk['id'])) {
-                continue;
-            }
-            $bkm->setReArea($bk['id'], $bk['id_rearea']);
-        }
-        Configuration::getLogger()->debug('[bk_schedulings] add link to re_area, done!');
-        */
-
         Configuration::getLogger()->debug('[id_space] set space identifier on objects');
 
         $sql = "SELECT * FROM `re_info`;";
@@ -140,7 +125,6 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `bk_calendar_entry`;";
-        // $resdb = $this->runRequest($sql)->fetchAll();
         $resdb = $this->runRequest($sql);
         while($res = $resdb->fetch()) {
             if($res['period_id']) {
@@ -154,8 +138,8 @@ class CoreDB extends Model {
         foreach ($resdb as $res) {
             $sql = "UPDATE bk_bookingcss SET id_space=? WHERE id_area=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bk_schedulings SET id_space=? WHERE id_area=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_schedulings SET id_space=?, id_rearea=? WHERE id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id'], $res['id']));
         }
 
         $sql = "SELECT * FROM `bj_collections`;";
@@ -166,7 +150,6 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `bj_notes`;";
-        // $resdb = $this->runRequest($sql)->fetchAll();
         $resdb = $this->runRequest($sql);
         while($res = $resdb->fetch()) {
             $sql = "UPDATE bj_events SET id_space=? WHERE id_note=?";
@@ -310,22 +293,24 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
 
 
-        Configuration::getLogger()->debug("[stats] import stats");
-        $cp = new CoreSpace();
-        $statHandler = new EventHandler();
-        $spaces = $cp->getSpaces('id');
-        foreach ($spaces as $space) {
-            $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
-            $spaceUsers = $cp->getUsers($space['id']);
-            foreach ($spaceUsers as $spaceUser) {
-                $statHandler->spaceUserJoin([
-                    'space' => ['id' => $space['id']],
-                    'user' => ['id' => $spaceUser['id']]
-                ]);
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug("[stats] import stats");
+            $cp = new CoreSpace();
+            $statHandler = new EventHandler();
+            $spaces = $cp->getSpaces('id');
+            foreach ($spaces as $space) {
+                $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
+                $spaceUsers = $cp->getUsers($space['id']);
+                foreach ($spaceUsers as $spaceUser) {
+                    $statHandler->spaceUserJoin([
+                        'space' => ['id' => $space['id']],
+                        'user' => ['id' => $spaceUser['id']]
+                    ]);
+                }
             }
+            $statHandler->calentryImport();
+            Configuration::getLogger()->debug('[stats] import stats, done!');
         }
-        $statHandler->calentryImport();
-        Configuration::getLogger()->debug('[stats] import stats, done!');
 
 
     }

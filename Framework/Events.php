@@ -98,12 +98,10 @@ class EventHandler {
     public function calentryImport() {
         $em = new EventModel();
         $sql = "SELECT * FROM `bk_calendar_entry`;";
-        // $resdb = $this->runRequest($sql)->fetchAll();
         $resdb = $em->runRequest($sql);
         while($res = $resdb->fetch()) {
             $this->calentryEdit(["action" => Events::ACTION_CAL_ENTRY_EDIT, "bk_calendar_entry_old" => null, "bk_calendar_entry" => ["id" => intval($res['id']), "id_space" => $res['id_space']]]);
         }
-
     }
 
     public function calentryEdit($msg) {
