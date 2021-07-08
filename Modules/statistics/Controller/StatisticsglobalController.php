@@ -10,6 +10,10 @@ require_once 'Modules/booking/Controller/BookingstatisticsController.php';
 
 require_once 'Modules/booking/Model/BkColorCode.php';
 
+
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+
 /**
  *
  * @author sprigent
@@ -102,15 +106,15 @@ class StatisticsglobalController extends CoresecureController {
     protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space) {
 
         $controllerServices = new ServicesstatisticsprojectController($this->request);
-        $objPHPExcel = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
+        $spreadsheet = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
 
         $controllerBooking = new BookingstatisticsController($this->request);
-        $objPHPExcel = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel);
-
-        $objPHPExcel->setActiveSheetIndex(1);
+        $spreadsheet = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $spreadsheet);
+        $spreadsheet->setActiveSheetIndex(1);
 
         // write excel file
-        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        // $objWriter = new PHPExcel_Writer_Excel2007($spreadsheet);
+        $objWriter = new Xlsx($spreadsheet);
 
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

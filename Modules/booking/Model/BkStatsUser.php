@@ -17,9 +17,9 @@ require_once 'Modules/clients/Model/ClClient.php';
 class BkStatsUser extends Model {
 
     public function authorizedUsersMail($resource_id, $id_space) {
-        include_once ("externals/PHPExcel/Classes/PHPExcel.php");
-        include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
-        include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
+        //include_once ("externals/PHPExcel/Classes/PHPExcel.php");
+        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
+        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
 
         // get resource category
         $modelResource = new ReCategory();
@@ -49,60 +49,61 @@ class BkStatsUser extends Model {
         //$req->execute($q);
         //$res = $req->fetchAll();
         // Création de l'objet
-        $objPHPExcel = new PHPExcel();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        // $spreadsheet = new PHPExcel();
 
         // Définition de quelques propriétés
-        $objPHPExcel->getProperties()->setCreator($teamName);
-        $objPHPExcel->getProperties()->setLastModifiedBy($teamName);
-        $objPHPExcel->getProperties()->setTitle("Liste d'utilisateurs autorises");
-        $objPHPExcel->getProperties()->setSubject("Equipement = " . $equipement);
-        $objPHPExcel->getProperties()->setDescription("Fichier genere avec PHPExel depuis la base de donnees");
+        $spreadsheet->getProperties()->setCreator($teamName);
+        $spreadsheet->getProperties()->setLastModifiedBy($teamName);
+        $spreadsheet->getProperties()->setTitle("Liste d'utilisateurs autorises");
+        $spreadsheet->getProperties()->setSubject("Equipement = " . $equipement);
+        $spreadsheet->getProperties()->setDescription("Fichier genere avec PHPExel depuis la base de donnees");
 
 
-        $center = array('alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER, 'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER));
+        $center = array('alignment' => array('horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' =>  PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
         $gras = array('font' => array('bold' => true));
         $border = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)));
         $borderLR = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_NONE),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_NONE)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE)));
 
         $borderG = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM)));
 
         $borderLRB = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_NONE),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)));
 
         $style = array(
             'font' => array(
@@ -121,21 +122,21 @@ class BkStatsUser extends Model {
         ));
 
         // Nommage de la feuille
-        $objPHPExcel->setActiveSheetIndex(0);
-        $sheet = $objPHPExcel->getActiveSheet();
+        $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Liste utilisateurs');
 
         // Mise en page de la feuille
-        $sheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-        $sheet->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-        $sheet->setBreak('A55', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E55', PHPExcel_Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A110', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E110', PHPExcel_Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A165', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E165', PHPExcel_Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A220', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E220', PHPExcel_Worksheet::BREAK_COLUMN);
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
         //$sheet->getPageSetup()->setFitToWidth(1);
         //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
@@ -154,11 +155,12 @@ class BkStatsUser extends Model {
         // Header
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
-        $objDrawing = new PHPExcel_Worksheet_HeaderFooterDrawing();
+        $objDrawing = \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
+        // $objDrawing = new PHPExcel_Worksheet_HeaderFooterDrawing();
         $objDrawing->setName('PHPExcel logo');
         $objDrawing->setPath($reqIcon[0]);
         $objDrawing->setHeight(60);
-        $objPHPExcel->getActiveSheet()->getHeaderFooter()->addImage($objDrawing, PHPExcel_Worksheet_HeaderFooter::IMAGE_HEADER_LEFT);
+        $spreadsheet->getActiveSheet()->getHeaderFooter()->addImage($objDrawing, \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooter::IMAGE_HEADER_LEFT);
         $sheet->getHeaderFooter()->setOddHeader('&L&G&R' . $header);
 
         // Titre
@@ -311,19 +313,20 @@ class BkStatsUser extends Model {
         $gdImage = $NouvelleImage;
 
         //on créé l’objet de dessin et on lui donne un nom, l’image, la position de l’image, la compression de l’image, le type mime…
-        $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+        $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing();
         $objDrawing->setName('Sample image');
         $objDrawing->setImageResource($gdImage);
         $objDrawing->setCoordinates('A1');
         $objDrawing->setOffsetX(50);
         $objDrawing->setOffsetY(8);
-        $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
-        $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+        $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
+        $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
         //enfin on l’envoie à la feuille de calcul !
         //$objDrawing->setWorksheet($sheet);
 
 
-        $writer = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        // $writer = PHPExcel_IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         $writer->save('./data/' . $nom);
         header('Content-Type: application/vnd.ms-excel');
@@ -339,9 +342,9 @@ class BkStatsUser extends Model {
      */
     public function authorizedUsers($resource_id, $id_space, $lang) {
         
-        include_once ("externals/PHPExcel/Classes/PHPExcel.php");
-        include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
-        include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
+        //include_once ("externals/PHPExcel/Classes/PHPExcel.php");
+        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
+        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
 
         // get resource category
         $modelResource = new ReCategory();
@@ -364,59 +367,59 @@ class BkStatsUser extends Model {
         $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($resource_id, $lang);
 
         // Création de l'objet
-        $objPHPExcel = new PHPExcel();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
         // Définition de quelques propriétés
-        $objPHPExcel->getProperties()->setCreator($teamName);
-        $objPHPExcel->getProperties()->setLastModifiedBy($teamName);
-        $objPHPExcel->getProperties()->setTitle("Liste d'utilisateurs autorises");
-        $objPHPExcel->getProperties()->setSubject("Equipement = " . $equipement);
-        $objPHPExcel->getProperties()->setDescription("Fichier genere avec PHPExel depuis la base de donnees");
+        $spreadsheet->getProperties()->setCreator($teamName);
+        $spreadsheet->getProperties()->setLastModifiedBy($teamName);
+        $spreadsheet->getProperties()->setTitle("Liste d'utilisateurs autorises");
+        $spreadsheet->getProperties()->setSubject("Equipement = " . $equipement);
+        $spreadsheet->getProperties()->setDescription("Fichier genere avec PHPExel depuis la base de donnees");
 
-        $center = array('alignment' => array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER, 'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER));
+        $center = array('alignment' => array('horizontal' =>  PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' =>  PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER));
         $gras = array('font' => array('bold' => true));
         $border = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)));
         $borderLR = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_NONE),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_NONE)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE)));
 
         $borderG = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_MEDIUM)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM)));
 
         $borderLRB = array(
             'borders' => array(
                 'top' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_NONE),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE),
                 'left' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'right' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN),
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'bottom' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN)));
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)));
 
         $style = array(
             'font' => array(
@@ -435,21 +438,21 @@ class BkStatsUser extends Model {
         ));
 
         // Nommage de la feuille
-        $objPHPExcel->setActiveSheetIndex(0);
-        $sheet = $objPHPExcel->getActiveSheet();
+        $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Liste utilisateurs');
 
         // Mise en page de la feuille
-        $sheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-        $sheet->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-        $sheet->setBreak('A55', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E55', PHPExcel_Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A110', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E110', PHPExcel_Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A165', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E165', PHPExcel_Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A220', PHPExcel_Worksheet::BREAK_ROW);
-        $sheet->setBreak('E220', PHPExcel_Worksheet::BREAK_COLUMN);
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+        $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
         //$sheet->getPageSetup()->setFitToWidth(1);
         //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
@@ -467,7 +470,7 @@ class BkStatsUser extends Model {
         $sheet->getColumnDimension('D')->setWidth(8);
 
         // Header
-        $objDrawing = new PHPExcel_Worksheet_HeaderFooterDrawing();
+        $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
         $objDrawing->setName('PHPExcel logo');
 
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
@@ -476,7 +479,7 @@ class BkStatsUser extends Model {
         //echo "icon = " . $reqIcon[0] . "<br/>";
         $objDrawing->setPath($reqIcon[0]);
         $objDrawing->setHeight(60);
-        $objPHPExcel->getActiveSheet()->getHeaderFooter()->addImage($objDrawing, PHPExcel_Worksheet_HeaderFooter::IMAGE_HEADER_LEFT);
+        $spreadsheet->getActiveSheet()->getHeaderFooter()->addImage($objDrawing, \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooter::IMAGE_HEADER_LEFT);
         $sheet->getHeaderFooter()->setOddHeader('&L&G&R' . $header);
 
 
@@ -645,19 +648,19 @@ class BkStatsUser extends Model {
         $gdImage = $NouvelleImage;
 
         //on créé l’objet de dessin et on lui donne un nom, l’image, la position de l’image, la compression de l’image, le type mime…
-        $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+        $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing();
         $objDrawing->setName('Sample image');
         $objDrawing->setImageResource($gdImage);
         $objDrawing->setCoordinates('A1');
         $objDrawing->setOffsetX(50);
         $objDrawing->setOffsetY(8);
-        $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
-        $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+        $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
+        $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
         
         //$objDrawing->setWorksheet($sheet);
 
 
-        $writer = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
 
         $writer->save('./data/' . $nom);
         header('Content-Type: application/vnd.ms-excel');

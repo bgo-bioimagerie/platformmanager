@@ -39,7 +39,7 @@ class ClPricing extends Model {
     public function getName($id) {
         $sql = "SELECT name FROM cl_pricings WHERE id=?";
         $d = $this->runRequest($sql, array($id))->fetch();
-        return $d[0];
+        return $d? $d[0] : null;
     }
 
     
