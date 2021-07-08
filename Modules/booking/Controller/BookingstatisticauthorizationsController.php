@@ -40,7 +40,6 @@ class BookingstatisticauthorizationsController extends CoresecureController {
     }
 
     public function indexAction($id_space) {
-
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -178,7 +177,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
                 }
                 $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $val);
                 $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-                $total += $val;
+                $total += intval($val);
             }
             $num++;
             $letter = $this->get_col_letter($num);
@@ -228,12 +227,9 @@ class BookingstatisticauthorizationsController extends CoresecureController {
                 $num++;
                 $letter = $this->get_col_letter($num);
                 $val = $countResourcesUnit[$resource["id"]][$unit["id"]];
-                if ($val == 0) {
-                    $val = "";
-                }
                 $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $val);
                 $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-                $total += $val;
+                $total += intval($val);
             }
             $num++;
             $letter = $this->get_col_letter($num);

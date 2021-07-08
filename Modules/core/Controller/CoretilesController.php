@@ -31,7 +31,6 @@ class CoretilesController extends CoresecureController {
      * @see Controller::index()
      */
     public function indexAction($level = 1, $id = -1) {
-
         if ( $id < 0 ){
             $this->redirect("coretilesdoc");
         }
