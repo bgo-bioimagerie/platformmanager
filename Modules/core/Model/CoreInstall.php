@@ -71,21 +71,7 @@ class CoreDB extends Model {
                 $cp->setShortname($space['id'], $shortname);
             }
         }
-
-        Configuration::getLogger()->debug("[stats] import stats");
-        $cp = new CoreSpace();
-        $statHandler = new EventHandler();
-        $spaces = $cp->getSpaces('id');
-        foreach ($spaces as $space) {
-            $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
-            $spaceUsers = $cp->getUsers($space['id']);
-            foreach ($spaceUsers as $spaceUser) {
-                $statHandler->spaceUserJoin([
-                    'space' => ['id' => $space['id']],
-                    'user' => ['id' => $spaceUser['id']]
-                ]);
-            }
-        }
+        Configuration::getLogger()->debug("[db] Add core_spaces shortname, contact, support, done!");
 
         Configuration::getLogger()->debug("[users] add apikey");
         $cu = new CoreUser();
@@ -322,6 +308,24 @@ class CoreDB extends Model {
         }
 
         Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
+
+
+        Configuration::getLogger()->debug("[stats] import stats");
+        $cp = new CoreSpace();
+        $statHandler = new EventHandler();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
+            $spaceUsers = $cp->getUsers($space['id']);
+            foreach ($spaceUsers as $spaceUser) {
+                $statHandler->spaceUserJoin([
+                    'space' => ['id' => $space['id']],
+                    'user' => ['id' => $spaceUser['id']]
+                ]);
+            }
+        }
+        $statHandler->calentryImport();
+        Configuration::getLogger()->debug('[stats] import stats, done!');
 
 
     }
