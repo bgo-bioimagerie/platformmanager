@@ -264,8 +264,6 @@ class CorespaceController extends CoresecureController {
     public function configdeleteuserAction($id_space, $id_user) {
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
-        $modelSpacePending = new CorePendingAccount();
-        $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
         // $this->spaceModel->deleteUser($id_space, $id_user);
         $this->redirect("spaceconfiguser/" . $id_space);
     }

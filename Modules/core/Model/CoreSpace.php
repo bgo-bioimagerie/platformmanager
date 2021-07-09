@@ -518,9 +518,7 @@ class CoreSpace extends Model {
             }
             if (!$found) {
                 $m = new CoreSpaceUser();
-                $m->delete($aadm["id_user"], $id, CoreSpace::$ADMIN);
-                $modelSpacePending = new CorePendingAccount();
-                $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
+                $m->delete($id, $aadm["id_user"], CoreSpace::$ADMIN);
                 //$sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=? AND status=?";
                 //$this->runRequest($sql, array($id, $aadm["id_user"], CoreSpace::$ADMIN));
             }

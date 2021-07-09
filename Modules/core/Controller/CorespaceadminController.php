@@ -86,23 +86,23 @@ class CorespaceadminController extends CoresecureController {
         $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
         $form->addText("support", CoreTranslator::Support($lang), false, $space["support"]);
-        
-        
-        $modelUser = new CoreUser();
-        $users = $modelUser->getActiveUsers("name");
-        $usersNames = array(); $usersIds = array();
-        foreach($users as $user){
-            $usersNames[] = $user["name"] . " " . $user["firstname"];
-            $usersIds[] = $user["id"];
+
+        if($isSuperAdmin) {
+            $modelUser = new CoreUser();
+            $users = $modelUser->getActiveUsers("name");
+            $usersNames = array(); $usersIds = array();
+            foreach($users as $user){
+                $usersNames[] = $user["name"] . " " . $user["firstname"];
+                $usersIds[] = $user["id"];
+            }
+            
+            $formAdd = new FormAdd($this->request, "addformspaceedit");
+            $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
+            $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
+            $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
+            $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id);
+            $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
         }
-        
-        $formAdd = new FormAdd($this->request, "addformspaceedit");
-        $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
-        $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
-        
-        $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
         if ($form->check()){ 
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
@@ -135,7 +135,9 @@ class CorespaceadminController extends CoresecureController {
             }
 
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
-            $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
+            if($isSuperAdmin) {
+                $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
+            }
             
             // upload image
             $target_dir = "data/core/menu/";
