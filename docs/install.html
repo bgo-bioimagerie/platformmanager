@@ -69,7 +69,8 @@
                 To run, Platform-Manager needs a web / php server and a mysql server
             </p>
             <ul>
-                <li> PHP version must be greater than or equal to version 5.2 </li>
+                <li> PHP version must be greater than or equal to version 8 </li>
+                <li> MySQL server must be > 5.6, tested on version 8 only</li>
                 <li> To install Platform Manager, you must have access to the server
                     file system (FTP, SSH ...) and an access to the MySQL database
                     (MySQL server address, login, password) </li>
@@ -160,23 +161,9 @@
             </p>
 
             <h2 id="firstconnectPM">First connection</h2>
-            <p>
-                In this paragraph, we will connect to the Platform-Manager web
-                interface to initialize the database
-            </p>
             <ul>
                 <li>Update Config/conf.ini with database info and other setup (some vars can also be set via environment variables).</li>
-                <li> Run <code>php cli/pfm-cli.php --install</code> to install/upgrade database and routes</i></li>
-                <li>
-                    If everything goes correctly you will be directed to the default login page of platform-manager.
-                    If not, make sure that the php rewrite engine is on, the .htaccess is on (see section <a href="install.html#quesquePM">Prerequisites</a> ) and that the file system authorizations are correct (see section <a href="install.html#copySourcesPM">Copy of sources</a>)
-                    <br/>
-                    <img alt="screenshot1" src="resources/install/install2.png" style="width: 100%;">
-                </li>
-                <li>
-                    To finish the installation, go to the URL <i> http://your_url.com/update </i>.<br/>
-                    This will initialize the database for all the modules listed in the config file: <i>Config/Config.ini</i>
-                </li>
+                <li> Run <code>php cli/pfm-cli.php install</code> to install/upgrade database and routes</i></li>
             </ul>
 
 
@@ -292,7 +279,7 @@
             <img alt="screenshot1" src="resources/install/install11.png" style="width: 100%;">
 
             <p>
-            Each tool provided by modules are note designed for a specific category of people (visitor, user, manager, admin).
+            Each tool provided by modules are designed for a specific category of people (visitor, user, manager, admin).
             It's the job of the space administrator to specify which category of people can access which tools. For
             example in the section <a href="install.html#configmodules"> Configure modules </a> we activated the user management tool for the space
             managers only. Actually, the space manager could have select "administrator" to allow only administrator to
