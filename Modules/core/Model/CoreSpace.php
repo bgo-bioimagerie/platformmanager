@@ -530,6 +530,9 @@ class CoreSpace extends Model {
         }
     }
 
+    /**
+     * @deprecated , duplicate function, should use delete in CoreSpaceUser
+     */
     public function deleteUser($id_space, $id_user) {
         $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $this->runRequest($sql, array($id_space, $id_user));
