@@ -75,37 +75,26 @@ class CoreMainSubMenu extends Model {
     }
 
     public function getForMenu($id_main_menu) {
-        /*
-        $sql = "SELECT * FROM core_main_sub_menus WHERE id_main_menu=? ORDER BY display_order ASC;";
+        $sql = "SELECT core_main_sub_menus.*, core_main_menu_items.id_space FROM core_main_sub_menus INNER JOIN core_main_menu_items ON core_main_sub_menus.id=core_main_menu_items.id_sub_menu WHERE core_main_sub_menus.id_main_menu=?";
         $data = $this->runRequest($sql, array($id_main_menu))->fetchAll();
-        for($i = 0 ; $i < count($data) ; $i++){
-            $sql = "SELECT id_space FROM core_main_menu_items WHERE id_sub_menu=?";
-            $req = $this->runRequest($sql, array($data[$i]["id"]));
-            if ( $req->rowCount() == 1 ){
-                $d = $req->fetch();
-                $data[$i]["link"] = "corespace/" . $d[0]; 
-            }
-            else if ( $req->rowCount() > 0 ){
-                $data[$i]["link"] = "coretile/" . $data[$i]["id"];
-            }
-            else{
-                $data[$i]["link"] = "";
-            }
-        }
-        */
-
-        $sql = "SELECT core_main_sub_menus.*, core_main_menu_items.id_space FROM core_main_menu_items INNER JOIN core_main_sub_menus ON core_main_sub_menus.id=core_main_menu_items.id_sub_menu WHERE core_main_sub_menus.id_main_menu=?";
-        $data = $this->runRequest($sql, array($id_main_menu))->fetchAll();
+        $menus = [];
         for($i=0;$i<count($data);$i++){
-            if ( $data[$i]['id_space']){
-                $data[$i]["link"] = "coretile/" . $data[$i]['id']; 
+            if(!isset($menus[$data[$i]['id']])) {
+                $menus[$data[$i]['id']] = [];
             }
-            else {
-                $data[$i]["link"] = "";
+            if(count($menus[$data[$i]['id']]) > 0) {
+                $menus[$data[$i]['id']]['link'] = "coretile/" . $data[$i]['id'];
+            } else {
+                $menus[$data[$i]['id']] = $data[$i];
+                $menus[$data[$i]['id']]['link'] = "corespace/" . $data[$i]['id_space'];
             }
         }
+        $items = [];
+        foreach ($menus as $id => $menu) {
+            $items[] = $menu;
+        }
 
-        return $data;
+        return $items;
     }
 
     public function set($id, $name, $id_main_menu, $display_order) {
