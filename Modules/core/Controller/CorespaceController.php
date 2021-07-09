@@ -11,6 +11,7 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 require_once 'Modules/core/Model/CoreInstalledModules.php';
 
@@ -263,6 +264,8 @@ class CorespaceController extends CoresecureController {
     public function configdeleteuserAction($id_space, $id_user) {
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
+        $modelSpacePending = new CorePendingAccount();
+        $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
         // $this->spaceModel->deleteUser($id_space, $id_user);
         $this->redirect("spaceconfiguser/" . $id_space);
     }

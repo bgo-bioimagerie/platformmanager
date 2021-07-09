@@ -4,6 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 require_once 'Framework/Events.php';
 
