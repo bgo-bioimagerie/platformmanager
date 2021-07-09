@@ -3,6 +3,7 @@
 require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
 
 require_once 'Framework/Events.php';
 
@@ -515,8 +516,12 @@ class CoreSpace extends Model {
                 }
             }
             if (!$found) {
-                $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=? AND status=?";
-                $this->runRequest($sql, array($id, $aadm["id_user"], CoreSpace::$ADMIN));
+                $m = new CoreSpaceUser();
+                $m->delete($aadm["id_user"], $id, CoreSpace::$ADMIN);
+                $modelSpacePending = new CorePendingAccount();
+                $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
+                //$sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=? AND status=?";
+                //$this->runRequest($sql, array($id, $aadm["id_user"], CoreSpace::$ADMIN));
             }
         }
 
