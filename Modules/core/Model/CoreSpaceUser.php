@@ -53,7 +53,7 @@ class CoreSpaceUser extends Model {
         }
         return false;
     }
-    
+
     public function setDateEndContract($id_user, $id_space, $date_contract_end){
         $sql = "UPDATE core_j_spaces_user SET date_contract_end=? WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($date_contract_end, $id_user, $id_space));
