@@ -32,8 +32,8 @@ class CorePendingAccount extends Model {
     }
 
     public function add($id_user, $id_space){
-        $sql = "INSERT INTO core_pending_accounts (id_user, id_space, validated) VALUES (?,?,?)";
-        $this->runRequest($sql, array($id_user, $id_space, 0));
+        $sql = "INSERT INTO core_pending_accounts (id_user, id_space, validated, validated_by) VALUES (?,?,?,?)";
+        $this->runRequest($sql, array($id_user, $id_space, 0, 0));
         return $this->getDatabase()->lastInsertId();
     }
 
