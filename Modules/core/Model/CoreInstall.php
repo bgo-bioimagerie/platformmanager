@@ -241,6 +241,13 @@ class CoreDB extends Model {
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
+        $sql = "SELECT * FROM `ac_anticorps`";
+        $resdb = $this->runRequest($sql);
+        while($res = $resdb->fetch()) {
+            $sql = "UPDATE ac_j_tissu_anticorps SET id_space=? WHERE id_anticorps=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
 
         // Check
         $sql = "show tables";

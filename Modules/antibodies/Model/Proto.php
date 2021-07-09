@@ -19,7 +19,7 @@ class Proto extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `ac_protos` (
 				`id` int(11) NOT NULL AUTO_INCREMENT,
 				`nom` varchar(30) NOT NULL,
-                                `id_space` int(11) NOT NULL,
+                `id_space` int(11) NOT NULL,
 				PRIMARY KEY (`id`)
 				);";
 
