@@ -256,6 +256,8 @@ class CorespaceaccessController extends CoresecureController {
         $lang = $this->getLanguage();
         $spaceModel = new CoreSpace();
         $spaceModel->deleteUser($id_space, $id_user);
+        $modelPending = new CorePendingAccount();
+        $modelPending->updateWhenUnjoin($id_user, $id_space);
         $_SESSION["message"] = CoreTranslator::UserAccountHasBeenDeleted($lang);
 
         $modelSpace = new CoreSpace();
