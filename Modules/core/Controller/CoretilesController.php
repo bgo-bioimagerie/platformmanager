@@ -164,7 +164,12 @@ class CoretilesController extends CoresecureController {
         if ($isMemberOfSpace) {
             // User is already member of space
             $modelSpaceUser = new CoreSpaceUser();
+            // remove user from space members
             $modelSpaceUser->delete($id_user, $id_space);
+
+            $modelSpacePending = new CorePendingAccount();
+            // keep track in core_pending_accounts and update in case user wants to re-join
+            $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
         } else {
             // User is not member of space
             $modelSpacePending = new CorePendingAccount();
@@ -176,9 +181,16 @@ class CoretilesController extends CoresecureController {
                 $spaceName = $spaceModel->getSpaceName($id_space);
 
                 if ($modelSpacePending->exists($id_space, $id_user)) {
-                    // This user is already associated to this space in database
+                    // This user is already associated to this space in core_pending_account 
                     $pendingId = $modelSpacePending->getBySpaceIdAndUserId($id_space, $id_user)["id"];
-                    $modelSpacePending->invalidate($pendingId, NULL);
+                    $pendingObject = $modelSpacePending->get($pendingId);
+
+                    if (intval($pendingObject["validated"]) === 1 && intval($pendingObject["validated_by"]) === 0) {
+                        // user has unjoin or has been rejected by space admin
+                        $modelSpacePending->updateWhenRejoin($id_user, $id_space);
+                    } else {
+                        $modelSpacePending->invalidate($pendingId, NULL);
+                    }
                 } else {
                     // This user is not associated to this space in database
                     $modelSpacePending->add($id_user, $id_space);

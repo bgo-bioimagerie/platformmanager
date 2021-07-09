@@ -256,6 +256,8 @@ class CorespaceaccessController extends CoresecureController {
         $lang = $this->getLanguage();
         $spaceModel = new CoreSpace();
         $spaceModel->deleteUser($id_space, $id_user);
+        $modelPending = new CorePendingAccount();
+        $modelPending->updateWhenUnjoin($id_user, $id_space);
         $_SESSION["message"] = CoreTranslator::UserAccountHasBeenDeleted($lang);
 
         $modelSpace = new CoreSpace();
@@ -367,11 +369,13 @@ class CorespaceaccessController extends CoresecureController {
     public function pendinguserdeleteAction($id_space, $id) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelPending = new CorePendingAccount();
+        $id_user = $modelPending->get($id)["id_user"];
         $modelPending->invalidate($id, $_SESSION["id_user"]);
+        $modelPending->updateWhenUnjoin($id_user, $id_space);
         $modelSpace = new CoreSpace();
         $mailParams = [
             "id_space" => $id_space,
-            "id_user" => $modelPending->get($id)["id_user"],
+            "id_user" => $id_user,
             "space_name" => $modelSpace->getSpaceName($id_space),
         ];
         $email = new Email();
