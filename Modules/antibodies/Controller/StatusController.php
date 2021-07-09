@@ -44,7 +44,7 @@ class StatusController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $status = $this->model->get($id);
+        $status = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "statuseditform");
         $form->setTitle("Modifier status");
@@ -77,7 +77,7 @@ class StatusController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("status/" . $id_space);
     }
 

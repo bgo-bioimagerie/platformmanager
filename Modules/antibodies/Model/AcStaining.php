@@ -28,7 +28,7 @@ class AcStaining extends Model {
     }
 
     public function getBySpace($id_space) {
-        $sql = "select * from ac_stainings WHERE id_space=?";
+        $sql = "select * from ac_stainings WHERE id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
@@ -50,10 +50,10 @@ class AcStaining extends Model {
      * @param string $sortentry Entry that is used to sort the especes
      * @return multitype: array
      */
-    public function getStainings($sortentry = 'id') {
+    public function getStainings($id_space, $sortentry = 'id') {
 
-        $sql = "select * from ac_stainings order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "select * from ac_stainings WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -64,18 +64,18 @@ class AcStaining extends Model {
      * @throws Exception id the espece is not found
      * @return mixed array
      */
-    public function get($id) {
+    public function get($id_space, $id) {
 
         if (!$id) {
             return array("name" => "");
         }
 
-        $sql = "select * from ac_stainings where id=?";
+        $sql = "SELECT * from ac_stainings where id=? AND id_space=? AND deleted=0";
         $unit = $this->runRequest($sql, array($id));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new Exception("Cannot find the staining using the given id");
+            throw new PfmException("Cannot find the staining using the given id", 404);
         }
     }
 
@@ -100,12 +100,12 @@ class AcStaining extends Model {
      */
     public function edit($id, $name, $id_space) {
 
-        $sql = "update ac_stainings set name=?, id_space=? where id=?";
-        $this->runRequest($sql, array("" . $name . "", $id_space, $id));
+        $sql = "UPDATE ac_stainings set name=? where id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array("" . $name . "", $id, $id_space));
     }
 
     public function getIdFromName($name, $id_space) {
-        $sql = "select id from ac_stainings where name=? AND id_space=?";
+        $sql = "SELECT id from ac_stainings where name=? AND id_space=? AND deleted=0";
         $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
@@ -115,9 +115,9 @@ class AcStaining extends Model {
         }
     }
 
-    public function getNameFromId($id) {
-        $sql = "select name from ac_stainings where id=?";
-        $unit = $this->runRequest($sql, array($id));
+    public function getNameFromId($id_space ,$id) {
+        $sql = "SELECT name from ac_stainings where id=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -126,9 +126,9 @@ class AcStaining extends Model {
         }
     }
 
-    public function isEntryAcs($name) {
-        $sql = "select id from ac_stainings where name=?";
-        $req = $this->runRequest($sql, array($name));
+    public function isEntryAcs($id_space, $name) {
+        $sql = "SELECT id from ac_stainings where name=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($name, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         } else {
@@ -136,9 +136,10 @@ class AcStaining extends Model {
         }
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM ac_stainings WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE ac_stainings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        //$sql = "DELETE FROM ac_stainings WHERE id = ?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

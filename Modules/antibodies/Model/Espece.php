@@ -28,7 +28,7 @@ class Espece extends Model {
     }
 
     public function getBySpace($id_space){
-        $sql = "select * from ac_especes WHERE id_space=?";
+        $sql = "select * from ac_especes WHERE id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
@@ -50,10 +50,10 @@ class Espece extends Model {
      * @param string $sortentry Entry that is used to sort the especes
      * @return multitype: array
      */
-    public function getEspeces($sortentry = 'id') {
+    public function getEspeces($id_space, $sortentry = 'id') {
 
-        $sql = "select * from ac_especes order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "select * from ac_especes WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -64,18 +64,18 @@ class Espece extends Model {
      * @throws Exception id the espece is not found
      * @return mixed array
      */
-    public function get($id) {
+    public function get($id_space ,$id) {
         if(!$id){
             return array("nom" => "");
         }
         
-        $sql = "select * from ac_especes where id=?";
-        $unit = $this->runRequest($sql, array($id));
+        $sql = "select * from ac_especes where id=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1){
             return $unit->fetch();
         }
         else{
-            throw new Exception("Cannot find the espece using the given id");
+            throw new PfmException("Cannot find the espece using the given id", 404);
         }
     }
 
@@ -107,12 +107,12 @@ class Espece extends Model {
      */
     public function edit($id, $name, $id_space) {
 
-        $sql = "update ac_especes set nom=?, id_space=? where id=?";
-        $this->runRequest($sql, array("" . $name . "", $id_space, $id));
+        $sql = "update ac_especes set nom=? where id=? AND id_space=?";
+        $this->runRequest($sql, array("" . $name . "", $id, $id_space));
     }
 
     public function getIdFromName($name, $id_space) {
-        $sql = "select id from ac_especes where nom=? AND id_space=?";
+        $sql = "select id from ac_especes where nom=? AND id_space=? AND deleted=0";
         $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
@@ -122,9 +122,10 @@ class Espece extends Model {
         }
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM ac_especes WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE ac_especes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        //$sql = "DELETE FROM ac_especes WHERE id = ?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

@@ -45,7 +45,7 @@ class ApplicationController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $acapplication = $this->acapplicationModel->get($id);
+        $acapplication = $this->acapplicationModel->get($id_space,$id);
         
         $form = new Form($this->request, "acapplicationeditform");
         $form->setTitle("Modifier application");
@@ -74,7 +74,7 @@ class ApplicationController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->acapplicationModel->delete($id);
+        $this->acapplicationModel->delete($id_space,$id);
 
         $this->redirect("application/" . $id_space);
     }

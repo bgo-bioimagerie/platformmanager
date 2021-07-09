@@ -44,7 +44,7 @@ class OptionController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $options = $this->model->get($id);
+        $options = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "optionseditform");
         $form->setTitle("Modifier options");
@@ -73,7 +73,7 @@ class OptionController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("option/" . $id_space);
     }
 

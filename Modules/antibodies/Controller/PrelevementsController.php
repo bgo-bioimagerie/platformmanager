@@ -44,7 +44,7 @@ class PrelevementsController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $prelevements = $this->model->get($id);
+        $prelevements = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "prelevementseditform");
         $form->setTitle("Modifier prelevements");
@@ -73,7 +73,7 @@ class PrelevementsController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("prelevements/" . $id_space);
     }
 
