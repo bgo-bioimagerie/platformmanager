@@ -231,7 +231,7 @@ class CoreInstall extends Model {
         $modelConfig = new CoreConfig();
         $modelConfig->createTable();
 
-        $modelConfig->initParam("admin_email", "firstname.name@company.com");
+        $modelConfig->initParam("admin_email", Configuration::get('admin_email', ''));
         $modelConfig->initParam("logo", "Modules/core/Theme/logo.jpg");        
     	$modelConfig->initParam("home_title", "Platform-Manager");
     	$modelConfig->initParam("home_message", "Connection");
