@@ -11,6 +11,7 @@ require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkOwnerPrice.php';
+require_once 'Modules/booking/Model/BkCalQuantities.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
@@ -91,7 +92,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
         $modelInvoice = new InInvoice();
         $invoice = $modelInvoice->get($id_invoice);
-        Configuration::getLogger()->debug("[TEST]", ["invoice" => $invoice]);
 
         $modelInvoiceItem = new InInvoiceItem();
         $id_items = $modelInvoiceItem->getInvoiceItems($id_invoice);
@@ -341,6 +341,23 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelCal = new BkCalendarEntry();
         foreach ($resources as $res) {
             $reservations = $modelCal->getUnpricedReservations($beginPeriod, $endPeriod, $res["id"], $id_resp);
+            $bkCalQuantitiesModel = new BkCalQuantities();
+            // get list of quantities
+            // $bkCalQuantities->calQuantitiesByResource($res["id"]);
+            $calQuantities = $bkCalQuantitiesModel->calQuantitiesByResource($res["id"]);
+            $calQuantites = ($calQuantities === null) ? [] : $calQuantities;
+            Configuration::getLogger()->debug("[TEST]", ["bkCalQuantities for resource" => $calQuantities]);
+            // filter by is_invoicing_unit (1 max) (and mandatory ?)
+            $isInvoicingUnit = false;
+            $calQuantityId;
+            // tell if there's an invoicing unit for this resource amongst quantities and get its ID
+            foreach ($calQuantites as $calQuantity) {
+                if ($calQuantity["is_invoicing_unit"] && intval($calQuantity["is_invoicing_unit"]) === 1) {
+                    $calQuantityId = $calQuantity["id"];
+                    $isInvoicingUnit = true;
+                }
+            }
+            // just in case, get the first one
 
             // get all packages
             $userPackages = array();
@@ -358,25 +375,37 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $userTime["ratio_bookings_we"] = 0;            
             $totalQte = 0; // $totalQte = total number of items booked
             foreach ($reservations as $reservation) {
-                Configuration::getLogger()->debug("[TEST]", ["reservation" => $reservation]);
-
                 // count: day night we, packages, quantity
                 if ($reservation["package_id"] > 0) {
-                    $userPackages[$reservation["package_id"]] ++;  
+                    $userPackages[$reservation["package_id"]] ++;
                 } else {
                     $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
-                    Configuration::getLogger()->debug("[TEST]", ["resaDayNightWe" => $resaDayNightWe]);
                     // TODO: use "is_invoicing_unit" condition !!!
-                    if ($reservation["quantities"] && $reservation["quantities"] !=null) {
+                    if ($isInvoicingUnit) {
                         // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
                         // get number of resources booked
                         // refactor that in a if statement
-                        $qte = ($reservation["quantities"] && $reservation["quantities"] !=null)
-                            ? intval(explode("=", explode(";", $reservation["quantities"])[0])[1])
-                            : 0;
-                        $isQteMandatory = ($reservation["quantities"] && $reservation["quantities"] !=null)
-                            ? intval(explode("=", explode(";", $reservation["quantities"])[0])[0])
-                            : 0;
+                        
+                        if ($reservation["quantities"] && $reservation["quantities"] != null) {
+                            Configuration::getLogger()->debug("[TEST]", ["multipleQuantities?" => $reservation["quantities"]]);
+                            // TODO: must look for the quantity with $calQuantityId AND secure that (try catch ?)
+
+                            $strToFind = strval($calQuantityId) . "=";
+                            $lastPos = 0;
+                            $positions = array();
+                            while(($lastPos = strpos($reservation["quantities"], $strToFind, $lastPos))!==false) {
+                                $positions[] = $lastPos;
+                                $lastPos = $lastPos + strlen($strToFind);
+                            }
+
+                            // TODO: 1ST THING : check if this works
+                            $foundStr = substr($reservation["quantities"], $positions[0]);
+                            $qte = intval(explode("=", $foundStr)[0]);
+                            // $qte = intval(explode("=", explode(";", $reservation["quantities"])[0])[1]);
+                            
+                        } else {
+                            $qte = 0;
+                        }
                         $totalQte += $qte;
                         $userTime["ratio_bookings_day"] += $resaDayNightWe["ratio_bookings_day"];
                         $userTime["ratio_bookings_night"] += $resaDayNightWe["ratio_bookings_night"];
@@ -390,8 +419,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 // Record that an invoice was generated for this reservation (so that we can't re-invoice still existing)
                 $modelCal->setReservationInvoice($reservation["id"], $invoice_id);
             }
-            // TODO: here make it replace $userTime
-            Configuration::getLogger()->debug("[TEST]", ["totalQte" => $totalQte]);
             // fill content
             if (count($reservations) > 0) {
                 if ($userTime["nb_hours_day"] > 0) {
@@ -430,10 +457,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                         $total_ht += floatval($weQte) * floatval($timePrices[$res["id"]]["price_we"]);
                     }
                 }
-                Configuration::getLogger()->debug("[TEST]", ["content" => $content]);
-                Configuration::getLogger()->debug("[TEST]", ["total_ht" => $total_ht]);
             }
-            //echo "<br/> content: $content <br/>";
         }
 
         // details
@@ -604,6 +628,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $resaDayNightWe;
     }
 
+    // FIXME: Can't work since calling EcUnit class
     protected function invoiceProjects($id_space, $id_projects, $id_unit, $id_resp) {
 
         // add invoice
