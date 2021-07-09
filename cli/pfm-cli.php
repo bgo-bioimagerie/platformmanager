@@ -28,30 +28,34 @@ $cli = Cli::create()
 
 $args = $cli->parse($argv);
 
-switch ($args->getCommand()) {
-    case 'install':
-        cliInstall();
-        break;
-    case 'expire':
-        $logger = Configuration::getLogger();
-        $logger->info("Expire old users");
-        $modelUser = new CoreUser();
-        $modelSettings = new CoreConfig();
-        $desactivateSetting = $modelSettings->getParam("user_desactivate", 6);
-        $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
-        $logger->info("Expired ".$count. " users");
-        break;
-    case 'version':
-        echo "Version: ".version()."\n";
-        if ($args->getOpt('db')) {
-            $cdb = new CoreDB();
-            $crel = $cdb->getRelease();
-            echo "DB installed version: ".$crel."\n";
-            echo "DB expected version: ".$cdb->getVersion()."\n";
-        }
-        break;
-    default:
-        break;
+try {
+    switch ($args->getCommand()) {
+        case 'install':
+            cliInstall();
+            break;
+        case 'expire':
+            $logger = Configuration::getLogger();
+            $logger->info("Expire old users");
+            $modelUser = new CoreUser();
+            $modelSettings = new CoreConfig();
+            $desactivateSetting = $modelSettings->getParam("user_desactivate", 6);
+            $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
+            $logger->info("Expired ".$count. " users");
+            break;
+        case 'version':
+            echo "Version: ".version()."\n";
+            if ($args->getOpt('db')) {
+                $cdb = new CoreDB();
+                $crel = $cdb->getRelease();
+                echo "DB installed version: ".$crel."\n";
+                echo "DB expected version: ".$cdb->getVersion()."\n";
+            }
+            break;
+        default:
+            break;
+    }
+} catch(Throwable $e) {
+    Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
 }
 
 function cliInstall() {
