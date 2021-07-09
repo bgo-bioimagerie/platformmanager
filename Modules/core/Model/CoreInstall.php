@@ -246,6 +246,8 @@ class CoreDB extends Model {
         while($res = $resdb->fetch()) {
             $sql = "UPDATE ac_j_tissu_anticorps SET id_space=? WHERE id_anticorps=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE ac_j_user_anticorps SET id_space=? WHERE id_anticorps=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
 
@@ -290,6 +292,13 @@ class CoreDB extends Model {
         if($resdb && intval($resdb['counter']) > $counter) {
             $counter = intval($resdb['counter']);
         }
+
+        $sql = "SELECT max(no_h2p2) as counter FROM ac_anticorps";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+
         $i = 0;
         while($i <= $counter) {
             $cvm = new CoreVirtual();
