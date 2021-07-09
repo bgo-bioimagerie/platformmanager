@@ -6,7 +6,7 @@ require_once 'Framework/Model.php';
  * case validated=0 and validated_by=0 => request is pending 
  * case validated=0 and validated_by>0 => space admin has rejected the join request
  * case validated=1 and validated_by>0 => space admin has accepted the join request
- * 
+ * case validated=1 and validated_by=0 => has already join then unjoin
  */
 class CorePendingAccount extends Model {
 
@@ -35,6 +35,16 @@ class CorePendingAccount extends Model {
         $sql = "INSERT INTO core_pending_accounts (id_user, id_space, validated, validated_by) VALUES (?,?,?,?)";
         $this->runRequest($sql, array($id_user, $id_space, 0, 0));
         return $this->getDatabase()->lastInsertId();
+    }
+
+    public function updateWhenUnjoin($id_user, $id_space){
+        $sql = "UPDATE core_pending_accounts SET validated=?, validated_by=? WHERE id_user=? AND id_space=?";
+        $this->runRequest($sql, array(1, 0, $id_user, $id_space));
+    }
+
+    public function updateWhenRejoin($id_user, $id_space){
+        $sql = "UPDATE core_pending_accounts SET validated=?, validated_by=? WHERE id_user=? AND id_space=?";
+        $this->runRequest($sql, array(0, 0, $id_user, $id_space));
     }
 
     /**
