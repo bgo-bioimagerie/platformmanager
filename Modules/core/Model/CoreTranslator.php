@@ -1857,6 +1857,11 @@ class CoreTranslator {
         return ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
     }
 
-
+    public static function History($lang = "") {
+        if ($lang == "fr") {
+            return "Historique";
+        }
+        return "History";
+    }
     
 }

@@ -85,6 +85,11 @@ class CoreSpaceUser extends Model {
     public function delete($id_user, $id_space){
         $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($id_user, $id_space));
+        Events::send([
+            "action" => Events::ACTION_SPACE_USER_UNJOIN,
+            "space" => ["id" => intval($id_space)],
+            "user" => ["id" => intval($id_user)]
+        ]);
     }
 
     /**

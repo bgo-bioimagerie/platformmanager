@@ -29,6 +29,7 @@ require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/users/Model/UsersPatch.php';
+require_once 'Modules/core/Model/CoreHistory.php';
 
 
 define("DB_VERSION", 2);
@@ -294,6 +295,9 @@ class CoreInstall extends Model {
 
         $modelCoreFiles = new CoreFiles();
         $modelCoreFiles->createTable();
+
+        $modelHistory = new CoreHistory();
+        $modelHistory->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);
