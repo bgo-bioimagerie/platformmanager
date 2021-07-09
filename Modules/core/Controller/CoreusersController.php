@@ -177,6 +177,8 @@ class CoreusersController extends CoresecureController {
     public function deleteAction($id) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         if (!$this->isLinkedToAnySpace($id)) {
+            $modelPending = new CorePendingAccount();
+            $modelPending->deleteByUser($id);
             $modelUser = new CoreUser();
             $modelUser->delete($id);
         } else {

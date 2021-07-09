@@ -165,11 +165,7 @@ class CoretilesController extends CoresecureController {
             // User is already member of space
             $modelSpaceUser = new CoreSpaceUser();
             // remove user from space members
-            $modelSpaceUser->delete($id_user, $id_space);
-
-            $modelSpacePending = new CorePendingAccount();
-            // keep track in core_pending_accounts and update in case user wants to re-join
-            $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
+            $modelSpaceUser->delete($id_space, $id_user);
         } else {
             // User is not member of space
             $modelSpacePending = new CorePendingAccount();

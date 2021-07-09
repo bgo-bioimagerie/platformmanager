@@ -126,5 +126,10 @@ class CorePendingAccount extends Model {
         $sql = "DELETE FROM core_pending_accounts WHERE (id_space=? AND id_user=?)";
         $this->runRequest($sql, array($id_space, $id_user));
     }
+
+    public function deleteByUser($id_user) {
+        $sql = "DELETE FROM core_pending_accounts WHERE id_user=?";
+        $this->runRequest($sql, array($id_user));
+    }
  
 }

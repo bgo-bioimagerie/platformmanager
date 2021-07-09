@@ -11,6 +11,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
@@ -254,10 +255,8 @@ class CorespaceaccessController extends CoresecureController {
     public function userdeleteAction($id_space, $id_user) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $lang = $this->getLanguage();
-        $spaceModel = new CoreSpace();
-        $spaceModel->deleteUser($id_space, $id_user);
-        $modelPending = new CorePendingAccount();
-        $modelPending->updateWhenUnjoin($id_user, $id_space);
+        $spaceUserModel = new CoreSpaceUser();
+        $spaceUserModel->delete($id_space, $id_user);
         $_SESSION["message"] = CoreTranslator::UserAccountHasBeenDeleted($lang);
 
         $modelSpace = new CoreSpace();
