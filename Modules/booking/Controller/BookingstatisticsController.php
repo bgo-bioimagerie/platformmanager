@@ -176,10 +176,11 @@ class BookingstatisticsController extends CoresecureController {
             $excludeColorCode = $this->request->getParameter("exclude_color");
             $generateunitstats = $this->request->getParameter("generateunitstats");
 
-            require_once 'externals/PHPExcel/Classes/PHPExcel.php';
-            $objPHPExcel = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, null);
+            //require_once 'externals/PHPExcel/Classes/PHPExcel.php';
+            $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, null);
             // write excel file
-            $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+            $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
+
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
             header('Cache-Control: max-age=0');
@@ -553,7 +554,7 @@ class BookingstatisticsController extends CoresecureController {
         echo $content;
     }
 
-    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
 
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
@@ -566,7 +567,7 @@ class BookingstatisticsController extends CoresecureController {
         $modelGraph = new BkGraph();
         $data = $modelGraph->getStatReservationPerMonth($month_start, $year_start, $month_end, $year_end, $id_space, $excludeColorCode);
 
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $lang = $this->getLanguage();
         $objWorkSheet->setTitle(BookingTranslator::Reservation_counting($lang));
         $objWorkSheet->getRowDimension('1')->setRowHeight(40);
@@ -595,10 +596,10 @@ class BookingstatisticsController extends CoresecureController {
             $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
         }
-        return $objPHPExcel;
+        return $spreadsheet;
     }
 
-    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
 
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
@@ -614,7 +615,7 @@ class BookingstatisticsController extends CoresecureController {
         $colorModel = new BkColorCode();
         $colorCodes = $colorModel->getColorCodes($id_space);
 
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $lang = $this->getLanguage();
         $objWorkSheet->setTitle(BookingTranslator::Reservation_per_resource($lang));
         $objWorkSheet->getRowDimension('1')->setRowHeight(40);
@@ -628,27 +629,27 @@ class BookingstatisticsController extends CoresecureController {
         $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
         $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
         $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
         $num = 3;
         foreach ($colorCodes as $c) {
             $num++;
             $letter = $this->get_col_letter($num);
             $objWorkSheet->SetCellValue($letter . $curentLine, $c["name"]);
             $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            $objPHPExcel->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
         }
         $num++;
         $letter = $this->get_col_letter($num);
         $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_number($lang));
         $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $objPHPExcel->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
         $num++;
         $letter = $this->get_col_letter($num);
         $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_time($lang));
         $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $objPHPExcel->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
 
 
         $resourcesids = $data['resourcesids'];
@@ -683,10 +684,10 @@ class BookingstatisticsController extends CoresecureController {
             $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
         }
-        return $objPHPExcel;
+        return $spreadsheet;
     }
 
-    public function statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+    public function statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
 
         // get data
         $modelGraph = new BkGraph();
@@ -694,7 +695,7 @@ class BookingstatisticsController extends CoresecureController {
         $units = $modelUnit->getUnits($id_space);
         $data = $modelGraph->getStatReservationPerUnit($dateBegin, $dateEnd, $id_space, $units, $excludeColorCode);
 
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $lang = $this->getLanguage();
         $objWorkSheet->setTitle(BookingTranslator::Reservation_per_unit($lang));
         $objWorkSheet->getRowDimension('1')->setRowHeight(40);
@@ -738,10 +739,10 @@ class BookingstatisticsController extends CoresecureController {
                 }
             }
         }
-        return $objPHPExcel;
+        return $spreadsheet;
     }
 
-    public function statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel) {
+    public function statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
 
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
@@ -757,7 +758,7 @@ class BookingstatisticsController extends CoresecureController {
         $resps = $modelClients->getAll($id_space);
         $data = $modelGraph->getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode);
 
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $lang = $this->getLanguage();
         $objWorkSheet->setTitle(BookingTranslator::Reservation_per_responsible($lang));
         $objWorkSheet->getRowDimension('1')->setRowHeight(40);
@@ -801,7 +802,7 @@ class BookingstatisticsController extends CoresecureController {
                 }
             }
         }
-        return $objPHPExcel;
+        return $spreadsheet;
     }
 
     protected function getStylesheet() {
@@ -817,20 +818,20 @@ class BookingstatisticsController extends CoresecureController {
             ),
             'borders' => array(
                 'outline' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     'color' => array(
                         'rgb' => '000000'),
                 ),
             ),
             'fill' => array(
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
             ),
         );
 
@@ -845,20 +846,20 @@ class BookingstatisticsController extends CoresecureController {
             ),
             'borders' => array(
                 'outline' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     'color' => array(
                         'rgb' => '000000'),
                 ),
             ),
             'fill' => array(
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ),
         );
 
@@ -866,26 +867,26 @@ class BookingstatisticsController extends CoresecureController {
             'styleBorderedCenteredCell' => $styleBorderedCenteredCell);
     }
 
-    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $objPHPExcel) {
+    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $spreadsheet) {
 
-        if (!$objPHPExcel) {
-            $objPHPExcel = new PHPExcel();
+        if (!$spreadsheet) {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
             // Set properties
-            $objPHPExcel->getProperties()->setCreator("Platform-Manager");
-            $objPHPExcel->getProperties()->setLastModifiedBy("Platform-Manager");
-            $objPHPExcel->getProperties()->setTitle("Booking balance sheet");
-            $objPHPExcel->getProperties()->setSubject("Booking balance sheet");
-            $objPHPExcel->getProperties()->setDescription("");
+            $spreadsheet->getProperties()->setCreator("Platform-Manager");
+            $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
+            $spreadsheet->getProperties()->setTitle("Booking balance sheet");
+            $spreadsheet->getProperties()->setSubject("Booking balance sheet");
+            $spreadsheet->getProperties()->setDescription("");
         }
 
-        $objPHPExcel = $this->statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-        $objPHPExcel = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+        $spreadsheet = $this->statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
+        $spreadsheet = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
         if ($generateunitstats == 1) {
-            $objPHPExcel = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
-            $objPHPExcel = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $objPHPExcel);
+            $spreadsheet = $this->statsReservationsPerUnit($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
+            $spreadsheet = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
         }
-        return $objPHPExcel;
+        return $spreadsheet;
     }
 
     function get_col_letter($num) {

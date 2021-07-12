@@ -97,6 +97,13 @@ if ($space['color'] == "") {
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Users($lang) ?></span>
                             </a>
                         </li> 
+
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="<?php echo "corespacehistory/" . $space["id"] ?>">
+                                <span class="pm-tiles glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::History($lang) ?></span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

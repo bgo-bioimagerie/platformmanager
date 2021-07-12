@@ -96,7 +96,7 @@ class StatisticsController extends CoresecureController {
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("statistics", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
-        $html = str_replace('{{title}}', InvoicesTranslator::invoices($lang), $html);
+        $html = str_replace('{{title}}', StatisticsTranslator::Statistics($lang), $html);
 
         return $html;
     }

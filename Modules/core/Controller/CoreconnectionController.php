@@ -219,7 +219,7 @@ class CoreconnectionController extends CorecookiesecureController {
 
         $lang = $this->getLanguage();
         $form = new Form($this->request, 'formpasswordforgottern');
-        $form->addText("email", CoreTranslator::Email($lang), true);
+        $form->addEmail("email", CoreTranslator::Email($lang), true);
         $form->setValidationButton(CoreTranslator::Ok($lang), "corepasswordforgotten");
 
         $_SESSION["message"] = CoreTranslator::PasswordForgotten($lang);

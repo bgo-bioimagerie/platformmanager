@@ -119,7 +119,7 @@ class Statistics {
             $writeApi->write($point);
             $client->close();
         } catch(Throwable $e) {
-            Configuration::getLogger()->error('[stats] stat error', ['message' => e.getMessage()]);
+            Configuration::getLogger()->error('[stats] stat error', ['message' => $e->getMessage()]);
             return false;
         }
         return true;

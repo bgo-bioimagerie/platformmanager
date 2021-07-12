@@ -508,7 +508,6 @@ class TableView {
     private function addDeleteButtonHtml($id, $name) {
 
         $html = $this->addDeleteScript($id, $name);
-        //$html = "";
         $html = $html . "<input class=\"btn btn-xs btn-danger\" type=\"button\" onclick=\"ConfirmDelete" . $id . "()\" value=\"Delete\">";
         return $html;
     }

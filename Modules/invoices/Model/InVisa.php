@@ -88,7 +88,9 @@ class InVisa extends Model {
     public function getVisaName($id){
         $sql = "SELECT * FROM in_visa WHERE id=?";
         $data = $this->runRequest($sql, array($id))->fetch();
-        
+        if(!$data) {
+            return null;
+        }        
         $modelUser = new CoreUser();
         return $modelUser->getUserFUllName($data["id_user"]);
     }
@@ -96,7 +98,9 @@ class InVisa extends Model {
     public function getVisaNameShort($id){
         $sql = "SELECT * FROM in_visa WHERE id=?";
         $data = $this->runRequest($sql, array($id))->fetch();
-        
+        if(!$data) {
+            return null;
+        }
         $modelUser = new CoreUser();
         return $modelUser->getUserInitials($data["id_user"]);
     }

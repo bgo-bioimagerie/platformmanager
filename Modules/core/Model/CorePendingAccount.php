@@ -6,7 +6,7 @@ require_once 'Framework/Model.php';
  * case validated=0 and validated_by=0 => request is pending 
  * case validated=0 and validated_by>0 => space admin has rejected the join request
  * case validated=1 and validated_by>0 => space admin has accepted the join request
- * 
+ * case validated=1 and validated_by=0 => has already join then unjoin
  */
 class CorePendingAccount extends Model {
 
@@ -32,9 +32,19 @@ class CorePendingAccount extends Model {
     }
 
     public function add($id_user, $id_space){
-        $sql = "INSERT INTO core_pending_accounts (id_user, id_space, validated) VALUES (?,?,?)";
-        $this->runRequest($sql, array($id_user, $id_space, 0));
+        $sql = "INSERT INTO core_pending_accounts (id_user, id_space, validated, validated_by) VALUES (?,?,?,?)";
+        $this->runRequest($sql, array($id_user, $id_space, 0, 0));
         return $this->getDatabase()->lastInsertId();
+    }
+
+    public function updateWhenUnjoin($id_user, $id_space){
+        $sql = "UPDATE core_pending_accounts SET validated=?, validated_by=? WHERE id_user=? AND id_space=?";
+        $this->runRequest($sql, array(1, 0, $id_user, $id_space));
+    }
+
+    public function updateWhenRejoin($id_user, $id_space){
+        $sql = "UPDATE core_pending_accounts SET validated=?, validated_by=? WHERE id_user=? AND id_space=?";
+        $this->runRequest($sql, array(0, 0, $id_user, $id_space));
     }
 
     /**
@@ -72,6 +82,20 @@ class CorePendingAccount extends Model {
         }
         return false;
     }
+
+    /**
+     * 
+     * Returns true if user is pending in any space
+     * 
+     * @param int $id_user
+     * 
+     * @return bool
+     */
+    public function isActuallyPendingInAnySpace($id_user) {
+        $sql = "SELECT id FROM core_pending_accounts WHERE id_user=? AND validated=0 AND validated_by=0";
+        $req = $this->runRequest($sql, array($id_user));
+        return ($req->rowCount() > 0);
+    }
  
     public function getPendingForSpace($id_space){
         $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND validated=0 AND validated_by=0";
@@ -101,6 +125,11 @@ class CorePendingAccount extends Model {
     public function deleteBySpaceIdAndUserId($id_space, $id_user){
         $sql = "DELETE FROM core_pending_accounts WHERE (id_space=? AND id_user=?)";
         $this->runRequest($sql, array($id_space, $id_user));
+    }
+
+    public function deleteByUser($id_user) {
+        $sql = "DELETE FROM core_pending_accounts WHERE id_user=?";
+        $this->runRequest($sql, array($id_user));
     }
  
 }

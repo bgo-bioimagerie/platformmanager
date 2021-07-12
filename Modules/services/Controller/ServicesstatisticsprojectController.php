@@ -104,11 +104,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
         ));
     }
 
-    public function getBalance($periodStart, $periodEnd, $id_space, $isglobal = false) {
-        return $this->generateBalance($id_space, $periodStart, $periodEnd, false, $isglobal);
+    public function getBalance($periodStart, $periodEnd, $id_space, $isglobal = false, $spreadsheet=null) {
+        return $this->generateBalance($id_space, $periodStart, $periodEnd, false, $isglobal, $spreadsheet);
     }
 
-    private function generateBalance($id_space, $periodStart, $periodEnd, $render = true, $isglobal = false) {
+    private function generateBalance($id_space, $periodStart, $periodEnd, $render = true, $isglobal = false, $spreadsheet=null) {
 
         //echo "not yet implemented <br/> " . $periodStart . "<br/>" . $periodEnd . "<br/>";
         // get all the opened projects informations
@@ -135,24 +135,26 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space);
         }
 
-        return $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $render);
+        return $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $render, $spreadsheet);
     }
 
-    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $render) {
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $render, $spreadsheet=null) {
 
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
 
         $lang = $this->getLanguage();
         // Create new PHPExcel object
-        $objPHPExcel = new PHPExcel();
-
-        // Set properties
-        $objPHPExcel->getProperties()->setCreator("Platform-Manager");
-        $objPHPExcel->getProperties()->setLastModifiedBy("Platform-Manager");
-        $objPHPExcel->getProperties()->setTitle("Project balance sheet");
-        $objPHPExcel->getProperties()->setSubject("Project balance sheet");
-        $objPHPExcel->getProperties()->setDescription("");
+        if($spreadsheet == null) {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            //$spreadsheet = new PHPExcel();
+            // Set properties
+            $spreadsheet->getProperties()->setCreator("Platform-Manager");
+            $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
+            $spreadsheet->getProperties()->setTitle("Project balance sheet");
+            $spreadsheet->getProperties()->setSubject("Project balance sheet");
+            $spreadsheet->getProperties()->setDescription("");
+        }
 
         // ////////////////////////////////////////////////////
         //              stylesheet
@@ -168,20 +170,20 @@ class ServicesstatisticsprojectController extends CoresecureController {
             ),
             'borders' => array(
                 'outline' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     'color' => array(
                         'rgb' => '000000'),
                 ),
             ),
             'fill' => array(
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
             ),
         );
 
@@ -196,109 +198,109 @@ class ServicesstatisticsprojectController extends CoresecureController {
             ),
             'borders' => array(
                 'outline' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     'color' => array(
                         'rgb' => '000000'),
                 ),
             ),
             'fill' => array(
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ),
         );
 
         // ////////////////////////////////////////////////////
         //                  opened projects
         // ////////////////////////////////////////////////////
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:D1');
-        $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('B1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('C1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('H1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('J1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('K1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('L1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('M1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('N1')->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('O1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->mergeCells('A1:D1');
+        $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('B1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('C1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('D1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('F1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('H1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('J1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('K1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('L1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('M1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('N1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('O1')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::OpenedUpper($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('A2', CoreTranslator::Responsible($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('A2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->setTitle(ServicesTranslator::OpenedUpper($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A2', CoreTranslator::Responsible($lang));
+        $spreadsheet->getActiveSheet()->getStyle('A2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('B2', CoreTranslator::Unit($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('B2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('B2', CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->getStyle('B2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('C2', CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('C2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('C2', CoreTranslator::User($lang));
+        $spreadsheet->getActiveSheet()->getStyle('C2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('D2', ServicesTranslator::Project_number($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('D2')->applyFromArray($styleBorderedCell);
-
-
-        $objPHPExcel->getActiveSheet()->mergeCells('E1:F1');
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', ServicesTranslator::New_team($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCenteredCell);
-
-        $objPHPExcel->getActiveSheet()->SetCellValue('E2', ServicesTranslator::Academique($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('E2')->applyFromArray($styleBorderedCell);
-
-        $objPHPExcel->getActiveSheet()->SetCellValue('F2', ServicesTranslator::Industry($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('F2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('D2', ServicesTranslator::Project_number($lang));
+        $spreadsheet->getActiveSheet()->getStyle('D2')->applyFromArray($styleBorderedCell);
 
 
-        $objPHPExcel->getActiveSheet()->mergeCells('G1:H1');
-        $objPHPExcel->getActiveSheet()->SetCellValue('G1', ServicesTranslator::New_project($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('G1')->applyFromArray($styleBorderedCenteredCell);
+        $spreadsheet->getActiveSheet()->mergeCells('E1:F1');
+        $spreadsheet->getActiveSheet()->SetCellValue('E1', ServicesTranslator::New_team($lang));
+        $spreadsheet->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCenteredCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('G2', ServicesTranslator::Academique($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('G2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('E2', ServicesTranslator::Academique($lang));
+        $spreadsheet->getActiveSheet()->getStyle('E2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('H2', ServicesTranslator::Industry($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('H2')->applyFromArray($styleBorderedCell);
-
-        $objPHPExcel->getActiveSheet()->SetCellValue('I2', ServicesTranslator::Origin($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('I2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('F2', ServicesTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->getStyle('F2')->applyFromArray($styleBorderedCell);
 
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('J2', ServicesTranslator::Opened_date($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('J2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->mergeCells('G1:H1');
+        $spreadsheet->getActiveSheet()->SetCellValue('G1', ServicesTranslator::New_project($lang));
+        $spreadsheet->getActiveSheet()->getStyle('G1')->applyFromArray($styleBorderedCenteredCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('K2', ServicesTranslator::Time_limite($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('K2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('G2', ServicesTranslator::Academique($lang));
+        $spreadsheet->getActiveSheet()->getStyle('G2')->applyFromArray($styleBorderedCell);
+
+        $spreadsheet->getActiveSheet()->SetCellValue('H2', ServicesTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->getStyle('H2')->applyFromArray($styleBorderedCell);
+
+        $spreadsheet->getActiveSheet()->SetCellValue('I2', ServicesTranslator::Origin($lang));
+        $spreadsheet->getActiveSheet()->getStyle('I2')->applyFromArray($styleBorderedCell);
+
+
+        $spreadsheet->getActiveSheet()->SetCellValue('J2', ServicesTranslator::Opened_date($lang));
+        $spreadsheet->getActiveSheet()->getStyle('J2')->applyFromArray($styleBorderedCell);
+
+        $spreadsheet->getActiveSheet()->SetCellValue('K2', ServicesTranslator::Time_limite($lang));
+        $spreadsheet->getActiveSheet()->getStyle('K2')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('L2', ServicesTranslator::OutDelay($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('L2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('L2', ServicesTranslator::OutDelay($lang));
+        $spreadsheet->getActiveSheet()->getStyle('L2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('M2', ServicesTranslator::Closed_date($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('M2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('M2', ServicesTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->getStyle('M2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('N2', ServicesTranslator::Visa($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('N2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('N2', ServicesTranslator::Visa($lang));
+        $spreadsheet->getActiveSheet()->getStyle('N2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->mergeCells('O1:P1');
-        $objPHPExcel->getActiveSheet()->SetCellValue('O2', ServicesTranslator::SampleReturn($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('O2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->mergeCells('O1:P1');
+        $spreadsheet->getActiveSheet()->SetCellValue('O2', ServicesTranslator::SampleReturn($lang));
+        $spreadsheet->getActiveSheet()->getStyle('O2')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('P2', CoreTranslator::Date($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('P2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('P2', CoreTranslator::Date($lang));
+        $spreadsheet->getActiveSheet()->getStyle('P2')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('Q2', ServicesTranslator::StockSamples($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('Q2')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('Q2', ServicesTranslator::StockSamples($lang));
+        $spreadsheet->getActiveSheet()->getStyle('Q2')->applyFromArray($styleBorderedCell);
         
 
-        $objPHPExcel->getActiveSheet()->mergeCells('I1:N1');
-        $objPHPExcel->getActiveSheet()->getStyle('I1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->mergeCells('I1:N1');
+        $spreadsheet->getActiveSheet()->getStyle('I1')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
+        $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
 
         $modelOrigin = new SeOrigin();
@@ -308,34 +310,34 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $curentLine++;
             $unitName = $modelClient->getName($proj["id_resp"]);
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
-            $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+            $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
-            $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
+            $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
-            $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
+            $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
-            $objPHPExcel->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
+            $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
 
             if ($proj["new_team"] == 2) {
-                $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, 1);
+                $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, 1);
             } else if ($proj["new_team"] == 3) {
-                $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, 1);
+                $spreadsheet->getActiveSheet()->SetCellValue('F' . $curentLine, 1);
             }
-            $objPHPExcel->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
-            $objPHPExcel->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+            $spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+            $spreadsheet->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
 
             if ($proj["new_project"] == 2) {
-                $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, 1);
+                $spreadsheet->getActiveSheet()->SetCellValue('G' . $curentLine, 1);
             } else if ($proj["new_project"] == 3) {
-                $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, 1);
+                $spreadsheet->getActiveSheet()->SetCellValue('H' . $curentLine, 1);
             }
-            $objPHPExcel->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
-            $objPHPExcel->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+            $spreadsheet->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+            $spreadsheet->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
             $dateClosed = "";
             $visaClosed = "";
@@ -344,11 +346,11 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 $visaClosed = $proj["closed_by_in"];
             }
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('I' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
-            $objPHPExcel->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
+            $spreadsheet->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCell);
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue('K' . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
             
             $outDelay = 0;
             if ($proj["date_close"] != "" && $proj["date_close"] != "0000-00-00"
@@ -357,74 +359,74 @@ class ServicesstatisticsprojectController extends CoresecureController {
                     $outDelay = 1;
                 }
             }
-            $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, $outDelay);
-            $objPHPExcel->getActiveSheet()->SetCellValue('M' . $curentLine, $dateClosed);
+            $spreadsheet->getActiveSheet()->SetCellValue('L' . $curentLine, $outDelay);
+            $spreadsheet->getActiveSheet()->SetCellValue('M' . $curentLine, $dateClosed);
             
-            $objPHPExcel->getActiveSheet()->SetCellValue('N' . $curentLine, $visaClosed);
-            $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, $proj["samplereturn"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, CoreTranslator::dateFromEn($proj["samplereturndate"], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $curentLine, $proj["sample_cabinet"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('N' . $curentLine, $visaClosed);
+            $spreadsheet->getActiveSheet()->SetCellValue('O' . $curentLine, $proj["samplereturn"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, CoreTranslator::dateFromEn($proj["samplereturndate"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue('Q' . $curentLine, $proj["sample_cabinet"]);
             
-            $objPHPExcel->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('K' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('L' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('M' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('N' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('O' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('P' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('Q' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('K' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('L' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('M' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('N' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('O' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('P' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('Q' . $curentLine)->applyFromArray($styleBorderedCell);
        
         }
 
         for ($col = 'A'; $col !== 'Q'; $col++) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:M1');
+        $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
+        $spreadsheet->getActiveSheet()->mergeCells('A1:M1');
         $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
         // ////////////////////////////////////////////////////
         //                  Bill list
         // ////////////////////////////////////////////////////
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::invoices($lang));
-        $objPHPExcel->setActiveSheetIndex(1);
-        $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
+        $spreadsheet->setActiveSheetIndex(1);
+        $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 1;
-        $objPHPExcel->getActiveSheet()->mergeCells('A' . $curentLine . ":" . 'E' . $curentLine);
-        $objPHPExcel->getActiveSheet()->mergeCells('F' . $curentLine . ":" . 'G' . $curentLine);
-        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, ServicesTranslator::New_team($lang));
-        $objPHPExcel->getActiveSheet()->mergeCells('H' . $curentLine . ":" . 'I' . $curentLine);
-        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, ServicesTranslator::New_project($lang));
+        $spreadsheet->getActiveSheet()->mergeCells('A' . $curentLine . ":" . 'E' . $curentLine);
+        $spreadsheet->getActiveSheet()->mergeCells('F' . $curentLine . ":" . 'G' . $curentLine);
+        $spreadsheet->getActiveSheet()->SetCellValue('F' . $curentLine, ServicesTranslator::New_team($lang));
+        $spreadsheet->getActiveSheet()->mergeCells('H' . $curentLine . ":" . 'I' . $curentLine);
+        $spreadsheet->getActiveSheet()->SetCellValue('H' . $curentLine, ServicesTranslator::New_project($lang));
 
 
         $curentLine = 2;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Total_HT($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Total_HT($lang));
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, ServicesTranslator::Academique($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, ServicesTranslator::Industry($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, ServicesTranslator::Academique($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $curentLine, ServicesTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('F' . $curentLine, ServicesTranslator::Academique($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('G' . $curentLine, ServicesTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('H' . $curentLine, ServicesTranslator::Academique($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, ServicesTranslator::Industry($lang));
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, ServicesTranslator::Origin($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, ServicesTranslator::Origin($lang));
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, ServicesTranslator::Opened_date($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, ServicesTranslator::Time_limite($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('M' . $curentLine, ServicesTranslator::Closed_date($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('N' . $curentLine, ServicesTranslator::Visa($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, ServicesTranslator::Date_Send_Invoice($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, ServicesTranslator::Visa_Send_Invoice($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $curentLine, ServicesTranslator::SampleReturn($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('R' . $curentLine, CoreTranslator::Date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('K' . $curentLine, ServicesTranslator::Opened_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('L' . $curentLine, ServicesTranslator::Time_limite($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('M' . $curentLine, ServicesTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('N' . $curentLine, ServicesTranslator::Visa($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('O' . $curentLine, ServicesTranslator::Date_Send_Invoice($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, ServicesTranslator::Visa_Send_Invoice($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('Q' . $curentLine, ServicesTranslator::SampleReturn($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('R' . $curentLine, CoreTranslator::Date($lang));
 
 
         $total = 0;
@@ -439,15 +441,15 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
             $unitName = $modelClient->getInstitution($invoice["id_responsible"]);
             
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
 
-            //$objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($invoice["visa_send"]));
+            //$spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($invoice["visa_send"]));
 
             //echo "invoice controller = " . $invoice["controller"] . '<br/>';
             if ($invoice["controller"] == "servicesinvoiceproject") {
@@ -465,26 +467,26 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 if (isset($proj["new_team"])) {
 
                     if ($proj["new_team"] == 2) {
-                        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, 1);
+                        $spreadsheet->getActiveSheet()->SetCellValue('F' . $curentLine, 1);
                     } else if ($proj["new_team"] == 3) {
-                        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, 1);
+                        $spreadsheet->getActiveSheet()->SetCellValue('G' . $curentLine, 1);
                     }
-                    $objPHPExcel->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
-                    $objPHPExcel->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+                    $spreadsheet->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+                    $spreadsheet->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
 
                     if ($proj["new_project"] == 2) {
-                        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $curentLine, 1);
+                        $spreadsheet->getActiveSheet()->SetCellValue('H' . $curentLine, 1);
                     } else if ($proj["new_project"] == 3) {
-                        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $curentLine, 1);
+                        $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, 1);
                     }
-                    $objPHPExcel->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
-                    $objPHPExcel->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+                    $spreadsheet->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+                    $spreadsheet->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
                     //$originName = $modelOrigin->getName($proj["id_origin"]);
                     
-                    $objPHPExcel->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
-                    $objPHPExcel->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
+                    $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
+                    $spreadsheet->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
 
                     $dateClosed = "";
@@ -493,163 +495,163 @@ class ServicesstatisticsprojectController extends CoresecureController {
                         $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
                         $visaClosed = $proj["closed_by_in"];
                     }
-                    $objPHPExcel->getActiveSheet()->SetCellValue('K' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
-                    $objPHPExcel->getActiveSheet()->SetCellValue('L' . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
-                    $objPHPExcel->getActiveSheet()->SetCellValue('M' . $curentLine, $dateClosed);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('N' . $curentLine, $visaClosed);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('Q' . $curentLine, $proj["samplereturn"]);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('R' . $curentLine, CoreTranslator::dateFromEn($proj["samplereturndate"], $lang));
-                    $objPHPExcel->getActiveSheet()->getStyle('K' . $curentLine)->applyFromArray($styleBorderedCell);
-                    $objPHPExcel->getActiveSheet()->getStyle('L' . $curentLine)->applyFromArray($styleBorderedCell);
-                    $objPHPExcel->getActiveSheet()->getStyle('M' . $curentLine)->applyFromArray($styleBorderedCell);
-                    $objPHPExcel->getActiveSheet()->getStyle('N' . $curentLine)->applyFromArray($styleBorderedCell);
-                    $objPHPExcel->getActiveSheet()->getStyle('Q' . $curentLine)->applyFromArray($styleBorderedCell);
-                    $objPHPExcel->getActiveSheet()->getStyle('R' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->SetCellValue('K' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
+                    $spreadsheet->getActiveSheet()->SetCellValue('L' . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
+                    $spreadsheet->getActiveSheet()->SetCellValue('M' . $curentLine, $dateClosed);
+                    $spreadsheet->getActiveSheet()->SetCellValue('N' . $curentLine, $visaClosed);
+                    $spreadsheet->getActiveSheet()->SetCellValue('Q' . $curentLine, $proj["samplereturn"]);
+                    $spreadsheet->getActiveSheet()->SetCellValue('R' . $curentLine, CoreTranslator::dateFromEn($proj["samplereturndate"], $lang));
+                    $spreadsheet->getActiveSheet()->getStyle('K' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->getStyle('L' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->getStyle('M' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->getStyle('N' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->getStyle('Q' . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->getStyle('R' . $curentLine)->applyFromArray($styleBorderedCell);
                 }
             }
 
             $total += $invoice["total_ht"];
         }
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->mergeCells('A' . $curentLine . ':D' . $curentLine);
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $total);
+        $spreadsheet->getActiveSheet()->mergeCells('A' . $curentLine . ':D' . $curentLine);
+        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, $total);
 
         for ($r = 1; $r <= $curentLine; $r++) {
             for ($c = 'A'; $c !== 'Q'; $c++) {
-                $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+                $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
             }
         }
         for ($col = 'A'; $col !== 'Q'; $col++) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
+        $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
         $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
         // ////////////////////////////////////////////////////
         //                  Stats
         // ////////////////////////////////////////////////////
 
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::StatisticsMaj($lang));
-        $objPHPExcel->setActiveSheetIndex(2);
+        $spreadsheet->setActiveSheetIndex(2);
 
         $curentLine = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewIndustryTeam($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewIndustryTeam"] . " (" . $stats["purcentageNewIndustryTeam"] . "%)");
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewIndustryTeam($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewIndustryTeam"] . " (" . $stats["purcentageNewIndustryTeam"] . "%)");
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberIndustryProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberIndustryProjects"]);
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberIndustryProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberIndustryProjects"]);
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyIndustryProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyIndustryProjects"] . " (" . $stats["purcentageloyaltyIndustryProjects"] . "%)");
-        $curentLine++;
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewAccademicTeam($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewAccademicTeam"] . " (" . $stats["purcentageNewAccademicTeam"] . "%)");
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberAccademicProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberAccademicProjects"]);
-        $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyAccademicProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyAccademicProjects"] . " (" . $stats["purcentageloyaltyAccademicProjects"] . "%)");
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyIndustryProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyIndustryProjects"] . " (" . $stats["purcentageloyaltyIndustryProjects"] . "%)");
         $curentLine++;
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::totalNumberOfProjects($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["totalNumberOfProjects"]);
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewAccademicTeam($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewAccademicTeam"] . " (" . $stats["purcentageNewAccademicTeam"] . "%)");
+        $curentLine++;
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberAccademicProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberAccademicProjects"]);
+        $curentLine++;
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyAccademicProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyAccademicProjects"] . " (" . $stats["purcentageloyaltyAccademicProjects"] . "%)");
+        $curentLine++;
+        $curentLine++;
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::totalNumberOfProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["totalNumberOfProjects"]);
 
 
         //print_r($delayStats);
 
         $curentLine++;
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectInDelay($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberIndustryProjectInDelay"] . " (" . round($delayStats["percentageIndustryProjectInDelay"]) . "%)");
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectInDelay($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberIndustryProjectInDelay"] . " (" . round($delayStats["percentageIndustryProjectInDelay"]) . "%)");
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectOutDelay($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberIndustryProjectOutDelay"] . " (" . round($delayStats["percentageIndustryProjectOutDelay"]) . "%)");
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::industryProjectOutDelay($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberIndustryProjectOutDelay"] . " (" . round($delayStats["percentageIndustryProjectOutDelay"]) . "%)");
         $curentLine++;
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::academicProjectInDelay($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectInDelay"] . " (" . round($delayStats["percentageAcademicProjectInDelay"]) . "%)");
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::academicProjectInDelay($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectInDelay"] . " (" . round($delayStats["percentageAcademicProjectInDelay"]) . "%)");
         $curentLine++;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::academicProjectOutDelay($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectOutDelay"] . " (" . round($delayStats["percentageAcademicProjectOutDelay"]) . "%)");
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::academicProjectOutDelay($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $delayStats["numberAcademicProjectOutDelay"] . " (" . round($delayStats["percentageAcademicProjectOutDelay"]) . "%)");
 
 
         for ($r = 1; $r <= $curentLine; $r++) {
             for ($c = 'A'; $c !== 'C'; $c++) {
-                $objPHPExcel->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+                $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
             }
         }
         for ($col = 'A'; $col !== 'C'; $col++) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
+        $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
         $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
         // ////////////////////////////////////////////////////
         //                  Origin
         // ////////////////////////////////////////////////////
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::OriginsMaj($lang));
-        $objPHPExcel->setActiveSheetIndex(3);
+        $spreadsheet->setActiveSheetIndex(3);
 
         $curentLine = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, ServicesTranslator::Academique($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ServicesTranslator::Academique($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Industry($lang));
 
-        $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
 
         $acc = $statsOrigins['academique'];
         $private = $statsOrigins['private'];
         for ($i = 0; $i < count($acc); $i++) {
             $curentLine++;
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $acc[$i]['origin']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $acc[$i]['count']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $private[$i]['count']);
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $acc[$i]['origin']);
+            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $acc[$i]['count']);
+            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $private[$i]['count']);
 
-            $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
         }
 
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
+        $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
         $text = ServicesTranslator::OriginsFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
 
         // ////////////////////////////////////////////////////
         //                Services billed details
         // ////////////////////////////////////////////////////
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
-        $objPHPExcel->setActiveSheetIndex(4);
-        $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
+        $spreadsheet->setActiveSheetIndex(4);
+        $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 1;
-        $objPHPExcel->getActiveSheet()->setCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->setCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
 
-        $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
         $itemIdx = 5;
         $items = $projectsBilledBalance["items"];
@@ -658,27 +660,27 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($items as $item) {
             $itemIdx++;
             $name = $modelItem->getItemName($item);
-            $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
+            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
-        //$objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBilledBalance["projects"];
         
         foreach ($projects as $proj) {
             $curentLine++;
             $unitName = $modelClient->getInstitution($proj["id_resp"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
+            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
 
-            $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
             // "entries"
             $idx = -1;
@@ -688,13 +690,13 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 $pos = $this->findItemPos($items, $entry["id"]);
                 if ($pos > 0 && $entry["pos"] > 0) {
                     //print_r($entry);
-                    $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($pos + 5) . $curentLine, $entry["sum"]);
-                    $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($pos + 5) . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + 5) . $curentLine, $entry["sum"]);
+                    $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + 5) . $curentLine)->applyFromArray($styleBorderedCell);
 
                     //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
             }
-            //$objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
+            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
         }
 
         // total services sum
@@ -704,46 +706,46 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($items as $itemsT) {
             $itemIdx++;
             $colLetter = $this->get_col_letter($itemIdx);
-            $objPHPExcel->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "2:" . $colLetter . $lastLine . ")");
+            $spreadsheet->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "2:" . $colLetter . $lastLine . ")");
         }
 
         for ($r = 1; $r <= $curentLine; $r++) {
             for ($c = 1; $c <= $itemIdx; $c++) {
-                $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($c) . $r)->applyFromArray($styleBorderedCell);
+                $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($c) . $r)->applyFromArray($styleBorderedCell);
             }
         }
         for ($col = 'A'; $col !== $this->get_col_letter($itemIdx + 1); $col++) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
+        $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
         $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
 
 
         // ////////////////////////////////////////////////////
         //                Services details
         // ////////////////////////////////////////////////////
-        $objWorkSheet = $objPHPExcel->createSheet();
+        $objWorkSheet = $spreadsheet->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
-        $objPHPExcel->setActiveSheetIndex(5);
-        $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
+        $spreadsheet->setActiveSheetIndex(5);
+        $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
-        //$objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
 
-        $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
-        $objPHPExcel->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-        //$objPHPExcel->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
+        //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
         $itemIdx = 4;
         $items = $projectsBalance["items"];
@@ -753,21 +755,21 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($items as $item) {
             $itemIdx++;
             $name = $modelItem->getItemName($item[0]);
-            $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
+            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
 
         $lastItemIdx = $itemIdx - 1;
-        $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 1) . $curentLine, ServicesTranslator::Opened_date($lang));
-        $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 1) . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 1) . $curentLine, ServicesTranslator::Opened_date($lang));
+        $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 1) . $curentLine)->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 2) . $curentLine, ServicesTranslator::Time_limite($lang));
-        $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 2) . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 2) . $curentLine, ServicesTranslator::Time_limite($lang));
+        $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 2) . $curentLine)->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 3) . $curentLine, ServicesTranslator::Closed_date($lang));
-        $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 3) . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 3) . $curentLine, ServicesTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 3) . $curentLine)->applyFromArray($styleBorderedCell);
 
-        //$objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBalance["projects"];
         //print_r($projects);
@@ -775,28 +777,28 @@ class ServicesstatisticsprojectController extends CoresecureController {
             $curentLine++;
             
             $unitName = $modelClient->getInstitution($proj["id_resp"]);
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
-            //$objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
+            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
+            //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
 
-            $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-            //$objPHPExcel->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
+            //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $dateClosed = "";
             if ($proj["date_close"] != "0000-00-00") {
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
             }
-            $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 1) . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 2) . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 3) . $curentLine, $dateClosed);
-            $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 1) . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 2) . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 3) . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 1) . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 2) . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 3) . $curentLine, $dateClosed);
+            $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 1) . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 2) . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 3) . $curentLine)->applyFromArray($styleBorderedCell);
 
             // "entries"
             $idx = -1;
@@ -811,15 +813,15 @@ class ServicesstatisticsprojectController extends CoresecureController {
                 //echo "id = " . $entry["id"] . " pos = " . $pos . "<br/>";
                 if ($pos > 0 && $entry["pos"] > 0) {
 
-                    $objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
-                    $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
+                    $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
                     //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
             }
-            //$objPHPExcel->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
+            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
             //if($projItemCount == 0){
-            //    $objPHPExcel->getActiveSheet()->removeRow($curentLine);
+            //    $spreadsheet->getActiveSheet()->removeRow($curentLine);
             //    $curentLine--;
             //}
         }
@@ -831,28 +833,29 @@ class ServicesstatisticsprojectController extends CoresecureController {
         foreach ($items as $itemsT) {
             $itemIdx++;
             $colLetter = $this->get_col_letter($itemIdx);
-            $objPHPExcel->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "2:" . $colLetter . $lastLine . ")");
+            $spreadsheet->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(" . $colLetter . "2:" . $colLetter . $lastLine . ")");
         }
 
         for ($r = 1; $r <= $curentLine; $r++) {
             for ($c = 1; $c <= $itemIdx; $c++) {
-                $objPHPExcel->getActiveSheet()->getStyle($this->get_col_letter($c) . $r)->applyFromArray($styleBorderedCell);
+                $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($c) . $r)->applyFromArray($styleBorderedCell);
             }
         }
         for ($col = 'A'; $col !== $this->get_col_letter($itemIdx + 1); $col++) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $objPHPExcel->getActiveSheet()->insertNewRowBefore(1, 1);
-        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
+        $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
         $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', $text);
+        $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
         if ($render) {
 
             // write excel file
-            $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+            //$objWriter = new PHPExcel_Writer_Excel2007($spreadsheet);
+            $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
             //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -860,7 +863,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
             header('Cache-Control: max-age=0');
             $objWriter->save('php://output');
         } else {
-            return $objPHPExcel;
+            return $spreadsheet;
         }
     }
 
@@ -915,14 +918,14 @@ class ServicesstatisticsprojectController extends CoresecureController {
         $modelProject = new SeProject();
         $returnedSamples = $modelProject->getReturnedSamples($id_space);
 
-        $objPHPExcel = new PHPExcel();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
         // Set properties
-        $objPHPExcel->getProperties()->setCreator("Platform-Manager");
-        $objPHPExcel->getProperties()->setLastModifiedBy("Platform-Manager");
-        $objPHPExcel->getProperties()->setTitle("Project balance sheet");
-        $objPHPExcel->getProperties()->setSubject("Project balance sheet");
-        $objPHPExcel->getProperties()->setDescription("");
+        $spreadsheet->getProperties()->setCreator("Platform-Manager");
+        $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
+        $spreadsheet->getProperties()->setTitle("Project balance sheet");
+        $spreadsheet->getProperties()->setSubject("Project balance sheet");
+        $spreadsheet->getProperties()->setDescription("");
 
         // ////////////////////////////////////////////////////
         //              stylesheet
@@ -938,20 +941,20 @@ class ServicesstatisticsprojectController extends CoresecureController {
             ),
             'borders' => array(
                 'outline' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     'color' => array(
                         'rgb' => '000000'),
                 ),
             ),
             'fill' => array(
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
             ),
         );
 
@@ -966,70 +969,70 @@ class ServicesstatisticsprojectController extends CoresecureController {
             ),
             'borders' => array(
                 'outline' => array(
-                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     'color' => array(
                         'rgb' => '000000'),
                 ),
             ),
             'fill' => array(
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ),
         );
 
-        $objPHPExcel->getActiveSheet()->setTitle(ServicesTranslator::SamplesStock($lang));
+        $spreadsheet->getActiveSheet()->setTitle(ServicesTranslator::SamplesStock($lang));
         
         //responsable, unité,  utilisateur, no projet
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('A1', CoreTranslator::Responsible($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('A1', CoreTranslator::Responsible($lang));
+        $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('B1', ClientsTranslator::Institution($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('B1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('B1', ClientsTranslator::Institution($lang));
+        $spreadsheet->getActiveSheet()->getStyle('B1')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('C1', CoreTranslator::User($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('C1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('C1', CoreTranslator::User($lang));
+        $spreadsheet->getActiveSheet()->getStyle('C1')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('D1', ServicesTranslator::Project($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('D1', ServicesTranslator::Project($lang));
+        $spreadsheet->getActiveSheet()->getStyle('D1')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('E1', ServicesTranslator::SampleReturn($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('E1', ServicesTranslator::SampleReturn($lang));
+        $spreadsheet->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCell);
 
-        $objPHPExcel->getActiveSheet()->SetCellValue('F1', CoreTranslator::Date($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('F1', CoreTranslator::Date($lang));
+        $spreadsheet->getActiveSheet()->getStyle('F1')->applyFromArray($styleBorderedCell);
         
-        $objPHPExcel->getActiveSheet()->SetCellValue('G1', ServicesTranslator::StockSamples($lang));
-        $objPHPExcel->getActiveSheet()->getStyle('G1')->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue('G1', ServicesTranslator::StockSamples($lang));
+        $spreadsheet->getActiveSheet()->getStyle('G1')->applyFromArray($styleBorderedCell);
 
         // projet; responsable, récupération matériel, date 
         $curentLine = 1;
         foreach ($returnedSamples as $r) {
             $curentLine++;
-            $objPHPExcel->getActiveSheet()->SetCellValue('A' . $curentLine, $r['resp']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('B' . $curentLine, $r['unit']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('C' . $curentLine, $r['user']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('D' . $curentLine, $r['name']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('E' . $curentLine, $r['samplereturn']);
-            $objPHPExcel->getActiveSheet()->SetCellValue('F' . $curentLine, CoreTranslator::dateFromEn($r['samplereturndate'], $lang));
-            $objPHPExcel->getActiveSheet()->SetCellValue('G' . $curentLine, $r['sample_cabinet']);
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $r['resp']);
+            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $r['unit']);
+            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $r['user']);
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $r['name']);
+            $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, $r['samplereturn']);
+            $spreadsheet->getActiveSheet()->SetCellValue('F' . $curentLine, CoreTranslator::dateFromEn($r['samplereturndate'], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue('G' . $curentLine, $r['sample_cabinet']);
             
-            $objPHPExcel->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCell);
-            $objPHPExcel->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('F' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('G' . $curentLine)->applyFromArray($styleBorderedCell);
         }
 
-        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
