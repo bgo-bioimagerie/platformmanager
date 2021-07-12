@@ -201,7 +201,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
         $formAdd->addNumber("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addNumber("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addFloat("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
