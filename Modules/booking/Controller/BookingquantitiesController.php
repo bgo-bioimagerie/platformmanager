@@ -68,48 +68,80 @@ class BookingquantitiesController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingquantities/".$id_space);
         $form->setButtonsWidth(2, 9);
         
-        if ($form->check()){
+        if ($form->check()) {
             $supID = $this->request->getParameterNoException("id_sups");
             $supResource = $this->request->getParameterNoException("id_resources");
             $supName = $this->request->getParameterNoException("names");
             $supMandatory = $this->request->getParameterNoException("mandatory");
             $supIsInvoicingUnit = $this->request->getParameterNoException("is_invoicing_unit");
-            
-            $count = 0;
-            
-            // get the last package id
-            $lastID = 0;
-            for( $p = 0 ; $p < count($supID) ; $p++){
-                if ($supName[$p] != "" && $supID[$p] > $lastID ){
-                    $lastID = $supID[$p];
-                }
-            }
-                
-            for( $p = 0 ; $p < count($supID) ; $p++){
-                if ($supName[$p] != "" ){
-                    $curentID = $supID[$p];
 
-                    if ($curentID == ""){
-                        $lastID++;
-                        $curentID = $lastID;
-                        $supID[$p] = $lastID;
+            // format into arrays
+            $supIsInvoicingUnit = is_array($supIsInvoicingUnit) ? $supIsInvoicingUnit : [$supIsInvoicingUnit];
+            $supID = is_array($supID) ? $supID : [$supID];
+
+            // find out if multiple quantities are used as invoicing units
+            if (count(array_keys($supIsInvoicingUnit, 1)) > 1) {
+                $_SESSION["message"] = ["content" => BookingTranslator::maxInvoicingUnits($lang), "type" => "alert-danger", "dismissible" => true];
+            } else {
+                $count = 0;
+            
+                // get the last package id
+                $lastID = 0;
+                for ($p = 0 ; $p < count($supID) ; $p++) {
+                    if ($supName[$p] != "" && $supID[$p] > $lastID ) {
+                        $lastID = $supID[$p];
                     }
-                    if ($curentID == 1 && $p > 0){
-                        $lastID++;
-                        $curentID = $lastID;
-                        $supID[$p] = $lastID;
-                    }
-                    //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelSups->setCalQuantity($curentID, $supResource[$p], $supName[$p], $supMandatory[$p], $supIsInvoicingUnit[$p]);
-                    $count++;
                 }
+                    
+                for ($p = 0 ; $p < count($supID) ; $p++) {
+                    if ($supName[$p] != "" ) {
+                        $curentID = $supID[$p];
+
+                        if ($curentID == "") {
+                            $lastID++;
+                            $curentID = $lastID;
+                            $supID[$p] = $lastID;
+                        }
+                        if ($curentID == 1 && $p > 0) {
+                            $lastID++;
+                            $curentID = $lastID;
+                            $supID[$p] = $lastID;
+                        }
+                        $modelSups->setCalQuantity($curentID, $supResource[$p], $supName[$p], $supMandatory[$p], $supIsInvoicingUnit[$p]);
+                        $count++;
+                    }
+                }
+                $count = 0;
+            
+                // get the last package id
+                $lastID = 0;
+                for ($p = 0 ; $p < count($supID) ; $p++) {
+                    if ($supName[$p] != "" && $supID[$p] > $lastID ) {
+                        $lastID = $supID[$p];
+                    }
+                }
+                    
+                for ($p = 0 ; $p < count($supID) ; $p++) {
+                    if ($supName[$p] != "" ) {
+                        $curentID = $supID[$p];
+    
+                        if ($curentID == "") {
+                            $lastID++;
+                            $curentID = $lastID;
+                            $supID[$p] = $lastID;
+                        }
+                        if ($curentID == 1 && $p > 0) {
+                            $lastID++;
+                            $curentID = $lastID;
+                            $supID[$p] = $lastID;
+                        }
+                        $modelSups->setCalQuantity($curentID, $supResource[$p], $supName[$p], $supMandatory[$p], $supIsInvoicingUnit[$p]);
+                        $count++;
+                    }
+                }
+                $modelSups->removeUnlistedQuantities($supID);
+                $_SESSION["message"] = ["content" => BookingTranslator::Quantities_saved($lang), "type" => "alert-success", "dismissible" => true];
             }
-            
-            //echo "sups ids = ". print_r($supID) . "<br/>";
-            //echo "sup Resource ids = ". print_r($supResource) . "<br/>";
-            
-            $modelSups->removeUnlistedQuantities($supID);
-            $_SESSION["message"] = BookingTranslator::Quantities_saved($lang);
             $this->redirect("bookingquantities/".$id_space);
             return;
         }

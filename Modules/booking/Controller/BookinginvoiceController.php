@@ -346,7 +346,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
             // $bkCalQuantities->calQuantitiesByResource($res["id"]);
             $calQuantities = $bkCalQuantitiesModel->calQuantitiesByResource($res["id"]);
             $calQuantites = ($calQuantities === null) ? [] : $calQuantities;
-            Configuration::getLogger()->debug("[TEST]", ["bkCalQuantities for resource" => $calQuantities]);
             // filter by is_invoicing_unit (1 max) (and mandatory ?)
             $isInvoicingUnit = false;
             $calQuantityId;
@@ -357,7 +356,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     $isInvoicingUnit = true;
                 }
             }
-            // just in case, get the first one
 
             // get all packages
             $userPackages = array();
@@ -380,16 +378,12 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     $userPackages[$reservation["package_id"]] ++;
                 } else {
                     $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
-                    // TODO: use "is_invoicing_unit" condition !!!
+                    
                     if ($isInvoicingUnit) {
-                        // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
-                        // get number of resources booked
-                        // refactor that in a if statement
-                        
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
-                            Configuration::getLogger()->debug("[TEST]", ["multipleQuantities?" => $reservation["quantities"]]);
-                            // TODO: must look for the quantity with $calQuantityId AND secure that (try catch ?)
-
+                            // TODO: secure that (try catch ?)
+                            // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
+                            // get number of resources booked
                             $strToFind = strval($calQuantityId) . "=";
                             $lastPos = 0;
                             $positions = array();
@@ -397,12 +391,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
                                 $positions[] = $lastPos;
                                 $lastPos = $lastPos + strlen($strToFind);
                             }
-
-                            // TODO: 1ST THING : check if this works
                             $foundStr = substr($reservation["quantities"], $positions[0]);
-                            $qte = intval(explode("=", $foundStr)[0]);
-                            // $qte = intval(explode("=", explode(";", $reservation["quantities"])[0])[1]);
-                            
+                            $qte = intval(explode("=", $foundStr)[1]);
                         } else {
                             $qte = 0;
                         }
@@ -416,7 +406,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                         $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
                     }
                 }
-                // Record that an invoice was generated for this reservation (so that we can't re-invoice still existing)
+                // Record that an invoice was generated for this reservation (so that we can't re-invoice if existing)
                 $modelCal->setReservationInvoice($reservation["id"], $invoice_id);
             }
             // fill content
