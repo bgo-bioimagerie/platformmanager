@@ -40,7 +40,6 @@ class View {
      * @param array $data data that fill the view
      */
     public function generate($data) {
-
         $rootWeb = Configuration::get("rootWeb", "/");
         $data['rootWeb'] = $rootWeb;
 
@@ -52,7 +51,7 @@ class View {
     }
 
     /**
-     * Generate a view file and return the it's content
+     * Generate a view file and return it's content
      * 
      * @param string $file URL of the view file vue to generate
      * @param array $data Needed data to generate the view
