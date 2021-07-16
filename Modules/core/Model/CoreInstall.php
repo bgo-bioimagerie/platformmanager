@@ -149,76 +149,94 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `bk_calendar_entry`;";
         $resdb = $this->runRequest($sql);
-        while($res = $resdb->fetch()) {
-            if($res['period_id']) {
-                $sql = "UPDATE bk_calendar_period SET id_space=? WHERE id=?";
-                $this->runRequest($sql, array($res['id_space'], $res['period_id']));
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                if($res['period_id']) {
+                    $sql = "UPDATE bk_calendar_period SET id_space=? WHERE id=?";
+                    $this->runRequest($sql, array($res['id_space'], $res['period_id']));
+                }
             }
         }
 
         $sql = "SELECT * FROM `re_area`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
-            $sql = "UPDATE bk_bookingcss SET id_space=? WHERE id_area=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bk_schedulings SET id_space=?, id_rearea=? WHERE id=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id'], $res['id']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE bk_bookingcss SET id_space=? WHERE id_area=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE bk_schedulings SET id_space=?, id_rearea=? WHERE id=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `bj_collections`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
-            $sql = "UPDATE bj_j_collections_notes SET id_space=? WHERE id_collection=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch) {
+                $sql = "UPDATE bj_j_collections_notes SET id_space=? WHERE id_collection=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `bj_notes`;";
         $resdb = $this->runRequest($sql);
-        while($res = $resdb->fetch()) {
-            $sql = "UPDATE bj_events SET id_space=? WHERE id_note=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bj_tasks SET id_space=? WHERE id_note=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bj_tasks_history SET id_space=? WHERE id_note=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE bj_events SET id_space=? WHERE id_note=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE bj_tasks SET id_space=? WHERE id_note=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE bj_tasks_history SET id_space=? WHERE id_note=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `ca_categories`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
-            $sql = "UPDATE ca_entries SET id_space=? WHERE id_category=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE ca_entries SET id_space=? WHERE id_category=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `cl_clients`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
-            $sql = "UPDATE cl_addresses SET id_space=? WHERE id=?";
-            $this->runRequest($sql, array($res['id_space'], $res['address_invoice']));
-            $this->runRequest($sql, array($res['id_space'], $res['address_delivery']));
-            $sql = "UPDATE cl_j_client_user SET id_space=? WHERE id_client=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE cl_addresses SET id_space=? WHERE id=?";
+                $this->runRequest($sql, array($res['id_space'], $res['address_invoice']));
+                $this->runRequest($sql, array($res['id_space'], $res['address_delivery']));
+                $sql = "UPDATE cl_j_client_user SET id_space=? WHERE id_client=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `in_invoice`;";
         $resdb = $this->runRequest($sql);
-        while($res = $resdb->fetch()) {
-            $sql = "UPDATE in_invoice_item SET id_space=? WHERE id_invoice=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE in_invoice_item SET id_space=? WHERE id_invoice=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `qo_quotes`;";
         $resdb = $this->runRequest($sql);
-        while($res = $resdb->fetch()) {
-            $sql = "UPDATE qo_quoteitems SET id_space=? WHERE id_quote=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE qo_quoteitems SET id_space=? WHERE id_quote=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `re_event`;";
         $resdb = $this->runRequest($sql);
-        while($res = $resdb->fetch()) {
-            $sql = "UPDATE re_event_data SET id_space=? WHERE id_event=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE re_event_data SET id_space=? WHERE id_event=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `re_category`;";
@@ -229,45 +247,53 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `se_services`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
-            $sql = "UPDATE se_prices SET id_space=? WHERE id_service=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE se_service_types SET id_space=? WHERE id=?";
-            $this->runRequest($sql, array($res['id_space'], $res['type_id']));
-            $sql = "UPDATE se_order_service SET id_space=? WHERE id_service=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE se_prices SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_service_types SET id_space=? WHERE id=?";
+                $this->runRequest($sql, array($res['id_space'], $res['type_id']));
+                $sql = "UPDATE se_order_service SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `stock_cabinets`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
-            $sql = "UPDATE stock_shelf SET id_space=? WHERE id_cabinet=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE stock_shelf SET id_space=? WHERE id_cabinet=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `es_sales`;";
         $resdb = $this->runRequest($sql);
-        while($res = $resdb->fetch()) {
-            $sql = "UPDATE es_sale_entered_items SET id_space=? WHERE id_sale=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE es_sale_history SET id_space=? WHERE id_sale=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE es_sale_items SET id_space=? WHERE id_sale=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE es_sale_invoice_items SET id_space=? WHERE id_sale=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE es_sale_entered_items SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE es_sale_history SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE es_sale_items SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE es_sale_invoice_items SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `ac_anticorps`";
         $resdb = $this->runRequest($sql);
-        while($res = $resdb->fetch()) {
-            $sql = "UPDATE ac_j_tissu_anticorps SET id_space=? WHERE id_anticorps=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE ac_j_user_anticorps SET id_space=? WHERE id_anticorps=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE ac_j_tissu_anticorps SET id_space=? WHERE id_anticorps=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE ac_j_user_anticorps SET id_space=? WHERE id_anticorps=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
 
@@ -314,9 +340,12 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT max(no_h2p2) as counter FROM ac_anticorps";
-        $resdb = $this->runRequest($sql)->fetch();
-        if($resdb && intval($resdb['counter']) > $counter) {
-            $counter = intval($resdb['counter']);
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $res = $resdb->fetch();
+            if($res && intval($res['counter']) > $counter) {
+                $counter = intval($res['counter']);
+            }
         }
 
         $i = 0;
@@ -420,9 +449,9 @@ class CoreDB extends Model {
                 if (method_exists($this, $upgradeMethod)) {
                     try {
                         $this->$upgradeMethod();
-                    } catch(Exception $e) {
+                    } catch(Throwable $e) {
                         $updateOK = false;
-                        Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+                        Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease, "error" => $e]);
                         break;
                     }
                 } else {
