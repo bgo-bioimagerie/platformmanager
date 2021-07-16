@@ -88,7 +88,9 @@ class InVisa extends Model {
     public function getVisaName($id_space, $id){
         $sql = "SELECT * FROM in_visa WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
-        
+        if(!$data) {
+            return null;
+        } 
         $modelUser = new CoreUser();
         return $modelUser->getUserFUllName($data["id_user"]);
     }
@@ -96,7 +98,9 @@ class InVisa extends Model {
     public function getVisaNameShort($id_space, $id){
         $sql = "SELECT * FROM in_visa WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
-        
+        if(!$data) {
+            return null;
+        }
         $modelUser = new CoreUser();
         return $modelUser->getUserInitials($data["id_user"]);
     }

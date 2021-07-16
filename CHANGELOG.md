@@ -1,7 +1,19 @@
 # 2.0
 
+* Fix multi-tenant (still have pending issues for some modules,
+  will be fixed in next release)
+* Fix multi-tenant issues for email 
+* #206 fix booking invoices creation when night and weekend
+  prices option not set
+* #189 fix booking blocking errors
+* #194 fix client creation
+* #105 fix user modification
+* #171 fix user login inactivity
+* #168 fix menu board display
+* Add sql debug and logging
+
 * New command-line script cli/php-cli.php:
-  * used for install commands
+  * used for install/upgrade commands
 
 * New env variables:
   * DEBUG: activate logs with debug level

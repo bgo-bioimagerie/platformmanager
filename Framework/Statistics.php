@@ -130,6 +130,9 @@ class Statistics {
             }
             $point = self::getPoint($stat);
             $writeApi = $this->getWriteApi($space);
+            if($writeApi == null) {
+                return;
+            }
             $writeApi->write($point);
         } catch(Throwable $e) {
             Configuration::getLogger()->error('[stats] stat error', ['message' => $e->getMessage()]);

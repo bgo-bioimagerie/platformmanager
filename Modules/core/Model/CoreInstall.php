@@ -30,6 +30,7 @@ require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
+require_once 'Modules/core/Model/CoreHistory.php';
 
 
 define("DB_VERSION", 3);
@@ -466,7 +467,7 @@ class CoreInstall extends Model {
         $modelConfig = new CoreConfig();
         $modelConfig->createTable();
 
-        $modelConfig->initParam("admin_email", "firstname.name@company.com");
+        $modelConfig->initParam("admin_email", Configuration::get('admin_email', ''));
         $modelConfig->initParam("logo", "Modules/core/Theme/logo.jpg");        
     	$modelConfig->initParam("home_title", "Platform-Manager");
     	$modelConfig->initParam("home_message", "Connection");
@@ -533,6 +534,8 @@ class CoreInstall extends Model {
 
         $modelVirtual = new CoreVirtual();
         $modelVirtual->createTable();
+        $modelHistory = new CoreHistory();
+        $modelHistory->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

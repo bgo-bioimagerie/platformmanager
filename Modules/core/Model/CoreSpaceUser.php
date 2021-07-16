@@ -2,6 +2,7 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 /**
  * Class defining the Status model
@@ -53,7 +54,7 @@ class CoreSpaceUser extends Model {
         }
         return false;
     }
-    
+
     public function setDateEndContract($id_user, $id_space, $date_contract_end){
         $sql = "UPDATE core_j_spaces_user SET date_contract_end=? WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($date_contract_end, $id_user, $id_space));
@@ -82,9 +83,35 @@ class CoreSpaceUser extends Model {
         return $this->runRequest($sql, array($id_space, $id_user))->fetch();
     }
 
-    public function delete($id_user, $id_space){
-        $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
-        $this->runRequest($sql, array($id_user, $id_space));
+    /**
+     * Remove user from space
+     * 
+     * @param int $id_space
+     * @param int $id_user
+     * @param int $status optional status filter
+     */
+    public function delete($id_space, $id_user, $status=null){
+        $count = 0;
+        if($status != null) {
+            $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=? AND status=?";
+            $pdo = $this->runRequest($sql, array($id_user, $id_space, $status));
+            $count = $pdo->rowCount();
+        } else {
+            $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+            $pdo = $this->runRequest($sql, array($id_user, $id_space));
+            $count = $pdo->rowCount();
+        }
+
+        if($count > 0) {
+            // Update eventually pending accounts status
+            $modelSpacePending = new CorePendingAccount();
+            $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_UNJOIN,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
+            ]);
+        }
     }
 
     /**

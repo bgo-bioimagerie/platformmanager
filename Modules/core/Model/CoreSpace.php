@@ -3,6 +3,8 @@
 require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 require_once 'Framework/Events.php';
 
@@ -517,8 +519,10 @@ class CoreSpace extends Model {
                 }
             }
             if (!$found) {
-                $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=? AND status=?";
-                $this->runRequest($sql, array($id, $aadm["id_user"], CoreSpace::$ADMIN));
+                $m = new CoreSpaceUser();
+                $m->delete($id, $aadm["id_user"], CoreSpace::$ADMIN);
+                //$sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=? AND status=?";
+                //$this->runRequest($sql, array($id, $aadm["id_user"], CoreSpace::$ADMIN));
             }
         }
 
@@ -528,6 +532,9 @@ class CoreSpace extends Model {
         }
     }
 
+    /**
+     * @deprecated , duplicate function, should use delete in CoreSpaceUser
+     */
     public function deleteUser($id_space, $id_user) {
         $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $this->runRequest($sql, array($id_space, $id_user));

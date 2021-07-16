@@ -96,7 +96,7 @@ class ClientslistController extends CoresecureController {
         $form->addText("name", ClientsTranslator::Identifier($lang), true, $client["name"]);
         $form->addText("contact_name", ClientsTranslator::ContactName($lang), false, $client["contact_name"]);
         $form->addText("phone", ClientsTranslator::Phone($lang), false, $client["phone"]);
-        $form->addText("email", ClientsTranslator::Email($lang), false, $client["email"]);
+        $form->addEmail("email", ClientsTranslator::Email($lang), false, $client["email"]);
 
         $form->addSelect("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
         $form->addSelect("invoice_send_preference", ClientsTranslator::invoice_send_preference($lang), $preferences["names"], $preferences["ids"], $client["invoice_send_preference"]);

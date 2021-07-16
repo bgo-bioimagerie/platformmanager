@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Modules/services/Model/SeProject.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
-require_once("externals/PHPExcel/Classes/PHPExcel.php");
+// require_once 'externals/PHPExcel/Classes/PHPExcel.php';
 
 /**
  * Class defining the supplies pricing model

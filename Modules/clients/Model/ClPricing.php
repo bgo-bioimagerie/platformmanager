@@ -48,7 +48,7 @@ class ClPricing extends Model {
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM cl_pricings WHERE id=? AND id_space=? AND deleted=0";
         $d = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $d ? $d[0]: "";
+        return $d ? $d[0]: null;
     }
 
     

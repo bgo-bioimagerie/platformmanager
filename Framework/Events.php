@@ -10,6 +10,8 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
+require_once 'Modules/core/Model/CoreHistory.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -67,11 +69,21 @@ class EventHandler {
     public function spaceUserJoin($msg) {
         $this->logger->debug('[spaceUserJoin]', ['space_id' => $msg['space']['id']]);
         $this->spaceUserCount($msg);
+        $u = new CoreUser();
+        $user = $u->getInfo($msg['user']['id']);
+        $login = $user['login'];
+        $m = new CoreHistory();
+        $m->add( $msg['space']['id'], $msg['_user'], "User $login joined space");
     }
 
     public function spaceUserUnjoin($msg) {
         $this->logger->debug('[spaceUserUnjoin]', ['space_id' => $msg['space']['id']]);
         $this->spaceUserCount($msg);
+        $u = new CoreUser();
+        $user = $u->getInfo($msg['user']['id']);
+        $login = $user['login'];
+        $m = new CoreHistory();
+        $m->add( $msg['space']['id'], $msg['_user'], "User $login left space");
     }
 
     private function _calEntryStat($space, $entry, $value){
@@ -221,6 +233,7 @@ class Events {
                 return;
             }
             Configuration::getLogger()->debug('[event] send', ['message' => $message]);
+            $message['_user'] = $_SESSION['login'] ?? 'unknown';
             $amqpMsg = new AMQPMessage(json_encode($message));
             $channel->basic_publish($amqpMsg, 'pfm_events', '');
         } catch (Exception $e) {

@@ -604,9 +604,9 @@ class EstoresaleController extends CoresecureController {
         $content = ob_get_clean();
         
         // convert in PDF
-        require_once('externals/html2pdf/vendor/autoload.php');
+        // require_once('externals/html2pdf/vendor/autoload.php');
         try {
-            $html2pdf = new HTML2PDF('P', 'A4', 'fr');
+            $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
             //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
@@ -614,7 +614,7 @@ class EstoresaleController extends CoresecureController {
             //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
             $html2pdf->Output('bon_de_livraison.pdf');
             return;
-        } catch (HTML2PDF_exception $e) {
+        } catch (Exception $e) {
             echo $e;
             exit;
         }
@@ -860,9 +860,9 @@ class EstoresaleController extends CoresecureController {
         $content = ob_get_clean();
         
         // convert in PDF
-        require_once('externals/html2pdf/vendor/autoload.php');
+        // require_once('externals/html2pdf/vendor/autoload.php');
         try {
-            $html2pdf = new HTML2PDF('P', 'A4', 'fr');
+            $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
             //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
@@ -870,7 +870,7 @@ class EstoresaleController extends CoresecureController {
             //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
             $html2pdf->Output('bon_de_livraison.pdf');
             return;
-        } catch (HTML2PDF_exception $e) {
+        } catch (Exception $e) {
             echo $e;
             exit;
         }
@@ -1118,9 +1118,9 @@ class EstoresaleController extends CoresecureController {
         $content = ob_get_clean();
         
         // convert in PDF
-        require_once('externals/html2pdf/vendor/autoload.php');
+        // require_once('externals/html2pdf/vendor/autoload.php');
         try {
-            $html2pdf = new HTML2PDF('P', 'A4', 'fr');
+            $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
             //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
@@ -1128,7 +1128,7 @@ class EstoresaleController extends CoresecureController {
             //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
             $html2pdf->Output('bon_de_livraison.pdf');
             return;
-        } catch (HTML2PDF_exception $e) {
+        } catch (Exception $e) {
             echo $e;
             exit;
         }

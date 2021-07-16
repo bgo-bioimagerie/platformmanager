@@ -121,12 +121,17 @@ class BkCalendarEntry extends Model {
             
             $sqlr = "SELECT name from cl_clients WHERE id=? AND deleted=0 AND space_id=?";
             //$sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
+
             $respinfo = $this->runRequest($sqlr, array($resp[0], $id_space))->fetch();
-            
+            if(!$respinfo) {
+                $respinfo = ["name" => "unknown"];
+            }
             $resourceCount = array();
             foreach( $resources as $resource){
                 $sql3 = "SELECT * FROM bk_calendar_entry WHERE deleted=0 AND space_id=? AND responsible_id=? AND resource_id=? AND start_time>=? AND start_time<=?";
                 $res = $this->runRequest($sql3, array($id_space, $resp[0], $resource["id"], $dateBeginTime, $dateEndTime))->fetchAll();
+                if(!$res) { continue; }
+
                 $time = 0;
                 foreach($res as $r){
                     $time += $r["end_time"] - $r["start_time"];
