@@ -23,8 +23,7 @@ class AcOwner extends Model {
                     `date_recept` DATE NOT NULL,
                     `no_dossier` varchar(12) NOT NULL,
                     PRIMARY KEY (`id`)
-                    );
-                    ";
+                    );";
 
         $this->runRequest($sql);
     }

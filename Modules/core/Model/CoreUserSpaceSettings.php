@@ -22,7 +22,7 @@ class CoreUserSpaceSettings extends Model {
 		`user_id` int(11) NOT NULL,
 		`setting` varchar(30) NOT NULL DEFAULT '',
 		`value` varchar(40) NOT NULL DEFAULT '',
-        `id_space` int(11) NOT NULL,
+        `id_space` int(11) NOT NULL
 		);";
 
         $pdo = $this->runRequest($sql);
