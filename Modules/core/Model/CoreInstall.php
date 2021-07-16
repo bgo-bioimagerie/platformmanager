@@ -141,10 +141,12 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `bk_packages`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach($resdb as $res) {
-            $sql = "UPDATE bk_j_packages_prices SET id_space=? WHERE id_package=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id_package']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE bk_j_packages_prices SET id_space=? WHERE id_package=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id_package']));
+            }
         }
 
         $sql = "SELECT * FROM `bk_calendar_entry`;";
@@ -240,10 +242,12 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `re_category`;";
-        $resdb = $this->runRequest($sql)->fetchAll();
-        foreach ($resdb as $res) {
-            $sql = "UPDATE re_visas SET id_space=? WHERE id_resource_category=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE re_visas SET id_space=? WHERE id_resource_category=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
         }
 
         $sql = "SELECT * FROM `se_services`;";
