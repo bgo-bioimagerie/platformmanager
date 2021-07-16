@@ -32,7 +32,7 @@ require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 
 
-define("DB_VERSION", 2);
+define("DB_VERSION", 3);
 /**
  * Class defining the database version installed
  */
@@ -73,6 +73,23 @@ class CoreDB extends Model {
         }
         Configuration::getLogger()->debug("[db] Add core_spaces shortname, contact, support, done!");
 
+        Configuration::getLogger()->debug("[stats] import stats");
+        $cp = new CoreSpace();
+        $statHandler = new EventHandler();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
+            $spaceUsers = $cp->getUsers($space['id']);
+            foreach ($spaceUsers as $spaceUser) {
+                $statHandler->spaceUserJoin([
+                    'space' => ['id' => $space['id']],
+                    'user' => ['id' => $spaceUser['id']]
+                ]);
+            }
+        }
+        Configuration::getLogger()->debug("[stats] import stats done!");
+
+
         Configuration::getLogger()->debug("[users] add apikey");
         $cu = new CoreUser();
         $cu->addColumn("core_users", "apikey", "varchar(30)", "");
@@ -83,13 +100,18 @@ class CoreDB extends Model {
             }    
             $cu->newApiKey($user['id']);
         }
+        Configuration::getLogger()->debug("[users] add apikey done!");
+
 
         Configuration::getLogger()->debug("[adminmenu] remove update");
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
+        Configuration::getLogger()->debug("[adminmenu] remove update done!");
 
+    }
+
+    public function upgrade_v2_v3() {
         Configuration::getLogger()->debug('[id_space] set space identifier on objects');
-
         $sql = "SELECT * FROM `re_info`;";
         $resdb = $this->runRequest($sql)->fetchAll();
         foreach ($resdb as $res) {
@@ -178,7 +200,6 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `in_invoice`;";
-        // $resdb = $this->runRequest($sql)->fetchAll();
         $resdb = $this->runRequest($sql);
         while($res = $resdb->fetch()) {
             $sql = "UPDATE in_invoice_item SET id_space=? WHERE id_invoice=?";
@@ -186,7 +207,6 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `qo_quotes`;";
-        // $resdb = $this->runRequest($sql)->fetchAll();
         $resdb = $this->runRequest($sql);
         while($res = $resdb->fetch()) {
             $sql = "UPDATE qo_quoteitems SET id_space=? WHERE id_quote=?";
@@ -194,7 +214,6 @@ class CoreDB extends Model {
         }
 
         $sql = "SELECT * FROM `re_event`;";
-        // $resdb = $this->runRequest($sql)->fetchAll();
         $resdb = $this->runRequest($sql);
         while($res = $resdb->fetch()) {
             $sql = "UPDATE re_event_data SET id_space=? WHERE id_event=?";
@@ -308,26 +327,12 @@ class CoreDB extends Model {
 
         Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
 
-
         if(Statistics::enabled()) {
-            Configuration::getLogger()->debug("[stats] import stats");
-            $cp = new CoreSpace();
+            Configuration::getLogger()->debug("[stats] import calentry stats");
             $statHandler = new EventHandler();
-            $spaces = $cp->getSpaces('id');
-            foreach ($spaces as $space) {
-                $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
-                $spaceUsers = $cp->getUsers($space['id']);
-                foreach ($spaceUsers as $spaceUser) {
-                    $statHandler->spaceUserJoin([
-                        'space' => ['id' => $space['id']],
-                        'user' => ['id' => $spaceUser['id']]
-                    ]);
-                }
-            }
             $statHandler->calentryImport();
-            Configuration::getLogger()->debug('[stats] import stats, done!');
+            Configuration::getLogger()->debug('[stats] import calentry stats, done!');
         }
-
 
     }
 
