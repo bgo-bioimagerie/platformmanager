@@ -46,18 +46,18 @@ class ResourceInfo extends Model {
         );
     }
     
-    public function setImage($id, $image){
-        $sql = "UPDATE re_info SET image=? WHERE id=?";
-        $this->runRequest($sql, array($image, $id));
+    public function setImage($id_space, $id, $image){
+        $sql = "UPDATE re_info SET image=? WHERE id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($image, $id, $id_space));
     }
 
     public function getAll($sort = "name") {
-        $sql = "SELECT * FROM re_info ORDER BY " . $sort . " ASC";
+        $sql = "SELECT * FROM re_info WHERE deleted=0 ORDER BY " . $sort . " ASC";
         return $this->runRequest($sql)->fetchAll();
     }
     
     public function getForSpace($id_space){
-        $sql = "SELECT * FROM re_info WHERE id_space=?";
+        $sql = "SELECT * FROM re_info WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
@@ -72,7 +72,7 @@ class ResourceInfo extends Model {
     }
     
     public function getAllForSelect($id_space, $sort = "name"){
-        $sql = "SELECT * FROM re_info WHERE id_space=? ORDER BY " . $sort . " ASC";
+        $sql = "SELECT * FROM re_info WHERE id_space=? AND deleted=0 ORDER BY " . $sort . " ASC";
         $resources = $this->runRequest($sql, array($id_space))->fetchAll();
         $names = array(); $ids = array();
         foreach($resources as $res){
@@ -83,64 +83,64 @@ class ResourceInfo extends Model {
         
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM re_info WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM re_info WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ( $req->rowCount() > 0 ){
             return $req->fetch();
         }
         return null;
     }
     
-    public function getBySpace($id) {
+    public function getBySpace($id_space) {
         $sql = "SELECT re_info.*, re_category.name as category "
                 . "FROM re_info "
                 . "INNER JOIN re_category ON re_info.id_category = re_category.id "
-                . "WHERE re_info.id_space=?";
-        return $this->runRequest($sql, array($id))->fetchAll();
+                . "WHERE re_info.id_space=? AND re_info.deleted=0";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
-    public function getIdByName($name){
-        $sql = "SELECT id FROM re_info WHERE name=?";
+    public function getIdByName($id_space, $name){
+        $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($name))->fetch();
         return $tmp[0];
     }
     
     public function getIdByNameSpace($name, $id_space){
-        $sql = "SELECT id FROM re_info WHERE name=? AND id_space=?";
+        $sql = "SELECT id FROM re_info WHERE name=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
         return $tmp[0];
     }
 
-    public function getAreaID($id){
-        $sql = "SELECT id_area FROM re_info WHERE id=?";
-        $tmp = $this->runRequest($sql, array($id))->fetch();
+    public function getAreaID($id_space, $id){
+        $sql = "SELECT id_area FROM re_info WHERE id=? AND id_space=? AND deleted=0";
+        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $tmp[0];
     }
     
-    public function getName($id) {
-        $sql = "SELECT name FROM re_info WHERE id=?";
-        $tmp = $this->runRequest($sql, array($id))->fetch();
+    public function getName($id_space, $id) {
+        $sql = "SELECT name FROM re_info WHERE id=? AND id_space=? AND deleted=0";
+        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $tmp[0];
     }
 
     public function set($id, $name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order) {
 
-        if (!$this->exists($id)) {
+        if (!$this->exists($id_space, $id)) {
             $sql = "INSERT INTO re_info (name, brand, type, description, long_description, id_category, id_area, id_space, display_order) "
                     . "VALUES (?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = "UPDATE re_info SET name=?, brand=?, type=?, description=?, long_description=?, id_category=?, id_area=?, id_space=?, display_order=? WHERE id=?";
-            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order, $id));
+            $sql = "UPDATE re_info SET name=?, brand=?, type=?, description=?, long_description=?, id_category=?, id_area=?, display_order=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $display_order, $id, $id_space));
             return $id;
         }
     }
 
-    public function exists($id) {
-        $sql = "SELECT id FROM re_info WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function exists($id_space, $id) {
+        $sql = "SELECT id FROM re_info WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -152,9 +152,9 @@ class ResourceInfo extends Model {
      * @param unknown $areaId
      * @return mixed
      */
-    public function firstResourceIDForArea($areaId) {
-        $sql = "select id from re_info where id_area=? ORDER BY display_order ASC;";
-        $req = $this->runRequest($sql, array($areaId));
+    public function firstResourceIDForArea($id_space, $areaId) {
+        $sql = "select id from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order ASC;";
+        $req = $this->runRequest($sql, array($areaId, $id_space));
         $tmp = $req->fetch();
         return $tmp[0];
     }
@@ -164,9 +164,9 @@ class ResourceInfo extends Model {
      * @param unknown $areaId
      * @return multitype:
      */
-    public function resourceIDNameForArea($areaId) {
-        $sql = "select id, name from re_info where id_area=? ORDER BY display_order";
-        $data = $this->runRequest($sql, array($areaId));
+    public function resourceIDNameForArea($id_space, $areaId) {
+        $sql = "SELECT id, name from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order";
+        $data = $this->runRequest($sql, array($areaId, $id_space));
         return $data->fetchAll();
     }
 
@@ -175,14 +175,15 @@ class ResourceInfo extends Model {
      * @param unknown $areaId
      * @return multitype:
      */
-    public function resourcesForArea($areaId) {
-        $sql = "select * from re_info where id_area=? ORDER BY display_order";
-        $data = $this->runRequest($sql, array($areaId));
+    public function resourcesForArea($id_space, $areaId) {
+        $sql = "SELECT * from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order";
+        $data = $this->runRequest($sql, array($areaId, $id_space));
         return $data->fetchAll();
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM re_info WHERE id=?";
+    public function delete($id_space, $id) {
+        $sql = "UPDATE re_info SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        //$sql = "DELETE FROM re_info WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id));
     }
 

@@ -18,7 +18,7 @@ class CoreUserSpaceSettings extends Model {
      */
     public function createTable() {
 
-        $sql = "CREATE TABLE IF NOT EXISTS `core_users_settings` (
+        $sql = "CREATE TABLE IF NOT EXISTS `core_user_space_settings` (
 		`user_id` int(11) NOT NULL,
 		`setting` varchar(30) NOT NULL DEFAULT '',
 		`value` varchar(40) NOT NULL DEFAULT '',
@@ -36,7 +36,7 @@ class CoreUserSpaceSettings extends Model {
      * @return multitype: Use settings
      */
     public function getUserSettings($id_space, $user_id) {
-        $sql = "select setting, value  from core_users_settings where user_id=? AND id_space=?";
+        $sql = "select setting, value  from core_user_space_settings where user_id=? AND id_space=?";
         $user = $this->runRequest($sql, array($user_id, $id_space));
         $res = $user->fetchAll();
 
@@ -55,7 +55,7 @@ class CoreUserSpaceSettings extends Model {
      * @return mixed
      */
     public function getUserSetting($id_space, $user_id, $setting) {
-        $sql = "select value from core_users_settings where user_id=? and setting=? and id_space=?";
+        $sql = "select value from core_user_space_settings where user_id=? and setting=? and id_space=?";
         $user = $this->runRequest($sql, array($user_id, $setting, $id_space));
         $tmp = $user->fetch();
         return $tmp[0];
@@ -84,7 +84,7 @@ class CoreUserSpaceSettings extends Model {
      * @return boolean
      */
     protected function isSetting($id_space, $user_id, $setting) {
-        $sql = "select * from core_users_settings where user_id=? and setting=? and id_space=?";
+        $sql = "select * from core_user_space_settings where user_id=? and setting=? and id_space=?";
         $req = $this->runRequest($sql, array($user_id, $setting, $id_space));
         return $req->rowCount() == 1;
     }
@@ -97,7 +97,7 @@ class CoreUserSpaceSettings extends Model {
      * @param string $value Setting value
      */
     protected function addSetting($id_space, $user_id, $setting, $value) {
-        $sql = "insert into core_users_settings (id_space, user_id, setting, value)
+        $sql = "insert into core_user_space_settings (id_space, user_id, setting, value)
 				 VALUES(?,?,?)";
         $this->runRequest($sql, array($id_space, $user_id, $setting, $value));
     }
@@ -110,7 +110,7 @@ class CoreUserSpaceSettings extends Model {
      * @param string $value Setting value
      */
     protected function updateSetting($id_space, $user_id, $setting, $value) {
-        $sql = "update core_users_settings set value=? where user_id=? and setting=? and id_space=?";
+        $sql = "update core_user_space_settings set value=? where user_id=? and setting=? and id_space=?";
         $this->runRequest($sql, array($value, $user_id, $setting, $id_space));
     }
 
@@ -121,7 +121,7 @@ class CoreUserSpaceSettings extends Model {
     public function updateSessionSettingVariable($id_space) {
         // add the user settings to the session
         $settings = $this->getUserSettings($id_space, $_SESSION["id_user"]);
-        $_SESSION["user_settings"] = $settings;
+        $_SESSION["user_space_settings"] = $settings;
     }
 
 }

@@ -45,7 +45,7 @@ class EnzymesController extends CoresecureController {
         $lang = $this->getLanguage();
         // get isotype info
         $lang = $this->getLanguage();
-        $enzymes = $this->model->get($id);
+        $enzymes = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "enzymeseditform");
         $form->setTitle("Modifier enzymes");
@@ -74,7 +74,7 @@ class EnzymesController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("enzymes/" . $id_space);
     }
 

@@ -46,12 +46,12 @@ class Document extends Model {
     }
     
     public function edit($id, $id_space, $title, $id_user){
-        $sql = "UPDATE dc_documents SET id_space=?, title=?, id_user=? WHERE id=?";
-        $this->runRequest($sql, array($id_space, $title, $id_user, $id));
+        $sql = "UPDATE dc_documents SET title=?, id_user=? WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($title, $id_user, $id, $id_space));
     }
     
     public function set($id, $id_space, $title, $id_user){
-        if ($this->isDocument($id)){
+        if ($this->isDocument($id_space, $id)){
             $this->edit($id, $id_space, $title, $id_user);
             return $id;
         }
@@ -60,8 +60,8 @@ class Document extends Model {
         }
     }
     
-    public function isDocument($id){
-        $sql = "SELECT id FROM dc_documents WHERE id=?";
+    public function isDocument($id_space, $id){
+        $sql = "SELECT id FROM dc_documents WHERE id=? AND id_space=?";
         $req = $this->runRequest($sql, array($id));
         if ($req->rowCount() == 1){
             return true;
@@ -69,18 +69,18 @@ class Document extends Model {
         return false;
     }
     
-    public function setUrl($id, $url){
-        $sql = "UPDATE dc_documents SET url=?, date_modified=? WHERE id=?";
-        $this->runRequest($sql, array($url, date("Y-m-d", time()), $id));
+    public function setUrl($id_space, $id, $url){
+        $sql = "UPDATE dc_documents SET url=?, date_modified=? WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($url, date("Y-m-d", time()), $id, $id_space));
     }
     
-    public function getUrl($id){
-        $sql = "SELECT url FROM dc_documents WHERE id=?";
-        $req = $this->runRequest($sql, array($id))->fetch();
+    public function getUrl($id_space, $id){
+        $sql = "SELECT url FROM dc_documents WHERE id=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req[0];
     }
     
-    public function get($id){
+    public function get($id_space, $id){
         if (!$id){
             return array(
                 "id" =>  0,
@@ -91,22 +91,22 @@ class Document extends Model {
                 "url" => ""
             );
         }
-        $sql = "SELECT * FROM dc_documents WHERE id=?";
-        $req = $this->runRequest($sql, array($id))->fetch();
+        $sql = "SELECT * FROM dc_documents WHERE id=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req;
     }
     
-    public function delete($id){
+    public function delete($id_space, $id){
         // remove the file
-        $sql = "SELECT * FROM dc_documents WHERE id=?";
-        $info = $this->runRequest($sql, array($id))->fetch();
+        $sql = "SELECT * FROM dc_documents WHERE id=? AND id_space=?";
+        $info = $this->runRequest($sql, array($id, $id_space))->fetch();
         if (file_exists($info["url"])){
             unlink($info["url"]);
         }
         
         // remove the entry
-        $sql2 = "DELETE FROM dc_documents WHERE id=?";
-        $this->runRequest($sql2, array($id));
+        $sql2 = "DELETE FROM dc_documents WHERE id=? AND id_space=?";
+        $this->runRequest($sql2, array($id, $id_space));
         
     }
 }

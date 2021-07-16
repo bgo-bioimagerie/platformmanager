@@ -57,7 +57,7 @@ class ComnewsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelComNews = new ComNews();
-        $data = $modelComNews->get($id);
+        $data = $modelComNews->get($id_space, $id);
 
         $form = new Form($this->request, "comneweditform");
         $form->setTitle(ComTranslator::NewsEdit($lang));
@@ -88,7 +88,7 @@ class ComnewsController extends CoresecureController {
                 $ext = pathinfo($_FILES["media"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "media", $idNew . "_" . $ext);
 
-                $modelComNews->setMedia($idNew, $target_dir . $idNew . "_" . $ext);
+                $modelComNews->setMedia($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
             }
 
             // redirect
@@ -102,7 +102,7 @@ class ComnewsController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
         $model = new ComNews();
-        $model->delete($id);
+        $model->delete($id_space, $id);
 
         $this->redirect("comnews/" . $id_space);
     }

@@ -64,14 +64,14 @@ class ServicesvisaController extends CoresecureController {
         if (!$id) {
             $value = array("id" => 0,  "id_user" => 0);
         } else {
-            $value = $this->visaModel->get($id);
+            $value = $this->visaModel->get($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
         $form->addSeparator(ServicesTranslator::Visa($lang));
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
        
@@ -92,7 +92,7 @@ class ServicesvisaController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->visaModel->delete($id);
+        $this->visaModel->delete($id_space, $id);
         $this->redirect("servicesvisas/" . $id_space);
     }
 }

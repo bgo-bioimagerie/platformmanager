@@ -52,7 +52,7 @@ class RevisasController extends CoresecureController {
         $modelUser = new CoreUser();
         for ($i = 0; $i < count($visaTable); $i++) {
 
-            $visaTable[$i]["id_resource_category"] = $modelResourceCategory->getName($visaTable[$i]["id_resource_category"]);
+            $visaTable[$i]["id_resource_category"] = $modelResourceCategory->getName($id_space, $visaTable[$i]["id_resource_category"]);
             $visaTable[$i]["id_instructor"] = $modelUser->getUserFUllName($visaTable[$i]["id_instructor"]);
             if ($visaTable[$i]["instructor_status"] == 1) {
                 $visaTable[$i]["instructor_status"] = ResourcesTranslator::Instructor($lang);
@@ -87,7 +87,7 @@ class RevisasController extends CoresecureController {
         $visaInfo = array("id" => 0, "is_active" => 1, "id_resource_category" => 0, "id_instructor" => 0, "instructor_status" => 1);
         if ($id > 0) {
             $modelVisa = new ReVisa();
-            $visaInfo = $modelVisa->getVisa($id);
+            $visaInfo = $modelVisa->getVisa($id_space, $id);
         }
         //print_r($visaInfo);
 
@@ -106,7 +106,7 @@ class RevisasController extends CoresecureController {
         $form->addSelect("id_resource_category", ResourcesTranslator::Categories($lang), $rcchoices, $rcchoicesid, $visaInfo["id_resource_category"]);
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
 
         
@@ -122,11 +122,11 @@ class RevisasController extends CoresecureController {
             // run the database query
             $modelVisa = new ReVisa();
             if ($id > 0) {
-                $modelVisa->editVisa($id, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
+                $modelVisa->editVisa($id_space, $id, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             } else {
-                $id = $modelVisa->addVisa($form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
+                $id = $modelVisa->addVisa($id_space, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             }
-            $modelVisa->setActive($id, $form->getParameter("is_active"));
+            $modelVisa->setActive($id_space, $id, $form->getParameter("is_active"));
             $this->redirect("resourcesvisa/" . $id_space);
         } else {
             // set the view
@@ -201,7 +201,7 @@ class RevisasController extends CoresecureController {
     public function deleteAction($id_space, $id){
         
         $modelVisa = new ReVisa();
-        $modelVisa->delete($id);
+        $modelVisa->delete($id_space, $id);
         
         $this->redirect("resourcesvisa/" . $id_space);
     }

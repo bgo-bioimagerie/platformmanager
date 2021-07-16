@@ -15,6 +15,13 @@ class ClientsTranslator {
         return "Clients";
     }
 
+    public static function NewClient($lang) {
+        if ($lang == "fr") {
+            return "Nouveau compte";
+        }
+        return "New client";
+    }
+
     public static function clientsConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Clients permet de gérer des comptes clients pour la facturation";

@@ -134,15 +134,15 @@ class ServicesordersController extends CoresecureController {
         $modelOrder = new SeOrder();
 
         if ($id > 0) {
-            $value = $modelOrder->getEntry($id);
-            $items = $modelOrder->getOrderServices($id);
+            $value = $modelOrder->getEntry($id_space, $id);
+            $items = $modelOrder->getOrderServices($id_space, $id);
         } else {
             $value = $modelOrder->defaultEntryValues();
             $items = array("services" => array(), "quantities" => array());
         }
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
 
         $form->addSeparator(CoreTranslator::Description($lang));
         $form->addText("no_identification", ServicesTranslator::No_identification($lang), false, $value["no_identification"]);
@@ -179,7 +179,7 @@ class ServicesordersController extends CoresecureController {
                     CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
                     date("Y-m-d", time()), 
                     CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang));
-            $modelOrder->setModifiedBy($id, $_SESSION["id_user"]);
+            $modelOrder->setModifiedBy($id_space, $id, $_SESSION["id_user"]);
             
             $servicesIds = $this->request->getParameter("services");
             $servicesQuantities = $this->request->getParameter("quantities");
@@ -188,11 +188,11 @@ class ServicesordersController extends CoresecureController {
                 if (!$id) {
                     $qOld = 0;
                 } else {
-                    $qOld = $modelOrder->getOrderServiceQuantity($id, $servicesIds[$i]);
+                    $qOld = $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
                 }
                 $qDelta = $servicesQuantities[$i] - $qOld[0];
-                $modelServices->editquantity($servicesIds[$i], $qDelta, "subtract");
-                $modelOrder->setService($id_order, $servicesIds[$i], $servicesQuantities[$i]);
+                $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
+                $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
             }
 
             $this->redirect("servicesorders/" . $id_space);

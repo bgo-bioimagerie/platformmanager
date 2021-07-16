@@ -59,9 +59,9 @@ class RecategoriesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         
         // get belonging info
-        $data = array("id" => 0, "name" => "", "id_space" => 1);
+        $data = array("id" => 0, "name" => "", "id_space" => $id_space);
         if ($id > 0) {
-            $data = $this->categoryModel->get($id);
+            $data = $this->categoryModel->get($id_space, $id);
         }
         
         // lang
@@ -97,7 +97,7 @@ class RecategoriesController extends CoresecureController {
     public function deleteAction($id_space, $id){
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         
-        $this->categoryModel->delete($id);
+        $this->categoryModel->delete($id_space, $id);
         $this->redirect("recategories/".$id_space);
     }
 }

@@ -45,7 +45,7 @@ class AciiController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $acii = $this->aciiModel->get($id);
+        $acii = $this->aciiModel->get($id_space, $id);
         
         $form = new Form($this->request, "aciieditform");
         $form->setTitle("Modifier AcII");
@@ -74,7 +74,7 @@ class AciiController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->aciiModel->delete($id);
+        $this->aciiModel->delete($id_space, $id);
 
         $this->redirect("acii/" . $id_space);
     }

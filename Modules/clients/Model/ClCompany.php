@@ -23,18 +23,18 @@ class ClCompany extends Model {
     }
 
     public function getForSpace($id_space) {
-        $sql = "SELECT * FROM cl_company WHERE id_space=?";
+        $sql = "SELECT * FROM cl_company WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetch();
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM cl_company WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM cl_company WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
     
-    public function getName($id){
-        $sql = "SELECT reference FROM cl_company WHERE id=?";
-        $data = $this->runRequest($sql, array($id))->fetch();
+    public function getName($id_space, $id){
+        $sql = "SELECT reference FROM cl_company WHERE id=? AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $data[0];
     }
 
@@ -49,16 +49,16 @@ class ClCompany extends Model {
             $county, $country, $tel, $fax, $email, $approval_number ));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE cl_company SET id_space=?, name=?, address=?, zipcode=?, 
-                city=?, county=?, country=?, tel=?, fax=?, email=?, approval_number=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $name, $address, $zipcode, $city, 
-            $county, $country, $tel, $fax, $email, $approval_number, $id));
+            $sql = 'UPDATE cl_company SET name=?, address=?, zipcode=?, 
+                city=?, county=?, country=?, tel=?, fax=?, email=?, approval_number=? WHERE id=? AND id_space=? AND deleted=0';
+            $this->runRequest($sql, array($name, $address, $zipcode, $city, 
+            $county, $country, $tel, $fax, $email, $approval_number, $id, $id_space));
             return $id;
         }
     }
     
     protected function exists($id_space){
-        $sql = "SELECT id FROM cl_company WHERE id_space=?";
+        $sql = "SELECT id FROM cl_company WHERE id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_space));
         if($req->rowCount() > 0){
             $tmp = $req->fetch();
@@ -67,9 +67,10 @@ class ClCompany extends Model {
         return 0;
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM cl_company WHERE id=?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE cl_company SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        // $sql = "DELETE FROM cl_company WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

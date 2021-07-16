@@ -83,10 +83,10 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
 
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($id_invoice);
+        $invoice = $modelInvoice->get($id_space, $id_invoice);
 
         $modelItem = new InInvoiceItem();
-        $invoiceitem = $modelItem->getForInvoice($id_invoice);
+        $invoiceitem = $modelItem->getForInvoice($id_space, $id_invoice);
 
         $validateURL = "invoiceglobaledit/" . $id_space . "/" . $id_invoice;
 
@@ -103,18 +103,18 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
 
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($id_invoice);
+        $invoice = $modelInvoice->get($id_space, $id_invoice);
 
         $modelItem = new InInvoiceItem();
-        $invoiceItem = $modelItem->getForInvoice($id_invoice);
+        $invoiceItem = $modelItem->getForInvoice($id_space, $id_invoice);
 
         $modelClient = new ClClient();
         
         $number = $invoice["number"];
         $date = $invoice["date_generated"];
         $unit = "";
-        $resp = $modelClient->getContactName($invoice["id_responsible"]);
-        $adress = $modelClient->getAddressInvoice($invoice["id_responsible"]);
+        $resp = $modelClient->getContactName($id_space, $invoice["id_responsible"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $content = json_decode($invoiceItem["content"], true);
         $table = $this->invoiceTable($content, $invoice, $lang);
 
@@ -137,12 +137,12 @@ class InvoiceglobalController extends InvoiceAbstractController {
         //print_r($content);
 
         $modelInvoice = new InInvoice();
-        $modelInvoice->setDiscount($id_invoice, $discount);
-        $modelInvoice->setTotal($id_invoice, $total_ht);
+        $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
+        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
 
         
         $modelItem = new InInvoiceItem();
-        $modelItem->setItemContent($id_invoice, $content);
+        $modelItem->setItemContent($id_space, $id_invoice, $content);
 
         echo json_encode(array("status" => "success", "message" => InvoicesTranslator::InvoiceHasBeenSaved($lang)));
         //echo json_encode(array("status" => "success", "message" => $content ));
@@ -160,7 +160,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 require_once $invoiceModelFile;
                 $modelName = ucfirst(strtolower($module)) . "Invoice";
                 $model = new $modelName();
-                $model->delete($id_invoice);
+                $model->delete($id_space, $id_invoice);
             }
         }
     }
@@ -285,8 +285,8 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $modelInvoice = new InInvoice();
         $invoiceNumber = $modelInvoice->getNextNumber();
         $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, $invoiceNumber, date("Y-m-d", time()), $id_resp, 0, $beginPeriod, $endPeriod);
-        $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
-        $modelInvoice->setTitle($id_invoice, "Facturation: période du " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " au " . CoreTranslator::dateFromEn($endPeriod, $lang));
+        $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
+        $modelInvoice->setTitle($id_space, $id_invoice, "Facturation: période du " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " au " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
         // get invoice content
         $modules = Configuration::get("modules");
@@ -314,9 +314,9 @@ class InvoiceglobalController extends InvoiceAbstractController {
         }
 
         // set invoice content to the database
-        $modelInvoice->setTotal($id_invoice, $total_ht);
+        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
         $modelInvoiceItem = new InInvoiceItem();
-        $modelInvoiceItem->setItem(0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
+        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
     }
 
     protected function generateDetailsTable($id_space, $invoice_id) {
