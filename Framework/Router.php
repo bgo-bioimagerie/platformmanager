@@ -142,10 +142,9 @@ class Router {
                 ));
             }
         } else {
-            if($this->useRouterController){
+            if($this->useRouterController) {
                 $controller->indexAction($args);
-            }
-            else{
+            } else {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         }
