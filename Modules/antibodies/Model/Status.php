@@ -53,8 +53,7 @@ class Status extends Model {
      * @param string $sortentry Entry that is used to sort the Statuss
      * @return multitype: array
      */
-    public function getStatus($id_space ,$sortentry = 'id') {
-
+    public function getStatus($id_space, $sortentry = 'id') {
         $sql = "select * from ac_status WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
