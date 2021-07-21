@@ -42,7 +42,7 @@ class Dem extends Model {
      */
     public function getDems($id_space, $sortentry = 'id') {
 
-        $sql = "select * from ac_dems order WHERE id_space=? AND deleted=0 by " . $sortentry . " ASC;";
+        $sql = "select * from ac_dems WHERE id_space=? AND deleted=0 ORDER BY " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }

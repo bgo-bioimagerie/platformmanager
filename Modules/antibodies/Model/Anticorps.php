@@ -217,7 +217,6 @@ class Anticorps extends Model {
      */
     public function getAnticorpsInfo($id_space, $letter="") {
         $ac = $this->getAnticorps($id_space, $letter, 'no_h2p2');
-        Configuration::getLogger()->debug("[TEST]", ["in AntibodieslistController::getAnticorpsInfos()", "id_space" => $id_space, "ac" => $ac]);
         return $this->anticorpsInfo($id_space ,$ac);
     }
 
@@ -230,7 +229,6 @@ class Anticorps extends Model {
     }
 
     private function anticorpsInfo($id_space, $ac, $catalog = false) {
-        Configuration::getLogger()->debug("[TEST]", ["in Anticorps::anticorpsInfos()"]);
         $isotypeModel = new Isotype();
         $sourceModel = new Source();
         $tissusModel = new Tissus();
