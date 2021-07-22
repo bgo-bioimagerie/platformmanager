@@ -44,6 +44,7 @@ class AddressForm extends FormGenerator{
     }
    
     public function save(){
+        Configuration::getLogger()->debug("[TEST][AddressForm]", ["id_space" => $this->id_space]);
         $model = new ClAddress();
         return $model->set(
                 $this->id_space,
