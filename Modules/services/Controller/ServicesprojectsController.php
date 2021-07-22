@@ -55,7 +55,6 @@ class ServicesprojectsController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space, $year = "", $status = "") {
-
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -77,7 +76,6 @@ class ServicesprojectsController extends CoresecureController {
         $years = array();
         $yearsUrl = "";
 
-
         if ($status == "all") {
             $title = ServicesTranslator::All_projects($lang);
             $modelCoreConfig = new CoreConfig();
@@ -95,7 +93,6 @@ class ServicesprojectsController extends CoresecureController {
             $title = ServicesTranslator::Opened_projects($lang);
             $entriesArray = $modelEntry->openedEntries($id_space, $sortentry);
         } else if ($status == "closed") {
-
             $modelCoreConfig = new CoreConfig();
             $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
@@ -152,10 +149,6 @@ class ServicesprojectsController extends CoresecureController {
             $entriesArray = $modelEntry->allPeriodProjects($id_space, $periodStart, $periodEnd);
         }
 
-        //echo "year = " . $year . "<br/>"; 
-        //echo "years = ";
-        //print_r($years);
-
         $table = new TableView();
         $table->setTitle($title, 3);
         $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color"));
@@ -174,37 +167,24 @@ class ServicesprojectsController extends CoresecureController {
             "close_icon" => array("title" => "", "type" => "glyphicon", "color" => "red"),
         );
 
-        //$modelUser = new CoreUser();
         $modelPricing = new ClPricing();
         $modelClient = new ClClient();
 
         $modelConfig = new CoreConfig();
-        $warning = $modelConfig->getParamSpace("SeProjectDelayWarning", $id_space);
+        $warning = intval($modelConfig->getParamSpace("SeProjectDelayWarning", $id_space));
 
         for ($i = 0; $i < count($entriesArray); $i++) {
 
             $entriesArray[$i]["close_icon"] = "";
+            
+            if (($entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00") && (!($entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00"))) {
+                $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
+                $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
 
-            //echo "date clode = " . $entriesArray[$i]["date_close"] . "<br/>";
-            if ($entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00") {
-
-                if ($entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00") {
-                    
-                } else {
-
-                    $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
-                    $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
-
-                    $today = time();
-
-                    //echo "limite time = " . $entriesArray[$i]["time_limit"] . "<br/>";
-
-                    $delay = $limitD - $today;
-                    //echo "delay = " . $delay . "<br/>";
-                    //$warning = 30;
-                    if ($delay < 0 || $delay < $warning * 24 * 3600) {
-                        $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
-                    }
+                $today = time();
+                $delay = $limitD - $today;
+                if ($delay < 0 || $delay < $warning * 24 * 3600) {
+                    $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
                 }
             }
 
@@ -214,8 +194,6 @@ class ServicesprojectsController extends CoresecureController {
 
             // get the pricing color
             $clientAccounts = $modelClient->get($id_space ,$entriesArray[$i]["id_resp"]);
-            //print_r($clientAccounts);
-            
             $entriesArray[$i]["resp_name"] = $clientAccounts["name"];
             $pricingInfo = $modelPricing->get($id_space ,$clientAccounts["pricing"]);
             

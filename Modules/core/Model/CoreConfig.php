@@ -117,7 +117,7 @@ class CoreConfig extends Model {
     /**
      * Get a parameter
      * @param string $key
-     * @return string: value
+     * @return string value
      */
     public function getParam($key) {
         return $this->getParamSpace($key , 0);
@@ -126,7 +126,7 @@ class CoreConfig extends Model {
    /**
      * Get a parameter
      * @param string $key
-     * @return string: value
+     * @return string value
      */
     public function getParamSpace($key, $id_space) {
         $this->loadParams($id_space);
