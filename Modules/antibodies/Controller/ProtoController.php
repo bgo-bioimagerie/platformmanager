@@ -6,6 +6,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Proto.php';
 
+// DEPRECATED?
 class ProtoController extends CoresecureController {
 
     /**
@@ -21,7 +22,6 @@ class ProtoController extends CoresecureController {
 
     // affiche la liste des Prelevements
     public function indexAction($id_space) {
-
         // get the user list
         $protosArray = $this->model->getBySpace($id_space);
 

@@ -21,6 +21,7 @@ class ProtocolsController extends CoresecureController {
 
     // affiche la liste des isotypes
     public function indexAction($id_space, $sortEntry) {
+        Configuration::getLogger()->debug("[TEST]", ["ProtocolsController::indexAction()"]);
         
         if ($sortEntry == ""){
             $sortEntry = "id";

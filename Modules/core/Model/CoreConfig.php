@@ -70,7 +70,7 @@ class CoreConfig extends Model {
      * @param string $id_space
      */
     private function loadParams($id_space) {
-        if(CoreConfig::$params != null) {
+        if (CoreConfig::$params != null && $id_space == 0) {
             return;
         }
         Configuration::getLogger()->debug('load config', ['space' => $id_space]);
@@ -158,5 +158,4 @@ class CoreConfig extends Model {
             $this->addParam($key, $value);
         }
     }
-
 }
