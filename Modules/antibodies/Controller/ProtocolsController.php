@@ -59,7 +59,8 @@ class ProtocolsController extends CoresecureController {
         ));
     }
 
-    public function protoref() {
+    // DEPRECATED?
+    public function protoref($id_space) {
         $anticorpsId = 0;
         if ($this->request->isParameterNotEmpty('actionid')) {
             $anticorpsId = $this->request->getParameter("actionid");
@@ -122,7 +123,7 @@ class ProtocolsController extends CoresecureController {
         $linkers = $modelLinker->getLinkers($id_space,"id");
         $incs = $modelInc->getIncs($id_space,"id");
         $aciis = $modelAcii->getAciis($id_space,"id");
-        Configuration::getLogger()->debug("[TEST][ProtocolEdit]", ["dems" => $dems]);
+
         $this->render(array(
             'lang' => $this->getLanguage(),
             'id_space' => $id_space,

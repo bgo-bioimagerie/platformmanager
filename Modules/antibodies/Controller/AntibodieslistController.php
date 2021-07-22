@@ -298,8 +298,8 @@ class AntibodieslistController extends CoresecureController {
             $catalogForm->setColumnsWidth(2, 10);
             $catalogForm->setButtonsWidth(2, 0);
             
-            if( $catalogForm->check() ){
-                $this->antibody->setExportCatalog($id, $form->getParameter("export_catalog"));
+            if ($catalogForm->check()) {
+                $this->antibody->setExportCatalog($id_space, $id, $form->getParameter("export_catalog"));
             
                 $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
 
