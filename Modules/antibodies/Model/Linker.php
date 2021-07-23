@@ -117,7 +117,6 @@ class Linker extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE ac_linkers SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        //$sql = "DELETE FROM ac_linkers WHERE id = ?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

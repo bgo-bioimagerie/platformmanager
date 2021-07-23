@@ -124,7 +124,6 @@ class Organe extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE ac_organes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        //$sql = "DELETE FROM ac_organes WHERE id = ?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

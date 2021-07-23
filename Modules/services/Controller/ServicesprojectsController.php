@@ -98,15 +98,16 @@ class ServicesprojectsController extends CoresecureController {
             $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
             $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodbegin, $projectperiodend);
-
             $yearsUrl = "servicesprojectsclosed";
+            
             if ($year == "") {
-                if (count($years) < 1) {
-                    $year = time('Y');
+                if (empty($years)) {
+                    $year = date('Y');
                 } else {
                     $year = $years[count($years) - 1];
                 }
             }
+
             $dates = $this->getProjectPeriod($id_space, $year);
             $title = ServicesTranslator::Closed_projects($lang);
             $entriesArray = $modelEntry->closedEntries($id_space, $dates['yearBegin'], $dates['yearEnd'], $sortentry);
@@ -114,7 +115,6 @@ class ServicesprojectsController extends CoresecureController {
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
-
             $projectperiodbeginArray = explode("-", $projectperiodbegin);
             $projectperiodendArray = explode("-", $projectperiodend);
             if ($projectperiodbeginArray[1] <= date("m", time())) {
@@ -128,6 +128,7 @@ class ServicesprojectsController extends CoresecureController {
             if ($month < 10) {
                 $month = "0" . $month;
             }
+            
             $monthp = $projectperiodendArray[1];
             if ($monthp < 10) {
                 $monthp = "0" . $monthp;
