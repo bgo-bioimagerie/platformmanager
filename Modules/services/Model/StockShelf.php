@@ -33,7 +33,7 @@ class StockShelf extends Model {
         $sql  = " SELECT stock_shelf.name as shelf, stock_cabinets.name as cabinet, stock_cabinets.room_number as room ";
         $sql .= " FROM stock_shelf ";
         $sql .= " INNER JOIN stock_cabinets ON stock_shelf.id_cabinet=stock_cabinets.id ";
-        $sql .= " WHERE stock_shelf.id = ?  AND id_space=? AND deleted=0";
+        $sql .= " WHERE stock_shelf.id = ?  AND stock_shelf.id_space=? AND stock_shelf.deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
         
         if ( $req->rowCount() > 0 ){

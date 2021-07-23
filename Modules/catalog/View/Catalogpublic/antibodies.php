@@ -49,7 +49,7 @@
                 <th class="text-center" style="width:5%; color:#337AB7;"></th>
                 <th class="text-center" style="width:5%; color:#337AB7;">No</th>
                 <th class="text-center" style="width:5%; color:#337AB7;"><?php echo CatalogTranslator::Name($lang) ?></th>              
-                <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Spices($lang) ?></th>
+                <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Species($lang) ?></th>
                 <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Sample($lang) ?></th>
                 <th class="text-center" style="width:5%; background-color: #eeffee; color:#337AB7;"><?php echo CatalogTranslator::Status($lang) ?></th>
             </tr>    

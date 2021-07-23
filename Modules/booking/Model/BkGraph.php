@@ -65,7 +65,7 @@ class BkGraph extends Model {
         return $data;
     }
 
-    public function getStatReservationPerUnit($dateBegin, $dateEnd, $id_space, $units, $excludeColorCode) {
+    public function getStatReservationPerUnit($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode) {
 
         $dateBeginArray = explode("-", $dateBegin);
         $day_start = $dateBeginArray[2];
@@ -97,23 +97,23 @@ class BkGraph extends Model {
 
         foreach ($resources as $resource) {
             $d['resource'] = $resource["name"];
-            foreach ($units as $unit) {
+            foreach ($clients as $client) {
                 $sql = "SELECT * FROM bk_calendar_entry WHERE resource_id=? AND "
-                        . "recipient_id IN (SELECT id FROM ec_users WHERE id_unit=?) "   // @bug refer to ec_users does not exists
+                        . "recipient_id IN (SELECT id_user FROM cl_j_client_user WHERE id_client=?) "
                         . " AND start_time >=" . $timeBegin . " AND end_time <=" . $timeEnd . " "
                         . " AND id_space=?"
                         . " AND deleted=0 ";
                 if ($in_color != "") {
                     $sql .= ' AND color_type_id NOT IN (' . $in_color . ')';
                 }
-                $resa = $this->runRequest($sql, array($resource['id'], $unit['id'], $id_space));
+                $resa = $this->runRequest($sql, array($resource['id'], $client['id'], $id_space));
 
                 $resatable = $resa->fetchAll();
                 $timeSec = 0;
                 foreach ($resatable as $r) {
                     $timeSec += $r['end_time'] - $r['start_time'];
                 }
-                $d['unit_' . $unit['id']] = array($resa->rowCount(), round($timeSec / 3600));
+                $d['unit_' . $client['id']] = array($resa->rowCount(), round($timeSec / 3600));
             }
             $data[] = $d;
         }

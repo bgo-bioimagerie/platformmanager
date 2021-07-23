@@ -208,11 +208,11 @@ class CatalogTranslator {
         return "Reference";
     }
 
-    public static function Spices($lang) {
+    public static function Species($lang) {
         if ($lang == "fr") {
             return "Espèce";
         }
-        return "Spices";
+        return "Species";
     }
 
     public static function Comment($lang) {
