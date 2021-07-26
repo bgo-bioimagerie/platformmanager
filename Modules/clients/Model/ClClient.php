@@ -23,7 +23,7 @@ class ClClient extends Model {
     public function getInstitution($id_space, $id){
         $sql = "SELECT * FROM cl_addresses WHERE id=(SELECT address_invoice FROM cl_clients WHERE id=? AND id_space=? AND deleted=0)";
         $address = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $address["institution"];
+        return $address ? $address["institution"] : [];
     }
     
     public function getAddressInvoice($id_space ,$id){

@@ -44,7 +44,6 @@ class BookingstatisticsController extends CoresecureController {
     }
     
     public function statquantitiesAction($id_space){
-        
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         
@@ -62,6 +61,9 @@ class BookingstatisticsController extends CoresecureController {
                     CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
                     CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
                     );
+
+            $stats = !empty($stats) ?: "No data found for this period";
+            // TODO: link that to a report generation
             print_r($stats);
             return;
         }
@@ -179,7 +181,6 @@ class BookingstatisticsController extends CoresecureController {
             //require_once 'externals/PHPExcel/Classes/PHPExcel.php';
             $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, null);
             // write excel file
-            //FIXME: ?
             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

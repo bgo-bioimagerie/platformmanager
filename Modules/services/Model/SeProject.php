@@ -594,12 +594,6 @@ class SeProject extends Model {
             $project['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
             $project['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
             $project["sample_cabinet"] = $modelSampleCabinet->getFullName($id_space, $project["id_sample_cabinet"]);
-            Configuration::getLogger()->debug("[TEST][SeProject]", [
-                "id_user" => $id_user,
-                "closed_by" => $project['closed_by'],
-                "closed_by_in" => $project['closed_by_in'],
-                "sample_cabinet" => $project["sample_cabinet"]
-                ]);
         }
 
         return $projects;
@@ -624,13 +618,8 @@ class SeProject extends Model {
             // get active items
             $activeItems = $this->getProjectItems($projectEntries);
             $itemsSummary = $this->getProjectItemsSymmary($projectEntries, $activeItems);
-            //print_r($itemsSummary);
 
             $projects[$i]["entries"] = $itemsSummary;
-            //print_r($itemsSummary);
-            //$items = $this->getProjectServices($projects[$i]["id"]);
-
-            
             $LABpricingid = $modelClient->getPricingID($id_space, $projects[$i]["id_resp"]);
             $projects[$i]["total"] = $this->calculateProjectTotal($id_space, $itemsSummary, $LABpricingid);
         }
