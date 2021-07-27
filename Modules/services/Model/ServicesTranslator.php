@@ -985,4 +985,27 @@ class ServicesTranslator {
         return "Stock samples";
     }
     
+    public static function serviceTypes($seType, $lang) {
+        if ($lang == "fr") {
+            switch ($seType) {
+                case "Quantity": $result = "Quantité";
+                    break;
+                case "Time minutes": $result = "Temps en minutes";
+                    break;
+                case "Time hours": $result = "Temps en heures";
+                    break;
+                case "Price": $result = "Prix";
+                    break;
+                case "Half day": $result = "1/2 journée";
+                    break;
+                case "Day": $result = "Jour";
+                    break;
+                default: $result = "n/a";
+                    break;
+            }
+            return $result;
+        }
+        return $seType;
+    }
+
 }
