@@ -996,9 +996,9 @@ class ServicesTranslator {
                     break;
                 case "Price": $result = "Prix";
                     break;
-                case "Half day": $result = "Demi-journée";
+                case "Half day": $result = "Demi journée";
                     break;
-                case "Day": $result = "Jour";
+                case "Day": $result = "Journée";
                     break;
                 default: $result = "n/a";
                     break;

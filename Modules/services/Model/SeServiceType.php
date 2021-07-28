@@ -23,6 +23,45 @@ class SeServiceType extends Model {
         self::$serviceTypes[6] = "Day";
     }
 
+    public function updateServiceTypesReferences() {
+        // extract service types names and ids from database
+        $sql = "SELECT `id`, `name` FROM se_service_types";
+        $typesData = $this->runRequest($sql, array())->fetchAll();
+        $tmpTypes = [];
+        $modifiedServiceIds = [];
+        $serviceTypesArray = self::$serviceTypes;
+
+        for ($i=0; $i<6; $i++) {
+            // format data get from database to match $serviceTypes format for further comparisons
+            $tmpTypes[$typesData[$i]["id"]] = $typesData[$i]["name"];
+
+            // set an array with en and fr names of service type elem
+            $okValues = array($serviceTypesArray[$typesData[$i]["id"]], ServicesTranslator::serviceTypes($serviceTypesArray[$typesData[$i]["id"]], "fr"));
+            // is db value equal to fr or en name ?
+            if (!in_array($tmpTypes[$typesData[$i]["id"]], $okValues)) {
+                // if not, get all referencing services
+                $sql = "SELECT `id` FROM se_services WHERE type_id=?";
+                $serviceIdsReq = $this->runRequest($sql, array($typesData[$i]["id"]))->fetchAll();
+
+                $serviceIds = [];
+                foreach ($serviceIdsReq as $serviceId) {
+                    if (!in_array($serviceId["id"], $modifiedServiceIds)) {
+                        array_push($serviceIds, $serviceId["id"]);
+                    }
+                }
+                //then update
+                foreach ($serviceIds as $serviceId) {
+                    $sql = "UPDATE se_services SET type_id=? WHERE id=?";
+                    // get index by name in $serviceTypesArray
+                    $typeIndex = array_search(ServicesTranslator::serviceTypes($typesData[$i]["name"], "en"), $serviceTypesArray);
+                    Configuration::getLogger()->info("[TEST][UPDATING TYPES]", ["modified type id" => $serviceId]);
+                    // set serviceId in a blacklist to avoid it to be modified a second time (in case two elements are exactly inverted between database and $serviceTypes array)
+                    array_push($modifiedServiceIds, $serviceId);
+                    $this->runRequest($sql, array($typeIndex, $serviceId));
+                }
+            }
+        }
+    }
 
     // Should we leave createTable() here for upgrade ?
     /**
@@ -88,14 +127,14 @@ class SeServiceType extends Model {
         return array_search($name, self::$serviceTypes);
     }
 
+    // DEPRECATED: using se_service_types table
+    /*
+
     public function exists($id_space, $name) {
         $sql = "select * from se_service_types where name=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($name, $id_space));
         return ($req->rowCount() == 1);
     }
-
-    // DEPRECATED: using se_service_types table
-    /*
 
      * Create the default empty Unit
      * 
