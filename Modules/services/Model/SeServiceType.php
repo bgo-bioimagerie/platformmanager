@@ -9,6 +9,20 @@ require_once 'Framework/Model.php';
  */
 class SeServiceType extends Model {
 
+    private static $serviceTypes;
+
+     /**
+     * Constructor
+     */
+    public function __construct() {
+        self::$serviceTypes[1] = "Quantity";
+        self::$serviceTypes[2] = "Time minutes";
+        self::$serviceTypes[3] = "Time hours";
+        self::$serviceTypes[4] = "Price";
+        self::$serviceTypes[5] = "Half day";
+        self::$serviceTypes[6] = "Day";
+    }
+
 
     // Should we leave createTable() here for upgrade ?
     /**
@@ -26,18 +40,6 @@ class SeServiceType extends Model {
 		);";
         return $this->runRequest($sql);
     }
-
-    /**
-     * All of service types
-     */
-    private static $serviceTypes = array(
-        "Quantity",
-        "Time minutes",
-        "Time hours",
-        "Price",
-        "Half day",
-        "Day"
-    );
     
     /**
      * get all service types
