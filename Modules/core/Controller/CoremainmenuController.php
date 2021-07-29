@@ -223,7 +223,7 @@ class CoremainmenuController extends CoresecureController {
         $form->addSelect("id_space", CoreTranslator::Space($lang), $spaceList["names"], $spaceList["ids"], $item["id_space"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), true, $item["display_order"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "coremainmenuitemedit/");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coremainmenuitemedit/".$id);
 
         if ($form->check()) {
 
