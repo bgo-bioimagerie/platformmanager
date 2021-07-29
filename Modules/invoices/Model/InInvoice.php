@@ -23,7 +23,7 @@ class InInvoice extends Model {
         $this->setColumnsInfo("period_begin", "date", "");
         $this->setColumnsInfo("period_end", "date", "");
         $this->setColumnsInfo("date_generated", "date", "");
-        $this->setColumnsInfo("date_send", "date", "0000-00-00");
+        $this->setColumnsInfo("date_send", "date", "");
         $this->setColumnsInfo("visa_send", "int(11)", 0);
         $this->setColumnsInfo("date_paid", "date", "");
         $this->setColumnsInfo("id_unit", "int(11)", 0);
@@ -108,7 +108,7 @@ class InInvoice extends Model {
         $this->runRequest($sql, array($id_user, $id_invoice, $id_space));
     }
 
-    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = "0000-00-00", $period_end = "0000-00-00", $id_project = 0) {
+    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = null, $period_end = null, $id_project = 0) {
         $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, 0, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
         return $this->getDatabase()->lastInsertId();
@@ -148,10 +148,10 @@ class InInvoice extends Model {
         
         $dateSendCondition = "";
         if($sent == 0){
-            $dateSendCondition = "AND date_send = '0000-00-00' ";
+            $dateSendCondition = "AND date_send is null ";
         }
         else{
-            $dateSendCondition = "AND date_send != '0000-00-00' ";
+            $dateSendCondition = "AND date_send is not null ";
         }
         
         $sql = "SELECT in_invoice.*, cl_clients.name AS resp "

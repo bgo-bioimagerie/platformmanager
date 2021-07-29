@@ -20,14 +20,14 @@ class CoreTranslator {
                 //echo "translated = " . $year . "-" . $month . "-" . $day . "<br/>";
                 return $year . "-" . $month . "-" . $day;
             }
-            return "0000-00-00";
+            return null;
         }
         // En
         return $date;
     }
 
     public static function dateFromEn($date, $lang) {
-        if ($date == "0000-00-00") {
+        if (!$date) {
             return "";
         }
 

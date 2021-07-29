@@ -20,13 +20,13 @@ class BkCalendarPeriod extends Model {
 		`id` int(11) NOT NULL AUTO_INCREMENT,	
 		`choice` varchar(50) NOT NULL,	
 		`optionval` varchar(50) NOT NULL,
-        `enddate` DATE NOT NULL,
+        `enddate` DATE,
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
         
-        $this->addColumn('bk_calendar_period', 'enddate', 'DATE', "0000-00-00");
+        $this->addColumn('bk_calendar_period', 'enddate', 'date', "");
     }
 
     public function setEndDate($id_space, $id, $date) {

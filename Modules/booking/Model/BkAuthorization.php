@@ -22,8 +22,8 @@ class BkAuthorization extends Model {
         $this->setColumnsInfo("user_id", "int(11)", 0);
         $this->setColumnsInfo("resource_id", "int(11)", 0);
         $this->setColumnsInfo("visa_id", "int(11)", 0);
-        $this->setColumnsInfo("date", "DATE", "0000-00-00");
-        $this->setColumnsInfo("date_desactivation", "DATE", "0000-00-00");
+        $this->setColumnsInfo("date", "date", "");
+        $this->setColumnsInfo("date_desactivation", "date", "");
         $this->setColumnsInfo("is_active", "int(1)", 1);
 
         $this->primaryKey = "id";

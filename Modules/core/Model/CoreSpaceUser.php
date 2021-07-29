@@ -20,12 +20,12 @@ class CoreSpaceUser extends Model {
 
         $this->tableName = "core_j_spaces_user";
         $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_user", "varchar(100)", "");
-        $this->setColumnsInfo("id_space", "varchar(100)", "");
+        $this->setColumnsInfo("id_user", "int(11)", "");
+        $this->setColumnsInfo("id_space", "int(11)", "");
         $this->setColumnsInfo("status", "varchar(100)", "");
-        $this->setColumnsInfo("date_convention", "date", "0000-00-00");
+        $this->setColumnsInfo("date_convention", "date", "");
         $this->setColumnsInfo("convention_url", "varchar(255)", "");
-        $this->setColumnsInfo("date_contract_end", "date", "0000-00-00");
+        $this->setColumnsInfo("date_contract_end", "date", "");
         $this->primaryKey = "id";
 
     }

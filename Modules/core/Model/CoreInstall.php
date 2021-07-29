@@ -366,9 +366,96 @@ class CoreDB extends Model {
             $statHandler = new EventHandler();
             $statHandler->calentryImport();
             Configuration::getLogger()->debug('[stats] import calentry stats, done!');
-        }
+	}
 
+
+
+    Configuration::getLogger()->debug('[core_users] fix column types');
+	$sql = "alter table core_users modify phone varchar(255)";
+	$this->runRequest($sql);
+	$sql = "alter table core_users modify date_end_contract date";
+	$this->runRequest($sql);
+	$sql = "update core_users set date_end_contract=null where date_end_contract='0000-00-00'";
+	$this->runRequest($sql);
+	$sql = "alter table core_users modify date_last_login date";
+	$this->runRequest($sql);
+	$sql = "update core_users set date_last_login=null where date_last_login='0000-00-00'";
+	$this->runRequest($sql);
+	$sql = "alter table core_users modify apikey varchar(30)";
+	$this->runRequest($sql);
+	Configuration::getLogger()->debug('[core_users] fix column types, done!');
+
+	Configuration::getLogger()->debug('[core_j_spaces_user] fix column types');
+	$sql = "alter table core_j_spaces_user modify id_user int(11) NOT NULL";
+	$this->runRequest($sql);
+	$sql = "alter table core_j_spaces_user modify id_space int(11) NOT NULL";
+	$this->runRequest($sql);
+	$sql = "alter table core_j_spaces_user modify convention_url varchar(255)";
+	$this->runRequest($sql);
+	$sql = "alter table core_j_spaces_user modify date_contract_end date";
+	$this->runRequest($sql);
+	$sql = "alter table core_j_spaces_user modify date_convention date";
+	$this->runRequest($sql);
+	$sql = "update core_j_spaces_user set date_convention=null where date_convention='0000-00-00'";
+	$this->runRequest($sql);
+	$sql = "update core_j_spaces_user set date_contract_end=null where date_convention='0000-00-00'";
+    $this->runRequest($sql);
+	Configuration::getLogger()->debug('[core_j_spaces_user] fix column types, done!');
+
+    Configuration::getLogger()->debug('[qo_quotes] fix column types');
+	$sql = "alter table qo_quotes modify date_last_modified date";
+	$this->runRequest($sql);
+	$sql = "update qo_quotes set date_last_modified=null where date_last_modified='0000-00-00'";
+	$this->runRequest($sql);
+	Configuration::getLogger()->debug('[qo_quotes] fix column types, done!');
+
+    Configuration::getLogger()->debug('[in_invoice] fix column types');
+	$sql = "alter table in_invoice modify date_send date";
+	$this->runRequest($sql);
+	$sql = "update in_invoice set date_send=null where date_send='0000-00-00'";
+	$this->runRequest($sql);
+	Configuration::getLogger()->debug('[in_invoice] fix column types, done!');
+
+    Configuration::getLogger()->debug('[bk_authorization] fix column types');
+	$sql = "alter table bk_authorization modify `date` date";
+	$this->runRequest($sql);
+	$sql = "update bk_authorization set `date`=null where `date`='0000-00-00'";
+	$this->runRequest($sql);
+	$sql = "alter table bk_authorization modify `date_desactivation` date";
+	$this->runRequest($sql);
+	$sql = "update bk_authorization set `date_desactivation`=null where `date_desactivation`='0000-00-00'";
+	$this->runRequest($sql);
+	Configuration::getLogger()->debug('[bk_authorization] fix column types, done!');
+
+    Configuration::getLogger()->debug('[core_pending_accounts] fix column types');
+	$sql = "alter table core_pending_accounts modify `date` date";
+	$this->runRequest($sql);
+	$sql = "update core_pending_accounts set `date`=null where `date`='0000-00-00'";
+	$this->runRequest($sql);
+	Configuration::getLogger()->debug('[core_pending_accounts] fix column types, done!');
+
+    Configuration::getLogger()->debug('[se_project] fix column types');
+	$sql = "alter table se_project modify `samplereturndate` date";
+	$this->runRequest($sql);
+	$sql = "update se_project set `samplereturndate`=null where `samplereturndate`='0000-00-00'";
+	$this->runRequest($sql);
+    $sql = "update se_project set date_open=null where date_open='0000-00-00'";
+	$this->runRequest($sql);
+    $sql = "update se_project set date_close=null where date_close='0000-00-00'";
+	$this->runRequest($sql);
+    $sql = "update se_project_service set `date`=null where `date`='0000-00-00'";
+	$this->runRequest($sql);
+
+	Configuration::getLogger()->debug('[se_project] fix column types, done!');
+
+    Configuration::getLogger()->debug('[bk_calendar_period] fix column types');
+	$sql = "alter table bk_calendar_period modify `enddate` date";
+	$this->runRequest($sql);
+	$sql = "update bk_calendar_period set `enddate`=null where `enddate`='0000-00-00'";
+	$this->runRequest($sql);
+	Configuration::getLogger()->debug('[bk_calendar_period] fix column types, done!');
     }
+
 
     /**
      * Get current database version

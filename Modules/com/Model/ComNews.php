@@ -22,8 +22,8 @@ class ComNews extends Model {
         $this->setColumnsInfo("title", "varchar(250)", "");
         $this->setColumnsInfo("content", "TEXT", "");
         $this->setColumnsInfo("media", "TEXT", "");
-        $this->setColumnsInfo("date", "DATE", "");
-        $this->setColumnsInfo("expires", "DATE", "");
+        $this->setColumnsInfo("date", "date", "");
+        $this->setColumnsInfo("expires", "date", "");
         $this->primaryKey = "id";
     }
 
@@ -87,7 +87,7 @@ class ComNews extends Model {
                 "content" => "",
                 "media" => "",
                 "date" => date('Y-m-d'),
-                "expires" => "0000-00-00"
+                "expires" => null
             );
         }
         $sql = "SELECT * FROM com_news WHERE id=? AND id_space=?";

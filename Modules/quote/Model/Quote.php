@@ -14,8 +14,8 @@ class Quote extends Model {
         $this->setColumnsInfo("address", "text", "");
         $this->setColumnsInfo("id_belonging", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", "");
-        $this->setColumnsInfo("date_open", "DATE", "");
-        $this->setColumnsInfo("date_last_modified", "DATE", 0);
+        $this->setColumnsInfo("date_open", "date", "");
+        $this->setColumnsInfo("date_last_modified", "date", "");
         $this->primaryKey = "id";
     }
 

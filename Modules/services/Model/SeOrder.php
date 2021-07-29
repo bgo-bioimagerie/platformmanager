@@ -103,7 +103,7 @@ class SeOrder extends Model {
 
     public function setOrder($id, $id_space, $id_user, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
         $id_status = 0;
-        if ($date_close == "" || $date_close=="0000-00-00"){
+        if ($date_close == "" || $date_close==null){
             $id_status = 1;
         }
         if ($this->isOrder($id_space, $id)){
@@ -229,9 +229,9 @@ class SeOrder extends Model {
     }
 
     public function reopenEntry($id_space, $id){
-        $sql = "UPDATE se_order set id_status=1, date_close=?
+        $sql = "UPDATE se_order set id_status=1, date_close is null
 		        where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array("0000-00-00", $id, $id_space));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
     // @bug refers to ec_j_user_responsible
