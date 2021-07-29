@@ -30,8 +30,9 @@ class SeServiceType extends Model {
         $tmpTypes = [];
         $modifiedServiceIds = [];
         $serviceTypesArray = self::$serviceTypes;
+        $nbDifferentTypes = 6;
 
-        for ($i=0; $i<6; $i++) {
+        for ($i=0; $i<$nbDifferentTypes; $i++) {
             // format data get from database to match $serviceTypes format for further comparisons
             $tmpTypes[$typesData[$i]["id"]] = $typesData[$i]["name"];
 
@@ -54,7 +55,6 @@ class SeServiceType extends Model {
                     $sql = "UPDATE se_services SET type_id=? WHERE id=?";
                     // get index by name in $serviceTypesArray
                     $typeIndex = array_search(ServicesTranslator::serviceTypes($typesData[$i]["name"], "en"), $serviceTypesArray);
-                    Configuration::getLogger()->info("[TEST][UPDATING TYPES]", ["modified type id" => $serviceId]);
                     // set serviceId in a blacklist to avoid it to be modified a second time (in case two elements are exactly inverted between database and $serviceTypes array)
                     array_push($modifiedServiceIds, $serviceId);
                     $this->runRequest($sql, array($typeIndex, $serviceId));
