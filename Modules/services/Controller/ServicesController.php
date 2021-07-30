@@ -205,6 +205,7 @@ class ServicesController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $data = $this->serviceModel->getAll($id_space);
+        Configuration::getLogger()->debug("[TEST][STOCK]", ["data" => $data]);
         $headers = array(
             "id" => "ID",
             "name" => CoreTranslator::name($lang),
@@ -213,9 +214,10 @@ class ServicesController extends CoresecureController {
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Stock($lang), 3);
+        $table->addLineEditButton("servicesedit/" . $id_space);
+        $table->addDeleteButton("servicesdelete/" . $id_space);
 
         $tableHtml = $table->view($data, $headers);
-
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 

@@ -47,7 +47,7 @@ class View {
         // Generate the dedicated part of the view
         extract($data);
         include ($this->file);
-
+        Configuration::getLogger()->debug("[TEST][VIEW]", ["returning generated view"]);
         return;
     }
 

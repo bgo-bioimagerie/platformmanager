@@ -84,6 +84,7 @@ class Router {
      * Examine a request and run the dedicated action
      */
     public function routerRequest() {
+        Configuration::getLogger()->debug("[TEST]", ["in routeRequest"]);
 
         try {
             // Merge parameters GET and POST
@@ -129,6 +130,7 @@ class Router {
     }
 
     protected function runAction($controller, $urlInfo, $action, $args) {
+        Configuration::getLogger()->debug("[TEST]", ["in runAction"]);
         if ($urlInfo["pathInfo"]["isapi"]) {
             try {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
@@ -142,9 +144,12 @@ class Router {
                 ));
             }
         } else {
+            Configuration::getLogger()->debug("[TEST]", ["in runAction else"]);
             if($this->useRouterController) {
+                Configuration::getLogger()->debug("[TEST]", ["in runAction useRouterController"]);
                 $controller->indexAction($args);
             } else {
+                Configuration::getLogger()->debug("[TEST]", ["in runAction !useRouterController"]);
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         }
