@@ -130,11 +130,11 @@ class UsersPatch extends Model {
                 $institution = $this->getEcUnitName($ecuser["id_unit"], false);
                 $address = $this->getEcUnitAddress($ecuser["id_unit"]);
 
-                $id_address = $modelAddress->set(0, $institution, "", "", $address, "", "", "");
+                $id_address = $modelAddress->set($space["id"], 0, $institution, "", "", $address, "", "", "");
 
                 $id_client = $modelClient->set(0, $space["id"], $name, $contact_name, $phone, $email, $pricing, 0);
-                $modelClient->setAddressDelivery($id_client, $id_address);
-                $modelClient->setAddressInvoice($id_client, $id_address);
+                $modelClient->setAddressDelivery($space["id"], $id_client, $id_address);
+                $modelClient->setAddressInvoice($space["id"], $id_client, $id_address);
             }
         }
         Configuration::getLogger()->info('[user][patch] copy responsibles to clients done');
@@ -201,7 +201,7 @@ class UsersPatch extends Model {
             foreach ($responsibles as $resp) {
                 foreach ($spaces as $space) {
                     $id_client = $this->getResponsibleNewClientId($resp["fullname"], $space["id"]);
-                    $modelClientUSer->set($id_client, $user['id']);
+                    $modelClientUSer->set($space["id"], $id_client, $user['id']);
                 }
             }
         }
@@ -243,9 +243,8 @@ class UsersPatch extends Model {
     protected function changeRespIdsToClientIdsInBookingAndServices($warning = true) {
         Configuration::getLogger()->info('[user][patch] changeRespIdsToClientIdsInBookingAndServices');
         $modelUser = new CoreUser();
-        $modelResource = new ResourceInfo();
-
-        $unknownResp = [];
+        // $modelResource = new ResourceInfo();
+        // $unknownResp = [];
 
         // booking
         $sql = "SELECT * FROM bk_calendar_entry";
@@ -253,9 +252,11 @@ class UsersPatch extends Model {
         $reservations = $this->runRequest($sql);
         foreach ($reservations as $res) {
             $resp_name = $modelUser->getUserFUllName($res["responsible_id"]);
-            $resource = $modelResource->get($res["resource_id"]);
-
-            if ($resource) {
+            // $resource = $modelResource->get($res["resource_id"]);
+            $sql = "SELECT * FROM re_info WHERE id=?";
+            $req = $this->runRequest($sql, array($res["resource_id"]));
+            if ($req) {
+                $resource = $req->fetch();
                 $idClient = $this->getResponsibleNewClientId($resp_name, $resource["id_space"]);
                 $sql = "UPDATE bk_calendar_entry SET responsible_id=? WHERE id=?";
                 $this->runRequest($sql, array($idClient, $res["id"]));
