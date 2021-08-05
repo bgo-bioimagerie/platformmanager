@@ -30,6 +30,9 @@ class BkCalendarPeriod extends Model {
     }
 
     public function setEndDate($id_space, $id, $date) {
+        if($date == "") {
+            $date = null;
+        }
         $sql = "UPDATE bk_calendar_period SET enddate=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($date, $id, $id_space));
         return $id;

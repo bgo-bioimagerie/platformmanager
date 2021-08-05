@@ -61,6 +61,9 @@ class Quote extends Model {
     }
 
     public function set($id, $id_space, $recipient, $address, $id_belonging, $id_user, $date_open) {
+        if($date_open == "") {
+            $date_open = null;
+        }
         $date_last_modified = date('Y-m-d');
         if (!$id) {
             $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?)';

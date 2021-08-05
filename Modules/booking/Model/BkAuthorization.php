@@ -43,11 +43,20 @@ class BkAuthorization extends Model {
     }
 
     public function add($id_space, $user_id, $resource_id, $visa_id, $date){
+        if($date == "") {
+            $date = null;
+        }
         $sql = "INSERT INTO bk_authorization (user_id, resource_id, visa_id, date, is_active, id_space) VALUES (?,?,?,?,?,?)";
         $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, 1, $id_space));
     }
 
     public function set($id_space, $id, $user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active){
+        if($date == "") {
+            $date = null;
+        }
+        if($date_desactivation == "") {
+            $date = null;
+        }
         $sql = "UPDATE bk_authorization SET user_id=?, resource_id=?, visa_id=?, date=?, date_desactivation=?, is_active=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active, $id, $id_space));
     }

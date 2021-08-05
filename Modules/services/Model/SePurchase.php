@@ -33,6 +33,9 @@ class SePurchase extends Model {
     }
     
     public function set($id, $comment, $id_space, $date){
+        if($date == "") {
+            $date = null;
+        }
         if ($this->ispurchase($id_space, $id)){
             $sql = "UPDATE se_purchase SET comment=?,date=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($comment, $date, $id, $id_space));

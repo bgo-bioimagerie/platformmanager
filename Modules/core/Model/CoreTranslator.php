@@ -20,7 +20,7 @@ class CoreTranslator {
                 //echo "translated = " . $year . "-" . $month . "-" . $day . "<br/>";
                 return $year . "-" . $month . "-" . $day;
             }
-            return null;
+            return "";
         }
         // En
         return $date;

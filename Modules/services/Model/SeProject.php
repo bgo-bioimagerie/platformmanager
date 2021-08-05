@@ -71,6 +71,9 @@ class SeProject extends Model {
     }
     
     public function closeProject($id_space, $id, $date_close, $closed_by) {
+        if($date_close == "") {
+            $date_close = null;
+        }
         $sql = "UPDATE se_project SET date_close=?, closed_by=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($date_close, $closed_by, $id, $id_space));
     }
@@ -101,6 +104,9 @@ class SeProject extends Model {
     }
 
     public function setSampleReturn($id_space, $id, $samplereturn, $samplereturndate) {
+        if($samplereturndate == "") {
+            $samplereturndate = null;
+        }
         $sql = "UPDATE se_project SET samplereturn=?, samplereturndate=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($samplereturn, $samplereturndate, $id, $id_space));
     }
@@ -165,6 +171,22 @@ class SeProject extends Model {
     protected function extractYears($data) {
 
         if (count($data) > 0) {
+            $firstYear = null;
+            $lastYear = null;
+            foreach($data as $date) {
+                if($date != null) {
+                    $lastDate = $date;
+                    $lastDateInfo = explode("-", $lastDate);
+                    $lastYear = $lastDateInfo[0];
+                    if($firstYear == null) {
+                        $firstDate = $date;
+                        $firstDateInfo = explode("-", $firstDate);
+                        $firstYear = $firstDateInfo[0];      
+                    }
+                }
+
+            }
+            /*
             $firstDate = $data[0][0];
             $firstDateInfo = explode("-", $firstDate);
             $firstYear = $firstDateInfo[0];
@@ -179,6 +201,7 @@ class SeProject extends Model {
             $lastDate = $data[count($data) - 1][0];
             $lastDateInfo = explode("-", $lastDate);
             $lastYear = $lastDateInfo[0];
+            */
 
             $years = array();
             for ($i = $firstYear; $i <= $lastYear; $i++) {
@@ -195,6 +218,24 @@ class SeProject extends Model {
 
         // extract years
         if (count($data) > 0) {
+
+            $firstYear = null;
+            $lastYear = null;
+            foreach($data as $date) {
+                if($date != null) {
+                    $lastDate = $date;
+                    $lastDateInfo = explode("-", $lastDate);
+                    $lastYear = $lastDateInfo[0];
+                    if($firstYear == null) {
+                        $firstDate = $date;
+                        $firstDateInfo = explode("-", $firstDate);
+                        $firstYear = $firstDateInfo[0];      
+                    }
+                }
+
+            }
+
+            /*
             $firstDate = $data[0][0];
             $firstDateInfo = explode("-", $firstDate);
             $firstYear = $firstDateInfo[0];
@@ -220,6 +261,7 @@ class SeProject extends Model {
             } else {
                 $lastYear = $lastDateInfo[0];
             }
+            */
 
             $years = array();
             for ($i = $firstYear; $i <= $lastYear; $i++) {
@@ -316,7 +358,9 @@ class SeProject extends Model {
     }
 
     public function setEntry($id_space, $id_entry, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
-
+        if($date == "") {
+            $date = null;
+        }
         if ($id_entry > 0) {
             //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
             $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=?, id_project=?, id_service=?, date=? WHERE id=? AND id_space=? AND deleted=0";
@@ -331,7 +375,9 @@ class SeProject extends Model {
     }
 
     public function setService($id_space, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
-
+        if($date == "") {
+            $date = null;
+        }
         if ($this->isProjectService($id_space, $id_project, $id_service, $date)) {
             //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>"; 
             $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=? WHERE id_project=? AND id_service=? AND date=? AND id_space=? AND deleted=0";
@@ -344,6 +390,9 @@ class SeProject extends Model {
     }
 
     public function addService($id_space, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0) {
+        if($date == "") {
+            $date = null;
+        }
         $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice, id_space) VALUES (?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice, $id_space));
     }
@@ -421,6 +470,12 @@ class SeProject extends Model {
     }
 
     public function setProject($id, $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit) {
+        if($date_open == "") {
+            $date_open = null;
+        }
+        if($date_close == "") {
+            $date_close = null;
+        }
         if ($this->isProject($id_space, $id)) {
             $this->updateEntry($id, $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit);
             return $id;
@@ -439,6 +494,13 @@ class SeProject extends Model {
     }
 
     public function addEntry($id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit) {
+
+        if($date_open == "") {
+            $date_open = null;
+        }
+        if($date_close == "") {
+            $date_close = null;
+        }
         $sql = "INSERT INTO se_project (id_space, name, id_resp, id_user, date_open, date_close, new_team, new_project, time_limit)
 				 VALUES(?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array(
@@ -448,6 +510,12 @@ class SeProject extends Model {
     }
 
     public function updateEntry($id, $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit) {
+        if($date_open == "") {
+            $date_open = null;
+        }
+        if($date_close == "") {
+            $date_close = null;
+        }
         $sql = "update se_project set name=?, id_resp=?, id_user=?, date_open=?, date_close=?, new_team=?, new_project=?, time_limit=?
 		        where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit, $id, $id_space));
@@ -541,6 +609,9 @@ class SeProject extends Model {
     }
 
     public function setEntryCloded($id_space, $id, $date_close) {
+        if($date_close == "") {
+            $date_close = null;
+        }
         $sql = "UPDATE se_project set date_close=?
 		        where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($date_close, $id, $id_space));

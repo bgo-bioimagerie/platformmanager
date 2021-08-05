@@ -46,6 +46,9 @@ class ComNews extends Model {
     }
 
     public function set($id, $id_space, $title, $content, $date, $expire) {
+        if($date == "") {
+            $date = null;
+        }
         if ($this->isNews($id_space, $id)) {
             $sql = "UPDATE com_news SET title=?, content=?, date=?, expires=?"
                     . " WHERE id=? AND id_space=?";
