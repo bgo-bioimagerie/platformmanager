@@ -306,10 +306,15 @@ class CoreDB extends Model {
         $tables = $this->runRequest($sql)->fetchAll();
         foreach($tables as $t) {
             $table = $t[0];
-            $sql = "SELECT COUNT(*) as total FROM ".$table." WHERE id_space=0";
-            $null_spaces = $this->runRequest($sql)->fetch();
-            if($null_spaces && intval($null_spaces) > 0) {
-                Configuration::getLogger()->warning('[id_space] found null space references', ['table' => $table, 'total' => $null_spaces]);
+            $sql = "SELECT COUNT(*) as total FROM ".$table;
+            $notEmpty = $this->runRequest($sql)->fetch();
+            if($notEmpty && intval($notEmpty['total']) > 0) {
+                // if table not empty and has id_space=0
+                $sql = "SELECT COUNT(*) as total FROM ".$table." WHERE id_space=0";
+                $null_spaces = $this->runRequest($sql)->fetch();
+                if($null_spaces && intval($null_spaces['total']) > 0) {
+                    Configuration::getLogger()->warning('[id_space] found null space references', ['table' => $table, 'total' => $null_spaces]);
+                }
             }
         }
 
@@ -368,6 +373,16 @@ class CoreDB extends Model {
             Configuration::getLogger()->debug('[stats] import calentry stats, done!');
         }
 
+        Configuration::getLogger()->debug('[space] remove super admin from spaces admins');
+        $cum = new CoreUser();
+        $superAdmins = $cum->superAdmins();
+        foreach ($superAdmins as $superAdmin) {
+            $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
+            $this->runRequest($sql, array($superAdmin['id']));
+        }
+        Configuration::getLogger()->debug('[space] remove super admin from spaces admins, done!');
+
+
     }
 
     /**
@@ -407,7 +422,7 @@ class CoreDB extends Model {
         $this->runRequest($sql);
     }
 
-    public function upgrade() {
+    public function upgrade($from=-1) {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
 
@@ -441,6 +456,12 @@ class CoreDB extends Model {
             $reqRelease = $this->runRequest($sqlRelease);
             $release = $reqRelease->fetch();
         }
+
+        if($from > 0) {
+            $oldRelease = $from;
+            $isNewRelease = true;
+        }
+        
 
         if($isNewRelease) {
             Configuration::getLogger()->info("[db] Need to migrate", ["oldrelease" => $oldRelease, "release" => DB_VERSION]);
