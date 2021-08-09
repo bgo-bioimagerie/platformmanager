@@ -21,7 +21,7 @@ class HelpdeskController extends CoresecureController {
         $lang = $this->getLanguage();
         $spaceModel = new CoreSpace();
         $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "role" => $role));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "role" => $role, "ticket" => null));
     }
 
     public function setSettingsAction($id_space) {
@@ -110,10 +110,10 @@ class HelpdeskController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
-        if(!$ticket) {
+        if(!$ticket && $id_ticket > 0) {
             throw new PfmException('ticket not found', 404);
         }
-        if($ticket['id_space'] != $id_space) {
+        if($id_ticket > 0 && $ticket['id_space'] != $id_space) {
             throw new PfmAuthException('not authorized', 403);
         }
 
@@ -122,6 +122,12 @@ class HelpdeskController extends CoresecureController {
         if(!$role) {
             throw new PfmAuthException('not authorized', 403);
         }
+
+        if($role < CoreSpace::$MANAGER && $id_ticket == 0) {
+            // user not manager not creator of ticket
+            throw new PfmAuthException('not authorized', 403);
+        }
+
         if($role < CoreSpace::$MANAGER && $ticket['created_by_user'] != $_SESSION['id_user']) {
             // user not manager not creator of ticket
             throw new PfmAuthException('not authorized', 403);
@@ -129,6 +135,7 @@ class HelpdeskController extends CoresecureController {
         $space = $sm->getSpace($id_space);
         $params = $this->request->params();
         $id = 0;
+        $isNew = false;
         if(intval($params['type']) == Helpdesk::$TYPE_EMAIL) {
             // TODO manage attachements
             Configuration::getLogger()->debug('[helpdesk] mail reply', ['params' => $params, 'files' => $_FILES]);
@@ -149,7 +156,23 @@ class HelpdeskController extends CoresecureController {
                 }
                 $attachments[] = ['id' => $attachId, 'name' => $name];
             }
-            $id = $hm->addEmail($id_space, $id_ticket, $params['body'], $_SESSION['email'], $attachments);
+
+            $from = $hm->fromAddress($space);
+            $fromName = 'pfm-' . $space['shortname'];
+            
+            $toAddress = explode(',', $params['to']);
+
+            if($id_ticket == 0) {
+                $isNew = true;
+                $newTicket = $hm->createTicket($id_space, $toAddress[0], $from, $params['subject'], $params['body'], 0, $attachments);
+                $id_ticket = $newTicket['ticket'];
+                $ticket = $hm->get($id_ticket);
+                $id = $newTicket['message'];
+            } else {
+                $id = $hm->addEmail($id_space, $id_ticket, $params['body'], $_SESSION['email'], $attachments);
+            }
+
+            $subject = '[Ticket #' . $ticket['id'] . '] '.$ticket['subject'];
 
             $converter = new CommonMarkConverter([
                 'html_input' => 'strip',
@@ -158,22 +181,20 @@ class HelpdeskController extends CoresecureController {
             
             $content = $converter->convertToHtml($params['body']);
             Configuration::getLogger()->debug('send email', ['body' => $content, 'files' => $attachementFiles]);
-            $from = $hm->fromAddress($space);
-            $fromName = 'pfm-' . $space['shortname'];
-            $subject = '[Ticket #' . $ticket['id'] . '] '.$ticket['subject'];
-            $toAddress = explode(',', $params['to']);
+            
+            
             $e = new Email();
             $e->sendEmail($from, $fromName, $toAddress, $subject, $content, false, $attachementFiles);
 
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
         }
-        $this->notify($id_space, $id_ticket, "en", false);
+        $hm->notify($id_space, $id_ticket, "en", $isNew);
 
         Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
 
         
-        $this->render(['data' => ['message' => ['id' => $id]]]);
+        $this->render(['data' => ['message' => ['id' => $id], 'ticket' => ['id' => $ticket['id']]]]);
 
     }
 
@@ -184,6 +205,9 @@ class HelpdeskController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
+        if(!$ticket) {
+            throw new PfmAuthException('ticket not found', 404);
+        }
         $ticket['status'] = intval($ticket['status']);
         if($ticket['id_space'] != $id_space) {
             throw new PfmAuthException('not in space', 403);

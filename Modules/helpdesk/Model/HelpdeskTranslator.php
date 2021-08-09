@@ -38,7 +38,7 @@ class HelpdeskTranslator {
         return "A new ticket has been received";
     }
 
-    public static function updateTicket($lang = "") {
+    public static function updatedTicket($lang = "") {
         if($lang == "fr") {
             return "Le ticket a été modifié";
         }

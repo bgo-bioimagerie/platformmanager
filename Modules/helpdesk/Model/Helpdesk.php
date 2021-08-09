@@ -74,13 +74,14 @@ class Helpdesk extends Model {
      * @param array $files  list of CoreFiles
      * @return int id of ticket
      */
-    public function createTicket($id_space, $from, $to, $subject, $body, $id_user=0) {
+    public function createTicket($id_space, $from, $to, $subject, $body, $id_user=0, $attachments=[]) {
         // create ticket
         // create message
         // create attachements
-        // TODO notify followers
+        $is_new = false;
         $id_ticket = $this->ticketFromSubject($subject);
         if($id_ticket == 0) {
+            $is_new = true;
             $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `subject`,  `created_by`, `created_by_user`, `created_at`)  VALUES (?,?,?, ?,?, NOW())';
             $this->runRequest($sql, array($id_space, self::$STATUS_NEW, $subject, $from, $id_user));
             $id_ticket = $this->getDatabase()->lastInsertId();
@@ -90,7 +91,10 @@ class Helpdesk extends Model {
         $this->runRequest($sql, array($id_ticket, $from, $to, $subject, $body, self::$TYPE_EMAIL));
         $id_message = $this->getDatabase()->lastInsertId();
 
-        return ['ticket' => $id_ticket, 'message' => $id_message];
+        if(!empty($attachments)) {
+            $this->attach($id_ticket, $id_message, $attachments);
+        }
+        return ['ticket' => $id_ticket, 'message' => $id_message, 'is_new' => $is_new];
     }
 
     /**
@@ -121,7 +125,6 @@ class Helpdesk extends Model {
 
     public function addNote($id_ticket, $body, $from) {
         // create message
-        // TODO notify followers
         $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE));
         return $this->getDatabase()->lastInsertId();
@@ -130,7 +133,7 @@ class Helpdesk extends Model {
 
     public function notify($id_space, $id_ticket, $lang="en", $isNew=true) {
         $cussm = new CoreUserSpaceSettings();
-        $ticket = $this>get($id_ticket);
+        $ticket = $this->get($id_ticket);
 
         $subject = "";
         $msg = "";

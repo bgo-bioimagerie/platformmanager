@@ -114,6 +114,7 @@ if (!$headless) {
             <div class="alert alert-warning">{{message}}</div>
         </div>
         <div class="col-sm-2 text-center">
+            <div @click="newTicket()">Create</div>
             <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
             <div @click="setFilter(0)">New</div>
             <div @click="setFilter(1)">Open</div>
@@ -152,9 +153,6 @@ if (!$headless) {
         </div>
         <div v-if="!settings && ticket !== null" class="col-sm-10 col-sm-offset-1 text-center">
             <div class="row">
-                <button class="pull-left btn btn-primary" type="button" @click="back">Back to tickets</button>
-            </div>
-            <div class="row">
                 <div class="col-sm-8">
                     <div v-for="message in ticket.messages" :key="message.id">
                         <div class="panel panel-default">
@@ -176,12 +174,19 @@ if (!$headless) {
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 v-if="addType==1" class="panel-title">Add note</h3>
-                                <h3 v-if="addType==0" class="panel-title">Email reply</h3>
+                                <h3 v-if="addType==0 && ticket.ticket.id > 0" class="panel-title">Email reply</h3>
+                                <h3 v-if="addType==0 && ticket.ticket.id == 0" class="panel-title">New ticket</h3>
                                 </div>
                             <div class="panel-body" v-html="message.body"></div>
                                 <form v-if="!textPreview">
-                                    <label>Destination</label>
-                                    <input v-if="addType==0" placeholder="comma separated emails" class="form-control" v-model:value="ticket.ticket.created_by"/>
+                                    <div v-if="ticket.ticket.id==0" class="form-group">
+                                        <label>Subject</label>
+                                        <input v-model="ticket.ticket.subject"/>
+                                    </div>
+                                    <div v-if="addType==0" class="form-group">
+                                        <label>Destination</label>
+                                        <input placeholder="comma separated emails" class="form-control" v-model:value="ticket.ticket.created_by"/>
+                                    </div>
                                     <div class="form-group">
                                     <textarea v-model="mdText" class="form-control" rows="5">
                                     </textarea>
@@ -192,8 +197,8 @@ if (!$headless) {
                             </div>
                             <div class="panel-footer">
                                 <button type="button" class="btn btn-primary" @click="preview">Message/Preview</button>
-                                <button type="button" class="btn btn-primary" v-if="addType==1" @click="save">Add [TODO]</button>
-                                <button type="button" class="btn btn-primary" v-if="addType==0" @click="save">Send [TODO]</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==1" @click="save">Add</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==0" @click="save">Send</button>
                             </div>
                         </div>
                     </div>
@@ -284,7 +289,9 @@ var app = new Vue({
             }
         }
     },
-    created () { this.fetchTickets() },
+    created () { this.fetchTickets(); <?php if($ticket) {
+        echo "this.fetchTicket(".$ticket['id'].")";
+    } ?> },
     methods: {
         getSettings () {
             this.settings = true;
@@ -350,6 +357,7 @@ var app = new Vue({
             }
             this.settings = false;
             this.filter = f;
+            this.ticket = null;
             this.fetchTickets();
         },
         assign() {
@@ -372,14 +380,15 @@ var app = new Vue({
             let headers = new Headers()
             headers.append('Content-Type','application/json')
             headers.append('Accept', 'application/json')
-            let cfg = {
-                headers: headers,
-                method: 'POST',
-                body: JSON.stringify({
+            let data = {
                     'type': this.addType,
                     'body': this.mdText,
                     'to': this.ticket.ticket.created_by
-                })
+                }
+            let cfg = {
+                headers: headers,
+                method: 'POST',
+                body: JSON.stringify(data)
             }
             if(this.addType == 0) {
                 const inputFiles = document.getElementById('mailFiles');
@@ -387,6 +396,9 @@ var app = new Vue({
                 f.append('type', this.addType);
                 f.append('body', this.mdText);
                 f.append('to', this.ticket.ticket.created_by);
+                if (this.ticket.ticket.id == 0) {
+                    f.append('subject', this.ticket.ticket.subject);
+                }
                 let fileIndex = 0;
                 for (const file of inputFiles.files) {
                     f.append('file' + fileIndex,file,file.name)
@@ -402,13 +414,28 @@ var app = new Vue({
             }
             fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}`, cfg).
             then(response => response.json()).
-            then(() => {
-                this.fetchTicket(this.ticket.ticket.id)
+            then((data) => {
+                this.fetchTicket(data.ticket.id)
                 this.addType = 1;
                 this.mdText = '';
                 this.text = '';
             })
 
+        },
+        newTicket() {
+            this.addType = 0;
+            this.mdText = '';
+            this.text = '';
+            this.ticket = {
+                'id_space': <?php echo $id_space ?>,
+                'ticket': {
+                'id': 0,
+                'subject': '',
+                'created_by': ''
+                },
+                'messages': [],
+
+            };
         },
         reply(ticket, message) {
             this.addType = 0;
