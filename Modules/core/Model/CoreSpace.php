@@ -136,7 +136,7 @@ class CoreSpace extends Model {
     }
 
     public function doesManageSpace($id_user) {
-        $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > 2";
+        $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > ".CoreSpace::$USER;
         $req = $this->runRequest($sql, array($id_user));
         if ($req->rowCount() > 0) {
             return true;
@@ -173,7 +173,7 @@ class CoreSpace extends Model {
      * @return array list of strings
      */
     public function getEmailsSpaceManagers($id_space) {
-        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>2)";
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>".CoreSpace::$USER.")";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
@@ -187,7 +187,7 @@ class CoreSpace extends Model {
      * @return array list of strings
      */
     public function getEmailsSpaceActiveUsers($id_space) {
-        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status=2)";
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status=".CoreSpace::$USER.")";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
@@ -513,6 +513,9 @@ class CoreSpace extends Model {
         foreach ($alreadyAdmins as $aadm) {
             $found = false;
             foreach ($id_admins as $cidadm) {
+                if(!$cidadm) {
+                    continue;
+                }
                 if ($cidadm == $aadm["id_user"]) {
                     $found = true;
                     break;
@@ -528,7 +531,9 @@ class CoreSpace extends Model {
 
         // add admins
         foreach ($id_admins as $adm) {
-            $this->setUser($adm, $id, CoreSpace::$ADMIN);
+            if($adm) {
+                $this->setUser($adm, $id, CoreSpace::$ADMIN);
+            }
         }
     }
 

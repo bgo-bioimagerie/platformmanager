@@ -263,6 +263,14 @@ class CoreUser extends Model {
         return 0;
     }
 
+    /**
+     * Returns super administrators
+     */
+    public function superAdmins() {
+        $sql = "SELECT * from core_users WHERE status_id=?";
+        return $this->runRequest($sql, array(CoreStatus::$ADMIN))->fetchAll();
+    }
+
     public function installDefault() {
         $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
