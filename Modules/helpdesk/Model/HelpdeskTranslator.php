@@ -45,4 +45,11 @@ class HelpdeskTranslator {
         return "Ticket has been updated";
     }
 
+    public static function reminderReachedTicket($lang="") {
+        if($lang == "fr") {
+            return "Le date d'expiration du ticket a été atteinte";
+        }
+        return "Reminder date has been reached";
+    }
+
 }

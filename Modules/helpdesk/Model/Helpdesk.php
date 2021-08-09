@@ -305,6 +305,26 @@ class Helpdesk extends Model {
         return $fromInfo[0]. '+' . $space['shortname'] . '@' . $fromInfo[1];
     }
 
+    public function remind($lang="en") {
+        $sql = "SELECT * FROM hp_tickets WHERE reminder<NOW() and reminder_sent=0";
+        $toRemind = $this->runRequest($sql)->fetchAll();
+        foreach ($toRemind as $ticket) {
+            if(!$ticket["assigned"]) { continue; }
+            $email = new Email();
+            $from = Configuration::get('smtp_from');
+            $fromName = "Platform-Manager";
+            $cum = new CoreUser();
+            $toAddress = $cum->getEmail($ticket["assigned"]);
+            if($toAddress) {
+                $subject = "[Ticket #".$ticket["id"]."] reminder reached";
+                $msg = HelpdeskTranslator::reminderReachedTicket($lang);
+                $email->sendEmail($from, $fromName, $toAddress, $subject, $msg);
+                $sql = "UPDATE hp_tickets SET reminder_sent=1 WHERE id=?";
+                $this->runRequest($sql, array($ticket["id"]));
+            }
+        }
+    }
+
 }
 
 ?>
