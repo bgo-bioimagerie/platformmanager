@@ -46,6 +46,7 @@ class CorespaceaccessController extends CoresecureController {
         $this->request->getSession()->setAttribut("logged_login", $_SESSION['login']);
         $this->request->getSession()->setAttribut("logged_email", $_SESSION['email']);
         $this->request->getSession()->setAttribut("logged_user_status", $_SESSION['user_status']);
+        $this->request->getSession()->setAttribut("logged_id_space", $id_space);
 
         $modelUser = new CoreUser();
         $user = $modelUser->getInfo($id_user);
@@ -83,6 +84,7 @@ class CorespaceaccessController extends CoresecureController {
         $this->request->getSession()->unset("logged_login");
         $this->request->getSession()->unset("logged_email");
         $this->request->getSession()->unset("logged_user_status");
+        $this->request->getSession()->unset("logged_id_space");
 
         $this->redirect("coretiles");
 
