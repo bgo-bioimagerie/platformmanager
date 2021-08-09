@@ -15,6 +15,7 @@ class Helpdesk extends Model {
     public static $STATUS_OPEN = 1;
     public static $STATUS_REMINDER = 2;
     public static $STATUS_CLOSED = 3;
+    public static $STATUS_SPAM = 4;
 
     /**
      * Create the stats_buckets table
@@ -212,6 +213,11 @@ class Helpdesk extends Model {
     }
 
     public function setStatus($id_ticket, $status, $reminder_date=null) {
+        if($status == self::$STATUS_SPAM) {
+            $this->trash($id_ticket);
+        }
+
+
         if($status === self::$STATUS_REMINDER) {
             $sql = "UPDATE hp_tickets set `status`=?, reminder=?, reminder_set=0 WHERE id=?";
             $this->runRequest($sql, array($status, $reminder_date, $id_ticket));

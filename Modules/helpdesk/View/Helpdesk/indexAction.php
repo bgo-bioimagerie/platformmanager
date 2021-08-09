@@ -217,6 +217,7 @@ if (!$headless) {
                                     <option value="1">Open</option>
                                     <option value="2">Reminder</option>
                                     <option value="3">Closed</option>
+                                    <option value="4">Spam</option>
                                 </select>
                             </div>
                             <div v-if="ticket.ticket.status == 2">
@@ -337,6 +338,11 @@ var app = new Vue({
             }
             fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}/status/${event.target.value}`, cfg).
             then(() => {
+                if(event.target.value == 4) {
+                    this.filter = 0;
+                    this.ticket = null;
+                    this.fetchTickets();
+                }
                 console.debug('ticket updated')
             })
         },
