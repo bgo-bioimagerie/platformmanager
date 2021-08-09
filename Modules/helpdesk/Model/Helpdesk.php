@@ -4,6 +4,8 @@ require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
 require_once 'Framework/Email.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreFiles.php';
+
 require_once 'Modules/helpdesk/Model/HelpdeskTranslator.php';
 
 class Helpdesk extends Model {
@@ -271,6 +273,15 @@ class Helpdesk extends Model {
 
     public function trash($id_ticket) {
         // TODO delete files too....
+        $sql = "SELECT * FROM hp_ticket_attachment WHERE id_ticket=?";
+        $files = $this->runRequest($sql, array($id_ticket))->fetchAll();
+        $cfm = new CoreFiles();
+        if($files) {
+            foreach ($files as $attachment) {
+                $cfm->delete($attachment['id_file']);
+            }
+        }
+
         $sql = "DELETE FROM hp_ticket_attachment WHERE id_ticket=?";
         $this->runRequest($sql, array($id_ticket));
         $sql = "DELETE FROM hp_ticket_message WHERE id_ticket=?";
