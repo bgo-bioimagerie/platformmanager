@@ -11,6 +11,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
@@ -74,9 +75,14 @@ class CorespaceaccessController extends CoresecureController {
         $modelOptions = new CoreSpaceAccessOptions();
         $options = $modelOptions->getAll($id_space);
         foreach($options as $option){
-            $translatorName = ucfirst($option["module"]).'Translator';
-            require_once 'Modules/'.$option["module"].'/Model/'.$translatorName.'.php';
-            $table->addLineButton($option["url"]."/" . $id_space, "id", $translatorName::$option["toolname"]($lang));
+            try {
+                $translatorName = ucfirst($option["module"]).'Translator';
+                require_once 'Modules/'.$option["module"].'/Model/'.$translatorName.'.php';
+                $toolname = $option["toolname"];
+                $table->addLineButton($option["url"]."/" . $id_space, "id", $translatorName::$toolname($lang));
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error('Option not found', ['option' => $option, 'error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+            }
         }
 
         $tableContent = array(
@@ -164,11 +170,12 @@ class CorespaceaccessController extends CoresecureController {
                 $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
 
                 $modelSpacePending = new CorePendingAccount();
-                $modelSpacePending->add($id_user, $id_space);
+                $pid = $modelSpacePending->add($id_user, $id_space);
 
                 $_SESSION["message"] = CoreTranslator::AccountHasBeenCreated($lang);
 
-                $this->redirect("corespaceaccessuseradd/".$id_space);
+                $user = $modelCoreUser->getInfo($id_user);
+                $this->redirect("corespaceaccessuseradd/".$id_space, [], ['user' => $user, 'pending' => $pid]);
                 return;
             }
         }
@@ -248,8 +255,8 @@ class CorespaceaccessController extends CoresecureController {
     public function userdeleteAction($id_space, $id_user) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $lang = $this->getLanguage();
-        $spaceModel = new CoreSpace();
-        $spaceModel->deleteUser($id_space, $id_user);
+        $spaceUserModel = new CoreSpaceUser();
+        $spaceUserModel->delete($id_space, $id_user);
         $_SESSION["message"] = CoreTranslator::UserAccountHasBeenDeleted($lang);
 
         $modelSpace = new CoreSpace();
@@ -339,7 +346,7 @@ class CorespaceaccessController extends CoresecureController {
             $email->notifyUserByEmail($mailParams, "accept_pending_user", $this->getLanguage());
 
             $_SESSION["message"] = CoreTranslator::UserAccountHasBeenActivated($lang);
-            $this->redirect("corespacependinguseredit/".$id_space."/".$id);
+            $this->redirect("corespacependinguseredit/".$id_space."/".$id, [], ['message' => 'user activated']);
         }
 
         return $this->render(array(
@@ -359,14 +366,15 @@ class CorespaceaccessController extends CoresecureController {
      * @param int $id pending account id
      */
     public function pendinguserdeleteAction($id_space, $id) {
-        Configuration::getLogger()->debug("in pendinguserdeleteAction", ["id_space" => $id_space, "id_pending" => $id]);
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelPending = new CorePendingAccount();
+        $id_user = $modelPending->get($id)["id_user"];
         $modelPending->invalidate($id, $_SESSION["id_user"]);
+        $modelPending->updateWhenUnjoin($id_user, $id_space);
         $modelSpace = new CoreSpace();
         $mailParams = [
             "id_space" => $id_space,
-            "id_user" => $modelPending->get($id)["id_user"],
+            "id_user" => $id_user,
             "space_name" => $modelSpace->getSpaceName($id_space),
         ];
         $email = new Email();

@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Email.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/mailer/Model/MailerTranslator.php';
@@ -45,7 +46,7 @@ class MailerController extends CoresecureController {
         // get sort action
         $areasList = array();
         $resourcesList = array();
-
+        
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "resources");
         if ($statusUserMenu > 0) {
@@ -55,7 +56,7 @@ class MailerController extends CoresecureController {
             $modelResource = new ResourceInfo();
             $resourcesList = array();
             foreach ($areasList as $area) {
-                $resourcesList[] = $modelResource->resourceIDNameForArea($area["id"]);
+                $resourcesList[] = $modelResource->resourceIDNameForArea($id_space, $area["id"]);
             }
         }
 
@@ -76,41 +77,28 @@ class MailerController extends CoresecureController {
         $subject = $this->request->getParameter("subject");
         $content = $this->request->getParameter("content");
 
-        // get the emails
-        $toAdress = array();
-        if ($to == "all") {
-            $modelUser = new CoreUser();
-            $toAdress = $modelUser->getAllSpaceActifEmails($id_space);
-        } elseif ($to == "managers") {
-            $modelUser = new CoreUser();
-            $toAdress = $modelUser->getActiveManagersEmails($id_space);
-        } else {
+        if (!in_array($to, array("all", "managers"))) {
             $toEx = explode("_", $to);
             if ($toEx[0] == "a") { // area
                 // get all the adresses of users who book in this area
                 $modelCalEntry = new BkCalendarEntry();
-                $toAdress = $modelCalEntry->getEmailsBookerArea($toEx[1]);
+                $to = $modelCalEntry->getEmailsBookerArea($id_space, $toEx[1]);
             } elseif ($toEx[0] == "r") { // resource
                 // get all the adresses of users who book in this resource
                 $modelCalEntry = new BkCalendarEntry();
-                $toAdress = $modelCalEntry->getEmailsBookerResource($toEx[1]);
+                $to = $modelCalEntry->getEmailsBookerResource($id_space, $toEx[1]);
             }
         }
-        
-        // get the space name
-        $modelSpace = new CoreSpace();
-        $space = $modelSpace->getSpace($id_space);
 
-        // send the email
-        $modelConfig = new CoreConfig();
-        $MailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space);
-        $MailerSetCopyToFromBool = false;
-        if($MailerSetCopyToFrom == 1){
-            $MailerSetCopyToFromBool = true;
-        }
-        
-        $mailerModel = new MailerSend();
-        $message = $mailerModel->sendEmail($from, $space["name"], $toAdress, $subject, $content, $MailerSetCopyToFromBool);
+        $email = new Email();
+        $mailParams = [
+            "id_space" => $id_space,
+            "content" => $content,
+            "subject" => $subject,
+            "from" => $from,
+            "to" => $to,
+        ];
+        $message = $email->sendEmailToSpaceMembers($mailParams, $this->getLanguage());
 
         $this->render(array(
             'lang' => $this->getLanguage(),

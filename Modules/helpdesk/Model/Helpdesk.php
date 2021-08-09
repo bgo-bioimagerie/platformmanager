@@ -2,7 +2,9 @@
 
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
+require_once 'Framework/Email.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/helpdesk/Model/HelpdeskTranslator.php';
 
 class Helpdesk extends Model {
 
@@ -106,7 +108,6 @@ class Helpdesk extends Model {
 
     public function addEmail($id_ticket, $body, $from, $files=[]) {
         // create message
-        // TODO notify followers
         $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_EMAIL));
         $id = $this->getDatabase()->lastInsertId();
@@ -124,6 +125,53 @@ class Helpdesk extends Model {
         $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE));
         return $this->getDatabase()->lastInsertId();
+
+    }
+
+    public function notify($id_space, $id_ticket, $lang="en", $isNew=true) {
+        $cussm = new CoreUserSpaceSettings();
+        $ticket = $this>get($id_ticket);
+
+        $subject = "";
+        $msg = "";
+        $sent = array();
+
+        if($isNew) {
+            $subject = "[Ticket #$id_ticket] new ticket";
+            $msg = HelpdeskTranslator::newTicket($lang);
+            $users = $cussm->getUsersForSetting($id_space, "hp_notifyNew", 1);
+            foreach ($users as $user) {
+                $sent[] = $user["user_id"];
+            }
+            //hp_notifyAssignedUpdate and assigned or hp_notifyAllUpdate
+        } else {
+            $subject = "[Ticket #$id_ticket] updated ticket";
+            $msg = HelpdeskTranslator::updatedTicket($lang);
+            if($ticket["assigned"]) {
+                $userSettings = $cussm->getUserSetting($id_space, $ticket["assigned"], "hp_notifyAssignedUpdate");
+                if($userSettings) {
+                    $sent[] = $ticket["assigned"];
+                }
+            }
+
+            $users = $cussm->getUsersForSetting($id_space, "hp_notifyAllUpdate", 1);
+            foreach ($users as $user) {
+                if($ticket["assigned"] == $user["user_id"] && !in_array($user["user_id"], $sent)) {
+                    $sent[] = $user["user_id"];
+                }
+            }
+        }
+        $subject .= " - ".substr($ticket["subject"], 0, 40);
+        foreach ($sent as $userToSend) {
+            $email = new Email();
+            $from = Configuration::get('smtp_from');
+            $fromName = "Platform-Manager";
+            $cum = new CoreUser();
+            $toAddress = $cum->getEmail($userToSend);
+            if($toAddress) {
+                $email->sendEmail($from, $fromName, $toAddress, $subject, $msg);
+            }
+        }
 
     }
 
@@ -153,13 +201,11 @@ class Helpdesk extends Model {
         // create attachements
         // send message
     }
-
     public function assign($id_ticket, $id_user) {
         $um = new CoreUser();
         $login = $um->getUserLogin($id_user);
         $sql = "UPDATE hp_tickets set assigned=?, assigned_name=? WHERE id=?";
         $this->runRequest($sql, array($id_user, $login, $id_ticket));
-
     }
 
     public function setStatus($id_ticket, $status, $reminder_date=null) {
@@ -238,6 +284,7 @@ class Helpdesk extends Model {
         $fromInfo = explode('@', $from);
         return $fromInfo[0]. '+' . $space['shortname'] . '@' . $fromInfo[1];
     }
+
 }
 
 ?>

@@ -5,9 +5,9 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
-//require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
 
 /**
  *
@@ -124,8 +124,9 @@ class CoreusersController extends CoresecureController {
                 $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
                 $script .= '</script>';
             } else {
-                $this->editQuery($form, $modelUser, $lang);
-                $this->redirect("coreusers");
+                $id_user = $this->editQuery($form, $modelUser, $lang);
+                $user = $modelUser->getInfo($id_user);
+                $this->redirect("coreusers", [], ['user' => $user]);
                 return;
             }
         }
@@ -162,7 +163,7 @@ class CoreusersController extends CoresecureController {
             if ($pwd != $pwdconfirm) {
                 throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
             }
-            $modelUser->add(
+            $id = $modelUser->add(
                 $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
             );
         } else {
@@ -170,13 +171,37 @@ class CoreusersController extends CoresecureController {
                     $id, $form->getParameter("login"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
             );
         }
+        return $id;
     }
 
     public function deleteAction($id) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
-        $modelUser = new CoreUser();
-        $modelUser->delete($id);
+        if (!$this->isLinkedToAnySpace($id)) {
+            $modelPending = new CorePendingAccount();
+            $modelPending->deleteByUser($id);
+            $modelUser = new CoreUser();
+            $modelUser->delete($id);
+        } else {
+            $_SESSION["message"] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
+        }
         $this->redirect("coreusers");
+    }
+
+    /**
+     * 
+     * Returns true if user is pending or active in any space
+     * 
+     * @param int $id_user
+     * 
+     * @return bool
+     */
+    public function isLinkedToAnySpace($idUser) {
+        $coreSpaceModel = new CoreSpaceUser();
+        $corePendingModel = new CorePendingAccount();
+        return (
+            $coreSpaceModel->getUserSpaceInfo($idUser) ||
+            $corePendingModel->isActuallyPendingInAnySpace($idUser)
+        );
     }
 
     public function myaccountAction() {

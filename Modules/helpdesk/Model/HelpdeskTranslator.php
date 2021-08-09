@@ -31,4 +31,18 @@ class HelpdeskTranslator {
         return "Menu name";
     }
 
+    public static function newTicket($lang = "") {
+        if($lang == "fr") {
+            return "Un niveau ticket est arrivé";
+        }
+        return "A new ticket has been received";
+    }
+
+    public static function updateTicket($lang = "") {
+        if($lang == "fr") {
+            return "Le ticket a été modifié";
+        }
+        return "Ticket has been updated";
+    }
+
 }

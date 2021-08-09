@@ -10,7 +10,9 @@
         "sentry/sdk": "^3.1",
         "vanilla/garden-cli": "^3.1",
         "league/html-to-markdown": "^5.0",
-        "league/commonmark": "^1.6"
+        "league/commonmark": "^1.6",
+        "phpoffice/phpspreadsheet": "^1.18",
+        "spipu/html2pdf": "^5.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

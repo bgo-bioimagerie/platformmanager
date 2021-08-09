@@ -2,6 +2,13 @@
 
 [Installation]
 rootWeb = /
+public_url = 'http://localhost:4000'
+
+[Admin]
+admin_user =
+admin_password = 
+admin_email = 
+admin_apikey =
 
 [BD]
 dsn = 'mysql:host=MYSQL_URL;dbname=MYSQL_DBNAME;charset=utf8'
@@ -28,19 +35,17 @@ modules[] = "documents"
 modules[] = "antibodies"
 modules[] = "quote"
 modules[] = "com"
-modules[] = "breeding"
-modules[] = "estore"
 
 [Company]
 name = "Platform-Manager"
 
-[Openid]
-openid[] = "orcid"
-openid_orcid_url = "https://sandbox.orcid.org"
-openid_orcid_client_id = "APP-XXXXX"
-openid_orcid_client_secret = "XXXXXXXXX"
-openid_orcid_login = "https://sandbox.orcid.org/oauth/authorize"
-openid_orcid_icon = ""
+;[Openid]
+;openid[] = "orcid"
+;openid_orcid_url = "https://sandbox.orcid.org"
+;openid_orcid_client_id = "APP-XXXXX"
+;openid_orcid_client_secret = "XXXXXXXXX"
+;openid_orcid_login = "https://sandbox.orcid.org/oauth/authorize"
+;openid_orcid_icon = ""
 
 [Amqp]
 amqp_host = "localhost"
@@ -49,6 +54,6 @@ amqp_user = "pfm"
 amqp_password = "pfm"
 
 [Influxdb]
-influxdb_url = ""
-influxdb_token = "XXXX"
+;influxdb_url = ""
+;influxdb_token = "XXXX"
 influxdb_org = "pfm"

@@ -44,7 +44,7 @@ class CatalogpublicController extends Controller {
         }
 
         $modelEntry = new CaEntry();
-        $entries = $modelEntry->getCategoryEntries($idCategory);
+        $entries = $modelEntry->getCategoryEntries($id_space, $idCategory);
 
         $modelCoreConfig = new CoreConfig();
 
@@ -82,7 +82,7 @@ class CatalogpublicController extends Controller {
         $entries = $modelAntibody->getAnticorpsInfoCatalog();
 
         $statusModel = new Status();
-        $status = $statusModel->getStatus();
+        $status = $statusModel->getBySpace($id_space);
         
         $modelCoreConfig = new CoreConfig();
         $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);

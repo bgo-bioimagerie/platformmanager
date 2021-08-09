@@ -52,7 +52,8 @@ class CoremainmenuController extends CoresecureController {
 
         return $this->render(array(
             "lang" => $lang,
-            "tableHtml" => $tableHtml
+            "tableHtml" => $tableHtml,
+            "data" => ["menus" => $menus]
         ));
     }
 
@@ -79,11 +80,9 @@ class CoremainmenuController extends CoresecureController {
 
         if ($form->check()) {
 
-            $id = $modelMenu->set($id, $form->getParameter("name"), $form->getParameter("display_order"));
+            $menuid = $modelMenu->set($id, $form->getParameter("name"), $form->getParameter("display_order"));
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
-            $menu = $modelMenu->get($id);
-            $this->redirect("coremainmenus", data: ['menu' => $menu]);
-            return;
+            $this->redirect("coremainmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name")]]);
         }
 
         return $this->render(array(
@@ -124,7 +123,8 @@ class CoremainmenuController extends CoresecureController {
 
         return $this->render(array(
             "lang" => $lang,
-            "tableHtml" => $tableHtml
+            "tableHtml" => $tableHtml,
+            "data" => ["menus" => $menus]
         ));
     }
 
@@ -150,14 +150,14 @@ class CoremainmenuController extends CoresecureController {
 
         if ($form->check()) {
 
-            $id = $modelMenu->set(
+            $menuid = $modelMenu->set(
                     $id,
                     $form->getParameter("name"),
                     $form->getParameter("id_main_menu"),
                     $form->getParameter("display_order"));
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
-            $menu = $modelMenu->get($id);
-            $this->redirect("coremainsubmenus", data: ['menu' => $menu]);
+            $this->redirect("coremainsubmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name"), 'id_main_menu' => $form->getParameter("id_main_menu")]]);
+
             return;
         }
 
@@ -197,7 +197,8 @@ class CoremainmenuController extends CoresecureController {
 
         return $this->render(array(
             "lang" => $lang,
-            "tableHtml" => $tableHtml
+            "tableHtml" => $tableHtml,
+            "data" => ["menus" => $items]
         ));
 
     }
@@ -225,11 +226,11 @@ class CoremainmenuController extends CoresecureController {
         $form->addSelect("id_space", CoreTranslator::Space($lang), $spaceList["names"], $spaceList["ids"], $item["id_space"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), true, $item["display_order"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "coremainmenuitemedit/");
+        $form->setValidationButton(CoreTranslator::Save($lang), "coremainmenuitemedit/".$id);
 
         if ($form->check()) {
 
-            $id = $modelItem->set(
+            $itemid = $modelItem->set(
                     $id,
                     $form->getParameter("name"),
                     $form->getParameter("id_sub_menu"),
@@ -237,9 +238,7 @@ class CoremainmenuController extends CoresecureController {
                     $form->getParameter("display_order")
             );
             $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
-            $menu = $modelItem->get($id);
-            $this->redirect("coremainmenuitems", data: ['menu' => $menu]);
-            return;
+            $this->redirect("coremainmenuitems", array(), ['menu' => ['id' => $itemid, 'name' => $form->getParameter("name"), 'id_space' => $form->getParameter("id_space"), 'id_sub_menu' => $form->getParameter("id_sub_menu")]]);
         }
 
         return $this->render(array(

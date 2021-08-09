@@ -64,7 +64,7 @@ class RerespsstatusController extends CoresecureController {
         // get belonging info
         $data = array("id" => 0, "name" => "", "id_space" => $id_space);
         if ($id > 0) {
-            $data = $this->model->get($id);
+            $data = $this->model->get($id_space ,$id);
         }
 
         // lang
@@ -100,7 +100,7 @@ class RerespsstatusController extends CoresecureController {
         
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         
-        $this->model->delete($id);
+        $this->model->delete($id_space, $id);
         $this->redirect("rerespsstatus/".$id_space);
     }
 

@@ -1,9 +1,28 @@
 <?php
 
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Model.php';
+require_once 'Framework/Statistics.php';
+
+require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreUser.php';
+
+require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
+require_once 'Modules/core/Model/CoreHistory.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+
+class EventModel extends Model {
+
+    public function runRequest($sql, $args=array()) {
+        return parent::runRequest($sql, $args);
+    }   
+
+}
 
 class EventHandler {
 
@@ -18,14 +37,17 @@ class EventHandler {
         $model = new CoreSpace();
         $nbSpaces = $model->countSpaces();
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
-        Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
+        $statHandler = new Statistics();
+        $statHandler->record(Configuration::get('influxdb_org', 'pfm'), $stat);
+        // Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
     }
 
     public function spaceCreate($msg) {
         $this->logger->debug('[spaceCreate]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
-        Statistics::createDB($space['shortname']);
+        $statHandler = new Statistics();
+        $statHandler->createDB($space['shortname']);
         $this->spaceCount($msg);
     }
 
@@ -39,17 +61,81 @@ class EventHandler {
         $space = $model->getSpace($msg['space']['id']);
         $nbUsers = $model->countUsers($msg['space']['id']);
         $stat = ['name' => 'users', 'fields' => ['value' => $nbUsers]];
-        Statistics::stat($space['shortname'], $stat);
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+        // Statistics::stat($space['shortname'], $stat);
     }
 
     public function spaceUserJoin($msg) {
         $this->logger->debug('[spaceUserJoin]', ['space_id' => $msg['space']['id']]);
         $this->spaceUserCount($msg);
+        $u = new CoreUser();
+        $user = $u->getInfo($msg['user']['id']);
+        $login = $user['login'];
+        $m = new CoreHistory();
+        $m->add( $msg['space']['id'], $msg['_user'], "User $login joined space");
     }
 
     public function spaceUserUnjoin($msg) {
         $this->logger->debug('[spaceUserUnjoin]', ['space_id' => $msg['space']['id']]);
         $this->spaceUserCount($msg);
+        $u = new CoreUser();
+        $user = $u->getInfo($msg['user']['id']);
+        $login = $user['login'];
+        $m = new CoreHistory();
+        $m->add( $msg['space']['id'], $msg['_user'], "User $login left space");
+    }
+
+    private function _calEntryStat($space, $entry, $value){
+        $id_space = $space['id'];
+        $timestamp = $entry['start_time'];
+        $r = new ResourceInfo();
+        $resource = $r-> get($id_space, $entry['resource_id']);
+        $u = new CoreUser();
+        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        $user = $u->userAllInfo($id_user);
+        $client = ['name' => 'unknown'];
+        if($entry['responsible_id']) {
+            $c = new ClClient();
+            $is_client = $c->get($entry['responsible_id'], $id_space);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    }
+
+    public function calentryImport() {
+        $em = new EventModel();
+        $sql = "SELECT * FROM `bk_calendar_entry`;";
+        $resdb = $em->runRequest($sql);
+        while($res = $resdb->fetch()) {
+            $this->calentryEdit(["action" => Events::ACTION_CAL_ENTRY_EDIT, "bk_calendar_entry_old" => null, "bk_calendar_entry" => ["id" => intval($res['id']), "id_space" => $res['id_space']]]);
+        }
+    }
+
+    public function calentryEdit($msg) {
+        $this->logger->debug('[calentryEdit]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
+        $id_space = $msg['bk_calendar_entry']['id_space'];
+
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        
+        if($msg['bk_calendar_entry_old']) {
+            $old = $msg['bk_calendar_entry_old'];
+            $this->_calEntryStat($space, $old, 0);
+        }
+
+        $m = new BkCalendarEntry();
+        $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
+        if(!$entry) {
+            Configuration::getLogger()->debug('[calentryEdit] id not found', ['id' => $msg['bk_calendar_entry']['id'], 'id_space' => $id_space]);
+            return;
+        }
+
+        $this->_calEntryStat($space, $entry, 1);
     }
 
     /**
@@ -79,11 +165,14 @@ class EventHandler {
                 case Events::ACTION_SPACE_USER_UNJOIN:
                     $this->spaceUserUnjoin($data);
                     break;
+                case Events::ACTION_CAL_ENTRY_EDIT:
+                    $this->calentryEdit($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $action]);
                     break;
             }
-        } catch(Exception $e) {
+        } catch(Throwable $e) {
             $this->logger->error('[message] error', ['message' => $e->getMessage()]);
         }
     }
@@ -97,6 +186,8 @@ class Events {
     public const ACTION_SPACE_USER_JOIN = 2;
     public const ACTION_SPACE_USER_UNJOIN = 3;
     public const HELPDESK_TICKET = 100;
+
+    public const ACTION_CAL_ENTRY_EDIT = 100;
 
     private static $connection;
     private static $channel;
@@ -127,6 +218,7 @@ class Events {
         if(self::$channel != null) {
             self::$channel->close();
             self::$connection->close();
+            self::$channel = null;
         }
     }
         
@@ -142,6 +234,7 @@ class Events {
                 return;
             }
             Configuration::getLogger()->debug('[event] send', ['message' => $message]);
+            $message['_user'] = $_SESSION['login'] ?? 'unknown';
             $amqpMsg = new AMQPMessage(json_encode($message));
             $channel->basic_publish($amqpMsg, 'pfm_events', '');
         } catch (Exception $e) {

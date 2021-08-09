@@ -64,7 +64,7 @@ class DocumentslistController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $model = new Document();
-        $data = $model->get($id);
+        $data = $model->get($id_space, $id);
 
         $form = new Form($this->request, "DocumentsEditAction");
         $form->setTitle(DocumentsTranslator::Edit_Document($lang));
@@ -83,7 +83,7 @@ class DocumentslistController extends CoresecureController {
                 $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "file_url", $idNew . "_" . $ext);
 
-                $model->setUrl($idNew, $target_dir . $idNew . "_" . $ext);
+                $model->setUrl($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
             }
 
             $this->redirect("documents/" . $id_space);
@@ -98,7 +98,7 @@ class DocumentslistController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
 
         $model = new Document();
-        $file = $model->getUrl($id);
+        $file = $model->getUrl($id_space,$id);
         
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
@@ -115,7 +115,7 @@ class DocumentslistController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
         $model = new Document();
-        $model->delete($id);
+        $model->delete($id_space, $id);
 
         $this->redirect("documents/" . $id_space);
     }

@@ -27,53 +27,54 @@ class InInvoiceItem extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getInvoiceItems($id_invoice) {
-        $sql = "SELECT id FROM in_invoice_item WHERE id_invoice=?";
-        return $this->runRequest($sql, array($id_invoice))->fetchAll();
+    public function getInvoiceItems($id_space, $id_invoice) {
+        $sql = "SELECT id FROM in_invoice_item WHERE id_invoice=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_invoice, $id_space))->fetchAll();
     }
 
-    public function getItem($id) {
-        $sql = "SELECT * FROM in_invoice_item WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function getItem($id_space, $id) {
+        $sql = "SELECT * FROM in_invoice_item WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
     
-    public function getForInvoice($id_invoice){
-        $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=?";
-        return $this->runRequest($sql, array($id_invoice))->fetch();
+    public function getForInvoice($id_space, $id_invoice){
+        $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_invoice, $id_space))->fetch();
     }
 
-    public function setItem($id, $id_invoice, $module, $controller, $content, $details, $total_ht) {
-        if (!$this->isItem($id)) {
-            $sql = "INSERT INTO in_invoice_item (id_invoice, module, controller, content, details, total_ht) VALUES (?,?,?,?,?,?)";
-            $this->runRequest($sql, array($id_invoice, $module, $controller, $content, $details, $total_ht));
+    public function setItem($id_space ,$id, $id_invoice, $module, $controller, $content, $details, $total_ht) {
+        if (!$this->isItem($id_space ,$id)) {
+            $sql = "INSERT INTO in_invoice_item (id_invoice, module, controller, content, details, total_ht, id_space) VALUES (?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($id_invoice, $module, $controller, $content, $details, $total_ht, $id_space));
         } else {
-            $sql = "UPDATE in_invoice_item SET id_invoice=?, module=?, controller=?, content=?, details=?, total_ht=? WHERE id=?";
-            $this->runRequest($sql, array($id_invoice, $module, $controller, $content, $details, $total_ht, $id));
+            $sql = "UPDATE in_invoice_item SET id_invoice=?, module=?, controller=?, content=?, details=?, total_ht=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_invoice, $module, $controller, $content, $details, $total_ht, $id, $id_space));
         }
     }
     
-    public function setItemContent($id_invoice, $content){
-        $sql = "UPDATE in_invoice_item SET content=? WHERE id_invoice=?";
-        $this->runRequest($sql, array($content, $id_invoice));
+    public function setItemContent($id_space, $id_invoice, $content){
+        $sql = "UPDATE in_invoice_item SET content=? WHERE id_invoice=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($content, $id_invoice, $id_space));
     }
 
-    public function editItemContent($id, $content, $total_ht) {
-        $sql = "UPDATE in_invoice_item SET content=?, total_ht=? WHERE id=?";
-        $this->runRequest($sql, array($content, $total_ht, $id));
+    public function editItemContent($id_space, $id, $content, $total_ht) {
+        $sql = "UPDATE in_invoice_item SET content=?, total_ht=? WHERE id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($content, $total_ht, $id, $id_space));
     }
 
-    public function isItem($id) {
-        $sql = "SELECT id FROM in_invoice_item WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function isItem($id_space, $id) {
+        $sql = "SELECT id FROM in_invoice_item WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
     
-    public function deleteForInvoice($id_invoice){
-        $sql = "DELETE FROM in_invoice_item WHERE id_invoice=?";
-        $this->runRequest($sql, array($id_invoice));
+    public function deleteForInvoice($id_space, $id_invoice){
+        $sql = "UPDATE in_invoice_item SET deleted=1,deleted_at=NOW() WHERE id_invoice=? AND id_space=?";
+        // $sql = "DELETE FROM in_invoice_item WHERE id_invoice=? AND id_space=?";
+        $this->runRequest($sql, array($id_invoice, $id_space));
     }
 
 }

@@ -98,7 +98,6 @@ class Router {
                 $params = array_merge($_GET, $_POST);
             }
             $request = new Request($params);
-
             if (!$this->install($request)) {
                 if ($this->route($request)) {
                     return;
@@ -124,7 +123,7 @@ class Router {
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         } catch (Throwable $e) {
-            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage()]);
+            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
             $this->manageError($e);
         }
     }

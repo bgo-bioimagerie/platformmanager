@@ -81,7 +81,7 @@ class ServicesprojectganttController extends CoresecureController {
         $modelBelonging = new ClPricing();
         foreach ($projects as $proj) {
 
-            $belInfo = $modelClient->get($proj["id_resp"]);
+            $belInfo = $modelClient->get($id_space, $proj["id_resp"]);
             
             $bkColor = 'col' . $belInfo["id"];
             
@@ -91,7 +91,7 @@ class ServicesprojectganttController extends CoresecureController {
             $first = false;
             $projectsjson .= "{";
 
-            $visa = $modelVisa->get($proj["in_charge"]);
+            $visa = $modelVisa->get($id_space ,$proj["in_charge"]);
             $projectsjson .= "name: \"" . $modelUser->getUserInitiales($visa["id_user"]) . "\",";
             $projectsjson .= "desc: \"" . $proj["name"] . "\",";
             $projectsjson .= "values: [{";

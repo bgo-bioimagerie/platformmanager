@@ -65,7 +65,7 @@ class BookingcolorcodesController extends CoresecureController {
         
         $model = new BkColorCode();
         if ($id > 0){
-            $data = $model->getColorCode($id);
+            $data = $model->getColorCode($id_space, $id);
         }
         else{
             $data = $model->getDefault();
@@ -87,7 +87,7 @@ class BookingcolorcodesController extends CoresecureController {
         if ($form->check()){
             
             $newID = $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
-            $model->setColorWhoCanUse($newID, $form->getParameter("who_can_use"));
+            $model->setColorWhoCanUse($id_space, $newID, $form->getParameter("who_can_use"));
             $this->redirect("bookingcolorcodes/".$id_space);
         }
         $formHtml = $form->getHtml($lang);
@@ -99,7 +99,7 @@ class BookingcolorcodesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         
         $model = new BkColorCode();
-        $model->delete($id);
+        $model->delete($id_space, $id);
         $this->redirect("bookingcolorcodes/".$id_space);
     }
 

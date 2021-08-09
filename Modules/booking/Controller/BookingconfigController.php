@@ -132,19 +132,6 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
-        /*
-        $bookingRestrictionForm = $this->bookingRestrictionForm($id_space, $lang);
-        if( $bookingRestrictionForm->check() ){
-                    
-            $modelConfig = new CoreConfig();
-            $modelConfig->setParam("Bkmaxbookingperday", $this->request->getParameter("Bkmaxbookingperday"), $id_space);
-            $modelConfig->setParam("BkbookingDelayUserCanEdit", $this->request->getParameter("BkbookingDelayUserCanEdit"), $id_space);
-            
-            $this->redirect("bookingconfig/".$id_space);
-            return;
-        }
-         */
-        
         $setbookingoptionsquery = $this->request->getParameterNoException("setbookingoptionsquery");
         if ($setbookingoptionsquery == "yes") {
             $bookingSettings = $this->optionsQuery($id_space);
@@ -173,7 +160,6 @@ class BookingconfigController extends CoresecureController {
     protected function bookingAuthorisationUseVisa($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
         $BkAuthorisationUseVisa = $modelCoreConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
-        
         $form = new Form($this->request, "BkAuthorisationUseVisaForm");
         $form->addSeparator(BookingTranslator::Use_Auth_Visa($lang));
         
@@ -285,7 +271,7 @@ class BookingconfigController extends CoresecureController {
     protected function editBookingMailingForm($id_space, $lang){
         
         $modelCoreConfig = new CoreConfig();
-	$BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $id_space);
+	    $BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $id_space);
         $BkBookingMailingAdmins = $modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
         $BkBookingMailingDelete = $modelCoreConfig->getParamSpace("BkBookingMailingDelete", $id_space);
         if ($BkBookingMailingDelete == ""){
@@ -305,29 +291,9 @@ class BookingconfigController extends CoresecureController {
         return $form;
     }
     
-    /*
-    protected function bookingRestrictionForm($id_space, $lang){
-        
-        $modelCoreConfig = new CoreConfig();
-	$maxBookingPerDay = $modelCoreConfig->getParamSpace("Bkmaxbookingperday", $id_space);
-        $bookingDelayUserCanEdit = $modelCoreConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
-        
-        $form = new Form($this->request, "BkbookingRestrictionForm");
-        $form->addSeparator(BookingTranslator::BookingRestriction($lang));
-        
-        $form->addNumber("Bkmaxbookingperday", BookingTranslator::Maxbookingperday($lang), false, $maxBookingPerDay);
-        $form->addNumber("BkbookingDelayUserCanEdit", BookingTranslator::BookingDelayUserCanEdit($lang), false, $bookingDelayUserCanEdit);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-     */
-    
     protected function menuNameForm($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
-	$bookingmenuname = $modelCoreConfig->getParamSpace("bookingmenuname", $id_space);
+	    $bookingmenuname = $modelCoreConfig->getParamSpace("bookingmenuname", $id_space);
         
         $form = new Form($this->request, "bookingmenunameForm");
         $form->addSeparator(CoreTranslator::MenuName($lang));

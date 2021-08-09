@@ -44,7 +44,7 @@ class OrganesController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $organes = $this->model->get($id);
+        $organes = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "organeseditform");
         $form->setTitle("Modifier organes");
@@ -73,7 +73,7 @@ class OrganesController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("organes/" . $id_space);
     }
 

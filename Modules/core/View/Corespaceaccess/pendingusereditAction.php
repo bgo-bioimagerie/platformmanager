@@ -8,7 +8,7 @@
     <?php if (isset($_SESSION["message"])) { ?>
 
         <div class="alert alert-success">
-            <?php echo $_SESSION["message"] ?>
+            <?php echo $_SESSION["message"];  unset($_SESSION["message"]);?>
         </div>
 
     <?php } else { ?>

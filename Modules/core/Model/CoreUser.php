@@ -6,6 +6,7 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CoreStatus.php';
 
 class CoreUser extends Model {
 
@@ -73,9 +74,11 @@ class CoreUser extends Model {
     }
 
     public function createAccount($login, $pwd, $name, $firstname, $email) {
-
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id) VALUES (?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d"), 1));
+        $bytes = random_bytes(10);
+        $apikey = bin2hex($bytes);
+        
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id, apikey) VALUES (?,?,?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d"), CoreStatus::$USER, $apikey));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -263,6 +266,14 @@ class CoreUser extends Model {
         return 0;
     }
 
+    /**
+     * Returns super administrators
+     */
+    public function superAdmins() {
+        $sql = "SELECT * from core_users WHERE status_id=?";
+        return $this->runRequest($sql, array(CoreStatus::$ADMIN))->fetchAll();
+    }
+
     public function installDefault() {
         $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
@@ -278,7 +289,7 @@ class CoreUser extends Model {
         } catch (Exception $e) {
             Configuration::getLogger()->info('Create admin user', ['admin' => $admin_user]);
             $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, 5, "local", date("Y-m-d"), $apikey));
+            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, CoreStatus::$ADMIN, "local", date("Y-m-d"), $apikey));
         }
     }
 
@@ -303,7 +314,7 @@ class CoreUser extends Model {
 
         $datecreated = date("Y-m-d", time());
 
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?, ?)";
+        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated, $apikey));
         return $this->getDatabase()->lastInsertId();
     }
@@ -818,11 +829,40 @@ class CoreUser extends Model {
         $names[] = "";
         $ids[] = "";
         foreach ($users as $res) {
+            if(!$res['is_active']) {
+                continue;
+            }
             $names[] = $res["name"] . " " . $res["firstname"];
             $ids[] = $res["id"];
         }
         return array("names" => $names, "ids" => $ids);
     }
+
+    public function getSpaceActiveUsersForSelect($id_space, $sortentry) {
+            $sql = "SELECT core_j_spaces_user.id_user AS id,"
+                    . "core_users.name AS name,core_users.firstname AS firstname "
+                    . "FROM core_j_spaces_user "
+                    . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1";
+            $users = $this->runRequest($sql, array($id_space))->fetchAll();
+            $names = array();
+            $ids = array();
+            $names[] = "";
+            $ids[] = "";
+            foreach ($users as $res) {
+                $names[] = $res["name"] . " " . $res["firstname"];
+                $ids[] = $res["id"];
+            }
+            return array("names" => $names, "ids" => $ids);
+    }
+
+    public function getSpaceActiveUsers($id_space) {
+        $sql = "SELECT core_users.*"
+                . "FROM core_j_spaces_user "
+                . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                . "WHERE core_j_spaces_user.id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+}
 
     /**
      * get the informations of a user from it's id

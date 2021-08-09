@@ -44,7 +44,7 @@ class LinkerController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $linkers = $this->model->get($id);
+        $linkers = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "linkereditform");
         $form->setTitle("Modifier linkers");
@@ -73,7 +73,7 @@ class LinkerController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("linker/" . $id_space);
     }
 

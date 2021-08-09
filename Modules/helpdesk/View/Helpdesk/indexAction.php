@@ -107,127 +107,157 @@ if (!$headless) {
         }
         ?>
         </div>
-
-         <!-- Form -->
-         <div v-if="message" class="col-sm-10 col-sm-offset-1 text-center">
+    </div>
+    <div class="row">
+        <!-- Form -->
+        <div v-if="message" class="col-sm-12 text-center">
             <div class="alert alert-warning">{{message}}</div>
         </div>
-        <div v-if="ticket !== null" class="col-sm-10 col-sm-offset-1 text-center">
-        <div class="row">
-        <button class="pull-left btn btn-primary" type="button" @click="back">Back to tickets</button>
+        <div class="col-sm-2 text-center">
+            <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
+            <div @click="setFilter(0)">New</div>
+            <div @click="setFilter(1)">Open</div>
+            <div @click="setFilter(2)">Reminder</div>
+            <div @click="setFilter(3)">Closed</div>
+            <?php
+            if ($role > CoreSpace::$MANAGER) {
+            ?>
+            <div @click="getSettings()">Settings</div>
+            <?php
+            }
+            ?>
         </div>
-        <div class="row">
-            <div class="col-sm-8">
-            <div v-for="message in ticket.messages" :key="message.id">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                    <h3 class="panel-title">{{message.from}} - {{message.created_at}}</h3>
-                    </div>
-                    <div class="panel-body" v-html="message.md"></div>
-                    <div class="panel-footer" v-if="message.type=='0'">
-                        <div>
-                            <div v-for="attach in message.attachements" :key="attach.id">
-                            <a v-bind:href="'/corefiles/<?php echo $id_space ?>/' + attach.id_file" target="_blank" rel="noopener noreferrer" >{{attach.name_file}}</a>
+        <div v-if="settings" class="col-sm-10">
+            <div class="form">
+                <div class="form-check">
+                    <input class="form-check-input" v-model="preferences.notifyNew" type="checkbox" value="" id="notifyNew">
+                    <label class="form-check-label" for="notifyNew">
+                        Notify on new tickets
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="preferences.notifyAssignedUpdate" type="checkbox" value="" id="notifyAssignedUpdate">
+                    <label class="form-check-label" for="notifyAssignedUpdate">
+                        Notify on assigned tickets update
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="preferences.notifyAllUpdate" type="checkbox" value="" id="notifyAllUpdate">
+                    <label class="form-check-label" for="notifyAllUpdate">
+                        Notify on all tickets update
+                    </label>
+                </div>
+                    <button @click="setSettings" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+        <div v-if="!settings && ticket !== null" class="col-sm-10 col-sm-offset-1 text-center">
+            <div class="row">
+                <button class="pull-left btn btn-primary" type="button" @click="back">Back to tickets</button>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div v-for="message in ticket.messages" :key="message.id">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                            <h3 class="panel-title">{{message.from}} - {{message.created_at}}</h3>
+                            </div>
+                            <div class="panel-body" v-html="message.md"></div>
+                            <div class="panel-footer" v-if="message.type=='0'">
+                                <div>
+                                    <div v-for="attach in message.attachements" :key="attach.id">
+                                    <a v-bind:href="'/corefiles/<?php echo $id_space ?>/' + attach.id_file" target="_blank" rel="noopener noreferrer" >{{attach.name_file}}</a>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" @click="reply(ticket.ticket.id, message.id)"><small>reply</small></button>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-primary" @click="reply(ticket.ticket.id, message.id)"><small>reply</small></button>
                     </div>
-                </div>
-            </div>
-            <div ref="addToMessage">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 v-if="addType==1" class="panel-title">Add note</h3>
-                    <h3 v-if="addType==0" class="panel-title">Email reply</h3>
-                    </div>
-                <div class="panel-body" v-html="message.body"></div>
-                    <form v-if="!textPreview">
-                        <label>Destination</label>
-                        <input v-if="addType==0" placeholder="comma separated emails" class="form-control" v-model:value="ticket.ticket.created_by"/>
-                        <div class="form-group">
-                        <textarea v-model="mdText" class="form-control" rows="5">
-                        </textarea>
-                        <input type="file" id="mailFiles" multiple v-if="addType==0" class="form-control">Attachments</h3>
-                        </div>
-                    </form>
-                    <div v-if="textPreview" class="panel-body" v-html="text"></div>
-                </div>
-                <div class="panel-footer">
-                    <button type="button" class="btn btn-primary" @click="preview">Message/Preview</button>
-                    <button type="button" class="btn btn-primary" v-if="addType==1" @click="save">Add [TODO]</button>
-                    <button type="button" class="btn btn-primary" v-if="addType==0" @click="save">Send [TODO]</button>
-                </div>
-            </div>
-            </div>
-            <div class="col-sm-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                <h3 class="panel-title">#{{ticket.ticket.id}}: {{ticket.ticket.subject}}</h3>
-                </div>
-                <div class="panel-body">
-                    <form class="form-horizontal">
-                    <div class="form-group">
-                    <label for="tstatus" class="col-sm-2">Status</label>
-                    <div >
-                        <select id="tstatus" class="form-control" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
-                            <option value="0">New</option>
-                            <option value="1">Open</option>
-                            <option value="2">Reminder</option>
-                            <option value="3">Closed</option>
-                        </select>
-                    </div>
-                    <div v-if="ticket.ticket.status == 2">
-                        <input type="date" v-model:value="ticket.ticket.reminder" class="form-control"/>
+                    <div ref="addToMessage">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 v-if="addType==1" class="panel-title">Add note</h3>
+                                <h3 v-if="addType==0" class="panel-title">Email reply</h3>
+                                </div>
+                            <div class="panel-body" v-html="message.body"></div>
+                                <form v-if="!textPreview">
+                                    <label>Destination</label>
+                                    <input v-if="addType==0" placeholder="comma separated emails" class="form-control" v-model:value="ticket.ticket.created_by"/>
+                                    <div class="form-group">
+                                    <textarea v-model="mdText" class="form-control" rows="5">
+                                    </textarea>
+                                    <input type="file" id="mailFiles" multiple v-if="addType==0" class="form-control">Attachments</h3>
+                                    </div>
+                                </form>
+                                <div v-if="textPreview" class="panel-body" v-html="text"></div>
+                            </div>
+                            <div class="panel-footer">
+                                <button type="button" class="btn btn-primary" @click="preview">Message/Preview</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==1" @click="save">Add [TODO]</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==0" @click="save">Send [TODO]</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group" v-if="ticket.ticket.assigned">
-                        <label for="tassign" class="col-sm-2">Assignee</label>
-                        <div>
-                            <input id="tassign" class="form-control" readonly v-bind:value="ticket.ticket.assigned_name"/>
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                        <h3 class="panel-title">#{{ticket.ticket.id}}: {{ticket.ticket.subject}}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+                            <div class="form-group">
+                            <label for="tstatus" class="col-sm-2">Status</label>
+                            <div >
+                                <select id="tstatus" class="form-control" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
+                                    <option value="0">New</option>
+                                    <option value="1">Open</option>
+                                    <option value="2">Reminder</option>
+                                    <option value="3">Closed</option>
+                                </select>
+                            </div>
+                            <div v-if="ticket.ticket.status == 2">
+                                <input type="date" v-model:value="ticket.ticket.reminder" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group" v-if="ticket.ticket.assigned">
+                                <label for="tassign" class="col-sm-2">Assignee</label>
+                                <div>
+                                    <input id="tassign" class="form-control" readonly v-bind:value="ticket.ticket.assigned_name"/>
+                                </div>
+                            </div>
+                            </form>
+                            <div v-if="!ticket.ticket.assigned"><button type="button" class="btn btn-primary" @click="assign"><small>Assign to myself</small></button></div>
+                            <div><small>Created: {{ticket.ticket.created_at}}</small></div>
                         </div>
                     </div>
-                    </form>
-                    <div v-if="!ticket.ticket.assigned"><button type="button" class="btn btn-primary" @click="assign"><small>Assign to myself</small></button></div>
-                    <div><small>Created: {{ticket.ticket.created_at}}</small></div>
                 </div>
             </div>
-            </div>
         </div>
-        </div>
-        <div v-if="ticket === null" class="col-sm-10 col-sm-offset-1 text-center">
-        <div>
-            <span class="badge" @click="setMy()">My tickets</span>
-            <span v-if="filter!=0" class="badge" @click="setFilter(0)">New</span>
-            <span v-if="filter!=1" class="badge" @click="setFilter(1)">Open</span>
-            <span v-if="filter!=2" class="badge" @click="setFilter(2)">Reminder</span>
-            <span v-if="filter!=3" class="badge" @click="setFilter(3)">Closed</span>
-        </div>
-        <table aria-describedby="list of tickets" class="table table-striped table-sm">
-            <thead class="thead-dark">
-                <tr>
-                <th scope="col">#</th>
-                <th scope="col">Date</th>
-                <th scope="col">Subject</th>
-                <th scope="col">Author</th>
-                <th scope="col">Status</th>
-                <th scope="col">Queue</th>
-                <th scope="col">Assigned</th>
+        <div v-if="!settings && ticket === null" class="col-sm-10 text-center">
+            <table aria-describedby="list of tickets" class="table table-striped table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                    <th scope="col">#{{current_filter}}</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Queue</th>
+                    <th scope="col">Assigned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr v-for="ticket in tickets" :key="ticket.id">
+                <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
+                <td>{{ticket.created_at}}</td>
+                <td>{{ticket.subject}}</td>
+                <td>{{ticket.created_by}}</td>
+                <td>{{status(ticket.status)}}</td>
+                <td>{{ticket.queue}}</td>
+                <td>{{ticket.assigned_name}}</td>
                 </tr>
-            </thead>
-            <tbody>
-            <tr v-for="ticket in tickets" :key="ticket.id">
-               <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
-               <td>{{ticket.created_at}}</td>
-               <td>{{ticket.subject}}</td>
-               <td>{{ticket.created_by}}</td>
-               <td>{{status(ticket.status)}}</td>
-               <td>{{ticket.queue}}</td>
-               <td>{{ticket.assigned_name}}</td>
-            </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
         </div>
-
     </div>
 </div>
 <script>
@@ -236,6 +266,7 @@ var app = new Vue({
     el: '#helpdeskapp',
     data () {
         return {
+            current_filter: 'New' ,
             filter: 0,  // ticket status filter
             addType: 1,  // note
             my: false,
@@ -244,13 +275,52 @@ var app = new Vue({
             ticket: null,
             textPreview: false,
             text: '',
-            mdText: ''
+            mdText: '',
+            settings: false,
+            preferences: {
+                notifyNew: false,
+                notifyAssignedUpdate: false,
+                notifyAllUpdate: false
+            }
         }
     },
     created () { this.fetchTickets() },
     methods: {
+        getSettings () {
+            this.settings = true;
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers,
+                method: 'GET',
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/settings`, cfg).
+            then(response => response.json()).
+            then((data) => {
+                this.preferences = {
+                    notifyNew: data.settings.notifyNew,
+                    notifyAssignedUpdate: data.settings.notifyAssignedUpdate,
+                    notifyAllUpdate: data.settings.notifyAllUpdate
+                }
+            })
+        },
+        setSettings () {
+            this.settings = true;
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers,
+                method: 'POST',
+                body: JSON.stringify({
+                    'settings': this.preferences
+                })
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/settings`, cfg).
+            then(() => { this.message = "Settings updated"})
+        },
         updateStatus(event) {
-            console.log('status', event.target.value);
             let headers = new Headers()
             headers.append('Content-Type','application/json')
             headers.append('Accept', 'application/json')
@@ -264,10 +334,21 @@ var app = new Vue({
             })
         },
         setMy() {
+            this.settings = false;
             this.my = !this.my;
             this.fetchTickets();
         },
         setFilter(f) {
+            if(f==0) {
+                this.current_filter = 'New'
+            } else if(f==1) {
+                this.current_filter = 'Open'
+            } else if(f==2) {
+                this.current_filter = 'Reminder'
+            } else if(f==3) {
+                this.current_filter = 'Closed'
+            }
+            this.settings = false;
             this.filter = f;
             this.fetchTickets();
         },

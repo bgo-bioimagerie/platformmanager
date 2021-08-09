@@ -6,6 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
  * 
@@ -78,7 +79,54 @@ class BookingpackagesController extends CoresecureController {
 
             $count = 0;
 
+            $rem = new ResourceInfo();
+            $spaceResources = $rem->getForSpace($id_space);
+            $spaceResourcesIDs = [];
+            foreach ($spaceResources as $spaceResource) {
+                $spaceResourcesIDs[] = $spaceResource['id'];
+            }
+
+            // Check resources are in space
+            foreach ($packageResource as $id) {
+                if(!in_array($id, $spaceResourcesIDs)) {
+                    Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+                    throw new PfmAuthException('access denied for this resource', 403);
+                }
+            }
+
+            // If package specified, check it exists in space
+            foreach ($packageID as $id) {
+                if($id && !in_array($id, $packagesIds)) {
+                    Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
+                    throw new PfmAuthException('access denied for this resource', 403);                }
+            }
+
+
+            $packs = [];
+            for ($p = 0; $p < count($packageID); $p++) {
+                if ($packageName[$p] != "" && $packageID[$p]) {
+                   $packs[$packageName[$p]] = $packageID[$p];
+                }
+            }
+            for ($p = 0; $p < count($packageID); $p++) {
+                if (!$packageID[$p]) {
+                    // If package id not set, use from known packages
+                    if(isset($packs[$packageName[$p]])) {
+                        $packageID[$p] = $packs[$packageName[$p]];
+                    } else {
+                        // Or create a new package
+                       $cvm = new CoreVirtual();
+                       $vid = $cvm->new('package');
+                       $packageID[$p] = $vid;
+                       $packs[$packageName[$p]] = $vid;
+                   }
+                }
+                $modelPackages->setPackage($id_space, $packageID[$p], $packageResource[$p], $packageName[$p], $packageDuration[$p]);
+            }
+
             // get the last package id
+            // @bug, should get from an increment in table, risk of conflict
+            /*            
             $lastID = 0;
             for ($p = 0; $p < count($packageID); $p++) {
                 if ($packageName[$p] != "") {
@@ -102,12 +150,15 @@ class BookingpackagesController extends CoresecureController {
                         $curentID = $lastID;
                         $packageID[$p] = $lastID;
                     }
+
                     //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelPackages->setPackage($curentID, $packageResource[$p], $packageName[$p], $packageDuration[$p]);
+                    $modelPackages->setPackage($id_space, $curentID, $packageResource[$p], $packageName[$p], $packageDuration[$p]);
                     $count++;
                 }
             }
-            $modelPackages->removeUnlistedPackages($packageID);
+            */
+   
+            $modelPackages->removeUnlistedPackages($id_space, $packageID);
             $_SESSION["message"] = BookingTranslator::Packages_saved($lang);
             $this->redirect("bookingpackages/".$id_space);
             return;

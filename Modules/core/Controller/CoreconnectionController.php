@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Email.php';
 
 require_once 'Modules/core/Controller/CorecookiesecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -11,8 +12,6 @@ require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreSpace.php';
-
-require_once 'Modules/mailer/Model/MailerSend.php';
 
 /**
  * Controler managing the user connection
@@ -220,7 +219,7 @@ class CoreconnectionController extends CorecookiesecureController {
 
         $lang = $this->getLanguage();
         $form = new Form($this->request, 'formpasswordforgottern');
-        $form->addText("email", CoreTranslator::Email($lang), true);
+        $form->addEmail("email", CoreTranslator::Email($lang), true);
         $form->setValidationButton(CoreTranslator::Ok($lang), "corepasswordforgotten");
 
         $_SESSION["message"] = CoreTranslator::PasswordForgotten($lang);
@@ -237,7 +236,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     $newPassWord = $this->randomPassword();
                     $model->changePwd($userByEmail["id"], $newPassWord);
 
-                    $mailer = new MailerSend();
+                    $mailer = new Email();
                     $from = Configuration::get('smtp_from');
                     $fromName = "Platform-Manager";
                     $toAdress = $email;

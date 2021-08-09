@@ -38,13 +38,13 @@ class InVisa extends Model {
             $sql = "INSERT INTO in_visa (id_user, id_space) VALUES (?,?)";
             $this->runRequest($sql, array($id_user, $id_space));
         } else {
-            $sql = "UPDATE in_visa SET id_user=?, id_space=? WHERE id=?";
+            $sql = "UPDATE in_visa SET id_user=? WHERE id_space=? AND id=?";
             $this->runRequest($sql, array($id_user, $id_space, $id));
         }
     }
 
     public function getIdFromUser($id_user, $id_space){
-        $sql = "SELECT id FROM in_visa WHERE id_user=? AND id_space=?";
+        $sql = "SELECT id FROM in_visa WHERE id_user=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_user, $id_space));
         if($req->rowCount() > 0){
             $tmp = $req->fetch();
@@ -54,7 +54,7 @@ class InVisa extends Model {
     }
     
     public function getAll($id_space) {
-        $sql = "SELECT * FROM in_visa WHERE id_space=?";
+        $sql = "SELECT * FROM in_visa WHERE id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         
         $modelUser = new CoreUser();
@@ -64,13 +64,13 @@ class InVisa extends Model {
         return $data;
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM in_visa WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM in_visa WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
     
     public function getForList($id_space){
-        $sql = "SELECT * FROM in_visa WHERE id_space=?";
+        $sql = "SELECT * FROM in_visa WHERE id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         
         $ids = array();
@@ -85,18 +85,22 @@ class InVisa extends Model {
         return array('ids' => $ids, 'names' => $names);
     }
     
-    public function getVisaName($id){
-        $sql = "SELECT * FROM in_visa WHERE id=?";
-        $data = $this->runRequest($sql, array($id))->fetch();
-        
+    public function getVisaName($id_space, $id){
+        $sql = "SELECT * FROM in_visa WHERE id=? AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id, $id_space))->fetch();
+        if(!$data) {
+            return null;
+        } 
         $modelUser = new CoreUser();
         return $modelUser->getUserFUllName($data["id_user"]);
     }
     
-    public function getVisaNameShort($id){
-        $sql = "SELECT * FROM in_visa WHERE id=?";
-        $data = $this->runRequest($sql, array($id))->fetch();
-        
+    public function getVisaNameShort($id_space, $id){
+        $sql = "SELECT * FROM in_visa WHERE id=? AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id, $id_space))->fetch();
+        if(!$data) {
+            return null;
+        }
         $modelUser = new CoreUser();
         return $modelUser->getUserInitials($data["id_user"]);
     }
@@ -106,10 +110,10 @@ class InVisa extends Model {
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($id) {
-
-        $sql = "DELETE FROM in_visa WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE in_visa SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        // $sql = "DELETE FROM in_visa WHERE id = ? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

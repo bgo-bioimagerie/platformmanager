@@ -6,6 +6,8 @@ class HelpdeskRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/helpdesk/[i:id_space]', 'helpdesk/helpdesk/index', 'helpdesk_index');
+        $router->map('GET', '/helpdesk/[i:id_space]/settings', 'helpdesk/helpdesk/settings', 'helpdesk_settings');
+        $router->map('POST', '/helpdesk/[i:id_space]/settings', 'helpdesk/helpdesk/setSettings', 'helpdesk_set_settings');
         $router->map('GET', '/helpdesk/[i:id_space]/[i:id_ticket]', 'helpdesk/helpdesk/messages', 'helpdesk_ticket_messages');
         $router->map('POST', '/helpdesk/[i:id_space]/[i:id_ticket]/status/[i:status]', 'helpdesk/helpdesk/status', 'helpdesk_ticket_status');
         $router->map('POST', '/helpdesk/[i:id_space]/[i:id_ticket]', 'helpdesk/helpdesk/message', 'helpdesk_ticket_add_message');

@@ -120,7 +120,7 @@ abstract class Model {
      * @param type $columnType
      * @param type $defaultValue
      */
-    public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
+    public function addColumn($tableName, $columnName, $columnType, $defaultValue, $nullable=false) {
 
         //$sql = "SHOW COLUMNS FROM `" . $tableName . "` LIKE '" . $columnName . "'";
         //$pdo = $this->runRequest($sql);
@@ -129,10 +129,19 @@ abstract class Model {
         $isColumn = $pdo->fetch();
         if ($isColumn === false) {
             Configuration::getLogger()->debug('[db] add column', ['table' => $tableName, 'col' => $columnName]);
-            $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType . " NOT NULL";
+            $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType;
+            if(!$nullable) {
+                $sql .= " NOT NULL";
+            }
             if($defaultValue != "") {
                 if(is_string($defaultValue)) {
-                    $sql .= " DEFAULT '" . $defaultValue . "'";
+                    if($defaultValue == 'INSERT_TIMESTAMP') {
+                        $sql .= " DEFAULT CURRENT_TIMESTAMP";
+                    } else if($defaultValue == 'UPDATE_TIMESTAMP') {
+                        $sql .= " DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+                    } else {
+                        $sql .= " DEFAULT '" . $defaultValue . "'";
+                    }
                 } else {
                     $sql .= " DEFAULT " . $defaultValue;
                 }

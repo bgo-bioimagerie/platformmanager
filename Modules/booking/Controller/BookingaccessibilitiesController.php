@@ -47,7 +47,7 @@ class BookingaccessibilitiesController extends CoresecureController {
         $modelResources = new ResourceInfo();
         $resources = $modelResources->getForSpace($id_space);
         foreach ($resources as $resource) {
-            $accessId = $model->getAccessId($resource["id"]);
+            $accessId = $model->getAccessId($id_space, $resource["id"]);
             $form->addSelect("r_" . $resource["id"], $resource["name"], $choices, $choicesid, $accessId);
         }
 
@@ -57,7 +57,7 @@ class BookingaccessibilitiesController extends CoresecureController {
         if ($form->check()) {
             foreach ($resources as $resource) {
                 $id_access = $this->request->getParameter("r_" . $resource["id"]);
-                $model->set($resource["id"], $id_access);
+                $model->set($id_space ,$resource["id"], $id_access);
             }
             $this->redirect("bookingaccessibilities/".$id_space);
         }

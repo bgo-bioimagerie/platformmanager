@@ -165,7 +165,7 @@ class ServicesController extends CoresecureController {
         if (!$id) {
             $value = array("name" => "", "description" => "", "display_order" => "", "type_id" => "");
         } else {
-            $value = $this->serviceModel->getItem($id);
+            $value = $this->serviceModel->getItem($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
@@ -176,7 +176,7 @@ class ServicesController extends CoresecureController {
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $value["display_order"]);
 
         $modelTypes = new SeServiceType();
-        $types = $modelTypes->getAllForSelect();
+        $types = $modelTypes->getAllForSelect($id_space);
 
         $form->addSelect("type_id", CoreTranslator::type($lang), $types["names"], $types["ids"], $value["type_id"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesedit/" . $id_space . "/" . $id);
@@ -196,7 +196,7 @@ class ServicesController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->serviceModel->delete($id);
+        $this->serviceModel->delete($id_space, $id);
         $this->redirect("services/" . $id_space);
     }
 

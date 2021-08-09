@@ -41,13 +41,6 @@ class BookingabstractController extends CoresecureController {
      */
     public function calendarMenuData($curentSiteId, $curentAreaId, $curentResourceId, $curentDate) {
 
-        /*
-          echo "curentSiteId = " . $curentSiteId . "<br/>";
-          echo "curentAreaId = " . $curentAreaId . "<br/>";
-          echo "curentResourceId = " . $curentResourceId . "<br/>";
-          echo "curentDate = " . $curentDate . "<br/>";
-         */
-
         if ($curentDate == "") {
             $curentDate = date("Y-m-d", time());
         }
@@ -77,7 +70,7 @@ class BookingabstractController extends CoresecureController {
         }
 
         $modelResource = new ResourceInfo();
-        $resources = $modelResource->resourceIDNameForArea($curentAreaId);
+        $resources = $modelResource->resourceIDNameForArea($curentSiteId, $curentAreaId);
 
         $_SESSION['bk_id_resource'] = $curentResourceId;
         $_SESSION['bk_id_area'] = $curentAreaId;
@@ -135,7 +128,7 @@ class BookingabstractController extends CoresecureController {
                 //echo "pass </Br>";
                 // check if the user has been authorized
                 $modelAuth = new BkAuthorization();
-                $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_resourcecategory, $id_user);
+                $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $id_resourcecategory, $id_user);
                 //echo "authorized user = " . $isUserAuthorizedToBook . "";
             }
         }

@@ -10,6 +10,9 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
+
 require_once 'Modules/core/Model/CoreInstalledModules.php';
 
 /**
@@ -259,7 +262,9 @@ class CorespaceController extends CoresecureController {
      * @param type $id_user
      */
     public function configdeleteuserAction($id_space, $id_user) {
-        $this->spaceModel->deleteUser($id_space, $id_user);
+        $spaceUserModel = new CoreSpaceUser();
+        $spaceUserModel->delete($id_space, $id_user);
+        // $this->spaceModel->deleteUser($id_space, $id_user);
         $this->redirect("spaceconfiguser/" . $id_space);
     }
 

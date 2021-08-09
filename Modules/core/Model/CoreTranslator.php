@@ -10,7 +10,7 @@ class CoreTranslator {
 
     public static function dateToEn($date, $lang) {
         //echo "to translate = " . $date . "<br/>";
-        if ($lang == "fr") {
+        if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
             if (count($dateArray) == 3) {
                 //print_r($dateArray);
@@ -1748,9 +1748,16 @@ class CoreTranslator {
 
     public static function UserAccountHasBeenDeleted($lang){
         if ($lang == "fr") {
-            return "Le compte utilisateur a bien été désactivé";
+            return "L'utilisateur n'a plus acces à votre espace";
         }
-        return "User account has been deleted";        
+        return "This user has no longer access to your space";
+    }
+
+    public static function UserIsMemberOfSpace($lang){
+        if ($lang == "fr") {
+            return "Impossible de supprimer cet utilisateur, car il est lié ,à un espace";
+        }
+        return "You are not allowed to delete this user as he is member of a space";
     }
     
     public static function AccessFor($lang){
@@ -1853,6 +1860,15 @@ class CoreTranslator {
         return "Support email";
     }
 
+    public static function MailSubjectPrefix($spaceName = "") {
+        return ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
+    }
 
+    public static function History($lang = "") {
+        if ($lang == "fr") {
+            return "Historique";
+        }
+        return "History";
+    }
     
 }

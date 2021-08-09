@@ -62,7 +62,7 @@ class ReeventtypesController extends CoresecureController {
         // get belonging info
         $site = array("id" => 0, "name" => "", "id_space" => $id_space);
         if ($id > 0) {
-            $site = $this->model->get($id);
+            $site = $this->model->get($id_space, $id);
         }
 
         // lang
@@ -97,7 +97,7 @@ class ReeventtypesController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         
-        $this->model->delete($id);
+        $this->model->delete($id_space ,$id);
         $this->redirect("reeventtypes/".$id_space);
     }
 

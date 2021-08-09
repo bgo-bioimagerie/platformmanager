@@ -19,42 +19,47 @@ function version()
 $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
+    ->opt('from', 'Force install from release', -1, 'integer')
     ->command('expire')
     ->description('Expire in spaces old users (according to global config)')
-    ->opt('del:d', 'Remove use from space, else just set as inactive', false, 'boolean')
+    ->opt('del:d', 'Remove user from space, else just set as inactive', false, 'boolean')
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean');
 
 $args = $cli->parse($argv);
 
-switch ($args->getCommand()) {
-    case 'install':
-        cliInstall();
-        break;
-    case 'expire':
-        $logger = Configuration::getLogger();
-        $logger->info("Expire old users");
-        $modelUser = new CoreUser();
-        $modelSettings = new CoreConfig();
-        $desactivateSetting = $modelSettings->getParam("user_desactivate", 6);
-        $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
-        $logger->info("Expired ".$count. " users");
-        break;
-    case 'version':
-        echo "Version: ".version()."\n";
-        if ($args->getOpt('db')) {
-            $cdb = new CoreDB();
-            $crel = $cdb->getRelease();
-            echo "DB installed version: ".$crel."\n";
-            echo "DB expected version: ".$cdb->getVersion()."\n";
-        }
-        break;
-    default:
-        break;
+try {
+    switch ($args->getCommand()) {
+        case 'install':
+            cliInstall($args->getOpt('from'));
+            break;
+        case 'expire':
+            $logger = Configuration::getLogger();
+            $logger->info("Expire old users");
+            $modelUser = new CoreUser();
+            $modelSettings = new CoreConfig();
+            $desactivateSetting = $modelSettings->getParam("user_desactivate", 6);
+            $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
+            $logger->info("Expired ".$count. " users");
+            break;
+        case 'version':
+            echo "Version: ".version()."\n";
+            if ($args->getOpt('db')) {
+                $cdb = new CoreDB();
+                $crel = $cdb->getRelease();
+                echo "DB installed version: ".$crel."\n";
+                echo "DB expected version: ".$cdb->getVersion()."\n";
+            }
+            break;
+        default:
+            break;
+    }
+} catch(Throwable $e) {
+    Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
 }
 
-function cliInstall() {
+function cliInstall($from=-1) {
     $logger = Configuration::getLogger();
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
@@ -101,7 +106,7 @@ function cliInstall() {
     }
 
     // update db release and launch upgrade
-    $cdb->upgrade();
+    $cdb->upgrade($from);
 
     $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 

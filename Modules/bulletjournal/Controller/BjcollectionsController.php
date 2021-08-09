@@ -50,7 +50,7 @@ class BjcollectionsController extends CoresecureController {
         $lang = $this->getLanguage();
         
         $model = new BjCollection();
-        $collection = $model->get($id);
+        $collection = $model->get($id_space, $id);
         
         $form = new Form($this->request, "addCollectionForm");
         $form->setTitle(BulletjournalTranslator::Edit_collection($lang));
@@ -71,11 +71,11 @@ class BjcollectionsController extends CoresecureController {
         
         // get the collection name
         $modelCollection = new BjCollection();
-        $collection = $modelCollection->get($id);
+        $collection = $modelCollection->get($id_space, $id);
         
         // select all the notes in this collection
         $model = new BjNote();
-        $notes = $model->getforCollection($id);
+        $notes = $model->getforCollection($id_space, $id);
         
         $this->render(array("id_space" => $id_space, "lang" => $lang, "notes" => $notes, "collection" => $collection));
     }

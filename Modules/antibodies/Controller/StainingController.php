@@ -44,7 +44,7 @@ class StainingController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $staining = $this->model->get($id);
+        $staining = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "stainingeditform");
         $form->setTitle("Modifier staining");
@@ -73,7 +73,7 @@ class StainingController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("staining/" . $id_space);
     }
 

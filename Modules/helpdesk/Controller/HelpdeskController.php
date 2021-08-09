@@ -10,6 +10,7 @@ require_once 'Modules/helpdesk/Model/Helpdesk.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreFiles.php';
+require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
 
 use League\CommonMark\CommonMarkConverter;
 
@@ -18,8 +19,44 @@ class HelpdeskController extends CoresecureController {
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+        $spaceModel = new CoreSpace();
+        $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "role" => $role));
+    }
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang));
+    public function setSettingsAction($id_space) {
+        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $role = $this->spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if ($role < CoreSpace::$MANAGER) {
+            throw new PfmAuthException('not authorized', 403);
+        }
+        $lang = $this->getLanguage();
+
+        $cussm = new CoreUserSpaceSettings();
+        $settings = $this->request->getParameter('settings');
+        $cussm->setUserSettings($id_space, $_SESSION["id_user"], "hp_notifyNew", $settings['notifyNew'] ? 1 : 0);
+        $cussm->setUserSettings($id_space, $_SESSION["id_user"], "hp_notifyAssignedUpdate", $settings['notifyAssignedUpdate'] ? 1 : 0);
+        $cussm->setUserSettings($id_space, $_SESSION["id_user"], "hp_notifyAllUpdate", $settings['notifyAllUpdate'] ? 1 : 0);
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "data" => [
+            "settings" => $settings
+        ]));
+    }
+
+    public function settingsAction($id_space) {
+        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+
+
+        $cussm = new CoreUserSpaceSettings();
+        $settings = $cussm->getUserSettings($id_space, $_SESSION["id_user"]);
+
+        $this->render(array("data" => [
+            "settings" => [
+                'notifyNew' => ($settings["hp_notifyNew"] ?? 0) ? true : false,
+                'notifyAssignedUpdate' => ($settings["hp_notifyAssignedUpdate"] ?? 0 ) ? true : false,
+                'notifyAllUpdate' => ($settings["hp_notifyAllUpdate"] ?? 0) ? true : false
+            ]
+        ]));
+
     }
 
     /**
@@ -112,7 +149,7 @@ class HelpdeskController extends CoresecureController {
                 }
                 $attachments[] = ['id' => $attachId, 'name' => $name];
             }
-            $id = $hm->addEmail($id_ticket, $params['body'], $_SESSION['email'], $attachments);
+            $id = $hm->addEmail($id_space, $id_ticket, $params['body'], $_SESSION['email'], $attachments);
 
             $converter = new CommonMarkConverter([
                 'html_input' => 'strip',
@@ -131,8 +168,7 @@ class HelpdeskController extends CoresecureController {
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
         }
-
-        // TODO manage user pref to receive notifications
+        $this->notify($id_space, $id_ticket, "en", false);
 
         Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
 
@@ -164,8 +200,11 @@ class HelpdeskController extends CoresecureController {
         }
         $filteredMessages = [];
         if($filter) {
-            // Not manager, remove notes
+            // Not manager, remove notes and reject if not creator
             foreach ($messages as $message) {
+                if($ticket['created_by_user'] != $_SESSION['id_user']) {
+                    throw new PfmAuthException('not ticket owner', 403);
+                }
                 if(intval($message['type']) == HelpDesk::$TYPE_EMAIL) {
                     $filteredMessages[] = $message;
                 }

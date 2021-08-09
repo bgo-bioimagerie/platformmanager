@@ -2,6 +2,10 @@
 
 require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CorePendingAccount.php';
+
 require_once 'Framework/Events.php';
 
 /**
@@ -41,7 +45,7 @@ class CoreSpace extends Model {
 		`name` varchar(30) NOT NULL DEFAULT '',
         `status` int(1) NOT NULL DEFAULT 0,
         `color` varchar(7) NOT NULL DEFAULT '',
-        `description` text NOT NULL DEFAULT '',
+        `description` text NOT NULL,
         `image` varchar(255) NOT NULL DEFAULT '',
         `shortname` varchar(30) NOT NULL DEFAULT '',
         `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
@@ -132,7 +136,7 @@ class CoreSpace extends Model {
     }
 
     public function doesManageSpace($id_user) {
-        $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > 2";
+        $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > ".CoreSpace::$USER;
         $req = $this->runRequest($sql, array($id_user));
         if ($req->rowCount() > 0) {
             return true;
@@ -160,8 +164,30 @@ class CoreSpace extends Model {
         return null;
     }
 
+    /**
+     * 
+     * Return a list of all managers' emails for a given space
+     * 
+     * @param int $id_space
+     *          id of the space for which we want to get all managers' emails
+     * @return array list of strings
+     */
     public function getEmailsSpaceManagers($id_space) {
-        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>2)";
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>".CoreSpace::$USER.")";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+
+    /**
+     * 
+     * Return a list of all users' emails for a given space
+     * 
+     * @param int $id_space
+     *          id of the space for which we want to get all users' emails
+     * @return array list of strings
+     */
+    public function getEmailsSpaceActiveUsers($id_space) {
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status=".CoreSpace::$USER.")";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
@@ -179,6 +205,7 @@ class CoreSpace extends Model {
     public function getSpaceMenusRole($id_space, $url) {
         $sql = "SELECT user_role FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
+
         if(!$req) {
             return null;
         }
@@ -218,7 +245,7 @@ class CoreSpace extends Model {
     }
 
     public function getSpaceMenus($id_space, $user_role) {
-        $sql = "SELECT * FROM core_space_menus WHERE id_space=? AND user_role<=? ORDER BY display_order";
+        $sql = "SELECT * FROM core_space_menus WHERE id_space=? AND user_role>0 AND user_role<=? ORDER BY display_order";
         return $this->runRequest($sql, array($id_space, $user_role))->fetchAll();
     }
 
@@ -284,7 +311,7 @@ class CoreSpace extends Model {
     public function getUserSpaceRole($id_space, $id_user) {
         // is super admin?
         $um = new CoreUser();
-        if($um->getStatus($id_user) == CoreUser::$ADMIN) {
+        if($um->getStatus($id_user) >= CoreStatus::$ADMIN) {
             return CoreSpace::$ADMIN;
         }
         // else check roles in space
@@ -470,6 +497,8 @@ class CoreSpace extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
+    
+
     public function countUsers($id_space) {
         $sql = "SELECT count(*) FROM core_j_spaces_user WHERE id_space=?";
         $res = $this->runRequest($sql, array($id_space))->fetch();
@@ -484,23 +513,33 @@ class CoreSpace extends Model {
         foreach ($alreadyAdmins as $aadm) {
             $found = false;
             foreach ($id_admins as $cidadm) {
+                if(!$cidadm) {
+                    continue;
+                }
                 if ($cidadm == $aadm["id_user"]) {
                     $found = true;
                     break;
                 }
             }
             if (!$found) {
-                $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=? AND status=?";
-                $this->runRequest($sql, array($id, $aadm["id_user"], CoreSpace::$ADMIN));
+                $m = new CoreSpaceUser();
+                $m->delete($id, $aadm["id_user"], CoreSpace::$ADMIN);
+                //$sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=? AND status=?";
+                //$this->runRequest($sql, array($id, $aadm["id_user"], CoreSpace::$ADMIN));
             }
         }
 
         // add admins
         foreach ($id_admins as $adm) {
-            $this->setUser($adm, $id, CoreSpace::$ADMIN);
+            if($adm) {
+                $this->setUser($adm, $id, CoreSpace::$ADMIN);
+            }
         }
     }
 
+    /**
+     * @deprecated , duplicate function, should use delete in CoreSpaceUser
+     */
     public function deleteUser($id_space, $id_user) {
         $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $this->runRequest($sql, array($id_space, $id_user));
