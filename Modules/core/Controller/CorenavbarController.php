@@ -88,6 +88,7 @@ class CorenavbarController extends CoresecureController {
                 array('userName' => $userName,
                     'toolMenu' => $toolMenu, 
                     'toolAdmin' => $toolAdmin,
+                    'impersonate' => $_SESSION['logged_login'] ?? null,
                     'lang' => $lang));
         // Send the view
         return $view;
