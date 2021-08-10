@@ -205,6 +205,13 @@ class Configuration {
             }
         }
 
+        if(getenv('PFM_ALLOW_REGISTRATION')) {
+            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION'));
+        }
+        if(getenv('PFM_JWT_SECRET')) {
+            self::$parameters['jwt_secret'] = getenv('PFM_JWT_SECRET');
+        }
+
     }
 
     /**

@@ -182,6 +182,11 @@ class Email extends Model {
             $subject = CoreTranslator::JoinResponseSubject($spaceName, $lang);
             $content = CoreTranslator::JoinResponseEmail($userFullName, $spaceName, $accepted, $lang);
             $toAdress = $pendingUser["email"];
+        } else if ($origin == "add_new_user_waiting") {
+            $fromName = "Platform-Manager";
+            $toAdress = $params["email"];
+            $subject = CoreTranslator::AccountPendingCreationSubject($lang);
+            $content = CoreTranslator::AccountPendingCreationEmail($lang, $params["jwt"], $params["url"]);            
         } else {
             Configuration::getLogger()->error(
                 "notifyUserByEmail",
