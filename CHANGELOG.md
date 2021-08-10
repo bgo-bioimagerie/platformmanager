@@ -1,3 +1,7 @@
+# 2.0.1
+
+* #245 fix count calls on int
+
 # 2.0
 
 * Fix multi-tenant (still have pending issues for some modules,
