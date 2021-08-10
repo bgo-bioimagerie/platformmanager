@@ -169,7 +169,7 @@ class InInvoice extends Model {
             $req = $this->runRequest($sql);
 
             $lastNumber = "";
-            if (count($req->rowCount()) > 0) {
+            if ($req->rowCount() > 0) {
                 $bill = $req->fetch();
                 $lastNumber = $bill["number"];
             }

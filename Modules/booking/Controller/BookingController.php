@@ -507,7 +507,7 @@ class BookingController extends BookingabstractController {
         $modelRescal = new ResourceInfo();
         $resourceInfo = $modelRescal->get($curentResource);
 
-        if (count($resourceInfo) <= 1) {
+        if (!$resourceInfo) {
             $this->redirect("booking");
             return;
         }
@@ -776,7 +776,7 @@ class BookingController extends BookingabstractController {
         $modelRescal = new ResourceInfo();
         $resourceInfo = $modelRescal->get($curentResource);
 
-        if (count($resourceInfo) <= 1) {
+        if (!$resourceInfo) {
             $this->redirect("booking");
             return;
         }
