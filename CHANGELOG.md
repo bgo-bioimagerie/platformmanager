@@ -1,3 +1,7 @@
+# 2.1
+
+* #218 allow user to define default language
+
 # 2.0
 
 * Fix multi-tenant (still have pending issues for some modules,
