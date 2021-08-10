@@ -51,8 +51,8 @@ class BookingauthorisationsController extends CoresecureController {
         // visas
         $data = array();
         foreach ($resources as $r) {
-            if ($modelAuth->hasAuthorization($r["id"], $id)) {
-                $authInfo = $modelAuth->getLastActiveAuthorization($r["id"], $id);
+            if ($modelAuth->hasAuthorization($id_space, $r["id"], $id)) {
+                $authInfo = $modelAuth->getLastActiveAuthorization($id_space, $r["id"], $id);
                 $authorised = CoreTranslator::yes($lang);
                 $authorised_color = "#32CD32";
                 $date_authorized = CoreTranslator::dateFromEn($authInfo["date"], $lang);
@@ -112,6 +112,8 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelCategory = new ReCategory();
 
+        $recat = $modelCategory->get($id_space, $id_resource_category);
+
         $table = new TableView();
         $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName);
         $table->setColorIndexes(array("active" => "authorised_color"));
@@ -119,10 +121,10 @@ class BookingauthorisationsController extends CoresecureController {
         $table->addLineEditButton("bookingauthorisationsedit/" . $id_space, "id");
 
         $modelVisa = new BkAuthorization();
-        $data = $modelVisa->getForResourceAndUser($id_resource_category, $id_user);
+        $data = $modelVisa->getForResourceAndUser($id_space, $id_resource_category, $id_user);
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["user_id"]);
-            $data[$i]["resource_category"] = $modelCategory->getName($data[$i]["resource_id"]);
+            $data[$i]["resource_category"] = $modelCategory->getName($id_space, $data[$i]["resource_id"]);
             if ($data[$i]["is_active"] == 1) {
                 $data[$i]["authorised_color"] = "#32CD32";
                 $data[$i]["active"] = CoreTranslator::yes($lang);
@@ -171,10 +173,13 @@ class BookingauthorisationsController extends CoresecureController {
 
 
         $modelResourcesCategories = new ReCategory();
-        $categoryName = $modelResourcesCategories->getName($id_resource_category);
+
+        $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
+        $categoryName = $recat['name'];
+
 
         $modelVisa = new ReVisa();
-        $visa_select = $modelVisa->getForListByCategory($id_resource_category);
+        $visa_select = $modelVisa->getForListByCategory($id_space, $id_resource_category);
 
 
         $form = new Form($this->request, "authorisationAddForm");
@@ -189,9 +194,8 @@ class BookingauthorisationsController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsadd/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-
             $modelAuth = new BkAuthorization();
-            $modelAuth->add($id_user, $id_resource_category, $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang)
+            $modelAuth->add($id_space, $id_user, $id_resource_category, $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang)
             );
 
             $this->redirect("bookingauthorisations/" . $id_space . "/" . $id_user);
@@ -214,17 +218,21 @@ class BookingauthorisationsController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelAuth = new BkAuthorization();
-        $data = $modelAuth->get($id);
+        $data = $modelAuth->get($id_space, $id);
 
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($data["user_id"]);
 
 
         $modelResourcesCategories = new ReCategory();
-        $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
+        // $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
+        $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
+        $categoryName = $recat['name'];
+
+
 
         $modelVisa = new ReVisa();
-        $visa_select = $modelVisa->getForListByCategory($data["resource_id"]);
+        $visa_select = $modelVisa->getForListByCategory($id_space, $data["resource_id"]);
 
         $form = new Form($this->request, "authorisationAddForm");
         $form->setTitle(BookingTranslator::Authorisations_for($lang) . ": " . $userName);
@@ -243,7 +251,7 @@ class BookingauthorisationsController extends CoresecureController {
         if ($form->check()) {
 
             $modelAuth = new BkAuthorization();
-            $modelAuth->set($id, $data["user_id"], $data["resource_id"], $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang), CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang), $form->getParameter("is_active"));
+            $modelAuth->set($id_space, $id, $data["user_id"], $data["resource_id"], $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang), CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang), $form->getParameter("is_active"));
 
 
             $this->redirect("bookingauthorisations/" . $id_space . "/" . $data["user_id"]);

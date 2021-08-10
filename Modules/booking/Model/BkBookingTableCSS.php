@@ -28,8 +28,7 @@ class BkBookingTableCSS extends Model {
 		PRIMARY KEY (`id`)
 		);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        return $this->runRequest($sql);
     }
 
     /**
@@ -37,9 +36,9 @@ class BkBookingTableCSS extends Model {
      * @param string $sortEntry Sort entry
      * @return multitype: tables of areas
      */
-    public function areas($sortEntry) {
-        $sql = "select * from bk_bookingcss order by " . $sortEntry . " ASC;";
-        $data = $this->runRequest($sql);
+    public function areas($id_space, $sortEntry) {
+        $sql = "select * from bk_bookingcss WHERE id_space=? AND deleted=0 order by " . $sortEntry . " ASC;";
+        $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }
 
@@ -58,9 +57,9 @@ class BkBookingTableCSS extends Model {
      * @param number $id Area ID
      * @return mixed|string CSS info or error message
      */
-    public function getAreaCss($id) {
+    public function getAreaCss($id_space, $id) {
 
-        $sql = "select * from bk_bookingcss where id_area=?;";
+        $sql = "select * from bk_bookingcss where id_area=? AND id_space=? AND deleted=0;";
         $data = $this->runRequest($sql, array($id));
         if ($data->rowCount() == 1) {
             return $data->fetch();
@@ -74,13 +73,13 @@ class BkBookingTableCSS extends Model {
      *
      * @param string $name name of the Area
      */
-    private function addAreaCss($id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
+    private function addAreaCss($id_space, $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
 
         $sql = "insert into bk_bookingcss(id_area, header_background, header_color, header_font_size, 
-										  resa_font_size, header_height, line_height)"
-                . " values(?,?,?,?,?,?,?)";
+										  resa_font_size, header_height, line_height, id_space)"
+                . " values(?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($id_area, $header_background, $header_color, $header_font_size,
-            $resa_font_size, $header_height, $line_height));
+            $resa_font_size, $header_height, $line_height, $id_space));
     }
 
     /**
@@ -88,19 +87,15 @@ class BkBookingTableCSS extends Model {
      * @param number $id_area
      * @return boolean
      */
-    public function isAreaCss($id_area) {
-        $sql = "select * from bk_bookingcss where id_area=?";
-        $unit = $this->runRequest($sql, array($id_area));
-        if ($unit->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+    public function isAreaCss($id_space, $id_area) {
+        $sql = "select * from bk_bookingcss where id_area=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id_area, $id_space));
+        return ($unit->rowCount() == 1);
     }
 
-    public function areaCssId($id_area) {
-        $sql = "select id from bk_bookingcss where id_area=?";
-        $unit = $this->runRequest($sql, array($id_area));
+    public function areaCssId($id_space, $id_area) {
+        $sql = "select id from bk_bookingcss where id_area=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id_area, $id_space));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
@@ -114,12 +109,12 @@ class BkBookingTableCSS extends Model {
      * @param number $display_order
      * @param number $restricted
      */
-    public function setAreaCss($id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
-        if (!$this->isAreaCss($id_area)) {
-            $this->addAreaCss($id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height);
+    public function setAreaCss($id_space, $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
+        if (!$this->isAreaCss($id_space, $id_area)) {
+            $this->addAreaCss($id_space, $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height);
         } else {
-            $id = $this->areaCssId($id_area);
-            $this->updateAreaCss($id[0], $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height);
+            $id = $this->areaCssId($id_space, $id_area);
+            $this->updateAreaCss($id_space, $id[0], $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height);
         }
     }
 
@@ -130,21 +125,22 @@ class BkBookingTableCSS extends Model {
      * @param number $display_order New display order
      * @param number $restricted New restriction
      */
-    public function updateAreaCss($id, $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
+    public function updateAreaCss($id_space, $id, $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
         $sql = "update bk_bookingcss set id_area=?, header_background=?, header_color=?, header_font_size=?, 
 								resa_font_size=?, header_height=?, line_height=?
-									  where id=?";
+									  where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_area, $header_background, $header_color, $header_font_size,
-            $resa_font_size, $header_height, $line_height, $id));
+            $resa_font_size, $header_height, $line_height, $id, $id_space));
     }
 
     /**
      * Remove an area
      * @param number $id Area ID
      */
-    public function delete($id) {
-        $sql = "DELETE FROM bk_bookingcss WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE bk_bookingcss set deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
+        // $sql = "DELETE FROM bk_bookingcss WHERE id = ? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

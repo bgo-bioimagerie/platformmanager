@@ -89,29 +89,29 @@ class BjTask extends Model {
         return $openedTasks;
     }
 
-    public function getForNote($id_note) {
+    public function getForNote($id_space, $id_note) {
         $sql = "SELECT bj_tasks.*, bj_notes.* FROM bj_tasks "
                 . "INNER JOIN bj_notes ON bj_tasks.id_note=bj_notes.id "
-                . "WHERE bj_tasks.id_note=?";
-        return $this->runRequest($sql, array($id_note))->fetch();
+                . "WHERE bj_tasks.id_note=? AND bj_tasks.id_space=?";
+        return $this->runRequest($sql, array($id_note, $id_space))->fetch();
     }
 
-    public function set($id_note, $priority, $deadline) {
-        if ($this->exists($id_note)) {
-            $sql = "UPDATE bj_tasks SET priority=?, deadline=? WHERE id_note=?";
-            $this->runRequest($sql, array($priority, $deadline, $id_note));
+    public function set($id_space, $id_note, $priority, $deadline) {
+        if ($this->exists($id_space, $id_note)) {
+            $sql = "UPDATE bj_tasks SET priority=?, deadline=? WHERE id_note=? AND id_space=?";
+            $this->runRequest($sql, array($priority, $deadline, $id_note, $id_space));
             return $id_note;
         } else {
-            $sql = "INSERT INTO bj_tasks (id_note, priority, deadline) VALUES (?,?,?)";
-            $this->runRequest($sql, array($id_note, $priority, $deadline));
+            $sql = "INSERT INTO bj_tasks (id_note, priority, deadline, id_space) VALUES (?,?,?,?)";
+            $this->runRequest($sql, array($id_note, $priority, $deadline, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
         return $id_note;
     }
 
-    public function exists($id_note) {
-        $sql = "SELECT * from bj_tasks WHERE id_note=?";
-        $req = $this->runRequest($sql, array($id_note));
+    public function exists($id_space, $id_note) {
+        $sql = "SELECT * from bj_tasks WHERE id_note=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id_note, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -122,9 +122,9 @@ class BjTask extends Model {
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($id_note) {
-        $sql = "DELETE FROM bj_tasks WHERE id_note = ?";
-        $this->runRequest($sql, array($id_note));
+    public function delete($id_space, $id_note) {
+        $sql = "DELETE FROM bj_tasks WHERE id_note = ? AND id_space=?";
+        $this->runRequest($sql, array($id_note, $id_space));
     }
 
 }

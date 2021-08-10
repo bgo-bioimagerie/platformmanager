@@ -7,6 +7,7 @@ require_once 'Framework/FileUpload.php';
 require_once 'Framework/Errors.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 //require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -65,7 +66,32 @@ class CoremenusController extends CoresecureController {
             $displayOrder = $this->request->getParameterNoException("display_order");
             
             //print_r($packageID);
-            
+
+
+            $packs = [];
+            for ($p = 0; $p < count($ids); $p++) {
+                if ($names[$p] != "" && $ids[$p]) {
+                   $packs[$names[$p]] = $ids[$p];
+                }
+            }
+            for ($p = 0; $p < count($ids); $p++) {
+                if (!$ids[$p]) {
+                    // If package id not set, use from known packages
+                    if(isset($packs[$names[$p]])) {
+                        $ids[$p] = $packs[$names[$p]];
+                    } else {
+                        // Or create a new package
+                       $cvm = new CoreVirtual();
+                       $vid = $cvm->new('menu');
+                       $ids[$p] = $vid;
+                       $packs[$names[$p]] = $vid;
+                   }
+                }
+                $modelMenu->setMenu($ids[$p], $names[$p], $displayOrder[$p]);
+            }
+
+
+            /* bug posible conflict on getting id            
             $count = 0;
             
             // get the last package id
@@ -97,6 +123,7 @@ class CoremenusController extends CoresecureController {
                     $count++;
                 }
             }
+            */
             $modelMenu->removeUnlistedMenus($ids);
             $_SESSION["message"] = CoreTranslator::Menus_saved($lang);
             $this->redirect("coremenus");

@@ -5,10 +5,11 @@
  * 
  * Example usage
  * 
- * Create a space db (bucket): Statistics::createDB('test8');
+ * Create a space db (bucket): $s = new Statistics(); $s-> $createDB('test8');
  * Create a stat:
  * $stat = ['name' => 'measure_test', 'tags' =>['key1' => 'tag1', 'key2' => 'tag2'], 'fields' => ['value' => rand(0, 20)]];
- * Statistics::stat('test8', $stat);
+ * $s = new Statistics()
+ * $s->record('test8', $stat);
  */
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
@@ -65,20 +66,80 @@ class BucketStatistics extends Model {
 
 class Statistics {
 
-    protected static function client($space){
-        if (Configuration::get('influxdb_url', '') === '') {
+    private $clients = [];
+    private $wapis = [];
+
+    /**
+     * Checks if stats are enabled (influxdb configured)
+     */
+    public static function enabled() {
+        return Configuration::get('influxdb_url', '') !== '';
+    }
+
+    public function getClient($space) {
+        if(!isset($this->clients[$space])) {
+            if (Configuration::get('influxdb_url', '') === '') {
                 Configuration::getLogger()->debug('[stats] disabled');
                 return null;
+            }
+            $this->clients[$space] = new Client([
+                "url" => Configuration::get('influxdb_url'),  // "http://localhost:8086"
+                "token" => Configuration::get('influxdb_token'),
+                "bucket" => $space,
+                "org" => Configuration::get('influxdb_org', 'pfm'),
+                "precision" => InfluxDB2\Model\WritePrecision::S,
+                "debug" => Configuration::get('debug_influxdb', false)
+    
+            ]);
+            $writeApi = $this->clients[$space]->createWriteApi();
+            $this->wapis[$space] = $writeApi;
         }
-        return new Client([
-            "url" => Configuration::get('influxdb_url'),  // "http://localhost:8086"
-            "token" => Configuration::get('influxdb_token'),
-            "bucket" => $space,
-            "org" => Configuration::get('influxdb_org', 'pfm'),
-            "precision" => InfluxDB2\Model\WritePrecision::S,
-            "debug" => Configuration::get('debug_influxdb', false)
+        return $this->clients[$space];
+    }
 
-        ]);
+    public function closeClient($space) {
+        $this->clients[$space]->close();
+        unset($this->clients[$space]);
+        unset($this->wapis[$space]);
+    }
+
+    public function getWriteApi($space) {
+        if(!isset($this->clients[$space])) {
+            $this->getClient($space);
+        }
+        return $this->wapis[$space];
+    }
+
+    /**
+     * Sends a stat for recording
+     * 
+     * @param string $space space shortname
+     * @param array input stat
+     * @return boolean success/failure indication
+     * 
+    */
+    public function record($space, $stat) {
+        try {
+            if (!isset($stat['fields']['value'])) {
+                Configuration::getLogger()->error('[stats] missing value in fields', ['stat' => $stat]);
+                return false;
+            }
+            if (!is_int($stat['fields']['value'] && !is_float($stat['fields']['value']))) {
+                // not an int, try to convert
+                $stat['fields']['value'] = floatval($stat['fields']['value']);
+            }
+            $point = self::getPoint($stat);
+            $writeApi = $this->getWriteApi($space);
+            if($writeApi == null) {
+                return;
+            }
+            $writeApi->write($point);
+        } catch(Throwable $e) {
+            Configuration::getLogger()->error('[stats] stat error', ['message' => $e->getMessage()]);
+            $this->closeClient($space);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -96,42 +157,12 @@ class Statistics {
     }
 
     /**
-     * Sends a stat for recording
-     * 
-     * @param string $space space shortname
-     * @param array input stat
-     * @return boolean success/failure indication
-     * 
-    */
-    public static function stat($space, $stat) {
-        try {
-            if (!isset($stat['fields']['value'])) {
-                Configuration::getLogger()->error('[stats] missing value in fields', ['stat' => $stat]);
-                return false;
-            }
-            if (!is_int($stat['fields']['value'] && !is_float($stat['fields']['value']))) {
-                // not an int, try to convert
-                $stat['fields']['value'] = floatval($stat['fields']['value']);
-            }
-            $point = self::getPoint($stat);
-            $client = self::client($space);
-            $writeApi = $client->createWriteApi();
-            $writeApi->write($point);
-            $client->close();
-        } catch(Throwable $e) {
-            Configuration::getLogger()->error('[stats] stat error', ['message' => $e->getMessage()]);
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Create a new database
      */
-    public static function createDB($space) {
+    public function createDB($space) {
         try {
             // check if a database exists then create it if it doesn't
-            $client = self::client(Configuration::get('influxdb_org', 'pfm'));
+            $client = $this->getClient(Configuration::get('influxdb_org', 'pfm'));
             if($client == null) {
                 return;
             }
@@ -167,7 +198,7 @@ class Statistics {
             $sm = new BucketStatistics();
             $sm->add($space, $bucket->getId(), $token);
             Configuration::getLogger()->debug('[stats] bucket created', ['bucket' => $bucket->getId(), 'token' => $token]);
-            $client->close();
+            // $client->close();
         } catch(Throwable $e) {
             Configuration::getLogger()->error('[stats] createdb error', ['message' => $e->getMessage()]);
         } 
@@ -181,6 +212,7 @@ class Statistics {
         $orgService = $client->createService(OrganizationsService::class);
         $orgs = $orgService->getOrgs()->getOrgs();
         foreach ($orgs as $org) {
+            Configuration::getLogger()->error('???', ['org' => $org]);
             if ($org->getName() == Configuration::get('influxdb_org', 'pfm')) {
                 return $org;
             }

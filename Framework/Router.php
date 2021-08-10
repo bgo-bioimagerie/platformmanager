@@ -52,8 +52,8 @@ class Router {
     }
 
     private function route($request) {
-
         $modulesNames = Configuration::get("modules");
+        $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
         foreach ($modulesNames as $moduleName) {
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";

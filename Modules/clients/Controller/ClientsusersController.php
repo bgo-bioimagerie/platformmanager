@@ -44,10 +44,10 @@ class ClientsusersController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelClient = new ClClient();
-        $clientName = $modelClient->getName($id_client);
+        $clientName = $modelClient->getName($id_space, $id_client);
 
         $modelUsers = new CoreUser();
-        $users = $modelUsers->getAcivesForSelect("name");
+        $users = $modelUsers->getSpaceActiveUsersForSelect($id_space, "name");
 
         $modelClientUser = new ClClientUser();
 
@@ -59,14 +59,14 @@ class ClientsusersController extends CoresecureController {
         
         if ($form->check()) {
 
-            $modelClientUser->set($id_client, $form->getParameter("id_user"));
+            $modelClientUser->set($id_space, $id_client, $form->getParameter("id_user"));
 
             $_SESSION["message"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
             $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
             return;
         }
 
-        $data = $modelClientUser->getUsersInfo($id_client);
+        $data = $modelClientUser->getUsersInfo($id_space, $id_client);
 
         $table = new TableView();
         $table->setTitle(ClientsTranslator::ClientUsers($lang));
@@ -94,7 +94,7 @@ class ClientsusersController extends CoresecureController {
 
         //echo 'delete client user ' . $id . "<br/>";
         $modelClientUser = new ClClientUser();
-        $modelClientUser->deleteClientUser($id_client, $id_user);
+        $modelClientUser->deleteClientUser($id_space, $id_client, $id_user);
 
         $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
     }

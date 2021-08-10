@@ -67,14 +67,14 @@ class InvoicesvisaController extends CoresecureController {
         if (!$id) {
             $value = array("id" => 0,  "id_user" => 0);
         } else {
-            $value = $this->visaModel->get($id);
+            $value = $this->visaModel->get($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
         $form->addSeparator(InvoicesTranslator::Visa($lang));
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
        
@@ -82,8 +82,10 @@ class InvoicesvisaController extends CoresecureController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "invoicesvisas/" . $id_space);
 
         if ($form->check()) {
-            $this->visaModel->set($id, $this->request->getParameter("id_user") 
-                    , $id_space);
+            $this->visaModel->set(
+                $id,
+                $this->request->getParameter("id_user"),
+                $id_space);
             
             $this->redirect("invoicesvisas/" . $id_space);
             return;
@@ -95,7 +97,7 @@ class InvoicesvisaController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
-        $this->visaModel->delete($id);
+        $this->visaModel->delete($id_space, $id);
         $this->redirect("invoicesvisas/" . $id_space);
     }
 }

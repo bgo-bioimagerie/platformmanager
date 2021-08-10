@@ -93,12 +93,12 @@ class ServicesstatisticsorderController extends CoresecureController {
         // get the bill manager list
         $modelBillManager = new InInvoice();
         $controller = "servicesinvoiceorder";
-        $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
+        $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space);
 
-        $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet);
+        $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet);
     }
 
-    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null) {
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null) {
 
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
@@ -216,7 +216,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         foreach ($openedOrders as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
 
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
@@ -278,7 +278,7 @@ class ServicesstatisticsorderController extends CoresecureController {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item);
+            $name = $modelItem->getItemName($id_space, $item);
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -287,7 +287,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         $orders = $ordersBilledBalance["orders"];
         foreach ($orders as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -363,7 +363,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelClient->getInstitution($invoice["id_responsible"]);
+            $unitName = $modelClient->getInstitution($id_space, $invoice["id_responsible"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -421,7 +421,7 @@ class ServicesstatisticsorderController extends CoresecureController {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item[0]);
+            $name = $modelItem->getItemName($id_space, $item[0]);
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -442,7 +442,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         //print_r($projects);
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);

@@ -41,7 +41,7 @@ modules[] = "com"
 [Company]
 name = "Platform-Manager"
 
-[Openid]
+;[Openid]
 ;openid[] = "orcid"
 ;openid_orcid_url = "https://sandbox.orcid.org"
 ;openid_orcid_client_id = "APP-XXXXX"
@@ -56,6 +56,6 @@ amqp_user = "pfm"
 amqp_password = "pfm"
 
 [Influxdb]
-influxdb_url = ""
-influxdb_token = "XXXX"
+;influxdb_url = ""
+;influxdb_token = "XXXX"
 influxdb_org = "pfm"

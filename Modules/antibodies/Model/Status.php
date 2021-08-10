@@ -31,7 +31,7 @@ class Status extends Model {
     }
 
     public function getBySpace($id_space) {
-        $sql = "select * from ac_status WHERE id_space=? ORDER BY display_order ASC;";
+        $sql = "select * from ac_status WHERE id_space=? AND deleted=0 ORDER BY display_order ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
@@ -53,10 +53,10 @@ class Status extends Model {
      * @param string $sortentry Entry that is used to sort the Statuss
      * @return multitype: array
      */
-    public function getStatus($sortentry = 'id') {
+    public function getStatus($id_space ,$sortentry = 'id') {
 
-        $sql = "select * from ac_status order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "select * from ac_status WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -67,17 +67,17 @@ class Status extends Model {
      * @throws Exception id the Status is not found
      * @return mixed array
      */
-    public function get($id) {
+    public function get($id_space, $id) {
         if(!$id){
             return array("color" => "#ffffff", "nom" => "");
         }
         
-        $sql = "select * from ac_status where id=?";
-        $unit = $this->runRequest($sql, array($id));
+        $sql = "select * from ac_status where id=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new Exception("Cannot find the Status using the given id");
+            throw new PfmException("Cannot find the Status using the given id", 404);
         }
     }
 
@@ -109,12 +109,12 @@ class Status extends Model {
      */
     public function edit($id, $name, $color, $display_order, $id_space) {
 
-        $sql = "update ac_status set nom=?, color=?, display_order=?, id_space=? where id=?";
-        $this->runRequest($sql, array("" . $name . "", $color, $display_order, $id_space, $id));
+        $sql = "update ac_status set nom=?, color=?, display_order=? where id=? AND id_space=?";
+        $this->runRequest($sql, array("" . $name . "", $color, $display_order, $id, $id_space));
     }
 
     public function getIdFromName($name, $id_space) {
-        $sql = "select id from ac_status where nom=? AND id_space=?";
+        $sql = "select id from ac_status where nom=? AND id_space=? AND deleted=0";
         $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
@@ -124,9 +124,10 @@ class Status extends Model {
         }
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM ac_status WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE ac_status SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        //$sql = "DELETE FROM ac_status WHERE id = ?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

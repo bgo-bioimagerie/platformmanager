@@ -26,7 +26,7 @@ class ProtocolsController extends CoresecureController {
             $sortEntry = "id";
         }
         // get the user list
-        $protocolesArray = $this->protocolModel->getProtocols2($sortEntry);
+        $protocolesArray = $this->protocolModel->getProtocols2($id_space,$sortEntry);
 
         $table = new TableView();
         $table->setTitle("Protocoles");
@@ -67,7 +67,7 @@ class ProtocolsController extends CoresecureController {
 
         // get the user list
         //echo "action id = " . $anticorpsId . "<br />";
-        $protocolesArray = $this->protocolModel->getProtocolsByAnticorps($anticorpsId);
+        $protocolesArray = $this->protocolModel->getProtocolsByAnticorps($id_space, $anticorpsId);
 
 
         // view
@@ -97,7 +97,7 @@ class ProtocolsController extends CoresecureController {
 
         if ($id != 0) {
             // get isotype info
-            $protocol = $this->protocolModel->getProtocol($id);
+            $protocol = $this->protocolModel->getProtocol($id_space, $id);
         }
 
         // lists
@@ -112,16 +112,16 @@ class ProtocolsController extends CoresecureController {
         $modelInc = new Inc();
         $modelAcii = new Acii();
 
-        $kits = $modelKit->getKits("id");
-        $protos = $modelProto->getProtos("id");
-        $fixatives = $modelFixative->getFixatives("id");
-        $options = $modelOption->getOptions("id");
-        $enzymes = $modelEnzyme->getEnzymes("id");
-        $dems = $modelDem->getDems("id");
-        $aciincs = $modelAciinc->getAciincs("id");
-        $linkers = $modelLinker->getLinkers("id");
-        $incs = $modelInc->getIncs("id");
-        $aciis = $modelAcii->getAciis("id");
+        $kits = $modelKit->getKits($id_space,"id");
+        $protos = $modelProto->getProtos($id_space,"id");
+        $fixatives = $modelFixative->getFixatives($id_space,"id");
+        $options = $modelOption->getOptions($id_space,"id");
+        $enzymes = $modelEnzyme->getEnzymes($id_space,"id");
+        $dems = $modelDem->getDems($id_space,"id");
+        $aciincs = $modelAciinc->getAciincs($id_space,"id");
+        $linkers = $modelLinker->getLinkers($id_space,"id");
+        $incs = $modelInc->getIncs($id_space,"id");
+        $aciis = $modelAcii->getAciis($id_space,"id");
 
         $this->render(array(
             'lang' => $this->getLanguage(),
@@ -171,7 +171,7 @@ class ProtocolsController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->protocolModel->delete($id);
+        $this->protocolModel->delete($id_space,$id);
 
         $this->redirect("protocols/".$id_space. "/id");
     }

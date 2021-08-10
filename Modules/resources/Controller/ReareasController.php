@@ -64,7 +64,7 @@ class ReareasController extends CoresecureController {
             $area = array("id" => 0, "name" => "", "id_space" => $id_space, "restricted" => 0);
         }
         else{
-            $area = $this->model->get($id);
+            $area = $this->model->get($id_space, $id);
         }
         
         // lang
@@ -103,7 +103,7 @@ class ReareasController extends CoresecureController {
     public function deleteAction($id_space, $id){
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         
-        $this->model->delete($id);
+        $this->model->delete($id_space, $id);
         $this->redirect("reareas/".$id_space);
     }
 

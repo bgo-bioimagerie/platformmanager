@@ -140,7 +140,7 @@ class InvoiceslistController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $modelInvoice = new InInvoice();
-        $service = $modelInvoice->get($id);
+        $service = $modelInvoice->get($id_space, $id);
 
         //print_r($service);
         
@@ -171,7 +171,7 @@ class InvoiceslistController extends CoresecureController {
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($id);
+        $invoice = $modelInvoice->get($id_space, $id);
 
         if ($invoice["date_paid"] == "0000-00-00") {
             $invoice["date_paid"] = "";
@@ -210,8 +210,8 @@ class InvoiceslistController extends CoresecureController {
             
             $datePaid = CoreTranslator::dateToEn($this->request->getParameter("date_paid"), $lang);
             //echo "date paid = " . $datePaid . "<br/>";
-            $modelInvoice->setDatePaid($id, $datePaid);
-            $modelInvoice->setSend($id, 
+            $modelInvoice->setDatePaid($id_space, $id, $datePaid);
+            $modelInvoice->setSend($id_space, $id, 
                     CoreTranslator::dateToEn($this->request->getParameter("date_send"), $lang), 
                     $this->request->getParameter("visa_send"));
             
@@ -240,7 +240,7 @@ class InvoiceslistController extends CoresecureController {
 
         // cancel the pricing in the origin module
         $modelInvoice = new InInvoice();
-        $service = $modelInvoice->get($id);
+        $service = $modelInvoice->get($id_space, $id);
 
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
@@ -250,9 +250,9 @@ class InvoiceslistController extends CoresecureController {
         
         // delete invoice
         $modelInvoiceItem = new InInvoiceItem();
-        $modelInvoiceItem->deleteForInvoice($id);
+        $modelInvoiceItem->deleteForInvoice($id_space, $id);
         
-        $modelInvoice->delete($id);
+        $modelInvoice->delete($id_space, $id);
 
         // redirect
         $this->redirect("invoices/" . $id_space);

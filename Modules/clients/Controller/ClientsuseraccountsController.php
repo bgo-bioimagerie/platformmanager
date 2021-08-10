@@ -52,7 +52,7 @@ class ClientsuseraccountsController extends CoresecureController {
 
         if ($form->check()) {
 
-            $modelClientUser->set($form->getParameter("id_client"), $id_user);
+            $modelClientUser->set($id_space, $form->getParameter("id_client"), $id_user);
 
             $_SESSION["message"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
             $this->redirect("clientsuseraccounts/" . $id_space . "/" . $id_user);
@@ -84,7 +84,7 @@ class ClientsuseraccountsController extends CoresecureController {
 
         //echo 'delete client user ' . $id . "<br/>";
         $modelClientUser = new ClClientUser();
-        $modelClientUser->deleteClientUser($id, $id_user);
+        $modelClientUser->deleteClientUser($id_space, $id, $id_user);
 
         $this->redirect("clientsuseraccounts/" . $id_space . "/" . $id_user);
     }

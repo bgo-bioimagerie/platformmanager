@@ -24,34 +24,34 @@ class BjEvent extends Model {
         $this->primaryKey = "id";
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM bj_events WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM bj_events WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function getForNote($id_note) {
+    public function getForNote($id_space, $id_note) {
         $sql = "SELECT bj_events.*, bj_notes.* FROM bj_events "
                 . "INNER JOIN bj_notes ON bj_events.id_note=bj_notes.id "
-                . "WHERE bj_events.id_note=?";
-        return $this->runRequest($sql, array($id_note))->fetch();
+                . "WHERE bj_events.id_note=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_note, $id_space))->fetch();
     }
 
-    public function set($id_note, $start_time, $end_time) {
-        if ($this->exists($id_note)) {
-            $sql = "UPDATE bj_events SET start_time=?, end_time=? WHERE id_note=?";
-            $this->runRequest($sql, array($start_time, $end_time, $id_note));
+    public function set($id_space, $id_note, $start_time, $end_time) {
+        if ($this->exists($id_space, $id_note)) {
+            $sql = "UPDATE bj_events SET start_time=?, end_time=? WHERE id_note=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($start_time, $end_time, $id_note, $id_space));
             return $id_note;
         } else {
-            $sql = "INSERT INTO bj_events (id_note, start_time, end_time) VALUES (?,?,?)";
-            $this->runRequest($sql, array($id_note, $start_time, $end_time));
+            $sql = "INSERT INTO bj_events (id_note, start_time, end_time, id_space) VALUES (?,?,?,?)";
+            $this->runRequest($sql, array($id_note, $start_time, $end_time, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
         return $id_note;
     }
 
-    public function exists($id_note) {
-        $sql = "SELECT * from bj_events WHERE id_note=?";
-        $req = $this->runRequest($sql, array($id_note));
+    public function exists($id_space, $id_note) {
+        $sql = "SELECT * from bj_events WHERE id_note=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id_note, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -62,9 +62,9 @@ class BjEvent extends Model {
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($id_note) {
-        $sql = "DELETE FROM bj_events WHERE id_note = ?";
-        $this->runRequest($sql, array($id_note));
+    public function delete($id_space, $id_note) {
+        $sql = "DELETE FROM bj_events WHERE id_note =? AND id_space=?";
+        $this->runRequest($sql, array($id_note, $id_space));
     }
 
 }

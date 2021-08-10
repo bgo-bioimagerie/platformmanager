@@ -19,9 +19,10 @@ function version()
 $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
+    ->opt('from', 'Force install from release', -1, 'integer')
     ->command('expire')
     ->description('Expire in spaces old users (according to global config)')
-    ->opt('del:d', 'Remove use from space, else just set as inactive', false, 'boolean')
+    ->opt('del:d', 'Remove user from space, else just set as inactive', false, 'boolean')
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean');
@@ -31,7 +32,7 @@ $args = $cli->parse($argv);
 try {
     switch ($args->getCommand()) {
         case 'install':
-            cliInstall();
+            cliInstall($args->getOpt('from'));
             break;
         case 'expire':
             $logger = Configuration::getLogger();
@@ -58,7 +59,7 @@ try {
     Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
 }
 
-function cliInstall() {
+function cliInstall($from=-1) {
     $logger = Configuration::getLogger();
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
@@ -105,7 +106,7 @@ function cliInstall() {
     }
 
     // update db release and launch upgrade
-    $cdb->upgrade();
+    $cdb->upgrade($from);
 
     $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 

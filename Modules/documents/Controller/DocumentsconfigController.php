@@ -38,18 +38,6 @@ class DocumentsconfigController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelSpace = new CoreSpace();
-        // color menu form
-        /*
-        $modelCoreConfig = new CoreConfig();
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
-        if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("documentsmenucolor", $this->request->getParameter("documentsmenucolor"), $id_space);
-            $modelCoreConfig->setParam("documentsmenucolortxt", $this->request->getParameter("documentsmenucolortxt"), $id_space);
-            
-            $this->redirect("documentsconfig/".$id_space);
-            return;
-        }
-         */
 
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);

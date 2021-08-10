@@ -1,12 +1,15 @@
-# 2.0.1
+# Changes
 
-* #245 fix count calls on int
+## 2.1
 
-# 2.0
+* #218 allow user to define default language
+* Add prometheus statistics
+
+## 2.0
 
 * Fix multi-tenant (still have pending issues for some modules,
   will be fixed in next release)
-* Fix multi-tenant issues for email 
+* Fix multi-tenant issues for email
 * #206 fix booking invoices creation when night and weekend
   prices option not set
 * #189 fix booking blocking errors

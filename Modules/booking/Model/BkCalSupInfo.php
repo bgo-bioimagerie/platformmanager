@@ -17,16 +17,15 @@ class BkCalSupInfo extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `bk_calsupinfo` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+		        `id` int(11) NOT NULL AUTO_INCREMENT,
                 `id_supinfo` int(11) NOT NULL,
                 `id_resource` int(11) NOT NULL,
                 `name` varchar(30) NOT NULL DEFAULT '',
-		`mandatory` int(1) NOT NULL,			
+		`       mandatory` int(1) NOT NULL,			
 		PRIMARY KEY (`id`)
 		);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+       return $this->runRequest($sql);
     }
 
     /**
@@ -34,30 +33,31 @@ class BkCalSupInfo extends Model {
      * @param unknown $sortEntry
      * @return multitype:
      */
-    public function calSupInfos($sortEntry) {
-        $sql = "select * from bk_calsupinfo order by " . $sortEntry . " ASC;";
-        $data = $this->runRequest($sql);
+    public function calSupInfos($id_space, $sortEntry) {
+        $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=? ORDER BY " . $sortEntry . " ASC;";
+        $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }
 
-    public function calSupInfosByResource($id_resource) {
-        $sql = "select * from bk_calsupinfo WHERE id_resource=?";
-        return $this->runRequest($sql, array($id_resource))->fetchAll();
+    public function calSupInfosByResource($id_space, $id_resource) {
+        $sql = "SELECT * FROM bk_calsupinfo WHERE id_resource=? AND deleted=0 AND id_space=?";
+        return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
 
-    public function getAll() {
-        $sql = "select * from bk_calsupinfo";
+    public function getAll($id_space) {
+        $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
         return $this->runRequest($sql)->fetchAll();
     }
     
     public function getForSpace($id_space, $sort) {
-        $sql = "select * from bk_calsupinfo WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY ".$sort." ASC;";
+        $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
+        //$sql = "select * from bk_calsupinfo WHERE deleted=0 AND id_space=? AND id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY ".$sort." ASC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
-    public function getForResource($id_resource, $sort = "name"){
-        $sql = "select * from bk_calsupinfo WHERE id_resource=? ORDER BY ".$sort." ASC;";
-        return $this->runRequest($sql, array($id_resource))->fetchAll();
+    public function getForResource($id_space, $id_resource, $sort = "name"){
+        $sql = "select * from bk_calsupinfo WHERE id_resource=? AND deleted=0 AND id_space=? ORDER BY ".$sort." ASC;";
+        return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
 
     /**
@@ -65,9 +65,9 @@ class BkCalSupInfo extends Model {
      * @param unknown $id
      * @return mixed|string
      */
-    public function getcalSupInfos($id) {
+    public function getcalSupInfos($id_space, $id) {
 
-        $sql = "select * from bk_calsupinfo where id=?;";
+        $sql = "SELECT * FROM bk_calsupinfo WHERE id=? AND deleted=0 AND id_space=?;";
         $data = $this->runRequest($sql, array($id));
         if ($data->rowCount() == 1) {
             return $data->fetch();
@@ -81,10 +81,10 @@ class BkCalSupInfo extends Model {
      * @param unknown $id
      * @return string
      */
-    public function getcalSupInfoName($id) {
+    public function getcalSupInfoName($id_space, $id) {
 
-        $sql = "select name from bk_calsupinfo where id=?;";
-        $data = $this->runRequest($sql, array($id));
+        $sql = "select name from bk_calsupinfo where id=? AND deleted=0 AND id_space=?;";
+        $data = $this->runRequest($sql, array($id, $id_space));
         if ($data->rowCount() == 1) {
             $tmp = $data->fetch();
             return $tmp[0];
@@ -98,11 +98,11 @@ class BkCalSupInfo extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function addCalSupInfo($id_supinfo, $id_resource, $name, $mandatory) {
+    public function addCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory) {
 
-        $sql = "insert into bk_calsupinfo(id_supinfo, id_resource, name, mandatory)"
-                . " values(?,?,?,?)";
-        $this->runRequest($sql, array($id_supinfo, $id_resource, $name, $mandatory));
+        $sql = "insert into bk_calsupinfo(id_supinfo, id_resource, name, mandatory, id_space)"
+                . " values(?,?,?,?,?)";
+        $this->runRequest($sql, array($id_supinfo, $id_resource, $name, $mandatory, $id_space));
     }
 
     /**
@@ -111,12 +111,12 @@ class BkCalSupInfo extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function setCalSupInfo($id_supinfo, $id_resource, $name, $mandatory) {
+    public function setCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory) {
 
-        if ($this->isCalSupInfoId($id_supinfo, $id_resource)) {
-            $this->updateCalSupInfo($id_supinfo, $id_resource, $name, $mandatory);
+        if ($this->isCalSupInfoId($id_space, $id_supinfo, $id_resource)) {
+            $this->updateCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory);
         } else {
-            $this->addCalSupInfo($id_supinfo, $id_resource, $name, $mandatory);
+            $this->addCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory);
         }
     }
 
@@ -125,14 +125,10 @@ class BkCalSupInfo extends Model {
      * @param unknown $id
      * @return boolean
      */
-    public function isCalSupInfoId($id_supinfo, $id_resource) {
-        $sql = "select id from bk_calsupinfo where id_supinfo=? AND id_resource=?";
-        $unit = $this->runRequest($sql, array($id_supinfo, $id_resource));
-        if ($unit->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+    public function isCalSupInfoId($id_space, $id_supinfo, $id_resource) {
+        $sql = "SELECT id FROM bk_calsupinfo WHERE id_supinfo=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $unit = $this->runRequest($sql, array($id_supinfo, $id_resource, $id_space));
+        return ($unit->rowCount() == 1);
     }
 
     /**
@@ -141,18 +137,19 @@ class BkCalSupInfo extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function updateCalSupInfo($id_supinfo, $id_resource, $name, $mandatory) {
-        $sql = "update bk_calsupinfo set name= ?, mandatory=? where id_supinfo=? AND id_resource=?";
-        $this->runRequest($sql, array($name, $mandatory, $id_supinfo, $id_resource));
+    public function updateCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory) {
+        $sql = "UPDATE bk_calsupinfo SET name= ?, mandatory=? WHERE id_supinfo=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $this->runRequest($sql, array($name, $mandatory, $id_supinfo, $id_resource, $id_space));
     }
 
     /**
      * REmove a supplemenary from it ID
      * @param unknown $id
      */
-    public function delete($id) {
-        $sql = "DELETE FROM bk_calsupinfo WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE bk_calsupinfo SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        // $sql = "DELETE FROM bk_calsupinfo WHERE id = ? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
     /**
@@ -161,16 +158,17 @@ class BkCalSupInfo extends Model {
      * @param unknown $calsupValues
      * @param unknown $reservation_id
      */
-    public function setEntrySupInfoData($calsupNames, $calsupValues, $reservation_id) {
+    public function setEntrySupInfoData($id_space, $calsupNames, $calsupValues, $reservation_id) {
 
         $supData = "";
         for ($i = 0; $i < count($calsupNames); $i++) {
             $supData .= $calsupNames[$i] . ":=" . $calsupValues[$i] . ";";
         }
 
-        $sql = "update bk_calendar_entry set supplementary=?
-									  where id=?";
-        $this->runRequest($sql, array($supData, $reservation_id));
+        $sql = "UPDATE bk_calendar_entry
+                SET supplementary=?
+				WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($supData, $reservation_id, $id_space));
     }
 
     /**
@@ -178,11 +176,11 @@ class BkCalSupInfo extends Model {
      * @param unknown $entryID
      * @return string
      */
-    public function getSummary($entryID) {
+    public function getSummary($id_space, $entryID) {
 
         $text = "";
         // get the entry sup entries
-        $supData = $this->getSupInfoData($entryID);
+        $supData = $this->getSupInfoData($id_space, $entryID);
         foreach ($supData as $key => $value) {
             $text .= "<b>" . $key . ": </b>" . $value;
         }
@@ -195,43 +193,39 @@ class BkCalSupInfo extends Model {
      * @param number $id
      * @return array supplementary
      */
-    public function getSupInfoData($id) {
-        $sql = "select supplementaries from bk_calendar_entry where id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function getSupInfoData($id_space, $id) {
+        $sql = "SELECT supplementaries FROM bk_calendar_entry WHERE id=? AND deleted=0 AND id_space=?";
+        $req = $this->runRequest($sql, array($id, $id_space));
         $tmp = $req->fetch();
         $sups = explode(";", $tmp[0]);
         $supData = array();
         foreach ($sups as $sup) {
             $sup2 = explode("=", $sup);
             if (count($sup2) == 2) {
-                $sql = "SELECT name FROM bk_calsupinfo WHERE id=?";
-                $name = $this->runRequest($sql, array($sup2[0]))->fetch();
+                $sql = "SELECT name FROM bk_calsupinfo WHERE id=? AND deleted=0 AND id_space=?";
+                $name = $this->runRequest($sql, array($sup2[0], $id_space))->fetch();
                 $supData[$name[0]] = $sup2[1];
             }
         }
         return $supData;
     }
 
-    public function removeUnlistedSupInfos($packageID) {
+    public function removeUnlistedSupInfos($id_space, $packageID) {
 
-        $sql = "select id, id_supinfo from bk_calsupinfo";
+        $sql = "SELECT id, id_supinfo FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql);
         $databasePackages = $req->fetchAll();
-
-        //echo "databasePackages = ". print_r($databasePackages) . "<br/>";
 
         foreach ($databasePackages as $dbPackage) {
             $found = false;
             foreach ($packageID as $pid) {
                 if ($dbPackage["id_supinfo"] == $pid) {
-                    //echo "found package " . $pid . "in the database <br/>";
                     $found = true;
                     break;
                 }
             }
             if (!$found) {
-                //echo "delete pacjkage id = " . $dbPackage["id"] . " package-id = " . $dbPackage["id_package"] . "<br/>";
-                $this->delete($dbPackage["id"]);
+                $this->delete($id_space, $dbPackage["id"]);
             }
         }
     }

@@ -23,33 +23,32 @@ class AcOwner extends Model {
                     `date_recept` DATE NOT NULL,
                     `no_dossier` varchar(12) NOT NULL,
                     PRIMARY KEY (`id`)
-                    );
-                    ";
+                    );";
 
         $this->runRequest($sql);
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM ac_j_user_anticorps WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM ac_j_user_anticorps WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function setOwner($id, $id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier) {
+    public function setOwner($id_space ,$id, $id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier) {
         if (!$id) {
-            $sql = "INSERT INTO ac_j_user_anticorps (id_anticorps, id_utilisateur, disponible, date_recept, no_dossier) VALUES (?,?,?,?,?);";
-            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier));
+            $sql = "INSERT INTO ac_j_user_anticorps (id_anticorps, id_utilisateur, disponible, date_recept, no_dossier, id_space) VALUES (?,?,?,?,?, ?);";
+            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id_space));
         } else {
-            $sql = "UPDATE ac_j_user_anticorps SET id_anticorps=?, id_utilisateur=?, disponible=?, date_recept=?, no_dossier=? WHERE id=?";
-            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id));
+            $sql = "UPDATE ac_j_user_anticorps SET id_anticorps=?, id_utilisateur=?, disponible=?, date_recept=?, no_dossier=? WHERE id=? AND id_space=?";
+            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id, $id_space));
         }
     }
 
-    public function getInfoForAntibody($id_antibody) {
+    public function getInfoForAntibody($id_space, $id_antibody) {
         if ($id_antibody == 0) {
             return array();
         }
-        $sql = "SELECT * FROM ac_j_user_anticorps WHERE id_anticorps=?";
-        $data = $this->runRequest($sql, array($id_antibody))->fetchAll();
+        $sql = "SELECT * FROM ac_j_user_anticorps WHERE id_anticorps=? AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id_antibody, $id_space))->fetchAll();
         $modelUser = new CoreUser();
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["id_utilisateur"]);
@@ -57,9 +56,9 @@ class AcOwner extends Model {
         return $data;
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM ac_j_user_anticorps WHERE id=?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "DELETE FROM ac_j_user_anticorps WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

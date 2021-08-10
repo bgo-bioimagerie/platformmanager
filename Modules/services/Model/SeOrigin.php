@@ -21,9 +21,9 @@ class SeOrigin extends Model {
         $this->addColumn('se_origin', 'display_order', 'int(11)', 0);
     }
     
-    public function getName($id){
-        $sql = "SELECT name FROM se_origin WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function getName($id_space, $id){
+        $sql = "SELECT name FROM se_origin WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if( $req->rowCount() > 0){
             $tmp = $req->fetch();
             return $tmp[0];
@@ -32,7 +32,7 @@ class SeOrigin extends Model {
     }
 
     public function getIdFromName($name, $id_space){
-        $sql = "SELECT id FROM se_origin WHERE name=? AND id_space=?";
+        $sql = "SELECT id FROM se_origin WHERE name=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($name, $id_space));
         if ($req->rowCount() > 0){
             $tmp = $req->fetch();
@@ -51,23 +51,23 @@ class SeOrigin extends Model {
             $sql = "INSERT INTO se_origin (id, name, display_order, id_space) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id, $name, $display_order, $id_space));
         } else {
-            $sql = "UPDATE se_origin SET name=?, display_order=?, id_space=? WHERE id=?";
-            $this->runRequest($sql, array($name, $display_order, $id_space, $id));
+            $sql = "UPDATE se_origin SET name=?, display_order=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($name, $display_order, $id, $id_space));
         }
     }
 
     public function getAll($id_space) {
-        $sql = "SELECT * FROM se_origin WHERE id_space=?";
+        $sql = "SELECT * FROM se_origin WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM se_origin WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM se_origin WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
     
     public function getForList($id_space){
-        $sql = "SELECT * FROM se_origin WHERE id_space=? ORDER BY display_order";
+        $sql = "SELECT * FROM se_origin WHERE id_space=? AND deleted=0 ORDER BY display_order";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $ids = array();
         $names = array();
@@ -84,9 +84,9 @@ class SeOrigin extends Model {
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($id) {
-
-        $sql = "DELETE FROM se_origin WHERE id = ?";
+    public function delete($id_space, $id) {
+        $sql = "UPDATE se_origin SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        //$sql = "DELETE FROM se_origin WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id));
     }
 

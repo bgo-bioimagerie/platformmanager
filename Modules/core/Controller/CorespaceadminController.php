@@ -87,22 +87,24 @@ class CorespaceadminController extends CoresecureController {
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
         $form->addText("support", CoreTranslator::Support($lang), false, $space["support"]);
 
-        if($isSuperAdmin) {
-            $modelUser = new CoreUser();
-            $users = $modelUser->getActiveUsers("name");
-            $usersNames = array(); $usersIds = array();
-            foreach($users as $user){
-                $usersNames[] = $user["name"] . " " . $user["firstname"];
-                $usersIds[] = $user["id"];
-            }
-            
-            $formAdd = new FormAdd($this->request, "addformspaceedit");
-            $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
-            $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
-            $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
-            $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id);
-            $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
+        $modelUser = new CoreUser();
+        $users = $modelUser->getActiveUsers("name");
+        $usersNames = array();
+        $usersIds = array();
+        $usersNames[] = CoreTranslator::Select($lang);
+        $usersIds[] = 0;
+        foreach($users as $user){
+            $usersNames[] = $user["name"] . " " . $user["firstname"];
+            $usersIds[] = $user["id"];
         }
+        
+        $formAdd = new FormAdd($this->request, "addformspaceedit");
+        $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
+        $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
+        $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
+        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
+
         if ($form->check()){ 
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
@@ -114,7 +116,7 @@ class CorespaceadminController extends CoresecureController {
             // set base informations
             if($isSuperAdmin) {
                 // Only super admin can create
-                Configuration::getLogger()->debug('[admin][space] edit space', ["space" => $id, "name" => $this->request->getParameter("name")]);
+                Configuration::getLogger()->debug('[admin][space] create space', ["space" => $id, "name" => $this->request->getParameter("name")]);
                 $id = $modelSpace->setSpace($id, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
@@ -124,7 +126,7 @@ class CorespaceadminController extends CoresecureController {
                     );
             } else {
                 // Space admin can edit
-                Configuration::getLogger()->debug('[admin][space] create space', ["name" => $this->request->getParameter("name")]);
+                Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);
                 $modelSpace->editSpace($id, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
@@ -135,9 +137,7 @@ class CorespaceadminController extends CoresecureController {
             }
 
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
-            if($isSuperAdmin) {
-                $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
-            }
+            $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
             
             // upload image
             $target_dir = "data/core/menu/";

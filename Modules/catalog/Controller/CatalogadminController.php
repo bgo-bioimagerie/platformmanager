@@ -50,8 +50,8 @@ class CatalogadminController extends CoresecureController {
         $display_order = 0;
         $modelCategory = new CaCategory();
         if ($id > 0) {
-            $name = $modelCategory->getName($id);
-            $display_order = $modelCategory->getDisplayOrder($id);
+            $name = $modelCategory->getName($id_space, $id);
+            $display_order = $modelCategory->getDisplayOrder($id_space ,$id);
         }
         // build the form
         $form = new Form($this->request, "formcategories");
@@ -83,7 +83,7 @@ class CatalogadminController extends CoresecureController {
      */
     public function categorydeleteAction($id_space, $id) {
         $modelCategory = new CaCategory();
-        $modelCategory->delete($id);
+        $modelCategory->delete($id_space, $id);
         // generate view
         $this->redirect("catalogcategories/".$id_space);
     }
@@ -94,7 +94,7 @@ class CatalogadminController extends CoresecureController {
         $dataArray = $modelEntry->getAll($id_space);
         $modelCategory = new CaCategory();
         for ($i = 0; $i < count($dataArray); $i++) {
-            $dataArray[$i]["id_category"] = $modelCategory->getName($dataArray[$i]["id_category"]);
+            $dataArray[$i]["id_category"] = $modelCategory->getName($id_space, $dataArray[$i]["id_category"]);
         }
         $table = new TableView();
         $table->setTitle(CatalogTranslator::Entries($lang));
@@ -115,7 +115,7 @@ class CatalogadminController extends CoresecureController {
         $modelEntry = new CaEntry();
         $entryInfo = array("title" => "", "id_category" => 0, "short_desc" => "", "full_desc" => "");
         if ($id > 0) {
-            $entryInfo = $modelEntry->getInfo($id);
+            $entryInfo = $modelEntry->getInfo($id_space, $id);
         }
         // categories choices
         $modelCategory = new CaCategory();
@@ -151,7 +151,7 @@ class CatalogadminController extends CoresecureController {
                 // download file
                 $this->downloadIllustration();
                 // set filename to database
-                $modelEntry->setImageUrl($id, $_FILES["illustration"]["name"]);
+                $modelEntry->setImageUrl($id_space, $id, $_FILES["illustration"]["name"]);
             }
             $this->redirect("catalogprestations/".$id_space);
         } else {
@@ -189,7 +189,7 @@ class CatalogadminController extends CoresecureController {
     }
     public function prestationdeleteAction($id_space, $id) {
         $modelCategory = new CaEntry();
-        $modelCategory->delete($id);
+        $modelCategory->delete($id_space ,$id);
         // generate view
         $this->redirect("catalogprestations/".$id_space);
     }

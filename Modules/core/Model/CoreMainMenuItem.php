@@ -83,8 +83,8 @@ class CoreMainMenuItem extends Model {
             $sql = "SELECT * FROM core_spaces WHERE id=?";
             $data = $this->runRequest($sql, array($id_space[0]))->fetch();
             $items[] = $data;
-            
         }
+
         return $items;
         
         //$sql = "SELECT * FROM core_spaces WHERE id IN (SELECT id_space FROM core_main_menu_items WHERE id_sub_menu=? ORDER BY display_order ASC)";

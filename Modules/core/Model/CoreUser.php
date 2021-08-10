@@ -263,6 +263,14 @@ class CoreUser extends Model {
         return 0;
     }
 
+    /**
+     * Returns super administrators
+     */
+    public function superAdmins() {
+        $sql = "SELECT * from core_users WHERE status_id=?";
+        return $this->runRequest($sql, array(CoreStatus::$ADMIN))->fetchAll();
+    }
+
     public function installDefault() {
         $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
@@ -816,11 +824,40 @@ class CoreUser extends Model {
         $names[] = "";
         $ids[] = "";
         foreach ($users as $res) {
+            if(!$res['is_active']) {
+                continue;
+            }
             $names[] = $res["name"] . " " . $res["firstname"];
             $ids[] = $res["id"];
         }
         return array("names" => $names, "ids" => $ids);
     }
+
+    public function getSpaceActiveUsersForSelect($id_space, $sortentry) {
+            $sql = "SELECT core_j_spaces_user.id_user AS id,"
+                    . "core_users.name AS name,core_users.firstname AS firstname "
+                    . "FROM core_j_spaces_user "
+                    . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1";
+            $users = $this->runRequest($sql, array($id_space))->fetchAll();
+            $names = array();
+            $ids = array();
+            $names[] = "";
+            $ids[] = "";
+            foreach ($users as $res) {
+                $names[] = $res["name"] . " " . $res["firstname"];
+                $ids[] = $res["id"];
+            }
+            return array("names" => $names, "ids" => $ids);
+    }
+
+    public function getSpaceActiveUsers($id_space) {
+        $sql = "SELECT core_users.*"
+                . "FROM core_j_spaces_user "
+                . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                . "WHERE core_j_spaces_user.id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+}
 
     /**
      * get the informations of a user from it's id

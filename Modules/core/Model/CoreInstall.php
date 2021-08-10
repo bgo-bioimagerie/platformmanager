@@ -28,11 +28,12 @@ require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 
 
-define("DB_VERSION", 2);
+define("DB_VERSION", 3);
 /**
  * Class defining the database version installed
  */
@@ -71,6 +72,7 @@ class CoreDB extends Model {
                 $cp->setShortname($space['id'], $shortname);
             }
         }
+        Configuration::getLogger()->debug("[db] Add core_spaces shortname, contact, support, done!");
 
         Configuration::getLogger()->debug("[stats] import stats");
         $cp = new CoreSpace();
@@ -86,6 +88,8 @@ class CoreDB extends Model {
                 ]);
             }
         }
+        Configuration::getLogger()->debug("[stats] import stats done!");
+
 
         Configuration::getLogger()->debug("[users] add apikey");
         $cu = new CoreUser();
@@ -97,10 +101,288 @@ class CoreDB extends Model {
             }    
             $cu->newApiKey($user['id']);
         }
+        Configuration::getLogger()->debug("[users] add apikey done!");
+
 
         Configuration::getLogger()->debug("[adminmenu] remove update");
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
+        Configuration::getLogger()->debug("[adminmenu] remove update done!");
+
+    }
+
+    public function upgrade_v2_v3() {
+        Configuration::getLogger()->debug('[id_space] set space identifier on objects');
+        $sql = "SELECT * FROM `re_info`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_access SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_calendar_entry SET id_space=? WHERE resource_id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_calquantities SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_owner_prices SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_packages SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_prices SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_restrictions SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE bk_calsupinfo SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE re_event SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+            $sql = "UPDATE re_resps SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `bk_packages`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE bk_j_packages_prices SET id_space=? WHERE id_package=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id_package']));
+            }
+        }
+
+        $sql = "SELECT * FROM `bk_calendar_entry`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                if($res['period_id']) {
+                    $sql = "UPDATE bk_calendar_period SET id_space=? WHERE id=?";
+                    $this->runRequest($sql, array($res['id_space'], $res['period_id']));
+                }
+            }
+        }
+
+        $sql = "SELECT * FROM `re_area`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE bk_bookingcss SET id_space=? WHERE id_area=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE bk_schedulings SET id_space=?, id_rearea=? WHERE id=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `bj_collections`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch) {
+                $sql = "UPDATE bj_j_collections_notes SET id_space=? WHERE id_collection=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `bj_notes`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE bj_events SET id_space=? WHERE id_note=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE bj_tasks SET id_space=? WHERE id_note=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE bj_tasks_history SET id_space=? WHERE id_note=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `ca_categories`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE ca_entries SET id_space=? WHERE id_category=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `cl_clients`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE cl_addresses SET id_space=? WHERE id=?";
+                $this->runRequest($sql, array($res['id_space'], $res['address_invoice']));
+                $this->runRequest($sql, array($res['id_space'], $res['address_delivery']));
+                $sql = "UPDATE cl_j_client_user SET id_space=? WHERE id_client=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `in_invoice`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE in_invoice_item SET id_space=? WHERE id_invoice=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `qo_quotes`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE qo_quoteitems SET id_space=? WHERE id_quote=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `re_event`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE re_event_data SET id_space=? WHERE id_event=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE re_visas SET id_space=? WHERE id_resource_category=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `se_services`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE se_prices SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_service_types SET id_space=? WHERE id=?";
+                $this->runRequest($sql, array($res['id_space'], $res['type_id']));
+                $sql = "UPDATE se_order_service SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `stock_cabinets`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                $sql = "UPDATE stock_shelf SET id_space=? WHERE id_cabinet=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `es_sales`;";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE es_sale_entered_items SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE es_sale_history SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE es_sale_items SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE es_sale_invoice_items SET id_space=? WHERE id_sale=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+        $sql = "SELECT * FROM `ac_anticorps`";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            while($res = $resdb->fetch()) {
+                $sql = "UPDATE ac_j_tissu_anticorps SET id_space=? WHERE id_anticorps=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE ac_j_user_anticorps SET id_space=? WHERE id_anticorps=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+            }
+        }
+
+
+        // Check
+        $sql = "show tables";
+        $tables = $this->runRequest($sql)->fetchAll();
+        foreach($tables as $t) {
+            $table = $t[0];
+            $sql = "SELECT COUNT(*) as total FROM ".$table;
+            $notEmpty = $this->runRequest($sql)->fetch();
+            if($notEmpty && intval($notEmpty['total']) > 0) {
+                // if table not empty and has id_space=0
+                $sql = "SELECT COUNT(*) as total FROM ".$table." WHERE id_space=0";
+                $null_spaces = $this->runRequest($sql)->fetch();
+                if($null_spaces && intval($null_spaces['total']) > 0) {
+                    Configuration::getLogger()->warning('[id_space] found null space references', ['table' => $table, 'total' => $null_spaces]);
+                }
+            }
+        }
+
+        Configuration::getLogger()->debug('[id_space] set space identifier on objects, done!');
+
+        Configuration::getLogger()->debug('[virtual counter] init virtual counter');
+        $counter = 0;
+        $sql = "SELECT max(id_package) as counter FROM bk_owner_prices";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && $resdb['counter']) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_package) as counter FROM bk_packages";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_package) as counter FROM bk_prices";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_supinfo) as counter FROM bk_calsupinfo";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+        $sql = "SELECT max(id_quantity) as counter FROM bk_calquantities";
+        $resdb = $this->runRequest($sql)->fetch();
+        if($resdb && intval($resdb['counter']) > $counter) {
+            $counter = intval($resdb['counter']);
+        }
+
+        $sql = "SELECT max(no_h2p2) as counter FROM ac_anticorps";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $res = $resdb->fetch();
+            if($res && intval($res['counter']) > $counter) {
+                $counter = intval($res['counter']);
+            }
+        }
+
+        $i = 0;
+        while($i <= $counter) {
+            $cvm = new CoreVirtual();
+            $cvm->new('import');
+            $i++;
+        }
+
+        Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
+
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug("[stats] import calentry stats");
+            $statHandler = new EventHandler();
+            $statHandler->calentryImport();
+            Configuration::getLogger()->debug('[stats] import calentry stats, done!');
+        }
+
+        Configuration::getLogger()->debug('[space] remove super admin from spaces admins');
+        $cum = new CoreUser();
+        $superAdmins = $cum->superAdmins();
+        foreach ($superAdmins as $superAdmin) {
+            $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
+            $this->runRequest($sql, array($superAdmin['id']));
+        }
+        Configuration::getLogger()->debug('[space] remove super admin from spaces admins, done!');
+
+
     }
 
     /**
@@ -140,9 +422,22 @@ class CoreDB extends Model {
         $this->runRequest($sql);
     }
 
-    public function upgrade() {
+    public function upgrade($from=-1) {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
+
+        Configuration::getLogger()->info("[db] set base columns if not present");
+        $sql = "show tables";
+        $tables = $this->runRequest($sql)->fetchAll();
+        foreach($tables as $t) {
+            $table = $t[0];
+            $this->addColumn($table, "deleted", "int(1)", 0);
+            $this->addColumn($table, "deleted_at", "DATETIME", "", true);
+            $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
+            $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
+            $this->addColumn($table, "id_space", "int(11)", 0);
+        }
+        Configuration::getLogger()->info("[db] set base columns if not present, done!");
 
         $isNewRelease = false;
         $oldRelease = 0;
@@ -162,6 +457,12 @@ class CoreDB extends Model {
             $release = $reqRelease->fetch();
         }
 
+        if($from > 0) {
+            $oldRelease = $from;
+            $isNewRelease = true;
+        }
+        
+
         if($isNewRelease) {
             Configuration::getLogger()->info("[db] Need to migrate", ["oldrelease" => $oldRelease, "release" => DB_VERSION]);
             $updateFromRelease = $oldRelease;
@@ -173,9 +474,9 @@ class CoreDB extends Model {
                 if (method_exists($this, $upgradeMethod)) {
                     try {
                         $this->$upgradeMethod();
-                    } catch(Exception $e) {
+                    } catch(Throwable $e) {
                         $updateOK = false;
-                        Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+                        Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease, "error" => $e]);
                         break;
                     }
                 } else {
@@ -198,17 +499,6 @@ class CoreDB extends Model {
             Configuration::getLogger()->info("[db] no migration needed");
         }
 
-        Configuration::getLogger()->info("[db] set base columns if not present");
-        $sql = "show tables";
-        $tables = $this->runRequest($sql)->fetchAll();
-        foreach($tables as $t) {
-            $table = $t[0];
-            $this->addColumn($table, "deleted", "int(1)", 0);
-            $this->addColumn($table, "deleted_at", "DATETIME", "", true);
-            $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
-            $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
-        }
-        Configuration::getLogger()->info("[db] set base columns if not present, done!");
     }
 }
 
@@ -296,6 +586,8 @@ class CoreInstall extends Model {
         $modelCoreFiles = new CoreFiles();
         $modelCoreFiles->createTable();
 
+        $modelVirtual = new CoreVirtual();
+        $modelVirtual->createTable();
         $modelHistory = new CoreHistory();
         $modelHistory->createTable();
 

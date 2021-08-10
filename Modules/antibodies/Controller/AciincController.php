@@ -44,7 +44,7 @@ class AciincController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $aciinc = $this->model->get($id);
+        $aciinc = $this->model->get($id_space ,$id);
         
         $form = new Form($this->request, "aciinceditform");
         $form->setTitle("Modifier AcIInc");
@@ -73,7 +73,7 @@ class AciincController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space, $id);
         $this->redirect("aciinc/" . $id_space);
     }
 
