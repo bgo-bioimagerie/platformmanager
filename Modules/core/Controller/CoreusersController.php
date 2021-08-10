@@ -250,4 +250,46 @@ class CoreusersController extends CoresecureController {
         }
     }
 
+    /**
+     * 
+     * Generates form for users to choose their default language
+     * 
+     * @return view default language editing screen
+     * 
+     */
+    public function languageeditAction() {
+        // language form
+        $id_user = $_SESSION["id_user"];
+        $userSettingsModel = new CoreUserSettings();
+
+        $lang = $this->getLanguage();
+        $choicesview = array(CoreTranslator::English($lang), CoreTranslator::French($lang));
+        $choicesidview = array("en", "fr");
+
+        $form = new Form($this->request, "languageForm");
+        $form->setTitle(CoreTranslator::Default_language($lang));  
+        $form->addSelect(
+            "language",
+            CoreTranslator::Default_language($lang),
+            $choicesview,
+            $choicesidview,
+            $lang
+        );
+        $form->setButtonsWidth(4, 8);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "coreuserslanguageedit");
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "coresettings");
+
+        if ($form->check()){
+            $lang = $this->request->getParameter("language");
+            $userSettingsModel->setSettings($id_user, "language", $lang);
+            $userSettingsModel->updateSessionSettingVariable();
+            $this->redirect("coresettings");
+        }
+
+        return $this->render(array(
+            'lang' => $lang,
+            'form' => $form->getHtml($lang)
+        ));
+    }
+
 }

@@ -559,12 +559,12 @@ class FormHtml {
 
     /**
      * 
-     * @param type $name
-     * @param type $choices
-     * @param type $choicesid
-     * @param type $value
-     * @param type $vect
-     * @param type $submitOnchange
+     * @param string $name
+     * @param array $choices
+     * @param array $choicesid
+     * @param string $value
+     * @param bool $vect
+     * @param bool $submitOnchange
      * @return string
      */
     static public function inlineSelect($name, $choices, $choicesid, $value, $isMandatory, $vect = false, $submitOnchange = "") {
