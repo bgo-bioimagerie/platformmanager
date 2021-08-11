@@ -16,6 +16,13 @@ use GuzzleHttp\Client;
  * |> filter(fn: (r) => r["_field"] == "value")
  * |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)
  * |> yield(name: "last")
+ * 
+ * Get last
+ * 
+ * from(bucket: "test")
+ * |>range(start: -90d)
+ * |> filter(fn: (r) => r["_measurement"] == "users")
+ * |> last()
  */
 
 class Grafana {
@@ -239,7 +246,7 @@ class Grafana {
         );
         $status = $response->getStatusCode();
         if ($status != 200) {
-            Configuration::getLogger()->debug('[grafana][user_create] add failed', ["name" => $name, "err" => $response->getBody()]);
+            Configuration::getLogger()->debug('[grafana][user_password] update failed', ["name" => $name, "err" => $response->getBody()]);
             return false;
         }
         return true;

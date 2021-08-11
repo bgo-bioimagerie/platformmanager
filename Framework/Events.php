@@ -3,9 +3,11 @@
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
 require_once 'Framework/Statistics.php';
+require_once 'Framework/Grafana.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
@@ -64,6 +66,15 @@ class EventHandler {
         $statHandler->record($space['shortname'], $stat);
     }
 
+    private function isSpaceOwner($id_space, $id_user) {
+        $sum = new CoreSpaceUser();
+        $link = $sum->getUserSpaceInfo2($id_space, $id_user);
+        if($link['status'] >= CoreSpace::$MANAGER) {
+            return true;
+        }
+        return false;
+    }
+
     public function spaceUserRoleUpdate($msg) {
         $this->logger->debug('[spaceUserRoleUpdate][TODO]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
         $role = $msg["role"];
@@ -72,12 +83,26 @@ class EventHandler {
         $login = $user['login'];
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login role update [role=$role]");
-        // TODO
+
+        // If owner, add to or remove from grafana 
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        if($role >= CoreSpace::$MANAGER) {
+            $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+        } else {
+            $g->delUser($space['shortname'], $user['login']);
+        }
     }
 
     public function userApiKey($msg) {
-        $this->logger->debug('[userApiKey][TODO]', ['user' => $msg['user']]);
-        // TODO
+        $this->logger->debug('[userApiKey]', ['user' => $msg['user']]);
+        // TODO do nothing if not a space manager/admin
+        $gm = new Grafana();
+        $u = new CoreUser();
+        $id_user = $msg['user']['id'];
+        $user = $u->userAllInfo($id_user);
+        $gm->updateUserPassword($user['login']);
     }
 
     public function spaceUserJoin($msg) {
@@ -88,6 +113,14 @@ class EventHandler {
         $login = $user['login'];
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login joined space");
+
+        // If owner, add to grafana
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
+            $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+        }
     }
 
     public function spaceUserUnjoin($msg) {
@@ -98,6 +131,14 @@ class EventHandler {
         $login = $user['login'];
         $m = new CoreHistory();
         $m->add( $msg['space']['id'], $msg['_user'] ?? null, "User $login left space");
+
+        // If owner, remove from grafana
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
+            $g->delUser($space['shortname'], $user['login']);
+        }
     }
 
     private function _calEntryStat($space, $entry, $value){
