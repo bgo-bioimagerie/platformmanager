@@ -453,7 +453,7 @@ class CoreUser extends Model {
      * @return array User info (id, login, pwd, id_status, is_active)
      */
     public function getUserByLogin($login) {
-        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email
+        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email, apikey
             from core_users where login=?";
         $user = $this->runRequest($sql, array(
             $login

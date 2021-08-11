@@ -29,6 +29,10 @@ class Grafana {
 
 
     public function getOrg($name) {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return null;
+        }
         $client = new Client([
             'base_uri' => Configuration::get('grafana_url'),
             'timeout'  => 2.0,
@@ -55,6 +59,10 @@ class Grafana {
      * @param string $space shortname of the space
      */
     public function createOrg($space) {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return false;
+        }
         Configuration::getLogger()->debug("[grafana] create org", ["org" => $space]);
         $orgID = $this->getOrg($space);
         if($orgID) {
@@ -192,6 +200,10 @@ class Grafana {
 
 
     public function getUser($name) {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return null;
+        }
         $client = new Client([
             'base_uri' => Configuration::get('grafana_url'),
             'timeout'  => 2.0,
@@ -220,6 +232,10 @@ class Grafana {
     }
 
     public function updateUserPassword($name, $apikey) {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return false;
+        }
         $user = $this->getUser($name);
         if(!$user) {
             return false;
@@ -256,6 +272,10 @@ class Grafana {
      * Create user and remove from main org
      */
     public function createUser($orgID, $name, $apikey) {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return null;
+        }
         $client = new Client([
             'base_uri' => Configuration::get('grafana_url'),
             'timeout'  => 2.0,
@@ -309,6 +329,10 @@ class Grafana {
      * Create user if needed and add to org
      */
     public function addUser($space, $name, $apikey) {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return false;
+        }
         $orgID = $this->getOrg($space);
         if(!$orgID) {
             Configuration::getLogger()->debug('[grafana][user_add] org not found', ['space' => $space, 'user' => $name]);
@@ -352,6 +376,10 @@ class Grafana {
      * Remove user role from org
      */
     public function delUser($space, $name) {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return false;
+        }
         $orgID = $this->getOrg($space);
         if(!$orgID) {
             Configuration::getLogger()->debug('[grafana][delete_user] org not found', ['space' => $space, 'user' => $name]);

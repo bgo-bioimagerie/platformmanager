@@ -205,6 +205,18 @@ class Configuration {
             }
         }
 
+        if(getenv('PFM_GRAFANA_URL')) {
+            self::$parameters['grafana_url'] = getenv('PFM_GRAFANA_URL');
+        }
+
+        if(getenv('PFM_GRAFANA_USER')) {
+            self::$parameters['grafana_user'] = getenv('PFM_GRAFANA_USER', 'admin');
+        }
+
+        if(getenv('PFM_GRAFANA_PASSWORD')) {
+            self::$parameters['grafana_password'] = getenv('PFM_GRAFANA_PASSWORD');
+        }
+
     }
 
     /**

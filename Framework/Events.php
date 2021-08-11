@@ -50,6 +50,13 @@ class EventHandler {
         $statHandler = new Statistics();
         $statHandler->createDB($space['shortname']);
         $this->spaceCount($msg);
+        // create org
+        $g = new Grafana();
+        $g->createOrg($space['shortname']);
+        // add pfm super admin
+        $u = new CoreUser();
+        $user = $u->getUserByLogin(Configuration::get('admin_user'));
+        $g->addUser($space['shortname'], $user['login'], $user['apikey']);
     }
 
     public function spaceDelete($msg) {
@@ -102,7 +109,7 @@ class EventHandler {
         $u = new CoreUser();
         $id_user = $msg['user']['id'];
         $user = $u->userAllInfo($id_user);
-        $gm->updateUserPassword($user['login']);
+        $gm->updateUserPassword($user['login'], $user['apikey']);
     }
 
     public function spaceUserJoin($msg) {
