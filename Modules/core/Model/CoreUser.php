@@ -99,6 +99,10 @@ class CoreUser extends Model {
         $apikey = bin2hex($bytes);
         $sql = "UPDATE core_users SET apikey=? WHERE id=?";
         $this->runRequest($sql, array($apikey, $id));
+        Events::send([
+            "action" => Events::ACTION_USER_APIKEY,
+            "user" => ["id" => intval($id), "apikey" => $apikey]
+        ]);
     }
 
     public function getByApiKey($apikey) {
