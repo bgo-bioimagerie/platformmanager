@@ -128,7 +128,15 @@ class CorespaceController extends CoresecureController {
                 $spaceMenuItems[$i]['color'] = $menuColor;
             }
 
-            return $this->render(array("role" => $role, "lang" => $lang, "id_space" => $id_space, "space" => $space, "spaceMenuItems" => $spaceMenuItems, "showAdmMenu" => $showAdmMenu));
+            return $this->render(array(
+                "role" => $role,
+                "lang" => $lang,
+                "id_space" => $id_space,
+                "space" => $space,
+                "spaceMenuItems" => $spaceMenuItems,
+                "showAdmMenu" => $showAdmMenu,
+                "data" => ["space" => $space]
+            ));
         }
     }
 

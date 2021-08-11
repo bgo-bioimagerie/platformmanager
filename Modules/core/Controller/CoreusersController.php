@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Errors.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
@@ -48,7 +49,9 @@ class CoreusersController extends CoresecureController {
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll();
         $modelStatus = new CoreStatus();
+        $users = [];
         for ($i = 0; $i < count($data); $i++) {
+            $users[] = $data[$i];
             $data[$i]["status"] = CoreTranslator::Translate_status($lang, $modelStatus->getStatusName($data[$i]["status_id"]));
             if ($data[$i]["is_active"] == 1) {
                 $data[$i]["is_active"] = CoreTranslator::yes($lang);
@@ -57,10 +60,13 @@ class CoreusersController extends CoresecureController {
             }
 
             $data[$i]["date_last_login"] = CoreTranslator::dateFromEn($data[$i]["date_last_login"], $lang);
+            unset($data[$i]['password']);
+            unset($data[$i]['apikey']);
+
         }
 
         $tableHtml = $table->view($data, $header);
-        return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang));
+        return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang, "data" => ["users" => $users]));
     }
 
     public function editAction($id) {
@@ -120,9 +126,7 @@ class CoreusersController extends CoresecureController {
         $script = "";
         if ($form->check()) {
             if (!$id && $modelUser->isLogin($this->request->getParameter('login'))) {
-                $script .= '<script language="javascript">';
-                $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
-                $script .= '</script>';
+                throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
             } else {
                 $id_user = $this->editQuery($form, $modelUser, $lang);
                 $user = $modelUser->getInfo($id_user);
@@ -140,7 +144,7 @@ class CoreusersController extends CoresecureController {
         if ($id > 0) {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
-        return $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
     }
 
     protected function editPwdQuery($formPwd, $modelUser, $lang) {
@@ -148,7 +152,7 @@ class CoreusersController extends CoresecureController {
         $pwd = $formPwd->getParameter("pwd");
         $pwdconfirm = $formPwd->getParameter("pwdconfirm");
         if ($pwd != $pwdconfirm) {
-            throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
+            throw new PfmException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
         }
 
         $modelUser->changePwd($formPwd->getParameter("id"), $pwd);
@@ -161,7 +165,7 @@ class CoreusersController extends CoresecureController {
             $pwd = $form->getParameter("pwd");
             $pwdconfirm = $form->getParameter("pwdconfirm");
             if ($pwd != $pwdconfirm) {
-                throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
+                throw new PfmException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
             }
             $id = $modelUser->add(
                 $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
@@ -226,7 +230,7 @@ class CoreusersController extends CoresecureController {
             return;
         }
 
-        return $this->render(array(
+        $this->render(array(
             "lang" => $lang,
             "formHtml" => $formPwd->getHtml($lang)
         ));
@@ -243,10 +247,10 @@ class CoreusersController extends CoresecureController {
             if ($pwd == $pwdc) {
                 $modelUser->changePwd($id, $pwd);
             } else {
-                throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
+                throw new PfmException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
             }
         } else {
-            throw new Exception(CoreTranslator::The_curent_password_is_not_correct($lang));
+            throw new PfmException(CoreTranslator::The_curent_password_is_not_correct($lang), 403);
         }
     }
 
