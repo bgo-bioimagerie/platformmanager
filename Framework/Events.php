@@ -35,7 +35,7 @@ class EventHandler {
     }
 
 
-    private function spaceCount($msg) {
+    public function spaceCount($msg) {
         $model = new CoreSpace();
         $nbSpaces = $model->countSpaces();
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];

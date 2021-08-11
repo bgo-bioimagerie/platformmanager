@@ -285,7 +285,7 @@ class Grafana {
             "name" => $name,
             "login" => $name,
             "password" => $apikey,
-            "orgId" => $orgID
+            "orgId" => 1
         ];
 
         $response =  $client->request('POST',
@@ -350,11 +350,12 @@ class Grafana {
         ]);
 
         $req = [
+            "loginOrEmail" => $name,
             "role" => "Editor"
         ];
 
-        $response =  $client->request('PATCH',
-            "/api/orgs/".$orgID."/users/".$user,
+        $response =  $client->request('POST',
+            "/api/orgs/".$orgID."/users",
             [
                 'headers' => [
                     'Accept' => 'application/json'
