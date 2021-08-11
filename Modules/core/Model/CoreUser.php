@@ -181,6 +181,18 @@ class CoreUser extends Model {
             $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
             if($remove) {
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_UNJOIN,
+                    "space" => ["id" => 0],
+                    "user" => ["id" => intval($r['id'])],
+                ]); 
+            } else {
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                    "space" => ["id" => 0],
+                    "user" => ["id" => intval($r['id'])],
+                    "role" => 0
+                ]); 
             }
             $this->runRequest($sql, array($r['id']));
 

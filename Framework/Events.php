@@ -185,6 +185,7 @@ class Events {
     public const ACTION_SPACE_DELETE = 1;
     public const ACTION_SPACE_USER_JOIN = 2;
     public const ACTION_SPACE_USER_UNJOIN = 3;
+    public const ACTION_SPACE_USER_ROLEUPDATE = 4;
 
     public const ACTION_CAL_ENTRY_EDIT = 100;
 
