@@ -34,10 +34,21 @@ class CoreSpaceUser extends Model {
         if ( !$this->exists($id_user, $id_space) ){
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $role));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_JOIN,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
+            ]);
         }
         else{
             $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
-            $this->runRequest($sql, array($role, $id_user, $id_space));    
+            $this->runRequest($sql, array($role, $id_user, $id_space));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)],
+                "role" => $role
+            ]);    
         }
         
         if ( $role > 0 ){
