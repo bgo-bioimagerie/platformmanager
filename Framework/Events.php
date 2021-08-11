@@ -39,7 +39,6 @@ class EventHandler {
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
         $statHandler = new Statistics();
         $statHandler->record(Configuration::get('influxdb_org', 'pfm'), $stat);
-        // Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
     }
 
     public function spaceCreate($msg) {
@@ -63,7 +62,11 @@ class EventHandler {
         $stat = ['name' => 'users', 'fields' => ['value' => $nbUsers]];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
-        // Statistics::stat($space['shortname'], $stat);
+    }
+
+    public function spaceUserRoleUpdate($msg) {
+        $this->logger->debug('[spaceUserRoleUpdate][TODO]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
+        // TODO
     }
 
     public function spaceUserJoin($msg) {
@@ -165,6 +168,8 @@ class EventHandler {
                 case Events::ACTION_SPACE_USER_UNJOIN:
                     $this->spaceUserUnjoin($data);
                     break;
+                case Events::ACTION_SPACE_USER_ROLEUPDATE:
+                    $this->spaceUserRoleUpdate($data);
                 case Events::ACTION_CAL_ENTRY_EDIT:
                     $this->calentryEdit($data);
                     break;
