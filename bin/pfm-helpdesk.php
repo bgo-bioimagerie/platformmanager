@@ -184,7 +184,7 @@ while(true) {
 
 
                 Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
-                print_r($mailContent);
+                // print_r($mailContent);
                 $um = new CoreUser();
                 $userEmail = $from[0]->mailbox."@".$from[0]->host;
                 $user = $um->getUserByEmail($userEmail);
@@ -211,15 +211,17 @@ while(true) {
                     $attachIds = $hm->attach($id_ticket, $id_message, [['id' => $attachId, 'name' => $name]]);
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
-                $from = Configuration::get('smtp_from');
-                $fromInfo = explode('@', $from);
-                $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
-                $fromName = $fromInfo[0]. '+' . $spaceName;
-                $subject = '[Ticket #' . $ticket['id'] . '] New ticket created';
-                $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon\n';
-                $e = new Email();
-            $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
-            $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
+                if($newTicket['is_new']) {
+                    $from = Configuration::get('smtp_from');
+                    $fromInfo = explode('@', $from);
+                    $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
+                    $fromName = $fromInfo[0]. '+' . $spaceName;
+                    $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
+                    $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
+                    $e = new Email();
+                    $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
+                }
+                $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
             imap_close($mbox, CL_EXPUNGE);
 

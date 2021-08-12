@@ -189,15 +189,14 @@ class Helpdesk extends Model {
      * @return int id of ticket, else 0
      */
     public function ticketFromSubject($subject) {
-        preg_match('/[Ticket #(\d+)]/', $subject, $matches, PREG_OFFSET_CAPTURE);
+        preg_match('/\[Ticket #(\d+)\]/', $subject, $matches, PREG_OFFSET_CAPTURE);
+        Configuration::getLogger()->debug('[helpdesk] check if linked to other ticket', ['subject' => $subject, 'matches' => $matcjes]);
         if(!$matches) {
             return 0;
         }
-        foreach($matches as $match) {
-            $res = $this->get($match[0]);
-            if($res) {
-                return $res;
-            }
+        $res = $this->get($matches[1][0]);
+        if($res) {
+            return $res['id'];
         }
         return 0;
     }
