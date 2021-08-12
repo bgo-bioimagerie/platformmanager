@@ -9,6 +9,9 @@
 class CoreTranslator {
 
     public static function dateToEn($date, $lang) {
+        if($date == null) {
+            return "";
+        }
         //echo "to translate = " . $date . "<br/>";
         if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
@@ -20,14 +23,14 @@ class CoreTranslator {
                 //echo "translated = " . $year . "-" . $month . "-" . $day . "<br/>";
                 return $year . "-" . $month . "-" . $day;
             }
-            return "0000-00-00";
+            return "";
         }
         // En
         return $date;
     }
 
     public static function dateFromEn($date, $lang) {
-        if ($date == "0000-00-00") {
+        if (!$date) {
             return "";
         }
 
@@ -115,6 +118,29 @@ class CoreTranslator {
             return $str . "Compte utilisateur créé";
         }
         return $str . "User account created";
+    }
+
+    public static function AccountPendingCreationSubject($lang) {
+        $str = "[pfm] ";
+        if ($lang == "fr") {
+            return $str . "Compte utilisateur en attente de confirmation";
+        }
+        return $str . "User account pending confirmation";
+    }
+
+    public static function AccountPendingCreationEmail($lang, $jwt, $url) {
+        $confirmUrl = $url."/corecreateaccountconfirm?token=".$jwt;
+        if($lang == "fr") {
+            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl;
+        }
+        return "Please confirm your registration at the following link.\n".$confirmUrl;
+    }
+
+    public static function WaitingAccountMessage($lang) {
+        if($lang == "fr") {
+            return "Un mail a été envoyé avec un lien pour confirmer votre inscription";
+        }
+        return "An email has been sent with a link to confirm your registration";
     }
 
     public static function Settings($lang = "") {
@@ -1438,7 +1464,7 @@ class CoreTranslator {
             return "Votre compte a bien été créé et un email avec vos identifiants vous a été envoyé. Votre compte sera actif lorsqu'un-e responsable"
             . " de l'accès que vous avez demandé l'activera";
         }
-        return "Your account has been created and you will recieve an email with your credentials. You will be able to connect to your account when a manager of"
+        return "Your account has been created and you will receive an email with your credentials. You will be able to connect to your account when a manager of"
         . " the acces you asked for will validate your account";
     }
 
@@ -1869,6 +1895,27 @@ class CoreTranslator {
             return "Historique";
         }
         return "History";
+    }
+
+    public static function Default_language($lang = "") {
+        if ($lang == "fr") {
+            return "Langue par défaut";
+        }
+        return "Default language";
+    }
+
+    public static function English($lang = "") {
+        if ($lang == "fr") {
+            return "Anglais";
+        }
+        return "English";
+    }
+
+    public static function French($lang = "") {
+        if ($lang == "fr") {
+            return "Français";
+        }
+        return "French";
     }
     
 }

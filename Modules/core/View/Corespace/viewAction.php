@@ -110,6 +110,22 @@ if ($space['color'] == "") {
             <?php
         }
         ?>
+        <?php if($role<CoreSpace::$MANAGER) { ?>
+        <div class="page-header">
+                <h2>
+                    <?php echo CoreTranslator::RequestJoin(true, $lang)."?" ?>
+                    <br>
+                </h2>
+        </div>
+        <div>
+            <a href="<?php echo "coretilesselfjoinspace/". $space["id"] ?>">
+                <button type="button" class="btn btn-md btn-danger">
+                    <?php echo CoreTranslator::RequestJoin(true, $lang) ?>
+                </button>
+            </a>
+        </div>
+        <?php } ?>
+
 
     </div> <!-- /container -->
 </div>

@@ -56,7 +56,7 @@
 
         <!-- CONTENT -->
         <div class="col-md-8" style="margin-top:25px;">
-
+            <p>Prefered install is via docker, see docker-platformmanager repository for docker-compose file</p>
             <p>
                 This section describes step-by-step how to installation new
                 instance of Platform-Manager on a server. The configuration of a server
@@ -90,13 +90,19 @@
                 <li> Create a **tmp** directory under platform manager sources, writable by the apache/nginx user (used for sessions)</li>
                 <li> Delete the directory "docs" (it is needed only for the web documentation) </li>
                 <li> Rename the file <b>Config/conf.ini.sample</b> to <b>Config/conf.ini</b></li>
+                <li> Install PHP dependencies with composer update</li>
                 <li> Edit <b>Config/conf.ini</b>
 
                     <div class="highlight"><pre class="prettyprint"><code>
 <span class="c"> ; Configuration</span>
-
+<span class="c"> [Admin]</span>
+<span class="c"> admin_user = pfmadmin</span>
+<span class="c"> admin_password = xxxx</span>
+<span class="c"> admin_email = xxxx</span>
+<span class="c"> admin_apikey = XXXX</span>
 <span class="c"> [Installation] </span>
 <span class="c"> rootWeb = / </span>
+<span class="c"> public_url = https://pfm.org</span>
 
 <span class="c"> [BD]</span>
 <span class="c"> dsn = </span>
@@ -126,6 +132,7 @@
 <span class="c"> name = "Platform-Manager" </span>
 </code></pre></div>
 
+<div>See docker-compose in docker-platformmanager repo for full install with influxdb, pfm-events etc.</div>
 
 
                     <ul>

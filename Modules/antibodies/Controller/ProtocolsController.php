@@ -21,7 +21,6 @@ class ProtocolsController extends CoresecureController {
 
     // affiche la liste des isotypes
     public function indexAction($id_space, $sortEntry) {
-        
         if ($sortEntry == ""){
             $sortEntry = "id";
         }
@@ -59,7 +58,8 @@ class ProtocolsController extends CoresecureController {
         ));
     }
 
-    public function protoref() {
+    // DEPRECATED?
+    public function protoref($id_space) {
         $anticorpsId = 0;
         if ($this->request->isParameterNotEmpty('actionid')) {
             $anticorpsId = $this->request->getParameter("actionid");

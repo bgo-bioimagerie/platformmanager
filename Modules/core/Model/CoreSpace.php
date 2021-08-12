@@ -448,7 +448,7 @@ class CoreSpace extends Model {
             Events::send([
                 "action" => Events::ACTION_SPACE_USER_JOIN,
                 "space" => ["id" => intval($id_space)],
-                "user" => ["id" => intval($id_user)]
+                "user" => ["id" => intval($id_user)],
             ]);
         }
     }
@@ -457,13 +457,19 @@ class CoreSpace extends Model {
         if ($this->isUser($id_user, $id_space)) {
             $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
             $this->runRequest($sql, array($status, $id_user, $id_space));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)],
+                "role" => $status
+            ]); 
         } else {
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $status));
             Events::send([
                 "action" => Events::ACTION_SPACE_USER_JOIN,
                 "space" => ["id" => intval($id_space)],
-                "user" => ["id" => intval($id_user)]
+                "user" => ["id" => intval($id_user)],
             ]);
         }
     }

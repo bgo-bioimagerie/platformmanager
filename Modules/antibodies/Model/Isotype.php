@@ -123,7 +123,6 @@ class Isotype extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE ac_isotypes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        //$sql = "DELETE FROM ac_isotypes WHERE id = ?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

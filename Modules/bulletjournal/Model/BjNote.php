@@ -124,6 +124,9 @@ class BjNote extends Model {
     }
 
     public function set($id, $id_space, $name, $type, $content, $date, $is_month_task) {
+        if($date == "") {
+            $date = null;
+        }
         if ($this->exists($id_space, $id)) {
             $sql = "UPDATE bj_notes SET name=?, type=?, content=?, date=?, is_month_task=? WHERE id=? AND id_space=?";
             $this->runRequest($sql, array($name, $type, $content, $date, $is_month_task, $id, $id_space));
@@ -150,7 +153,7 @@ class BjNote extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "DELETE FROM bj_notes WHERE id = ? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

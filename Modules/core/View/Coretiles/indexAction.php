@@ -95,6 +95,7 @@ if (!$headless) {
                                 if (!in_array($item["id"], $spacesUserIsAdminOf)) {
                                     if (!in_array($item["id"], $userPendingSpaces)) {
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
+                                        if(!$isMemberOfSpace) {
                             ?>
                                         <div style="position: absolute; bottom: 10px; right: 10px">
                                             <a href="<?php echo "coretilesselfjoinspace/". $item["id"] ?>">
@@ -104,7 +105,8 @@ if (!$headless) {
                                             </a>
                                         </div>
                                     <?php
-                                        } else {
+                                        }
+                                    } else {
                                     ?>
                                         <div style="position: absolute; bottom: 10px; right: 10px">
                                             <button type="button" class="btn btn-md btn-info" disabled>

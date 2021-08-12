@@ -90,8 +90,7 @@ class SeVisa extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE from se_visa SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM se_visa WHERE id =? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }
