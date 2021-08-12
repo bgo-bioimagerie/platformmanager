@@ -9,6 +9,7 @@
 * Add prometheus statistics
 * #225 bug fixes
 * #235 use static data for se_service_types
+* #246 allow user self registration (via config)
 
 ## 2.0
 
