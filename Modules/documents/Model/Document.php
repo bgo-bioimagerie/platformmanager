@@ -21,7 +21,7 @@ class Document extends Model {
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("title", "varchar(250)", "");
         $this->setColumnsInfo("id_user", "int(11)", 0);
-        $this->setColumnsInfo("date_modified", "DATE", "");
+        $this->setColumnsInfo("date_modified", "date", "");
         $this->setColumnsInfo("url", "TEXT", "");
         $this->primaryKey = "id";
     }
@@ -87,7 +87,7 @@ class Document extends Model {
                 "id_space" => 0,
                 "title" => "",
                 "id_user" =>  0,
-                "date_modified" => "0000-00-00",
+                "date_modified" => null,
                 "url" => ""
             );
         }

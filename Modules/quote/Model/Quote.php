@@ -14,8 +14,8 @@ class Quote extends Model {
         $this->setColumnsInfo("address", "text", "");
         $this->setColumnsInfo("id_belonging", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", "");
-        $this->setColumnsInfo("date_open", "DATE", "");
-        $this->setColumnsInfo("date_last_modified", "DATE", 0);
+        $this->setColumnsInfo("date_open", "date", "");
+        $this->setColumnsInfo("date_last_modified", "date", "");
         $this->primaryKey = "id";
     }
 
@@ -61,6 +61,9 @@ class Quote extends Model {
     }
 
     public function set($id, $id_space, $recipient, $address, $id_belonging, $id_user, $date_open) {
+        if($date_open == "") {
+            $date_open = null;
+        }
         $date_last_modified = date('Y-m-d');
         if (!$id) {
             $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?)';

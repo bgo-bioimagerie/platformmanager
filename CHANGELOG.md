@@ -1,5 +1,8 @@
 # 2.1
 
+* #234 fix defaults in db schema
+* #230 generate apikey on ldap login
+* #233 fix schema of core_j_spaces_user
 * #218 allow user to define default language
 * #225 bug fixes
 * #235 use static data for se_service_types

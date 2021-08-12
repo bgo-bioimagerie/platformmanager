@@ -123,7 +123,7 @@ abstract class Model {
      * @param type $columnType
      * @param type $defaultValue
      */
-    public function addColumn($tableName, $columnName, $columnType, $defaultValue, $nullable=false) {
+    public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
 
         //$sql = "SHOW COLUMNS FROM `" . $tableName . "` LIKE '" . $columnName . "'";
         //$pdo = $this->runRequest($sql);
@@ -133,20 +133,17 @@ abstract class Model {
         if ($isColumn === false) {
             Configuration::getLogger()->debug('[db] add column', ['table' => $tableName, 'col' => $columnName]);
             $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType;
-            if(!$nullable) {
-                $sql .= " NOT NULL";
-            }
             if($defaultValue != "") {
                 if(is_string($defaultValue)) {
                     if($defaultValue == 'INSERT_TIMESTAMP') {
-                        $sql .= " DEFAULT CURRENT_TIMESTAMP";
+                        $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP";
                     } else if($defaultValue == 'UPDATE_TIMESTAMP') {
-                        $sql .= " DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+                        $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
                     } else {
-                        $sql .= " DEFAULT '" . $defaultValue . "'";
+                        $sql .= " NOT NULL DEFAULT '" . $defaultValue . "'";
                     }
                 } else {
-                    $sql .= " DEFAULT " . $defaultValue;
+                    $sql .= " NOT NULL DEFAULT " . $defaultValue;
                 }
             }
             $this->runRequest($sql);
@@ -203,9 +200,15 @@ abstract class Model {
             $sql .= "`" . $this->columnsNames[$i] . "` " . $this->columnsTypes[$i];
             if ($this->columnsDefaultValue[$i] != "") {
                 if(is_string($this->columnsDefaultValue[$i])) {
-                    $sql .= " NOT NULL DEFAULT '" . $this->columnsDefaultValue[$i] . "' ";
+                    if($this->columnsDefaultValue[$i] == 'INSERT_TIMESTAMP') {
+                        $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP";
+                    } else if($this->columnsDefaultValue[$i] == 'UPDATE_TIMESTAMP') {
+                        $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+                    } else {
+                        $sql .= " NOT NULL DEFAULT '" . $this->columnsDefaultValue[$i] . "' ";
+                    }
                 } else {
-                    $sql .= " NOT NULL DEFAULT " . $this->columnsDefaultValue[$i] . " ";
+                    $sql .= " NOT NULL DEFAULT " .$this->columnsDefaultValue[$i] . " ";
                 }
             }
             if ($this->columnsNames[$i] == $this->primaryKey) {
