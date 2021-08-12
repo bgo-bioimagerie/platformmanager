@@ -96,21 +96,21 @@ function _get_body_attach($mbox, $mid) {
 
 
 
-$boiteMail = Configuration::get('helpdesk_imap_server');
+$inbox = Configuration::get('helpdesk_imap_server');
 $port = intval(Configuration::get('helpdesk_imap_port', 110));
 $login = Configuration::get('helpdesk_imap_user');
-$motDePasse = Configuration::get('helpdesk_imap_password');
+$password = Configuration::get('helpdesk_imap_password');
 $tls = Configuration::get('helpdesk_imap_tls');  //   '/ssl'
 
-if(!$boiteMail) {
+if(!$inbox) {
     exit(0);
 }
 
-Configuration::getLogger()->debug('Connecting...', ['url' => $boiteMail.':'.$port.'/pop3'.$tls, 'login' => $login, 'tls' => $tls]);
+Configuration::getLogger()->debug('Connecting...', ['url' => $inbox.':'.$port.'/pop3'.$tls, 'login' => $login, 'tls' => $tls]);
 
 while(true) {
     try {
-    $mbox = imap_open('{'.$boiteMail.':'.$port.'/pop3'.$tls.'}', $login, $motDePasse);
+    $mbox = imap_open('{'.$inbox.':'.$port.'/pop3'.$tls.'}', $login, $password);
     } catch(Throwable $err) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
         exit(1);
@@ -151,8 +151,6 @@ while(true) {
                 $headerText = imap_fetchHeader($mbox, $mail->uid, FT_UID);
                 $header = imap_rfc822_parse_headers($headerText);
 
-                // REM: Attention s'il y a plusieurs sections
-                // $corps = imap_fetchbody($mbox, $uid, 1, FT_UID);
                 $mailContent = _get_body_attach($mbox, $mail->uid);
                 imap_delete($mbox, $mail->uid);
 
@@ -184,7 +182,6 @@ while(true) {
 
 
                 Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
-                // print_r($mailContent);
                 $um = new CoreUser();
                 $userEmail = $from[0]->mailbox."@".$from[0]->host;
                 $user = $um->getUserByEmail($userEmail);

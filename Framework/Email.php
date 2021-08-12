@@ -119,7 +119,7 @@ class Email extends Model {
                     $toAddress = $this->formatAddresses($params["to"]);
                 } catch (Exception $e) {
                     Configuration::getLogger()->error('something went wrong getting email addresses', ['error' => $e->getMessage()]);
-                    return;
+                    return "something went wrong!";
                 }
                 break;
                 
