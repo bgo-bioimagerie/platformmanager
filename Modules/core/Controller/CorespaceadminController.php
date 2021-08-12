@@ -152,7 +152,7 @@ class CorespaceadminController extends CoresecureController {
             
             $newSpace = $modelSpace->getSpace($id);
             if($isSuperAdmin) {
-                $this->redirect("spaceadmin", data: ['space' => $newSpace]);
+                $this->redirect("spaceadmin", [], ['space' => $newSpace]);
                 return;
             }
         }

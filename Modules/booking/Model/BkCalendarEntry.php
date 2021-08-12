@@ -744,7 +744,7 @@ class BkCalendarEntry extends Model {
 				FROM core_users AS user
 				INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
 				WHERE bk_calendar_entry.resource_id=?
-                                AND deleted=0
+                AND bk_calendar_entry.deleted=0
 				AND user.is_active = 1 
 				;";
         $req = $this->runRequest($sql, array($resource_id));
@@ -763,7 +763,7 @@ class BkCalendarEntry extends Model {
 				INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
 				WHERE bk_calendar_entry.resource_id IN (SELECT id FROM re_info WHERE id_area=?) 
 				AND user.is_active = 1  
-                                AND deleted=0
+                AND bk_calendar_entry.deleted=0
 				;";
         $req = $this->runRequest($sql, array($area_id));
         return $req->fetchAll();
