@@ -96,22 +96,29 @@ function _get_body_attach($mbox, $mid) {
 
 
 
-$boiteMail = Configuration::get('heldeskp_imap_server');
-$port = intval(Configuration::get('heldeskp_imap_port', 110));
-$login = Configuration::get('heldeskp_imap_user');
-$motDePasse = Configuration::get('heldeskp_imap_password');
-$tls = Configuration::get('heldeskp_imap_tls');  //   '/ssl'
+$boiteMail = Configuration::get('helpdesk_imap_server');
+$port = intval(Configuration::get('helpdesk_imap_port', 110));
+$login = Configuration::get('helpdesk_imap_user');
+$motDePasse = Configuration::get('helpdesk_imap_password');
+$tls = Configuration::get('helpdesk_imap_tls');  //   '/ssl'
+
+if(!$boiteMail) {
+    exit(0);
+}
+
+Configuration::getLogger()->debug('Connecting...', ['url' => $boiteMail.':'.$port.'/pop3'.$tls, 'login' => $login, 'tls' => $tls]);
 
 while(true) {
     try {
     $mbox = imap_open('{'.$boiteMail.':'.$port.'/pop3'.$tls.'}', $login, $motDePasse);
     } catch(Throwable $err) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
-        continue;
+        exit(1);
     }
     $mails = FALSE;
     if (FALSE === $mbox) {
-        $err = 'Connexion failed, check parameters!';
+        Configuration::getLogger()->error('Connexion failed, check parameters!');
+        exit(1);
     } else {
         $info = imap_check($mbox);
         if (FALSE !== $info) {
@@ -125,101 +132,108 @@ while(true) {
     if (FALSE === $mails) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
     } else {
-        Configuration::getLogger()->debug('inbox', ['msgs' => $info->Nmsgs, 'recent' => $info->Recent]);
+        try {
+            Configuration::getLogger()->debug('inbox', ['msgs' => $info->Nmsgs, 'recent' => $info->Recent]);
 
-        $sp = new CoreSpace();
-        $spaces = $sp->getSpaces('id');
-        $spaceNames = array();
-        $impactedSpaces = array();
-        foreach($spaces as $space) {
-            $spaceNames[$space['shortname']] = $space['id'];
-        }
+            $sp = new CoreSpace();
+            $spaces = $sp->getSpaces('id');
+            if(!$spaces) {
+                sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
+                continue;
+            }
+            $spaceNames = array();
+            $impactedSpaces = array();
+            foreach($spaces as $space) {
+                $spaceNames[$space['shortname']] = $space['id'];
+            }
 
-        foreach ($mails as $mail) {
-            $headerText = imap_fetchHeader($mbox, $mail->uid, FT_UID);
-            $header = imap_rfc822_parse_headers($headerText);
+            foreach ($mails as $mail) {
+                $headerText = imap_fetchHeader($mbox, $mail->uid, FT_UID);
+                $header = imap_rfc822_parse_headers($headerText);
 
-            // REM: Attention s'il y a plusieurs sections
-            // $corps = imap_fetchbody($mbox, $uid, 1, FT_UID);
-            $mailContent = _get_body_attach($mbox, $mail->uid);
-            imap_delete($mbox, $mail->uid);
+                // REM: Attention s'il y a plusieurs sections
+                // $corps = imap_fetchbody($mbox, $uid, 1, FT_UID);
+                $mailContent = _get_body_attach($mbox, $mail->uid);
+                imap_delete($mbox, $mail->uid);
 
-            $from=$header->from;
-            $to = $header->to;
-            $id_space = 0;
-            $toSpace = null;
-            $otherDests = [];
-            $spaceName = null;
-            foreach($to as $dest) {
-                if($dest->host == "genouest.org") {
-                    $recipient = explode('+', $dest->mailbox);
-                    $spaceName = $recipient[1];
-                if(!isset($spaceNames[$spaceName])) {
-                            $otherDests[] = $dest->mailbox."@".$dest->host;
-                            continue;
-                        }
-                        $id_space = $spaceNames[$spaceName];
-                        $toSpace = $dest->mailbox."@".$dest->host;
-                } else {
-                    $otherDests[] = $dest->mailbox."@".$dest->host;
+                $from=$header->from;
+                $to = $header->to;
+                $id_space = 0;
+                $toSpace = null;
+                $otherDests = [];
+                $spaceName = null;
+                foreach($to as $dest) {
+                    if($dest->host == "genouest.org") {
+                        $recipient = explode('+', $dest->mailbox);
+                        $spaceName = $recipient[1];
+                    if(!isset($spaceNames[$spaceName])) {
+                                $otherDests[] = $dest->mailbox."@".$dest->host;
+                                continue;
+                            }
+                            $id_space = $spaceNames[$spaceName];
+                            $toSpace = $dest->mailbox."@".$dest->host;
+                    } else {
+                        $otherDests[] = $dest->mailbox."@".$dest->host;
+                    }
                 }
+                if($id_space == 0) {
+                    Configuration::getLogger()->info("Message not related to a space", ["space" => $to]);
+                }
+
+                $spaceNames[$id_space] = true;
+
+
+                Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
+                print_r($mailContent);
+                $um = new CoreUser();
+                $userEmail = $from[0]->mailbox."@".$from[0]->host;
+                $user = $um->getUserByEmail($userEmail);
+                $id_user = 0;
+                if($user != null) {
+                    $id_user = $user['id'];
+                }
+                $hm = new Helpdesk();
+                $converter = new HtmlConverter(array('strip_tags' => true));
+                $md = $converter->convert($mailContent['body']);
+                $otherDestList = implode(',', $otherDests);
+                $newTicket = $hm->createTicket($id_space, $userEmail, $otherDestList, $mail->subject, $md, $id_user);
+                Configuration::getLogger()->debug('new ticket', ['ticket' => $newTicket]);
+                $id_ticket = $newTicket['ticket'];
+                $id_message = $newTicket['message'];
+                foreach ($mailContent['attachment'] as $attachment) {
+                    $c = new CoreFiles();
+                    $role = CoreSpace::$MANAGER;
+                    $module = "helpdesk";
+                    $name = $attachment['filename'];
+                    $attachId = $c->set(0, $id_space, $name, $role, $module, $id_user);
+                    $file = $c->get($attachId);
+                    $c->copyData($file, $attachment['filedata']);
+                    $attachIds = $hm->attach($id_ticket, $id_message, [['id' => $attachId, 'name' => $name]]);
+                    Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
+                }
+                $from = Configuration::get('smtp_from');
+                $fromInfo = explode('@', $from);
+                $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
+                $fromName = $fromInfo[0]. '+' . $spaceName;
+                $subject = '[Ticket #' . $ticket['id'] . '] New ticket created';
+                $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon\n';
+                $e = new Email();
+            $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
+            $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
-            if($id_space == 0) {
-                Configuration::getLogger()->info("Message not related to a space", ["space" => $to]);
+            imap_close($mbox, CL_EXPUNGE);
+
+            foreach ($spaceNames as $key => $value) {
+                Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($key)]]);
             }
 
-            $spaceNames[$id_space] = true;
-
-
-            Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
-            print_r($mailContent);
-            $um = new CoreUser();
-            $userEmail = $from[0]->mailbox."@".$from[0]->host;
-            $user = $um->getUserByEmail($userEmail);
-            $id_user = 0;
-            if($user != null) {
-                $id_user = $user['id'];
-            }
-            $hm = new Helpdesk();
-            $converter = new HtmlConverter(array('strip_tags' => true));
-            $md = $converter->convert($mailContent['body']);
-            $otherDestList = implode(',', $otherDests);
-            $newTicket = $hm->createTicket($id_space, $userEmail, $otherDestList, $mail->subject, $md, $id_user);
-            Configuration::getLogger()->debug('new ticket', ['ticket' => $newTicket]);
-            $id_ticket = $newTicket['ticket'];
-            $id_message = $newTicket['message'];
-            foreach ($mailContent['attachment'] as $attachment) {
-                $c = new CoreFiles();
-                $role = CoreSpace::$MANAGER;
-                $module = "helpdesk";
-                $name = $attachment['filename'];
-                $attachId = $c->set(0, $id_space, $name, $role, $module, $id_user);
-                $file = $c->get($attachId);
-                $c->copyData($file, $attachment['filedata']);
-                $attachIds = $hm->attach($id_ticket, $id_message, [['id' => $attachId, 'name' => $name]]);
-                Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
-            }
-            Configuration::getLogger()->debug("New ticket ", ["id" => $id_ticket]);
-            $from = Configuration::get('smtp_from');
-            $fromInfo = explode('@', $from);
-            $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
-            $fromName = $fromInfo[0]. '+' . $spaceName;
-            $subject = '[Ticket #' . $ticket['id'] . '] New ticket created';
-            $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon\n';
-            $e = new Email();
-        $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
-        $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
+            $hm->remind();
+        } catch(Throwable $e) {
+            Configuration::getLogger()->error('[helpdesk] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }
-        imap_close($mbox, CL_EXPUNGE);
 
-        foreach ($spaceNames as $key => $value) {
-            Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($key)]]);
-        }
-
-        $hm->remind();
-
-        sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
     }
+    sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
 
     }
 ?>
