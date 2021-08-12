@@ -44,7 +44,6 @@ class BookingstatisticsController extends CoresecureController {
     }
     
     public function statquantitiesAction($id_space){
-        
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         
@@ -62,6 +61,9 @@ class BookingstatisticsController extends CoresecureController {
                     CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
                     CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
                     );
+
+            $stats = !empty($stats) ?: "No data found for this period";
+            // TODO: link that to a report generation
             print_r($stats);
             return;
         }
@@ -668,7 +670,7 @@ class BookingstatisticsController extends CoresecureController {
             $num = 3;
             foreach ($colorCodes as $c) {
                 $num++;
-                $timeColor = $modelGraph->getReservationPerResourceColor($dateBegin, $dateEnd, $resourcesids[$i], $c['id']);
+                $timeColor = $modelGraph->getReservationPerResourceColor($id_space, $dateBegin, $dateEnd, $resourcesids[$i], $c['id']);
 
                 $letter = $this->get_col_letter($num);
                 $objWorkSheet->SetCellValue($letter . $curentLine, $timeColor);
@@ -694,9 +696,9 @@ class BookingstatisticsController extends CoresecureController {
 
         // get data
         $modelGraph = new BkGraph();
-        $modelUnit = new EcUnit();
-        $units = $modelUnit->getUnits($id_space);
-        $data = $modelGraph->getStatReservationPerUnit($dateBegin, $dateEnd, $id_space, $units, $excludeColorCode);
+        $modelClient = new ClClient();
+        $clients = $modelClient->getAll($id_space);
+        $data = $modelGraph->getStatReservationPerUnit($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode);
 
         $objWorkSheet = $spreadsheet->createSheet();
         $lang = $this->getLanguage();
@@ -719,10 +721,10 @@ class BookingstatisticsController extends CoresecureController {
             $curentLine++;
             $curentCol = 1;
             $style = $this->getStylesheet();
-            foreach ($units as $unit) {
+            foreach ($clients as $client) {
                 $curentCol++;
                 $colLetter = $this->get_col_letter($curentCol);
-                $objWorkSheet->SetCellValue($colLetter . $curentLine, $unit['name']);
+                $objWorkSheet->SetCellValue($colLetter . $curentLine, $client['name']);
                 $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
             }
 
@@ -734,10 +736,10 @@ class BookingstatisticsController extends CoresecureController {
                 $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
 
                 $curentCol = 1;
-                foreach ($units as $unit) {
+                foreach ($clients as $client) {
                     $curentCol++;
                     $colLetter = $this->get_col_letter($curentCol);
-                    $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["unit_" . $unit['id']][$catstat]);
+                    $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["unit_" . $client['id']][$catstat]);
                     $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
                 }
             }
@@ -762,8 +764,16 @@ class BookingstatisticsController extends CoresecureController {
         $data = $modelGraph->getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode);
 
         $objWorkSheet = $spreadsheet->createSheet();
+
         $lang = $this->getLanguage();
-        $objWorkSheet->setTitle(BookingTranslator::Reservation_per_responsible($lang));
+        $title = BookingTranslator::Reservation_per_responsible($lang);
+
+        // Maximum 31 characters allowed in sheet title
+        if (strlen($title) > 31) {
+            $title = substr($title, 0, 30);
+        }
+            
+        $objWorkSheet->setTitle($title);
         $objWorkSheet->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = -1;

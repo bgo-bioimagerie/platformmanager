@@ -22,7 +22,12 @@
                             <?php echo $this->clean($controller["module"]) ?> 
                         </div>
                         <div class="col-md-2">
-                            <button type="button" onclick="location.href = '<?php echo $this->clean($controller["controller"]) ?>'" class="btn btn-primary" id="navlink"><?php echo CoreTranslator::Edit($lang) ?></button>
+                            <button
+                                type="button"
+                                onclick="location.href = '<?php echo $this->clean($controller["controller"]) ?>'"
+                                class="btn btn-primary" id="navlink">
+                                <?php echo CoreTranslator::Edit($lang) ?>
+                            </button>
                         </div>
                     </h2>	
                 </div>
@@ -30,7 +35,25 @@
             <?php
         }
         ?>
-
+        <!-- select language -->
+        <div>
+            <div>
+                <h2>
+                    <div class="col-md-10">
+                        <?php echo CoreTranslator::Language($lang) ?>
+                    </div>
+                    <div class="col-md-2">
+                        <!-- <?php echo $form ?> -->
+                        <button
+                            type="button"
+                            onclick="location.href = 'coreuserslanguageedit'"
+                            class="btn btn-primary" id="navlink">
+                            <?php echo CoreTranslator::Edit($lang) ?>
+                        </button>
+                    </div>
+                </h2>	
+            </div>
+        </div>
     </div>
 </div>
 <?php

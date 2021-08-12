@@ -737,7 +737,7 @@ class Form {
         if ($formID == $this->id) {
             return 1;
         }
-        Configuration::getLogger()->error('[form=check] failed', ['form' => $this->id, 'data' => $this->request->params()]);
+        Configuration::getLogger()->debug('[form=check] failed', ['form' => $this->id, 'data' => $this->request->params()]);
         return 0;
     }
 

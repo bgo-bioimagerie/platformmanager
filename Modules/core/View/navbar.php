@@ -64,8 +64,10 @@ if ($menuUrl != ""){
 				<?php }?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
+				<?php if($impersonate!=null) { ?><li><a href="/corespaceaccess/0/unimpersonate"><button class="btn btn-danger">Log back to <?php echo $impersonate; ?></button></a></li><?php } ?>
+
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <?php echo  $userName ?> <span class="caret"></span></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img onerror="this.style.display='none'" alt="avatar" src="<?php echo "https://www.gravatar.com/avatar/" . md5( strtolower( trim( $_SESSION['email'] ) ) ) . "?s=20"; ?>"/> <?php echo  $userName ?> <span class="caret"></span></a>
 					<ul class="dropdown-menu" role="menu">
         				<li><a href=coremyaccount > <?php echo  CoreTranslator::My_Account($lang) ?> </a></li>
         				<li><a href=coresettings > <?php echo  CoreTranslator::Settings($lang) ?> </a></li>

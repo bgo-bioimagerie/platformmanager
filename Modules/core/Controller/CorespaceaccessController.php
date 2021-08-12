@@ -31,6 +31,66 @@ class CorespaceaccessController extends CoresecureController {
         parent::__construct($request);
     }
 
+    public function impersonateAction($id_space, $id_user) {
+        $modelSpace = new CoreSpace();
+        $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if ($role <= CoreSpace::$MANAGER) {
+            throw new PfmAuthException("Error 403: Permission denied, not manager", 403);
+        }
+        $role = $modelSpace->getUserSpaceRole($id_space, $id_user);
+        if ($role != CoreSpace::$USER) {
+            throw new PfmAuthException("Error 403: Permission denied, user not with User role", 403);
+        }
+ 
+        $this->request->getSession()->setAttribut("logged_id_user", $_SESSION['id_user']);
+        $this->request->getSession()->setAttribut("logged_login", $_SESSION['login']);
+        $this->request->getSession()->setAttribut("logged_email", $_SESSION['email']);
+        $this->request->getSession()->setAttribut("logged_user_status", $_SESSION['user_status']);
+        $this->request->getSession()->setAttribut("logged_id_space", $id_space);
+
+        $modelUser = new CoreUser();
+        $user = $modelUser->getInfo($id_user);
+
+        Configuration::getLogger()->debug('[impersonate]', [
+            'to_id' => $user['id'], 'to_login' => $user['login'],
+            'from_id' => $_SESSION['id_user'], 'from_login' => $_SESSION['login']
+        ]);
+
+
+        $this->request->getSession()->setAttribut("id_user", $user['id']);
+        $this->request->getSession()->setAttribut("login", $user['login']);
+        $this->request->getSession()->setAttribut("email", $user['email']);
+        $this->request->getSession()->setAttribut("user_status", CoreStatus::$USER);
+
+        $this->redirect("coretiles");
+    }
+
+    public function unimpersonateAction($id_space) {
+        if(!isset($_SESSION['logged_id_user'])) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
+
+        Configuration::getLogger()->debug('[unimpersonate]', [
+            'to_id' => $_SESSION['logged_id_user'], 'to_login' => $_SESSION['logged_login'],
+            'from_id' => $_SESSION['id_user'], 'from_login' => $_SESSION['login']
+        ]);
+ 
+        $this->request->getSession()->setAttribut("id_user", $_SESSION['logged_id_user']);
+        $this->request->getSession()->setAttribut("login", $_SESSION['logged_login']);
+        $this->request->getSession()->setAttribut("email", $_SESSION['logged_email']);
+        $this->request->getSession()->setAttribut("user_status", $_SESSION['logged_user_status']);
+
+        $this->request->getSession()->unset("logged_id_user");
+        $this->request->getSession()->unset("logged_login");
+        $this->request->getSession()->unset("logged_email");
+        $this->request->getSession()->unset("logged_user_status");
+        $this->request->getSession()->unset("logged_id_space");
+
+        $this->redirect("coretiles");
+
+
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -71,6 +131,8 @@ class CorespaceaccessController extends CoresecureController {
         // table view
         $table = new TableView();
         $table->addLineButton("coreaccessuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
+        $table->addLineButton("corespaceaccess/" . $id_space . "/impersonate" , "id", "Impersonate");
+
 
         $modelOptions = new CoreSpaceAccessOptions();
         $options = $modelOptions->getAll($id_space);
@@ -109,8 +171,9 @@ class CorespaceaccessController extends CoresecureController {
             'tableHtml' => $tableHtml,
             'active' => $active,
             'letter' => $letter,
-            'space' => $space
-                ), "indexAction");
+            'space' => $space,
+            'data' => ['users' => $users]
+        ), "indexAction");
     }
 
     public function usersAction($id_space, $letter = "") {
@@ -279,8 +342,10 @@ class CorespaceaccessController extends CoresecureController {
         $modelSpacePending = new CorePendingAccount();
         $modelUser = new CoreUser();
 
+        $pendingUsers = [];
         $data = $modelSpacePending->getPendingForSpace($id_space);
         for ($i = 0; $i < count($data); $i++) {
+            $pendingUsers[] = $data[$i];
             $data[$i]["fullname"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
             $data[$i]["date_created"] = $modelUser->getDateCreated($data[$i]["id_user"]);
         }
@@ -300,7 +365,8 @@ class CorespaceaccessController extends CoresecureController {
             'lang' => $lang,
             'id_space' => $id_space,
             'tableHtml' => $tableHtml,
-            "space" => $space
+            "space" => $space,
+            'data' => ["users" => $data]
         ));
     }
 

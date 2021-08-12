@@ -132,12 +132,15 @@ class UseraccountController extends CoresecureController {
         }
         
         $_SESSION["redirect"] = "usersmyaccount";
+
+        unset($userCore['password']);
         // render the View
         $this->render(array(
             'lang' => $lang,
             'formHtml' => $form->getHtml($lang),
             'providers' => $providers,
-            'linked' => $linked
+            'linked' => $linked,
+            'data' => ['user' => $userCore]
         ));
     }
 

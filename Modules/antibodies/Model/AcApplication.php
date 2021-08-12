@@ -103,7 +103,7 @@ class AcApplication extends Model {
 
     public function getIdFromName($id_space, $name) {
         $sql = "SELECT id from ac_applications where name=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($name, $$id_space));
+        $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -126,16 +126,11 @@ class AcApplication extends Model {
     public function isEntryApp($id_space, $name) {
         $sql = "SELECT id from ac_applications where name=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($name, $id_space));
-        if ($req->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($req->rowCount() == 1);
     }
 
     public function delete($id_space, $id) {
-        $sq = "UPDATE ac_applications SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        //$sql = "DELETE FROM ac_applications WHERE id = ?";
+        $sql = "UPDATE ac_applications SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

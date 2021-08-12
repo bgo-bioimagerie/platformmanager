@@ -95,27 +95,18 @@ if (getenv('PFM_MODE') != 'dev') {
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
 
-                        <!--
+                        <?php if(Configuration::get('allow_registration', 0) == 1) { ?>
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
-                            <br></br>
+                            <br/>
                             <p class="text-center">
-                                <b><?php echo CoreTranslator::or_($language) ?></b>
+                                <strong><?php echo CoreTranslator::or_($language) ?></strong>
                             </p>
                         </div>
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                             <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
                         </div>
-                        -->
+                        <?php }  ?>
 
-                        <!--
-                        <div style="padding-top: 25px; margin-bottom: 25px;">
-                                <b>
-                            <p class="text-center"><?php echo CoreTranslator::or_($language) ?>
-                            </b>
-                            </p>
-                            </div>
-                            <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
-                         -->
                     </div>
                 </div>
             </div>

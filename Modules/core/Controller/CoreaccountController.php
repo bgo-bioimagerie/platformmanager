@@ -13,6 +13,8 @@ require_once 'Framework/Email.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 
+use Firebase\JWT\JWT;
+
 /**
  *
  * @author sprigent
@@ -27,11 +29,61 @@ class CoreaccountController extends Controller {
         parent::__construct($request);
     }
 
+    public function confirmAction() {
+        $token = $this->request->getParameter("token");
+        $decoded = JWT::decode($token, Configuration::get('jwt_secret'), array('HS256'));
+        $decoded_array = (array) $decoded;
+        $data = (array) $decoded_array['data'];
+        Configuration::getLogger()->debug('[account] registration confirmation', ['user' => $data]);
+
+        $modelCoreUser = new CoreUser();
+
+        if ($modelCoreUser->isLogin($data["login"])) {
+            throw new PfmException("Error:". CoreTranslator::LoginAlreadyExists($lang), 403);
+        }
+        $pwd = $modelCoreUser->generateRandomPassword();
+
+        $id_user = $modelCoreUser->createAccount(
+            $data["login"],
+            $pwd,
+            $data["name"],
+            $data["firstname"],
+            $data["email"]
+        );
+        if($data["phone"]??"") {
+            $modelCoreUser->setPhone($id_user, $data["phone"]);
+        }
+        $modelPeningAccounts = new CorePendingAccount();
+        $modelPeningAccounts->add($id_user, $data["id_space"]);
+
+        $email = new Email();
+        $mailParams = [
+            "email" => $data["email"],
+            "login" => $data["login"],
+            "pwd" => $pwd
+        ];
+        $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
+
+        $this->redirect("coreaccountcreated");
+    }
+
+    public function waitingAction() {
+        $lang = $this->getLanguage();
+        $message = CoreTranslator::WaitingAccountMessage($lang);
+
+        return $this->render(array(
+            "message" => $message
+        ));
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::index()
      */
     public function indexAction() {
+        if(intval(Configuration::get('allow_registration', 0)) != 1) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
 
         $lang = $this->getLanguage();
 
@@ -55,30 +107,40 @@ class CoreaccountController extends Controller {
 
             if ($modelCoreUser->isLogin($form->getParameter("login"))) {
                 $_SESSION["message"] = CoreTranslator::Error($lang) . ":" . CoreTranslator::LoginAlreadyExists($lang);
-            } else {
-                $pwd = $modelCoreUser->generateRandomPassword();
-
-                $id_user = $modelCoreUser->createAccount(
-                        $form->getParameter("login"),
-                        $pwd,
-                        $form->getParameter("name"),
-                        $form->getParameter("firstname"),
-                        $form->getParameter("email")
-                );
-                $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
-                $modelPeningAccounts = new CorePendingAccount();
-                $modelPeningAccounts->add($id_user, $form->getParameter("id_space"));
-
-                $email = new Email();
-                $mailParams = [
-                    "email" => $form->getParameter("email"),
-                    "login" => $form->getParameter("login"),
-                    "pwd" => $pwd
-                ];
-                $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
-                $this->redirect("coreaccountcreated");
+                $this->redirect("corecreateaccount");
                 return;
             }
+
+            $payload = array(
+                "iss" => Configuration::get('public_url', ''),
+                "aud" => Configuration::get('public_url', ''),
+                "exp" => time() + 3600*24*2, // 2 days to confirm
+                "data" => [
+                    "login" => $form->getParameter("login"),
+                    "name" => $form->getParameter("name"),
+                    "firstname" => $form->getParameter("firstname"),
+                    "email" => $form->getParameter("email"),
+                    "phone" => $form->getParameter("phone") ?? '',
+                    "id_space" => $form->getParameter("id_space")
+                ]
+            );
+            
+            /**
+             * IMPORTANT:
+             * You must specify supported algorithms for your application. See
+             * https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
+             * for a list of spec-compliant algorithms.
+             */
+            $jwt = JWT::encode($payload, Configuration::get('jwt_secret'));
+            $email = new Email();
+            $mailParams = [
+                "jwt" => $jwt,
+                "url" => Configuration::get('public_url'),
+                "email" => $form->getParameter("email")
+            ];
+            $email->notifyUserByEmail($mailParams, "add_new_user_waiting", $lang);
+            $this->redirect("coreuserwaiting");
+            return;
         }
 
         $modelConfig = new CoreConfig();

@@ -72,7 +72,7 @@ abstract class Controller {
     /**
      * Generate the vue associated to the curent controller
      * 
-     * @param array $dataView Data neededbu the view
+     * @param array $dataView Data needed by the view
      * @param string $action Action associated to the view
      */
     protected function render($dataView = array(), $action = null) {

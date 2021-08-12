@@ -12,7 +12,9 @@
         "league/html-to-markdown": "^5.0",
         "league/commonmark": "^1.6",
         "phpoffice/phpspreadsheet": "^1.18",
-        "spipu/html2pdf": "^5.2"
+        "spipu/html2pdf": "^5.2",
+        "firebase/php-jwt": "^5.4",
+        "promphp/prometheus_client_php": "^2.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

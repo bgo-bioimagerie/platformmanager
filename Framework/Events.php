@@ -39,7 +39,6 @@ class EventHandler {
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
         $statHandler = new Statistics();
         $statHandler->record(Configuration::get('influxdb_org', 'pfm'), $stat);
-        // Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
     }
 
     public function spaceCreate($msg) {
@@ -63,7 +62,22 @@ class EventHandler {
         $stat = ['name' => 'users', 'fields' => ['value' => $nbUsers]];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
-        // Statistics::stat($space['shortname'], $stat);
+    }
+
+    public function spaceUserRoleUpdate($msg) {
+        $this->logger->debug('[spaceUserRoleUpdate][TODO]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
+        $role = $msg["role"];
+        $u = new CoreUser();
+        $user = $u->getInfo($msg['user']['id']);
+        $login = $user['login'];
+        $m = new CoreHistory();
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login role update [role=$role]");
+        // TODO
+    }
+
+    public function userApiKey($msg) {
+        $this->logger->debug('[userApiKey][TODO]', ['user' => $msg['user']]);
+        // TODO
     }
 
     public function spaceUserJoin($msg) {
@@ -73,7 +87,7 @@ class EventHandler {
         $user = $u->getInfo($msg['user']['id']);
         $login = $user['login'];
         $m = new CoreHistory();
-        $m->add( $msg['space']['id'], $msg['_user'], "User $login joined space");
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login joined space");
     }
 
     public function spaceUserUnjoin($msg) {
@@ -83,7 +97,7 @@ class EventHandler {
         $user = $u->getInfo($msg['user']['id']);
         $login = $user['login'];
         $m = new CoreHistory();
-        $m->add( $msg['space']['id'], $msg['_user'], "User $login left space");
+        $m->add( $msg['space']['id'], $msg['_user'] ?? null, "User $login left space");
     }
 
     private function _calEntryStat($space, $entry, $value){
@@ -165,6 +179,11 @@ class EventHandler {
                 case Events::ACTION_SPACE_USER_UNJOIN:
                     $this->spaceUserUnjoin($data);
                     break;
+                case Events::ACTION_SPACE_USER_ROLEUPDATE:
+                    $this->spaceUserRoleUpdate($data);
+                    break;
+                case Events::ACTION_USER_APIKEY:
+                    $this->userApikey($data);
                 case Events::ACTION_CAL_ENTRY_EDIT:
                     $this->calentryEdit($data);
                     break;
@@ -185,9 +204,10 @@ class Events {
     public const ACTION_SPACE_DELETE = 1;
     public const ACTION_SPACE_USER_JOIN = 2;
     public const ACTION_SPACE_USER_UNJOIN = 3;
-    public const HELPDESK_TICKET = 100;
-
+    public const ACTION_SPACE_USER_ROLEUPDATE = 4;
+    public const ACTION_USER_APIKEY = 5;
     public const ACTION_CAL_ENTRY_EDIT = 100;
+    public const HELPDESK_TICKET = 200;
 
     private static $connection;
     private static $channel;

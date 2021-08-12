@@ -133,25 +133,13 @@ class SeStats extends Model {
             $pricingInfo = $modelPricing->get($id_space, $clientInfo["pricing"]);
             
             $onTime = true;
-            if ($project["date_close"] != "" && $project["date_close"] != "0000-00-00"
-                && $project["time_limit"] != "" && $project["time_limit"] != "0000-00-00"    ){
+            if ($project["date_close"] != "" && $project["date_close"] != null
+                && $project["time_limit"] != "" && $project["time_limit"] != null    ){
                 if ( $project["date_close"] > $project["time_limit"]){
                     $onTime = false;
                 }
             }
-            
-            /*
-            $onTime = false;
-            
-            if( $project["date_close"] == "0000-00-00" ){
-                $project["date_close"] = date("Y-m-d", time());
-            }
-            if( $project["time_limit"] == "0000-00-00" || $project["time_limit"] >= $project["date_close"]  ){
-                $onTime = true;
-            }
-            */
-            
-            
+
             if ($pricingInfo["type"] == 1) {
                 
                 if($onTime){

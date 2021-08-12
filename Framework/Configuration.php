@@ -223,6 +223,18 @@ class Configuration {
         if(getenv('PFM_HELPDESK_IMAP_TLS')) {  // empty string if not tls, else /ssl
             self::$parameters['helpdesk_imap_tls'] = getenv('PFM_HELPDESK_IMAP_TLS');
         }
+        if(getenv('PFM_ALLOW_REGISTRATION')) {
+            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION'));
+        }
+        if(getenv('PFM_JWT_SECRET')) {
+            self::$parameters['jwt_secret'] = getenv('PFM_JWT_SECRET');
+        }
+        if(getenv('PFM_REDIS_HOST')) {
+            self::$parameters['redis_host'] = getenv('PFM_REDIS_HOST');
+        }
+        if(getenv('PFM_REDIS_PORT')) {
+            self::$parameters['redis_port'] = intval(getenv('PFM_REDIS_PORT'));
+        }
 
     }
 
