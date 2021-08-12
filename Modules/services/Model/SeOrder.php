@@ -103,9 +103,21 @@ class SeOrder extends Model {
 
     public function setOrder($id, $id_space, $id_user, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
         $id_status = 0;
-        if ($date_close == "" || $date_close=="0000-00-00"){
+        if($date_close == "") {
+            $date_close = null;
+        }
+        if ($date_close==null){
             $id_status = 1;
         }
+
+        if($date_open == "") {
+            $date_open = null;
+        }
+
+        if($date_last_modified == "") {
+            $date_last_modified = null;
+        }
+
         if ($this->isOrder($id_space, $id)){
             $this->updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
             return $id;
@@ -127,6 +139,18 @@ class SeOrder extends Model {
     }
 
     public function addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
+        if($date_close == "") {
+            $date_close = null;
+        }
+
+        if($date_open == "") {
+            $date_open = null;
+        }
+
+        if($date_last_modified == "") {
+            $date_last_modified = null;
+        }
+
         $sql = "INSERT INTO se_order (id_space, id_user, no_identification, id_status, date_open, date_last_modified, date_close)
 				 VALUES(?,?,?,?,?,?,?)";
         $this->runRequest($sql, array(
@@ -136,6 +160,20 @@ class SeOrder extends Model {
     }
 
     public function updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
+        if($date_close == "") {
+            $date_close = null;
+        }
+        if ($date_close==null){
+            $id_status = 1;
+        }
+
+        if($date_open == "") {
+            $date_open = null;
+        }
+
+        if($date_last_modified == "") {
+            $date_last_modified = null;
+        }
         $sql = "UPDATE se_order set id_user=?, no_identification=?, id_status=?, date_open=?, date_last_modified=?, date_close=?
 		        where id=? AND id_space=?";
         $this->runRequest($sql, array($id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close, $id, $id_space));
@@ -229,9 +267,9 @@ class SeOrder extends Model {
     }
 
     public function reopenEntry($id_space, $id){
-        $sql = "UPDATE se_order set id_status=1, date_close=?
+        $sql = "UPDATE se_order set id_status=1, date_close is null
 		        where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array("0000-00-00", $id, $id_space));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
     // @bug refers to ec_j_user_responsible

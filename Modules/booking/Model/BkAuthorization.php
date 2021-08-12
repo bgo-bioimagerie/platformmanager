@@ -22,8 +22,8 @@ class BkAuthorization extends Model {
         $this->setColumnsInfo("user_id", "int(11)", 0);
         $this->setColumnsInfo("resource_id", "int(11)", 0);
         $this->setColumnsInfo("visa_id", "int(11)", 0);
-        $this->setColumnsInfo("date", "DATE", "0000-00-00");
-        $this->setColumnsInfo("date_desactivation", "DATE", "0000-00-00");
+        $this->setColumnsInfo("date", "date", "");
+        $this->setColumnsInfo("date_desactivation", "date", "");
         $this->setColumnsInfo("is_active", "int(1)", 1);
 
         $this->primaryKey = "id";
@@ -43,11 +43,20 @@ class BkAuthorization extends Model {
     }
 
     public function add($id_space, $user_id, $resource_id, $visa_id, $date){
+        if($date == "") {
+            $date = null;
+        }
         $sql = "INSERT INTO bk_authorization (user_id, resource_id, visa_id, date, is_active, id_space) VALUES (?,?,?,?,?,?)";
         $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, 1, $id_space));
     }
 
     public function set($id_space, $id, $user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active){
+        if($date == "") {
+            $date = null;
+        }
+        if($date_desactivation == "") {
+            $date = null;
+        }
         $sql = "UPDATE bk_authorization SET user_id=?, resource_id=?, visa_id=?, date=?, date_desactivation=?, is_active=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active, $id, $id_space));
     }

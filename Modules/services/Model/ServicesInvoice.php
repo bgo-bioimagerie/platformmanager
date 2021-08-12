@@ -18,8 +18,8 @@ class ServicesInvoice extends InvoiceModel {
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
         
         // projects
-        $sqlps = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND id_resp=? AND (date_close=? OR date_close='')";
-        $projects = $this->runRequest($sqlps, array($id_space, $id_resp, '0000-00-00'))->fetchAll();
+        $sqlps = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND id_resp=? AND date_close is NULL)";
+        $projects = $this->runRequest($sqlps, array($id_space, $id_resp))->fetchAll();
         foreach ($projects as $p){
             
             $sqlpd = "SELECT * FROM se_project_service WHERE id_project=? AND id_invoice=0 AND id_space=?";
@@ -51,8 +51,8 @@ class ServicesInvoice extends InvoiceModel {
         $orders = $modelOrder->openedForRespPeriod($beginPeriod, $endPeriod, $id_resp, $id_space);
 
         // get all projects
-        $sqlps = "SELECT * FROM se_project WHERE id_space=? AND id_resp=? AND (date_close=? OR date_close='')";
-        $projects = $this->runRequest($sqlps, array($id_space, $id_resp, '0000-00-00'))->fetchAll();
+        $sqlps = "SELECT * FROM se_project WHERE id_space=? AND id_resp=? AND date_close is null)";
+        $projects = $this->runRequest($sqlps, array($id_space, $id_resp))->fetchAll();
 
         $modelPrice = new SePrice();
 
@@ -196,8 +196,8 @@ class ServicesInvoice extends InvoiceModel {
     }
 
     public function deleteOrders($id_space, $id_invoice) {
-        $sql = "UPDATE se_order SET id_invoice=0, id_status=1, date_close=? WHERE id_invoice=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array("0000-00-00", $id_invoice, $id_space));
+        $sql = "UPDATE se_order SET id_invoice=0, id_status=1, date_close=null WHERE id_invoice=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($id_invoice, $id_space));
     }
 
 }
