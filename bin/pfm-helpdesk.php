@@ -101,6 +101,10 @@ $port = intval(Configuration::get('helpdesk_imap_port', 110));
 $login = Configuration::get('helpdesk_imap_user');
 $password = Configuration::get('helpdesk_imap_password');
 $tls = Configuration::get('helpdesk_imap_tls');  //   '/ssl'
+$origin = Configuration::get('helpdesk_email') || Configuration::get('mail_from');
+$originInfo = explode('@', $origin);
+$originDomain = $originInfo[1];
+
 
 if(!$inbox) {
     exit(0);
@@ -161,15 +165,19 @@ while(true) {
                 $otherDests = [];
                 $spaceName = null;
                 foreach($to as $dest) {
-                    if($dest->host == "genouest.org") {
+                    if($dest->host == $originDomain) {
                         $recipient = explode('+', $dest->mailbox);
                         $spaceName = $recipient[1];
-                    if(!isset($spaceNames[$spaceName])) {
-                                $otherDests[] = $dest->mailbox."@".$dest->host;
-                                continue;
-                            }
-                            $id_space = $spaceNames[$spaceName];
-                            $toSpace = $dest->mailbox."@".$dest->host;
+                        if($spaceName == 'donotreply') {
+                            Configuration::getLogger()->debug("[helpdesk] reply to a donotreply!", ['dest' => $dest->host, 'from' => $from]);
+                            continue;
+                        }
+                        if(!isset($spaceNames[$spaceName])) {
+                            $otherDests[] = $dest->mailbox."@".$dest->host;
+                            continue;
+                        }
+                        $id_space = $spaceNames[$spaceName];
+                        $toSpace = $dest->mailbox."@".$dest->host;
                     } else {
                         $otherDests[] = $dest->mailbox."@".$dest->host;
                     }
