@@ -198,7 +198,7 @@ if (!$headless) {
                             <div class="panel-footer">
                                 <button type="button" class="btn btn-primary" @click="preview">Message/Preview</button>
                                 <button type="button" class="btn btn-primary" v-if="addType==1" @click="save">Add</button>
-                                <button type="button" class="btn btn-primary" v-if="addType==0" @click="save">Send</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==0 && !textPreview" @click="save">Send</button>
                             </div>
                         </div>
                     </div>
@@ -406,8 +406,8 @@ var app = new Vue({
                     f.append('subject', this.ticket.ticket.subject);
                 }
                 let fileIndex = 0;
-                for (const file of inputFiles.files) {
-                    f.append('file' + fileIndex,file,file.name)
+                for (const inputfile of inputFiles.files) {
+                    f.append('file' + fileIndex,inputfile,inputfile.name)
                     fileIndex++;
                 }
                 headers = new Headers()

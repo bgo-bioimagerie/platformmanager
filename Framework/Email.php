@@ -23,8 +23,9 @@ class Email extends Model {
      * @param string $content
      * @param string $sentCopyToFrom
      * @param array  list of CoreFiles to attach to email
+     * @param bool   set toAdress as Bcc:, defaults to true, else just set in To:
      */
-    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false, $files = [] ) {
+    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true ) {
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -45,11 +46,19 @@ class Email extends Model {
         }
 
         if (is_array($toAdress)){
-            foreach($toAdress as $address){                
-                $mail->addBCC($address);
+            foreach($toAdress as $address){
+                if($bcc) {            
+                    $mail->addBCC($address);
+                } else {
+                    $mail->addAddress($address);
+                }
             }
         } else if ( $toAdress != "" ) {
-            $mail->addBCC($toAdress);
+            if($bcc) {
+                $mail->addBCC($toAdress);
+            } else {
+                $mail->addAddress($toAddress);
+            }
         }
 
         $fm = new CoreFiles();

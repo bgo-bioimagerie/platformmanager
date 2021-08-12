@@ -169,7 +169,7 @@ class HelpdeskController extends CoresecureController {
                 $ticket = $hm->get($id_ticket);
                 $id = $newTicket['message'];
             } else {
-                $id = $hm->addEmail($id_space, $id_ticket, $params['body'], $_SESSION['email'], $attachments);
+                $id = $hm->addEmail($id_ticket, $params['body'], $_SESSION['email'], $attachments);
             }
 
             $subject = '[Ticket #' . $ticket['id'] . '] '.$ticket['subject'];
@@ -184,7 +184,7 @@ class HelpdeskController extends CoresecureController {
             
             
             $e = new Email();
-            $e->sendEmail($from, $fromName, $toAddress, $subject, $content, false, $attachementFiles);
+            $e->sendEmail($from, $fromName, $toAddress, $subject, $content, false, $attachementFiles, false);
 
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
