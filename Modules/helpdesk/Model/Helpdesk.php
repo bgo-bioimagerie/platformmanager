@@ -5,6 +5,7 @@ require_once 'Framework/Model.php';
 require_once 'Framework/Email.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreFiles.php';
+require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
 
 require_once 'Modules/helpdesk/Model/HelpdeskTranslator.php';
 
