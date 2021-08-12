@@ -10,6 +10,7 @@
 * #225 bug fixes
 * #235 use static data for se_service_types
 * #246 allow user self registration (via config)
+* #244 Allow impersonation
 
 ## 2.0
 
