@@ -117,7 +117,6 @@ class Acii extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE ac_aciis SET deleted=1,deleted_at=NOW() WHERE id=? and id_space=?";
-        //$sql = "DELETE FROM ac_aciis WHERE id = ?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

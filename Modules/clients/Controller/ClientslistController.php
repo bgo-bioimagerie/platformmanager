@@ -154,7 +154,6 @@ class ClientslistController extends CoresecureController {
         $formi = $formAddressInvoice->getForm();
         if ($formi->check()) {
             $id_adress = $formAddressInvoice->save();
-            
             $this->clientModel->setAddressInvoice($id_space, $id, $id_adress);
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
             $this->redirect("clclienteditdelivery/" . $id_space . "/" . $id);

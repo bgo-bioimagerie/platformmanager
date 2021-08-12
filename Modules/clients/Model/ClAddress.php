@@ -49,8 +49,7 @@ class ClAddress extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE cl_addresses SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM cl_addresses WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

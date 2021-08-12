@@ -38,7 +38,7 @@ class Router {
         try {
             $controller = $this->createControllerImp($module, $controller_name, false, $request);
         } catch (PfmRoutingException $e) {
-            $this->logger->error('no controller found, redirect to homepage', [
+            $this->logger->warning('no controller found, redirect to homepage', [
                 'url' => $request->getParameter('path'),
                 'controller' => $controller_name,
                 'module' => $module
@@ -84,7 +84,6 @@ class Router {
      * Examine a request and run the dedicated action
      */
     public function routerRequest() {
-
         if(Configuration::get('redis_host') && $_SERVER['REQUEST_URI'] == '/metrics') {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
@@ -130,7 +129,7 @@ class Router {
 
                 $urlInfo = $this->getUrlData($request);
                 if(!$urlInfo['pathInfo']) {
-                    $this->logger->error('no route found, redirect to homepage', [
+                    $this->logger->warning('no route found, redirect to homepage', [
                         'url' => $request->getParameter('path'),
                     ]);
                     $this->call('core/coretiles/index', [], $request);
@@ -150,8 +149,12 @@ class Router {
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         } catch (Throwable $e) {
+<<<<<<< HEAD
             $reqEnd = microtime(true);
             Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+=======
+            Configuration::getLogger()->warning('[router] something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+>>>>>>> pfm2
             $this->manageError($e);
         }
         $this->prometheus($reqStart, $reqEnd, $reqRoute);
@@ -198,10 +201,9 @@ class Router {
                 ));
             }
         } else {
-            if($this->useRouterController){
+            if ($this->useRouterController) {
                 $controller->indexAction($args);
-            }
-            else{
+            } else {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         }

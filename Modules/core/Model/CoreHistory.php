@@ -23,6 +23,9 @@ class CoreHistory extends Model {
      * Create a new entry
      */
     public function add($id_space, $user, $message) {
+        if(!$user) {
+            return null;
+        }
         $sql = 'INSERT INTO core_history (id_space, user, message) VALUES (?,?,?)';
         $this->runRequest($sql, array($id_space, $user, $message));
         return $this->getDatabase()->lastInsertId();

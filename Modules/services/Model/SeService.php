@@ -119,10 +119,7 @@ class SeService extends Model {
     }
     
     public function getAll($id_space){
-        $sql = "SELECT se_services.*, se_service_types.local_name as type "
-                . "FROM se_services "
-                . "INNER JOIN se_service_types ON se_services.type_id = se_service_types.id "
-                . "WHERE se_services.id_space=? AND se_services.deleted=0";
+        $sql = "SELECT * FROM se_services WHERE se_services.id_space=? AND se_services.deleted=0;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
@@ -198,8 +195,7 @@ class SeService extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE se_services SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM se_services WHERE id = ? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

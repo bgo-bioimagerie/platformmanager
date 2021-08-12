@@ -20,7 +20,7 @@ class ServicesRouting extends Routing {
 
 
         // stock
-        $this->addRoute("servicesstock", "servicesstock", "services", "stock", array("id_space"), array(""));
+        $this->addRoute("servicesstock", "servicesstock", "serviceslisting", "stock", array("id_space"), array(""));
 
         // purchase
         $this->addRoute("servicespurchase", "servicespurchase", "servicespurchase", "index", array("id_space"), array(""));

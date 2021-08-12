@@ -109,8 +109,9 @@ class CorespaceaccessController extends CoresecureController {
             'tableHtml' => $tableHtml,
             'active' => $active,
             'letter' => $letter,
-            'space' => $space
-                ), "indexAction");
+            'space' => $space,
+            'data' => ['users' => $users]
+        ), "indexAction");
     }
 
     public function usersAction($id_space, $letter = "") {
@@ -279,8 +280,10 @@ class CorespaceaccessController extends CoresecureController {
         $modelSpacePending = new CorePendingAccount();
         $modelUser = new CoreUser();
 
+        $pendingUsers = [];
         $data = $modelSpacePending->getPendingForSpace($id_space);
         for ($i = 0; $i < count($data); $i++) {
+            $pendingUsers[] = $data[$i];
             $data[$i]["fullname"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
             $data[$i]["date_created"] = $modelUser->getDateCreated($data[$i]["id_user"]);
         }
@@ -300,7 +303,8 @@ class CorespaceaccessController extends CoresecureController {
             'lang' => $lang,
             'id_space' => $id_space,
             'tableHtml' => $tableHtml,
-            "space" => $space
+            "space" => $space,
+            'data' => ["users" => $data]
         ));
     }
 

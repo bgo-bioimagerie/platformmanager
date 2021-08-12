@@ -78,12 +78,9 @@ abstract class CoresecureController extends CorecookiesecureController {
      * @see Controller::runAction()
      */
     public function runAction($module, $action, $args = array()) {
-
         $modelConfig = new CoreConfig();
-        if ($modelConfig->getParam("is_maintenance")) {
-            if ($this->request->getSession()->getAttribut("user_status") < 4) {
+        if ($modelConfig->getParam("is_maintenance") && ($this->request->getSession()->getAttribut("user_status") < 4)) {
                 throw new PfmException($modelConfig->getParam("maintenance_message"), 503);
-            }
         }
 
         $cookieCheck = $this->checkRememberMeCookie();
@@ -108,7 +105,6 @@ abstract class CoresecureController extends CorecookiesecureController {
 
         // check if there is a session    
         if ($this->request->getSession()->isAttribut("id_user")) {
-
             $login = $this->request->getSession()->getAttribut("login");
             $company = $this->request->getSession()->getAttribut("company");
 

@@ -195,8 +195,6 @@ class ServicesprojectsController extends CoresecureController {
 
             // get the pricing color
             $clientAccounts = $modelClient->get($id_space ,$entriesArray[$i]["id_resp"]);
-            //print_r($clientAccounts);
-            
             $entriesArray[$i]["resp_name"] = $clientAccounts["name"];
             $pricingInfo = $modelPricing->get($id_space ,$clientAccounts["pricing"]);
             
