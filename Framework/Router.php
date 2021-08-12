@@ -146,11 +146,10 @@ class Router {
                 $this->logger->debug('[router][old] call', ["controller" => $controller, "action" => $action, "args" => $args]);
                 $this->runAction($controller, $urlInfo, $action, $args);
                 $reqEnd = microtime(true);
-                //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         } catch (Throwable $e) {
+            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
             $reqEnd = microtime(true);
-            Configuration::getLogger()->warning('[router] something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
             $this->manageError($e);
         }
         $this->prometheus($reqStart, $reqEnd, $reqRoute);

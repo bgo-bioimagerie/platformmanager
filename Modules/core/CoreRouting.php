@@ -6,6 +6,8 @@ class CoreRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/corefiles/[i:id_space]/[i:id_file]', 'core/corefiles/download', 'files_download');
+        $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
+        $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
     }
     
     public function listRoutes(){
@@ -22,8 +24,7 @@ class CoreRouting extends Routing{
         
         // create account
         $this->addRoute("corecreateaccount", "corecreateaccount", "coreaccount", "index");
-        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");
-         
+        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");         
          
         // home
         $this->addRoute("corehome", "corehome", "corehome", "index");
