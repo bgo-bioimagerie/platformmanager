@@ -2,6 +2,8 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
+require_once 'Framework/FCache.php';
+
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
@@ -20,6 +22,9 @@ $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
     ->opt('from', 'Force install from release', false, 'integer')
+    ->command('routes')
+    ->description('manage routes')
+    ->opt('reload:r', 'Reload routes from code', false, 'boolean')
     ->command('expire')
     ->description('Expire in spaces old users (according to global config)')
     ->opt('del:d', 'Remove user from space, else just set as inactive', false, 'boolean')
@@ -33,6 +38,13 @@ try {
     switch ($args->getCommand()) {
         case 'install':
             cliInstall($args->getOpt('from', -1));
+            break;
+        case 'routes':
+            if($args->getOpt('reload')) {
+                $modelCache = new FCache();
+                $modelCache->freeTableURL();
+                $modelCache->load();
+            }
             break;
         case 'expire':
             $logger = Configuration::getLogger();
