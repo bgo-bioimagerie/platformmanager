@@ -149,12 +149,8 @@ class Router {
                 //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         } catch (Throwable $e) {
-<<<<<<< HEAD
             $reqEnd = microtime(true);
-            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
-=======
             Configuration::getLogger()->warning('[router] something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
->>>>>>> pfm2
             $this->manageError($e);
         }
         $this->prometheus($reqStart, $reqEnd, $reqRoute);
