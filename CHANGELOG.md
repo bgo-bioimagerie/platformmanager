@@ -1,6 +1,8 @@
 # 2.1
 
 * #218 allow user to define default language
+* #225 bug fixes
+* #235 use static data for se_service_types
 
 # 2.0
 
