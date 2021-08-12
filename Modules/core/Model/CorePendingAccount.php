@@ -16,7 +16,7 @@ class CorePendingAccount extends Model {
         $this->setColumnsInfo("id_user", "int(11)", 0);
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("validated", "int(1)", 0);
-        $this->setColumnsInfo("date", "date", "0000-00-00");
+        $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("validated_by", "int(11)", 0);
         $this->primaryKey = "id";
     }

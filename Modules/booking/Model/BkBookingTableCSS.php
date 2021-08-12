@@ -139,7 +139,6 @@ class BkBookingTableCSS extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE bk_bookingcss set deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
-        // $sql = "DELETE FROM bk_bookingcss WHERE id = ? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
     }
 

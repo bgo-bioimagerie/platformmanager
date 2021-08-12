@@ -99,6 +99,10 @@ class CoreUser extends Model {
         $apikey = bin2hex($bytes);
         $sql = "UPDATE core_users SET apikey=? WHERE id=?";
         $this->runRequest($sql, array($apikey, $id));
+        Events::send([
+            "action" => Events::ACTION_USER_APIKEY,
+            "user" => ["id" => intval($id), "apikey" => $apikey]
+        ]);
     }
 
     public function getByApiKey($apikey) {
@@ -156,21 +160,21 @@ class CoreUser extends Model {
 
         $sql = null;
         $req = [];
-        $nodate = '0000-00-00';
+        // $nodate = '0000-00-00';
         if($expireDelay!=null && $expireContract) {
             $sql = "SELECT * FROM core_users WHERE".
-                " (date_last_login!=? AND date_last_login<? ) "
-                . "OR (date_end_contract!=? AND date_end_contract < ?)";
-            $req = $this->runRequest($sql, array($nodate, $expireDelay, $nodate, $date))->fetchAll();
+                " (date_last_login is not null AND date_last_login<? ) "
+                . "OR (date_end_contract is not null AND date_end_contract < ?)";
+            $req = $this->runRequest($sql, array($expireDelay, $date))->fetchAll();
 
         } else if($expireDelay!=null && !$expireContract) {
             $sql = "SELECT * FROM core_users WHERE ".
-                "(date_last_login!=? AND date_last_login<? ) ";
-            $req = $this->runRequest($sql, array($nodate, $expireDelay))->fetchAll();
+                "(date_last_login is not null AND date_last_login<? ) ";
+            $req = $this->runRequest($sql, array($expireDelay))->fetchAll();
         } else if($expireDelay==null && $expireContract) {
             $sql = "SELECT * FROM core_users WHERE ".
-                "(date_end_contract!=? AND date_end_contract < ?)";
-            $req = $this->runRequest($sql, array($nodate, $date))->fetchAll();
+                "(date_end_contract is not null AND date_end_contract < ?)";
+            $req = $this->runRequest($sql, array($date))->fetchAll();
         }
 
         if($sql == null) {
@@ -181,6 +185,18 @@ class CoreUser extends Model {
             $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
             if($remove) {
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_UNJOIN,
+                    "space" => ["id" => 0],
+                    "user" => ["id" => intval($r['id'])],
+                ]); 
+            } else {
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                    "space" => ["id" => 0],
+                    "user" => ["id" => intval($r['id'])],
+                    "role" => 0
+                ]); 
             }
             $this->runRequest($sql, array($r['id']));
 
@@ -437,7 +453,7 @@ class CoreUser extends Model {
      * @return array User info (id, login, pwd, id_status, is_active)
      */
     public function getUserByLogin($login) {
-        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email
+        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email, apikey
             from core_users where login=?";
         $user = $this->runRequest($sql, array(
             $login
@@ -586,7 +602,7 @@ class CoreUser extends Model {
             $contractDate = $user ["date_end_contract"];
             $today = date("Y-m-d", time());
 
-            if ($contractDate != "0000-00-00") {
+            if ($contractDate != null) {
                 if ($contractDate < $today) {
                     $this->setactive($user["id"], 0);
 
@@ -615,7 +631,7 @@ class CoreUser extends Model {
 
             // get the last login date in second
             $lastLoginDate = $user ["date_last_login"];
-            if ($lastLoginDate != "0000-00-00") {
+            if ($lastLoginDate != null) {
 
                 $lastLoginDate = explode("-", $lastLoginDate);
                 $timell = mktime(0, 0, 0, $lastLoginDate [1], $lastLoginDate [2], $lastLoginDate [0]);
@@ -884,10 +900,10 @@ class CoreUser extends Model {
                 "pwd" => '',
                 "id_status" => 1,
                 "convention" => 0,
-                "date_convention" => '0000-00-00',
-                "date_created" => '0000-00-00',
-                "date_last_login" => '0000-00-00',
-                "date_end_contract" => '0000-00-00',
+                "date_convention" => null,
+                "date_created" => null,
+                "date_last_login" => null,
+                "date_end_contract" => null,
                 "is_active" => 1,
                 "source" => 'local');
         }

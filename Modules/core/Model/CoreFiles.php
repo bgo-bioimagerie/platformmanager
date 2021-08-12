@@ -29,7 +29,7 @@ class CoreFiles extends Model {
     public function download($file) {
         $path = $this->path($file);
         if($path == null || !file_exists($path)) {
-            Configuration::getLogger()->error('file not found', ['file' => $path]);
+            Configuration::getLogger()->warning('file not found', ['file' => $path]);
             throw new PfmFileException('file does not exists');
         }
         $mime = mime_content_type($path);
@@ -52,7 +52,7 @@ class CoreFiles extends Model {
     public function upload($file, $formFileId) {
         $path = $this->path($file);
         if($path == null) {
-            Configuration::getLogger()->error('file not found', ['file' => $path]);
+            Configuration::getLogger()->warning('file not found', ['file' => $path]);
             throw new PfmFileException('file does not exists');
         }
         $base = dirname($path);

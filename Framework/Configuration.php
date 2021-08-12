@@ -210,6 +210,11 @@ class Configuration {
         }
         if(getenv('PFM_JWT_SECRET')) {
             self::$parameters['jwt_secret'] = getenv('PFM_JWT_SECRET');
+        if(getenv('PFM_REDIS_HOST')) {
+            self::$parameters['redis_host'] = getenv('PFM_REDIS_HOST');
+        }
+        if(getenv('PFM_REDIS_PORT')) {
+            self::$parameters['redis_port'] = intval(getenv('PFM_REDIS_PORT'));
         }
 
     }

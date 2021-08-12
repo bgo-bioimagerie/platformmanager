@@ -9,6 +9,9 @@
 class CoreTranslator {
 
     public static function dateToEn($date, $lang) {
+        if($date == null) {
+            return "";
+        }
         //echo "to translate = " . $date . "<br/>";
         if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
@@ -20,14 +23,14 @@ class CoreTranslator {
                 //echo "translated = " . $year . "-" . $month . "-" . $day . "<br/>";
                 return $year . "-" . $month . "-" . $day;
             }
-            return "0000-00-00";
+            return "";
         }
         // En
         return $date;
     }
 
     public static function dateFromEn($date, $lang) {
-        if ($date == "0000-00-00") {
+        if (!$date) {
             return "";
         }
 

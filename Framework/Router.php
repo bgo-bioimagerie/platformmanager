@@ -38,7 +38,7 @@ class Router {
         try {
             $controller = $this->createControllerImp($module, $controller_name, false, $request);
         } catch (PfmRoutingException $e) {
-            $this->logger->error('no controller found, redirect to homepage', [
+            $this->logger->warning('no controller found, redirect to homepage', [
                 'url' => $request->getParameter('path'),
                 'controller' => $controller_name,
                 'module' => $module
@@ -47,7 +47,8 @@ class Router {
             $action = 'index';
         }
         $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
-        $controller->runAction($module, $action, $args);   
+        $controller->runAction($module, $action, $args);
+        return $module."_".$controller_name."_".$action;
     }
 
     private function route($request) {
@@ -72,11 +73,10 @@ class Router {
         $match = $this->router->match();
         if(!$match) {
             Configuration::getLogger()->debug('No route match, check old way');
-            return false;
+            return null;
         }
 
-        $this->call($match['target'], $match['params'], $request);
-        return true;
+        return $this->call($match['target'], $match['params'], $request);
     }
 
     /**
@@ -84,7 +84,28 @@ class Router {
      * Examine a request and run the dedicated action
      */
     public function routerRequest() {
+        if(Configuration::get('redis_host') && $_SERVER['REQUEST_URI'] == '/metrics') {
+            \Prometheus\Storage\Redis::setDefaultOptions(
+                [
+                    'host' => Configuration::get('redis_host'),
+                    'port' => intval(Configuration::get('redis_host', 6379)),
+                    'password' => null,
+                    'timeout' => 0.1, // in seconds
+                    'read_timeout' => '10', // in seconds
+                    'persistent_connections' => false
+                ]
+            );
+            $registry = \Prometheus\CollectorRegistry::getDefault();
+            $renderer = new \Prometheus\RenderTextFormat();
+            $result = $renderer->render($registry->getMetricFamilySamples());
+            header('Content-type: ' . \Prometheus\RenderTextFormat::MIME_TYPE);
+            echo $result;
+            return;
+        }
 
+        $reqStart = microtime(true);
+        $reqEnd = $reqStart;
+        $reqRoute = "root";
         try {
             // Merge parameters GET and POST
             $params = array();
@@ -99,13 +120,16 @@ class Router {
             }
             $request = new Request($params);
             if (!$this->install($request)) {
-                if ($this->route($request)) {
+                $reqRoute = $this->route($request);
+                if ($reqRoute) {
+                    $reqEnd = microtime(true);
+                    $this->prometheus($reqStart, $reqEnd, $reqRoute);
                     return;
                 }
 
                 $urlInfo = $this->getUrlData($request);
                 if(!$urlInfo['pathInfo']) {
-                    $this->logger->error('no route found, redirect to homepage', [
+                    $this->logger->warning('no route found, redirect to homepage', [
                         'url' => $request->getParameter('path'),
                     ]);
                     $this->call('core/coretiles/index', [], $request);
@@ -113,6 +137,7 @@ class Router {
                 }
                 $controller = $this->createController($urlInfo, $request);
                 $action = $urlInfo["pathInfo"]["action"];
+                $reqRoute = $urlInfo["pathInfo"]["module"]."_".$urlInfo["pathInfo"]["controller"]."_".$action;
                 $args = $this->getArgs($urlInfo);
                 if(isset($args['id_space'])){
                     $_SESSION['id_space'] = $args['id_space'];
@@ -120,11 +145,40 @@ class Router {
 
                 $this->logger->debug('[router][old] call', ["controller" => $controller, "action" => $action, "args" => $args]);
                 $this->runAction($controller, $urlInfo, $action, $args);
-                //$controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
+                $reqEnd = microtime(true);
             }
         } catch (Throwable $e) {
             Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            $reqEnd = microtime(true);
             $this->manageError($e);
+        }
+        $this->prometheus($reqStart, $reqEnd, $reqRoute);
+
+    }
+
+    private function prometheus($reqStart, $reqEnd, $reqRoute) {
+        if(!Configuration::get('redis_host')) {
+            return;
+        }
+        Configuration::getLogger()->info('[prometheus] stat', ['route' => $reqRoute]);
+        try {
+            \Prometheus\Storage\Redis::setDefaultOptions(
+                [
+                    'host' => Configuration::get('redis_host'),
+                    'port' => intval(Configuration::get('redis_host', 6379)),
+                    'password' => null,
+                    'timeout' => 0.1, // in seconds
+                    'read_timeout' => '10', // in seconds
+                    'persistent_connections' => false
+                ]
+            );
+            $registry = \Prometheus\CollectorRegistry::getDefault();
+            $counter = $registry->getOrRegisterCounter('pfm', 'request_nb', 'quantity', ['url', 'code']);
+            $counter->incBy(1, [$reqRoute, http_response_code()]);
+            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [10, 20, 50, 100, 1000]);
+            $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
+        } catch(Exception $e) {
+            Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
         }
     }
 
@@ -142,10 +196,9 @@ class Router {
                 ));
             }
         } else {
-            if($this->useRouterController){
+            if ($this->useRouterController) {
                 $controller->indexAction($args);
-            }
-            else{
+            } else {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         }

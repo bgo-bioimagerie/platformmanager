@@ -16,6 +16,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 class ServiceslistingController extends CoresecureController {
 
     private $serviceModel;
+    private $typeModel;
 
     /**
      * Constructor
@@ -24,6 +25,7 @@ class ServiceslistingController extends CoresecureController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
+        $this->typeModel = new SeServiceType();
         $_SESSION["openedNav"] = "services";
     }
 
@@ -32,11 +34,16 @@ class ServiceslistingController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $data = $this->serviceModel->getAll($id_space);
-        //print_r($data);
+
+        // set types from services
+        $typesArray = $this->typeModel->getTypes();
+        for ($i = 0; $i < count($data); $i++) {
+            $data[$i]["type"] = ServicesTranslator::serviceTypes($typesArray[$data[$i]["type_id"]], $lang);
+        }
 
         $headers = array(
             "id" => "ID",
-            "name" => CoreTranslator::type($lang),
+            "name" => CoreTranslator::Name($lang),
             "description" => CoreTranslator::Description($lang),
             "type" => CoreTranslator::type($lang),
             "display_order" => CoreTranslator::Display_order($lang)
@@ -48,7 +55,6 @@ class ServiceslistingController extends CoresecureController {
         $table->addDeleteButton("servicesdelete/" . $id_space);
 
         $tableHtml = $table->view($data, $headers);
-
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
@@ -70,17 +76,22 @@ class ServiceslistingController extends CoresecureController {
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $value["display_order"]);
 
         $modelTypes = new SeServiceType();
-        $types = $modelTypes->getAllForSelect($id_space);
+        $types = $modelTypes->getAllForSelect();
 
         $form->addSelect("type_id", CoreTranslator::type($lang), $types["names"], $types["ids"], $value["type_id"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "services/" . $id_space);
 
         if ($form->check()) {
-            $this->serviceModel->setService($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("description"), $this->request->getParameter("display_order"), $this->request->getParameter("type_id")
+            $this->serviceModel->setService(
+                $id, $id_space,
+                $this->request->getParameter("name"),
+                $this->request->getParameter("description"),
+                $this->request->getParameter("display_order"),
+                $this->request->getParameter("type_id")
             );
 
-            $this->redirect("services/" . $id_space);
+            $this->redirect("serviceslisting/" . $id_space);
             return;
         }
 
