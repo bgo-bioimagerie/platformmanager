@@ -18,7 +18,7 @@ class StockCabinet extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getForList($id_space){
+    public function getForList($id_space) {
         $sql = "SELECT id, name, room_number FROM stock_cabinets WHERE id_space=? AND deleted=0 ORDER BY name ASC;";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         
@@ -31,7 +31,7 @@ class StockCabinet extends Model {
         return array( "names" => $names, "ids" => $ids );
     }
     
-    public function getAll($id_space){
+    public function getAll($id_space) {
         $sql = "SELECT * FROM stock_cabinets WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
@@ -41,27 +41,23 @@ class StockCabinet extends Model {
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function set($id, $id_space, $name, $room_number){
-        
-        if ($id > 0){
+    public function set($id_space, $id, $name, $room_number) {
+        if ($id > 0) {
             $sql = "UPDATE stock_cabinets SET name=?, room_number=? WHERE id=?  AND id_space=? AND deleted=0";
             $this->runRequest($sql, array(
                 $name, $room_number, $id, $id_space
             ));
             return $id;
-        }
-        else{
+        } else {
             $sql = "INSERT INTO stock_cabinets (id_space, name, room_number) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_space, $name, $room_number));
             return $this->getDatabase()->lastInsertId();
-        }
-        
+        }      
     }
     
     public function delete($id_space, $id) {
         $sql = "UPDATE stock_cabinets SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM stock_cabinets WHERE id = ? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

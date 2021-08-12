@@ -212,7 +212,6 @@ class Statistics {
         $orgService = $client->createService(OrganizationsService::class);
         $orgs = $orgService->getOrgs()->getOrgs();
         foreach ($orgs as $org) {
-            Configuration::getLogger()->error('???', ['org' => $org]);
             if ($org->getName() == Configuration::get('influxdb_org', 'pfm')) {
                 return $org;
             }

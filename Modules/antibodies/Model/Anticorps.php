@@ -120,7 +120,7 @@ class Anticorps extends Model {
         $sql = "SELECT * FROM ac_anticorps WHERE id_space=? AND deleted=0";
         
         if($letter != 'All' && $letter != ''){
-            $sql .= " WHERE nom LIKE '".$letter."%'";
+            $sql .= " AND nom LIKE '".$letter."%'";
         }
         $sql .= " ORDER BY " . $sortentry . " ASC;";
         
@@ -138,21 +138,13 @@ class Anticorps extends Model {
     public function isAnticorps($id_space ,$no_h2p2) {
         $sql = "SELECT * from ac_anticorps where no_h2p2=? AND id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($no_h2p2, $id_space));
-        if ($user->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($user->rowCount() == 1);
     }
 
     public function isAnticorpsID($id_space, $id) {
         $sql = "SELECT * from ac_anticorps where id=? AND id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id, $id_space));
-        if ($user->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($user->rowCount() == 1);
     }
 
     /**
@@ -223,9 +215,8 @@ class Anticorps extends Model {
      * @param string $sortentry column used to sort the users
      * @return Ambigous <multitype:, boolean>
      */
-    public function getAnticorpsInfo($id_space, $letter) {
+    public function getAnticorpsInfo($id_space, $letter="") {
         $ac = $this->getAnticorps($id_space, $letter, 'no_h2p2');
-
         return $this->anticorpsInfo($id_space ,$ac);
     }
 
@@ -263,7 +254,7 @@ class Anticorps extends Model {
         $user = $this->runRequest($sql, array($id_space, $searchTxt));
         $ac = $user->fetchAll();
 
-        return $this->anticorpsInfo($ac);
+        return $this->anticorpsInfo($id_space, $ac);
     }
 
     public function getAnticorpsProprioSearch($id_space, $columnName, $searchTxt) {
@@ -585,7 +576,6 @@ class Anticorps extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE ac_anticorps SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM ac_anticorps WHERE id = ?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

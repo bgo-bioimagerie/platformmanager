@@ -59,8 +59,7 @@ class SePurchase extends Model {
 
     public function delete($id_space, $id){
         $sql = "UPDATE se_purchase SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM se_purchase WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

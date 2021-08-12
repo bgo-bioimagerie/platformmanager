@@ -60,7 +60,7 @@ class CorespaceadminController extends CoresecureController {
         $table->addDeleteButton("spaceadmindelete");
         $tableHtml = $table->view($data, $headers);
         
-        return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml, "data" => ["spaces" => $data]));
     }
     
     public function editAction($id){
@@ -152,12 +152,12 @@ class CorespaceadminController extends CoresecureController {
             
             $newSpace = $modelSpace->getSpace($id);
             if($isSuperAdmin) {
-                $this->redirect("spaceadmin", data: ['space' => $newSpace]);
+                $this->redirect("spaceadmin", [], ['space' => $newSpace]);
                 return;
             }
         }
         
-        return $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        return $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang), "data" => ["space" => $space]));
         
     }
     

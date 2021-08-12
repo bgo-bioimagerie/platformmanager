@@ -63,21 +63,22 @@ class CorespaceController extends CoresecureController {
         }
 
         $lang = $this->getLanguage();
-        
+        $role = 0;
+        $showAdmMenu = false;
+
+        if ($_SESSION['user_status'] > CoreStatus::$USER) {
+            $showAdmMenu = true;
+            $role = CoreSpace::$ADMIN;
+        } else {
+            $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
+            if ($role > CoreSpace::$MANAGER) {
+                $showAdmMenu = true;
+            }
+        }
+        $spaceMenuItems = $this->spaceModel->getSpaceMenus($space["id"], $role);
+
         $userCustomDashboard = $modelConfig->getParamSpace("CoreSpaceCustomDashboard", $id_space);
         if ($userCustomDashboard) {
-            
-            $role = 0;
-            $showAdmMenu = false;
-            if ($_SESSION['user_status'] > CoreStatus::$USER) {
-                $showAdmMenu = true;
-                $role = CoreSpace::$ADMIN;
-            } else {
-                $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
-                if ($role > CoreSpace::$MANAGER) {
-                    $showAdmMenu = true;
-                }
-            }
             
             $modelDashboardSection = new CoreDashboardSection();
             $modelDashboardItem = new CoreDashboardItem();
@@ -87,24 +88,16 @@ class CorespaceController extends CoresecureController {
                 $sections[$i]["items"] = $items;
             }
             
-            return $this->render(array("lang" => $lang, "id_space" => $id_space, 
+            return $this->render(array(
+                "role" => $role,
+                "lang" => $lang,
+                "id_space" => $id_space, 
                 "space" => $space, 
                 "sections" => $sections, 
                 "showAdmMenu" => $showAdmMenu), "viewcustomAction");
       
             
         } else {
-            $showAdmMenu = false;
-            if ($_SESSION['user_status'] > CoreStatus::$USER) {
-                $spaceMenuItems = $this->spaceModel->getSpaceMenus($space["id"], CoreSpace::$ADMIN);
-                $showAdmMenu = true;
-            } else {
-                $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
-                if ($role > CoreSpace::$MANAGER) {
-                    $showAdmMenu = true;
-                }
-                $spaceMenuItems = $this->spaceModel->getSpaceMenus($space["id"], $role);
-            }
             $configModel = new CoreConfig();
             for ($i = 0; $i < count($spaceMenuItems); $i++) {
                 $item = $spaceMenuItems[$i];
@@ -135,7 +128,15 @@ class CorespaceController extends CoresecureController {
                 $spaceMenuItems[$i]['color'] = $menuColor;
             }
 
-            return $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "spaceMenuItems" => $spaceMenuItems, "showAdmMenu" => $showAdmMenu));
+            return $this->render(array(
+                "role" => $role,
+                "lang" => $lang,
+                "id_space" => $id_space,
+                "space" => $space,
+                "spaceMenuItems" => $spaceMenuItems,
+                "showAdmMenu" => $showAdmMenu,
+                "data" => ["space" => $space]
+            ));
         }
     }
 

@@ -1873,5 +1873,26 @@ class CoreTranslator {
         }
         return "History";
     }
+
+    public static function Default_language($lang = "") {
+        if ($lang == "fr") {
+            return "Langue par défaut";
+        }
+        return "Default language";
+    }
+
+    public static function English($lang = "") {
+        if ($lang == "fr") {
+            return "Anglais";
+        }
+        return "English";
+    }
+
+    public static function French($lang = "") {
+        if ($lang == "fr") {
+            return "Français";
+        }
+        return "French";
+    }
     
 }

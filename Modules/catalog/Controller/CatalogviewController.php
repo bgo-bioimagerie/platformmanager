@@ -85,7 +85,7 @@ class CatalogviewController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelAntibody = new Anticorps();
-        $entries = $modelAntibody->getAnticorpsInfoCatalog();
+        $entries = $modelAntibody->getAnticorpsInfoCatalog($id_space);
 
         $statusModel = new Status();
         $status = $statusModel->getBySpace($id_space);

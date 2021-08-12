@@ -76,8 +76,7 @@ class CaEntry extends Model {
     public function getCategoryEntries($id_space, $id) {
         $sql = "SELECT * FROM ca_entries WHERE id_category=? AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
-        $inter = $req->fetchAll();
-        return $inter;
+        return $req->fetchAll();
     }
 
 }

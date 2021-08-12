@@ -100,7 +100,7 @@ class AntibodiesRouting extends Routing{
         $this->addRoute("statusedit", "statusedit", "status", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("statusdelete", "statusdelete", "status", "delete", array("id_space", "id"), array("", ""));
         // anticorps
-        $this->addRoute("anticorps", "anticorps", "antibodieslist", "index", array("id_space", "sortentry"), array("", ""));
+        $this->addRoute("anticorps", "anticorps", "antibodieslist", "index", array("id_space"), array(""));
         $this->addRoute("anticorpsedit", "anticorpsedit", "antibodieslist", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("anticorpseditquery", "anticorpseditquery", "antibodieslist", "editquery", array("id_space", "id"), array("", ""));
         // search

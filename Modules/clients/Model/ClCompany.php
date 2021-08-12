@@ -22,9 +22,17 @@ class ClCompany extends Model {
         $this->primaryKey = "id";
     }
 
+    /**
+     * Get the clCompany for this space
+     * @param string|int $id_space 
+     * 
+     * @return array
+     */
     public function getForSpace($id_space) {
         $sql = "SELECT * FROM cl_company WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_space))->fetch();
+        $clCompany = $this->runRequest($sql, array($id_space))->fetch();
+        $clCompany = !($clCompany === false) ?: [];
+        return $clCompany;
     }
 
     public function get($id_space, $id) {
@@ -69,7 +77,6 @@ class ClCompany extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE cl_company SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM cl_company WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

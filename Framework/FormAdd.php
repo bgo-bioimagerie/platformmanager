@@ -84,11 +84,11 @@ class FormAdd {
     
     /**
      * Add a select field 
-     * @param type $name Field name
-     * @param type $label Field label
-     * @param type $choices List of choices names
-     * @param type $choicesid List of choices Ids
-     * @param type $values List of default values
+     * @param string $name Field name
+     * @param string $label Field label
+     * @param array $choices List of choices names
+     * @param array $choicesid List of choices Ids
+     * @param array $values List of default values
      */
     public function addSelect($name, $label, $choices, $choicesid, $values = array()) {
         $this->types[] = "select";

@@ -291,7 +291,7 @@ class SeOrder extends Model {
             if ($orders[$i]["id_resp"] == 0){
                 $sql = "SELECT id_resp FROM ec_j_user_responsible WHERE id_user=? AND id_space=? AND deleted=0";
                 $resp_id = $this->runRequest($sql, array($orders[$i]["id_user"], $id_space))->fetch();
-                $orders[$i]["id_resp"] = $resp_id[0];
+                $orders[$i]["id_resp"] = !empty($resp_id) ? $resp_id[0] : 0;
             }
         }
         return $orders;
@@ -302,37 +302,21 @@ class SeOrder extends Model {
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
         $orders = $req->fetchAll();
 
-        //$items = array();
         $modelServices = new SeService();
         $items = $modelServices->getBySpace($id_space);
-        //print_r($items);
 
         $modelClientUser = new ClClientUser();
         $modelClient = new ClClient();
         for ($i = 0; $i < count($orders); $i++) {
 
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
-                //echo "id user = " . $orders[$i]["id_user"] . "<br/>";
                 $resps = $modelClientUser->getUserClientAccounts($orders[$i]["id_user"], $id_space);
-                //echo "coucou 1 <br/>";echo "resps = <br/>";
-                //print_r($resps);
-                if (count($resps) > 0){
-
-                    $orders[$i]["id_resp"] = $resps[0]["id"];
-                }
-                else{
-                    $orders[$i]["id_resp"] = 0;
-                }
+                $orders[$i]["id_resp"] = !empty($resps) ? $resps[0]["id"] : 0;
             }
             $sql = "SELECT * FROM se_order_service WHERE id_order=? AND id_space=? AND deleted=0";
             $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"], $id_space));
 
-            //print_r($itemsSummary);
-
             $orders[$i]["entries"] = $itemsSummary;
-            //print_r($itemsSummary);
-            //$items = $this->getProjectServices($projects[$i]["id"]);
-
             $LABpricingid = $modelClient->getPricingID($id_space, $orders[$i]["id_resp"]);
             $orders[$i]["total"] = $this->calculateOrderTotal($id_space, $itemsSummary, $LABpricingid);
         }
@@ -347,14 +331,12 @@ class SeOrder extends Model {
         foreach($itemsSummary as $item){
             if($item["quantity"] > 0){
                 $unitaryPrice = $itemPricing->getPrice($id_space, $item["id_service"], $LABpricingid);
-                //print_r($unitaryPrice);
                 $totalHT += (float) $item["quantity"] * (float) $unitaryPrice;
             }
         }
         return $totalHT;
     }
 
-    // @bug refers to ecunit
     public function getPeriodeBilledServicesBalancesOrders($id_space, $periodStart, $periodEnd){
         // get the projects
         $sql1 = "SELECT * FROM se_order WHERE deleted=0 AND id_space=? AND id_invoice > 0 AND date_open >= ? AND date_open <= ?";
@@ -362,29 +344,19 @@ class SeOrder extends Model {
         $orders = $req1->fetchAll();
 
         $items = array();
-        $modelUser = new CoreUser();
         $modelUserClient = new ClClientUser();
-        $modelUnit = new EcUnit();
         $modelClient = new ClClient();
         for ($i = 0; $i < count($orders); $i++) {
 
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
                 $resps = $modelUserClient->getUserClientAccounts($orders[$i]["id_user"], $id_space);
-                if (count($resps) > 0){
-
-                    $orders[$i]["id_resp"] = $resps[0]["id"];
-                }
-                else{
-                    $orders[$i]["id_resp"] = 0;
-                }
+                $orders[$i]["id_resp"] = !empty($resps) ? $resps[0]["id"] : 0;
             }
             $sql = "SELECT * FROM se_order_service WHERE id_order=? AND id_space=? AND deleted=0";
             $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"], $id_space));
 
             $orders[$i]["entries"] = $itemsSummary;
-
-            $id_unit = $modelClient->getInstitution($id_space, $orders[$i]["id_resp"]);
-            $LABpricingid = $modelUnit->getBelonging($id_space, $id_unit);
+            $LABpricingid = $modelClient->getPricingID($id_space, $orders[$i]["id_resp"]);
             $orders[$i]["total"] = $this->calculateOrderTotal($id_space, $itemsSummary, $LABpricingid);
         }
 
@@ -396,7 +368,6 @@ class SeOrder extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE se_order SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM se_order WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

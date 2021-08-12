@@ -71,6 +71,9 @@ abstract class Model {
         } catch (Exception $e) {
             $msg = $e->getMessage();
             Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
+            if(Configuration::get('sentry_dsn', '')) {
+                \Sentry\captureException($e);
+            }
         }
         return $result;
     }

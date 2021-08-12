@@ -88,7 +88,7 @@ class StockcabinetController extends CoresecureController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($id_space, $form->getParameter("id"), $id_space, $form->getParameter("name"), $form->getParameter("room_number")); 
+            $this->model->set($id_space, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("room_number")); 
             $this->redirect("stockcabinets/" . $id_space);
         } else {
             // set the view
