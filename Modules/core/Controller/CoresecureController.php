@@ -105,6 +105,14 @@ abstract class CoresecureController extends CorecookiesecureController {
 
         // check if there is a session    
         if ($this->request->getSession()->isAttribut("id_user")) {
+            $logged_in_space = 0;
+            if($this->request->getSession()->isAttribut("logged_id_space")) {
+                $logged_in_space = $this->request->getSession()->getAttribut("logged_id_space");
+            }
+            if(array_key_exists('id_space', $args) && $args['id_space'] > 0 && $logged_in_space != $args['id_space']) {
+                throw new PfmException("Space not allowed with impersonification", 403);
+            }
+
             $login = $this->request->getSession()->getAttribut("login");
             $company = $this->request->getSession()->getAttribut("company");
 
