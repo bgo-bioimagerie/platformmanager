@@ -258,8 +258,8 @@ class CoreDB extends Model {
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
                 $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
-                $sql = "UPDATE se_service_types SET id_space=? WHERE id=?";
-                $this->runRequest($sql, array($res['id_space'], $res['type_id']));
+                // update static array to match db state
+                SeServiceType::updateServiceTypesReferences();
                 $sql = "UPDATE se_order_service SET id_space=? WHERE id_service=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
