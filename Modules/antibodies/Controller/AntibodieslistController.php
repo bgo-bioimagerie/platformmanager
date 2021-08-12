@@ -56,7 +56,6 @@ class AntibodieslistController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space, $letter = "") {
-
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         
         if ($this->isAdvSearch()) {
@@ -64,13 +63,13 @@ class AntibodieslistController extends CoresecureController {
             return;
         }
 
-        // get the user list
+        // get the antibodies list
         if($letter == ""){
             $letter = "A";
         }
+
         $anticorpsModel = new Anticorps();
         $anticorpsArray = $anticorpsModel->getAnticorpsInfo($id_space, $letter);
-
         $modelstatus = new Status();
         $status = $modelstatus->getStatus($id_space);
 
@@ -299,8 +298,8 @@ class AntibodieslistController extends CoresecureController {
             $catalogForm->setColumnsWidth(2, 10);
             $catalogForm->setButtonsWidth(2, 0);
             
-            if( $catalogForm->check() ){
-                $this->antibody->setExportCatalog($id, $form->getParameter("export_catalog"));
+            if ($catalogForm->check()) {
+                $this->antibody->setExportCatalog($id_space, $id, $form->getParameter("export_catalog"));
             
                 $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
 

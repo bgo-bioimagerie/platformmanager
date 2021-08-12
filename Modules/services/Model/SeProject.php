@@ -588,12 +588,12 @@ class SeProject extends Model {
 
         $modelUser = new CoreUser();
         $modelSampleCabinet = new StockShelf();
-        for ($i = 0; $i < count($projects); $i++) {
+        foreach ($projects as $project) {
             $sql = "SELECT id_user FROM se_visa WHERE id=? AND id_space=? AND deleted=0";
-            $id_user = $this->runRequest($sql, array($projects[$i]['closed_by'], $id_space))->fetch();
-            $projects[$i]['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
-            $projects[$i]['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
-            $projects[$i]["sample_cabinet"] = $modelSampleCabinet->getFullName($id_space, $projects[$i]["id_sample_cabinet"]);
+            $id_user = $this->runRequest($sql, array($project['closed_by'], $id_space))->fetchAll()[0];
+            $project['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
+            $project['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
+            $project["sample_cabinet"] = $modelSampleCabinet->getFullName($id_space, $project["id_sample_cabinet"]);
         }
 
         return $projects;
@@ -618,13 +618,8 @@ class SeProject extends Model {
             // get active items
             $activeItems = $this->getProjectItems($projectEntries);
             $itemsSummary = $this->getProjectItemsSymmary($projectEntries, $activeItems);
-            //print_r($itemsSummary);
 
             $projects[$i]["entries"] = $itemsSummary;
-            //print_r($itemsSummary);
-            //$items = $this->getProjectServices($projects[$i]["id"]);
-
-            
             $LABpricingid = $modelClient->getPricingID($id_space, $projects[$i]["id_resp"]);
             $projects[$i]["total"] = $this->calculateProjectTotal($id_space, $itemsSummary, $LABpricingid);
         }

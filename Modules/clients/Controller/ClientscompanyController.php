@@ -45,6 +45,12 @@ class ClientscompanyController extends CoresecureController {
 
         // form
         // build the form
+
+        $formKeys = ["name", "address", "zipcode", "city", "county", "country", "tel", "fax", "email", "approval_number"];
+        foreach ($formKeys as $key) {
+            $data[$key] = array_key_exists($key, $data) ?: "";
+        }
+
         $form = new Form($this->request, "pricing/edit");
         $form->setTitle(ClientsTranslator::CompanyInfo($lang), 3);
         $form->addText('name', ClientsTranslator::Name($lang), true, $data["name"]);

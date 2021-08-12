@@ -9,6 +9,7 @@ require_once 'Modules/anticorps/Model/Prelevement.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 
+// DEPRECATED? 
 class ControllerAnticorps extends ControllerSecureNav {
 	
 	// Affiche la liste de tous les billets du blog
@@ -34,9 +35,9 @@ class ControllerAnticorps extends ControllerSecureNav {
 		$status = $modelstatus->getStatus($id_space);
 		
 		$navBar = $this->navBar();
-		$this->generateView ( array (
+		$this->generateView(array(
 				'navBar' => $navBar, 'anticorpsArray' => $anticorpsArray, 'status' => $status
-		) );
+		));
 	
 	}
 	

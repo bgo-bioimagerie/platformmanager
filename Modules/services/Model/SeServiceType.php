@@ -76,8 +76,7 @@ class SeServiceType extends Model {
     }
 
     public function add($id_space, $name, $local_name) {
-
-        if (!$this->exists($name)) {
+        if (!$this->exists($id_space, $name)) {
             $sql = "INSERT INTO se_service_types (name, local_name, id_space) VALUES(?,?,?)";
             $this->runRequest($sql, array($name, $local_name, $id_space));
         }
@@ -86,11 +85,7 @@ class SeServiceType extends Model {
     public function exists($id_space, $name) {
         $sql = "select * from se_service_types where name=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($name, $id_space));
-        if ($req->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($req->rowCount() == 1);
     }
 
 }

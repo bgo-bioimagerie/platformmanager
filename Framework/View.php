@@ -46,7 +46,6 @@ class View {
         // Generate the dedicated part of the view
         extract($data);
         include ($this->file);
-
         return;
     }
 

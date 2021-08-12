@@ -84,7 +84,6 @@ class Router {
      * Examine a request and run the dedicated action
      */
     public function routerRequest() {
-
         try {
             // Merge parameters GET and POST
             $params = array();
@@ -142,10 +141,9 @@ class Router {
                 ));
             }
         } else {
-            if($this->useRouterController){
+            if ($this->useRouterController) {
                 $controller->indexAction($args);
-            }
-            else{
+            } else {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         }

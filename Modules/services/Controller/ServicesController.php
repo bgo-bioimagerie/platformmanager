@@ -215,7 +215,6 @@ class ServicesController extends CoresecureController {
         $table->setTitle(ServicesTranslator::Stock($lang), 3);
 
         $tableHtml = $table->view($data, $headers);
-
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 

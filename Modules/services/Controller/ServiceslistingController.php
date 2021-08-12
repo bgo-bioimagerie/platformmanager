@@ -36,7 +36,7 @@ class ServiceslistingController extends CoresecureController {
 
         $headers = array(
             "id" => "ID",
-            "name" => CoreTranslator::type($lang),
+            "name" => CoreTranslator::Name($lang),
             "description" => CoreTranslator::Description($lang),
             "type" => CoreTranslator::type($lang),
             "display_order" => CoreTranslator::Display_order($lang)
@@ -48,7 +48,6 @@ class ServiceslistingController extends CoresecureController {
         $table->addDeleteButton("servicesdelete/" . $id_space);
 
         $tableHtml = $table->view($data, $headers);
-
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
