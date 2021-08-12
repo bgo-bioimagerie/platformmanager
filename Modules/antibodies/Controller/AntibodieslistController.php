@@ -57,7 +57,7 @@ class AntibodieslistController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $letter = "") {
+    public function indexAction($id_space, $sortentry = "") {
 
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
 
@@ -72,18 +72,18 @@ class AntibodieslistController extends CoresecureController {
 
         //echo "letter = " . $letter . "<br/>";
         // get the user list
-        if($letter == ""){
-            $letter = "A";
+        if($sortentry == ""){
+            $sortentry = "A";
         }
         $anticorpsModel = new Anticorps();
-        $anticorpsArray = $anticorpsModel->getAnticorpsInfo($letter);
+        $anticorpsArray = $anticorpsModel->getAnticorpsInfo($sortentry);
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus();
 
         return $this->render(array(
             'id_space' => $id_space, 'anticorpsArray' => $anticorpsArray,
-            'status' => $status, 'lang' => $this->getLanguage(), 'letter' => $letter
+            'status' => $status, 'lang' => $this->getLanguage(), 'letter' => $sortentry
         ));
     }
 
