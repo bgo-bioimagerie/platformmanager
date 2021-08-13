@@ -193,7 +193,7 @@ class InvoiceslistController extends CoresecureController {
             $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, CoreTranslator::dateFromEn($invoice["date_paid"], $lang));
         }
         else{
-            $form->addHidden("date_paid", "0000-00-00");
+            $form->addHidden("date_paid", "");
         }
         $form->setButtonsWidth(3, 8);
         $form->setValidationButton(CoreTranslator::Save($lang), "invoiceinfo/" . $id_space . "/" . $id);
@@ -217,7 +217,7 @@ class InvoiceslistController extends CoresecureController {
             
             $_SESSION["message"] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
             $this->redirect("invoiceinfo/" . $id_space . "/" . $id);
-            return;
+            return "";
         }
         else{
             return $form->getHtml($lang);
@@ -230,8 +230,9 @@ class InvoiceslistController extends CoresecureController {
         $lang = $this->getLanguage();
         
         $formHtml = $this->infoForm($id_space, $id);
-
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $formHtml));
+        if($formHtml) {
+            $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $formHtml));
+        }
     }
 
     public function deleteAction($id_space, $id) {

@@ -89,7 +89,6 @@ abstract class Model {
             $dsn = Configuration::get("dsn");
             $login = Configuration::get("login");
             $pwd = Configuration::get("pwd");
-
             // Create connection
             self::$bdd = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
             if (getenv('PFM_MODE') == 'dev' && Configuration::get('debug_sql', false)) {
@@ -343,6 +342,16 @@ abstract class Model {
     public function deleteAll() {
         $sql = "DELETE FROM " . $this->tableName;
         $this->runRequest($sql);
+    }
+
+    public function admGetBy($tableName, $key, $value) {
+        $sql = "SELECT * from $tableName WHERE $key=?";
+        return $this->runRequest($sql, array($value))->fetch();
+    }
+
+    public function admGetAll($tableName) {
+        $sql = "SELECT * from $tableName";
+        return $this->runRequest($sql)->fetchAll();
     }
 
 }

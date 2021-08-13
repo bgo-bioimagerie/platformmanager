@@ -71,10 +71,10 @@ class Configuration {
      */
     private static function getParameters() {
         if (self::$parameters == null) {
-
             $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
-                throw new Exception("Unable to find the configuration file");
+                Configuration::getLogger()->warning('No configuration file found, using env vars only');
+                // throw new Exception("Unable to find the configuration file");
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
@@ -87,6 +87,61 @@ class Configuration {
      * Override some config with env variables
      */
     private static function override() {
+
+        if(getenv('MYSQL_HOST')) {
+            self::$parameters['mysql_host']= getenv('MYSQL_HOST');
+        }
+        if(getenv('MYSQL_DBNAME')) {
+            self::$parameters['mysql_dbname']= getenv('MYSQL_DBNAME');
+        }
+        if(getenv('MYSQL_USER')) {
+            self::$parameters['login']= getenv('MYSQL_USER');
+        }
+        if(getenv('MYSQL_PASS')) {
+            self::$parameters['pwd']= getenv('MYSQL_PASS');
+        }
+        if(!isset(self::$parameters['dsn'])) {
+            try {
+                self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
+            } catch(Exception $e) {
+                throw PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+            }
+        }
+
+        if(getenv('PFM_HEADLESS')) {
+            self::$parameters['headless']= intval(getenv('PFM_HEADLESS')) == 1 ? true : false;
+        }
+
+        if(!isset(self::$parameters['rootWeb'])) {
+            self::$parameters['rootWeb'] = '/';
+        }
+        if(getenv('PFM_ROOTWEB')) {
+            self::$parameters['rootWeb']= getenv('PFM_ROOTWEB');
+        }
+
+        if(!isset(self::$parameters['name'])) {
+            self::$parameters['name'] = 'Platform-Manager';
+        }
+
+        if(!isset(self::$parameters['modules'])) {
+            self::$parameters['modules'] = [
+                'core',
+                'clients',
+                'users',
+                'resources',
+                'services',
+                'booking',
+                'catalog',
+                'invoices',
+                'statistics',
+                'mailer',
+                'documents',
+                'antibodies',
+                'quote',
+                'com'
+            ];
+        }
+
         self::$parameters['smtp_host'] = getenv('SMTP_HOST', '');
         if(!isset(self::$parameters['smtp_port'])) {
             self::$parameters['smtp_port'] = 25;
