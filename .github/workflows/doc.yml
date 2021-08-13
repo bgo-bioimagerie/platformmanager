@@ -19,7 +19,7 @@ jobs:
           hugo-version: 'latest'
 
       - name: Build
-        run: cd doc && hugo --minify
+        run: cd doc && hugo -d ../docs/
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.4

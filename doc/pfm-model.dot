@@ -1,0 +1,200 @@
+digraph pfm {
+
+BkAccess -> ResourceInfo[label="id_resource"];
+
+BkAuthorization -> ReCategory [label="resource_id"];
+BkAuthorization -> CoreUser [label="user_id"];
+
+BkBookingTableCSS -> ReArea [label="id_area"];
+BkCalendarEntry -> ResourceInfo[label="resource_id"];
+BkCalendarEntry -> booked_by_id;
+BkCalendarEntry -> ClClientUser[label="recipient_id"];
+BkCalendarEntry -> color_type_id;
+BkCalendarEntry -> package_id;
+BkCalendarEntry -> responsible_id;
+BkCalendarEntry -> InInvoice [label="invoice_id"];
+BkCalendarEntry -> BkCalendarPeriod[label="period_id"];
+
+BkCalQuantities -> VirtualQuantity [label="id_quantity"];
+BkCalQuantities -> ResourceInfo[label="id_resource"];
+
+BkCalSupInfo -> VirtualSupInfo [label="id_supinfo"];
+BkCalSupInfo -> ResourceInfo [label="id_resource"];
+
+BkNightWE -> ClClient [label="id_belonging"];  // to be checked
+
+BkOwnerPrice -> ResourceInfo [label="id_resource"];
+BkOwnerPrice -> VirtualPackage [label="id_package"];
+BkOwnerPrice -> Unknown [label="id_unit"];
+
+BkPackages -> VirtualPackage [label="id_package"];  // what is package, seems internal counter, no "link"
+BkPackages -> ResourceInfo [label="id_resource"];
+
+bk_j_packages_prices -> VirtualPackage [label="id_package"];
+bk_j_packages_prices -> BkPrice [label="id_pricing"];
+bk_j_packages_prices -> BkPackage [label="id_package"];
+
+BkPrice -> ResourceInfo [label="id_resource"];
+BkPrice -> VirtualPackage [label="id_package"];
+BkPrice -> ClPricing[label="id_belonging"];
+
+BkRestrictions -> ResourceInfo [label="id_resource"];
+
+BkScheduling -> ReArea [label="id_rearea"];
+
+BjCollectionNote -> BjCollection [label="id_collection"];
+BjCollectionNote -> BjNote [label="id_note"];
+
+BjEvent -> BjNote[label="id_note"];
+BjTask -> BjNote[label="id_note"];
+BjTaskHistory -> BjNote[label="id_note"];
+
+CaEntry -> CaCategory [label="id_category"];
+
+ClClient -> ClAddress [label="address_invoice"];
+ClClient -> ClAddress [label="address_delivery"];
+ClClient -> ClPricing [label="pricing"];
+
+ClClientUser -> ClClient [label="id_client"];
+ClClientUser -> CoreUser [label="id_user"];
+
+ClCompany; // ???? not used?
+
+ComNews;
+
+Document;
+
+EsCancelReason;
+EsContactType;
+EsDeliveryMethod;
+EsNotFeasibleMethod;
+EsPrice -> EsProduct [label="id_product"];
+EsPrice -> ClPricing [label="id_pricing"];
+EsProductCategoryDefault;
+EsProductDefault -> EsProductCategoryDefault [label="id_category"];
+EsProductUnitQ -> EsProduct [label="id_product"];
+EsSale -> ClClient [label="id_client"]; // to be checked
+EsSale -> EsContactType [label="id_contact_type"];
+EsSale -> EsNotFeasibleReason [label="not_feasible_reason"];
+EsSale -> EsDeliveryType [label="delivery_type"];
+EsSale -> EsCancelReason [label="cancel_reason"];
+EsSale -> EsSaleStatus [label="id_status"];
+EsSaleEnteredItem -> EsSale [label="id_sale"];
+EsSaleEnteredItem -> EsProduct [label="id_product"];
+EsSaleHistory -> EsSale [label="id_sale"];
+EsSaleHistory -> EsSaleStatus [label="id_status"]; // not in db
+EsSaleHistory -> CoreUser [label="id_user"];
+EsSaleItem -> EsSale [label="id_sale"];
+EsSaleItem -> BrBach [label="id_batch"];  // breeding
+EsSaleItemInvoice -> EsSale [label="id_sale"];
+EsSaleItemInvoice -> BrBatch [label="id_batch"]; // breeding
+
+
+InInvoice -> id_unit; // no ref found
+InInvoice -> id_project; // no ref found
+InInvoice -> id_edited_by;
+InInvoice -> ClClient [label="id_responsible"]; // ? client
+
+InInvoiceItem -> InInvoice [label="id_invoice"];
+
+InVisa -> CoreUser [label="id_user"];
+
+Quote -> id_belonging;
+Quote -> id_user;
+QuoteItem -> Quote [label="id_quote"]
+// module defines which object is linked to id_content
+QuoteItem -> ResourceInfo [label="id_content"];
+QuoteItem -> SeService [label="id_content"];
+
+ReArea;
+ReCategory;
+ReEvent -> ResourceInfo [label="id_resource"];
+ReEvent -> ReState [label="id_state"];
+ReEvent -> ReEventType [label="id_eventtype"];
+ReEventData -> ReEvent [label="id_event"];
+ReEventType;
+ReResps -> ResourceInfo [label="id_resource"];
+ReResps -> ReRespsStatusi [label="id_status"];
+ReResps -> CoreUser [label="id_user"];
+
+ResourceInfo -> ReCategory [label="id_category"];
+ResourceInfo -> ReArea [label="id_area"];
+
+ReState;
+
+ReVisa -> ReCategory [label="id_resource_category"];
+
+SeOrder -> InInvoice [label="id_invoice"];
+SeOrder -> id_unit; // ????
+SeOrder -> CoreUser [label="id_responsible"];
+SeOrder -> SeProject [label="id_project"];
+SeOrder -> CoreUser [label="id_edited_by"];
+
+se_order_service -> SeOrder [label="id_order"];
+se_order_service -> SeService [label="id_service"];
+
+SeOrigin;
+SePrice -> SeService [label="id_service"];
+SePrice -> ClClient [label="id_belonging"]; // to be cheked!!
+
+SeProject -> CoreUser [label="id_resp"];
+SeProject ->CoreUser [label="id_user"];
+SeProject -> SeOrigin [label="id_origin"];
+SeProject -> CoreUser [label="closed_by"];
+SeProject -> CoreUser [label="in_charge"];
+
+SePurchase;
+SePurchaseItem -> SePurcharse [label="id_purchase"];
+SePurchaseItem -> SeService [label="id_service"];
+
+SeService -> SeServiceType [label="type_id"];
+
+SeVisa -> CoreUser [label="id_user"];
+
+StockCabinet;
+StockShelf -> StockCabinet [label="id_cabinet"];
+
+// antibodies
+AcApplication;
+Acii;
+Aciinc;
+AcOption;
+AcOwner -> Anticorps [label="id_anticorps"];
+AcOwner -> CoreUser [label="id_utilisateur"];
+AcProtocol -> Proto [label="proto"];
+AcProtocol -> Fixative [label="fixative"];
+AcProtocol -> AcOption [label="option_"];
+AcProtocol -> Enzyme [label="enzyme"];
+AcProtocol -> Dem [label="dem"];
+AcProtocol -> Aciinc [label="acl_inc"];
+AcProtocol -> Linker [label="linker"];
+AcProtocol -> Inc [label="inc"];
+AcProtocol -> Acii [label="acll"];
+AcProtocol -> Inc [label="in2"];
+AcStraining;
+Anticorps -> no_h2p2;
+Anticorps -> Source [label="id_source"];
+Anticorps -> id_isotope;
+Anticorps -> AcStaining [label="id_staining"];
+Anticoprs -> AcApplication [label="id_application"];
+ac_j_user_anticorps -> Anticorps [label="id_anticorps"];
+ac_j_user_anticorps -> CoreUser [label="id_utilisateur"];
+Dem;
+Enzyme;
+Espece;
+Fixative;
+Inc;
+Isotype;
+Kit;
+Linker;
+Organe;
+Prelevement;
+Proto;
+Source;
+Status;
+// missing id_space
+Tissus -> Anticorps [label="id_anticorps"];
+Tissus -> Espece [label="espece"];
+Tissus -> Organe [label="organe"];
+}
+
