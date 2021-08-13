@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
-
+require_once 'Modules/services/Model/ServicesTranslator.php';
 /**
  * Class defining the Unit model for consomable module
  *

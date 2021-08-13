@@ -31,6 +31,7 @@ require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 require_once 'Modules/core/Model/CoreHistory.php';
+require_once 'Modules/services/Model/SeServiceType.php';
 
 
 define("DB_VERSION", 3);
@@ -270,8 +271,13 @@ class CoreDB extends Model {
                 $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
                 // update static array to match db state
-                SeServiceType::updateServiceTypesReferences();
+                $sem = new SeServiceType();
+                $sem->updateServiceTypesReferences();
                 $sql = "UPDATE se_order_service SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_project_service SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
         }
@@ -382,6 +388,11 @@ class CoreDB extends Model {
             $statHandler = new EventHandler();
             $statHandler->calentryImport();
             Configuration::getLogger()->debug('[stats] import calentry stats, done!');
+
+            Configuration::getLogger()->debug("[stats] import invoice stats");
+            $statHandler = new EventHandler();
+            $statHandler->invoiceImport();
+            Configuration::getLogger()->debug('[stats] import invoice stats, done!');
 	    }
 
         Configuration::getLogger()->debug('[core_users] fix column types');

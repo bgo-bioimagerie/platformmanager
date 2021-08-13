@@ -248,7 +248,7 @@ class ServicesbalanceController extends CoresecureController {
             $spreadsheet->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
             $dateClosed = "";
-            if ($proj["date_close"] != "0000-00-00"){
+            if ($proj["date_close"] && $proj["date_close"] != "0000-00-00"){
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
             }
             $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
@@ -475,7 +475,7 @@ class ServicesbalanceController extends CoresecureController {
             //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $dateClosed = "";
-            if ($proj["date_close"] != "0000-00-00"){
+            if ($proj["date_close"] && $proj["date_close"] != "0000-00-00"){
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
             }
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+1) . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));

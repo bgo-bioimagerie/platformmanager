@@ -177,8 +177,8 @@ class ServicesprojectsController extends CoresecureController {
         for ($i = 0; $i < count($entriesArray); $i++) {
 
             $entriesArray[$i]["close_icon"] = "";
-            
-            if (($entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00") && (!($entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00"))) {
+
+            if (($entriesArray[$i]["date_close"] == null || $entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00") && (!($entriesArray[$i]["time_limit"] == null || $entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00"))) {
                 $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
                 $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
 
@@ -203,14 +203,14 @@ class ServicesprojectsController extends CoresecureController {
             $entriesArray[$i]["time_color"] = "#ffffff";
             if ($entriesArray[$i]["time_limit"] != "") {
 
-                if (strval($entriesArray[$i]["time_limit"]) != "0000-00-00") {
+                if ($entriesArray[$i]["time_limit"] && strval($entriesArray[$i]["time_limit"]) != "0000-00-00") {
                     $entriesArray[$i]["time_color"] = "#FFCC00";
                 }
             }
 
 
             $entriesArray[$i]["closed_color"] = "#ffffff";
-            if ($entriesArray[$i]["date_close"] != "0000-00-00") {
+            if ($entriesArray[$i]["date_close"] && $entriesArray[$i]["date_close"] != "0000-00-00") {
                 $entriesArray[$i]["closed_color"] = "#99CC00";
             }
         }

@@ -151,6 +151,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
             $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
             $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
+            Events::send([
+                "action" => Events::ACTION_INVOICE_EDIT,
+                "space" => ["id" => intval($id_space)],
+                "invoice" => ["id" => intval($id_invoice)]
+            ]);
 
             $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O");
             return;
@@ -424,6 +429,12 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoiceItem->setItem($id_space, 0, $invoice_id, $module, $controller, $content, $details, $total_ht);
 
         $modelInvoice->setTotal($id_space, $invoice_id, $total_ht);
+
+        Events::send([
+            "action" => Events::ACTION_INVOICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "invoice" => ["id" => intval($invoice_id)]
+        ]);
     }
 
     protected function getUnitPackagePricesForEachResource($resources, $LABpricingid, $id_client) {
@@ -621,6 +632,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
         // set invoice itmems
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+        Events::send([
+            "action" => Events::ACTION_INVOICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "invoice" => ["id" => intval($id_invoice)]
+        ]);
     }
 
     protected function invoiceTable($id_space, $invoice, $id_item, $lang) {

@@ -344,4 +344,14 @@ abstract class Model {
         $this->runRequest($sql);
     }
 
+    public function admGetBy($tableName, $key, $value) {
+        $sql = "SELECT * from $tableName WHERE $key=?";
+        return $this->runRequest($sql, array($value))->fetch();
+    }
+
+    public function admGetAll($tableName) {
+        $sql = "SELECT * from $tableName";
+        return $this->runRequest($sql)->fetchAll();
+    }
+
 }

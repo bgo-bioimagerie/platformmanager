@@ -200,7 +200,7 @@ class Statistics {
             Configuration::getLogger()->debug('[stats] bucket created', ['bucket' => $bucket->getId(), 'token' => $token]);
             // $client->close();
         } catch(Throwable $e) {
-            Configuration::getLogger()->error('[stats] createdb error', ['message' => $e->getMessage()]);
+            Configuration::getLogger()->error('[stats] createdb error', ['message' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         } 
 
     }

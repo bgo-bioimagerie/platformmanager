@@ -12,6 +12,7 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/invoices/Model/InInvoice.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -111,7 +112,7 @@ class EventHandler {
         $client = ['name' => 'unknown'];
         if($entry['responsible_id']) {
             $c = new ClClient();
-            $is_client = $c->get($entry['responsible_id'], $id_space);
+            $is_client = $c->get($id_space, $entry['responsible_id']);
             if($is_client) {
                 $client = $is_client;
             }
@@ -152,6 +153,66 @@ class EventHandler {
         $this->_calEntryStat($space, $entry, 1);
     }
 
+    public function invoiceImport() {
+        $em = new EventModel();
+        $sql = "SELECT * FROM `in_invoice`;";
+        $resdb = $em->runRequest($sql);
+        $i = 0;
+        while($res = $resdb->fetch()) {
+            //echo "??".$res["date_generated"];
+            //$date_generated = date("Y-m-d", $res["date_generated"]);
+            $dt = DateTime::createFromFormat("Y-m-d H:i:s", $res["date_generated"]." 00:00:00");
+            $timestamp = $dt->getTimestamp() + $i;
+            $i++;
+            $this->invoiceEdit(["action" => Events::ACTION_INVOICE_EDIT, "invoice" => ["id" => intval($res['id']), "created_at" => $timestamp], "id_space" => $res['id_space']]);
+        }
+    }
+
+
+    public function invoiceEdit($msg) {
+        $this->logger->debug('[invoiceEdit]', ['id_invoice' => $msg['invoice']['id']]);
+        $im = new InInvoice();
+        $invoice = $im->admGetBy('in_invoice', 'id', $msg['invoice']['id']);
+        $id_space = $invoice['id_space'];
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        $client = ['name' => 'unknown'];
+        if($invoice['id_responsible']) {
+            $c = new ClClient();
+            $is_client = $c->get($id_space, $invoice['id_responsible']);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $total = floatval($invoice['total_ht']) - floatval($invoice['discount']);
+        $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
+        $stat = ['name' => 'invoice', 'fields' => ['value' => $total], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
+        $this->logger->debug('[invoiceEdit]', ['stat' => $stat]);
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    }
+
+    public function invoiceDelete($msg) {
+        $this->logger->debug('[invoiceDelete]', ['id_invoice' => $msg['invoice']['id']]);
+        $im = new InInvoice();
+        $invoice = $im->admGetBy('in_invoice', 'id', $msg['invoice']['id']);
+        $id_space = $invoice['id_space'];
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        $client = ['name' => 'unknown'];
+        if($invoice['responsible_id']) {
+            $c = new ClClient();
+            $is_client = $c->get($id_space, $invoice['responsible_id']);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
+        $stat = ['name' => 'invoice', 'fields' => ['value' => 0], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    }
+
     /**
      * Handle message from rabbitmq
      * 
@@ -184,8 +245,15 @@ class EventHandler {
                     break;
                 case Events::ACTION_USER_APIKEY:
                     $this->userApikey($data);
+                    break;
                 case Events::ACTION_CAL_ENTRY_EDIT:
                     $this->calentryEdit($data);
+                    break;
+                case Events::ACTION_INVOICE_EDIT:
+                    $this->invoiceEdit($data);
+                    break;
+                case Events::ACTION_INVOICE_DELETE:
+                    $this->invoiceDelete($data);
                     break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $action]);
@@ -208,6 +276,9 @@ class Events {
     public const ACTION_USER_APIKEY = 5;
 
     public const ACTION_CAL_ENTRY_EDIT = 100;
+
+    public const ACTION_INVOICE_EDIT = 300;
+    public const ACTION_INVOICE_DELETE = 301;
 
     private static $connection;
     private static $channel;
