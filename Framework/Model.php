@@ -89,7 +89,6 @@ abstract class Model {
             $dsn = Configuration::get("dsn");
             $login = Configuration::get("login");
             $pwd = Configuration::get("pwd");
-
             // Create connection
             self::$bdd = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
             if (getenv('PFM_MODE') == 'dev' && Configuration::get('debug_sql', false)) {

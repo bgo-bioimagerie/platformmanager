@@ -792,7 +792,6 @@ class CoreInstall extends Model {
         $content = "";
         $pos = strpos($buffer, $varName);
         if ($pos === false) {
-
         } else if ($pos == 0) {
             $content = $varName . ' = ' . $varContent . PHP_EOL;
         }
