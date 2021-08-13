@@ -29,3 +29,4 @@ Some module has an admin configuration panel.
 * [antibodies](./module/antibodies) manage catalog of antibodies
 * [quote](./module/quote) create quotes for your customers
 * [com](./module/com) manage space communication
+* [helpdesk](./module/helpdesk) lightweight helpdesk system
