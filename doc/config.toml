@@ -1,4 +1,4 @@
-baseURL = "https://pfm.genouest.org/"
+baseURL = "https://bgo-bioimagerie.github.io/platformmanager/"
 languageCode = "en-us"
 title = "Platform Manager"
 theme = "hugo-geekdoc"
