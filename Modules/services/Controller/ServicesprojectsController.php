@@ -175,10 +175,14 @@ class ServicesprojectsController extends CoresecureController {
         $warning = intval($modelConfig->getParamSpace("SeProjectDelayWarning", $id_space));
 
         for ($i = 0; $i < count($entriesArray); $i++) {
-
             $entriesArray[$i]["close_icon"] = "";
-
-            if (($entriesArray[$i]["date_close"] == null || $entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00") && (!($entriesArray[$i]["time_limit"] == null || $entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00"))) {
+            if (
+                (
+                    $entriesArray[$i]["date_close"] == null || $entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00"
+                ) && (
+                    !($entriesArray[$i]["time_limit"] == null || $entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00")
+                )
+            ) {
                 $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
                 $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
 
