@@ -320,6 +320,12 @@ class Helpdesk extends Model {
         $this->runRequest($sql, array($id_ticket));
     }
 
+    // count unread messages
+    public function unread($id_space) {
+        $sql = "SELECT count(*) as total, status FROM hp_tickets WHERE unread=1 AND id_space=? GROUP BY status";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
     public function remind($lang="en") {
         $sql = "SELECT * FROM hp_tickets WHERE reminder<NOW() and reminder_sent=0";
         $toRemind = $this->runRequest($sql)->fetchAll();

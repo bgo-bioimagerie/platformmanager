@@ -259,6 +259,23 @@ class HelpdeskController extends CoresecureController {
     }
 
     /**
+     * Count unread messages per status (managers only)
+     */
+    public function unreadCountAction($id_space) {
+        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $sm = new CoreSpace();
+        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if(!$role || $role < CoreSpace::$MANAGER) {
+            $this->render(['data' => ['unread' => []]]);
+            return;
+        }
+        $hm = new Helpdesk();
+        $tickets = $hm->unread($id_space);
+        //$this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
+        $this->render(['data' => ['unread' => $tickets]]);
+    }
+
+    /**
      * List tickets in desired status
      * 
      * If not admin of space, returns only tickets assigned or opened by session user

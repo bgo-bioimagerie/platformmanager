@@ -116,10 +116,10 @@ if (!$headless) {
         <div class="col-sm-2 text-center">
             <div @click="newTicket()">Create</div>
             <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
-            <div @click="setFilter(0)">New</div>
-            <div @click="setFilter(1)">Open</div>
-            <div @click="setFilter(2)">Reminder</div>
-            <div @click="setFilter(3)">Closed</div>
+            <div @click="setFilter(0)">New {{unread["s0"]}}</div>
+            <div @click="setFilter(1)">Open {{unread["s1"]}}</div>
+            <div @click="setFilter(2)">Reminder {{unread["s2"]}}</div>
+            <div @click="setFilter(3)">Closed {{unread["s3"]}}</div>
             <?php
             if ($role > CoreSpace::$MANAGER) {
             ?>
@@ -297,7 +297,8 @@ var app = new Vue({
                 notifyAllUpdate: false
             },
             offset: 0,
-            limit: 50
+            limit: 50,
+            unread: {}
         }
     },
     created () { this.fetchTickets(); <?php if($ticket) {
@@ -551,6 +552,36 @@ var app = new Vue({
                 this.tickets = data.tickets;
                 console.debug('get tickets', data);
             })
+            this.fetchUnread();
+        },
+        fetchUnread() {
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers
+            }
+            let params = new URLSearchParams({
+                offset: this.offset,
+                limit: this.limit
+            });
+            if(this.my) {
+                params = new URLSearchParams({
+                    mine: 1,
+                    offset: this.offset,
+                    limit: this.limit
+                })
+            }
+            fetch('/helpdesk/<?php echo $id_space ?>/unread' , cfg).
+            then((response) => response.json()).
+            then(data => {
+                let unreads = {}
+                data.unread.forEach(unread => {
+                    unreads["s"+unread.status] = `(${unread.total})`
+                });
+                this.unread = unreads;
+                console.debug('unread tickets', unreads);
+            })            
         }
     }
 })
