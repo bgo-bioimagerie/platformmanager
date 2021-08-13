@@ -216,6 +216,7 @@ class HelpdeskController extends CoresecureController {
         $filter = false;
         $sm = new CoreSpace();
         $um = new CoreUser();
+
         if($um->getStatus($_SESSION['id_user']) != CoreUser::$ADMIN) {
             $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
             if(!$role || $role < CoreSpace::$MANAGER) {
@@ -236,6 +237,7 @@ class HelpdeskController extends CoresecureController {
 
         } else {
             $filteredMessages = $messages;
+            $hm->markRead($id_ticket);
         }
 
         $attachements = $hm->getAttachments($id_ticket);
@@ -276,10 +278,22 @@ class HelpdeskController extends CoresecureController {
         if(!$id_user && isset($_GET['mine'])) {
             $id_user = $_SESSION['id_user'];
         }
-        $tickets = $hm->list($id_space, $status, $id_user);
+
+        $offset = 0;
+        $limit = 50;
+
+        if(isset($_GET['offset'])) {
+            $offset = intval($_GET['offset']);
+        }
+
+        if(isset($_GET['limit'])) {
+            $limit = intval($_GET['limit']);
+        }
+
+        $tickets = $hm->list($id_space, $status, $id_user, $offset, $limit);
 
         //$this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
-        $this->render(['data' => ['tickets' => $tickets]]);
+        $this->render(['data' => ['tickets' => $tickets, 'offset' => $offset, 'limit' => $limit]]);
     }
 
 }

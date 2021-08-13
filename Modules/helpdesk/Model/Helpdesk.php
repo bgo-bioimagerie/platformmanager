@@ -39,6 +39,7 @@ class Helpdesk extends Model {
             `assigned_name` varchar(30),  /* name of assignee */
             `reminder` DATE,
             `reminder_sent`int(1) DEFAULT 0,
+            `unread` int(1) DEFAULT 0,  /* has unread messages */
             PRIMARY KEY (`id`)
             );";
         $this->runRequest($sql);
@@ -94,6 +95,9 @@ class Helpdesk extends Model {
         $sql = 'INSERT INTO `hp_ticket_message` (`id_ticket`, `from`, `to`, `subject`, `body`, `type`, `created_at`)  VALUES (?,?,?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $to, $subject, $body, self::$TYPE_EMAIL));
         $id_message = $this->getDatabase()->lastInsertId();
+        if(!$is_new) {
+            $this->markUnread($id_ticket);
+        }
 
         if(!empty($attachments)) {
             $this->attach($id_ticket, $id_message, $attachments);
@@ -228,12 +232,13 @@ class Helpdesk extends Model {
         $this->runRequest($sql, array($status, $id_ticket));
     }
 
-    public function list($id_space, $status=0, $id_user=0) {
+    public function list($id_space, $status=0, $id_user=0, $offset=0, $limit=50) {
         $sql = "SELECT * FROM hp_tickets WHERE `status`=?";
         if($id_user) {
-            $sql .= " AND (assigned=? OR created_by_user=?)";
+            $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id LIMIT ".$limit." OFFSET ".$offset;
             return $this->runRequest($sql, array($status, $id_user, $id_user))->fetchAll();
         }
+        $sql .= " ORDER BY id LIMIT ".$limit." OFFSET ".$offset;
         return $this->runRequest($sql, array($status))->fetchAll();
     }
 
@@ -303,6 +308,16 @@ class Helpdesk extends Model {
         }
         $fromInfo = explode('@', $from);
         return $fromInfo[0]. '+' . $space['shortname'] . '@' . $fromInfo[1];
+    }
+
+    public function markRead($id_ticket) {
+        $sql = "UPDATE hp_tickets SET unread=0 WHERE id=?";
+        $this->runRequest($sql, array($id_ticket));
+    }
+
+    public function markUnread($id_ticket) {
+        $sql = "UPDATE hp_tickets SET unread=1 WHERE id=?";
+        $this->runRequest($sql, array($id_ticket));
     }
 
     public function remind($lang="en") {

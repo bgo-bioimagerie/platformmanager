@@ -239,7 +239,11 @@ if (!$headless) {
             </div>
         </div>
         <div v-if="!settings && ticket === null" class="col-sm-10 text-center">
-            <table aria-describedby="list of tickets" class="table table-striped table-sm">
+            <div>
+                <button v-if="offset > 0" class="btn btn-primary" @click="prevPage()">prev</button>
+                <button class="btn btn-primary" @click="nextPage()">next</button>
+            </div>
+            <table aria-describedby="list of tickets" class="table  table-sm">
                 <thead class="thead-dark">
                     <tr>
                     <th scope="col">#{{current_filter}}</th>
@@ -252,7 +256,7 @@ if (!$headless) {
                     </tr>
                 </thead>
                 <tbody>
-                <tr v-for="ticket in tickets" :key="ticket.id">
+                <tr v-for="ticket in tickets" :key="ticket.id" v-bind:class="ticket.unread=='1' ? 'alert alert-warning':''">
                 <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
                 <td>{{ticket.created_at}}</td>
                 <td>{{ticket.subject}}</td>
@@ -263,6 +267,10 @@ if (!$headless) {
                 </tr>
                 </tbody>
             </table>
+            <div>
+                <button v-if="offset > 0" class="btn btn-primary" @click="prevPage()">prev</button>
+                <button class="btn btn-primary" @click="nextPage()">next</button>
+            </div>
         </div>
     </div>
 </div>
@@ -287,13 +295,30 @@ var app = new Vue({
                 notifyNew: false,
                 notifyAssignedUpdate: false,
                 notifyAllUpdate: false
-            }
+            },
+            offset: 0,
+            limit: 50
         }
     },
     created () { this.fetchTickets(); <?php if($ticket) {
         echo "this.fetchTicket(".$ticket['id'].")";
     } ?> },
     methods: {
+        nextPage() {
+            if(this.tickets.length == 0) {
+                return;
+            }
+            this.offset += this.limit;
+            this.fetchTickets();
+        },
+        prevPage() {
+            if(this.offset - this.limit < 0) {
+                this.offset = 0;
+            } else {
+                this.offset -= this.limit;
+            }
+            this.fetchTickets();
+        },
         getSettings () {
             this.settings = true;
             let headers = new Headers()
@@ -509,13 +534,18 @@ var app = new Vue({
             let cfg = {
                 headers: headers
             }
-            let params = '';
+            let params = new URLSearchParams({
+                offset: this.offset,
+                limit: this.limit
+            });
             if(this.my) {
                 params = new URLSearchParams({
-                    mine: 1
+                    mine: 1,
+                    offset: this.offset,
+                    limit: this.limit
                 })
             }
-            fetch('/helpdesk/<?php echo $id_space ?>/list/' + this.filter + '?' + params, cfg).
+            fetch('/helpdesk/<?php echo $id_space ?>/list/' + this.filter + '?' + params , cfg).
             then((response) => response.json()).
             then(data => {
                 this.tickets = data.tickets;
