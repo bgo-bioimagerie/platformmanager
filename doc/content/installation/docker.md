@@ -77,6 +77,12 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_GRAFANA_USER: admin
   * PFM_GRAFANA_PASSWORD: ${PFM_ADMIN_PASSWORD}
 * PFM_SENTRY_DSN: # optional, catch errors and send to an external Sentry server
+* PFM_HELPDESK_EMAIL: # optional, base email used for helpdesk module  support@pfm.org for example, users will write to support+space1@pfm.org
+  * PFM_HELPDESK_IMAP_SERVER: myimap.myprovider.fr  # hostname of imap provider
+  * PFM_HELPDESK_IMAP_PORT:  # port of imap
+  * PFM_HELPDESK_IMAP_USER:  # mail account name
+  * PFM_HELPDESK_IMAP_PASSWORD:  # mail account password
+  * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
 
 And .env file should define (according to variables used):
 

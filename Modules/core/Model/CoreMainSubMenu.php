@@ -105,7 +105,7 @@ class CoreMainSubMenu extends Model {
         } else {
             $sql = "INSERT INTO core_main_sub_menus (name, id_main_menu, display_order) VALUES (?,?,?)";
             $this->runRequest($sql, array($name, $id_main_menu, $display_order));
-            return $this->getDatabase()->lastInsertId();
+            return $this->getDatabase()->lastInsertId(); 
         }
     }
 

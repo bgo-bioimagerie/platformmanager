@@ -10,6 +10,9 @@ require_once 'Modules/core/Model/CoreStatus.php';
 
 class CoreUser extends Model {
 
+    public static $USER = 1;
+    public static $ADMIN = 5;
+
     public function __construct() {
         $this->tableName = "core_users";
         $this->setColumnsInfo("id", "int(11)", "");
@@ -291,9 +294,11 @@ class CoreUser extends Model {
         $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
         $pwd = Configuration::get('admin_password', 'admin');
+
         $bytes = random_bytes(10);
         // $apikey = bin2hex($bytes);
         $apikey = Configuration::get('admin_apikey', bin2hex($bytes));
+
         try {
             $this->getUserByLogin($admin_user);
             Configuration::getLogger()->info('Admin user already exists, skipping creation');

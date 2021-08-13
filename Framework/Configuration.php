@@ -260,6 +260,24 @@ class Configuration {
             }
         }
 
+        if(getenv('PFM_HELPDESK_EMAIL')) {
+            self::$parameters['helpdesk_email'] = getenv('PFM_HELPDESK_EMAIL');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_SERVER')) {
+            self::$parameters['helpdesk_imap_server'] = getenv('PFM_HELPDESK_IMAP_SERVER');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_PORT')) {
+            self::$parameters['helpdesk_imap_port'] = intval(getenv('PFM_HELPDESK_IMAP_PORT'));
+        }
+        if(getenv('PFM_HELPDESK_IMAP_USER')) {
+            self::$parameters['helpdesk_imap_user'] = getenv('PFM_HELPDESK_IMAP_USER');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_PASSWORD')) {
+            self::$parameters['helpdesk_imap_password'] = getenv('PFM_HELPDESK_IMAP_PASSWORD');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_TLS')) {  // empty string if not tls, else /ssl
+            self::$parameters['helpdesk_imap_tls'] = getenv('PFM_HELPDESK_IMAP_TLS');
+        }
         if(getenv('PFM_ALLOW_REGISTRATION')) {
             self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION'));
         }

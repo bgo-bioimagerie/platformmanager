@@ -23,8 +23,9 @@ class Email extends Model {
      * @param string $content
      * @param string $sentCopyToFrom
      * @param array  list of CoreFiles to attach to email
+     * @param bool   set toAdress as Bcc:, defaults to true, else just set in To:
      */
-    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false, $files = [] ) {
+    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true ) {
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -45,11 +46,19 @@ class Email extends Model {
         }
 
         if (is_array($toAdress)){
-            foreach($toAdress as $address){                
-                $mail->addBCC($address);
+            foreach($toAdress as $address){
+                if($bcc) {            
+                    $mail->addBCC($address);
+                } else {
+                    $mail->addAddress($address);
+                }
             }
         } else if ( $toAdress != "" ) {
-            $mail->addBCC($toAdress);
+            if($bcc) {
+                $mail->addBCC($toAdress);
+            } else {
+                $mail->addAddress($toAddress);
+            }
         }
 
         $fm = new CoreFiles();
@@ -75,6 +84,16 @@ class Email extends Model {
         }
     }
 
+    private function getFromEmail($spaceShortName) {
+        $from = Configuration::get('smtp_from');
+        $helpdeskEmail = Configuration::get('helpdesk_email');
+        if($helpdeskEmail) {
+            $helpdeskInfo = explode('@', $helpdeskEmail);
+            $from = $helpdeskInfo[0].'+'.$spaceShortName.'@'.$helpdeskInfo[1];
+        }
+        return $from;
+    }
+
     /**
      * 
      * Send an Email to all users or all managers within a space
@@ -85,11 +104,17 @@ class Email extends Model {
      * 
      * @return string result of call to function sendMail() telling if mail was sent or not
      */
-    public Function sendEmailToSpaceMembers($params, $lang = "") {
+    public function sendEmailToSpaceMembers($params, $lang = "") {
         $modelSpace = new CoreSpace();
         $spaceId = $params["id_space"];
-        $from = Configuration::get('smtp_from');
-        $spaceName = $modelSpace->getSpaceName($spaceId);
+        //$from = Configuration::get('smtp_from');
+        $space = $modelSpace->getSpace($spaceId);
+        $spaceName = $space['name'];
+        // $spaceName = $modelSpace->getSpaceName($spaceId);
+        // If helpdesk is activated
+        if($modelSpace->getSpaceMenusRole($spaceId, "helpdesk")) {
+            $from = $this->getFromEmail($space['shortname']);
+        }
         $subject = $params["subject"];
         $fromName = "Platform-Manager";
         $subject = CoreTranslator::MailSubjectPrefix($spaceName, $lang) . " " . $subject;
@@ -110,7 +135,7 @@ class Email extends Model {
                     $toAddress = $this->formatAddresses($params["to"]);
                 } catch (Exception $e) {
                     Configuration::getLogger()->error('something went wrong getting email addresses', ['error' => $e->getMessage()]);
-                    return;
+                    return "something went wrong!";
                 }
                 break;
                 
@@ -167,8 +192,16 @@ class Email extends Model {
     public function notifyUserByEmail($params, $origin, $lang = "") {
         $fromName = "Platform-Manager";
         $from = Configuration::get('smtp_from');
-        $spaceName = ($params["space_name"] !== null) ? $params["space_name"] : "";
-
+        $spaceName = isset($params["space_name"]) ? $params["space_name"] : "";
+        if(isset($params['id_space'])) {
+            $modelSpace = new CoreSpace();
+            if($modelSpace->getSpaceMenusRole($params['id_space'], "helpdesk")) {
+                $space = $modelSpace->getSpace($params['id_space']);
+                $from = $this->getFromEmail($space['shortname']);
+                $spaceName = $space['name'];
+            }
+        }
+        
         if ($origin === "add_new_user") {
             $fromName = "Platform-Manager";
             $toAdress = $params["email"];

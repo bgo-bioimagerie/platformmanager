@@ -274,8 +274,8 @@ class Events {
     public const ACTION_SPACE_USER_UNJOIN = 3;
     public const ACTION_SPACE_USER_ROLEUPDATE = 4;
     public const ACTION_USER_APIKEY = 5;
-
     public const ACTION_CAL_ENTRY_EDIT = 100;
+    public const HELPDESK_TICKET = 200;
 
     public const ACTION_INVOICE_EDIT = 300;
     public const ACTION_INVOICE_DELETE = 301;

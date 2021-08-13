@@ -733,7 +733,6 @@ class Form {
      * @return number
      */
     public function check() {
-
         $formID = $this->request->getParameterNoException("formid");
         if ($formID == $this->id) {
             return 1;
