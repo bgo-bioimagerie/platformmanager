@@ -35,4 +35,3 @@ Apache should also have specific pfm configuration:
 ## Install with docker
 
 You just need docker and docker-compose ;-)
-

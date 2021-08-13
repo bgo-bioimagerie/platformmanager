@@ -9,6 +9,8 @@ pygmentsUseClasses = true
 pygmentsCodeFences = true
 disablePathToLower = true
 
+geekdocOverwriteHTMLBase = true
+
 # Needed for mermaid shortcodes
 [markup]
   [markup.goldmark.renderer]

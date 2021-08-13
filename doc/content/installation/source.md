@@ -16,6 +16,5 @@ Code contains some .htaccess to limit access to specific directories. If not usi
 Apache as frontend, you need to restrict access yourself based on .htaccess files
 definition.
 
-In Config, define a *conf.ini* (see [Configuration](./configuration/)) with 
+In Config, define a *conf.ini* (see [Configuration](./configuration/)) with
 appropriate setup.
-
