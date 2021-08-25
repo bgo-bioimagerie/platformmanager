@@ -208,73 +208,82 @@ else if($size_bloc_resa == 3600){
 </div>	
 	
 <!-- hours reservation -->
-<div class="col-xs-11" id="colDiv">
+<?php
+	if (!empty($resourceInfo)) {
+?>
 
-	<div id="tcelltop" style="width:100%; height: <?php echo $agendaStyle["header_height"] ?>px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
-	<p class="text-center"><b><?php echo  $this->clean($resourceBase['name']) ?></b><br/><?php echo  $this->clean($resourceBase['description']) ?>
-        <?php
-            if($resourceBase['last_state'] != ""){
-                ?>
-                    <br/>
-                    <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourceBase['id'] ?>" style="background-color:<?php echo $resourceBase['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
-                <?php
-            }
-            ?>
-        </p>
+	<div class="col-xs-11" id="colDiv">
+
+		<div id="tcelltop" style="width:100%; height: <?php echo $agendaStyle["header_height"] ?>px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
+		<p class="text-center"><b><?php echo  $this->clean($resourcesBase['name']) ?></b><br/><?php echo  $this->clean($resourcesBase['description']) ?>
+			<?php
+				if($resourcesBase['last_state'] != ""){
+					?>
+						<br/>
+						<a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase['id'] ?>" style="background-color:<?php echo $resourcesBase['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+					<?php
+				}
+				?>
+			</p>
+		</div>
+
+		
+		<div class="row seven-cols">
+		
+		<?php 
+		for ($d = 0 ; $d < 7 ; $d++){
+			
+			// test if the day is available
+			$isDayAvailable = false;
+			if ($available_days[$d] == 1){
+				$isDayAvailable = true;
+			
+			
+				$idcss = "colDiv";
+				if ($d == 0){
+					$idcss = "colDivleft";
+				}
+				if ($d == 6){
+					$idcss = "colDivright";
+				}
+				
+				// day title
+				$temp = explode("-", $mondayDate);
+				$date_unix = mktime(0,0,0,$temp[1], $temp[2]+$d, $temp[0]);
+				$dayStream = date("l", $date_unix);
+				$monthStream = date("M", $date_unix);
+				$dayNumStream = date("d", $date_unix);
+				$sufixStream = date("S", $date_unix);
+				
+				$dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);
+				//$dayTitle = $dayStream . " " . $monthStream . ". " . $dayNumStream . $sufixStream;
+				
+				?>
+				
+				
+				<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="<?php echo  $idcss ?>">
+				
+				<div id="tcelltop" style="height: 50px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
+				<p class="text-center"><b> <?php echo  $dayTitle ?></b> </p>
+				</div>
+				
+				<?php 
+				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle);
+				?>
+				
+				</div>
+					<?php
+			} 
+		}
+		?>
+		</div>
+		
 	</div>
 
-	
-	<div class="row seven-cols">
-	
-	<?php 
-	for ($d = 0 ; $d < 7 ; $d++){
-		
-		// test if the day is available
-		$isDayAvailable = false;
-		if ($available_days[$d] == 1){
-			$isDayAvailable = true;
-		
-		
-			$idcss = "colDiv";
-			if ($d == 0){
-				$idcss = "colDivleft";
-			}
-			if ($d == 6){
-				$idcss = "colDivright";
-			}
-			
-			// day title
-			$temp = explode("-", $mondayDate);
-			$date_unix = mktime(0,0,0,$temp[1], $temp[2]+$d, $temp[0]);
-			$dayStream = date("l", $date_unix);
-			$monthStream = date("M", $date_unix);
-			$dayNumStream = date("d", $date_unix);
-			$sufixStream = date("S", $date_unix);
-			
-			$dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);
-			//$dayTitle = $dayStream . " " . $monthStream . ". " . $dayNumStream . $sufixStream;
-			
-			?>
-			
-			
-			<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="<?php echo  $idcss ?>">
-			
-			<div id="tcelltop" style="height: 50px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
-			<p class="text-center"><b> <?php echo  $dayTitle ?></b> </p>
-			</div>
-			
-			<?php 
-			bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle);
-			?>
-			
-			</div>
-				<?php
-		} 
+<?php	
 	}
-	?>
-	</div>
-	
-</div>
+?>
+
 
 <div class="col-xs-12">
 
