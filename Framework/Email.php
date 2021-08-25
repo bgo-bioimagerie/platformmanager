@@ -23,9 +23,9 @@ class Email extends Model {
      * @param string $content
      * @param string $sentCopyToFrom
      * @param array  list of CoreFiles to attach to email
-     * @param bool   set toAdress as Bcc:, defaults to true, else just set in To:
+     * @param bool   set toAddress as Bcc:, defaults to true, else just set in To:
      */
-    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true ) {
+    public function sendEmail($from, $fromName, $toAddress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true ) {        
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -45,17 +45,17 @@ class Email extends Model {
             $mail->AddCC($from);
         }
 
-        if (is_array($toAdress)){
-            foreach($toAdress as $address){
+        if (is_array($toAddress)){
+            foreach($toAddress as $address){
                 if($bcc) {            
                     $mail->addBCC($address);
                 } else {
                     $mail->addAddress($address);
                 }
             }
-        } else if ( $toAdress != "" ) {
+        } else if ( $toAddress != "" ) {
             if($bcc) {
-                $mail->addBCC($toAdress);
+                $mail->addBCC($toAddress);
             } else {
                 $mail->addAddress($toAddress);
             }
@@ -204,7 +204,7 @@ class Email extends Model {
         
         if ($origin === "add_new_user") {
             $fromName = "Platform-Manager";
-            $toAdress = $params["email"];
+            $toAddress = $params["email"];
             $subject = CoreTranslator::AccountCreatedSubject($spaceName, $lang);
             $content = CoreTranslator::AccountCreatedEmail($lang, $params["login"], $params["pwd"]);
         } else if ($origin === "accept_pending_user" || $origin === "reject_pending_user") {
@@ -214,10 +214,10 @@ class Email extends Model {
             $userFullName = $pendingUser["firstname"] . " " . $pendingUser["name"];
             $subject = CoreTranslator::JoinResponseSubject($spaceName, $lang);
             $content = CoreTranslator::JoinResponseEmail($userFullName, $spaceName, $accepted, $lang);
-            $toAdress = $pendingUser["email"];
+            $toAddress = $pendingUser["email"];
         } else if ($origin == "add_new_user_waiting") {
             $fromName = "Platform-Manager";
-            $toAdress = $params["email"];
+            $toAddress = $params["email"];
             $subject = CoreTranslator::AccountPendingCreationSubject($lang);
             $content = CoreTranslator::AccountPendingCreationEmail($lang, $params["jwt"], $params["url"]);            
         } else {
@@ -226,7 +226,7 @@ class Email extends Model {
                 ["message" => "origin parameter is not set properly", "origin" => $origin]
             );
         }
-        $this->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
+        $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
     }
 
     /**
