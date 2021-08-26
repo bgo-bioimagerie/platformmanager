@@ -61,7 +61,7 @@ class ServicespricesController extends CoresecureController {
         for($i = 0 ; $i < count($services) ; $i++){
             $data = array();
             for($b = 0 ; $b < count($belongings) ; $b++){
-                $data[$belongings[$b]["id"]] = $modelPrice->getPrice($services[$i]["id"], $belongings[$b]["id"]);
+                $data[$belongings[$b]["id"]] = $modelPrice->getPrice($id_space ,$services[$i]["id"], $belongings[$b]["id"]);
                 $data['service'] = $services[$i]['name'];
                 $data['id_service'] = $services[$i]['id'];
             }
@@ -96,7 +96,7 @@ class ServicespricesController extends CoresecureController {
         
         foreach($belongings as $belonging){
             $price = $this->request->getParameter('bel_' . $belonging['id']);
-            $modelPrice->setPrice($id_service, $belonging['id'], $price);
+            $modelPrice->setPrice($id_space ,$id_service, $belonging['id'], $price);
         }
         
         $this->redirect('servicesprices/' . $id_space);

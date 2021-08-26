@@ -89,14 +89,18 @@ if (!$headless) {
                             <p style="color:#a1a1a1; font-size:12px;">
                                 <?php echo $item["description"] ?>
                             </p>
+                            <div style="position: absolute; bottom: 0px"><small>
+                            <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
+                            </small></div>
 
                             <!-- JOIN BUTTON -->
                             <?php
                                 if (!in_array($item["id"], $spacesUserIsAdminOf)) {
                                     if (!in_array($item["id"], $userPendingSpaces)) {
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
+                                        if(!$isMemberOfSpace) {
                             ?>
-                                        <div style="position: absolute; bottom: 10px; right: 10px">
+                                        <div style="position: absolute; bottom: 20px; right: 10px">
                                             <a href="<?php echo "coretilesselfjoinspace/". $item["id"] ?>">
                                                 <button type="button" class="btn btn-md btn-success">
                                                     <?php echo CoreTranslator::RequestJoin($isMemberOfSpace, $lang) ?>
@@ -104,9 +108,10 @@ if (!$headless) {
                                             </a>
                                         </div>
                                     <?php
-                                        } else {
+                                        }
+                                    } else {
                                     ?>
-                                        <div style="position: absolute; bottom: 10px; right: 10px">
+                                        <div style="position: absolute; bottom: 20px; right: 10px">
                                             <button type="button" class="btn btn-md btn-info" disabled>
                                                 <?php echo CoreTranslator::JoinRequested($lang) ?>
                                             </button>

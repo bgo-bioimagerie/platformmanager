@@ -44,7 +44,7 @@ class KitController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $kits = $this->model->get($id);
+        $kits = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "kitseditform");
         $form->setTitle("Modifier kits");
@@ -73,7 +73,7 @@ class KitController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("kit/" . $id_space);
     }
 

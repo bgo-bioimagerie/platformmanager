@@ -44,7 +44,7 @@ class BookingnightweController extends CoresecureController {
 
         // prepare view
         for ($i = 0; $i < count($pricingArray); $i++) {
-            $pricingArray[$i]["name"] = $modelBelonging->getName($pricingArray[$i]["id_belonging"]);
+            $pricingArray[$i]["name"] = $modelBelonging->getName($id_space, $pricingArray[$i]["id_belonging"]);
             if ($pricingArray[$i]["tarif_unique"] == 1) {
                 $pricingArray[$i]["tarif_unique"] = CoreTranslator::yes($lang);
             } else {
@@ -90,7 +90,7 @@ class BookingnightweController extends CoresecureController {
         $pricing = $modelPricing->getPricing($id, $id_space);
 
         $modelBelonging = new ClPricing();
-        $pricing["name"] = $modelBelonging->getName($id);
+        $pricing["name"] = $modelBelonging->getName($id_space, $id);
 
         $this->render(array(
             'lang' => $lang,

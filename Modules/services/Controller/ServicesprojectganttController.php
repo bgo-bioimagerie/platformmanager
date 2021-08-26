@@ -81,7 +81,7 @@ class ServicesprojectganttController extends CoresecureController {
         $modelBelonging = new ClPricing();
         foreach ($projects as $proj) {
 
-            $belInfo = $modelClient->get($proj["id_resp"]);
+            $belInfo = $modelClient->get($id_space, $proj["id_resp"]);
             
             $bkColor = 'col' . $belInfo["id"];
             
@@ -91,20 +91,20 @@ class ServicesprojectganttController extends CoresecureController {
             $first = false;
             $projectsjson .= "{";
 
-            $visa = $modelVisa->get($proj["in_charge"]);
+            $visa = $modelVisa->get($id_space ,$proj["in_charge"]);
             $projectsjson .= "name: \"" . $modelUser->getUserInitiales($visa["id_user"]) . "\",";
             $projectsjson .= "desc: \"" . $proj["name"] . "\",";
             $projectsjson .= "values: [{";
 
             $startTime = time();
-            if ($proj["date_open"] != "0000-00-00") {
+            if ($proj["date_open"] && $proj["date_open"] != "0000-00-00") {
                 $startTime = strtotime($proj["date_open"]);
             }
 
             $projectsjson .= "from: \"/Date(" . 1000 * $startTime . ")/\",";
 
             $dateEnd = time();
-            if ($proj["time_limit"] != "0000-00-00" && $proj["time_limit"] != "") {
+            if ($proj["time_limit"] && $proj["time_limit"] != "0000-00-00" && $proj["time_limit"] != "") {
                 $dateEnd = strtotime($proj["time_limit"]);
             }
 
@@ -114,7 +114,7 @@ class ServicesprojectganttController extends CoresecureController {
             $projectsjson .= "}";
 
             $closeTime = 0;
-            if ($proj["date_close"] != "0000-00-00" && $proj["date_close"] != "") {
+            if ($proj["date_close"] && $proj["date_close"] != "0000-00-00" && $proj["date_close"] != "") {
                 $closeTime = strtotime($proj["date_close"]);
             }
             if ($closeTime == 0) {

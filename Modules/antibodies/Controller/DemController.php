@@ -45,7 +45,7 @@ class DemController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $dem = $this->demModel->get($id);
+        $dem = $this->demModel->get($id_space, $id);
         
         $form = new Form($this->request, "demeditform");
         $form->setTitle("Modifier Dem");
@@ -74,7 +74,7 @@ class DemController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->demModel->delete($id);
+        $this->demModel->delete($id_space, $id);
 
         $this->redirect("dem/" . $id_space);
     }

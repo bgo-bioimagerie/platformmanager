@@ -55,7 +55,6 @@ class ServicesprojectsController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space, $year = "", $status = "") {
-
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -77,7 +76,6 @@ class ServicesprojectsController extends CoresecureController {
         $years = array();
         $yearsUrl = "";
 
-
         if ($status == "all") {
             $title = ServicesTranslator::All_projects($lang);
             $modelCoreConfig = new CoreConfig();
@@ -95,21 +93,21 @@ class ServicesprojectsController extends CoresecureController {
             $title = ServicesTranslator::Opened_projects($lang);
             $entriesArray = $modelEntry->openedEntries($id_space, $sortentry);
         } else if ($status == "closed") {
-
             $modelCoreConfig = new CoreConfig();
             $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
             $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodbegin, $projectperiodend);
-
             $yearsUrl = "servicesprojectsclosed";
+            
             if ($year == "") {
-                if (count($years) < 1) {
-                    $year = time('Y');
+                if (empty($years)) {
+                    $year = date('Y');
                 } else {
                     $year = $years[count($years) - 1];
                 }
             }
+
             $dates = $this->getProjectPeriod($id_space, $year);
             $title = ServicesTranslator::Closed_projects($lang);
             $entriesArray = $modelEntry->closedEntries($id_space, $dates['yearBegin'], $dates['yearEnd'], $sortentry);
@@ -117,7 +115,6 @@ class ServicesprojectsController extends CoresecureController {
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
-
             $projectperiodbeginArray = explode("-", $projectperiodbegin);
             $projectperiodendArray = explode("-", $projectperiodend);
             if ($projectperiodbeginArray[1] <= date("m", time())) {
@@ -131,6 +128,7 @@ class ServicesprojectsController extends CoresecureController {
             if ($month < 10) {
                 $month = "0" . $month;
             }
+            
             $monthp = $projectperiodendArray[1];
             if ($monthp < 10) {
                 $monthp = "0" . $monthp;
@@ -152,10 +150,6 @@ class ServicesprojectsController extends CoresecureController {
             $entriesArray = $modelEntry->allPeriodProjects($id_space, $periodStart, $periodEnd);
         }
 
-        //echo "year = " . $year . "<br/>"; 
-        //echo "years = ";
-        //print_r($years);
-
         $table = new TableView();
         $table->setTitle($title, 3);
         $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color"));
@@ -174,37 +168,28 @@ class ServicesprojectsController extends CoresecureController {
             "close_icon" => array("title" => "", "type" => "glyphicon", "color" => "red"),
         );
 
-        //$modelUser = new CoreUser();
         $modelPricing = new ClPricing();
         $modelClient = new ClClient();
 
         $modelConfig = new CoreConfig();
-        $warning = $modelConfig->getParamSpace("SeProjectDelayWarning", $id_space);
+        $warning = intval($modelConfig->getParamSpace("SeProjectDelayWarning", $id_space));
 
         for ($i = 0; $i < count($entriesArray); $i++) {
-
             $entriesArray[$i]["close_icon"] = "";
+            if (
+                (
+                    $entriesArray[$i]["date_close"] == null || $entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00"
+                ) && (
+                    !($entriesArray[$i]["time_limit"] == null || $entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00")
+                )
+            ) {
+                $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
+                $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
 
-            //echo "date clode = " . $entriesArray[$i]["date_close"] . "<br/>";
-            if ($entriesArray[$i]["date_close"] == "" || $entriesArray[$i]["date_close"] == "0000-00-00") {
-
-                if ($entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00") {
-                    
-                } else {
-
-                    $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
-                    $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
-
-                    $today = time();
-
-                    //echo "limite time = " . $entriesArray[$i]["time_limit"] . "<br/>";
-
-                    $delay = $limitD - $today;
-                    //echo "delay = " . $delay . "<br/>";
-                    //$warning = 30;
-                    if ($delay < 0 || $delay < $warning * 24 * 3600) {
-                        $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
-                    }
+                $today = time();
+                $delay = $limitD - $today;
+                if ($delay < 0 || $delay < $warning * 24 * 3600) {
+                    $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
                 }
             }
 
@@ -213,25 +198,23 @@ class ServicesprojectsController extends CoresecureController {
             $entriesArray[$i]["time_limit"] = CoreTranslator::dateFromEn($entriesArray[$i]["time_limit"], $lang);
 
             // get the pricing color
-            $clientAccounts = $modelClient->get($entriesArray[$i]["id_resp"]);
-            //print_r($clientAccounts);
-            
+            $clientAccounts = $modelClient->get($id_space ,$entriesArray[$i]["id_resp"]);
             $entriesArray[$i]["resp_name"] = $clientAccounts["name"];
-            $pricingInfo = $modelPricing->get($clientAccounts["pricing"]);
+            $pricingInfo = $modelPricing->get($id_space ,$clientAccounts["pricing"]);
             
             $entriesArray[$i]["color"] = $pricingInfo["color"];
 
             $entriesArray[$i]["time_color"] = "#ffffff";
             if ($entriesArray[$i]["time_limit"] != "") {
 
-                if (strval($entriesArray[$i]["time_limit"]) != "0000-00-00") {
+                if ($entriesArray[$i]["time_limit"] && strval($entriesArray[$i]["time_limit"]) != "0000-00-00") {
                     $entriesArray[$i]["time_color"] = "#FFCC00";
                 }
             }
 
 
             $entriesArray[$i]["closed_color"] = "#ffffff";
-            if ($entriesArray[$i]["date_close"] != "0000-00-00") {
+            if ($entriesArray[$i]["date_close"] && $entriesArray[$i]["date_close"] != "0000-00-00") {
                 $entriesArray[$i]["closed_color"] = "#99CC00";
             }
         }
@@ -273,7 +256,7 @@ class ServicesprojectsController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $serviceModel = new SeProject();
-        $serviceModel->delete($id);
+        $serviceModel->delete($id_space ,$id);
         $this->redirect("services/" . $id_space);
     }
 
@@ -285,7 +268,7 @@ class ServicesprojectsController extends CoresecureController {
         $visas = $modelVisa->getForList($id_space);
 
         $modelProject = new SeProject();
-        $project = $modelProject->getEntry($id);
+        $project = $modelProject->getEntry($id_space ,$id);
 
 
 
@@ -301,12 +284,14 @@ class ServicesprojectsController extends CoresecureController {
         if ($form->check()) {
             
             $modelProject->closeProject(
+                    $id_space,
                     $id,
                     CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang),
                     $this->request->getParameter("closed_by")
             );
             
             $modelProject->sampleReturn(
+                    $id_space,
                     $id,
                     $this->request->getParameter("samplereturn"),
                     CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang)
@@ -333,7 +318,7 @@ class ServicesprojectsController extends CoresecureController {
         $cabinets = $modelShelf->getAllForProjectSelect($id_space);
         
         $modelProject = new SeProject();
-        $project = $modelProject->getEntry($id);
+        $project = $modelProject->getEntry($id_space, $id);
 
         $form = new Form($this->request, "projectreturnform");
         
@@ -346,6 +331,7 @@ class ServicesprojectsController extends CoresecureController {
 
         if ($form->check()) {
             $modelProject->setSampleStock(
+                    $id_space,
                     $id, 
                     1,
                     $this->request->getParameter("id_cabinet"),
@@ -373,11 +359,11 @@ class ServicesprojectsController extends CoresecureController {
         //$form->setTitle(ServicesTranslator::Edit_projects($lang), 3);
 
         $modelProject = new SeProject();
-        $projectName = $modelProject->getName($id);
+        $projectName = $modelProject->getName($id_space, $id);
 
         if ($id > 0) {
-            $value = $modelProject->getEntry($id);
-            $items = $modelProject->getProjectServices($id);
+            $value = $modelProject->getEntry($id_space, $id);
+            $items = $modelProject->getProjectServices($id_space, $id);
         } else {
             $value = $modelProject->defaultEntryValues();
             $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
@@ -385,7 +371,7 @@ class ServicesprojectsController extends CoresecureController {
 
         $modelUser = new CoreUser();
         $modelClients = new ClClient();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
         $resps = $modelClients->getForList($id_space);
 
         $modelVisa = new SeVisa();
@@ -418,8 +404,8 @@ class ServicesprojectsController extends CoresecureController {
 
             $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), $value["date_close"], $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
 
-            $modelProject->setOrigin($id, $this->request->getParameter("id_origin"));
-            $modelProject->setInCharge($id, $this->request->getParameter("in_charge"));
+            $modelProject->setOrigin($id_space, $id, $this->request->getParameter("id_origin"));
+            $modelProject->setInCharge($id_space ,$id, $this->request->getParameter("in_charge"));
 
 
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
@@ -439,7 +425,7 @@ class ServicesprojectsController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelProject = new SeProject();
-        $projectName = $modelProject->getName($id);
+        $projectName = $modelProject->getName($id_space ,$id);
 
         $table = new TableView();
         $table->addLineEditButton("editentry", "id", true);
@@ -454,11 +440,11 @@ class ServicesprojectsController extends CoresecureController {
 
         $modelServices = new SeService();
         $modelInvoice = new InInvoice();
-        $items = $modelProject->getProjectServicesDefault($id);
+        $items = $modelProject->getProjectServicesDefault($id_space, $id);
         for ($i = 0; $i < count($items); $i++) {
-            $items[$i]["description"] = $items[$i]["quantity"] . " " . $modelServices->getItemName($items[$i]["id_service"]);
+            $items[$i]["description"] = $items[$i]["quantity"] . " " . $modelServices->getItemName($id_space, $items[$i]["id_service"]);
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
-            $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($items[$i]["id_invoice"]);
+            $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($id_space, $items[$i]["id_invoice"]);
         }
         $tableHtml = $table->view($items, $headersArray);
 
@@ -504,7 +490,7 @@ class ServicesprojectsController extends CoresecureController {
         $comment = $this->request->getParameter("formservicecomment");
 
         $modelProject = new SeProject();
-        $modelProject->setEntry($id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
+        $modelProject->setEntry($id_space ,$id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
 
         $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
     }
@@ -513,7 +499,7 @@ class ServicesprojectsController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $modelProject = new SeProject();
-        $modelProject->deleteEntry($id);
+        $modelProject->deleteEntry($id_space, $id);
 
         $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
     }
@@ -528,8 +514,8 @@ class ServicesprojectsController extends CoresecureController {
         $modelProject = new SeProject();
 
         if ($id > 0) {
-            $value = $modelProject->getEntry($id);
-            $items = $modelProject->getProjectServices($id);
+            $value = $modelProject->getEntry($id_space , $id);
+            $items = $modelProject->getProjectServices($id_space, $id);
         } else {
             $value = $modelProject->defaultEntryValues();
             $items = array("dates" => array(), "services" => array(), "quantities" => array(),
@@ -538,7 +524,7 @@ class ServicesprojectsController extends CoresecureController {
 
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
         $resps = $modelClient->getForList($id_space);
 
         $modelVisa = new SeVisa();
@@ -594,8 +580,8 @@ class ServicesprojectsController extends CoresecureController {
         if ($form->check()) {
 
             $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
-            $modelProject->setOrigin($id_project, $this->request->getParameter("id_origin"));
-            $modelProject->setInCharge($id_project, $this->request->getParameter("in_charge"));
+            $modelProject->setOrigin($id_space ,$id_project, $this->request->getParameter("id_origin"));
+            $modelProject->setInCharge($id_space, $id_project, $this->request->getParameter("in_charge"));
 
             $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
             return;
@@ -607,12 +593,12 @@ class ServicesprojectsController extends CoresecureController {
     public function exportAction($id_space, $id) {
         // get project entries
         $modelProject = new SeProject();
-        $projectEntries = $modelProject->getProjectServicesBase($id);
+        $projectEntries = $modelProject->getProjectServicesBase($id_space ,$id);
 
         // calculate total sum and price HT
         $modelClient = new ClClient();
-        $id_resp = $modelProject->getResp($id);
-        $LABpricingid = $modelClient->getPricingID($id_resp);
+        $id_resp = $modelProject->getResp($id_space, $id);
+        $LABpricingid = $modelClient->getPricingID($id_space, $id_resp);
 
         $itemPricing = new SePrice();
 
@@ -625,15 +611,15 @@ class ServicesprojectsController extends CoresecureController {
 
             $content .= $entry["date"] . ";";
             $content .= str_replace(";", ",", $entry["comment"]) . ";";
-            $content .= $modelItem->getItemName($entry["id_service"]) . ";";
-            if ($modelItem->getItemType($entry["id_service"]) == 4) {
+            $content .= $modelItem->getItemName($id_space, $entry["id_service"]) . ";";
+            if ($modelItem->getItemType($id_space, $entry["id_service"]) == 4) {
 
                 $content .= 1 . ";";
                 $unitPrice = $entry["quantity"];
                 $entry["quantity"] = 1;
             } else {
                 $content .= $entry["quantity"] . ";";
-                $unitPrice = $itemPricing->getPrice($entry["id_service"], $LABpricingid);
+                $unitPrice = $itemPricing->getPrice($id_space, $entry["id_service"], $LABpricingid);
                 //echo "price for service " . $entry["id_service"] . " and lab " . $LABpricingid . " = " .$unitPrice. " <br/>";
             }
             $content .= $unitPrice . ";";

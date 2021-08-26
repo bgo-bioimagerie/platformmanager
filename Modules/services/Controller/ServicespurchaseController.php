@@ -66,9 +66,9 @@ class ServicespurchaseController extends CoresecureController {
             $value = array("comment" => "", "date" => CoreTranslator::dateFromEn(date("Y-m-d", time()), $lang));
             $items = array("services" => array(), "quantities" => array());
         } else {
-            $value = $this->serviceModel->getItem($id);
+            $value = $this->serviceModel->getItem($id_space, $id);
             $value["date"] = CoreTranslator::dateFromEn($value["date"], $lang);
-            $items = $modelItem->getForPurchase($id);
+            $items = $modelItem->getForPurchase($id_space, $id);
         }
         
         $modelServices = new SeService();
@@ -101,11 +101,11 @@ class ServicespurchaseController extends CoresecureController {
                    $qOld = 0; 
                 }
                 else{
-                    $qOld = $modelItem->getItemQuantity($servicesIds[$i], $id);
+                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id);
                 }
                 $qDelta = $servicesQuantities[$i] - $qOld[0];
-                $modelServices->editquantity($servicesIds[$i], $qDelta, "add");
-                $modelItem->set($id_purchase, $servicesIds[$i], $servicesQuantities[$i], "");
+                $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "add");
+                $modelItem->set($id_space, $id_purchase, $servicesIds[$i], $servicesQuantities[$i], "");
             }
 
             $this->redirect("servicespurchase/" . $id_space);
@@ -118,7 +118,7 @@ class ServicespurchaseController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->serviceModel->delete($id);
+        $this->serviceModel->delete($id_space, $id);
         $this->redirect("services/" . $id_space);
     }
 

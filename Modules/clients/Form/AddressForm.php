@@ -1,7 +1,8 @@
 <?php
 
 require_once 'Framework/FormGenerator.php';
-require_once 'Modules/breeding/Model/BreedingTranslator.php';
+// require_once 'Modules/breeding/Model/BreedingTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/clients/Model/ClAddress.php';
 
@@ -28,10 +29,7 @@ class AddressForm extends FormGenerator{
         // Form
         $this->form = new Form($this->request, $this->id);
         $this->form->setTitle($this->title, 3);
-        
         $this->form->addHidden("id", $this->getData("id"));
-       
-        //echo "institution = " . $this->getData("institution") . "<br/>";
         
         $this->form->addText("institution", ClientsTranslator::Institution($this->lang), true, $this->getData("institution"));
         $this->form->addText("building_floor", ClientsTranslator::BuildingFloor($this->lang), true, $this->getData("building_floor"));
@@ -47,8 +45,9 @@ class AddressForm extends FormGenerator{
    
     public function save(){
         $model = new ClAddress();
-        $id = $model->set(
-                $this->request->getParameter("id"), 
+        return $model->set(
+                $this->id_space,
+                $this->request->getParameter("id"),
                 $this->request->getParameter("institution"),
                 $this->request->getParameter("building_floor"),
                 $this->request->getParameter("service"),
@@ -56,9 +55,7 @@ class AddressForm extends FormGenerator{
                 $this->request->getParameter("zip_code"), 
                 $this->request->getParameter("city"), 
                 $this->request->getParameter("country")
-                );
-           
-        return $id;
+            );  
     }
     
 }

@@ -6,6 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkCalQuantities.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
  * 
@@ -43,8 +44,10 @@ class BookingquantitiesController extends CoresecureController {
         
         $modelSups = new BkCalQuantities();
         $sups = $modelSups->getForSpace($id_space, "id_resource");
-        $supsIds = array(); $supsIdsRes = array();
-        $supsNames = array(); $supsMandatories = array();
+        $supsIds = array();
+        $supsIdsRes = array();
+        $supsNames = array();
+        $supsMandatories = array();
         foreach($sups as $p){
             $supsIds[] = $p["id_quantity"];
             $supsIdsRes[] = $p["id_resource"];
@@ -84,11 +87,37 @@ class BookingquantitiesController extends CoresecureController {
                 $_SESSION["message"] = ["content" => BookingTranslator::maxInvoicingUnits($lang), "type" => "alert-danger", "dismissible" => true];
             } else {
                 $count = 0;
-            
-                // get the last package id
-                $lastID = 0;
-                for ($p = 0 ; $p < count($supID) ; $p++) {
-                    if ($supName[$p] != "" && $supID[$p] > $lastID ) {
+            // $count = 0;
+
+
+            $packs = [];
+            for ($p = 0; $p < count($supID); $p++) {
+                if ($supName[$p] != "" && $supID[$p]) {
+                   $packs[$supName[$p]] = $supID[$p];
+                }
+            }
+            for ($p = 0; $p < count($supID); $p++) {
+                if (!$supID[$p]) {
+                    // If package id not set, use from known packages
+                    if(isset($packs[$supName[$p]])) {
+                        $supID[$p] = $packs[$supName[$p]];
+                    } else {
+                        // Or create a new package
+                       $cvm = new CoreVirtual();
+                       $vid = $cvm->new('quantities');
+                       $supID[$p] = $vid;
+                       $packs[$supName[$p]] = $vid;
+                   }
+                }
+                $modelSups->setCalQuantity($id_space,  $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
+            }
+
+            /* bug to get last id (could conflict)
+            // get the last package id
+            $lastID = 0;
+            for( $p = 0 ; $p < count($supID) ; $p++){
+                if ($supName[$p] != "" ){
+                    if ($supID[$p] > $lastID){
                         $lastID = $supID[$p];
                     }
                 }
@@ -138,10 +167,31 @@ class BookingquantitiesController extends CoresecureController {
                         $modelSups->setCalQuantity($curentID, $supResource[$p], $supName[$p], $supMandatory[$p], $supIsInvoicingUnit[$p]);
                         $count++;
                     }
+                    if(! in_array($supResource[$p], $choicesRid)) {
+                        continue;
+                    }
+                    //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
+                    $modelSups->setCalQuantity($id_space, $curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
+                    $count++;
                 }
                 $modelSups->removeUnlistedQuantities($supID);
                 $_SESSION["message"] = ["content" => BookingTranslator::Quantities_saved($lang), "type" => "alert-success", "dismissible" => true];
             }
+            */
+            
+            //echo "sups ids = ". print_r($supID) . "<br/>";
+            //echo "sup Resource ids = ". print_r($supResource) . "<br/>";
+            
+            $sups = $modelSups->getForSpace($id_space, "id_resource");
+            // If package in db is not listed in provided package list, delete them
+            foreach ($sups as $s) {
+                if($s['id_quantity'] && !in_array($s['id_quantity'], $supID)) {
+                    $modelSups->delete($id_space, $s['id']);
+                }
+            } 
+
+            // $modelSups->removeUnlistedQuantities($supID);
+            $_SESSION["message"] = BookingTranslator::Quantities_saved($lang);
             $this->redirect("bookingquantities/".$id_space);
             return;
         }
@@ -154,3 +204,4 @@ class BookingquantitiesController extends CoresecureController {
         ));
     }
 }
+

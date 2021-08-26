@@ -52,10 +52,12 @@ class BookingdisplayController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelCSS = new BkBookingTableCSS();
-        $data = $modelCSS->getAreaCss($id);
+        $data = $modelCSS->getAreaCss($id_space, $id);
 
         $modelArea = new ReArea();
-        $name = $modelArea->getName($id);
+        // $name = $modelArea->getName($id);
+        $area = $modelArea->get($id_space, $id);
+        $name = $area['name'];
 
         $form = new Form($this->request, "bookingschedulingedit");
         $form->setTitle(BookingTranslator::Display($lang) . ": " . $name, 3);

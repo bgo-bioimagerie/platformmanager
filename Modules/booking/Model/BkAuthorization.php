@@ -22,8 +22,8 @@ class BkAuthorization extends Model {
         $this->setColumnsInfo("user_id", "int(11)", 0);
         $this->setColumnsInfo("resource_id", "int(11)", 0);
         $this->setColumnsInfo("visa_id", "int(11)", 0);
-        $this->setColumnsInfo("date", "DATE", "0000-00-00");
-        $this->setColumnsInfo("date_desactivation", "DATE", "0000-00-00");
+        $this->setColumnsInfo("date", "date", "");
+        $this->setColumnsInfo("date_desactivation", "date", "");
         $this->setColumnsInfo("is_active", "int(1)", 1);
 
         $this->primaryKey = "id";
@@ -37,19 +37,28 @@ class BkAuthorization extends Model {
         }
     }
 
-    public function getForResourceAndUser($id_resource_category, $id_user){
-        $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND user_id=?";
-        return $this->runRequest($sql, array($id_resource_category, $id_user))->fetchAll();
+    public function getForResourceAndUser($id_space, $id_resource_category, $id_user){
+        $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND user_id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_resource_category, $id_user, $id_space))->fetchAll();
     }
 
-    public function add($user_id, $resource_id, $visa_id, $date){
-        $sql = "INSERT INTO bk_authorization (user_id, resource_id, visa_id, date, is_active) VALUES (?,?,?,?,?)";
-        $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, 1));
+    public function add($id_space, $user_id, $resource_id, $visa_id, $date){
+        if($date == "") {
+            $date = null;
+        }
+        $sql = "INSERT INTO bk_authorization (user_id, resource_id, visa_id, date, is_active, id_space) VALUES (?,?,?,?,?,?)";
+        $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, 1, $id_space));
     }
 
-    public function set($id, $user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active){
-        $sql = "UPDATE bk_authorization SET user_id=?, resource_id=?, visa_id=?, date=?, date_desactivation=?, is_active=? WHERE id=?";
-        $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active, $id));
+    public function set($id_space, $id, $user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active){
+        if($date == "") {
+            $date = null;
+        }
+        if($date_desactivation == "") {
+            $date = null;
+        }
+        $sql = "UPDATE bk_authorization SET user_id=?, resource_id=?, visa_id=?, date=?, date_desactivation=?, is_active=? WHERE id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($user_id, $resource_id, $visa_id, $date, $date_desactivation, $is_active, $id, $id_space));
     }
 
     /**
@@ -57,11 +66,12 @@ class BkAuthorization extends Model {
      * @param number $id ID of the authorization
      * @param number $active Active status
      */
-    public function setActive($id, $active) {
-        $sql = "update bk_authorization set is_active=? where id=?";
+    public function setActive($id_space, $id, $active) {
+        $sql = "update bk_authorization set is_active=? where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array(
             $active,
-            $id
+            $id,
+            $id_space
         ));
     }
 
@@ -69,10 +79,11 @@ class BkAuthorization extends Model {
      * Set an authorization unactive
      * @param number $id ID of the authorization
      */
-    public function unactivate($id) {
-        $sql = "update bk_authorization set is_active=0 where id=?";
+    public function unactivate($id_space, $id) {
+        $sql = "update bk_authorization set is_active=0 where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array(
-            $id
+            $id,
+            $id_space
         ));
     }
 
@@ -80,16 +91,17 @@ class BkAuthorization extends Model {
      * Set an authorization active
      * @param number $id ID of the authorization
      */
-    public function activate($id) {
-        $sql = "update bk_authorization set is_active=1 where id=?";
+    public function activate($id_space, $id) {
+        $sql = "update bk_authorization set is_active=1 where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array(
-            $id
+            $id,
+            $id_space
         ));
     }
 
-    public function get($id) {
-        $sql = "SELECT * from bk_authorization where id=?";
-        $auth = $this->runRequest($sql, array($id));
+    public function get($id_space, $id) {
+        $sql = "SELECT * from bk_authorization where id=? AND id_space=? AND deleted=0";
+        $auth = $this->runRequest($sql, array($id, $id_space));
         return $auth->fetch();
     }
 
@@ -99,20 +111,15 @@ class BkAuthorization extends Model {
      * @param unknown $id_user ID of the user
      * @return boolean
      */
-    public function hasAuthorization($id_resource, $id_user) {
-        $sql = "SELECT id from bk_authorization where user_id=? AND resource_id=? AND is_active=1";
-        $data = $this->runRequest($sql, array($id_user, $id_resource));
-        if ($data->rowCount() >= 1){
-            return true;  // get the first line of the result
-        }
-        else{
-            return false;
-        }
+    public function hasAuthorization($id_space, $id_resource, $id_user) {
+        $sql = "SELECT id from bk_authorization where user_id=? AND resource_id=? AND is_active=1 AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id_user, $id_resource, $id_space));
+        return ($data->rowCount() >= 1);
     }
 
-    public function getLastActiveAuthorization($id_resource, $id_user){
-        $sql = "SELECT * from bk_authorization where user_id=? AND resource_id=? AND is_active=1 ORDER BY date DESC;";
-        $data = $this->runRequest($sql, array($id_user, $id_resource));
+    public function getLastActiveAuthorization($id_space, $id_resource, $id_user){
+        $sql = "SELECT * from bk_authorization where user_id=? AND resource_id=? AND is_active=1 AND id_space=? AND deleted=0 ORDER BY date DESC;";
+        $data = $this->runRequest($sql, array($id_user, $id_resource, $id_space));
         if ($data->rowCount() >= 1){
             return $data->fetch();
         }
@@ -121,48 +128,45 @@ class BkAuthorization extends Model {
         }
     }
 
-
-
-
     public function getTotalForPeriod($id_space, $period_begin, $period_end){
-        $sql = 'SELECT * FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
-        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
+        $sql = 'SELECT * FROM bk_authorization WHERE deleted=0 AND id_space=? AND date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0)';
+        $req = $this->runRequest($sql, array($id_space, $period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
 
     public function getDistinctUserForPeriod($id_space, $period_begin, $period_end){
-        $sql = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
-        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
+        $sql = 'SELECT DISTINCT user_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 )';
+        $req = $this->runRequest($sql, array($id_space, $period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
 
     public function getDistinctUnitForPeriod($id_space, $period_begin, $period_end){
-        $sql = 'SELECT DISTINCT lab_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
-        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
+        $sql = 'SELECT DISTINCT lab_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 )';
+        $req = $this->runRequest($sql, array($id_space, $period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
 
     public function getDistinctVisaForPeriod($id_space, $period_begin, $period_end){
-        $sql = 'SELECT DISTINCT visa_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
-        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
+        $sql = 'SELECT DISTINCT visa_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 )';
+        $req = $this->runRequest($sql, array($id_space, $period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
 
     public function getDistinctResourceForPeriod($id_space, $period_begin, $period_end){
-        $sql = 'SELECT DISTINCT resource_id FROM bk_authorization WHERE date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? )';
-        $req = $this->runRequest($sql, array($period_begin, $period_end, $id_space));
+        $sql = 'SELECT DISTINCT resource_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 )';
+        $req = $this->runRequest($sql, array($id_space, $period_begin, $period_end, $id_space));
         return $req->rowCount();
     }
 
     public function getNewPeopleForPeriod($id_space, $period_begin, $period_end){
-        $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE date >=? AND date <=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? ) ORDER BY date';
-        $req = $this->runRequest($sql_search_1, array($period_begin, $period_end, $id_space));
+        $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date >=? AND date <=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 ) ORDER BY date';
+        $req = $this->runRequest($sql_search_1, array($id_space, $period_begin, $period_end, $id_space));
         $res_distinct_nf = $req->fetchAll();
         $new_people = 0;
         foreach ($res_distinct_nf as $rDN) {
             $nf = $rDN[0];
-            $q = array('start' => $period_begin, 'user_id' => $nf);
-            $sql = 'SELECT id FROM bk_authorization WHERE user_id=:user_id AND date<:start ORDER BY date';
+            $q = array('start' => $period_begin, 'user_id' => $nf, 'id_space' => $id_space);
+            $sql = 'SELECT id FROM bk_authorization WHERE user_id=:user_id AND date<:start AND deleted=0 AND id_space=:id_space ORDER BY date';
             $req = $this->runRequest($sql, $q);
             $num = $req->rowCount();
             if ($num == 0) {
@@ -366,22 +370,23 @@ class BkAuthorization extends Model {
         return $t;
     }
 
-    public function getForResourceInstructorPeriod($resource_id, $instructor_id, $period_begin, $period_end){
-        $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND date>=? AND date<=? AND visa_id IN (SELECT id FROM re_visas WHERE id_instructor=?) ";
-        $req = $this->runRequest($sql, array($resource_id, $period_begin, $period_end, $instructor_id));
+    public function getForResourceInstructorPeriod($id_space, $resource_id, $instructor_id, $period_begin, $period_end){
+        $sql = "SELECT * FROM bk_authorization WHERE deleted=0 AND id_space=? AND resource_id=? AND date>=? AND date<=? AND visa_id IN (SELECT id FROM re_visas WHERE id_instructor=? AND id_space=? AND deleted=0) ";
+        $req = $this->runRequest($sql, array($id_space, $resource_id, $period_begin, $period_end, $instructor_id, $id_space));
         return $req->fetchAll();
     }
 
     // unit = client
-    public function getFormResourceUnitPeriod($resource_id, $unit_id, $period_begin, $period_end){
+    public function getFormResourceUnitPeriod($id_space, $resource_id, $unit_id, $period_begin, $period_end){
 
-        $sql = "SELECT * FROM bk_authorization WHERE resource_id=? AND date>=? AND date<=? AND user_id IN (SELECT id_user from cl_j_client_user WHERE id_client=?)";
-        $req = $this->runRequest($sql, array($resource_id, $period_begin, $period_end, $unit_id));
+        $sql = "SELECT * FROM bk_authorization WHERE deleted=0 AND id_space=? AND resource_id=? AND date>=? AND date<=? AND user_id IN (SELECT id_user from cl_j_client_user WHERE id_client=? AND id_space=? AND deleted=0)";
+        $req = $this->runRequest($sql, array($id_space, $resource_id, $period_begin, $period_end, $unit_id, $id_space));
         return $req->fetchAll();
     }
 
     /**
      * Calculate detailled statistics
+     * @deprecated
      * @param date $searchDate_start
      * @param date $searchDate_end
      * @param number $user_id
@@ -496,6 +501,7 @@ class BkAuthorization extends Model {
 
     /**
      * Calculate authorizations statistics for all the resources and plot it into a graph
+     * @deprecated
      * @param date $searchDate_start
      * @param date $searchDate_end
      * @return string: XML graph
@@ -577,28 +583,28 @@ class BkAuthorization extends Model {
         return $camembert;
     }
 
-    public function getActiveAuthorizationSummaryForResourceCategory($resource_id, $lang) {
+    // @bug osallou: refer to ec_units, get unit name from user
+    // TODO: to be tested
+    public function getActiveAuthorizationSummaryForResourceCategory($id_space, $resource_id, $lang) {
 
-        $sql = "SELECT DISTINCT core_users.name, auth.visa_id, auth.date, core_users.firstname, core_users.email,"
-                . "ec_units.name AS unitName " .
+        $sql = "SELECT DISTINCT core_users.name, auth.visa_id, auth.date, core_users.firstname, core_users.email, core_users.id as user_id" .
                 "FROM bk_authorization AS auth " .
-                "LEFT JOIN ec_units ON auth.lab_id = ec_units.id " .
                 "INNER JOIN core_users ON auth.user_id = core_users.id " .
-                "WHERE auth.resource_id=? AND auth.is_active=1 "
+                "WHERE auth.resource_id=? AND auth.is_active=1 AND auth.id_space=? AND auth.deleted=0 "
                 . " ORDER BY core_users.name ASC;";
 
-        //$sql = "SELECT * FROM bk_authorization WHERE bk_authorization.resource_id=? AND bk_authorization.is_active=1";
-        $req = $this->runRequest($sql, array($resource_id));
+        $req = $this->runRequest($sql, array($resource_id, $id_space));
         $auth = $req->fetchAll();
 
         $modelVisa = new ReVisa();
-        //$modelUser = new CoreUser();
-        //$modelUnit = new CoreUnit();
+        $modelClient = new ClClientUser();
         for ($i = 0; $i < count($auth); $i++) {
             $auth[$i]["visa"] = $modelVisa->getVisaShortDescription($auth[$i]["visa_id"], $lang);
-            //$auth[$i]["userName"] = $modelUser->getUserFUllName($auth[$i]["user_id"]);
-            //$auth[$i]["userEmail"] = $modelUser->getUserEmail($auth[$i]["user_id"]);
-            //$auth[$i]["unitName"] = $modelUnit->getUnitName($auth[$i]["lab_id"]);
+            $uc = $modelClient->getUserClientAccounts($auth[$i]["user_id"], $id_space);
+            $auth[$i]["unitName"] = "";
+            if($uc && !empty($uc)) {
+                $auth[$i]["unitName"] = $uc[0];
+            }
         }
         return $auth;
     }
@@ -607,35 +613,52 @@ class BkAuthorization extends Model {
      * Get all the active authorizations for a given resource
      * @param number $resource_id
      * @return multitype: Authorizations informations
+     * 
+     *  @bug osallou: refer to ec_units, get unit name from user
+     * TODO: to be tested
      */
-    public function getActiveAuthorizationForResourceCategory($resource_id) {
-        $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.name AS userName, core_users.firstname AS userFirstname, core_users.email AS userEmail, ce_units.name AS unitName, se_visa.name AS visa, re_category.name AS resource
+    public function getActiveAuthorizationForResourceCategory($id_space, $resource_id) {
+        $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.id AS user_id, core_users.name AS userName, core_users.firstname AS userFirstname, core_users.email AS userEmail, se_visa.name AS visa, re_category.name AS resource
 					from bk_authorization
-					     INNER JOIN ce_users on bk_authorization.user_id = core_users.id
-					     LEFT JOIN ce_units on bk_authorization.lab_id = ce_units.id
+					     INNER JOIN core_users on bk_authorization.user_id = core_users.id
 					     INNER JOIN se_visa on bk_authorization.visa_id = se_visa.id
 					     INNER JOIN re_category on bk_authorization.resource_id = re_category.id
-				WHERE bk_authorization.resource_id=? AND bk_authorization.is_active=1
+				WHERE bk_authorization.resource_id=? AND bk_authorization.is_active=1 AND bk_authorization.deleted=0 AND bk_authorization.id_space=?
 				ORDER BY core_users.name;";
-        $req = $this->runRequest($sql, array($resource_id));
-        return $req->fetchAll();
+        $req = $this->runRequest($sql, array($resource_id, $id_space));
+        $auth = $req->fetchAll();
+
+        $modelClient = new ClClientUser();
+        for ($i = 0; $i < count($auth); $i++) {
+            $uc = $modelClient->getUserClientAccounts($auth[$i]["user_id"], $id_space);
+            $auth[$i]["unitName"] = "";
+            if($uc && !empty($uc)) {
+                $auth[$i]["unitName"] = $uc[0];
+            }
+        }
+
+        return $auth;
+
     }
 
     /**
      * Remove a visa
      * @param number $id
      */
-    public function delete($id) {
-        $sql = "DELETE FROM bk_authorization WHERE id = ?";
-        $req = $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE bk_authorization set deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
-    public function desactivateUnactiveUserAuthorizations() {
+    /**
+     * @deprecated
+     */
+    public function desactivateUnactiveUserAuthorizations($id_space) {
         $sql = "SELECT * FROM core_users WHERE is_active=0";
         $req = $this->runRequest($sql);
         $users = $req->fetchAll();
         foreach ($users as $user) {
-            $this->desactivateAthorizationsForUser($user['id']);
+            $this->desactivateAuthorizationsForUser($user['id']);  // @bug DOES NOT EXISTS!!!!
         }
     }
 

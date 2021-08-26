@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Welcome on Platform Manager</title>
+    <link>https://bgo-bioimagerie.github.io/platformmanager/</link>
+    <description>Recent content in Welcome on Platform Manager</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Jun 2021 15:44:36 +0200</lastBuildDate><atom:link href="https://bgo-bioimagerie.github.io/platformmanager/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Basic space configuration</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/manager/basic_space_configuration/</link>
+      <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/manager/basic_space_configuration/</guid>
+      <description>For basic booking fonctions, you will have to activate and configure Clients module, Resources module and Booking module.
+Modules activation    To activate a new module, go to Configuration module.
+Then, click the Edit button of the corresponding module.
+You have to set the Users selector to the lower role you want to grant access to this module. (i.e. if user is set, then, users, managers and admins will be granted access).</description>
+    </item>
+    
+    <item>
+      <title>Getting started</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</link>
+      <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</guid>
+      <description>Setup new spaces    At first, as superadmin you must create a space, create accounts for the future space administrators and give them admin role to this space.
+First step is to connect with the configured admin account.
+Create a space    In the admin menu, go to Spaces
+Add a space
+Space is created, now it is to create menus to access it.
+Create menus    Menus are a way to group spaces in logical groups.</description>
+    </item>
+    
+    <item>
+      <title>How to join an existing space</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/use_cases/join_space/</link>
+      <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/use_cases/join_space/</guid>
+      <description>Since Platform-Manager V2 (2021-08-10 release), users with an existing account can request to join a space.
+Request join    First, click on Menus in top navbar and choose the structure on which the space you want to join depends. Then you should see, amongst one or several tiles, the one you are looking for.
+Click on Join button contained in this tile.
+Until your join request is accepted or rejected by a space admin, the join button now is inactive and displays Join requested.</description>
+    </item>
+    
+    <item>
+      <title>Requirements</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/</link>
+      <pubDate>Wed, 23 Jun 2021 15:52:39 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/</guid>
+      <description>Install from source     Database: mysql &amp;gt; 5.6, tested on 8 PHP:  version &amp;gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support   Apache server with:  PHP enabled rewrite, headers, proxy_http modules use of .htaccess    Apache should also have specific pfm configuration:
+&amp;lt;Location /update&amp;gt; Order deny,allow Deny from all Allow from 127.0.0.1 &amp;lt;/Location&amp;gt; &amp;lt;Directory &amp;quot;^${docroot}/data&amp;quot;&amp;gt; &amp;lt;FilesMatch &amp;quot;.</description>
+    </item>
+    
+    <item>
+      <title>Source</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/source/</link>
+      <pubDate>Wed, 23 Jun 2021 18:13:29 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/source/</guid>
+      <description>Install from source code    Clone git repository from https://github.com/bgo-bioimagerie/platformmanager.
+Stable code is in master branch.
+Releases can also be download from https://github.com/bgo-bioimagerie/platformmanager/releases.
+Code contains some .htaccess to limit access to specific directories. If not using Apache as frontend, you need to restrict access yourself based on .htaccess files definition.
+In Config, define a conf.ini (see Configuration) with appropriate setup.</description>
+    </item>
+    
+    <item>
+      <title>Cli</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</link>
+      <pubDate>Wed, 23 Jun 2021 16:11:10 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</guid>
+      <description>cli/pfm-cli.php tool (to be executed in code root directory), helps administrators on different tasks.
+For help commands, execute:
+php cli/pfm-cli.php  Tool can be used to install/upgrade database, expire users, check database version etc.</description>
+    </item>
+    
+    <item>
+      <title>Users management</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/manager/users/</link>
+      <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/manager/users/</guid>
+      <description>Users creation    Users cannot register for an account, space managers must create the user for their space if user does not already have an account (they will receive a temporary password by email). If user already have an account, he can request to join the space via the web interface (Join button).
+Create a user as a space admin    If you want to directly link a user to a specific space or if you are space admin, not superadmin, you can create user from within a space by going into Users module in your space homepage.</description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/docker/</link>
+      <pubDate>Wed, 23 Jun 2021 15:51:32 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/docker/</guid>
+      <description>Using docker    setup    Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
+Update docker-compose.yml file environment sections with your setup.
+Some variables are defined in a .env file for sensitive data.
+Example:
+PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx  Exemple docker-compose.yml use local docker volumes to save database etc. Only local host mounted volume is data directory which contains space upload files, which should be writable by container www-data user and shared among pfm instances.</description>
+    </item>
+    
+    <item>
+      <title>Upgrade</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/</link>
+      <pubDate>Wed, 23 Jun 2021 16:05:10 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/</guid>
+      <description>For first installation, and for any later upgrade, at code root location:
+php cli/phm-cli.php install  This will setup database i.e create tables, migrate/update schemas etc..</description>
+    </item>
+    
+    <item>
+      <title>Configuration</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/configuration/</link>
+      <pubDate>Wed, 23 Jun 2021 16:05:10 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/configuration/</guid>
+      <description>General configuration    Configuration file, located in Config/conf.ini defines base configuration and the list of modules globally activated.
+Example file is available with conf.ini.sample.
+Mandatory sections are:
+ Installation: base setup with public url access and optional url prefix Modules: list of modules DB: mysql connection information Admin: super administrator information (created at install if not exists), admin secrets (password, apikey) should not be exposed in config file and should rather be defined via env variables (see below).</description>
+    </item>
+    
+    <item>
+      <title>Antibodies</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/antibodies/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/antibodies/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Booking</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Catalog</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Clients</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Com</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Documents</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/documents/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/documents/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Invoices</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mailer</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Quote</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Resources</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Services</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Statistics</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Users</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

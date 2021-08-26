@@ -44,7 +44,7 @@ class IsotypesController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $isotypes = $this->model->get($id);
+        $isotypes = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "isotypeseditform");
         $form->setTitle("Modifier isotypes");
@@ -73,7 +73,7 @@ class IsotypesController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("isotypes/" . $id_space);
     }
 

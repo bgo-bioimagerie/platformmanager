@@ -76,7 +76,7 @@ class ClientslistController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // get client
-        $client = $this->clientModel->get($id);
+        $client = $this->clientModel->get($id_space, $id);
         
         // pricings
         $modelPricing = new ClPricing();
@@ -139,10 +139,10 @@ class ClientslistController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // get client
-        $client = $this->clientModel->get($id);
+        $client = $this->clientModel->get($id_space, $id);
         
         $modelAdress = new ClAddress();
-        $addressInvoice = $modelAdress->get($client["address_invoice"]);
+        $addressInvoice = $modelAdress->get($id_space, $client["address_invoice"]);
         
         // Address invoice
         $formAddressInvoice = new AddressForm($this->request, "formAddressInvoice", "clclienteditinvoice/" . $id_space . "/" . $id);
@@ -154,8 +154,7 @@ class ClientslistController extends CoresecureController {
         $formi = $formAddressInvoice->getForm();
         if ($formi->check()) {
             $id_adress = $formAddressInvoice->save();
-            
-            $this->clientModel->setAddressInvoice($id, $id_adress);
+            $this->clientModel->setAddressInvoice($id_space, $id, $id_adress);
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
             $this->redirect("clclienteditdelivery/" . $id_space . "/" . $id);
             return;
@@ -178,10 +177,10 @@ class ClientslistController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // get client
-        $client = $this->clientModel->get($id);
+        $client = $this->clientModel->get($id_space, $id);
         
         $modelAdress = new ClAddress();
-        $addressDelivery = $modelAdress->get($client["address_delivery"]);
+        $addressDelivery = $modelAdress->get($id_space, $client["address_delivery"]);
         
         // Address delivery
         $formAddressDelivery = new AddressForm($this->request, "formAddressDelivery", "clclienteditdelivery/" . $id_space . "/" . $id);
@@ -194,7 +193,7 @@ class ClientslistController extends CoresecureController {
         if ($formd->check()) {
             $id_adress = $formAddressDelivery->save();
             
-            $this->clientModel->setAddressDelivery($id, $id_adress);
+            $this->clientModel->setAddressDelivery($id_space, $id, $id_adress);
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
             $this->redirect("clclients/" . $id_space);
             return;
@@ -216,7 +215,7 @@ class ClientslistController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
 
         // query to delete the provider
-        $this->clientModel->delete($id);
+        $this->clientModel->delete($id_space, $id);
 
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clclients/" . $id_space);

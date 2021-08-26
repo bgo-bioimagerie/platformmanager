@@ -23,28 +23,28 @@ class ReEventData extends Model {
         $this->primaryKey = "id";
     }
 
-    public function addFile($id_event, $url){
-        $sql = "INSERT INTO re_event_data (id_event, url) VALUES (?,?)";
-        $this->runRequest($sql, array($id_event, $url));
+    public function addFile($id_space, $id_event, $url){
+        $sql = "INSERT INTO re_event_data (id_event, url, id_space) VALUES (?,?,?)";
+        $this->runRequest($sql, array($id_event, $url, $id_space));
     }
     
-    public function get($id) {
-        $sql = "SELECT * FROM re_event_data WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM re_event_data WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
     
-    public function getByEvent($id_event) {
-        $sql = "SELECT * FROM re_event_data WHERE id_event=?";
-        return $this->runRequest($sql, array($id_event))->fetchAll();
+    public function getByEvent($id_space, $id_event) {
+        $sql = "SELECT * FROM re_event_data WHERE id_event=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_event, $id_space))->fetchAll();
     }
 
-    public function set($id, $id_event, $url) {
-        if ($this->exists($id)) {
-            $sql = "UPDATE re_event_data SET id_event=?, url=? WHERE id=?";
-            $id = $this->runRequest($sql, array($id_event, $url, $id));
+    public function set($id_space, $id, $id_event, $url) {
+        if ($this->exists($id_space, $id)) {
+            $sql = "UPDATE re_event_data SET id_event=?, url=? WHERE id=? AND id_space=? AND deleted=0";
+            $id = $this->runRequest($sql, array($id_event, $url, $id, $id_space));
         } else {
-            $sql = "INSERT INTO re_event_data (id_event, url) VALUES (?,?)";
-            $this->runRequest($sql, array($id_event, $url));
+            $sql = "INSERT INTO re_event_data (id_event, url, id_space) VALUES (?,?,?)";
+            $this->runRequest($sql, array($id_event, $url, $id_space));
         }
         return $id;
     }

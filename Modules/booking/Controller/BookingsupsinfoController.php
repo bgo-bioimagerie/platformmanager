@@ -6,6 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
  * 
@@ -74,8 +75,30 @@ class BookingsupsinfoController extends CoresecureController {
             $supName = $this->request->getParameterNoException("names");
             $supMandatory = $this->request->getParameterNoException("mandatory");
 
-            $count = 0;
+            $packs = [];
+            for ($p = 0; $p < count($supID); $p++) {
+                if ($supName[$p] != "" && $supID[$p]) {
+                   $packs[$supName[$p]] = $supID[$p];
+                }
+            }
+            for ($p = 0; $p < count($supID); $p++) {
+                if (!$supID[$p]) {
+                    // If package id not set, use from known packages
+                    if(isset($packs[$supName[$p]])) {
+                        $supID[$p] = $packs[$supName[$p]];
+                    } else {
+                        // Or create a new package
+                       $cvm = new CoreVirtual();
+                       $vid = $cvm->new('supinfo');
+                       $supID[$p] = $vid;
+                       $packs[$supName[$p]] = $vid;
+                   }
+                }
+                $modelSups->setCalSupInfo($id_space, $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
+            }
 
+            /* bug possible conflict on getting id
+            $count = 0;
             // get the last package id
             $lastID = 0;
             for ($p = 0; $p < count($supID); $p++) {
@@ -100,16 +123,17 @@ class BookingsupsinfoController extends CoresecureController {
                         $curentID = $lastID;
                         $supID[$p] = $lastID;
                     }
+                    if(! in_array($supResource[$p], $choicesRid)) {
+                        continue;
+                    }
                     //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelSups->setCalSupInfo($curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
+                    $modelSups->setCalSupInfo($id_space, $curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
                     $count++;
                 }
             }
+            */
 
-            //echo "sups ids = ". print_r($supID) . "<br/>";
-            //echo "sup Resource ids = ". print_r($supResource) . "<br/>";
-
-            $modelSups->removeUnlistedSupInfos($supID);
+            $modelSups->removeUnlistedSupInfos($id_space, $supID);
             $_SESSION["message"] = BookingTranslator::Supplementaries_saved($lang);
             $this->redirect("bookingsupsinfo/".$id_space);
             return;

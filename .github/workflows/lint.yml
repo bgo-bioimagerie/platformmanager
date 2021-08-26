@@ -1,0 +1,13 @@
+name: PHP lint CI
+
+on: [push, pull_request]
+
+jobs:
+  phplint:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v1
+        - uses: overtrue/phplint@8.0
+          with:
+            path: .
+            options: --exclude=*.log

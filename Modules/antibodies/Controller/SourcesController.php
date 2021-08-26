@@ -44,7 +44,7 @@ class SourcesController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $sources = $this->model->get($id);
+        $sources = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "sourceseditform");
         $form->setTitle("Modifier sources");
@@ -73,7 +73,7 @@ class SourcesController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("sources/" . $id_space);
     }
 

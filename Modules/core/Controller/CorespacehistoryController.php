@@ -26,9 +26,6 @@ class CorespacehistoryController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
 
-        if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
-        }
     }
 
     /**
@@ -36,6 +33,10 @@ class CorespacehistoryController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space) {
+        $userSpaceStatus = $this->getUserSpaceStatus($id_space, $_SESSION["id_user"]);
+        if($userSpaceStatus < CoreSpace::$MANAGER ) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
         $lang = $this->getLanguage();
         $m = new CoreHistory();
         $startFilter = $_GET["start"] ?? null;

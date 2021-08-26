@@ -6,6 +6,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Proto.php';
 
+// DEPRECATED?
 class ProtoController extends CoresecureController {
 
     /**
@@ -21,7 +22,6 @@ class ProtoController extends CoresecureController {
 
     // affiche la liste des Prelevements
     public function indexAction($id_space) {
-
         // get the user list
         $protosArray = $this->model->getBySpace($id_space);
 
@@ -44,7 +44,7 @@ class ProtoController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $proto = $this->model->get($id);
+        $proto = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "protoeditform");
         $form->setTitle("Modifier proto");
@@ -73,7 +73,7 @@ class ProtoController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("proto/" . $id_space);
     }
 

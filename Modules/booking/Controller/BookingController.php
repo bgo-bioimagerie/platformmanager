@@ -118,20 +118,20 @@ class BookingController extends BookingabstractController {
             $calendarDefaultResource = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultResource");
             if ($calendarDefaultResource != "") {
                 $id_resource = $calendarDefaultResource;
-                $id_area = $modelResource->getAreaID($id_resource);
-                $id_site = $modelArea->getSiteID($id_area);
+                $id_area = $modelResource->getAreaID($id_space, $id_resource);
+                $id_site = $modelArea->getSiteID($id_space, $id_area);
             } else {
                 if ($id_area == "" || $id_area == 0) {
                     $modelArea = new ReArea();
                     if ($_SESSION["user_status"] < 2) {
-                        $id_area = $modelArea->getSmallestUnrestrictedID();
+                        $id_area = $modelArea->getSmallestUnrestrictedID($id_space);
                     } else {
-                        $id_area = $modelArea->getSmallestID();
+                        $id_area = $modelArea->getSmallestID($id_space);
                     }
-                    $id_site = $modelArea->getSiteID($id_area);
+                    $id_site = $modelArea->getSiteID($id_space, $id_area);
                 }
                 // get the resource with the smallest id
-                $id_resource = $modelResource->firstResourceIDForArea($id_area);
+                $id_resource = $modelResource->firstResourceIDForArea($id_space, $id_area);
             }
             //echo "id_area = " . $id_area . "</br>";
             //echo "id_resource = " . $id_resource . "</br>";
@@ -255,7 +255,7 @@ class BookingController extends BookingabstractController {
 
         // get the resource info
         $modelRescal = new ResourceInfo();
-        $resourceInfo = $modelRescal->get($curentResource);
+        $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
         //if (count($resourceInfo) <= 1) {
         //    $this->redirect("calendar", "booking");
@@ -263,7 +263,7 @@ class BookingController extends BookingabstractController {
         //}
 
         $modelRes = new ResourceInfo();
-        $resourceBase = $modelRes->get($curentResource);
+        $resourceBase = $modelRes->get($id_space, $curentResource);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
@@ -271,7 +271,7 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $curentDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($dateBegin, $dateEnd, $curentResource);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
 
         // curentdate unix
         $temp = explode("-", $curentDate);
@@ -283,19 +283,19 @@ class BookingController extends BookingabstractController {
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
-        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($resourceBase["id"]);
+        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
         $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
         // get last state
         $modelEvent = new ReEvent();
-        $resourceBase["last_state"] = $modelEvent->getLastStateColor($resourceBase["id"]);
+        $resourceBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourceBase["id"]);
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
         //print_r($agendaStyle);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($curentAreaId);
+        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
 
         // view
         $this->render(array(
@@ -378,15 +378,15 @@ class BookingController extends BookingabstractController {
         $modelRes = new ResourceInfo();
         $modelAccess = new BkAccess();
         //echo "curentAreaId = " . $curentAreaId . "<br/>"; 
-        $resourcesBase = $modelRes->resourcesForArea($curentAreaId);
+        $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            $resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($resourcesBase[$r]["id"]);
+            $resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase[$r]["id"]);
         }
 
         // get last state
         $modelEvent = new ReEvent();
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($resourcesBase[$r]["id"]);
+            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
         }
 
         // get the entries for this resource
@@ -396,7 +396,7 @@ class BookingController extends BookingabstractController {
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
         for ($t = 0; $t < count($resourcesBase); $t++) {
-            $calEntries[] = $modelEntries->getEntriesForPeriodeAndResource($dateBegin, $dateEnd, $resourcesBase[$t]["id"]);
+            $calEntries[] = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resourcesBase[$t]["id"]);
         }
 
         // curentdate unix
@@ -417,10 +417,10 @@ class BookingController extends BookingabstractController {
         //return;
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($curentAreaId);
+        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
 
         // view
         $this->render(array(
@@ -505,22 +505,22 @@ class BookingController extends BookingabstractController {
         //$_SESSION['bk_curentDate'] = $curentDate;
         // get the resource info
         $modelRescal = new ResourceInfo();
-        $resourceInfo = $modelRescal->get($curentResource);
+        $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
-        if (count($resourceInfo) <= 1) {
+        if (!$resourceInfo) {
             $this->redirect("booking");
             return;
         }
 
         $modelRes = new ResourceInfo();
-        $resourceBase = $modelRes->get($curentResource);
+        $resourceBase = $modelRes->get($id_space, $curentResource);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($dateBegin, $dateEnd, $curentResource);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
 
         //echo "Cal entry count = " . count($calEntries) . "</br>";
         // curentdate unix
@@ -533,19 +533,19 @@ class BookingController extends BookingabstractController {
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
-        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($resourceBase["id"]);
+        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
         $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
         // get last state
         $modelEvent = new ReEvent();
-        $resourceBase["last_state"] = $modelEvent->getLastStateColor($resourceBase["id"]);
+        $resourceBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourceBase["id"]);
 
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($curentAreaId);
+        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
 
         // view
         $this->render(array(
@@ -639,17 +639,17 @@ class BookingController extends BookingabstractController {
 
         // get the resource info
         $modelRes = new ResourceInfo();
-        $resourcesBase = $modelRes->resourcesForArea($curentAreaId);
+        $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
 
         // get last state
         $modelEvent = new ReEvent();
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($resourcesBase[$r]["id"]);
+            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
         }
 
         $modelRescal = new ResourceInfo();
         for ($t = 0; $t < count($resourcesBase); $t++) {
-            $resourcesInfo[$t] = $modelRescal->get($resourcesBase[$t]["id"]);
+            $resourcesInfo[$t] = $modelRescal->get($id_space, $resourcesBase[$t]["id"]);
         }
 
         // get the entries for this resource
@@ -657,7 +657,7 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndArea($dateBegin, $dateEnd, $curentAreaId);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId);
 
         // curentdate unix
         $temp = explode("-", $curentDate);
@@ -671,7 +671,7 @@ class BookingController extends BookingabstractController {
         $modelAccess = new BkAccess();
         $isUserAuthorizedToBook = array();
         foreach ($resourcesBase as $resourceBase) {
-            $resourceBase["accessibility_id"] = $modelAccess->getAccessId($resourceBase["id"]);
+            $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
             $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
         }
 
@@ -681,10 +681,10 @@ class BookingController extends BookingabstractController {
         //return;
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($curentAreaId);
+        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
 
         // view
         $this->render(array(
@@ -773,23 +773,25 @@ class BookingController extends BookingabstractController {
         //$_SESSION['id_area'] = $curentAreaId;
         //$_SESSION['curentDate'] = $curentDate;
         // get the resource info
-        $modelRescal = new ResourceInfo();
-        $resourceInfo = $modelRescal->get($curentResource);
 
-        if (count($resourceInfo) <= 1) {
+        $modelRescal = new ResourceInfo();
+        $resourceInfo = $modelRescal->get($id_space, $curentResource);
+
+        if (!$resourceInfo) {
             $this->redirect("booking");
             return;
         }
 
-        $modelRes = new ResourceInfo();
-        $resourceBase = $modelRes->get($curentResource);
+        // $modelRes = new ResourceInfo();
+        // $resourceBase = $modelRes->get($id_space, $curentResource);
+        $resourceBase = $resourceInfo;
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 31, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($dateBegin, $dateEnd, $curentResource);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
 
         //echo "Cal entry count = " . count($calEntries) . "</br>";
         // curentdate unix
@@ -802,11 +804,11 @@ class BookingController extends BookingabstractController {
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
-        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($resourceBase["id"]);
+        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
         $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         // view
         $this->render(array(
@@ -837,7 +839,6 @@ class BookingController extends BookingabstractController {
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
             $modelDefault = new BookingdefaultController($this->request);
             $modelDefault->editreservationdefault($id_space, $param);
-            return;
         } else {
             /// todo run plugin
             $modelCache = new FCache();
@@ -859,7 +860,6 @@ class BookingController extends BookingabstractController {
                 $args = $this->getArgs($urlInfo);
 
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
-                return;
             } else {
                 throw new Exception("Unable to find the controller file '$fileController' ");
             }

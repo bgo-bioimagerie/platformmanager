@@ -23,7 +23,7 @@ class BkStatsUser extends Model {
 
         // get resource category
         $modelResource = new ReCategory();
-        $resourceInfo = $modelResource->getName($resource_id);
+        $resourceInfo = $modelResource->getName($id_space, $resource_id);
 
         // header
         $today = date('d/m/Y');
@@ -41,7 +41,7 @@ class BkStatsUser extends Model {
 
 
         $modelAuthorisation = new BkAuthorization();
-        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($resource_id, "");
+        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($id_space, $resource_id, "");
 
         //$q = array('equipement'=>$equipement);
         //$sql = 'SELECT DISTINCT nf, laboratoire, date_unix, visa FROM autorisation WHERE machine=:equipement ORDER by nf';
@@ -348,7 +348,7 @@ class BkStatsUser extends Model {
 
         // get resource category
         $modelResource = new ReCategory();
-        $resourceInfo = $modelResource->getName($resource_id); // ->getResourcesCategory($resource_id);
+        $resourceInfo = $modelResource->getName($id_space, $resource_id); // ->getResourcesCategory($resource_id);
         // header
         $today = date('d/m/Y');
         $equipement = $resourceInfo;
@@ -364,7 +364,7 @@ class BkStatsUser extends Model {
         $footer = "platform-manager/" . $teamName . "/exportFiles/" . $nom;
 
         $modelAuthorisation = new BkAuthorization();
-        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($resource_id, $lang);
+        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($id_space, $resource_id, $lang);
 
         // Création de l'objet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -686,13 +686,13 @@ class BkStatsUser extends Model {
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'space' => $id_space);
         $sql = 'SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE
 				(start_time >=:start AND start_time <= :end)
-                                AND resource_id IN (SELECT id FROM re_info WHERE id_space=:space)';
+                AND deleted=0 AND id_space=:space';
         $req = $this->runRequest($sql, $q);
         $recs = $req->fetchAll();
 
         $sql2 = 'SELECT DISTINCT responsible_id FROM bk_calendar_entry WHERE
 				(start_time >=:start AND start_time <= :end)
-                                AND resource_id IN (SELECT id FROM re_info WHERE id_space=:space)';
+                AND deleted=0 AND id_space=:space';
         $req2 = $this->runRequest($sql2, $q);
         $recresps = $req2->fetchAll();
 
@@ -706,7 +706,7 @@ class BkStatsUser extends Model {
                 'email' => $modelUser->getEmail($recs[$i]['recipient_id']));
         }
         for ($i = 0; $i < count($recresps); $i++) {
-            $clientInfo = $modelClient->get($recresps[$i]['responsible_id']);
+            $clientInfo = $modelClient->get($id_space, $recresps[$i]['responsible_id']);
             $recss[] = array(
                 'name' => $clientInfo["contact_name"],
                 'email' => $clientInfo["email"] 

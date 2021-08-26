@@ -27,14 +27,14 @@ class BjNote extends Model {
         $this->primaryKey = "id";
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM bj_notes WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM bj_notes WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
     
-    public function getforCollection($id_collection){
-        $sql = "SELECT * FROM bj_notes WHERE id IN (SELECT id_note FROM bj_j_collections_notes WHERE id_collection=?)";
-        $req = $this->runRequest($sql, array($id_collection));
+    public function getforCollection($id_space, $id_collection){
+        $sql = "SELECT * FROM bj_notes WHERE id IN (SELECT id_note FROM bj_j_collections_notes WHERE id_collection=? AND id_space=? AND deleted=0)";
+        $req = $this->runRequest($sql, array($id_collection, $id_space));
         $notes = $req->fetchAll();
         
         return $this->getNoteInfos($notes);
@@ -50,8 +50,8 @@ class BjNote extends Model {
         
         // select migrated notes
         $firstDaytime = mktime(0, 0, 0, $month, 1, $year);
-        $sql2 = "SELECT * FROM bj_tasks_history WHERE status=4 AND date=?";
-        $migratedHist = $this->runRequest($sql2, array($firstDaytime))->fetchAll();
+        $sql2 = "SELECT * FROM bj_tasks_history WHERE status=4 AND date=? AND id_space=?";
+        $migratedHist = $this->runRequest($sql2, array($firstDaytime, $id_space))->fetchAll();
         foreach($migratedHist as $hist){
             $sql = "SELECT * FROM bj_notes WHERE id=?";
             $tmpNote = $this->runRequest($sql, array($hist["id_note"]))->fetch();
@@ -61,11 +61,11 @@ class BjNote extends Model {
         }
         
         // get notes info
-        return $this->getNoteInfos($notes);
+        return $this->getNoteInfos($id_space, $notes);
         
     }
     
-    public function getNoteInfos($notes){
+    public function getNoteInfos($id_space, $notes){
         for($i = 0 ; $i < count($notes) ; $i++){
             if($notes[$i]["type"] == 2){
                 $sql = "SELECT * FROM bj_tasks WHERE id_note=?";
@@ -117,28 +117,30 @@ class BjNote extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function getName($id) {
-        $sql = "SELECT name FROM bj_notes WHERE id=?";
-        $tmp = $this->runRequest($sql, array($id))->fetch();
+    public function getName($id_space, $id) {
+        $sql = "SELECT name FROM bj_notes WHERE id=? AND id_space=?";
+        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $tmp[0];
     }
 
     public function set($id, $id_space, $name, $type, $content, $date, $is_month_task) {
-        if ($this->exists($id)) {
-            $sql = "UPDATE bj_notes SET id_space=?, name=?, type=?, content=?, date=?, is_month_task=? WHERE id=?";
-            $this->runRequest($sql, array($id_space, $name, $type, $content, $date, $is_month_task, $id));
-            return $id;
+        if($date == "") {
+            $date = null;
+        }
+        if ($this->exists($id_space, $id)) {
+            $sql = "UPDATE bj_notes SET name=?, type=?, content=?, date=?, is_month_task=? WHERE id=? AND id_space=?";
+            $this->runRequest($sql, array($name, $type, $content, $date, $is_month_task, $id, $id_space));
         } else {
             $sql = "INSERT INTO bj_notes (id_space, name, type, content, date, is_month_task) VALUES (?,?,?,?,?,?)";
             $this->runRequest($sql, array($id_space, $name, $type, $content, $date, $is_month_task));
-            return $this->getDatabase()->lastInsertId();
+            $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }
 
-    public function exists($id) {
-        $sql = "SELECT id from bj_notes WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function exists($id_space, $id) {
+        $sql = "SELECT id from bj_notes WHERE id=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -149,9 +151,9 @@ class BjNote extends Model {
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($id) {
-        $sql = "DELETE FROM bj_notes WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "DELETE FROM bj_notes WHERE id = ? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

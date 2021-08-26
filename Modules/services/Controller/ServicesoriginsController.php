@@ -53,7 +53,7 @@ class ServicesoriginsController extends CoresecureController {
         if (!$id) {
             $value = array("name" => "", "display_order" => 1);
         } else {
-            $value = $this->originModel->get($id);
+            $value = $this->originModel->get($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
@@ -80,7 +80,7 @@ class ServicesoriginsController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->originModel->delete($id);
+        $this->originModel->delete($id_space, $id);
         $this->redirect("servicesorigins/" . $id_space);
     }
 

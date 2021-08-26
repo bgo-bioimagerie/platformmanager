@@ -11,23 +11,23 @@ class SeService extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_services` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_space` int(11) NOT NULL DEFAULT 0,
-                `name` varchar(100) NOT NULL,
-		`description` varchar(250) NOT NULL,
-		`display_order` int(11) NOT NULL DEFAULT 0,		
-		`is_active` int(1) NOT NULL DEFAULT 1,	 
-		`type_id` int(11) NOT NULL DEFAULT 1,
-                `quantity` varchar(128) NOT NULL DEFAULT '0',
+		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(11) NOT NULL DEFAULT 0,
+            `name` varchar(100) NOT NULL,
+            `description` varchar(250) NOT NULL,
+            `display_order` int(11) NOT NULL DEFAULT 0,		
+            `is_active` int(1) NOT NULL DEFAULT 1,	 
+            `type_id` int(11) NOT NULL DEFAULT 1,
+            `quantity` varchar(128) NOT NULL DEFAULT '0',
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
     }
 
-    public function getIdFromName($name, $id_sapce){
-        $sql = "SELECT id FROM se_services WHERE name=? AND id_space=?";
-        $data = $this->runRequest($sql, array($name, $id_sapce));
+    public function getIdFromName($name, $id_space){
+        $sql = "SELECT id FROM se_services WHERE name=? AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($name, $id_space));
         if($data->rowCount() > 0){
             $tmp = $data->fetch();
             return $tmp[0];
@@ -35,26 +35,27 @@ class SeService extends Model {
         return 0;
     }
     
-    public function getItemType($id){
-        $sql = "SELECT type_id FROM se_services WHERE id=?";
-        $data = $this->runRequest($sql, array($id))->fetch();
+    public function getItemType($id_space, $id){
+        $sql = "SELECT type_id FROM se_services WHERE id=? AND id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $data[0];
     }
     
-    public function setQuantity($id, $quantity){
-        $sql = "UPDATE se_services SET quantity=? WHERE id=?";
-        $this->runRequest($sql, array($quantity, $id));
+    public function setQuantity($id_space, $id, $quantity){
+        $sql = "UPDATE se_services SET quantity=? WHERE id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($quantity, $id, $id_space));
     }
     
-    public function editquantity($id, $quantity, $operation = "add"){
-        $sql = "SELECT quantity FROM se_services WHERE id=?";
-        $q = $this->runRequest($sql, array($id))->fetch();
+    // @bug possible collision between select and update
+    public function editquantity($id_space, $id, $quantity, $operation = "add"){
+        $sql = "SELECT quantity FROM se_services WHERE id=? AND id_space=? AND deleted=0";
+        $q = $this->runRequest($sql, array($id, $id_space))->fetch();
         
         if ($operation == "add"){
-            $this->setQuantity($id, $quantity + $q[0]);
+            $this->setQuantity($id_space, $id, $quantity + $q[0]);
         }
         else{
-            $this->setQuantity($id, $q[0] - $quantity);
+            $this->setQuantity($id_space, $id, $q[0] - $quantity);
         }
     }
     
@@ -63,18 +64,18 @@ class SeService extends Model {
      *
      * @param string $name name of the unit
      */
-    public function addItem($name, $description, $display_order, $type_id = 1) {
+    public function addItem($id_space, $name, $description, $display_order, $type_id = 1) {
 
-        $sql = "insert into se_services(name, description, display_order, type_id)"
-                . " values(?, ?, ?, ?)";
-        $this->runRequest($sql, array($name, $description, $display_order, $type_id));
+        $sql = "insert into se_services(name, description, display_order, type_id, id_space)"
+                . " values(?, ?, ?, ?, ?)";
+        $this->runRequest($sql, array($name, $description, $display_order, $type_id, $id_space));
         return $this->getDatabase()->lastInsertId();
     }
     
     public function setService($id, $id_space, $name, $description, $display_order, $type_id){
-        if($this->isService($id)){
-            $sql = "UPDATE se_services SET name=?, id_space=?, description=?, display_order=?, type_id=? WHERE id=?";
-            $this->runRequest($sql, array($name, $id_space, $description, $display_order, $type_id, $id));
+        if($this->isService($id_space, $id)){
+            $sql = "UPDATE se_services SET name=?, description=?, display_order=?, type_id=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($name, $description, $display_order, $type_id, $id, $id_space));
             return $id;
         }
         else{
@@ -84,18 +85,18 @@ class SeService extends Model {
         }
     }
     
-    public function isService($id){
-        $sql = "SELECT id FROM se_services WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function isService($id_space, $id){
+        $sql = "SELECT id FROM se_services WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1){
             return true;
         }
         return false;
     }
 
-    public function setActive($id, $active) {
-        $sql = "update se_services set is_active=? where id=?";
-        $this->runRequest($sql, array($active, $id));
+    public function setActive($id_space, $id, $active) {
+        $sql = "update se_services set is_active=? where id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($active, $id, $id_space));
     }
 
     /**
@@ -104,29 +105,26 @@ class SeService extends Model {
      * @param string $sortentry Entry that is used to sort the units
      * @return multitype: array
      */
-    public function getItems($sortentry = 'id') {
+    public function getItems($id_space, $sortentry = 'id') {
 
-        $sql = "select * from se_services order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "SELECT * from se_services WHERE AND id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
     
     public function getBySpace($id_space){
-        $sql = "SELECT * FROM se_services WHERE id_space=?";
+        $sql = "SELECT * FROM se_services WHERE id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
     
     public function getAll($id_space){
-        $sql = "SELECT se_services.*, se_service_types.local_name as type "
-                . "FROM se_services "
-                . "INNER JOIN se_service_types ON se_services.type_id = se_service_types.id "
-                . "WHERE se_services.id_space=?";
+        $sql = "SELECT * FROM se_services WHERE se_services.id_space=? AND se_services.deleted=0;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
     public function getForList($id_space){
-        $sql = "select * from se_services WHERE id_space=? ORDER BY name ASC;";
+        $sql = "select * from se_services WHERE id_space=? AND deleted=0 ORDER BY name ASC;";
         $req = $this->runRequest($sql, array($id_space))->fetchAll();
         $ids = array(); $names = array();
         foreach($req as $r){
@@ -142,10 +140,10 @@ class SeService extends Model {
      * @param string $sortentry Entry that is used to sort the units
      * @return multitype: array
      */
-    public function getActiveItems($sortentry = 'id') {
+    public function getActiveItems($id_space, $sortentry = 'id') {
 
-        $sql = "select * from se_services where is_active=1 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql);
+        $sql = "select * from se_services where is_active=1 AND id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -156,9 +154,9 @@ class SeService extends Model {
      * @throws Exception id the item is not found
      * @return mixed array
      */
-    public function getItem($id) {
-        $sql = "select * from se_services where id=?";
-        $unit = $this->runRequest($sql, array($id));
+    public function getItem($id_space, $id) {
+        $sql = "select * from se_services where id=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1){
             return $unit->fetch();  // get the first line of the result
         }
@@ -167,9 +165,9 @@ class SeService extends Model {
         }
     }
 
-    public function getItemName($id) {
-        $sql = "select name from se_services where id=?";
-        $unit = $this->runRequest($sql, array($id));
+    public function getItemName($id_space, $id) {
+        $sql = "select name from se_services where id=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];  // get the first line of the result
@@ -185,19 +183,19 @@ class SeService extends Model {
      * @param int $id Id of the item to update
      * @param string $name New name of the item
      */
-    public function editItem($id, $name, $description, $display_order, $type_id) {
+    public function editItem($id_space, $id, $name, $description, $display_order, $type_id) {
 
-        $sql = "update se_services set name=?, description=?, display_order=?, type_id=? where id=?";
-        $this->runRequest($sql, array("" . $name . "", $description, $display_order, $type_id, $id));
+        $sql = "update se_services set name=?, description=?, display_order=?, type_id=? where id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array("" . $name . "", $description, $display_order, $type_id, $id, $id_space));
     }
 
     /**
      * Remove an item from the database
      * @param number $id item ID
      */
-    public function delete($id) {
-        $sql = "DELETE FROM se_services WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE se_services SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

@@ -51,6 +51,8 @@ class BookingblockController extends CoresecureController {
 
     /**
      * Query to make several resources unavailable
+     * 
+     * @deprecated
      */
     public function blockresourcesqueryAction($id_space) {
         $lang = $this->getLanguage();
@@ -77,10 +79,10 @@ class BookingblockController extends CoresecureController {
         if ($end_time <= $start_time) {
             $errormessage = "Error: The begin time must be before the end time";
             //echo "error message = " . $errormessage . "<br/>";
-            $modelResources = new SyResource();
-            $resources = $modelResources->resources("name");
-            $modelColor = new SyColorCode();
-            $colorCodes = $modelColor->getColorCodes();
+            $modelResources = new ResourceInfo();
+            $resources = $modelResources->getBySpace($id_space);
+            $modelColor = new BkColorCode();
+            $colorCodes = $modelColor->getColorCodes($id_space);
             $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
@@ -96,15 +98,14 @@ class BookingblockController extends CoresecureController {
         $userID = $_SESSION["id_user"];
         foreach ($resources as $resource_id) {
 
-            $conflict = $modelCalEntry->isConflict($start_time, $end_time, $resource_id);
+            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $resource_id);
 
             if ($conflict) {
                 $errormessage = "Error: There is already a reservation for the given slot, please remove it before booking";
-                //echo "error message = " . $errormessage . "<br/>";
                 $modelResources = new ResourceInfo();
                 $resources = $modelResources->getBySpace($id_space);
                 $modelColor = new BkColorCode();
-                $colorCodes = $modelColor->getColorCodes();
+                $colorCodes = $modelColor->getColorCodes($id_space);
                 $this->render(array(
                     'id_space' => $id_space,
                     'lang' => $lang,
@@ -119,7 +120,7 @@ class BookingblockController extends CoresecureController {
             $last_update = date("Y-m-d H:i:s", time());
             $full_description = "";
             $quantity = "";
-            $modelCalEntry->addEntry($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity);
+            $modelCalEntry->addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity);
         }
 
         $this->redirect("bookingblock/" . $id_space);
