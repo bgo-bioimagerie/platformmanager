@@ -347,7 +347,7 @@ class Router {
     private function manageError(Throwable $exception, $type = '') {
         $sendToSentry = true;
 
-        if ($exception instanceof Pfmauthexception) {
+        if ($exception instanceof PfmAuthException) {
             $sendToSentry = false;
         }
 
