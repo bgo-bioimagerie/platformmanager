@@ -197,12 +197,9 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $invoiceInfo = $modelInvoice->get($id_space ,$id_invoice);
 
         $clientInfo = $modelClient->get($id_space ,$invoiceInfo["id_responsible"]);
-        $id_belonging = $clientInfo["id_pricing"];
+        $id_belonging = $clientInfo["pricing"];
         
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
-        
-        
-        $item = $modelInvoiceItem->getItem($id_item); 
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         foreach ($contentArray as $content) {
@@ -318,9 +315,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         
         $number = "";
         foreach ($resps as $resp) {
-            //print_r($resp);
             $billIt = $modelCal->hasResponsibleEntry($id_space, $resp["id"], $beginPeriod, $endPeriod);
-            //echo "billIt = " . $billIt . "<br/>";
             if ($billIt) {
                 $number = $modelInvoice->getNextNumber($number);
                 $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"], $number);
@@ -328,6 +323,26 @@ class BookinginvoiceController extends InvoiceAbstractController {
         }
     }
 
+    /**
+     * Generate an invoice for the chosen period.
+     * 
+     * To be noticed:
+     * For each reservation, calculate the price. 
+     * 2 general cases:
+     * - resource booked price depends on duration, then it costs Unit price * reservation duration (in hours)
+     * - resource booked price depends on a quantity of elements, then it costs Unit price * nb elements (quantity)
+     * 
+     * Unit prices can depend on the period booked (day, night, week-end)
+     * 
+     * Specific case:
+     * - if a reservation depending on quantity of elements is stradding 2 types of period (i.e. night and day),
+     * then applies a ratio.
+     * example:
+     * for a reservation covering 2 night hours and 6 day hours => nightRatio = 0.25 and dayRatio = 0.75
+     * if nightPrice = 20 / element and dayPrice = 10 / element,
+     * total price = nbElements * (nightPrice * nightRatio) + nbElements * (dayPrice * dayRatio)
+     * 
+     */
     protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $number = "") {
         $lang = $this->getLanguage();
 
@@ -346,9 +361,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         
         // add the invoice to the database
         $modelInvoice = new InInvoice();
-        if ($number == "") {
-            $number = $modelInvoice->getNextNumber();
-        }
+        $number = ($number != "") ?: $modelInvoice->getNextNumber();
+
         $module = "booking";
         $controller = "Bookinginvoice";
         $date_generated = date("Y-m-d", time());
@@ -360,18 +374,19 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $content = "";
         $total_ht = 0;
         $modelCal = new BkCalendarEntry();
+        $bkCalQuantitiesModel = new BkCalQuantities();
         foreach ($resources as $res) {
+            // get reservations
             $reservations = $modelCal->getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $res["id"], $id_resp);
-            $bkCalQuantitiesModel = new BkCalQuantities();
+            
             // get list of quantities
-            // $bkCalQuantities->calQuantitiesByResource($res["id"]);
             $calQuantities = $bkCalQuantitiesModel->calQuantitiesByResource($id_space, $res["id"]);
-            $calQuantites = ($calQuantities === null) ? [] : $calQuantities;
-            // filter by is_invoicing_unit (1 max) (and mandatory ?)
-            $isInvoicingUnit = false;
-            $calQuantityId;
+            $calQuantities = ($calQuantities !== null) ?: [];
+
             // tell if there's an invoicing unit for this resource amongst quantities and get its ID
-            foreach ($calQuantites as $calQuantity) {
+            $isInvoicingUnit = false;
+            $calQuantityId = "";
+            foreach ($calQuantities as $calQuantity) {
                 if ($calQuantity["is_invoicing_unit"] && intval($calQuantity["is_invoicing_unit"]) === 1) {
                     $calQuantityId = $calQuantity["id"];
                     $isInvoicingUnit = true;
@@ -391,14 +406,15 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
             $userTime["ratio_bookings_day"] = 0;
             $userTime["ratio_bookings_night"] = 0;
-            $userTime["ratio_bookings_we"] = 0;            
+            $userTime["ratio_bookings_we"] = 0;      
             $totalQte = 0; // $totalQte = total number of items booked
+
             foreach ($reservations as $reservation) {
                 // count: day night we, packages, quantity
                 if ($reservation["package_id"] > 0) {
                     $userPackages[$reservation["package_id"]] ++;
                 } else {
-                    $resaDayNightWe = $this->calculateTimeResDayNightWe($id_space, $reservation, $timePrices[$res["id"]]);
+                    $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     
                     if ($isInvoicingUnit) {
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
@@ -430,6 +446,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 // Record that an invoice was generated for this reservation (so that we can't re-invoice if existing)
                 $modelCal->setReservationInvoice($id_space, $reservation["id"], $invoice_id);
             }
+
             // fill content
             if (count($reservations) > 0) {
                 if ($userTime["nb_hours_day"] > 0) {
@@ -638,6 +655,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resaDayNightWe["nb_hours_night"] = round($nb_hours_night / 3600, 1);
         $resaDayNightWe["nb_hours_we"] = round($nb_hours_we / 3600, 1);
 
+        // manage cases where a booking is between day and night hours => get a ratio
         $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
         $resaDayNightWe["ratio_bookings_day"] = round($nb_hours_day / $totalHours, 2);
         $resaDayNightWe["ratio_bookings_night"] = round($nb_hours_night / $totalHours, 2);

@@ -162,7 +162,7 @@ class ResourceInfo extends Model {
     /**
      * Get the resources IDs and names for a given Area
      * @param unknown $areaId
-     * @return multitype:
+     * @return array
      */
     public function resourceIDNameForArea($id_space, $areaId) {
         $sql = "SELECT id, name from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order";
@@ -173,7 +173,7 @@ class ResourceInfo extends Model {
     /**
      * Get the resources info for a given area
      * @param unknown $areaId
-     * @return multitype:
+     * @return array
      */
     public function resourcesForArea($id_space, $areaId) {
         $sql = "SELECT * from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order";

@@ -774,8 +774,8 @@ class BookingdefaultController extends BookingabstractController {
 
     public function deleteAction($id_space, $id) {
         $sendEmail = intval($this->request->getParameter("sendmail"));
+        $modelCalEntry = new BkCalendarEntry();
         if ($sendEmail == 1) {
-            $modelCalEntry = new BkCalendarEntry();
             $entryInfo = $modelCalEntry->getEntry($id_space, $id);
             $id_resource = $entryInfo["resource_id"];
             $resourceModel = new ResourceInfo();

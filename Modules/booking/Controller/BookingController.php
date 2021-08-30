@@ -329,12 +329,10 @@ class BookingController extends BookingabstractController {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
         }
 
-        if ($curentAreaId == "") {
-            if (isset($_SESSION['bk_id_resource'])) {
-                $curentResource = $_SESSION['bk_id_resource'];
-                $curentAreaId = $_SESSION['bk_id_area'];
-                $curentDate = $_SESSION['bk_curentDate'];
-            }
+        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
+            $curentResource = $_SESSION['bk_id_resource'];
+            $curentAreaId = $_SESSION['bk_id_area'];
+            $curentDate = $_SESSION['bk_curentDate'];
         }
 
         // change input if action
@@ -377,7 +375,6 @@ class BookingController extends BookingabstractController {
         // get the resource info
         $modelRes = new ResourceInfo();
         $modelAccess = new BkAccess();
-        //echo "curentAreaId = " . $curentAreaId . "<br/>"; 
         $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
         for ($r = 0; $r < count($resourcesBase); $r++) {
             $resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase[$r]["id"]);
@@ -392,7 +389,6 @@ class BookingController extends BookingabstractController {
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $curentDate);
-        //echo "curent date = " . $curentDate . "<br/>";
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
         for ($t = 0; $t < count($resourcesBase); $t++) {
@@ -409,7 +405,6 @@ class BookingController extends BookingabstractController {
 
         // isUserAuthorizedToBook
         foreach ($resourcesBase as $resourceBase) {
-            //print_r($resourceBase);
             $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
         }
 
@@ -635,7 +630,7 @@ class BookingController extends BookingabstractController {
           $_SESSION['curentDate'] = $curentDate;
          */
         // get the area info
-        $area = $modelArea->get($curentAreaId);
+        $area = $modelArea->get($id_space, $curentAreaId);
 
         // get the resource info
         $modelRes = new ResourceInfo();

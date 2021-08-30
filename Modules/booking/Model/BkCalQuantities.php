@@ -41,7 +41,7 @@ class BkCalQuantities extends Model {
     }
 
     public function calQuantitiesByResource($id_space, $id_resource) {
-        $sql = "select * from bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
+        $sql = "SELECT * FROM bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
 
@@ -161,7 +161,7 @@ class BkCalQuantities extends Model {
 
     /**
      * Set the supplementary of a calendar entry
-     * @param unknown $calsupNames
+     * @param array $calsupNames
      * @param unknown $calsupValues
      * @param unknown $reservation_id
      */
@@ -217,8 +217,8 @@ class BkCalQuantities extends Model {
 
     public function removeUnlistedQuantities($id_space, $packageID) {
 
-        $sql = "select id, id_quantity from bk_calquantities AND id_space=?";
-        $req = $this->runRequest($sql);
+        $sql = "select id, id_quantity from bk_calquantities WHERE id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
         $databasePackages = $req->fetchAll();
 
         foreach ($databasePackages as $dbPackage) {
