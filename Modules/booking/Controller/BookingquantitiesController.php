@@ -114,34 +114,6 @@ class BookingquantitiesController extends CoresecureController {
                         $count++;
                     }
                 }
-                $count = 0;
-            
-                // get the last package id
-                $lastID = 0;
-                for ($p = 0 ; $p < count($supID) ; $p++) {
-                    if ($supName[$p] != "" && $supID[$p] > $lastID ) {
-                        $lastID = $supID[$p];
-                    }
-                }
-                    
-                for ($p = 0 ; $p < count($supID) ; $p++) {
-                    if ($supName[$p] != "" ) {
-                        $curentID = $supID[$p];
-    
-                        if ($curentID == "") {
-                            $lastID++;
-                            $curentID = $lastID;
-                            $supID[$p] = $lastID;
-                        }
-                        if ($curentID == 1 && $p > 0) {
-                            $lastID++;
-                            $curentID = $lastID;
-                            $supID[$p] = $lastID;
-                        }
-                        $modelSups->setCalQuantity($curentID, $supResource[$p], $supName[$p], $supMandatory[$p], $supIsInvoicingUnit[$p]);
-                        $count++;
-                    }
-                }
                 $modelSups->removeUnlistedQuantities($id_space, $supID);
                 $_SESSION["message"] = ["content" => BookingTranslator::Quantities_saved($lang), "type" => "alert-success", "dismissible" => true];
             }

@@ -327,7 +327,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
      * Generate an invoice for the chosen period.
      * 
      * To be noticed:
-     * For each reservation, calculate the price. 
+     * For each reservation, calculate its price (using $this->calculateTimeResDayNightWe()).
      * 2 general cases:
      * - resource booked price depends on duration, then it costs Unit price * reservation duration (in hours)
      * - resource booked price depends on a quantity of elements, then it costs Unit price * nb elements (quantity)
@@ -381,7 +381,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
             
             // get list of quantities
             $calQuantities = $bkCalQuantitiesModel->calQuantitiesByResource($id_space, $res["id"]);
-            $calQuantities = ($calQuantities !== null) ?: [];
+            $calQuantities = ($calQuantities != null) ? $calQuantities : [];
 
             // tell if there's an invoicing unit for this resource amongst quantities and get its ID
             $isInvoicingUnit = false;
@@ -418,7 +418,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     
                     if ($isInvoicingUnit) {
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
-                            // TODO: secure that (try catch ?)
                             // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
                             // get number of resources booked
                             $strToFind = strval($calQuantityId) . "=";
@@ -612,7 +611,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $timePrices;
     }
 
-    // TODO: comment here
+    /**
+     * Refer to $this->invoice() for details
+     * 
+     */
     protected function calculateTimeResDayNightWe($reservation, $timePrices) {
 
         // initialize output

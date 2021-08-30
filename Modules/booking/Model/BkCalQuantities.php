@@ -107,9 +107,9 @@ class BkCalQuantities extends Model {
      */
     public function addCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
 
-        $sql = "insert into bk_calquantities(id_quantity, id_resource, name, mandatory, is_invoicing_unit, id_space)"
+        $sql = "INSERT into bk_calquantities(id_space, id_quantity, id_resource, name, mandatory, is_invoicing_unit)"
                 . " values(?,?,?,?,?,?)";
-        $this->runRequest($sql, array($id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit, $id_space));
+        $this->runRequest($sql, array($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit));
     }
 
     /**
@@ -119,7 +119,6 @@ class BkCalQuantities extends Model {
      * @param unknown $mandatory
      */
     public function setCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
-
         if ($this->isCalQuantityId($id_space, $id_quantity, $id_resource)) {
             $this->updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
         } else {
@@ -133,7 +132,7 @@ class BkCalQuantities extends Model {
      * @return boolean
      */
     public function isCalQuantityId($id_space, $id_quantity, $id_resource) {
-        $sql = "select id from bk_calquantities where id_quantity=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $sql = "SELECT id from bk_calquantities where id_quantity=? AND id_resource=? AND id_space=?";
         $unit = $this->runRequest($sql, array($id_quantity, $id_resource, $id_space));
         return ($unit->rowCount() == 1);
     }
@@ -145,7 +144,7 @@ class BkCalQuantities extends Model {
      * @param unknown $mandatory
      */
     public function updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
-        $sql = "update bk_calquantities set name= ?, mandatory=?, is_invoicing_unit = ? where id_quantity=? AND id_resource=? AND id_space=?";
+        $sql = "UPDATE bk_calquantities SET name=?, mandatory=?, is_invoicing_unit = ? where id_quantity=? AND id_resource=? AND id_space=?";
         $this->runRequest($sql, array($name, $mandatory, $is_invoicing_unit, $id_quantity, $id_resource, $id_space));
     }
 
