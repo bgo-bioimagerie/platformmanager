@@ -113,7 +113,7 @@ class ResourcesinfoController extends CoresecureController {
         $form->addText("brand", ResourcesTranslator::Brand($lang), false, $data["brand"]);
         $form->addText("type", ResourcesTranslator::Type($lang), false, $data["type"]);
         $form->addSelectMandatory("id_category", ResourcesTranslator::Category($lang), $choicesC, $choicesidC, $data["id_category"]);
-        $form->addSelect("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
+        $form->addSelectMandatory("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
         $form->addNumber("display_order", ResourcesTranslator::Display_order($lang), false, $data["display_order"]);
         $form->addUpload("image", CoreTranslator::Image($lang), $data["image"]);
         $form->addText("description", ResourcesTranslator::Description($lang), false, $data["description"], true);

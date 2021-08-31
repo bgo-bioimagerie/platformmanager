@@ -95,7 +95,8 @@ class RecategoriesController extends CoresecureController {
         }
     }
     
-    public function deleteAction($id_space, $id){
+    public function deleteAction($id_space, $id) {
+        $lang = $this->getLanguage();
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         // check if category is linked to resources. If yes, deletion is not authorized => warn the user
@@ -103,13 +104,11 @@ class RecategoriesController extends CoresecureController {
         $linkedResources = $resourceModel->resourcesForCategory($id_space, $id);
 
         if ($linkedResources == null || empty($linkedResources)) {
-            Configuration::getLogger()->debug("[TEST][CAT]", ["not linked to resources, deletion is authorized"]);
             // not linked to resources, deletion is authorized
             $this->categoryModel->delete($id_space, $id);
         } else {
-            Configuration::getLogger()->debug("[TEST][CAT]", ["linked to resources, deletion is NOT authorized"]);
-            // not linked to resources, notify the user
-            $_SESSION["message"] = "Error: As long as this category is linked to existing resources, you can't delete it";
+            // linked to resources, notify the user
+            $_SESSION["message"] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Category($lang), $lang);
         }
         $this->redirect("recategories/".$id_space);
     }
