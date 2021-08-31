@@ -181,6 +181,17 @@ class ResourceInfo extends Model {
         return $data->fetchAll();
     }
 
+    /**
+     * Get the resources info for a given category
+     * @param unknown $areaId
+     * @return multitype:
+     */
+    public function resourcesForCategory($id_space, $categoryId) {
+        $sql = "SELECT * from re_info where id_category=? AND id_space=? AND deleted=0 ORDER BY display_order";
+        $data = $this->runRequest($sql, array($categoryId, $id_space));
+        return $data->fetchAll();
+    }
+
     public function delete($id_space, $id) {
         $sql = "UPDATE re_info SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
