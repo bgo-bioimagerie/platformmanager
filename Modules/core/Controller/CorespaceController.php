@@ -58,10 +58,9 @@ class CorespaceController extends CoresecureController {
         $modelConfig = new CoreConfig();
         $space_home_page = $modelConfig->getParamSpace('space_home_page', $id_space);
 
-        // $showCom = ($space_home_page == "comhome");
-        $showCom = true;
+        $showCom = ($space_home_page == "comhome");
 
-        if ($space_home_page != "") {
+        if ($space_home_page != "" && !$showCom) {
             $this->redirect($space_home_page . "/" . $id_space);
             return;
         }
@@ -91,7 +90,6 @@ class CorespaceController extends CoresecureController {
                 $items = $modelDashboardItem->getForSection($sections[$i]["id"], $role);
                 $sections[$i]["items"] = $items;
             }
-            Configuration::getLogger()->debug("[TEST][SPACECTRL]", ["userCustomDashboard"]);
             return $this->render(array(
                 "role" => $role,
                 "lang" => $lang,

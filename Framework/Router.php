@@ -161,25 +161,27 @@ class Router {
             return;
         }
         Configuration::getLogger()->info('[prometheus] stat', ['route' => $reqRoute]);
-        try {
-            \Prometheus\Storage\Redis::setDefaultOptions(
-                [
-                    'host' => Configuration::get('redis_host'),
-                    'port' => intval(Configuration::get('redis_host', 6379)),
-                    'password' => null,
-                    'timeout' => 0.1, // in seconds
-                    'read_timeout' => '10', // in seconds
-                    'persistent_connections' => false
-                ]
-            );
-            $registry = \Prometheus\CollectorRegistry::getDefault();
-            $counter = $registry->getOrRegisterCounter('pfm', 'request_nb', 'quantity', ['url', 'code']);
-            $counter->incBy(1, [$reqRoute, http_response_code()]);
-            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [10, 20, 50, 100, 1000]);
-            $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
-        } catch(Exception $e) {
-            Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
-        }
+        //TODO: [TEST] uncomment that
+        // try {
+        //     \Prometheus\Storage\Redis::setDefaultOptions(
+        //         [
+        //             'host' => Configuration::get('redis_host'),
+        //             'port' => intval(Configuration::get('redis_host', 6379)),
+        //             'password' => null,
+        //             'timeout' => 0.1, // in seconds
+        //             'read_timeout' => '10', // in seconds
+        //             'persistent_connections' => false
+        //         ]
+        //     );
+        //     $registry = \Prometheus\CollectorRegistry::getDefault();
+        //     $counter = $registry->getOrRegisterCounter('pfm', 'request_nb', 'quantity', ['url', 'code']);
+        //     $counter->incBy(1, [$reqRoute, http_response_code()]);
+        //     $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [10, 20, 50, 100, 1000]);
+        //     $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
+        // } catch(Exception $e) {
+        //     Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
+        // }
+        // [TEST] fin de zone commentée 
     }
 
     protected function runAction($controller, $urlInfo, $action, $args) {
