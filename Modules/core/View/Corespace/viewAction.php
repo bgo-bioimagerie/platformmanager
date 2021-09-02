@@ -31,7 +31,32 @@ if ($space['color'] == "") {
 
 <div class="col-xs-12 text-center" style="color: #fff; background-color: <?php echo $space['color'] ?>; height: 35px;">
     <h4><?php echo $space['name'] ?></h4>
-</div>   
+</div>
+
+<div>
+    <!-- display com popup -->
+<?php
+    if ($showCom) {
+?>
+
+<!--  *************  -->
+<!--  Popup windows  -->
+<!--  *************  -->
+<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
+<div id="hider" class="col-xs-12"></div> 
+<div id="entriespopup_box" class="pm_popup_box" style="display: none;">
+    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a></div>
+        <p id="news_title"> </p>
+</div> 
+
+<?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
+
+<?php
+    }
+?>
+</div>
+
+
 <div class="col-xs-12" style="background-color: #fff; height: 2000px;">
 
     <div class="container" style="background-color: #fff;">
