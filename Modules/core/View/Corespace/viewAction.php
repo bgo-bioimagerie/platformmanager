@@ -53,6 +53,7 @@ if ($space['color'] == "") {
         </div>
     </div>
 </div>
+
 <?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
 
 <?php

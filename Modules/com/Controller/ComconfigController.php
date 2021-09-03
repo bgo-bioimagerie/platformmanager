@@ -53,7 +53,6 @@ class ComconfigController extends CoresecureController {
 
             $use_space_home_page = $this->request->getParameter('use_space_home_page');
             if ($use_space_home_page == 1) {
-                // TODO: problem here
                 $modelConfig->setParam('space_home_page', 'comhome', $id_space);
             } else {
                 $modelConfig->setParam('space_home_page', '', $id_space);

@@ -129,7 +129,6 @@ class CorespaceController extends CoresecureController {
                 }
                 $spaceMenuItems[$i]['color'] = $menuColor;
             }
-            Configuration::getLogger()->debug("[TEST][SPACECTRL]", ["NO userCustomDashboard"]);
             return $this->render(array(
                 "role" => $role,
                 "lang" => $lang,

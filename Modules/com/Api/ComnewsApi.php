@@ -24,12 +24,8 @@ class ComnewsApi extends CoresecureController {
     }
 
     public function getnewsAction($id_space) {
-        Configuration::getLogger()->debug("[TEST][ComnewsApi]", ["in getnewsAction"]);
         $modelNews = new ComNews();
-        $news = $modelNews->getByDate($id_space, 2);
-        
-        Configuration::getLogger()->debug("[TEST][ComnewsApi]", ["news" => $news]);
-
+        $news = $modelNews->getByDate($id_space, 10);
         echo json_encode($news);
     }
 
