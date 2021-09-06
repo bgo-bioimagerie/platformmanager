@@ -86,13 +86,19 @@ class BookingschedulingController extends CoresecureController {
         
         $modelColor = new BkColorCode();
         $colors = $modelColor->getForSpace($id_space);
+
+        // if no color code was created, then alert user it is required to do so
+        if (!$colors) {
+            // display alert
+            $_SESSION["message"] = BookingTranslator::MissingColorCode($lang);
+        }
         
         $cc = array(); $ccid = array();
         foreach($colors as $color){
             $cc[] = $color["name"];
             $ccid[] = $color["id"];
         }
-        $form->addSelect("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $data["default_color_id"]);
+        $form->addSelectMandatory("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $data["default_color_id"]);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingschedulingedit/".$id_space."/".$id);
         $form->setColumnsWidth(3, 9);
@@ -116,7 +122,6 @@ class BookingschedulingController extends CoresecureController {
              
              
             $this->redirect("bookingschedulingedit/".$id_space."/".$id);
-            //echo "form checked <br/>"; 
             return;
              
         }
