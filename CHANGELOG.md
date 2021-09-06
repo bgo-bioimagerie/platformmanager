@@ -11,7 +11,7 @@
 * #235 use static data for se_service_types
 * #246 allow user self registration (via config)
 * #244 Allow impersonation
-* #273 Fix color codes error in booking schedulings 
+* #275 Fix color codes error in booking schedulings 
 
 ## 2.0
 
