@@ -38,7 +38,6 @@ if ($space['color'] == "") {
 <?php
     if ($showCom) {
 ?>
-
 <!--  *************  -->
 <!--  Popup windows  -->
 <!--  *************  -->
@@ -49,7 +48,7 @@ if ($space['color'] == "") {
         <a id="entriesbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a>
     </div>
     <div class="row">
-        <div id="content_section" class="col-md-12" style="text-align:center">
+        <div id="content_section" class="col-md-12" style="text-align:center;">
         </div>
     </div>
 </div>

@@ -11,6 +11,7 @@
 * #235 use static data for se_service_types
 * #246 allow user self registration (via config)
 * #244 Allow impersonation
+* #272 allow to display news in popup on space home page
 
 ## 2.0
 

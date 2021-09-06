@@ -41,18 +41,24 @@
          * @param array newsList
          * 
          */
-        function fillPopup(newsList) {         
+        function fillPopup(newsList) {
+            let contentElem;
+            let img;
             newsList.forEach((news) => {
                 if (news.media && news.media != null) {
                     // set image
-                    let img = document.createElement('img');
+                    img = document.createElement('img');
                     img.setAttribute("src", news.media);
-                    img.setAttribute("style", "max-width:320px");
+                    img.setAttribute("style", "max-width:320px; margin:5px");
                     $("#content_section").append(img);
                     $("#content_section").append("<br/>");
-                }            
-                $("#content_section").append("<b>" + news.title + "</b>");
-                $("#content_section").append(news.content);
+                }
+                // set content
+                contentElem = document.createElement("div");
+                contentElem.style.margin = "25px";
+                contentElem.innerHTML = news.content;
+                $("#content_section").append("<b>" + news.title + "</b>");                
+                $("#content_section").append(contentElem);
                 $("#content_section").append("<br/>");
             });
         }
