@@ -1601,4 +1601,10 @@ class BookingTranslator {
         return "You need to create at least one color code to be able to edit schedulings";
     }
 
+    public static function noBookingArea($lang) {
+        if ($lang == "fr") {
+            return "Erreur : Aucun domaine et / ou aucune ressource n'a été créé";
+        }
+        return "Error: No resource and/or area has been created";
+    }
 }

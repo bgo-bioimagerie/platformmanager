@@ -50,39 +50,44 @@ class BookingschedulingController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
     
-    public function editAction($id_space, $id){
+    public function editAction($id_space, $id) {
+        // That to avoid some confusions between id_rearea and bkScheduling['id']
+        $id_rearea = $id;
         
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
-        
         $lang = $this->getLanguage();
         
         $modelArea = new ReArea();
-        $area = $modelArea->get($id_space, $id);
-
+        $area = $modelArea->get($id_space, $id_rearea);
         $name = $area['name'];
         
         $modelScheduling = new BkScheduling();
-        $data = $modelScheduling->getByReArea($id_space, $id);
+        $bkScheduling = $modelScheduling->getByReArea($id_space, $id_rearea);
 
+        if (!$bkScheduling) {
+            $bkScheduling = $modelScheduling->getDefault();
+            $bkScheduling["id_space"] = $id_space;
+            $bkScheduling["id_rearea"] = $id_rearea;
+        }
 
         $form = new Form($this->request, "bookingschedulingedit");
         $form->setTitle(BookingTranslator::Edit_scheduling($lang) . ": " . $name, 3);
-        $form->addChoicesList(BookingTranslator::Availables_days($lang), 
+        $form->addChoicesList(BookingTranslator::Availables_days($lang),
                 BookingTranslator::DaysList($lang), 
                 array("is_monday", "is_tuesday", "is_wednesday", "is_thursday", "is_friday", "is_saturday", "is_sunday"),
-                array($data["is_monday"], $data["is_tuesday"], $data["is_wednesday"], $data["is_thursday"], $data["is_friday"], $data["is_saturday"], $data["is_sunday"])
+                array($bkScheduling["is_monday"], $bkScheduling["is_tuesday"], $bkScheduling["is_wednesday"], $bkScheduling["is_thursday"], $bkScheduling["is_friday"], $bkScheduling["is_saturday"], $bkScheduling["is_sunday"])
                 );
         
-        $dc = array(); $dcid = array();  
+        $dc = array(); $dcid = array();
         for ($d = 0 ; $d < 25 ; $d++){
             $dc[] = $d . "h";
             $dcid[] = $d;
         }
-        $form->addSelect("day_begin", BookingTranslator::Day_beginning($lang), $dc, $dcid, $data["day_begin"]);
-        $form->addSelect("day_end", BookingTranslator::Day_end($lang), $dc, $dcid, $data["day_end"]);
-        $form->addSelect("size_bloc_resa", BookingTranslator::Booking_size_bloc($lang), array("15min", "30min", "1h"), array(900, 1800, 3600), $data["size_bloc_resa"]);
-        $form->addSelect("booking_time_scale", BookingTranslator::Booking_time_scale($lang), array(BookingTranslator::Minutes($lang), BookingTranslator::Hours($lang), BookingTranslator::Days($lang)), array(1, 2, 3), $data["booking_time_scale"]);
-        $form->addSelect("resa_time_setting", BookingTranslator::The_user_specify($lang), array(BookingTranslator::the_booking_duration($lang), BookingTranslator::the_date_time_when_reservation_ends($lang)), array(1, 2), $data["resa_time_setting"]);
+        $form->addSelect("day_begin", BookingTranslator::Day_beginning($lang), $dc, $dcid, $bkScheduling["day_begin"]);
+        $form->addSelect("day_end", BookingTranslator::Day_end($lang), $dc, $dcid, $bkScheduling["day_end"]);
+        $form->addSelect("size_bloc_resa", BookingTranslator::Booking_size_bloc($lang), array("15min", "30min", "1h"), array(900, 1800, 3600), $bkScheduling["size_bloc_resa"]);
+        $form->addSelect("booking_time_scale", BookingTranslator::Booking_time_scale($lang), array(BookingTranslator::Minutes($lang), BookingTranslator::Hours($lang), BookingTranslator::Days($lang)), array(1, 2, 3), $bkScheduling["booking_time_scale"]);
+        $form->addSelect("resa_time_setting", BookingTranslator::The_user_specify($lang), array(BookingTranslator::the_booking_duration($lang), BookingTranslator::the_date_time_when_reservation_ends($lang)), array(1, 2), $bkScheduling["resa_time_setting"]);
         
         $modelColor = new BkColorCode();
         $colors = $modelColor->getForSpace($id_space);
@@ -98,14 +103,14 @@ class BookingschedulingController extends CoresecureController {
             $cc[] = $color["name"];
             $ccid[] = $color["id"];
         }
-        $form->addSelectMandatory("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $data["default_color_id"]);
+        $form->addSelectMandatory("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $bkScheduling["default_color_id"]);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingschedulingedit/".$id_space."/".$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingschedulingedit/".$id_space."/".$id_rearea);
         $form->setColumnsWidth(3, 9);
         $form->setButtonsWidth(3, 9);
-        if ($form->check()){
-           
-            $modelScheduling->edit($id_space, $data['id'], 
+
+        if ($form->check()) {
+            $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 
@@ -119,11 +124,9 @@ class BookingschedulingController extends CoresecureController {
                     $this->request->getParameter("booking_time_scale"), 
                     $this->request->getParameter("resa_time_setting"), 
                     $this->request->getParameter("default_color_id"));
-             
-             
-            $this->redirect("bookingschedulingedit/".$id_space."/".$id);
+               
+            $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea);
             return;
-             
         }
          
         $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang) ));

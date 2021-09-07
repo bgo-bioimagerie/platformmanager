@@ -373,5 +373,12 @@ class ResourcesTranslator {
         }
         return "Is active";
     }
+
+    public static function DeletionNotAuthorized($elemType, $lang = "") {
+        if ($lang == "fr") {
+            return "Erreur : il est impossible de supprimer cette " . $elemType . " car des ressources y sont rattachées";
+        }
+        return "Error: As long as this " . $elemType . " is linked to existing resources, you can't delete it";
+    }
     
 }
