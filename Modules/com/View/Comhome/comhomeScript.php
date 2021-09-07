@@ -1,66 +1,77 @@
+<?php include 'Modules/core/View/spacelayout.php' ?>
+<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
+<div id="hider" class="col-xs-12"></div> 
+<div id="popup_box" class="pm_popup_box" style="display: none;">
+    
+    <div class="row">
+        <div id="content_section" class="col-md-12" style="text-align:center;">
+            <div id="news">
+                <div class="col-md-1 col-md-offset-11" style="text-align: right;">
+                    <button id="close"
+                        v-on:click="closePopup"
+                        class="glyphicon glyphicon-remove"
+                        style="cursor:pointer;">
+                    </button>
+                </div>
+                <div v-for="news in newsList">
+                    <img :src="news.media" alt="news image" style="max-width:320px; margin:5px"/>
+                    <h3> {{ news.title }} </h3>
+                    <div v-html="news.content" style="margin:25px">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    <?php include 'Modules/com/Api/ComnewsApi.php'; ?>
 
-    $(document).ready(function() {
-        $("#hider").fadeIn("slow");
-        $('#entriespopup_box').fadeIn("slow");
-        $("#entriesbuttonclose").click(function() {
-            $("#hider").hide();
-            $('#entriespopup_box').hide();
-        });
-        showEditEntryForm(<?php echo $id_space ?>);
+let popup_box = document.getElementById('popup_box');
+let hider = document.getElementById('hider');
 
-        /**
-         * Gets news from ComnewsApi then calls displayPopup()
-         * 
-         * @param string id_space
-         * @param string id_resource 
-         * 
-         */
-        function showEditEntryForm(id_space) {
-            // get com infos
-            $.post('comgetnews/' + id_space)
-                .done((response) => {
-                    let data = JSON.parse(response);
-                    let newsList = new Array();
+var newsView = new Vue({
+    el: '#news',
+    data: {
+        newsList: new Array(),
+
+    },
+    methods: {
+        getNewsData() {
+            let headers = new Headers();
+                headers.append('Content-Type','application/json');
+                headers.append('Accept', 'application/json');
+            let cfg = {
+                headers: headers,
+                method: 'GET',
+            };
+            fetch(`comgetnews/<?php echo $id_space ?>`, cfg).
+                then((response) => response.json()).
+                then(data => {
                     data.forEach((elem) => {
-                        newsList.push({
+                        this.newsList.push({
                             "title": elem.title,
                             "content": elem.content,
                             "media": elem.media
-                        })
+                        });
                     });
-                    fillPopup(newsList);
-                });
+                }).
+                then(this.displayPopup());
+        },
+        displayPopup() {
+            popup_box.style.display = "block";
+            popup_box.style.opacity = 1;  
+        },
+        closePopup(event) {
+            // hider.hide();
+            // popup_box.hide();
+            hider.style.opacity = 0;
+            popup_box.style.opacity = 0;
+            popup_box.style.display = "none";
+            hider.style.display = "none";
         }
-
-        /**
-         * Displays a popup window #entriespopup_box
-         * to display news
-         * 
-         * @param array newsList
-         * 
-         */
-        function fillPopup(newsList) {
-            let contentElem;
-            let img;
-            newsList.forEach((news) => {
-                if (news.media && news.media != null) {
-                    // set image
-                    img = document.createElement('img');
-                    img.setAttribute("src", news.media);
-                    img.setAttribute("style", "max-width:320px; margin:5px");
-                    $("#content_section").append(img);
-                    $("#content_section").append("<br/>");
-                }
-                // set content
-                contentElem = document.createElement("div");
-                contentElem.style.margin = "25px";
-                contentElem.innerHTML = news.content;
-                $("#content_section").append("<b>" + news.title + "</b>");                
-                $("#content_section").append(contentElem);
-                $("#content_section").append("<br/>");
-            });
-        }
-    });
+    },
+    beforeMount() {
+        this.getNewsData();
+    }
+})
 </script>

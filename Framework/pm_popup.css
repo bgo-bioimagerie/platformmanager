@@ -30,6 +30,10 @@
     overflow-y: auto;
     overflow-x: hidden;
     z-index:100;
+    -webkit-transition: opacity 250ms ease-in-out;
+    -moz-transition: opacity 250ms ease-in-out;
+    -o-transition: opacity 250ms ease-in-out;
+    transition: opacity 250ms ease-in-out;
     
     /*
     position:fixed;
