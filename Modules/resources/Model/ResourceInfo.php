@@ -173,9 +173,9 @@ class ResourceInfo extends Model {
     /**
      * Get the resources info for a given area
      * @param unknown $areaId
-     * @return multitype:
+     * @return array
      */
-    public function resourcesForArea($id_space, $areaId) {
+    public function resourcesForArea($id_space, $areaId): array {
         $sql = "SELECT * from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order";
         $data = $this->runRequest($sql, array($areaId, $id_space));
         return $data->fetchAll();

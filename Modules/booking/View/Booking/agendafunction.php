@@ -1,6 +1,6 @@
 <?php
 
-function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle) {
+function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo) {
 
     $mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
 
@@ -30,8 +30,13 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 </div>
                 <div class="col-md-3">
                     <p ><strong> <?php echo $mois_fr[$mois] . " " . $annee ?></strong></p>
-
+                    <?php
+                        if (!empty($resourceInfo)) {
+                    ?>
                     <p ><strong> <?php echo $resourceBase["name"] ?></strong></p>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <div class="col-md-6" style="text-align: right;">
                     <div class="btn-group" role="group" aria-label="...">

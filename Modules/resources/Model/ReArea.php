@@ -115,7 +115,7 @@ class ReArea extends Model {
      */
     public function getSmallestUnrestrictedID($id_space) {
         $sql = "SELECT id FROM re_area WHERE restricted=0 AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql);
+        $req = $this->runRequest($sql, array($id_space));
         $tmp = $req->fetch();
         return $tmp? $tmp[0]:0;
     }
