@@ -159,7 +159,7 @@ class ReArea extends Model {
      * @param number $id ID
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE re_area SET deleted=0,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE re_area SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         // $sql = "DELETE FROM re_area WHERE id = ? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
     }
