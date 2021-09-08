@@ -64,6 +64,11 @@ class ResourcesinfoController extends CoresecureController {
         $resources = $modelResource->getBySpace($id_space);
 
 
+        $logger = Configuration::getLogger();
+        foreach($resources as $resource) {
+            $logger->debug("[TEST][resources]", ["id" => $resource['id'], "name" => $resource["name"]]);
+        }
+
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
         for ($i = 0; $i < count($resources); $i++) {
