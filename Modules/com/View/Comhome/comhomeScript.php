@@ -1,5 +1,3 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
-
 <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
 
 <div id="hider" class="col-xs-12"></div> 
