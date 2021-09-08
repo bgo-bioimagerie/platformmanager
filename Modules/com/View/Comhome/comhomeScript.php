@@ -1,17 +1,18 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
+
 <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
+
 <div id="hider" class="col-xs-12"></div> 
-<div id="popup_box" class="pm_popup_box" style="display: none;">
-    
+<div id="popup_box" class="pm_popup_box" style="display: none;">    
     <div class="row">
         <div id="content_section" class="col-md-12" style="text-align:center;">
             <div id="news">
                 <div class="col-md-1 col-md-offset-11" style="text-align: right;">
-                    <button id="close"
+                    <a id="close"
                         v-on:click="closePopup"
                         class="glyphicon glyphicon-remove"
                         style="cursor:pointer;">
-                    </button>
+                    </a>
                 </div>
                 <div v-for="news in newsList">
                     <img :src="news.media" alt="news image" style="max-width:320px; margin:5px"/>
@@ -33,7 +34,6 @@ var newsView = new Vue({
     el: '#news',
     data: {
         newsList: new Array(),
-
     },
     methods: {
         getNewsData() {
