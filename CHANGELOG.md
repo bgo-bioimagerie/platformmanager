@@ -1,5 +1,22 @@
 # Changes
 
+## 2.0.4
+
+* Fix admin space to edit space
+* Fix clientuserdelete params
+
+## 2.0.3
+
+* Bug fix release (routes on antibodies and history)
+
+## 2.0.2
+
+* fix servicesprojecteditentryquery route parameters #253
+* add route reload command in cli
+* Fix antibodieslist action parameter name (route expects sortentry but function defines letter)
+
+## 2.0.1
+
 ## 2.1
 
 * #234 fix defaults in db schema
@@ -11,6 +28,7 @@
 * #235 use static data for se_service_types
 * #246 allow user self registration (via config)
 * #244 Allow impersonation
+* #275 Fix color codes error in booking schedulings 
 
 ## 2.0
 
