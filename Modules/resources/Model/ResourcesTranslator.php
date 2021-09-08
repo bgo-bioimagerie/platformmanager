@@ -380,5 +380,12 @@ class ResourcesTranslator {
         }
         return "Error: As long as this " . $elemType . " is linked to existing resources, you can't delete it";
     }
+
+    public static function NoCategoryWarning($resource_name, $lang = "") {
+        if ($lang == "fr") {
+            return "Votre ressource \"" . $resource_name . "\" n'a pas de catégorie. Vous devriez lui en attribuer une.";
+        }
+        return "Your resource \"" . $resource_name . "\" has no category. You should add one.";
+    }
     
 }

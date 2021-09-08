@@ -61,19 +61,16 @@ class ResourcesinfoController extends CoresecureController {
         );
 
         $modelResource = new ResourceInfo();
-        $resources = $modelResource->getBySpace($id_space);
-
-
-        $logger = Configuration::getLogger();
-        foreach($resources as $resource) {
-            $logger->debug("[TEST][resources]", ["id" => $resource['id'], "name" => $resource["name"]]);
-        }
+        $resources = $modelResource->getBySpaceWithoutCategory($id_space);
 
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
         for ($i = 0; $i < count($resources); $i++) {
             $resources[$i]["area"] = $modelArea->getName($id_space, $resources[$i]["id_area"]);
             $resources[$i]["category"] = $modelCategory->getName($id_space, $resources[$i]["id_category"]);
+            if ($resources[$i]["category"] === "") {
+                $_SESSION["flash"] = ResourcesTranslator::NoCategoryWarning($resources[$i]['name'], $lang);
+            }
         }
 
         $tableHtml = $table->view($resources, $headers);
@@ -130,7 +127,16 @@ class ResourcesinfoController extends CoresecureController {
         $form->setColumnsWidth(2, 10);
 
         if ($form->check()) {
-            $id = $modelResource->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("brand"), $form->getParameter("type"), $form->getParameter("description"), $form->getParameter("long_description"), $form->getParameter("id_category"), $form->getParameter("id_area"), $id_space, $form->getParameter("display_order"));
+            $id = $modelResource->set($form->getParameter("id"),
+            $form->getParameter("name"),
+            $form->getParameter("brand"),
+            $form->getParameter("type"),
+            $form->getParameter("description"),
+            $form->getParameter("long_description"),
+            $form->getParameter("id_category"),
+            $form->getParameter("id_area"),
+            $id_space,
+            $form->getParameter("display_order"));
             
             // upload image
             $target_dir = "data/resources/";
