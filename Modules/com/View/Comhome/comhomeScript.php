@@ -42,10 +42,10 @@ var newsView = new Vue({
                 headers: headers,
                 method: 'GET',
             };
-            fetch(`comgetnews/<?php echo $id_space ?>`, cfg).
+            fetch(`getnews/<?php echo $id_space ?>`, cfg).
                 then((response) => response.json()).
                 then(data => {
-                    data.forEach((elem) => {
+                    data.news.forEach((elem) => {
                         this.newsList.push({
                             "title": elem.title,
                             "content": elem.content,
