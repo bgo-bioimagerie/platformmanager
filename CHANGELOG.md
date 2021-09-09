@@ -28,7 +28,8 @@
 * #235 use static data for se_service_types
 * #246 allow user self registration (via config)
 * #244 Allow impersonation
-* #275 Fix color codes error in booking schedulings 
+* #275 Fix color codes error in booking schedulings
+* #278 add email duplicates checking in core users and space users forms
 
 ## 2.0
 
