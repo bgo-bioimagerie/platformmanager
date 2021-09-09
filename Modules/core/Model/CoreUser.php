@@ -677,14 +677,62 @@ class CoreUser extends Model {
         ));
     }
 
+    /**
+     * 
+     * Check if this login is linked to an account
+     * 
+     * @param string $login
+     * 
+     * @return bool
+     */
     public function isLogin($login) {
-        $sql = "select * from core_users where login=?";
+        $sql = "select login from core_users where login=?";
         $user = $this->runRequest($sql, array($login));
         if ($user->rowCount() == 1) {
             return true;
         }
         return false;
     }
+
+    /**
+     * 
+     * Check if an email is linked to an existing account
+     * 
+     * @param string $email
+     * 
+     * @return bool
+     */
+    public function isEmail($email) {
+        $sql = "select email from core_users where email=?";
+        $email = $this->runRequest($sql, array($email));
+        if ($email->rowCount() >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * Check if an email is linked to an existing account, except a specific one
+     * 
+     * @param string $email
+     * @param string $emailToIgnore
+     * 
+     * @return bool
+     */
+    public function isEmailWithFilter($email, $emailToIgnore) {
+        $result = false;
+        $sql = "select email from core_users where email=?";
+        $reqResult = $this->runRequest($sql, array($email));
+        if ($reqResult->rowCount() > 1) {
+            $result = true;
+        } else if ($reqResult->rowCount() == 1) {
+            $email = $reqResult->fetch()["email"];
+            $result = ($emailToIgnore != $email);
+        }
+        return $result;
+    }
+
 
     /**
      * Get the users information

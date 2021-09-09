@@ -86,8 +86,8 @@ class CoreusersController extends CoresecureController {
             $form->setTitle(CoreTranslator::Add_User($lang));
         }
         $form->addHidden("id", $user["id"]);
-        // #105: add readonly
         $isLoginLocked = (!$id) ? false : true;
+        // Next line OK
         $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked);
         if (!$id) {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
@@ -125,14 +125,36 @@ class CoreusersController extends CoresecureController {
         }
         $script = "";
         if ($form->check()) {
-            if (!$id && $modelUser->isLogin($this->request->getParameter('login'))) {
-                throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
+            $canEditUser = true;
+            if (!$id) {
+                if ($modelUser->isLogin($this->request->getParameter('login'))) {
+                    $canEditUser = false;
+                    throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
+                }
+                if($modelUser->isEmail($form->getParameter("email"))) {
+                    // if email alreday exists, warn user
+                    $canEditUser = false;
+                    $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                }
             } else {
+                $emailUsedByAnother = $modelUser->isEmailWithFilter($form->getParameter("email"), $user["email"]);
+                if ($emailUsedByAnother) {
+                    // if email, excepting user's one, already exists, warn user
+                    $canEditUser = false;
+                    $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                }
+            }
+            if ($canEditUser) {
+                $_SESSION["flash"] = (!$id)
+                    ? CoreTranslator::AccountHasBeenCreated($lang)
+                    : CoreTranslator::AccountHasBeenModified($lang);
+                $_SESSION["flashClass"] = "success";
                 $id_user = $this->editQuery($form, $modelUser, $lang);
                 $user = $modelUser->getInfo($id_user);
                 $this->redirect("coreusers", [], ['user' => $user]);
                 return;
             }
+                
         }
         if ($id > 0 && $formPwd->check()) {
             $this->editPwdQuery($form, $modelUser, $lang);

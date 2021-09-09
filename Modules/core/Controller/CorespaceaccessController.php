@@ -202,12 +202,19 @@ class CorespaceaccessController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd/".$id_space);
 
         if ($form->check()) {
-
             $modelCoreUser = new CoreUser();
+            $canEditUser = true;
+            if ($modelCoreUser->isLogin($this->request->getParameter('login'))) {
+                $canEditUser = false;
+                throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
+            }
+            if($modelCoreUser->isEmail($form->getParameter("email"))) {
+                // if email alreday exists, warn user
+                $canEditUser = false;
+                $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+            }
 
-            if ($modelCoreUser->isLogin($form->getParameter("login"))) {
-                $_SESSION["message"] = CoreTranslator::Error($lang) . ":" . CoreTranslator::LoginAlreadyExists($lang);
-            } else {
+            if ($canEditUser) {
                 $pwd = $modelCoreUser->generateRandomPassword();
 
                 $id_user = $modelCoreUser->createAccount(
@@ -235,7 +242,8 @@ class CorespaceaccessController extends CoresecureController {
                 $modelSpacePending = new CorePendingAccount();
                 $pid = $modelSpacePending->add($id_user, $id_space);
 
-                $_SESSION["message"] = CoreTranslator::AccountHasBeenCreated($lang);
+                $_SESSION["flash"] = CoreTranslator::AccountHasBeenCreated($lang);
+                $_SESSION["flashClass"] = "success";
 
                 $user = $modelCoreUser->getInfo($id_user);
                 $this->redirect("corespaceaccessuseradd/".$id_space, [], ['user' => $user, 'pending' => $pid]);
