@@ -1594,4 +1594,17 @@ class BookingTranslator {
         return "Booking access";
     }
 
+    public static function MissingColorCode($lang) {
+        if ($lang == "fr") {
+            return "Vous devez créer au moins un code couleur afin de pouvoir éditer les horaires";
+        }
+        return "You need to create at least one color code to be able to edit schedulings";
+    }
+
+    public static function noBookingArea($lang) {
+        if ($lang == "fr") {
+            return "Erreur : Aucun domaine et / ou aucune ressource n'a été créé";
+        }
+        return "Error: No resource and/or area has been created";
+    }
 }

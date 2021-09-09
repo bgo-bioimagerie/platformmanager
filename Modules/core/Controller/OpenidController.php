@@ -193,7 +193,10 @@ class OpenidController extends CorecookiesecureController {
     public function connectAction($provider) {
         // Check openid connection
         if(!isset($_GET['code'])) {
+            $_SESSION["message"] = "Authentication failed";
+            Configuration::getLogger()->debug('[openid][code] no code provided');
             $this->redirect("coreconnection");
+            return;
         }
         Configuration::getLogger()->debug('[openid][code]', ['code' => $_GET['code']]);
         $redirect = '';
