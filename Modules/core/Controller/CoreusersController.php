@@ -129,19 +129,21 @@ class CoreusersController extends CoresecureController {
             if (!$id) {
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
                     $canEditUser = false;
-                    throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
+                    $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
+                    $_SESSION["flashClass"] = "danger";
                 }
                 if($modelUser->isEmail($form->getParameter("email"))) {
                     // if email alreday exists, warn user
                     $canEditUser = false;
                     $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                    $_SESSION["flashClass"] = "danger";
                 }
             } else {
-                $emailUsedByAnother = $modelUser->isEmailWithFilter($form->getParameter("email"), $user["email"]);
-                if ($emailUsedByAnother) {
+                if ($modelUser->isEmail($form->getParameter("email")) && $form->getParameter("email") != $user["email"]) {
                     // if email, excepting user's one, already exists, warn user
                     $canEditUser = false;
                     $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                    $_SESSION["flashClass"] = "danger";
                 }
             }
             if ($canEditUser) {

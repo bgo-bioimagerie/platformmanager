@@ -206,12 +206,14 @@ class CorespaceaccessController extends CoresecureController {
             $canEditUser = true;
             if ($modelCoreUser->isLogin($this->request->getParameter('login'))) {
                 $canEditUser = false;
-                throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
+                $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
+                $_SESSION["flashClass"] = "danger";
             }
             if($modelCoreUser->isEmail($form->getParameter("email"))) {
                 // if email alreday exists, warn user
                 $canEditUser = false;
                 $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                $_SESSION["flashClass"] = "danger";
             }
 
             if ($canEditUser) {

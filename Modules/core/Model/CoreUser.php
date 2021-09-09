@@ -712,29 +712,6 @@ class CoreUser extends Model {
     }
 
     /**
-     * 
-     * Check if an email is linked to an existing account, except a specific one
-     * 
-     * @param string $email
-     * @param string $emailToIgnore
-     * 
-     * @return bool
-     */
-    public function isEmailWithFilter($email, $emailToIgnore) {
-        $result = false;
-        $sql = "select email from core_users where email=?";
-        $reqResult = $this->runRequest($sql, array($email));
-        if ($reqResult->rowCount() > 1) {
-            $result = true;
-        } else if ($reqResult->rowCount() == 1) {
-            $email = $reqResult->fetch()["email"];
-            $result = ($emailToIgnore != $email);
-        }
-        return $result;
-    }
-
-
-    /**
      * Get the users information
      *
      * @param string $sortentry
