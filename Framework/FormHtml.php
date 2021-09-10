@@ -149,7 +149,7 @@ class FormHtml {
         if ($required) {
             $reqTxt = "*";
         }
-
+        
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
@@ -381,17 +381,21 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function email($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
+    static public function email($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9, $checkUnicity = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
         }
-
+        
+        
         $html = "<div class=\"form-group " . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"email\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
+        if ($checkUnicity) {
+            $html .= "onfocusout=\"checkEmailUnicity() \"";
+        }
         $html .= "/>";
         $html .= "</div>";
         $html .= "</div>";
@@ -721,6 +725,14 @@ class FormHtml {
         $string = file_get_contents('Framework/formajax_script.php');
         $string1 = str_replace("formid", $formId, $string);
         return str_replace("validationurl", $validationURL, $string1);
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    static public function checkUnicityScript() {
+        return file_get_contents("Framework/formUtils.php");
     }
 
 }

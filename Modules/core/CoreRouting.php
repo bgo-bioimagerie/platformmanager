@@ -47,6 +47,8 @@ class CoreRouting extends Routing{
         $this->addRoute("coreusersedit", "coreusersedit", "coreusers", "edit", array("id"), array(""));
         $this->addRoute("coreusersdelete", "coreusersdelete", "coreusers", "delete", array("id"), array(""));
         $this->addRoute("coreuserslanguageedit", "coreuserslanguageedit", "coreusers", "languageedit");
+        $this->addRoute("coreusersisunique", "coreusersisunique", "coreusers", "isunique", array("id"), array(""));
+
         // settings
         $this->addRoute("coremyaccount", "coremyaccount", "coreusers", "myaccount");
         $this->addRoute("coresettings", "coresettings", "coresettings", "index");

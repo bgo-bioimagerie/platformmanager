@@ -1207,6 +1207,13 @@ class CoreTranslator {
         return "The two password are different";
     }
 
+    public static function PasswordHasBeenChanged($lang) {
+        if ($lang == "fr") {
+            return "Le mot de passe a bien été modifié";
+        }
+        return "Password has been modified successfully";
+    }
+
     public static function The_curent_password_is_not_correct($lang) {
         if ($lang == "fr") {
             return "Le mot de passe actuel n'est pas correct";

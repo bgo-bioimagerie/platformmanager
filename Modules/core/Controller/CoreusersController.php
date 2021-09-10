@@ -95,7 +95,7 @@ class CoreusersController extends CoresecureController {
         }
         $form->addText("name", CoreTranslator::Name($lang), false, $user["name"]);
         $form->addText("firstname", CoreTranslator::Firstname($lang), false, $user["firstname"]);
-        $form->addEmail("email", CoreTranslator::Email($lang), false, $user["email"]);
+        $form->addEmail("email", CoreTranslator::Email($lang), false, $user["email"], true);
 
         $modelStatus = new CoreStatus();
         $status = $modelStatus->allStatusInfo();
@@ -126,7 +126,8 @@ class CoreusersController extends CoresecureController {
         $script = "";
         if ($form->check()) {
             if (!$id && $modelUser->isLogin($this->request->getParameter('login'))) {
-                throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
+                 // throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
+                 $_SESSION['flash'] = CoreTranslator::LoginAlreadyExists($lang);
             } else {
                 $id_user = $this->editQuery($form, $modelUser, $lang);
                 $user = $modelUser->getInfo($id_user);
@@ -152,10 +153,11 @@ class CoreusersController extends CoresecureController {
         $pwd = $formPwd->getParameter("pwd");
         $pwdconfirm = $formPwd->getParameter("pwdconfirm");
         if ($pwd != $pwdconfirm) {
-            throw new PfmException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
+            $_SESSION['flash'] = CoreTranslator::TheTwoPasswordAreDifferent($lang);
+        } else {
+            $modelUser->changePwd($formPwd->getParameter("id"), $pwd);
+            $_SESSION['flash'] = CoreTranslator::PasswordHasBeenChanged($lang);
         }
-
-        $modelUser->changePwd($formPwd->getParameter("id"), $pwd);
     }
 
     protected function editQuery($form, $modelUser, $lang) {
@@ -165,7 +167,7 @@ class CoreusersController extends CoresecureController {
             $pwd = $form->getParameter("pwd");
             $pwdconfirm = $form->getParameter("pwdconfirm");
             if ($pwd != $pwdconfirm) {
-                throw new PfmException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
+                $_SESSION['flash'] = CoreTranslator::TheTwoPasswordAreDifferent($lang);
             }
             $id = $modelUser->add(
                 $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
@@ -294,6 +296,14 @@ class CoreusersController extends CoresecureController {
             'lang' => $lang,
             'form' => $form->getHtml($lang)
         ));
+    }
+
+    public function isuniqueAction($id) { //TODO: add type parameter. Check routes in db !!!
+        //$id goes for "value"
+        Configuration::getLogger()->debug("[TEST][COREUSERS]", ["in isuniqueAction"]);
+        $modelUser = new CoreUser();
+        $isUnique = $modelUser->isEmail("managertest@test.org");
+        $this->render(['data' => ['isUnique' => $isUnique]]);
     }
 
 }
