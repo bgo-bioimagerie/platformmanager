@@ -51,6 +51,7 @@ abstract class Controller {
      * @throws Exception If the action does not exist in the curent controller
      */
     public function runAction($module, $action, $args = array()) {
+        Configuration::getLogger()->debug("[TEST][CONTROLLER]", ["module" => $module, "action"> $action, "args" => $args]);
         $this->module = strtolower($module);
         $actionName = $action . "Action";
         if (method_exists($this, $actionName)) {

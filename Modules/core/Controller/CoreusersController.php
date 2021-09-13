@@ -298,11 +298,9 @@ class CoreusersController extends CoresecureController {
         ));
     }
 
-    public function isuniqueAction($id) { //TODO: add type parameter. Check routes in db !!!
-        //$id goes for "value"
-        Configuration::getLogger()->debug("[TEST][COREUSERS]", ["in isuniqueAction"]);
+    public function isuniqueAction($value) {
         $modelUser = new CoreUser();
-        $isUnique = $modelUser->isEmail("managertest@test.org");
+        $isUnique = !$modelUser->isEmail("$value");
         $this->render(['data' => ['isUnique' => $isUnique]]);
     }
 

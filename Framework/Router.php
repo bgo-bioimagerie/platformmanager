@@ -128,6 +128,7 @@ class Router {
                 }
 
                 $urlInfo = $this->getUrlData($request);
+                Configuration::getLogger()->debug("[TEST][ROUTER]", ["urlInfo" => $urlInfo]);
                 if(!$urlInfo['pathInfo']) {
                     $this->logger->warning('no route found, redirect to homepage', [
                         'url' => $request->getParameter('path'),

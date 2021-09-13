@@ -394,7 +394,7 @@ class FormHtml {
         $html .= "<input class=\"form-control\" type=\"email\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         if ($checkUnicity) {
-            $html .= "onfocusout=\"checkEmailUnicity() \"";
+            $html .= "onblur=\"checkEmailUnicity() \"";
         }
         $html .= "/>";
         $html .= "</div>";
