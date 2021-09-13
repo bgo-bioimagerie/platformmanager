@@ -124,11 +124,14 @@ class CoreusersController extends CoresecureController {
             $formPwd->setButtonsWidth(3, 8);
         }
         $script = "";
+        $checked = false;
         if ($form->check()) {
             if (!$id && $modelUser->isLogin($this->request->getParameter('login'))) {
                  // throw new PfmException(CoreTranslator::LoginAlreadyExists($lang), 403);
                  $_SESSION['flash'] = CoreTranslator::LoginAlreadyExists($lang);
+                 Configuration::getLogger()->debug("[TEST][FORM]", ["form KO"]);
             } else {
+                Configuration::getLogger()->debug("[TEST][FORM]", ["form OK"]);
                 $id_user = $this->editQuery($form, $modelUser, $lang);
                 $user = $modelUser->getInfo($id_user);
                 $this->redirect("coreusers", [], ['user' => $user]);
@@ -145,7 +148,9 @@ class CoreusersController extends CoresecureController {
         if ($id > 0) {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
-        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+        if ($checked = true) {
+            $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+        }
     }
 
     protected function editPwdQuery($formPwd, $modelUser, $lang) {
