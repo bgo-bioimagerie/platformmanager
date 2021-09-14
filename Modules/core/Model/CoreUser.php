@@ -680,14 +680,21 @@ class CoreUser extends Model {
     /**
      * 
      * Check if this login is linked to an account
+     * Can exclude a specific login from the research 
      * 
      * @param string $login
+     * @param (optional) string $filteredLogin we want to exclude from the research
      * 
      * @return bool
      */
-    public function isLogin($login) {
+    public function isLogin($login, $filteredLogin = false) {
         $sql = "select * from core_users where login=?";
-        $user = $this->runRequest($sql, array($login));
+        $params = array($login);
+        if ($filteredLogin) {
+            $sql .= " AND login <> ?";
+            array_push($params, $filteredLogin);
+        }
+        $user = $this->runRequest($sql, $params);
         if ($user->rowCount() == 1) {
             return true;
         }
@@ -697,14 +704,21 @@ class CoreUser extends Model {
     /**
      * 
      * Check if an email is linked to an existing account
+     * Can exclude a specific email from the research
      * 
      * @param string $email
+     * @param (optional) string $filteredEmail we want to exclude from the research
      * 
      * @return bool
      */
-    public function isEmail($email) {
+    public function isEmail($email, $filteredEmail = false) {
         $sql = "select email from core_users where email=?";
-        $email = $this->runRequest($sql, array($email));
+        $params = array($email);
+        if ($filteredEmail) {
+            $sql .= " AND email <> ?";
+            array_push($params, $filteredEmail);
+        }
+        $email = $this->runRequest($sql, $params);
         if ($email->rowCount() >= 1) {
             return true;
         }

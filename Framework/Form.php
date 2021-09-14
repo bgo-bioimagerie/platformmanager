@@ -329,7 +329,7 @@ class Form {
      * @param string $value Input default value
      */
     // #105: add readonly
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "") {
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false) {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -342,7 +342,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = $readonly;
-        $this->checkUnicity[] = false;
+        $this->checkUnicity[] = $checkUnicity;
     }
 
     /**
@@ -650,7 +650,6 @@ class Form {
 
         // fields
         for ($i = 0; $i < count($this->types ?? []); $i++) {
-            Configuration::getLogger()->debug("[TEST][FORM.php]", ["type" => $this->types[$i], "checkUnicity" => $this->checkUnicity[$i]]);
             $readonlyElem = false;
             if ($this->readonly[$i]) {
                 $readonlyElem = true;
@@ -658,6 +657,7 @@ class Form {
 
             $checkUnicityElem = false;
             if ($this->checkUnicity[$i]) {
+                Configuration::getLogger()->debug("[TEST][FORM]", ["checkUnicity for id" => $i]);
                 $checkUnicityElem = true;
             }
             
@@ -682,7 +682,7 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem);
+                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicity = $checkUnicityElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);

@@ -141,19 +141,27 @@ class FormHtml {
      * @param type $required
      * @param type $labelWidth
      * @param type $inputWidth
+     * @param bool $readonly
+     * @param bool $checkUnicity
      * @return string
      */
     // #105: add readonly
-    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false) {
+    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false, $checkUnicity = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
         }
+        Configuration::getLogger()->debug("[TEST][UNICITY]", ["adding unicity check to textfield" => $name,  $checkUnicity]);
         
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"text\" id=\"" . $name . "\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control";
+        if ($checkUnicity) {
+            $html .= " unique";
+        }
+        $html .= "\"";
+        $html .= " type=\"text\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\" " . $required . " " . $enabled;
         // #105: add readonly
         if ($readonly) {
@@ -391,11 +399,13 @@ class FormHtml {
         $html = "<div class=\"form-group " . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"email\" id=\"" . $name . "\" name=\"" . $name . "\"";
-        $html .= " value=\"" . $value . "\"" . $required;
+        $html .= "<input class=\"form-control";
         if ($checkUnicity) {
-            $html .= "onblur=\"checkEmailUnicity() \"";
+            $html .= " unique";
         }
+        $html .= "\"";
+        $html .= " type=\"email\" id=\"" . $name . "\" name=\"" . $name . "\"";
+        $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         $html .= "</div>";
         $html .= "</div>";
@@ -732,7 +742,7 @@ class FormHtml {
      * @return type
      */
     static public function checkUnicityScript() {
-        return file_get_contents("Framework/formUtils.php");
+        return file_get_contents("Framework/checkUnicity_script.php");
     }
 
 }

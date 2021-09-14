@@ -88,7 +88,7 @@ class CoreusersController extends CoresecureController {
         $form->addHidden("id", $user["id"]);
         // #105: add readonly
         $isLoginLocked = (!$id) ? false : true;
-        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked);
+        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked, checkUnicity: !$isLoginLocked);
         if (!$id) {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
             $form->addPassword("pwdconfirm", CoreTranslator::Password($lang));
@@ -303,9 +303,23 @@ class CoreusersController extends CoresecureController {
         ));
     }
 
-    public function isuniqueAction($value) {
+    public function isuniqueAction($type, $value, $id_user) {
         $modelUser = new CoreUser();
-        $isUnique = !$modelUser->isEmail("$value");
+        $email = "";
+        $login = "";
+        if ($id_user && $id_user > 0) {
+          $user = $modelUser->getInfo($id_user);
+          $email = $user['email'];
+          $login = $user['login'];
+        }
+        Configuration::getLogger()->debug("[TEST][ISUNIQUEACTION]", ["type" => $type, "value" => $value, "id_user" => $id_user]);
+        if ($type === "email") {
+            $isUnique = !$modelUser->isEmail($value, $email);
+        } else if ($type === "login") {
+            $isUnique = !$modelUser->isLogin($value, $login);
+        } else {
+            $isUnique = "wrong type";
+        }
         $this->render(['data' => ['isUnique' => $isUnique]]);
     }
 
