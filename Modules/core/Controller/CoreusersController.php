@@ -115,6 +115,7 @@ class CoreusersController extends CoresecureController {
 
 
         if ($id > 0) {
+            Configuration::getLogger()->debug("[TEST][PWD]", ["password form"]);
             $formPwd = new Form($this->request, "coreuseretidpwd");
             $formPwd->addHidden("id", $user["id"]);
             $formPwd->setTitle(CoreTranslator::Change_password($lang));
@@ -132,6 +133,7 @@ class CoreusersController extends CoresecureController {
                  Configuration::getLogger()->debug("[TEST][FORM]", ["form KO"]);
             } else {
                 Configuration::getLogger()->debug("[TEST][FORM]", ["form OK"]);
+                // TODO: check email with regexp
                 $id_user = $this->editQuery($form, $modelUser, $lang);
                 $user = $modelUser->getInfo($id_user);
                 $this->redirect("coreusers", [], ['user' => $user]);
