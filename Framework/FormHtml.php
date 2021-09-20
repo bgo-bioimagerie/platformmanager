@@ -151,7 +151,6 @@ class FormHtml {
         if ($required) {
             $reqTxt = "*";
         }
-        Configuration::getLogger()->debug("[TEST][UNICITY]", ["adding unicity check to textfield" => $name,  $checkUnicity]);
         
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";

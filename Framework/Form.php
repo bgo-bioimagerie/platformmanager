@@ -657,7 +657,6 @@ class Form {
 
             $checkUnicityElem = false;
             if ($this->checkUnicity[$i]) {
-                Configuration::getLogger()->debug("[TEST][FORM]", ["checkUnicity for id" => $i]);
                 $checkUnicityElem = true;
             }
             
@@ -744,7 +743,6 @@ class Form {
         }
 
         if ($this->checkUnicity == true) {
-            Configuration::getLogger()->debug("[TEST][FORM.php]", ["this->checkUnicity == true"]);
             $html .= $formHtml->checkUnicityScript();
         }
 
