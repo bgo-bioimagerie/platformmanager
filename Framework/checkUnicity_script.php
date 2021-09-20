@@ -1,14 +1,20 @@
-<script>
+<script type="text/javascript">
+
 // get const values userId, save btn and form elements
-userId = document.getElementById("id").value;
-form = document.getElementById("editForm");
+if (document.getElementById("id")) {
+   userId = document.getElementById("id").value;
+} else {
+    userId = 0;
+}
+
+form = document.getElementById("editForm")
+    || document.getElementById("createuseraccountform");
+    
 saveBtn = document.getElementById("editFormsubmit");
 inputs = form.getElementsByTagName("input");
 isPwd = [...inputs].filter(input => input.id === "pwd").length > 0;
-console.log("isPwd", isPwd);
 pwdInput = "";
 pwdConfirmInput = "";
-
 // check elements when submitting form
 form.setAttribute("onsubmit", "return validateUserForm(event)");
 
@@ -32,12 +38,19 @@ if (isPwd) {
     createErrorDiv(pwdConfirmInput);
 }
 
-function createErrorDiv(HTMLelement) {
+/**
+ * Create an div of classes errorMessage and notUnique
+ * append to the parentElement of the specified HTMLElement
+ * 
+ * @param {HTMLElement} element
+ * 
+ */
+function createErrorDiv(element) {
     let error = document.createElement("div");
     error.className = "errorMessage notUnique";
     error.style.color = "red";
     error.style.display = "none";
-    HTMLelement.parentElement.append(error);
+    element.parentElement.append(error);
 }
 
 
@@ -53,23 +66,23 @@ function createErrorDiv(HTMLelement) {
  * Setting checkUnicity param to true in Form::addEmail() or Form::addText() will lead to use this control function.
  * Forbid form submission and displays warns to user if a "unique" input field is filled with data already existing in database.
  * 
- * @param string origin
+ * @param {string} origin
  * 
  */
-// TODO: rename, factorize
 function validateUserForm(origin) {
-    console.log("!origin.target", !origin.target);
     let unicity = true;
-    let pwdValidity = true;
+    let pwdIdentical = true;
     let msg;
-    if (!origin.target) {
+    let submissionRequest = !(!origin.target);
+    let elemsToCheck = [...uniqueElems];
+    if (!submissionRequest) {
         // not an onsubmit event
-        uniqueElems.length = 0;
-        uniqueElems.push(origin);
+        elemsToCheck.length = 0;
+        elemsToCheck.push(origin);
     } else {
         origin.preventDefault();
         // check if passwords match
-        pwdValidity = isPwd ? validatePasswords() : true;
+        pwdIdentical = isPwd ? validatePasswords() : true;
     }
     const headers = new Headers();
         headers.append('Content-Type','application/json');
@@ -80,39 +93,39 @@ function validateUserForm(origin) {
     };
     
     // for each element fetch unicity info then display or delete warnings
-    uniqueElems.forEach((elem, index) => {
-        console.log("in forEach");
+    elemsToCheck.forEach((elem, index) => {
         const elemHTML = document.getElementById(elem.id);
         const value = elemHTML.value;
         const type = elemHTML.id;
         let errors = elemHTML.parentElement.getElementsByClassName("errorMessage");
+        // Do we still need errordISPLAYED ?
         let errorDisplayed = (errors.length > 0);
         let invalidEmail = (type === "email") && !validateEmail(value);
-        fetch(`isunique/` + type + "/" + value + "/" + userId, cfg).
+        fetch(`isunique/` + type + "/" + value + "/" + userId, cfg, true).
             then((response) => response.json()).
             then(data => {
-                console.log("data", data);
-                if (!data.isUnique || invalidEmail /*|| passwordsDontMatch*/) {
+                if (!data.isUnique || invalidEmail) {
                     // Data is not valid
                     unicity = false;
-                    if (!data.isUnique && errorDisplayed) {
-                        msg = "this " + type + " already exists"
+                    if (!data.isUnique) {
+                        // TODO: find a way to get values from CoreTranslator !!!
+                        msg = "this " + type + " already exists";
                         displayError(errors, elemHTML, msg);
                     }
-                    if (invalidEmail && errorDisplayed) {
-                        msg = "please enter a valid email address"
+                    if (invalidEmail) {
+                        msg = "please enter a valid email address";
                         displayError(errors, elemHTML, msg);
                     }
-                    if (origin.target) {
+                    if (submissionRequest) {
                         elemHTML.focus();
                     }
-                    
+                    console.error("not submitting")
                 } else {
                     if (errorDisplayed) {
                         hideErrors(errors, elemHTML)
                     }
-                    if ((index === (uniqueElems.length - 1)) && origin.target && (unicity && pwdValidity)) {
-                        /* submission button has been clicked
+                    if ((index === (elemsToCheck.length - 1)) && submissionRequest && (unicity && pwdIdentical)) {
+                        /* submission has been requested
                         AND all unique inputs have been tested and have returned true
                         AND, if password input, passwords match */
                         console.error("submitting");
@@ -128,7 +141,7 @@ function validateUserForm(origin) {
 /**
  * Compare the values of pwd and pwdConfirm input fields
  * 
- * @return bool
+ * @return {boolean} - passwords validated
  */
 function validatePasswords() {
     let valid = (pwdInput.value === pwdConfirmInput.value);
@@ -136,33 +149,51 @@ function validatePasswords() {
     if (errors.length > 0) {
         hideErrors(errors, pwdConfirmInput);
     }
-    let msg = "the two passwords don't match"
+    let msg = "the two passwords are different"
     if (!valid) {
         let errors = pwdConfirmInput.parentElement.getElementsByClassName("errorMessage");
         displayError(errors, pwdConfirmInput, msg);
     }
-    console.log("password validation", valid);
     return valid;
 }
 
+/**
+ * Check if a string is in an email format
+ * 
+ * @param {string} email
+ * 
+ * @return {boolean}
+ */
 function validateEmail(email) {
-
     // Ajout en conf ?
     // const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*))@((([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
+/**
+ * hide old errors, by calling hideErrors(), then displays a new error attached to a speĉific html tag
+ *
+ * @param {HTMLCollection} errors - previously displayed errors attached to elemHTML 
+ * @param {HTMLElement} elemHTML - element to which attach the new error
+ * @param msg {string} msg - message to display as an error
+ * 
+ */
 function displayError(errors, elemHTML, msg) {
-    [...errors].forEach(error => {
-        error.style.display = "none";
-    });
+    hideErrors(errors, elemHTML);
     let errorToShow = elemHTML.parentElement.getElementsByClassName("errorMessage")[0];
     errorToShow.innerHTML = msg;
     elemHTML.style.borderColor = "red";
     errorToShow.style.display = "block";
 }
 
+/**
+ * hide old errors attached to elemHTML
+ *
+ * @param {HTMLCollection} errors - displayed errors attached to elemHTML 
+ * @param {HTMLElement} elemHTML - element to which are attached the errors
+ * 
+ */
 function hideErrors(errors, elemHTML) {
     elemHTML.style.borderColor = "";
     [...errors].forEach(error => {
