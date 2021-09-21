@@ -160,7 +160,6 @@ class Email extends Model {
      * @param string $lang
      */
     public function notifyAdminsByEmail($params, $origin, $lang = "") {
-        Configuration::getLogger()->debug("[TEST][EMAIL]", ["params" => $params]);
         if ($origin === "new_join_request") {
             $modelSpace = new CoreSpace();
             $from = Configuration::get('smtp_from');

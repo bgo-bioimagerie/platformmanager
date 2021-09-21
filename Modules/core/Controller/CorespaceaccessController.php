@@ -347,6 +347,7 @@ class CorespaceaccessController extends CoresecureController {
         for ($i = 0; $i < count($data); $i++) {
             $pendingUsers[] = $data[$i];
             $data[$i]["fullname"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
+            $data[$i]["email"] = $modelUser->getEmail($data[$i]["id_user"]);
             $data[$i]["date_created"] = $modelUser->getDateCreated($data[$i]["id_user"]);
         }
 
@@ -357,6 +358,7 @@ class CorespaceaccessController extends CoresecureController {
 
         $headers = array(
             'fullname' => CoreTranslator::Name($lang),
+            'email' => CoreTranslator::Email($lang),
             'date_created' => CoreTranslator::DateCreated($lang)
         );
         $tableHtml = $table->view($data, $headers);

@@ -1836,7 +1836,6 @@ class CoreTranslator {
     }
 
     public static function JoinRequestEmail($login, $spaceName, $userEmail, $lang){
-        Configuration::getLogger()->debug("[TEST]", ["userEmail" => $userEmail]);
         if ($lang == "fr") {
             return "Bonjour, <br><br>" . $login . " (" . $userEmail . ") demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
         }
