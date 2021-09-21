@@ -1144,6 +1144,13 @@ class CoreTranslator {
         return "An account with this email address already exists";
     }
 
+    public static function EmailInvalid($lang) {
+        if ($lang == "fr") {
+            return "Le format de l'adresse Email est incorrect";
+        }
+        return "The format of the email address is not valid";
+    }
+
     public static function Maintenance_Mode($lang) {
         if ($lang == "fr") {
             return "Mode maintenance";

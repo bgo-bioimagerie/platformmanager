@@ -4,6 +4,7 @@
 
 * Fix admin space to edit space
 * Fix clientuserdelete params
+* Add front-end controls in user forms. Improves ergonomy
 
 ## 2.0.3
 

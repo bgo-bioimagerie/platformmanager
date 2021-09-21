@@ -726,6 +726,19 @@ class CoreUser extends Model {
     }
 
     /**
+     * 
+     * Check if an email matches with the regexp in set in env or Configuration
+     * 
+     * @param string $email
+     * 
+     * @return bool
+     */
+    public function isEmailFormat($email) {
+        $regexp = Configuration::get('email_regexp');
+        return preg_match(Configuration::get('email_regexp'), $email); 
+    }
+
+    /**
      * Get the users information
      *
      * @param string $sortentry
