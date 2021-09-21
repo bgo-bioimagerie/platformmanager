@@ -4,6 +4,7 @@
 
 * Fix admin space to edit space
 * Fix clientuserdelete params
+* Add user email to notification for join requests
 
 ## 2.0.3
 
