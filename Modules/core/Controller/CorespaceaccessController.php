@@ -346,9 +346,10 @@ class CorespaceaccessController extends CoresecureController {
         $data = $modelSpacePending->getPendingForSpace($id_space);
         for ($i = 0; $i < count($data); $i++) {
             $pendingUsers[] = $data[$i];
-            $data[$i]["fullname"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
-            $data[$i]["email"] = $modelUser->getEmail($data[$i]["id_user"]);
-            $data[$i]["date_created"] = $modelUser->getDateCreated($data[$i]["id_user"]);
+            $userInfos = $modelUser->getInfo($data[$i]['id_user']);
+            $data[$i]['fullname'] = $userInfos['name'] . " " . $userInfos['firstname'];
+            $data[$i]['email'] = $userInfos['email'];
+            $data[$i]["date_created"] = $userInfos['date_created'];
         }
 
         $table = new TableView();
