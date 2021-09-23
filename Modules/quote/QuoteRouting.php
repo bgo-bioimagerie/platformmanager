@@ -20,7 +20,7 @@ class QuoteRouting extends Routing{
         
         $this->addRoute("quotegetitem", "quotegetitem", "quote", "getitem", array("id"), array(""), true);
         
-        $this->addRoute("quoteedititem", "quoteedititem", "quotelist", "edititem", array("id_space", "id"), array("", ""));
+        $this->addRoute("quoteedititem", "quoteedititem", "quotelist", "edititem", array("id_space"), array(""));
         
         $this->addRoute("quotedelete", "quotedelete", "quotelist", "delete", array("id_space", "id"), array("", ""));
        
