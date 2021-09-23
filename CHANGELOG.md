@@ -1,3 +1,7 @@
+# 2.0.5
+
+* Fix #293 quote edition not working
+
 # 2.0.4
 
 * Fix admin space to edit space
