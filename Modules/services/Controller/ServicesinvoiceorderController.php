@@ -16,6 +16,7 @@ require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 //require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
@@ -128,7 +129,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     }
 
     protected function createByUnitForm($id_space, $lang) {
-        /*
+        // How do user get there ???
         $form = new Form($this->request, "invoicebyunitform");
         $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
 
@@ -137,32 +138,44 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $dateBegin = $this->request->getParameterNoException("date_begin");
         $dateEnd = $this->request->getParameterNoException("date_end");
 
-        $modelUnit = new EcUnit();
-        $units = $modelUnit->getUnitsForList("name");
+        // $modelUnit = new EcUnit();
+        // $units = $modelUnit->getUnitsForList("name");
+        $modelClient = new ClClient();
+        $clients = $modelClient->getAll($id_space);
+        $clientsNames = [];
+        $clientsIds = [];
+        // TODO: foreach on clients to get institutions names (or clients names ?) and resps
+        foreach($clients as $client) {
+            array_push($clientsNames, $client['name']);
+            array_push($clientsIds, $client['id']);
+        }
 
-        $modelUser = new EcUser();
-        $resps = $modelUser->getResponsibleOfUnit($unitId);
+        // $modelUser = new EcUser();
+        // $resps = $modelUser->getResponsibleOfUnit($unitId);
+        // TODO: Replaced EcUnit by client => check if it is ok !!!
 
         $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
         $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
-        $form->addSelect("id_unit", ClientsTranslator::Institution($lang), $units["names"], $units["ids"], $unitId, true);
-        $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
+        $form->addSelect("id_client", ClientsTranslator::Institution($lang), $clientsNames, $clientsIds, $unitId, false);
+        // $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
         return $form;
 
-         */
-        return "";
+         
+        // return "";
     }
 
     // @bug calls EcUnit
+    // TODO: debug that
     private function generateRespBill($dateBegin, $dateEnd, $id_unit, $id_resp, $id_space) {
 
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
-        $modelUnit = new EcUnit();
+        // $modelUnit = new EcUnit();
+        $modelClient = new ClClient();
         // select all the opened order
         $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
 

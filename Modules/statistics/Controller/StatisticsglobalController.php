@@ -67,7 +67,9 @@ class StatisticsglobalController extends CoresecureController {
         $form->setTitle(StatisticsTranslator::StatisticsGlobal($lang));
         $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, CoreTranslator::dateFromEn($date_begin, $lang) );
         $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, CoreTranslator::dateFromEn($date_end, $lang) );
-        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateunitstats"));
+
+        // TODO: replace by clients stats ?
+        // $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateunitstats"));
 
         $modelColorCode = new BkColorCode();
         $colorCodes = $modelColorCode->getForList($id_space);
@@ -86,7 +88,7 @@ class StatisticsglobalController extends CoresecureController {
         if ($form->check()) {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);
             $dateEnd = CoreTranslator::dateToEn($form->getParameter("date_end"), $lang);
-            $generateunitstats = $this->request->getParameter("generateunitstats");
+            $generateunitstats = false; // $this->request->getParameter("generateunitstats");
 
             if ($dateBegin != "" && $dateEnd != "" && $dateBegin > $dateEnd) {
                 $_SESSION['message'] = ServicesTranslator::Dates_are_not_correct($lang);
@@ -114,7 +116,8 @@ class StatisticsglobalController extends CoresecureController {
 
         // write excel file
         // $objWriter = new PHPExcel_Writer_Excel2007($spreadsheet);
-        $objWriter = new Xlsx($spreadsheet);
+        // $objWriter = new Xlsx($spreadsheet);
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

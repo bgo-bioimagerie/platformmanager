@@ -28,6 +28,8 @@ require_once 'Modules/invoices/Model/InInvoice.php';
  * @author sprigent
  * Controller for the home page
  */
+
+ // @deprecated?
 class ServicesstatisticsorderController extends CoresecureController {
 
     private $serviceModel;
@@ -47,7 +49,6 @@ class ServicesstatisticsorderController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space) {
-
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
