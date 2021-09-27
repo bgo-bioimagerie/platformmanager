@@ -174,7 +174,6 @@ class InInvoice extends Model {
 
     // @bug, should get unique ids, no increment (parallel requests will result in conflicts)
     public function getNextNumber($previousNumber = "") {
-
         if ($previousNumber == "") {
             $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
             $req = $this->runRequest($sql);
@@ -187,6 +186,7 @@ class InInvoice extends Model {
         } else {
             $lastNumber = $previousNumber;
         }
+
         if ($lastNumber != "") {
             //echo "lastNumber = " . $lastNumber . "<br/>";
             $lastNumber = explode("-", $lastNumber);

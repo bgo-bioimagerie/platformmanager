@@ -361,8 +361,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         
         // add the invoice to the database
         $modelInvoice = new InInvoice();
-        $number = ($number != "") ?: $modelInvoice->getNextNumber();
-
+        $number = ($number === "") ? $modelInvoice->getNextNumber() : $number;
         $module = "booking";
         $controller = "Bookinginvoice";
         $date_generated = date("Y-m-d", time());
