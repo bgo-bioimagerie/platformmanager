@@ -36,7 +36,7 @@
 
         function showEditForm(id) {
             $.post(
-                    'quotegetitem/' + id,
+                    'quotegetitem/<?php echo $id_space ?>/' + id,
                     {},
                     function (data) {
 

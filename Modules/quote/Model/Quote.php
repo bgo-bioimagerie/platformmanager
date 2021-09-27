@@ -36,7 +36,7 @@ class Quote extends Model {
                 "date_last_modified" => ""
             ];
         }
-        $sql = "SELECT * FROM qo_quotes WHERE id=? AND id_space=0 AND deleted=0";
+        $sql = "SELECT * FROM qo_quotes WHERE id=? AND id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
