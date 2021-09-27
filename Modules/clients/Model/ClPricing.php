@@ -17,7 +17,7 @@ class ClPricing extends Model {
     }
 
     public function getAll($id_space) {
-        $sql = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=0";
+        $sql = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 

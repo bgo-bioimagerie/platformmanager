@@ -82,7 +82,7 @@ class ClientspricingsController extends CoresecureController {
             $pricing = array("id" => 0, "name" => "");
         }
         else{
-            $pricing = $this->pricingModel->get($id_space, $id);
+            $pricing = $this->pricingModel->get($is_space, $id);
         }
         
         

@@ -34,9 +34,9 @@ class ServicespricesApi extends CoresecureController {
         $data = array();
         
         $data['id_service'] = $id_service;
-        $data['service'] = $modelService->getItemName($id_space, $id_service);
+        $data['service'] = $modelService->getItemName($id_service);
         for($i = 0 ; $i < count($belongings) ; $i++){
-            $price = $modelPrices->getPrice($id_space, $id_service, $belongings[$i]["id"]);
+            $price = $modelPrices->getPrice($id_service, $belongings[$i]["id"]);
             $data['bel_'.$belongings[$i]['id']] = floatval($price); 
         }
         

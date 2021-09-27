@@ -49,17 +49,18 @@ class BookingconfigController extends CoresecureController {
                     $this->request->getParameter("displayBookingMenu"),
                     0,
                     $this->request->getParameter("colorBookingMenu")
-                );
+                    );
             $modelSpace->setSpaceMenu($id_space, "booking", "bookingsettings", "glyphicon glyphicon-calendar", 
                     $this->request->getParameter("bookingsettingsmenustatus"),
                     $this->request->getParameter("displaySettingsMenu"),
                     1,
                     $this->request->getParameter("colorSettingsMenu")
-                );
+                    );
             
             if ( $this->request->getParameter("bookingsettingsmenustatus") > 0 ){
                 $modelAccess = new CoreSpaceAccessOptions();
                 $modelAccess->set($id_space, "bookingauthorisations", "booking", "bookingauthorisations");
+                
             }
             
             $this->redirect("bookingconfig/".$id_space);
