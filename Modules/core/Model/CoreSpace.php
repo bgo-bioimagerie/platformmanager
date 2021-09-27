@@ -331,11 +331,10 @@ class CoreSpace extends Model {
     public function isUserMenuSpaceAuthorized($menuUrl, $id_space, $id_user) {
         // is superadmin ?
 
-
         // is menu public
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
-        $roleArrray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
-        $menuRole = $roleArrray[0];
+        $roleArray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
+        $menuRole = $roleArray[0];
 
         if ($this->isSpacePublic($id_space)) {
             if ($menuRole < CoreSpace::$MANAGER) {

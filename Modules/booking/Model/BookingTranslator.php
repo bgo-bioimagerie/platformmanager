@@ -725,6 +725,13 @@ class BookingTranslator {
         return "Is mandatory";
     }
 
+    public static function Is_invoicing_unit($lang) {
+        if ($lang == "fr") {
+            return "Utiliser comme unité de facturation";
+        }
+        return "Use as invoicing unit";
+    }
+
     public static function Supplementaries_saved($lang) {
         if ($lang == "fr") {
             return "Les suppléments ont été sauvegardés";
@@ -1592,6 +1599,14 @@ class BookingTranslator {
             return "Habilitations";
         }
         return "Booking access";
+    }
+
+    public static function maxInvoicingUnits($lang) {
+        if ($lang == "fr") {
+            return "Seulement une quantité peut être utilisée comme unité de facturation. Merci de passer \"Utiliser comme unité de facturation\" à \"non\" pour les autres quantités.";
+        } else {
+            return "Only one quantity can be used as an invoicing unit. Please set \"Use as invoicing unit\" to \"no\" for other quantites.";
+        }
     }
 
     public static function MissingColorCode($lang) {

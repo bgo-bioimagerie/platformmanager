@@ -811,19 +811,18 @@ class BookingController extends BookingabstractController {
             $modelDefault = new BookingdefaultController($this->request);
             $modelDefault->editreservationdefault($id_space, $param);
         } else {
-
             /// todo run plugin
             $modelCache = new FCache();
             $pathInfo = $modelCache->getURLInfos($editResaFunction);
             $path = $this->request->getParameter('path');
             $pathData = explode("/", $path);
-        
             $urlInfo = array("pathData" => $pathData, "pathInfo" => $pathInfo);
 
             $controllerName = $urlInfo["pathInfo"]["controller"];
             $classController = ucfirst(strtolower($controllerName)) . "Controller";
             $module = $urlInfo["pathInfo"]["module"];
             $fileController = 'Modules/' . $module . "/Controller/" . $classController . ".php";
+
             if (file_exists($fileController)) {
                 // Instantiate controler
                 require_once ($fileController);

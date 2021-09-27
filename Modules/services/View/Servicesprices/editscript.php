@@ -1,8 +1,16 @@
 <?php ?>
 
 <script>
-    $(document).ready(function () {
 
+    class ServiceBkPricing {
+        constructor(serviceId, serviceName, belongingPrices) {
+            this.serviceId = serviceId;
+            this.serviceName = serviceName;
+            this.belongingPrices = belongingPrices;
+        }
+    }
+
+    $(document).ready(function () {
         $("#hider").hide();
         $("#entriesbuttonclose").click(function () {
             $("#hider").hide();
@@ -14,36 +22,60 @@
                 
                 var strid = this.id;
                 var arrayid = strid.split("_");
-                //alert("edit note clicked " + arrayid[1]);
                 showEditEntryForm(<?php echo $id_space ?>, arrayid[1]);
             });
     <?php
 }
 ?>
 
+        /**
+         * Gets bookingPrices from ServicespricesApi then calls displayPopup()
+         * 
+         * @param string id_space
+         * @param string id_service 
+         * 
+         */
         function showEditEntryForm(id_space, id_service) {
-            $.post(
-                    'servicesgetprices/' + id_space + '/' + id_service,
-                    {},
-                    function (data) {
-                        $('#service_id').val(data.id_service);
-                        $('#service').val(data.service);
-                        <?php 
-                        foreach($belongings as $belonging){
-                            ?>
-                             $('<?php echo '#bel_' . $belonging['id'] ?>').val(data.<?php echo 'bel_' . $belonging['id'] ?>);               
-                        <?php                    
+            const bkPricing = new ServiceBkPricing();
+            bkPricing.serviceId = id_service;
+            bkPricing.belongingPrices = [];
+
+            $.post('servicesgetprices/' + id_space + '/' + id_service)
+                .done((response) => {
+                    alert(response);
+                    // TODO: errors linked with prometheus returned during tests. Following string manipulations are set to filter it.
+                    // Check how to do that properly
+                    jsonData = response.includes("<br />") ?  jsonData = response.slice(0, response.indexOf("<br />")) : response;
+                    data = JSON.parse(jsonData);
+
+                    // format to be used more easily
+                    Object.entries(data).forEach((entry) => {
+                        const [key, value] = entry;
+                        if (key.slice(0, 4) === "bel_") {
+                            bkPricing.belongingPrices.push({belonging: key, price: value});
+                        } else if (key === "service") {
+                            bkPricing.serviceName = value;
                         }
-                        ?>
-
-                        $("#hider").fadeIn("slow");
-                        $('#entriespopup_box').fadeIn("slow");
-                    },
-                    'json'
-                    );
-
+                    });
+                    displayPopup(bkPricing);
+                });
         }
-        ;
 
+        /**
+         * Displays a popup window #entriespopup_box
+         * to edit service prices
+         * 
+         * @param ServiceBkPricing bkPricing
+         * 
+         */
+        function displayPopup(bkPricing) {
+            $('#service_id').val(bkPricing.serviceId);
+            $('#service').val(bkPricing.serviceName);
+            bkPricing.belongingPrices.forEach( (bkPrice) => {
+                $('#' + bkPrice.belonging).val(bkPrice.price);
+            });
+            $("#hider").fadeIn("slow");
+            $('#entriespopup_box').fadeIn("slow");
+        }
     });
-</script>            
+</script>

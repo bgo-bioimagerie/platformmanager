@@ -17,12 +17,13 @@ class BkCalQuantities extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `bk_calquantities` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-        `id_quantity` int(11) NOT NULL,
-        `id_resource` int(11) NOT NULL,
-        `name` varchar(30) NOT NULL DEFAULT '',
-		`mandatory` int(1) NOT NULL,
-		PRIMARY KEY (`id`)
+		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_quantity` int(11) NOT NULL,
+            `id_resource` int(11) NOT NULL,
+            `name` varchar(30) NOT NULL DEFAULT '',
+            `mandatory` int(1) NOT NULL,
+            `is_invoicing_unit` int(1) NOT NULL DEFAULT 0,
+		    PRIMARY KEY (`id`)
 		);";
 
         return $this->runRequest($sql);
@@ -40,7 +41,7 @@ class BkCalQuantities extends Model {
     }
 
     public function calQuantitiesByResource($id_space, $id_resource) {
-        $sql = "select * from bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
+        $sql = "SELECT * FROM bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
 
@@ -104,10 +105,11 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function addCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory) {
-        $sql = "insert into bk_calquantities(id_quantity, id_resource, name, mandatory, id_space)"
-                . " values(?,?,?,?,?)";
-        $this->runRequest($sql, array($id_quantity, $id_resource, $name, $mandatory, $id_space));
+    public function addCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
+
+        $sql = "INSERT into bk_calquantities(id_space, id_quantity, id_resource, name, mandatory, is_invoicing_unit)"
+                . " values(?,?,?,?,?,?)";
+        $this->runRequest($sql, array($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit));
     }
 
     /**
@@ -116,12 +118,11 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function setCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory) {
-
+    public function setCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
         if ($this->isCalQuantityId($id_space, $id_quantity, $id_resource)) {
-            $this->updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory);
+            $this->updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
         } else {
-            $this->addCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory);
+            $this->addCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
         }
     }
 
@@ -131,7 +132,7 @@ class BkCalQuantities extends Model {
      * @return boolean
      */
     public function isCalQuantityId($id_space, $id_quantity, $id_resource) {
-        $sql = "select id from bk_calquantities where id_quantity=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $sql = "SELECT id from bk_calquantities where id_quantity=? AND id_resource=? AND id_space=?";
         $unit = $this->runRequest($sql, array($id_quantity, $id_resource, $id_space));
         return ($unit->rowCount() == 1);
     }
@@ -142,9 +143,9 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory) {
-        $sql = "update bk_calquantities set name= ?, mandatory=? where id_quantity=? AND id_resource=? AND deleted=0 AND id_space=?";
-        $this->runRequest($sql, array($name, $mandatory, $id_quantity, $id_resource, $id_space));
+    public function updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
+        $sql = "UPDATE bk_calquantities SET name=?, mandatory=?, is_invoicing_unit = ? where id_quantity=? AND id_resource=? AND id_space=?";
+        $this->runRequest($sql, array($name, $mandatory, $is_invoicing_unit, $id_quantity, $id_resource, $id_space));
     }
 
     /**
@@ -159,7 +160,7 @@ class BkCalQuantities extends Model {
 
     /**
      * Set the supplementary of a calendar entry
-     * @param unknown $calsupNames
+     * @param array $calsupNames
      * @param unknown $calsupValues
      * @param unknown $reservation_id
      */
@@ -215,8 +216,8 @@ class BkCalQuantities extends Model {
 
     public function removeUnlistedQuantities($id_space, $packageID) {
 
-        $sql = "select id, id_quantity from bk_calquantities AND id_space=?";
-        $req = $this->runRequest($sql);
+        $sql = "select id, id_quantity from bk_calquantities WHERE id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
         $databasePackages = $req->fetchAll();
 
         foreach ($databasePackages as $dbPackage) {

@@ -40,30 +40,29 @@ class BookingpricesApi extends CoresecureController {
         $data = array();
 
         $residArray = explode("-", $id_resource);
-        $resourceName = $modelResource->getName($residArray[0]);
+        $resourceName = $modelResource->getName($id_space, $residArray[0]);
         if ($residArray[1] == "day") {
             $data['resource'] = $resourceName;
             foreach($belongings as $bel){
-                $data['bel_' . $bel['id']] = $modelPrices->getDayPrice($residArray[0], $bel["id"]);
+                $data['bel_' . $bel['id']] = $modelPrices->getDayPrice($id_space, $residArray[0], $bel["id"]);
             }
         } else if ($residArray[1] == "night") {
             $data['resource'] = $resourceName . " " . BookingTranslator::night($lang);
             foreach($belongings as $bel){
-                $data['bel_' . $bel['id']] = $modelPrices->getNightPrice($residArray[0], $bel["id"]);
+                $data['bel_' . $bel['id']] = $modelPrices->getNightPrice($id_space, $residArray[0], $bel["id"]);
             }
         } else if ($residArray[1] == "we") {
             $data['resource'] = $resourceName . " " . BookingTranslator::WE($lang);
             foreach($belongings as $bel){
-                $data['bel_' . $bel['id']] = $modelPrices->getWePrice($residArray[0], $bel["id"]);
+                $data['bel_' . $bel['id']] = $modelPrices->getWePrice($id_space, $residArray[0], $bel["id"]);
             }
         } else if ($residArray[1] == "pk") {
-            $data['resource'] = $resourceName . " " . $modelPackage->getName($residArray[2]);
+            $data['resource'] = $resourceName . " " . $modelPackage->getName($id_space, $residArray[2]);
             foreach($belongings as $bel){
-                $data['bel_' . $bel['id']] = $modelPrices->getPackagePrice($residArray[2], $residArray[0], $bel["id"]);
+                $data['bel_' . $bel['id']] = $modelPrices->getPackagePrice($id_space, $residArray[2], $residArray[0], $bel["id"]);
             }
         }
         $data['id_resource'] = $id_resource;
-
         echo json_encode($data);
     }
 
