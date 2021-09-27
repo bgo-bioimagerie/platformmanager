@@ -1299,6 +1299,13 @@ class BookingTranslator {
         return "Reservation unit";
     }
 
+    public static function Reservation_per_client($lang) {
+        if ($lang == "fr") {
+            return "Réservations par clients";
+        }
+        return "Reservation per client";
+    }
+
     public static function Reservation_per_responsible($lang) {
         if ($lang == "fr") {
             return "Réservations par responsable";
@@ -1313,11 +1320,25 @@ class BookingTranslator {
         return "Number reservations per unit from ";
     }
 
+    public static function NumberResaPerClientFrom($lang) {
+        if ($lang == "fr") {
+            return "Nombre de réservations par client sur la période du ";
+        }
+        return "Number reservations per client from ";
+    }
+
     public static function TimeResaPerUnitFrom($lang) {
         if ($lang == "fr") {
             return "Durée de réservations par unités sur la période du ";
         }
         return "Time reservations per unit from ";
+    }
+
+    public static function TimeResaPerClientFrom($lang) {
+        if ($lang == "fr") {
+            return "Durée de réservations par client sur la période du ";
+        }
+        return "Time reservations per client from ";
     }
 
     public static function To($lang) {
@@ -1339,6 +1360,13 @@ class BookingTranslator {
             return "Générer les statistiques par unité ?";
         }
         return "Generate stats per unit ?";
+    }
+
+    public static function GenerateStatsPerClient($lang) {
+        if ($lang == "fr") {
+            return "Générer les statistiques par client ?";
+        }
+        return "Generate stats per client ?";
     }
 
     public static function Use_Auth_Visa($lang) {
