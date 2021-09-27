@@ -137,6 +137,7 @@ class HelpdeskController extends CoresecureController {
         $id = 0;
         $isNew = false;
         if(intval($params['type']) == Helpdesk::$TYPE_EMAIL) {
+            // TODO manage attachements
             Configuration::getLogger()->debug('[helpdesk] mail reply', ['params' => $params, 'files' => $_FILES]);
             $attachments = [];
             $attachementFiles = [];

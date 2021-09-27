@@ -432,7 +432,7 @@ class CorespaceaccessController extends CoresecureController {
      * @param int $id pending account id
      */
     public function pendinguserdeleteAction($id_space, $id) {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelPending = new CorePendingAccount();
         $id_user = $modelPending->get($id)["id_user"];
         $modelPending->invalidate($id, $_SESSION["id_user"]);

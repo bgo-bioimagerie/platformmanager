@@ -22,7 +22,7 @@ class ClientsRouting extends Routing{
         
         // clients user
         $this->addRoute("clclientusers", "clclientusers", "clientsusers", "index", array("id_space", "id_client"), array("", ""));
-        $this->addRoute("clclientuserdelete", "clclientuserdelete", "clientsusers", "delete", array("id_space", "id_client", "id_user"), array("", "", ""));
+        $this->addRoute("clclientuserdelete", "clclientuserdelete", "clientsusers", "delete", array("id_space", "id_client", "id"), array("", "", ""));
         
         // client account
         $this->addRoute("clientsuseraccounts", "clientsuseraccounts", "clientsuseraccounts", "index", array("id_space", "id_user"), array("", ""));

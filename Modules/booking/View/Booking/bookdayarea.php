@@ -8,8 +8,8 @@ require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/bookfunction.php';
 ?>
 
-<?php
-$dayWidth = !empty($resourcesBase) ? 100/count($resourcesBase) : 1;
+<?php 
+$dayWidth = 100/count($resourcesBase);
 ?>
 
 <head>

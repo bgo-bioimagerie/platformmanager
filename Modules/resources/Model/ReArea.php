@@ -115,7 +115,7 @@ class ReArea extends Model {
      */
     public function getSmallestUnrestrictedID($id_space) {
         $sql = "SELECT id FROM re_area WHERE restricted=0 AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql);
         $tmp = $req->fetch();
         return $tmp? $tmp[0]:0;
     }
@@ -159,7 +159,7 @@ class ReArea extends Model {
      * @param number $id ID
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE re_area SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE re_area SET deleted=0,deleted_at=NOW() WHERE id=? AND id_space=?";
         // $sql = "DELETE FROM re_area WHERE id = ? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
     }

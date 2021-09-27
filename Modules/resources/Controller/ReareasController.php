@@ -101,20 +101,9 @@ class ReareasController extends CoresecureController {
     }
     
     public function deleteAction($id_space, $id){
-        $lang = $this->getLanguage();
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         
-        // check if area is linked to resources. If yes, deletion is not authorized => warn the user
-        $resourceModel = new ResourceInfo();
-        $linkedResources = $resourceModel->resourcesForArea($id_space, $id);
-
-        if ($linkedResources == null || empty($linkedResources)) {
-            // not linked to resources, deletion is authorized
-            $this->model->delete($id_space, $id);
-        } else {
-            // linked to resources, notify the user
-            $_SESSION["message"] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Area($lang), $lang);
-        }
+        $this->model->delete($id_space, $id);
         $this->redirect("reareas/".$id_space);
     }
 

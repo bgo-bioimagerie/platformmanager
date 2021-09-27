@@ -87,8 +87,8 @@ class Helpdesk extends Model {
         $id_ticket = $this->ticketFromSubject($subject);
         if($id_ticket == 0) {
             $is_new = true;
-            $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `subject`,  `created_by`, `created_by_user`, `created_at`, `unread`)  VALUES (?,?,?, ?,?, NOW(), ?)';
-            $this->runRequest($sql, array($id_space, self::$STATUS_NEW, $subject, $from, $id_user, 1));
+            $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `subject`,  `created_by`, `created_by_user`, `created_at`)  VALUES (?,?,?, ?,?, NOW())';
+            $this->runRequest($sql, array($id_space, self::$STATUS_NEW, $subject, $from, $id_user));
             $id_ticket = $this->getDatabase()->lastInsertId();
         }
 
@@ -154,24 +154,20 @@ class Helpdesk extends Model {
             foreach ($users as $user) {
                 $sent[] = $user["user_id"];
             }
-        } else {
             //hp_notifyAssignedUpdate and assigned or hp_notifyAllUpdate
+        } else {
             $subject = "[Ticket #$id_ticket] updated ticket";
             $msg = HelpdeskTranslator::updatedTicket($lang);
             if($ticket["assigned"]) {
                 $userSettings = $cussm->getUserSetting($id_space, $ticket["assigned"], "hp_notifyAssignedUpdate");
                 if($userSettings) {
-                    foreach($userSettings as $user) {
-                        if($ticket["assigned"] == $user["user_id"] && !in_array($user["user_id"], $sent)) {
-                            $sent[] = $ticket["assigned"];
-                        }
-                    }
+                    $sent[] = $ticket["assigned"];
                 }
             }
 
             $users = $cussm->getUsersForSetting($id_space, "hp_notifyAllUpdate", 1);
             foreach ($users as $user) {
-                if(!in_array($user["user_id"], $sent)) {
+                if($ticket["assigned"] == $user["user_id"] && !in_array($user["user_id"], $sent)) {
                     $sent[] = $user["user_id"];
                 }
             }

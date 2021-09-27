@@ -71,16 +71,22 @@ class BookingController extends BookingabstractController {
         $id_resource = $this->request->getParameterNoException("id_resource");
         $curentDate = $this->request->getParameterNoException("curentDate");
 
-        if ($id_area == "" && isset($_SESSION['bk_id_area'])) {
-            $id_area = $_SESSION['bk_id_area'];
+        if ($id_area == "") {
+            if (isset($_SESSION['bk_id_area'])) {
+                $id_area = $_SESSION['bk_id_area'];
+            }
         }
-        if ($id_resource == "" && isset($_SESSION['bk_id_resource'])) {
-            $id_resource = $_SESSION['bk_id_resource'];
+        if ($id_resource == "") {
+            if (isset($_SESSION['bk_id_resource'])) {
+                $id_resource = $_SESSION['bk_id_resource'];
+            }
         }
-        if ($id_resource == "" && isset($_SESSION['bk_curentDate'])) {
-            $curentDate = $_SESSION['bk_curentDate'];
+        if ($id_resource == "") {
+            if (isset($_SESSION['bk_curentDate'])) {
+                $curentDate = $_SESSION['bk_curentDate'];
+            }
         }
-
+        //echo "index: id_area = " . $id_area . ", id_resource = " . "curentDate = " . $curentDate . "<br/>";
         $this->bookingAction($id_space, $id_area, $id_resource, $curentDate);
     }
 
@@ -102,15 +108,18 @@ class BookingController extends BookingabstractController {
             }
         }
 
+        //echo "curent date booking = " . $curentDate . "<br/>";
         $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
 
         $modelResource = new ResourceInfo();
+        $modelArea = New ReArea();
         $userSettingsModel = new CoreUserSettings();
         if ($id_resource == "" || $id_resource == 0) { // booking home page
             $calendarDefaultResource = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultResource");
             if ($calendarDefaultResource != "") {
                 $id_resource = $calendarDefaultResource;
                 $id_area = $modelResource->getAreaID($id_space, $id_resource);
+                $id_site = $modelArea->getSiteID($id_space, $id_area);
             } else {
                 if ($id_area == "" || $id_area == 0) {
                     $modelArea = new ReArea();
@@ -119,14 +128,18 @@ class BookingController extends BookingabstractController {
                     } else {
                         $id_area = $modelArea->getSmallestID($id_space);
                     }
+                    $id_site = $modelArea->getSiteID($id_space, $id_area);
                 }
                 // get the resource with the smallest id
                 $id_resource = $modelResource->firstResourceIDForArea($id_space, $id_area);
             }
-
+            //echo "id_area = " . $id_area . "</br>";
+            //echo "id_resource = " . $id_resource . "</br>";
+            //$menuData = $this->calendarMenuData($id_area, $id_resource, date("Y-m-d", time()));
             $_SESSION['bk_id_resource'] = $id_resource;
             $_SESSION['bk_id_area'] = $id_area;
             $_SESSION['bk_curentDate'] = $curentDate;
+            //echo "booking: id_area = " . $id_area . ", id_resource = " . "curentDate = " . $curentDate . "<br/>";
 
             if ($id_resource == 0) {
                 $this->render(array(
@@ -149,7 +162,6 @@ class BookingController extends BookingabstractController {
         }
     }
 
-    // DEPRECATED? => replaced by bookingAction()? 
     public function book($id_space, $message) {
         $lastView = "";
         if (isset($_SESSION["user_settings"]["calendarDefaultView"])) {
@@ -158,25 +170,25 @@ class BookingController extends BookingabstractController {
         if (isset($_SESSION['lastbookview'])) {
             $lastView = $_SESSION['lastbookview'];
         }
-        switch($lastView) {
-            case "bookingday":
-                $this->dayAction($id_space, "", $message);
-                break;
-            case "bookingweek":
-                $this->weekAction($id_space, "", $message);
-                break;
-            case "bookingdayarea":
-                $this->dayareaAction($id_space, "", $message);
-                break;
-            case "bookingweekarea":
-                $this->weekareaAction($id_space, "", $message);
-                break;
-            default:
-                $this->dayAction($id_space, "", $message);
+        if ($lastView == "bookingday") {
+            $this->dayAction($id_space, "", $message);
+            return;
+        } else if ($lastView == "bookingweek") {
+            $this->weekAction($id_space, "", $message);
+            return;
+        } else if ($lastView == "bookingweekarea") {
+            $this->weekareaAction($id_space, "", $message);
+            return;
+        } else if ($lastView == "bookingdayarea") {
+            $this->dayareaAction($id_space, "", $message);
+            return;
         }
+        $this->dayAction($id_space, "", $message);
     }
 
     public function dayAction($id_space, $action, $message) {
+
+        //print_r($_SESSION);
         $_SESSION['lastbookview'] = "bookingday";
 
         $lang = $this->getLanguage();
@@ -185,6 +197,8 @@ class BookingController extends BookingabstractController {
         $curentResource = $this->request->getParameterNoException('bk_id_resource');
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
+
+        //echo "curent resource bookday 1 = " . $curentResource . "<br/>";
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
@@ -196,6 +210,10 @@ class BookingController extends BookingabstractController {
             $curentDate = $_SESSION['bk_curentDate'];
         }
 
+
+        //print_r($_SESSION);
+        //echo "curent resource bookday 2 = " . $curentResource . "<br/>";
+        //sreturn;
         // change input if action
         if ($action == "daybefore") {
             $curentDate = explode("-", $curentDate);
@@ -214,6 +232,7 @@ class BookingController extends BookingabstractController {
         }
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        //print_r($menuData);
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -227,17 +246,28 @@ class BookingController extends BookingabstractController {
             $_SESSION['bk_id_resource'] = $curentResource;
         }
 
+
+        // save the menu info in the session
+        //$_SESSION['bk_id_resource'] = $curentResource;
+        //$_SESSION['bk_id_area'] = $curentAreaId;
+        // $_SESSION['bk_id_site'] = $curentSiteId;
         $curentDate = $_SESSION['bk_curentDate'];
 
         // get the resource info
         $modelRescal = new ResourceInfo();
         $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
+        //if (count($resourceInfo) <= 1) {
+        //    $this->redirect("calendar", "booking");
+        //    return;
+        //}
+
         $modelRes = new ResourceInfo();
         $resourceBase = $modelRes->get($id_space, $curentResource);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
+        //echo "curent date line 470 = " . $curentDate . "<br/>";
         $dateArray = explode("-", $curentDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
@@ -262,14 +292,10 @@ class BookingController extends BookingabstractController {
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
+        //print_r($agendaStyle);
 
         $modelScheduling = new BkScheduling();
         $scheduling = $modelScheduling->get($id_space, $curentAreaId);
-
-        // Setting an error message if no resource exists
-        if (empty($menuData["resources"])) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
-        }
 
         // view
         $this->render(array(
@@ -291,6 +317,7 @@ class BookingController extends BookingabstractController {
 
     public function dayareaAction($id_space, $action, $message) {
         $_SESSION['lastbookview'] = "bookingdayarea";
+
         $lang = $this->getLanguage();
 
         // get inputs
@@ -300,9 +327,6 @@ class BookingController extends BookingabstractController {
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
-        } else {
-            $_SESSION['bk_curentDate'] = date("Y-m-d", time());
-            $curentDate = $_SESSION['bk_curentDate'];
         }
 
         if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
@@ -384,17 +408,14 @@ class BookingController extends BookingabstractController {
             $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
         }
 
+        //print_r($calEntries);
+        //return;
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
         $scheduling = $modelScheduling->get($id_space, $curentAreaId);
-
-        // Setting an error message if no resource exists
-        if (empty($resourcesBase)) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
-        }
 
         // view
         $this->render(array(
@@ -451,6 +472,7 @@ class BookingController extends BookingabstractController {
 
         // get the closest monday to curent day
         $i = 0;
+        //echo "curentDate = " . $curentDate . "<br/>";
         $curentDateE = explode("-", $curentDate);
         while (date('D', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - $i, $curentDateE[0])) != "Mon") {
             $i++;
@@ -475,18 +497,18 @@ class BookingController extends BookingabstractController {
         //$_SESSION['bk_id_resource'] = $curentResource;
         //$_SESSION['bk_id_area'] = $curentAreaId;
         //$_SESSION['bk_id_area'] = $curentAreaId;
-        $_SESSION['bk_curentDate'] = $curentDate;
+        //$_SESSION['bk_curentDate'] = $curentDate;
         // get the resource info
         $modelRescal = new ResourceInfo();
         $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
-        // Setting an error message if no resource exists
         if (!$resourceInfo) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $this->redirect("booking");
+            return;
         }
 
         $modelRes = new ResourceInfo();
-        $resourcesBase = $modelRes->get($id_space, $curentResource);
+        $resourceBase = $modelRes->get($id_space, $curentResource);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
@@ -495,6 +517,7 @@ class BookingController extends BookingabstractController {
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
         $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
 
+        //echo "Cal entry count = " . count($calEntries) . "</br>";
         // curentdate unix
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
@@ -505,12 +528,12 @@ class BookingController extends BookingabstractController {
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
-        $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase["id"]);
-        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
+        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
+        $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
         // get last state
         $modelEvent = new ReEvent();
-        $resourcesBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase["id"]);
+        $resourceBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourceBase["id"]);
 
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
@@ -525,7 +548,7 @@ class BookingController extends BookingabstractController {
             'id_space' => $id_space,
             'menuData' => $menuData,
             'resourceInfo' => $resourceInfo,
-            'resourcesBase' => $resourcesBase,
+            'resourceBase' => $resourceBase,
             'date' => $curentDate,
             'date_unix' => $curentDateUnix,
             'mondayDate' => $mondayDate,
@@ -541,6 +564,7 @@ class BookingController extends BookingabstractController {
 
     public function weekareaAction($id_space, $action, $message) {
         $_SESSION['lastbookview'] = "bookingweekarea";
+
         $lang = $this->getLanguage();
 
         // get inputs
@@ -556,6 +580,8 @@ class BookingController extends BookingabstractController {
             $curentResource = $_SESSION['bk_id_resource'];
             $curentAreaId = $_SESSION['bk_id_area'];
             $curentDate = $_SESSION['bk_curentDate'];
+            //echo "curent area id " . $curentAreaId . "<br/>"; 
+            //echo "curent date n-2 = " . $curentDate . "<br/>";
         }
         
         $modelArea = new ReArea();
@@ -565,6 +591,8 @@ class BookingController extends BookingabstractController {
             $curentResource = 0;
         }
         
+
+        //echo "curent date n-1= " . $curentDate . "<br/>";
         // change input if action
         if ($action == "dayweekbefore") {
             $curentDate = explode("-", $curentDate);
@@ -596,11 +624,11 @@ class BookingController extends BookingabstractController {
 
 
         // save the menu info in the session
-        
-        // $_SESSION['id_resource'] = $curentResource;
-        // $_SESSION['id_area'] = $curentAreaId;
-        $_SESSION['curentDate'] = $curentDate;
-         
+        /*
+          $_SESSION['id_resource'] = $curentResource;
+          $_SESSION['id_area'] = $curentAreaId;
+          $_SESSION['curentDate'] = $curentDate;
+         */
         // get the area info
         $area = $modelArea->get($id_space, $curentAreaId);
 
@@ -652,11 +680,6 @@ class BookingController extends BookingabstractController {
 
         $modelScheduling = new BkScheduling();
         $scheduling = $modelScheduling->get($id_space, $curentAreaId);
-
-        // Setting an error message if no resource exists
-        if (empty($resourcesBase)) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
-        }
 
         // view
         $this->render(array(
@@ -719,6 +742,7 @@ class BookingController extends BookingabstractController {
 
         // get the closest monday to curent day
         $i = 0;
+        //echo "curentDate = " . $curentDate . "<br/>";
         $curentDateE = explode("-", $curentDate);
         while (date('d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - $i, $curentDateE[0])) != 1) {
             $i++;
@@ -742,20 +766,20 @@ class BookingController extends BookingabstractController {
         // save the menu info in the session
         //$_SESSION['id_resource'] = $curentResource;
         //$_SESSION['id_area'] = $curentAreaId;
-        $_SESSION['curentDate'] = $curentDate;
-
+        //$_SESSION['curentDate'] = $curentDate;
         // get the resource info
+
         $modelRescal = new ResourceInfo();
         $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
-        // Setting an error message if no resource exists
         if (!$resourceInfo) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $this->redirect("booking");
+            return;
         }
 
         // $modelRes = new ResourceInfo();
         // $resourceBase = $modelRes->get($id_space, $curentResource);
-        $resourcesBase = $resourceInfo;
+        $resourceBase = $resourceInfo;
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
@@ -775,8 +799,8 @@ class BookingController extends BookingabstractController {
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
-        $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase["id"]);
-        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
+        $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
+        $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
 
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
@@ -787,7 +811,7 @@ class BookingController extends BookingabstractController {
             'id_space' => $id_space,
             'menuData' => $menuData,
             'resourceInfo' => $resourceInfo,
-            'resourcesBase' => $resourcesBase,
+            'resourceBase' => $resourceBase,
             'date' => $curentDate,
             'month' => date("n", $curentTime),
             'year' => date("Y", $curentTime),
