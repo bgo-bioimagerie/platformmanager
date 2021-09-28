@@ -166,7 +166,7 @@ class Email extends Model {
             $spaceName = ($params["space_name"] !== null) ? $params["space_name"] : "";
             $fromName = "Platform-Manager";
             $subject = CoreTranslator::JoinRequestSubject($params["space_name"], $lang);
-            $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $lang);
+            $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $params['user_email'], $lang);
             $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($params["id_space"]));
             $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {
