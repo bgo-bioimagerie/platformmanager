@@ -14,6 +14,7 @@
 * #142 fix resource with no category handling
 * #272 allow to display news in popup on space home page
 * #275 Fix color codes error in booking schedulings 
+* #292 [ServicesinvoiceorderController] calls to deprecated function createByUnitForm()
 
 ## 2.0.5
 
