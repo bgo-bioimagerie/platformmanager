@@ -671,16 +671,13 @@ class BkStatsUser extends Model {
     }
 
     public function bookingUsers($id_space, $startdate, $enddate) {
-
         // convert start date to unix date
         $tabDate = explode("-", $startdate);
-        $date_debut = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
-        $searchDate_start = mktime(0, 0, 0, $tabDate[1], $tabDate[2], $tabDate[0]);
+        $searchDate_start = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]), intval($tabDate[0]));        
 
         // convert end date to unix date
         $tabDate = explode("-", $enddate);
-        $date_fin = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
-        $searchDate_end = mktime(0, 0, 0, $tabDate[1], $tabDate[2] + 1, $tabDate[0]);
+        $searchDate_end = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]) + 1, intval($tabDate[0]));
 
         //  get all the booking users
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'space' => $id_space);
