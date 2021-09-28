@@ -99,6 +99,11 @@ class ResourceInfo extends Model {
                 . "WHERE re_info.id_space=? AND re_info.deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+
+    public function getBySpaceWithoutCategory($id_space) {
+        $sql = "SELECT * FROM re_info WHERE re_info.id_space=? AND re_info.deleted=0";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
     
     public function getIdByName($id_space, $name){
         $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0";
