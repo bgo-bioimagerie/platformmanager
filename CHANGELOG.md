@@ -12,6 +12,27 @@
 * #246 allow user self registration (via config)
 * #244 Allow impersonation
 * #142 fix resource with no category handling
+* #272 allow to display news in popup on space home page
+* #275 Fix color codes error in booking schedulings 
+
+## 2.0.5
+
+* Fix #293 quote edition not working
+
+## 2.0.4
+
+* Fix admin space to edit space
+* Fix clientuserdelete params
+
+## 2.0.3
+
+* Bug fix release (routes on antibodies and history)
+
+## 2.0.2
+
+* fix servicesprojecteditentryquery route parameters #253
+* add route reload command in cli
+* Fix antibodieslist action parameter name (route expects sortentry but function defines letter)
 
 ## 2.0
 
