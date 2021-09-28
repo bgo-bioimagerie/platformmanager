@@ -1,5 +1,23 @@
 # Changes
 
+## 2.1
+
+* #234 fix defaults in db schema
+* #230 generate apikey on ldap login
+* #233 fix schema of core_j_spaces_user
+* #218 allow user to define default language
+* Add prometheus statistics
+* #225 bug fixes
+* #235 use static data for se_service_types
+* #246 allow user self registration (via config)
+* #244 Allow impersonation
+* #272 allow to display news in popup on space home page
+* #275 Fix color codes error in booking schedulings 
+
+## 2.0.5
+
+* Fix #293 quote edition not working
+
 ## 2.0.4
 
 * Fix admin space to edit space
@@ -14,22 +32,6 @@
 * fix servicesprojecteditentryquery route parameters #253
 * add route reload command in cli
 * Fix antibodieslist action parameter name (route expects sortentry but function defines letter)
-
-## 2.0.1
-
-## 2.1
-
-* #234 fix defaults in db schema
-* #230 generate apikey on ldap login
-* #233 fix schema of core_j_spaces_user
-* #218 allow user to define default language
-* Add prometheus statistics
-* #225 bug fixes
-* #235 use static data for se_service_types
-* #246 allow user self registration (via config)
-* #244 Allow impersonation
-* #272 allow to display news in popup on space home page
-* #275 Fix color codes error in booking schedulings 
 
 ## 2.0
 
