@@ -741,7 +741,7 @@ class FormHtml {
      * @return type
      */
     static public function checkUnicityScript() {
-        // return file_get_contents("Framework/checkUnicity_script.php");
+        return file_get_contents("Framework/checkUnicity_script.php");
     }
 
 }
