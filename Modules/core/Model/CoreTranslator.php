@@ -1823,9 +1823,9 @@ class CoreTranslator {
     
     public static function RequestJoin($isMemberOfSpace, $lang){
         if ($lang == "fr") {
-            return $isMemberOfSpace ? "Quitter" : "Contacter";
+            return $isMemberOfSpace ? "Se désinscrire" : "Demander l'accès";
         }
-        return $isMemberOfSpace ? "Leave" : "Contact"; 
+        return $isMemberOfSpace ? "Unsubscribe" : "Request access"; 
     }
 
     public static function JoinRequested($lang){
