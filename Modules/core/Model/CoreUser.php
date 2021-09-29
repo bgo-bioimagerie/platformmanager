@@ -690,9 +690,8 @@ class CoreUser extends Model {
     public function isLogin($login, $filteredLogin = false) {
         $sql = "select * from core_users where login=?";
         $params = array($login);
-        if ($filteredLogin) {
-            $sql .= " AND login <> ?";
-            array_push($params, $filteredLogin);
+        if ($filteredLogin === $login) {
+            return false;
         }
         $user = $this->runRequest($sql, $params);
         if ($user->rowCount() == 1) {
@@ -714,9 +713,8 @@ class CoreUser extends Model {
     public function isEmail($email, $filteredEmail = false) {
         $sql = "select email from core_users where email=?";
         $params = array($email);
-        if ($filteredEmail) {
-            $sql .= " AND email <> ?";
-            array_push($params, $filteredEmail);
+        if ($filteredEmail === $email) {
+            return false;
         }
         $email = $this->runRequest($sql, $params);
         if ($email->rowCount() >= 1) {
