@@ -1858,9 +1858,9 @@ class CoreTranslator {
     
     public static function RequestJoin($isMemberOfSpace, $lang){
         if ($lang == "fr") {
-            return $isMemberOfSpace ? "Quitter" : "Rejoindre";
+            return $isMemberOfSpace ? "Se désinscrire" : "Demander l'accès";
         }
-        return $isMemberOfSpace ? "Leave" : "Join"; 
+        return $isMemberOfSpace ? "Unsubscribe" : "Request access"; 
     }
 
     public static function JoinRequested($lang){
@@ -1870,11 +1870,11 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $spaceName, $lang){
+    public static function JoinRequestEmail($login, $spaceName, $userEmail, $lang){
         if ($lang == "fr") {
-            return "Bonjour, <br><br>" . $login . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            return "Bonjour, <br><br>" . $login . " (" . $userEmail . ") demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
         }
-        return "Hi, <br><br>" . $login . " requests to join your space " . $spaceName. " on Platform-Manager";
+        return "Hi, <br><br>" . $login . " (" . $userEmail . ") requests to join your space " . $spaceName. " on Platform-Manager";
     }
 
     public static function JoinRequestSubject($spaceName, $lang){

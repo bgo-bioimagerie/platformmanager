@@ -57,7 +57,10 @@ class CorespaceController extends CoresecureController {
 
         $modelConfig = new CoreConfig();
         $space_home_page = $modelConfig->getParamSpace('space_home_page', $id_space);
-        if ($space_home_page != "") {
+
+        $showCom = ($space_home_page == "comhome");
+
+        if ($space_home_page != "" && !$showCom) {
             $this->redirect($space_home_page . "/" . $id_space);
             return;
         }
@@ -87,7 +90,6 @@ class CorespaceController extends CoresecureController {
                 $items = $modelDashboardItem->getForSection($sections[$i]["id"], $role);
                 $sections[$i]["items"] = $items;
             }
-            
             return $this->render(array(
                 "role" => $role,
                 "lang" => $lang,
@@ -127,7 +129,6 @@ class CorespaceController extends CoresecureController {
                 }
                 $spaceMenuItems[$i]['color'] = $menuColor;
             }
-
             return $this->render(array(
                 "role" => $role,
                 "lang" => $lang,
@@ -135,6 +136,7 @@ class CorespaceController extends CoresecureController {
                 "space" => $space,
                 "spaceMenuItems" => $spaceMenuItems,
                 "showAdmMenu" => $showAdmMenu,
+                "showCom" => $showCom,
                 "data" => ["space" => $space]
             ));
         }

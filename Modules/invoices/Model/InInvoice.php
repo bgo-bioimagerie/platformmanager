@@ -118,6 +118,12 @@ class InInvoice extends Model {
         if($date_generated == "") {
             $date_generated = null;
         }
+        if($period_begin == "") {
+            $period_begin = null;
+        }
+        if($period_end == "") {
+            $period_end = null;
+        }
         $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, 0, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
         return $this->getDatabase()->lastInsertId();

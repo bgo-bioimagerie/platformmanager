@@ -22,6 +22,7 @@ class ComRouting extends Routing{
         $this->addRoute("comnewsdelete", "comnewsdelete", "comnews", "delete", array("id_space", "id"), array("", ""));
         
         $this->addRoute("Comhome", "Comhome", "Comhome", "index", array("id_space"), array(""));
+        $this->addRoute("getnews", "getnews", "Comhome", "getnews", array("id_space"), array(""));
         
         
     }
