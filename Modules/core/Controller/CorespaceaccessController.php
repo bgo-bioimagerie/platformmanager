@@ -242,13 +242,13 @@ class CorespaceaccessController extends CoresecureController {
                 $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
 
                 $modelSpacePending = new CorePendingAccount();
-                $pid = $modelSpacePending->add($id_user, $id_space);
+                $modelSpacePending->add($id_user, $id_space);
 
                 $_SESSION["flash"] = CoreTranslator::AccountHasBeenCreated($lang);
                 $_SESSION["flashClass"] = "success";
 
-                $user = $modelCoreUser->getInfo($id_user);
-                $this->redirect("corespaceaccessuseradd/".$id_space, [], ['user' => $user, 'pending' => $pid]);
+                $modelCoreUser->getInfo($id_user);
+                $this->redirect("corespacependingusers/".$id_space, [], []);
                 return;
             }
         }

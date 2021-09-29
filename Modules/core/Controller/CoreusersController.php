@@ -92,9 +92,9 @@ class CoreusersController extends CoresecureController {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
             $form->addPassword("pwdconfirm", CoreTranslator::Password($lang));
         }
-        $form->addText("name", CoreTranslator::Name($lang), false, $user["name"]);
-        $form->addText("firstname", CoreTranslator::Firstname($lang), false, $user["firstname"]);
-        $form->addEmail("email", CoreTranslator::Email($lang), false, $user["email"], true);
+        $form->addText("name", CoreTranslator::Name($lang), true, $user["name"]);
+        $form->addText("firstname", CoreTranslator::Firstname($lang), true, $user["firstname"]);
+        $form->addEmail("email", CoreTranslator::Email($lang), true, $user["email"], true);
 
         $modelStatus = new CoreStatus();
         $status = $modelStatus->allStatusInfo();
@@ -123,7 +123,6 @@ class CoreusersController extends CoresecureController {
             $formPwd->setButtonsWidth(3, 8);
         }
         $script = "";
-        $checked = false;
         if ($form->check()) {
             $canEditUser = true;
             if (!$id) {
@@ -133,7 +132,7 @@ class CoreusersController extends CoresecureController {
                     $_SESSION["flashClass"] = "danger";
                 }
                 if(!$modelUser->isEmailFormat($form->getParameter("email"))) {
-                    // if email alreadyy exists, warn user
+                    // if email already exists, warn user
                     $canEditUser = false;
                     $_SESSION["flash"] = CoreTranslator::EmailInvalid($lang);
                     $_SESSION["flashClass"] = "danger";
@@ -175,9 +174,8 @@ class CoreusersController extends CoresecureController {
         if ($id > 0) {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
-        if ($checked = true) {
-            $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
-        }
+
+        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
     }
 
     protected function editPwdQuery($formPwd, $modelUser, $lang) {
@@ -186,9 +184,11 @@ class CoreusersController extends CoresecureController {
         $pwdconfirm = $formPwd->getParameter("pwdconfirm");
         if ($pwd != $pwdconfirm) {
             $_SESSION['flash'] = CoreTranslator::TheTwoPasswordAreDifferent($lang);
+            $_SESSION["flashClass"] = "danger";
         } else {
             $modelUser->changePwd($formPwd->getParameter("id"), $pwd);
             $_SESSION['flash'] = CoreTranslator::PasswordHasBeenChanged($lang);
+            $_SESSION["flashClass"] = "success";
         }
     }
 
@@ -200,13 +200,30 @@ class CoreusersController extends CoresecureController {
             $pwdconfirm = $form->getParameter("pwdconfirm");
             if ($pwd != $pwdconfirm) {
                 $_SESSION['flash'] = CoreTranslator::TheTwoPasswordAreDifferent($lang);
+                $_SESSION["flashClass"] = "danger";
+                $this->redirect("coreusers");
+            } else {
+                $id = $modelUser->add(
+                    $form->getParameter("login"),
+                    $form->getParameter("pwd"),
+                    $form->getParameter("name"),
+                    $form->getParameter("firstname"),
+                    $form->getParameter("email"),
+                    $form->getParameter("status_id"),
+                    $form->getParameter("date_end_contract"),
+                    $form->getParameter("is_active")
+                );
             }
-            $id = $modelUser->add(
-                $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
-            );
         } else {
             $modelUser->edit(
-                    $id, $form->getParameter("login"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
+                $id,
+                $form->getParameter("login"),
+                $form->getParameter("name"),
+                $form->getParameter("firstname"),
+                $form->getParameter("email"),
+                $form->getParameter("status_id"),
+                $form->getParameter("date_end_contract"),
+                $form->getParameter("is_active")
             );
         }
         return $id;
