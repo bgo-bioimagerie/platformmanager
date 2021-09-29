@@ -15,6 +15,7 @@
 * #272 allow to display news in popup on space home page
 * #275 Fix color codes error in booking schedulings 
 * #292 [ServicesinvoiceorderController] calls to deprecated function createByUnitForm()
+* #281 Add front-end controls in user forms. Improves ergonomy
 
 ## 2.0.5
 

@@ -141,19 +141,26 @@ class FormHtml {
      * @param type $required
      * @param type $labelWidth
      * @param type $inputWidth
+     * @param bool $readonly
+     * @param bool $checkUnicity
      * @return string
      */
     // #105: add readonly
-    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false) {
+    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false, $checkUnicity = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
         }
-
+        
         $html = "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"text\" id=\"" . $name . "\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control";
+        if ($checkUnicity) {
+            $html .= " unique";
+        }
+        $html .= "\"";
+        $html .= " type=\"text\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\" " . $required . " " . $enabled;
         // #105: add readonly
         if ($readonly) {
@@ -381,16 +388,22 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function email($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
+    static public function email($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9, $checkUnicity = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
         }
-
+        
+        
         $html = "<div class=\"form-group " . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-        $html .= "<input class=\"form-control\" type=\"email\" id=\"" . $name . "\" name=\"" . $name . "\"";
+        $html .= "<input class=\"form-control";
+        if ($checkUnicity) {
+            $html .= " unique";
+        }
+        $html .= "\"";
+        $html .= " type=\"email\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
         $html .= "</div>";
@@ -721,6 +734,14 @@ class FormHtml {
         $string = file_get_contents('Framework/formajax_script.php');
         $string1 = str_replace("formid", $formId, $string);
         return str_replace("validationurl", $validationURL, $string1);
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    static public function checkUnicityScript() {
+        return file_get_contents("Framework/checkUnicity_script.php");
     }
 
 }

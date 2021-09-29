@@ -119,6 +119,13 @@ class Configuration {
             self::$parameters['rootWeb']= getenv('PFM_ROOTWEB');
         }
 
+        if(!isset(self::$parameters['email_regexp'])) {
+            self::$parameters['email_regexp'] = '/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*))@((([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
+        }
+        if(getenv('EMAIL_REGEXP')) {
+            self::$parameters['email_regexp']= getenv('EMAIL_REGEXP');
+        }
+
         if(!isset(self::$parameters['name'])) {
             self::$parameters['name'] = 'Platform-Manager';
         }
