@@ -1,8 +1,14 @@
 <?php ?>
 
 <script>
+    class ResourceBkPricing {
+        constructor(resourceId, resourceName, belongingPrices) {
+            this.resourceId = resourceId;
+            this.resourceName = resourceName;
+            this.belongingPrices = belongingPrices;
+        }
+    }
     $(document).ready(function () {
-
         $("#hider").hide();
         $("#entriesbuttonclose").click(function () {
             $("#hider").hide();
@@ -14,36 +20,38 @@
                 
                 var strid = this.id;
                 var arrayid = strid.split("_");
-                //alert("add note clicked " + arrayid[1]);
                 showEditEntryForm(<?php echo $id_space ?>, arrayid[1]);
             });
     <?php
 }
 ?>
-
+        /**
+         * Gets bookingPrices from BookingpricesApi then calls displayPopup()
+         * 
+         * @param string id_space
+         * @param string id_resource 
+         * 
+         */
         function showEditEntryForm(id_space, id_service) {
-            $.post(
-                    'bookinggetprices/' + id_space + '/' + id_service,
-                    {},
-                    function (data) {
-                        $('#resource_id').val(data.id_resource);
-                        $('#resource').val(data.resource);
-                        <?php 
-                        foreach($belongings as $belonging){
-                            ?>
-                             $('<?php echo '#bel_' . $belonging['id'] ?>').val(data.<?php echo 'bel_' . $belonging['id'] ?>);               
-                        <?php                    
+            const bkPricing = new ResourceBkPricing();
+            bkPricing.resourceId = id_resource;
+            bkPricing.belongingPrices = [];
+            $.post('bookinggetprices/' + id_space + '/' + id_resource)
+                .done((response) => {
+                    jsonData = response.includes("<br />") ?  jsonData = response.slice(0, response.indexOf("<br />")) : response;
+                    data = JSON.parse(jsonData);
+
+                    // format to be used more easily
+                    Object.entries(data).forEach((entry) => {
+                        const [key, value] = entry;
+                        if (key.slice(0, 4) === "bel_") {
+                            bkPricing.belongingPrices.push({belonging: key, price: value});
+                        } else if (key === "resource") {
+                            bkPricing.resourceName = value;
                         }
-                        ?>
-
-                        $("#hider").fadeIn("slow");
-                        $('#entriespopup_box').fadeIn("slow");
-                    },
-                    'json'
-                    );
-
+                    });
+                    displayPopup(bkPricing);
+            });
         }
-        ;
-
     });
 </script>            

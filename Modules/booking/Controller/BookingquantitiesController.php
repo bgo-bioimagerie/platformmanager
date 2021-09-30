@@ -53,6 +53,7 @@ class BookingquantitiesController extends CoresecureController {
             $supsIdsRes[] = $p["id_resource"];
             $supsNames[] = $p["name"];
             $supsMandatories[] = $p["mandatory"];
+            $supIsInvoicingUnit[] = $p["is_invoicing_unit"] ? intval($p["is_invoicing_unit"]) : 0;
         }
         
         $form = new Form($this->request, "supsForm");
@@ -63,6 +64,7 @@ class BookingquantitiesController extends CoresecureController {
         $formAdd->addSelect("id_resources", BookingTranslator::Resource($lang) , $choicesR, $choicesRid, $supsIdsRes);
         $formAdd->addText("names", CoreTranslator::Name($lang), $supsNames);
         $formAdd->addSelect("mandatory", BookingTranslator::Is_mandatory($lang) , array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $supsMandatories);
+        $formAdd->addSelect("is_invoicing_unit", BookingTranslator::Is_invoicing_unit($lang) , array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $supIsInvoicingUnit);
         
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);  
@@ -74,10 +76,13 @@ class BookingquantitiesController extends CoresecureController {
             $supResource = $this->request->getParameterNoException("id_resources");
             $supName = $this->request->getParameterNoException("names");
             $supMandatory = $this->request->getParameterNoException("mandatory");
-            
-            // $count = 0;
+            $supIsInvoicingUnit = $this->request->getParameterNoException("is_invoicing_unit");
 
+            // format into arrays
+            $supIsInvoicingUnit = is_array($supIsInvoicingUnit) ? $supIsInvoicingUnit : [$supIsInvoicingUnit];
+            $supID = is_array($supID) ? $supID : [$supID];
 
+            // TODO: check if this next loops are ok
             $packs = [];
             for ($p = 0; $p < count($supID); $p++) {
                 if ($supName[$p] != "" && $supID[$p]) {
@@ -99,6 +104,7 @@ class BookingquantitiesController extends CoresecureController {
                 }
                 $modelSups->setCalQuantity($id_space,  $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
             }
+            
 
             /* bug to get last id (could conflict)
             // get the last package id

@@ -191,7 +191,7 @@ class BookingpricesController extends CoresecureController {
         $units = $unitModel->getUnitsForList("name");
         
         $modelOwnerPrices = new BkOwnerPrice();
-        $data = $modelOwnerPrices->getAll();
+        $data = $modelOwnerPrices->getAll($id_space);
         $dataResources = array();
         $dataUnits = array();
         $dataPrice = array();
@@ -226,18 +226,18 @@ class BookingpricesController extends CoresecureController {
             $units = $this->request->getParameter("unit");
             $prices = $this->request->getParameter("price");
             
-            $modelPrice->removeNotListed($id_resource, $units);
+            $modelPrice->removeNotListed($id_space, $id_resource, $units);
             
             for ($i = 0; $i < count($id_resource); $i++) {
                 $residArray = explode("_", $id_resource[$i]);
                 if ($residArray[1] == "day") {
-                    $modelPrice->setPriceDay($id_resource[$i], $units[$i], $prices[$i]);
+                    $modelPrice->setPriceDay($id_space, $id_resource[$i], $units[$i], $prices[$i]);
                 } else if ($residArray[1] == "night") {
-                    $modelPrice->setPriceNight($id_resource[$i], $units[$i], $prices[$i]);
+                    $modelPrice->setPriceNight($id_space, $id_resource[$i], $units[$i], $prices[$i]);
                 } else if ($residArray[1] == "we") {
-                    $modelPrice->setPriceWe($id_resource[$i], $units[$i], $prices[$i]);
+                    $modelPrice->setPriceWe($id_space, $id_resource[$i], $units[$i], $prices[$i]);
                 } else if ($residArray[1] == "pk") {
-                    $modelPrice->setPricePackage($id_resource[$i], $units[$i], $residArray[2], $prices[$i]);
+                    $modelPrice->setPricePackage($id_space, $id_resource[$i], $units[$i], $residArray[2], $prices[$i]);
                 }
             }
             
@@ -266,13 +266,13 @@ class BookingpricesController extends CoresecureController {
             $resourcesIds[$count] = $resources[$i]["id"] . "_day";
             $resourcesNames[$count] = $resources[$i]["name"];
             // add night we
-            $isNight = $modelPNightWe->isNight($belongings[0]["id"]);
+            $isNight = $modelPNightWe->isNight($id_space, $belongings[0]["id"]);
             if ($isNight) {
                 $count++;
                 $resourcesIds[$count] = $resources[$i]["id"] . "_night";
                 $resourcesNames[$count] = $resources[$i]["name"] . " " . BookingTranslator::night($lang);
             }
-            $isWe = $modelPNightWe->isWe($belongings[0]["id"]);
+            $isWe = $modelPNightWe->isWe($id_space, $belongings[0]["id"]);
             if ($isWe) {
                 $count++;
                 $resourcesIds[$count] = $resources[$i]["id"] . "_we";
@@ -280,7 +280,7 @@ class BookingpricesController extends CoresecureController {
             }
 
             // add forfaits
-            $packages = $modelPackage->getByResource($resources[$i]["id"]);
+            $packages = $modelPackage->getByResource($id_space, $resources[$i]["id"]);
             foreach ($packages as $package) {
                 $count++;
                 $resourcesIds[$count] = $resources[$i]["id"] . "_pk_" . $package["id"];

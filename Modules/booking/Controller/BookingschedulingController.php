@@ -95,7 +95,7 @@ class BookingschedulingController extends CoresecureController {
         // if no color code was created, then alert user it is required to do so
         if (!$colors) {
             // display alert
-            $_SESSION["message"] = BookingTranslator::MissingColorCode($lang);
+            $_SESSION["flash"] = BookingTranslator::MissingColorCode($lang);
         }
         
         $cc = array(); $ccid = array();
