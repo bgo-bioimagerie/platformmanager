@@ -1635,4 +1635,11 @@ class BookingTranslator {
         }
         return "Error: No resource and/or area has been created";
     }
+
+    public static function VisaNeeded($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord spécifier un visa dans le module Ressources > Visas";
+        }
+        return "You need first to specify a visa in Resources module>Visas";
+    }
 }

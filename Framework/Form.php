@@ -519,7 +519,7 @@ class Form {
     }
     
         /**
-     * Add select input to the form
+     * Add mandatory select input to the form
      * @param string $name Input name
      * @param string $label Input label
      * @param unknown $choices List of options names
