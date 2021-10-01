@@ -618,16 +618,10 @@ class SeProject extends Model {
     }
 
     public function getInfoFromInvoice($id_invoice, $id_space) {
-
         $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=? AND id_space=? AND deleted=0";
         $invoiceItem = $this->runRequest($sql, array($id_invoice, $id_space))->fetch();
-        //print_r($invoiceItem["details"]);
         $details = explode(";", $invoiceItem["details"]);
-        //echo "details = " . $invoiceItem["details"] . "<br/>";
-        //echo 'count details = ' . count($details) . "<br/>";
         $proj = explode("=", $details[count($details) - 2]);
-        //$projName = $proj[0];
-
         $projUrl = explode("/", $proj[1]);
         $projID = $projUrl[2];
         $sqlp = "SELECT * FROM se_project WHERE id=? AND id_space=? AND deleted=0";
@@ -639,34 +633,33 @@ class SeProject extends Model {
             $info['closed_by'] = "";
             $info['closed_by_in'] = "";
         }
-        //else{
-        //    echo 'cannot find project for name ' . $projName . "and id " . $projID ."<br>";
-        //}
-
-
-        $modelUser = new CoreUser();
-        $sql2 = "SELECT id_user FROM se_visa WHERE id=? AND id_space=? AND deleted=0";
-        $id_user = $this->runRequest($sql2, array($info['closed_by'], $id_space))->fetch();
-        $info['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
-        $info['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
-
+        
+        if ($info['closed_by']) {
+            $modelUser = new CoreUser();
+            $sql2 = "SELECT id_user FROM se_visa WHERE id=? AND id_space=? AND deleted=0";
+            $id_user = $this->runRequest($sql2, array($info['closed_by'], $id_space))->fetch();
+            $info['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
+            $info['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
+        } else {
+            $info['closed_by'] = "";
+            $info['closed_by_in'] = "";
+        }
         return $info;
     }
 
     public function getProjectsOpenedPeriod($beginPeriod, $endPeriod, $id_space) {
-        $sql = "select * from se_project where date_open>=? AND date_open<=? AND id_space=? AND deleted=0";
+        $sql = "SELECT * FROM se_project WHERE date_open>=? AND date_open<=? AND id_space=? AND deleted=0";
         $projects = $this->runRequest($sql, array($beginPeriod, $endPeriod, $id_space))->fetchAll();
-
         $modelUser = new CoreUser();
         $modelSampleCabinet = new StockShelf();
         foreach ($projects as $project) {
             $sql = "SELECT id_user FROM se_visa WHERE id=? AND id_space=? AND deleted=0";
-            $id_user = $this->runRequest($sql, array($project['closed_by'], $id_space))->fetchAll()[0];
-            $project['closed_by'] = $modelUser->getUserFUllName($id_user[0]);
-            $project['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
+            $requestResult = $this->runRequest($sql, array($project['closed_by'], $id_space))->fetchAll();
+            $id_user = empty($requestResult) ?: $requestResult[0];
+            $project['closed_by'] = !empty($requestResult) ? $modelUser->getUserFUllName($id_user[0]) : "";
+            $project['closed_by_in'] = !empty($requestResult) ? $modelUser->getUserInitials($id_user[0]) : "";
             $project["sample_cabinet"] = $modelSampleCabinet->getFullName($id_space, $project["id_sample_cabinet"]);
         }
-
         return $projects;
     }
 

@@ -192,9 +192,13 @@ class CoretilesController extends CoresecureController {
                     $modelSpacePending->add($id_user, $id_space);
                 }
 
+                $modelUser = new CoreUser();
+                $userEmail = $modelUser->getEmail($id_user);
+
                 $mailParams = [
                     "id_space" => $id_space,
-                    "space_name" => $spaceName
+                    "space_name" => $spaceName,
+                    "user_email" => $userEmail
                 ];
                 $email = new Email();
                 $email->notifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());

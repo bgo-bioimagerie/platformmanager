@@ -67,7 +67,9 @@ class StatisticsglobalController extends CoresecureController {
         $form->setTitle(StatisticsTranslator::StatisticsGlobal($lang));
         $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, CoreTranslator::dateFromEn($date_begin, $lang) );
         $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, CoreTranslator::dateFromEn($date_end, $lang) );
-        $form->addSelect("generateunitstats", BookingTranslator::GenerateStatsPerUnit($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateunitstats"));
+
+        // TODO: replace by clients stats ?
+        $form->addSelect("generateclientstats", BookingTranslator::GenerateStatsPerClient($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateclientstats"));
 
         $modelColorCode = new BkColorCode();
         $colorCodes = $modelColorCode->getForList($id_space);
@@ -86,7 +88,7 @@ class StatisticsglobalController extends CoresecureController {
         if ($form->check()) {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);
             $dateEnd = CoreTranslator::dateToEn($form->getParameter("date_end"), $lang);
-            $generateunitstats = $this->request->getParameter("generateunitstats");
+            $generateclientstats = $this->request->getParameter("generateclientstats");
 
             if ($dateBegin != "" && $dateEnd != "" && $dateBegin > $dateEnd) {
                 $_SESSION['message'] = ServicesTranslator::Dates_are_not_correct($lang);
@@ -96,27 +98,26 @@ class StatisticsglobalController extends CoresecureController {
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
 
-            $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space);
+            $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
             return;
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
     }
 
-    protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateunitstats, $id_space) {
+    protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space) {
 
         $controllerServices = new ServicesstatisticsprojectController($this->request);
         $spreadsheet = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
 
         $controllerBooking = new BookingstatisticsController($this->request);
-        $spreadsheet = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateunitstats, $spreadsheet);
+        $spreadsheet = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet);
         $spreadsheet->setActiveSheetIndex(1);
 
         // write excel file
-        // $objWriter = new PHPExcel_Writer_Excel2007($spreadsheet);
-        $objWriter = new Xlsx($spreadsheet);
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
-        //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
+        // record modifications and download file
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
         header('Cache-Control: max-age=0');

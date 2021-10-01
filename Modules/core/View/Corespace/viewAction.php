@@ -24,6 +24,20 @@ if (!$headless) {
 <?php startblock('content') ?>
 
 <?php
+    if ($showCom) {
+?>
+<!--  *************  -->
+<!--  Popup window  -->
+<!--  *************  -->
+
+<?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
+
+<?php
+    }
+?>
+</div>
+
+<?php
 if ($space['color'] == "") {
     $space['color'] = "#428bca";
 }
@@ -31,7 +45,12 @@ if ($space['color'] == "") {
 
 <div class="col-xs-12 text-center" style="color: #fff; background-color: <?php echo $space['color'] ?>; height: 35px;">
     <h4><?php echo $space['name'] ?></h4>
-</div>   
+</div>
+
+<div>
+    <!-- display com popup -->
+
+
 <div class="col-xs-12" style="background-color: #fff; height: 2000px;">
 
     <div class="container" style="background-color: #fff;">
@@ -131,3 +150,4 @@ if ($space['color'] == "") {
 </div>
 <?php
 endblock();
+?>

@@ -195,19 +195,28 @@ class CorespaceaccessController extends CoresecureController {
 
         $form->addText("name", CoreTranslator::Name($lang), true);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true);
-        $form->addText("login", CoreTranslator::Login($lang), true);
-        $form->addEmail("email", CoreTranslator::email($lang), true);
+        $form->addText("login", CoreTranslator::Login($lang), true, checkUnicity: true);
+        $form->addEmail("email", CoreTranslator::email($lang), true, checkUnicity: true);
         $form->addText("phone", CoreTranslator::Phone($lang), false);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd/".$id_space);
 
         if ($form->check()) {
-
             $modelCoreUser = new CoreUser();
+            $canEditUser = true;
+            if ($modelCoreUser->isLogin($this->request->getParameter('login'))) {
+                $canEditUser = false;
+                $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
+                $_SESSION["flashClass"] = "danger";
+            }
+            if($modelCoreUser->isEmail($form->getParameter("email"))) {
+                // if email alreday exists, warn user
+                $canEditUser = false;
+                $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                $_SESSION["flashClass"] = "danger";
+            }
 
-            if ($modelCoreUser->isLogin($form->getParameter("login"))) {
-                $_SESSION["message"] = CoreTranslator::Error($lang) . ":" . CoreTranslator::LoginAlreadyExists($lang);
-            } else {
+            if ($canEditUser) {
                 $pwd = $modelCoreUser->generateRandomPassword();
 
                 $id_user = $modelCoreUser->createAccount(
@@ -233,12 +242,13 @@ class CorespaceaccessController extends CoresecureController {
                 $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
 
                 $modelSpacePending = new CorePendingAccount();
-                $pid = $modelSpacePending->add($id_user, $id_space);
+                $modelSpacePending->add($id_user, $id_space);
 
-                $_SESSION["message"] = CoreTranslator::AccountHasBeenCreated($lang);
+                $_SESSION["flash"] = CoreTranslator::AccountHasBeenCreated($lang);
+                $_SESSION["flashClass"] = "success";
 
-                $user = $modelCoreUser->getInfo($id_user);
-                $this->redirect("corespaceaccessuseradd/".$id_space, [], ['user' => $user, 'pending' => $pid]);
+                $modelCoreUser->getInfo($id_user);
+                $this->redirect("corespacependingusers/".$id_space, [], []);
                 return;
             }
         }
@@ -346,8 +356,10 @@ class CorespaceaccessController extends CoresecureController {
         $data = $modelSpacePending->getPendingForSpace($id_space);
         for ($i = 0; $i < count($data); $i++) {
             $pendingUsers[] = $data[$i];
-            $data[$i]["fullname"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
-            $data[$i]["date_created"] = $modelUser->getDateCreated($data[$i]["id_user"]);
+            $userInfos = $modelUser->getInfo($data[$i]['id_user']);
+            $data[$i]['fullname'] = $userInfos['name'] . " " . $userInfos['firstname'];
+            $data[$i]['email'] = $userInfos['email'];
+            $data[$i]["date_created"] = $userInfos['date_created'];
         }
 
         $table = new TableView();
@@ -357,6 +369,7 @@ class CorespaceaccessController extends CoresecureController {
 
         $headers = array(
             'fullname' => CoreTranslator::Name($lang),
+            'email' => CoreTranslator::Email($lang),
             'date_created' => CoreTranslator::DateCreated($lang)
         );
         $tableHtml = $table->view($data, $headers);

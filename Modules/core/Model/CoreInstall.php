@@ -439,6 +439,14 @@ class CoreDB extends Model {
         $this->runRequest($sql);
         $sql = "update in_invoice set date_send=null where date_send='0000-00-00'";
         $this->runRequest($sql);
+        $sql = "alter table in_invoice modify column period_begin date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table in_invoice modify column period_end date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table in_invoice modify column date_generated date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table in_invoice modify column date_send date NULL";
+        $this->runRequest($sql);
         Configuration::getLogger()->debug('[in_invoice] fix column types, done!');
 
         Configuration::getLogger()->debug('[bk_authorization] fix column types');
