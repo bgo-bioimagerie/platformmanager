@@ -404,6 +404,7 @@ class ResourcesinfoController extends CoresecureController {
 
     public function respsAction($id_space, $id_resource) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
 
         $modelResps = new ReResps();
         $respsData = $modelResps->getResps($id_space, $id_resource);
@@ -415,7 +416,7 @@ class ResourcesinfoController extends CoresecureController {
         }
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getSpaceActiveUsers();
+        $users = $modelUser->getSpaceActiveUsers($id_space);
         $choicesU = array();
         $choicesidU = array();
         foreach ($users as $user) {
@@ -431,9 +432,10 @@ class ResourcesinfoController extends CoresecureController {
             $choicesS[] = $status["name"];
             $choicesidS[] = $status["id"];
         }
+        if (empty($choicesidS)) {
+            $_SESSION['flash'] = ResourcesTranslator::StatusNeeded($lang);
+        }
 
-
-        $lang = $this->getLanguage();
         $form = new Form($this->request, "respsform");
         $formAdd = new FormAdd($this->request, "respaddform");
         $formAdd->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $resps);
