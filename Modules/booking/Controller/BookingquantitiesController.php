@@ -29,7 +29,6 @@ class BookingquantitiesController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space) {
-
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         
         $lang = $this->getLanguage();
@@ -48,12 +47,12 @@ class BookingquantitiesController extends CoresecureController {
         $supsIdsRes = array();
         $supsNames = array();
         $supsMandatories = array();
-        foreach($sups as $p){
-            $supsIds[] = $p["id_quantity"];
-            $supsIdsRes[] = $p["id_resource"];
-            $supsNames[] = $p["name"];
-            $supsMandatories[] = $p["mandatory"];
-            $supIsInvoicingUnit[] = $p["is_invoicing_unit"] ? intval($p["is_invoicing_unit"]) : 0;
+        foreach($sups as $sup){
+            $supsIds[] = $sup["id_quantity"];
+            $supsIdsRes[] = $sup["id_resource"];
+            $supsNames[] = $sup["name"];
+            $supsMandatories[] = $sup["mandatory"];
+            $supIsInvoicingUnit[] = $sup["is_invoicing_unit"] ? intval($sup["is_invoicing_unit"]) : 0;
         }
         
         $form = new Form($this->request, "supsForm");
@@ -63,8 +62,8 @@ class BookingquantitiesController extends CoresecureController {
         $formAdd->addHidden("id_sups", $supsIds);
         $formAdd->addSelect("id_resources", BookingTranslator::Resource($lang) , $choicesR, $choicesRid, $supsIdsRes);
         $formAdd->addText("names", CoreTranslator::Name($lang), $supsNames);
-        $formAdd->addSelect("mandatory", BookingTranslator::Is_mandatory($lang) , array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $supsMandatories);
-        $formAdd->addSelect("is_invoicing_unit", BookingTranslator::Is_invoicing_unit($lang) , array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $supIsInvoicingUnit);
+        $formAdd->addSelect("mandatory", BookingTranslator::Is_mandatory($lang) , array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supsMandatories);
+        $formAdd->addSelect("is_invoicing_unit", BookingTranslator::Is_invoicing_unit($lang) , array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supIsInvoicingUnit);
         
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);  
@@ -73,7 +72,7 @@ class BookingquantitiesController extends CoresecureController {
         
         if ($form->check()){
             $supID = $this->request->getParameterNoException("id_sups");
-            $supResource = $this->request->getParameterNoException("id_resources");
+            $supResources = $this->request->getParameterNoException("id_resources");
             $supName = $this->request->getParameterNoException("names");
             $supMandatory = $this->request->getParameterNoException("mandatory");
             $supIsInvoicingUnit = $this->request->getParameterNoException("is_invoicing_unit");
@@ -81,79 +80,55 @@ class BookingquantitiesController extends CoresecureController {
             // format into arrays
             $supIsInvoicingUnit = is_array($supIsInvoicingUnit) ? $supIsInvoicingUnit : [$supIsInvoicingUnit];
             $supID = is_array($supID) ? $supID : [$supID];
+            $supResources = is_array($supResources) ? $supResources : [$supResources];
 
-            // TODO: check if this next loops are ok
-            $packs = [];
-            for ($p = 0; $p < count($supID); $p++) {
-                if ($supName[$p] != "" && $supID[$p]) {
-                   $packs[$supName[$p]] = $supID[$p];
+            // find out if multiple quantities are used as invoicing units
+            $invoicingUnitsResources = [];
+            foreach ($supResources as $index => $resource) {
+                if ($supIsInvoicingUnit[$index] == 1) {
+                    if (in_array($resource, $invoicingUnitsResources)) {
+                        $_SESSION["flash"] = BookingTranslator::maxInvoicingUnits($lang);
+                        $_SESSION["flashClass"] = "danger";
+                        $this->redirect("bookingquantities/".$id_space);
+                    } else {
+                        array_push($invoicingUnitsResources, $resource);
+                    }
                 }
             }
-            for ($p = 0; $p < count($supID); $p++) {
-                if (!$supID[$p]) {
+
+            $supacks = [];
+            for ($sup = 0; $sup < count($supID); $sup++) {
+                if ($supName[$sup] != "" && $supID[$sup]) {
+                   $supacks[$supName[$sup]] = $supID[$sup];
+                }
+            }
+            for ($sup = 0; $sup < count($supID); $sup++) {
+                if (!$supID[$sup]) {
                     // If package id not set, use from known packages
-                    if(isset($packs[$supName[$p]])) {
-                        $supID[$p] = $packs[$supName[$p]];
+                    if(isset($supacks[$supName[$sup]])) {
+                        $supID[$sup] = $supacks[$supName[$sup]];
                     } else {
                         // Or create a new package
                        $cvm = new CoreVirtual();
                        $vid = $cvm->new('quantities');
-                       $supID[$p] = $vid;
-                       $packs[$supName[$p]] = $vid;
+                       $supID[$sup] = $vid;
+                       $supacks[$supName[$sup]] = $vid;
                    }
                 }
-                $modelSups->setCalQuantity($id_space,  $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
+                $modelSups->setCalQuantity($id_space,  $supID[$sup], $supResources[$sup], $supName[$sup], $supMandatory[$sup], $supIsInvoicingUnit[$sup]);
             }
-            
-
-            /* bug to get last id (could conflict)
-            // get the last package id
-            $lastID = 0;
-            for( $p = 0 ; $p < count($supID) ; $p++){
-                if ($supName[$p] != "" ){
-                    if ($supID[$p] > $lastID){
-                        $lastID = $supID[$p];
-                    }
-                }
-            }
-                
-            for( $p = 0 ; $p < count($supID) ; $p++){
-                if ($supName[$p] != "" ){
-                    $curentID = $supID[$p];
-
-                    if ($curentID == ""){
-                        $lastID++;
-                        $curentID = $lastID;
-                        $supID[$p] = $lastID;
-                    }
-                    if ($curentID == 1 && $p > 0){
-                        $lastID++;
-                        $curentID = $lastID;
-                        $supID[$p] = $lastID;
-                    }
-                    if(! in_array($supResource[$p], $choicesRid)) {
-                        continue;
-                    }
-                    //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelSups->setCalQuantity($id_space, $curentID, $supResource[$p], $supName[$p], $supMandatory[$p]);
-                    $count++;
-                }
-            }
-            */
-            
-            //echo "sups ids = ". print_r($supID) . "<br/>";
-            //echo "sup Resource ids = ". print_r($supResource) . "<br/>";
             
             $sups = $modelSups->getForSpace($id_space, "id_resource");
             // If package in db is not listed in provided package list, delete them
-            foreach ($sups as $s) {
-                if($s['id_quantity'] && !in_array($s['id_quantity'], $supID)) {
-                    $modelSups->delete($id_space, $s['id']);
+            foreach ($sups as $sup) {
+                if($sup['id_quantity'] && !in_array($sup['id_quantity'], $supID)) {
+                    $modelSups->delete($id_space, $sup['id']);
                 }
             } 
 
-            // $modelSups->removeUnlistedQuantities($supID);
-            $_SESSION["message"] = BookingTranslator::Quantities_saved($lang);
+            $modelSups->removeUnlistedQuantities($id_space, $supID);
+            $_SESSION["flash"] = BookingTranslator::Quantities_saved($lang);
+            $_SESSION["flashClass"] = "success";
             $this->redirect("bookingquantities/".$id_space);
             return;
         }

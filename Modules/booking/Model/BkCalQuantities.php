@@ -218,9 +218,8 @@ class BkCalQuantities extends Model {
     public function removeUnlistedQuantities($id_space, $packageID) {
 
         $sql = "select id, id_quantity from bk_calquantities WHERE id_space=?";
-        $req = $this->runRequest($sql);
+        $req = $this->runRequest($sql, array($id_space));
         $databasePackages = $req->fetchAll();
-
         foreach ($databasePackages as $dbPackage) {
             $found = false;
             foreach ($packageID as $pid) {

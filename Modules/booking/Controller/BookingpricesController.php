@@ -45,8 +45,8 @@ class BookingpricesController extends CoresecureController {
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getBySpace($id_space);
         
+        // TODO: handle case where $belongings = null; Causes warnings in dev mode
         $belongings = $modelPricing->getAll($id_space);
-        
         $table = new TableView();
         
         $modelConfig = new CoreConfig();

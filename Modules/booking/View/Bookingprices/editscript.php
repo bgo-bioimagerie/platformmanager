@@ -32,10 +32,12 @@
          * @param string id_resource 
          * 
          */
-        function showEditEntryForm(id_space, id_service) {
+        function showEditEntryForm(id_space, id_resource) {
+            console.log("in showEditForm");
             const bkPricing = new ResourceBkPricing();
             bkPricing.resourceId = id_resource;
             bkPricing.belongingPrices = [];
+
             $.post('bookinggetprices/' + id_space + '/' + id_resource)
                 .done((response) => {
                     jsonData = response.includes("<br />") ?  jsonData = response.slice(0, response.indexOf("<br />")) : response;
@@ -53,5 +55,21 @@
                     displayPopup(bkPricing);
             });
         }
+        /**
+         * Displays a popup window #entriespopup_box
+         * to edit resource prices
+         * 
+         * @param ResourceBkPricing bkPricing
+         * 
+         */
+        function displayPopup(bkPricing) {
+            $('#resource_id').val(bkPricing.resourceId);
+            $('#resource').val(bkPricing.resourceName);
+            bkPricing.belongingPrices.forEach( (bkPrice) => {
+                $('#' + bkPrice.belonging).val(bkPrice.price);
+            });
+            $("#hider").fadeIn("slow");
+            $('#entriespopup_box').fadeIn("slow");
+        }
     });
-</script>            
+</script>

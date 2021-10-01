@@ -1645,9 +1645,9 @@ class BookingTranslator {
 
     public static function maxInvoicingUnits($lang) {
         if ($lang == "fr") {
-            return "Seulement une quantité peut être utilisée comme unité de facturation. Merci de passer \"Utiliser comme unité de facturation\" à \"non\" pour les autres quantités.";
+            return "Seule une quantité peut être utilisée comme unité de facturation pour une ressource. Merci de passer \"Utiliser comme unité de facturation\" à \"non\" pour les autres quantités concernées.";
         } else {
-            return "Only one quantity can be used as an invoicing unit. Please set \"Use as invoicing unit\" to \"no\" for other quantites.";
+            return "Only one quantity can be used as an invoicing unit for one resource. Please set \"Use as invoicing unit\" to \"no\" for other quantites.";
         }
     }
 }

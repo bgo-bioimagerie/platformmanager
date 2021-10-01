@@ -29,7 +29,6 @@ class BookingpricesApi extends CoresecureController {
     }
 
     public function getpricesAction($id_space, $id_resource) {
-
         $lang = $this->getLanguage();
         $modelPrices = new BkPrice();
         $modelBelongings = new ClPricing();
