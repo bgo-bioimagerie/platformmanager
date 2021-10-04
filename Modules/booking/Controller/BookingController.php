@@ -268,7 +268,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (empty($menuData["resources"])) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         // view
@@ -393,7 +394,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         // view
@@ -482,7 +484,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (!$resourceInfo) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         $modelRes = new ResourceInfo();
@@ -582,8 +585,6 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d", time());
         }
 
-        //echo "curent date n = " . $curentDate . "<br/>";
-        // get the closest monday to curent day
         $i = 0;
         $curentDateE = explode("-", $curentDate);
         while (date('D', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - $i, $curentDateE[0])) != "Mon") {
@@ -596,9 +597,6 @@ class BookingController extends BookingabstractController {
 
 
         // save the menu info in the session
-        
-        // $_SESSION['id_resource'] = $curentResource;
-        // $_SESSION['id_area'] = $curentAreaId;
         $_SESSION['curentDate'] = $curentDate;
          
         // get the area info
@@ -655,7 +653,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         // view
@@ -750,11 +749,10 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (!$resourceInfo) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
-        // $modelRes = new ResourceInfo();
-        // $resourceBase = $modelRes->get($id_space, $curentResource);
         $resourcesBase = $resourceInfo;
 
         // get the entries for this resource
