@@ -1123,11 +1123,32 @@ class CoreTranslator {
         return "Private";
     }
 
+    public static function AlreadyExists($elem , $lang) {
+        if ($lang == "fr") {
+            return "Un compte avec " . $elem . " existe déjà";
+        }
+        return "An account with " . $elem . " already exists";
+    }
+
     public static function LoginAlreadyExists($lang) {
         if ($lang == "fr") {
             return "Le login est déjà pris";
         }
-        return "The login already exists";
+        return "Login already exists";
+    }
+
+    public static function EmailAlreadyExists($lang) {
+        if ($lang == "fr") {
+            return "Un compte existe déjà avec cette adresse mail";
+        }
+        return "An account with this email address already exists";
+    }
+
+    public static function EmailInvalid($lang) {
+        if ($lang == "fr") {
+            return "Le format de l'adresse Email est incorrect";
+        }
+        return "The format of the email address is not valid";
     }
 
     public static function Maintenance_Mode($lang) {
@@ -1205,6 +1226,13 @@ class CoreTranslator {
             return "Les deux mots de passe sont différents";
         }
         return "The two password are different";
+    }
+
+    public static function PasswordHasBeenChanged($lang) {
+        if ($lang == "fr") {
+            return "Le mot de passe a bien été modifié";
+        }
+        return "Password has been modified successfully";
     }
 
     public static function The_curent_password_is_not_correct($lang) {
@@ -1819,7 +1847,14 @@ class CoreTranslator {
             return "Le compte a bien été créé";
         }
         return "Account has been created";        
-    }   
+    }
+
+    public static function AccountHasBeenModified($lang){
+        if ($lang == "fr") {
+            return "Le compte a bien été modifié";
+        }
+        return "Account has been modified";        
+    }  
     
     public static function RequestJoin($isMemberOfSpace, $lang){
         if ($lang == "fr") {

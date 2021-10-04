@@ -677,13 +677,63 @@ class CoreUser extends Model {
         ));
     }
 
-    public function isLogin($login) {
+    /**
+     * 
+     * Check if this login is linked to an account
+     * Can exclude a specific login from the research 
+     * 
+     * @param string $login
+     * @param (optional) string $filteredLogin we want to exclude from the research
+     * 
+     * @return bool
+     */
+    public function isLogin($login, $filteredLogin = false) {
         $sql = "select * from core_users where login=?";
-        $user = $this->runRequest($sql, array($login));
+        $params = array($login);
+        if ($filteredLogin === $login) {
+            return false;
+        }
+        $user = $this->runRequest($sql, $params);
         if ($user->rowCount() == 1) {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 
+     * Check if an email is linked to an existing account
+     * Can exclude a specific email from the research
+     * 
+     * @param string $email
+     * @param (optional) string $filteredEmail we want to exclude from the research
+     * 
+     * @return bool
+     */
+    public function isEmail($email, $filteredEmail = false) {
+        $sql = "select email from core_users where email=?";
+        $params = array($email);
+        if ($filteredEmail === $email) {
+            return false;
+        }
+        $email = $this->runRequest($sql, $params);
+        if ($email->rowCount() >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * Check if an email matches with the regexp in set in env or Configuration
+     * 
+     * @param string $email
+     * 
+     * @return bool
+     */
+    public function isEmailFormat($email) {
+        $regexp = Configuration::get('email_regexp');
+        return preg_match(Configuration::get('email_regexp'), $email); 
     }
 
     /**
