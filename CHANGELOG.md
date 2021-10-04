@@ -17,6 +17,7 @@
 * #292 [ServicesinvoiceorderController] calls to deprecated function createByUnitForm()
 * #298 Add invoice by quantities
 * #281 Add front-end controls in user forms. Improves ergonomy
+* #302 fix_pendings_users_couldnt_unsubscribe
 
 ## 2.0.5
 
