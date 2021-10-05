@@ -477,6 +477,10 @@ class CoreDB extends Model {
         $this->runRequest($sql);
         $sql = "update se_project_service set `date`=null where `date`='0000-00-00'";
         $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_close date NULL";
+        $this->runRequest($sql);
 
         Configuration::getLogger()->debug('[se_project] fix column types, done!');
 
