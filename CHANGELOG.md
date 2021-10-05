@@ -2,6 +2,7 @@
 
 ## 2.1
 
+* fix resources visa listing
 * #234 fix defaults in db schema
 * #230 generate apikey on ldap login
 * #233 fix schema of core_j_spaces_user

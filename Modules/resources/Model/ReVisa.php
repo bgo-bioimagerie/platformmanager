@@ -115,7 +115,7 @@ class ReVisa extends Model {
     
     public function getVisasBySpace($id_space, $sortentry = 'id') {
     
-        $sql = "SELECT * FROM re_visas WHERE deleted=0 AND id_resource_category IN (SELECT id FROM re_category WHERE id_space=? AND delelted=0) order by " . $sortentry . " ASC;";
+        $sql = "SELECT * FROM re_visas WHERE deleted=0 AND id_resource_category IN (SELECT id FROM re_category WHERE id_space=? AND deleted=0) order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
