@@ -434,7 +434,7 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[qo_quotes] fix column types, done!');
 
         Configuration::getLogger()->debug('[in_invoice] fix column types');
-        $sql = "alter table in_invoice modify date_send date";
+        $sql = "alter table in_invoice modify date_send date NULL";
         $this->runRequest($sql);
         $sql = "update in_invoice set date_send=null where date_send='0000-00-00'";
         $this->runRequest($sql);
@@ -443,8 +443,6 @@ class CoreDB extends Model {
         $sql = "alter table in_invoice modify column period_end date NULL";
         $this->runRequest($sql);
         $sql = "alter table in_invoice modify column date_generated date NULL";
-        $this->runRequest($sql);
-        $sql = "alter table in_invoice modify column date_send date NULL";
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[in_invoice] fix column types, done!');
 
@@ -469,6 +467,10 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[se_project] fix column types');
         $sql = "alter table se_project modify `samplereturndate` date";
         $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_close date NULL";
+        $this->runRequest($sql);
         $sql = "update se_project set `samplereturndate`=null where `samplereturndate`='0000-00-00'";
         $this->runRequest($sql);
         $sql = "update se_project set date_open=null where date_open='0000-00-00'";
@@ -476,10 +478,6 @@ class CoreDB extends Model {
         $sql = "update se_project set date_close=null where date_close='0000-00-00'";
         $this->runRequest($sql);
         $sql = "update se_project_service set `date`=null where `date`='0000-00-00'";
-        $this->runRequest($sql);
-        $sql = "alter table se_project modify column date_open date NULL";
-        $this->runRequest($sql);
-        $sql = "alter table se_project modify column date_close date NULL";
         $this->runRequest($sql);
 
         Configuration::getLogger()->debug('[se_project] fix column types, done!');
