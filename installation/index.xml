@@ -27,7 +27,8 @@
 Stable code is in master branch.
 Releases can also be download from https://github.com/bgo-bioimagerie/platformmanager/releases.
 Code contains some .htaccess to limit access to specific directories. If not using Apache as frontend, you need to restrict access yourself based on .htaccess files definition.
-In Config, define a conf.ini (see Configuration) with appropriate setup.</description>
+In Config, define a conf.ini (see Configuration) with appropriate setup.
+See docker for available env variables to override defaults.</description>
     </item>
     
     <item>
@@ -50,7 +51,9 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/</guid>
       <description>For first installation, and for any later upgrade, at code root location:
-php cli/phm-cli.php install  This will setup database i.e create tables, migrate/update schemas etc..</description>
+php cli/pfm-cli.php install  This will setup database i.e create tables, migrate/update schemas etc..
+To know current version:
+php cli/pfm-cli.php version --db </description>
     </item>
     
     <item>
