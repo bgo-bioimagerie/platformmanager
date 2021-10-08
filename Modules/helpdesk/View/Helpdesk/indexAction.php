@@ -1,0 +1,591 @@
+<!doctype html>
+<?php include 'Modules/layout.php' ?>
+
+<!-- header -->
+<?php startblock('title') ?>
+Platform-Manager
+<?php endblock() ?>
+
+
+<?php startblock('stylesheet') ?>
+<?php
+$headless = Configuration::get("headless");
+$pmspaceheadercontent = "";
+$pmspaceheadernavbar = "pm-space-navbar-no-header";
+if (!$headless) {
+    $pmspaceheadercontent = "pm-space-content";
+    $pmspaceheadernavbar = "pm-space-navbar";
+    ?>
+    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <?php
+}
+
+
+?>
+
+<!-- Bootstrap core CSS -->
+<link href="externals/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="Modules/core/Theme/core.css">
+<link rel='stylesheet' type='text/css' href='Modules/core/Theme/spacemenu.css' />
+<link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
+
+
+<script src="https://unpkg.com/marked@0.3.6"></script>
+<script src="https://unpkg.com/lodash@4.16.0"></script>
+<style>
+body {
+    font-size: 1.1em;
+}
+h3.panel-title {
+    font-size: 1.1em;
+}
+
+.btn {
+    font-size: 1em;
+}
+
+pre {
+    all: unset;
+}
+
+blockquote {
+    all: unset;
+}
+</style>
+
+<?php endblock() ?>
+
+
+<?php
+startblock('navbar');
+if (!$headless) {
+    require_once 'Modules/core/Controller/CorenavbarController.php';
+    $navController = new CorenavbarController(new Request(array(), false));
+    echo $navController->navbar();
+}
+endblock();
+?>
+
+
+<?php startblock('spacenavbar'); ?>
+<?php
+if (!$headless) {
+    require_once 'Modules/core/Controller/CorespaceController.php';
+    $spaceController = new CorespaceController(new Request(array(), false));
+    echo $spaceController->navbar($id_space);
+}
+?>
+
+<div class="col-md-12 col-lg-12 <?php echo $pmspaceheadercontent ?>" >
+<?php endblock(); ?>
+
+
+
+<!-- body -->
+<?php startblock('content') ?>
+
+<div id="helpdeskapp" class="col-md-12" style="background-color: #fff; height:100%">
+    <div class="row">
+        <!-- Message -->
+        <div class="col-sm-10 col-sm-offset-1 text-center">
+             <?php
+        if (isset($_SESSION["message"])) {
+            if (substr($_SESSION["message"], 0, 3) === "Err") {
+                ?>
+                <div class="alert alert-danger">
+                    <?php echo $_SESSION["message"] ?>
+                </div>
+                <?php
+            } else {
+                ?>
+                <div class="alert alert-success">
+                    <?php echo $_SESSION["message"] ?>
+                </div>
+                <?php
+            }
+            unset($_SESSION["message"]);
+        }
+        ?>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Form -->
+        <div v-if="message" class="col-sm-12 text-center">
+            <div class="alert alert-warning">{{message}}</div>
+        </div>
+        <div class="col-sm-2 text-center">
+            <div @click="newTicket()">Create</div>
+            <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
+            <div @click="setFilter(0)">New {{unread["s0"]}}</div>
+            <div @click="setFilter(1)">Open {{unread["s1"]}}</div>
+            <div @click="setFilter(2)">Reminder {{unread["s2"]}}</div>
+            <div @click="setFilter(3)">Closed {{unread["s3"]}}</div>
+            <?php
+            if ($role > CoreSpace::$MANAGER) {
+            ?>
+            <div @click="getSettings()">Settings</div>
+            <?php
+            }
+            ?>
+        </div>
+        <div v-if="settings" class="col-sm-10">
+            <div class="form">
+                <div class="form-check">
+                    <input class="form-check-input" v-model="preferences.notifyNew" type="checkbox" value="" id="notifyNew">
+                    <label class="form-check-label" for="notifyNew">
+                        Notify on new tickets
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="preferences.notifyAssignedUpdate" type="checkbox" value="" id="notifyAssignedUpdate">
+                    <label class="form-check-label" for="notifyAssignedUpdate">
+                        Notify on assigned tickets update
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" v-model="preferences.notifyAllUpdate" type="checkbox" value="" id="notifyAllUpdate">
+                    <label class="form-check-label" for="notifyAllUpdate">
+                        Notify on all tickets update
+                    </label>
+                </div>
+                    <button @click="setSettings" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+        <div v-if="!settings && ticket !== null" class="col-sm-10 col-sm-offset-1 text-center">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div v-for="message in ticket.messages" :key="message.id">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                            <h3 class="panel-title">{{message.from}} - {{message.created_at}}</h3>
+                            </div>
+                            <div class="panel-body" v-html="message.md"></div>
+                            <div class="panel-footer" v-if="message.type=='0'">
+                                <div>
+                                    <div v-for="attach in message.attachements" :key="attach.id">
+                                    <a v-bind:href="'/corefiles/<?php echo $id_space ?>/' + attach.id_file" target="_blank" rel="noopener noreferrer" >{{attach.name_file}}</a>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" @click="reply(ticket.ticket.id, message.id)"><small>reply</small></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div ref="addToMessage">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 v-if="addType==1" class="panel-title">Add note</h3>
+                                <h3 v-if="addType==0 && ticket.ticket.id > 0" class="panel-title">Email reply</h3>
+                                <h3 v-if="addType==0 && ticket.ticket.id == 0" class="panel-title">New ticket</h3>
+                                </div>
+                            <div class="panel-body" v-html="message.body"></div>
+                                <form v-if="!textPreview">
+                                    <div v-if="ticket.ticket.id==0" class="form-group">
+                                        <label>Subject</label>
+                                        <input v-model="ticket.ticket.subject"/>
+                                    </div>
+                                    <div v-if="addType==0" class="form-group">
+                                        <label>Destination</label>
+                                        <input placeholder="comma separated emails" class="form-control" v-model:value="ticket.ticket.created_by"/>
+                                    </div>
+                                    <div class="form-group">
+                                    <textarea v-model="mdText" class="form-control" rows="5">
+                                    </textarea>
+                                    <input type="file" id="mailFiles" multiple v-if="addType==0" class="form-control">Attachments</h3>
+                                    </div>
+                                </form>
+                                <div v-if="textPreview" class="panel-body" v-html="text"></div>
+                            </div>
+                            <div class="panel-footer">
+                                <button type="button" class="btn btn-primary" @click="preview">Message/Preview</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==1" @click="save">Add</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==0 && !textPreview" @click="save">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                        <h3 class="panel-title">#{{ticket.ticket.id}}: {{ticket.ticket.subject}}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+                            <div class="form-group">
+                            <label for="tstatus" class="col-sm-2">Status</label>
+                            <div >
+                                <select id="tstatus" class="form-control" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
+                                    <option value="0">New</option>
+                                    <option value="1">Open</option>
+                                    <option value="2">Reminder</option>
+                                    <option value="3">Closed</option>
+                                    <option value="4">Spam</option>
+                                </select>
+                            </div>
+                            <div v-if="ticket.ticket.status == 2">
+                                <input type="date" v-model:value="ticket.ticket.reminder" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group" v-if="ticket.ticket.assigned">
+                                <label for="tassign" class="col-sm-2">Assignee</label>
+                                <div>
+                                    <input id="tassign" class="form-control" readonly v-bind:value="ticket.ticket.assigned_name"/>
+                                </div>
+                            </div>
+                            </form>
+                            <div v-if="!ticket.ticket.assigned"><button type="button" class="btn btn-primary" @click="assign"><small>Assign to myself</small></button></div>
+                            <div><small>Created: {{ticket.ticket.created_at}}</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="!settings && ticket === null" class="col-sm-10 text-center">
+            <div>
+                <button v-if="offset > 0" class="btn btn-primary" @click="prevPage()">prev</button>
+                <button class="btn btn-primary" @click="nextPage()">next</button>
+            </div>
+            <table aria-describedby="list of tickets" class="table  table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                    <th scope="col">#{{current_filter}}</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Queue</th>
+                    <th scope="col">Assigned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr v-for="ticket in tickets" :key="ticket.id" v-bind:class="ticket.unread=='1' ? 'alert alert-warning':''">
+                <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
+                <td>{{ticket.created_at}}</td>
+                <td>{{ticket.subject}}</td>
+                <td>{{ticket.created_by}}</td>
+                <td>{{status(ticket.status)}}</td>
+                <td>{{ticket.queue}}</td>
+                <td>{{ticket.assigned_name}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div>
+                <button v-if="offset > 0" class="btn btn-primary" @click="prevPage()">prev</button>
+                <button class="btn btn-primary" @click="nextPage()">next</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+var app = new Vue({
+    el: '#helpdeskapp',
+    data () {
+        return {
+            current_filter: 'New' ,
+            filter: 0,  // ticket status filter
+            addType: 1,  // note
+            my: false,
+            message: '',
+            tickets: [],
+            ticket: null,
+            textPreview: false,
+            text: '',
+            mdText: '',
+            settings: false,
+            preferences: {
+                notifyNew: false,
+                notifyAssignedUpdate: false,
+                notifyAllUpdate: false
+            },
+            offset: 0,
+            limit: 50,
+            unread: {}
+        }
+    },
+    created () { this.fetchTickets(); <?php if($ticket) {
+        echo "this.fetchTicket(".$ticket['id'].")";
+    } ?> },
+    methods: {
+        nextPage() {
+            if(this.tickets.length == 0) {
+                return;
+            }
+            this.offset += this.limit;
+            this.fetchTickets();
+        },
+        prevPage() {
+            if(this.offset - this.limit < 0) {
+                this.offset = 0;
+            } else {
+                this.offset -= this.limit;
+            }
+            this.fetchTickets();
+        },
+        getSettings () {
+            this.settings = true;
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers,
+                method: 'GET',
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/settings`, cfg).
+            then(response => response.json()).
+            then((data) => {
+                this.preferences = {
+                    notifyNew: data.settings.notifyNew,
+                    notifyAssignedUpdate: data.settings.notifyAssignedUpdate,
+                    notifyAllUpdate: data.settings.notifyAllUpdate
+                }
+            })
+        },
+        setSettings () {
+            this.settings = true;
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers,
+                method: 'POST',
+                body: JSON.stringify({
+                    'settings': this.preferences
+                })
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/settings`, cfg).
+            then(() => { this.message = "Settings updated"})
+        },
+        updateStatus(event) {
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers,
+                method: 'POST',
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}/status/${event.target.value}`, cfg).
+            then(() => {
+                if(event.target.value == 4) {
+                    this.filter = 0;
+                    this.ticket = null;
+                    this.fetchTickets();
+                }
+                console.debug('ticket updated')
+            })
+        },
+        setMy() {
+            this.settings = false;
+            this.my = !this.my;
+            this.fetchTickets();
+        },
+        setFilter(f) {
+            if(f==0) {
+                this.current_filter = 'New'
+            } else if(f==1) {
+                this.current_filter = 'Open'
+            } else if(f==2) {
+                this.current_filter = 'Reminder'
+            } else if(f==3) {
+                this.current_filter = 'Closed'
+            }
+            this.settings = false;
+            this.filter = f;
+            this.ticket = null;
+            this.fetchTickets();
+        },
+        assign() {
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers,
+                method: 'POST'
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}/assign`, cfg).
+            then(() => this.fetchTicket(this.ticket.ticket.id))
+        },
+        back() {
+            this.ticket = null;
+            this.fetchTickets();
+        },
+        save() {
+            console.debug('save ticket', this.ticket.ticket);
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let data = {
+                    'type': this.addType,
+                    'body': this.mdText,
+                    'to': this.ticket.ticket.created_by
+                }
+            let cfg = {
+                headers: headers,
+                method: 'POST',
+                body: JSON.stringify(data)
+            }
+            if(this.addType == 0) {
+                const inputFiles = document.getElementById('mailFiles');
+                let f = new FormData();
+                f.append('type', this.addType);
+                f.append('body', this.mdText);
+                f.append('to', this.ticket.ticket.created_by);
+                if (this.ticket.ticket.id == 0) {
+                    f.append('subject', this.ticket.ticket.subject);
+                }
+                let fileIndex = 0;
+                for (const inputfile of inputFiles.files) {
+                    f.append('file' + fileIndex,inputfile,inputfile.name)
+                    fileIndex++;
+                }
+                headers = new Headers()
+                headers.append('Accept', 'application/json')
+                cfg = {
+                    headers: headers,
+                    method: 'POST',
+                    body: f
+                }
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}`, cfg).
+            then(response => response.json()).
+            then((data) => {
+                this.fetchTicket(data.ticket.id)
+                this.addType = 1;
+                this.mdText = '';
+                this.text = '';
+            })
+
+        },
+        newTicket() {
+            this.addType = 0;
+            this.mdText = '';
+            this.text = '';
+            this.ticket = {
+                'id_space': <?php echo $id_space ?>,
+                'ticket': {
+                'id': 0,
+                'subject': '',
+                'created_by': ''
+                },
+                'messages': [],
+
+            };
+        },
+        reply(ticket, message) {
+            this.addType = 0;
+            let body = '';
+            for(let i=0;i<this.ticket.messages.length;i++) {
+                if(this.ticket.messages[i].id == message) {
+                    let lines = this.ticket.messages[i].body.split("\n");
+                    let resp = '';
+                    lines.forEach(line => {
+                        resp += '>'+line + "\n";
+                    })
+                    body = resp;
+                }
+                this.mdText = "\n\n"+body;
+            }
+            this.goto('addToMessage')
+        },
+        goto(refName) {
+            let element = this.$refs[refName];
+            let top = element.offsetTop;
+            window.scrollTo(0, top);
+        },
+        togglePreview () {
+            this.textPreview = !this.textPreview;
+        },
+        preview () {
+            this.text = marked( this.mdText, { sanitize: true });
+            this.togglePreview();
+        },
+        status (id) {
+            switch (parseInt(id)) {
+                case 0:
+                    return 'New';
+                case 1:
+                    return 'Open';
+                case 2:
+                    return 'Reminder';
+                case 3:
+                    return 'Closed';
+                default:
+                    return 'Unknown';
+            }
+        },
+        fetchTicket (id) {
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers
+            }
+            fetch(`/helpdesk/<?php echo $id_space ?>/${id}`, cfg).
+            then((response) => response.json()).
+            then(data => {
+                for(let i=0;i<data.messages.length;i++) {
+                    data.messages[i].md = marked(data.messages[i].body, { sanitize: true }) || "";
+                }
+                this.ticket = data;
+                console.debug('get ticket', data);
+            })    
+        },
+        fetchTickets () {
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers
+            }
+            let params = new URLSearchParams({
+                offset: this.offset,
+                limit: this.limit
+            });
+            if(this.my) {
+                params = new URLSearchParams({
+                    mine: 1,
+                    offset: this.offset,
+                    limit: this.limit
+                })
+            }
+            fetch('/helpdesk/<?php echo $id_space ?>/list/' + this.filter + '?' + params , cfg).
+            then((response) => response.json()).
+            then(data => {
+                this.tickets = data.tickets;
+                console.debug('get tickets', data);
+            })
+            this.fetchUnread();
+        },
+        fetchUnread() {
+            let headers = new Headers()
+            headers.append('Content-Type','application/json')
+            headers.append('Accept', 'application/json')
+            let cfg = {
+                headers: headers
+            }
+            let params = new URLSearchParams({
+                offset: this.offset,
+                limit: this.limit
+            });
+            if(this.my) {
+                params = new URLSearchParams({
+                    mine: 1,
+                    offset: this.offset,
+                    limit: this.limit
+                })
+            }
+            fetch('/helpdesk/<?php echo $id_space ?>/unread' , cfg).
+            then((response) => response.json()).
+            then(data => {
+                let unreads = {}
+                data.unread.forEach(unread => {
+                    unreads["s"+unread.status] = `(${unread.total})`
+                });
+                this.unread = unreads;
+                console.debug('unread tickets', unreads);
+            })            
+        }
+    }
+})
+</script>
+<?php
+endblock();
+

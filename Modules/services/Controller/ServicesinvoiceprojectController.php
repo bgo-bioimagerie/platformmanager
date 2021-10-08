@@ -50,7 +50,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $formByProjects = $this->createByProjectForm($id_space, $lang);
         if ($formByProjects->check()) {
             $id_projects = $this->request->getParameter("id_project");
-            $id_resp = $this->getProjectsResp($id_projects);
+            $id_resp = $this->getProjectsResp($id_space, $id_projects);
             //echo "id resp = " . $id_resp . "<br/>";
             //echo "id unit = " . $id_unit . "<br/>";
             $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp);
@@ -65,7 +65,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
             $id_resp = $this->request->getParameter("id_resp");
             if ($id_resp != 0) {
-                $id_projects = $modelProject->getProjectsOpenedPeriodResp($beginPeriod, $endPeriod, $id_resp);
+                $id_projects = $modelProject->getProjectsOpenedPeriodResp($id_space, $beginPeriod, $endPeriod, $id_resp);
 
                 $this->invoiceProjects($id_space, $id_projects, $id_resp);
                 $this->redirect("invoices/" . $id_space);
@@ -84,10 +84,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $lang = $this->getLanguage();
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($id_invoice);
+        $invoice = $modelInvoice->get($id_space, $id_invoice);
 
         $modelInvoiceItem = new InInvoiceItem();
-        $id_items = $modelInvoiceItem->getInvoiceItems($id_invoice);
+        $id_items = $modelInvoiceItem->getInvoiceItems($id_space, $id_invoice);
 
         // generate pdf
         if ($pdf == 1) {
@@ -98,7 +98,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         //print_r($id_items);
         // unparse details
         $detailsData = array();
-        $item = $modelInvoiceItem->getItem($id_items[0]["id"]);
+        $item = $modelInvoiceItem->getItem($id_space, $id_items[0]["id"]);
         $details = $item["details"];
         $detailsArray = explode(";", $details);
         foreach ($detailsArray as $de) {
@@ -129,9 +129,14 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             //echo "total after = $total_ht <br/>";
             
             
-            $modelInvoiceItem->editItemContent($id_items[0]["id"], $content, $total_ht);
-            $modelInvoice->setTotal($id_invoice, $total_ht);
-            $modelInvoice->setDiscount($id_invoice, $discount);
+            $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
+            $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+            $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
+            Events::send([
+                "action" => Events::ACTION_INVOICE_EDIT,
+                "space" => ["id" => intval($id_space)],
+                "invoice" => ["id" => intval($id_invoice)]
+            ]);
             $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
             return;
         }
@@ -141,11 +146,11 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "invoice" => $invoice, "details" => $detailsData, "htmlForm" => $form->getHtml($lang)));
     }
     
-    protected function unparseContent($id_item) {
+    protected function unparseContent($id_space, $id_item) {
 
         $modelServices = new SeService();
         $modelInvoiceItem = new InInvoiceItem();
-        $item = $modelInvoiceItem->getItem($id_item);
+        $item = $modelInvoiceItem->getItem($id_space, $id_item);
 
         $contentArray = explode(";", $item["content"]);
         $contentList = array();
@@ -154,10 +159,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $data = explode("=", $content);
             //echo "size = " . count($data) . "<br/>";
             if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($data[0]), $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0]), $data[1], $data[2]);
             }
             if (count($data) > 3) {
-                $contentList[] = array($modelServices->getItemName($data[0]) . " " . $data[3], $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0]) . " " . $data[3], $data[1], $data[2]);
             }
         }
         return $contentList;
@@ -169,9 +174,9 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         // get items
         $modelProject = new SeProject();
-        $services = $modelProject->getServicesInvoice($id_invoice);
+        $services = $modelProject->getServicesInvoice($id_space, $id_invoice);
         foreach ($services as $s) {
-            $modelProject->setServiceInvoice($s["id"], 0);
+            $modelProject->setServiceInvoice($id_space, $s["id"], 0);
         }
     }
 
@@ -185,7 +190,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelInvoiceItem = new InInvoiceItem();
 
         //print_r($id_item);
-        $item = $modelInvoiceItem->getItem($id_item);
+        $item = $modelInvoiceItem->getItem($id_space, $id_item);
 
         $contentArray = explode(";", $item["content"]);
         $total = 0;
@@ -222,7 +227,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $form->setFormAdd($formAdd);
         
         $modelInvoice = new InInvoice();
-        $discount = $modelInvoice->getDiscount($id_invoice);
+        $discount = $modelInvoice->getDiscount($id_space, $id_invoice);
         $form->addText("discount", ServicesTranslator::Discount($lang), false, $discount);
         
         
@@ -238,7 +243,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $form->addSeparator(ServicesTranslator::By_projects($lang));
 
         $modelProject = new SeProject();
-        $projects = $modelProject->getOpenedProjectForList();
+        $projects = $modelProject->getOpenedProjectForList($id_space);
 
         $formAdd = new FormAdd($this->request, "ByProjectFormAdd");
         $formAdd->addSelect("id_project", ServicesTranslator::Project($lang), $projects["names"], $projects["ids"]);
@@ -274,7 +279,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         //echo "id_proj = " . $id_project . "<br/>";
 
         $modelProject = new SeProject();
-        $id_resp = $modelProject->getResp($id_project);
+        $id_resp = $modelProject->getResp($id_space, $id_project);
         //echo "$id_resp = " . $id_resp . "<br/>";
         
         $id_projects = array();
@@ -293,12 +298,12 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $controller = "servicesinvoiceproject";
         $number = $modelInvoice->getNextNumber();
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_resp);
-        $modelInvoice->setEditedBy($id_invoice, $_SESSION["id_user"]);
+        $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         
         // parse content
         //echo "parse content <br/>";
         $modelClient = new ClClient();
-        $id_belonging = $modelClient->getPricingID($id_resp);
+        $id_belonging = $modelClient->getPricingID($id_space ,$id_resp);
         
         //echo 'resp = ' . $id_resp . '<br/>';
         //echo 'belonging = ' . $id_belonging . "<br/>";
@@ -311,11 +316,11 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelPrice = new SePrice();
 
         foreach ($id_projects as $id_proj) {
-            $services = $modelProject->getNoInvoicesServices($id_proj);
+            $services = $modelProject->getNoInvoicesServices($id_space, $id_proj);
 
             $servicesMerged = array();
             for ($i = 0; $i < count($services); $i++) {
-                $modelProject->setServiceInvoice($services[$i]["id"], $id_invoice);
+                $modelProject->setServiceInvoice($id_space, $services[$i]["id"], $id_invoice);
                 if (!isset($services[$i]["counted"])) {
                     $quantity = floatval($services[$i]["quantity"]);
 
@@ -340,7 +345,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             for ($i = 0; $i < count($servicesMerged); $i++) {
                 $addedServices[] = $servicesMerged[$i]["id_service"];
                 $quantity = floatval($servicesMerged[$i]["quantity"]);
-                $price = $modelPrice->getPrice($servicesMerged[$i]["id_service"], $id_belonging);
+                $price = $modelPrice->getPrice($id_space, $servicesMerged[$i]["id_service"], $id_belonging);
                 $addedServicesCount[] = $quantity;
                 $addedServicesPrice[] = $price;
                 $addedServicesComment[] = $servicesMerged[$i]["comment"];
@@ -357,30 +362,35 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $details = "";
         $title = "";
         foreach ($id_projects as $id_proj) {
-            $name = $modelProject->getName($id_proj);
+            $name = $modelProject->getName($id_space, $id_proj);
             $details .= $name . "=" . "servicesprojectfollowup/" . $id_space . "/" . $id_proj . ";";
             $title .= $name . " ";
         }
         //echo "set item <br/>";
         // set invoice itmems
-        $modelInvoiceItem->setItem(0, $id_invoice, $module, $controller, $content, $details, $total_ht);
-        $modelInvoice->setTotal($id_invoice, $total_ht);
-        $modelInvoice->setTitle($id_invoice, $title);
+        $modelInvoiceItem->setItem($id_space ,0, $id_invoice, $module, $controller, $content, $details, $total_ht);
+        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+        $modelInvoice->setTitle($id_space, $id_invoice, $title);
+        Events::send([
+            "action" => Events::ACTION_INVOICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "invoice" => ["id" => intval($id_invoice)]
+        ]);
 
         return $id_invoice;
     }
 
-    protected function getProjectsResp($id_projects) {
+    protected function getProjectsResp($id_space, $id_projects) {
 
-        if (count($id_projects) == 0) {
+        if (empty($id_projects) == 0) {
             throw new Exception("You need to select at least one project");
         }
 
         $modelProject = new SeProject();
 
-        $id_resp = $modelProject->getResp($id_projects[0]);
+        $id_resp = $modelProject->getResp($id_space, $id_projects[0]);
         for ($i = 1; $i < count($id_projects); $i++) {
-            $id_respi = $modelProject->getResp($id_projects[$i]);
+            $id_respi = $modelProject->getResp($id_space, $id_projects[$i]);
             if ($id_respi != $id_resp) {
                 throw new Exception("Projects must have the same responsible");
             }
@@ -402,7 +412,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        $content = $this->unparseContent($id_item);
+        $content = $this->unparseContent($id_space, $id_item);
         //print_r($invoice);
         $total = 0;
         foreach ($content as $d) {
@@ -441,8 +451,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $modelClient = new ClClient();
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
-        $resp = $modelClient->getContactName($invoice["id_responsible"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
+        $resp = $modelClient->getContactName($id_space ,$invoice["id_responsible"]);
         $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
     }
 

@@ -23,10 +23,19 @@ class CoreTest extends TestCase
     private static $allUsers = [];
 
     private function asAdmin($id_space=0) {
-        $_SESSION['id_user'] = 1;
-        $_SESSION['id_space'] = $id_space;
-        $_SESSION["user_settings"] = ["language" => "en"];
+        return $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
+    }
 
+    private function asUser($name, $id_space) {
+        for($i=0;$i<count(self::$allUsers);$i++) {
+            if(self::$allUsers[$i]['name'] == $name) {
+                $_SESSION['id_user'] = self::$allUsers[$i]['id'];
+                $_SESSION['id_space'] = $id_space;
+                $_SESSION["user_settings"] = ["language" => "en"];                
+                return self::$allUsers[$i];
+            }
+        }
+        return null;
     }
 
     public function testInstallAndCoreAccess()
@@ -35,6 +44,14 @@ class CoreTest extends TestCase
         $c = new CoreconnectionController($req);
         $res = $c->indexAction();
         $this->assertTrue(isset($res['metadesc']));
+
+        $m = new CoreUser();
+        $users = $m->getAll();
+        foreach($users as $user){
+            self::$allUsers[] = ["name" => $user['login'], "id" => intval($user['id'])];
+        }
+
+
     }
 
     public function testCreateSpace() {
@@ -138,7 +155,7 @@ class CoreTest extends TestCase
             }
         }
         $this->assertTrue($userId > 0);
-        self::$allUsers[] = ["name" => "user1", "id" => intval($userId), "role" => -1];
+        self::$allUsers[] = ["name" => "user1", "id" => intval($userId)];
 
         $sm = new CoreSpace();
         $role = $sm->getUserSpaceRole($space['id'], $userId);
@@ -158,7 +175,7 @@ class CoreTest extends TestCase
         $req = new Request([
             "path" => "corespacependinguseredit/".$space['id']."/".$pendings['id'],
             "formid" => "pendingusereditactionform",
-            "role" => 2
+            "role" => CoreSpace::$USER
         ], true);
 
 
@@ -166,7 +183,7 @@ class CoreTest extends TestCase
         $c->pendingusereditAction($space['id'], $pendings['id']);
         $sm = new CoreSpace();
         $role = $sm->getUserSpaceRole($space['id'], $user['id']);
-        $this->assertEquals(2, $role);
+        $this->assertEquals(CoreSpace::$USER, $role);
         $pm = new CorePendingAccount();
         $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
     }

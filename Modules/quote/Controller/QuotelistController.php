@@ -58,12 +58,12 @@ class QuotelistController extends CoresecureController {
                 $data[$i]["recipient"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
                 $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space);
                 if (count($resps) > 0) {
-                    $unitID = $modelClient->getInstitution($resps[0]['id']);
-                    $data[$i]["address"] = $modelClient->getAddressInvoice($resps[0]['id']);
-                    $data[$i]["id_belonging"] = $modelClient->getPricingID($resps[0]['id']);
+                    $unitID = $modelClient->getInstitution($id_space, $resps[0]['id']);
+                    $data[$i]["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]['id']);
+                    $data[$i]["id_belonging"] = $modelClient->getPricingID($id_space, $resps[0]['id']);
                 }
             }
-            $data[$i]["belonging"] = $pricings->getName($data[$i]["id_belonging"]);
+            $data[$i]["belonging"] = $pricings->getName($id_space, $data[$i]["id_belonging"]);
             $data[$i]["date_open"] = CoreTranslator::dateFromEn($data[$i]["date_open"], $lang);
             $data[$i]["date_last_modified"] = CoreTranslator::dateFromEn($data[$i]["date_last_modified"], $lang);
         }
@@ -85,7 +85,7 @@ class QuotelistController extends CoresecureController {
 
     public function editAction($id_space, $id) {
         $modelQuote = new Quote();
-        $info = $modelQuote->get($id);
+        $info = $modelQuote->get($id_space, $id);
 
         if ($info["id_user"] > 0) {
             $this->editexistinguserAction($id_space, $id);
@@ -100,16 +100,16 @@ class QuotelistController extends CoresecureController {
 
         // items table
         if ($id > 0) {
-            $tableHtml = $this->createItemsTable($id);
+            $tableHtml = $this->createItemsTable($id_space, $id);
         } else {
             $tableHtml = "";
         }
 
         // information form
         $modelQuote = new Quote();
-        $info = $modelQuote->get($id);
+        $info = $modelQuote->get($id_space, $id);
         $modelQuoteitem = new QuoteItem();
-        $items = $modelQuoteitem->getAll($id);
+        $items = $modelQuoteitem->getAll($id_space, $id);
 
         $form = new Form($this->request, "editexistinguserForm");
 
@@ -118,7 +118,7 @@ class QuotelistController extends CoresecureController {
         }
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getAcivesForSelect("name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         $form->addSelect('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
 
         if ($id > 0) {
@@ -170,20 +170,20 @@ class QuotelistController extends CoresecureController {
         return $form->getHtml($lang);
     }
 
-    protected function createItemsTable($id_quote) {
+    protected function createItemsTable($id_space, $id_quote) {
 
         $lang = $this->getLanguage();
 
         $modelQuoteItem = new QuoteItem();
         $modelResource = new ResourceInfo();
         $modelServices = new SeService();
-        $items = $modelQuoteItem->getAll($id_quote);
+        $items = $modelQuoteItem->getAll($id_space, $id_quote);
         for ($i = 0; $i < count($items); $i++) {
             if ($items[$i]["module"] == "booking") {
-                $items[$i]["name"] = $modelResource->getName($items[$i]["id_content"]);
+                $items[$i]["name"] = $modelResource->getName($id_space, $items[$i]["id_content"]);
             }
             if ($items[$i]["module"] == "services") {
-                $items[$i]["name"] = $modelServices->getItemName($items[$i]["id_content"]);
+                $items[$i]["name"] = $modelServices->getItemName($id_space, $items[$i]["id_content"]);
             }
         }
         $headers = array(
@@ -205,15 +205,15 @@ class QuotelistController extends CoresecureController {
 
         // items table
         if ($id > 0) {
-            $tableHtml = $this->createItemsTable($id);
+            $tableHtml = $this->createItemsTable($id_space, $id);
         } else {
             $tableHtml = "";
         }
 
         $modelQuote = new Quote();
-        $info = $modelQuote->get($id);
+        $info = $modelQuote->get($id_space, $id);
         $modelQuoteitem = new QuoteItem();
-        $items = $modelQuoteitem->getAll($id);
+        $items = $modelQuoteitem->getAll($id_space, $id);
 
         $form = new Form($this->request, "editexistinguserForm");
 
@@ -255,7 +255,7 @@ class QuotelistController extends CoresecureController {
             "items" => $items), 'editnewuserAction');
     }
 
-    public function edititemAction() {
+    public function edititemAction($id_space) {
         $id_quote = $this->request->getParameter("id_quote");
         $id = $this->request->getParameter("id");
         $id_contentform = $this->request->getParameter("id_item");
@@ -268,10 +268,10 @@ class QuotelistController extends CoresecureController {
 
 
         $modelItem = new QuoteItem();
-        $modelItem->setItem($id, $id_quote, $id_content, $module, $quantity, $comment);
+        $modelItem->setItem($id_space, $id, $id_quote, $id_content, $module, $quantity, $comment);
 
         $modelQuote = new Quote();
-        $quote = $modelQuote->get($id_quote);
+        $quote = $modelQuote->get($id_space, $id_quote);
         if ($quote["id_user"] == 0) {
             $this->redirect("quotenew/" . $quote["id_space"] . '/' . $quote["id"]);
         } else {
@@ -285,7 +285,7 @@ class QuotelistController extends CoresecureController {
         $info = $modelQuote->getAllInfo($id_space, $id);
 
         $modelQuoteitems = new QuoteItem();
-        $items = $modelQuoteitems->getAll($id);
+        $items = $modelQuoteitems->getAll($id_space, $id);
         $table = array();
         $modelBooking = new ResourceInfo();
         $modelBookingPrices = new BkPrice();
@@ -294,14 +294,14 @@ class QuotelistController extends CoresecureController {
         $total = 0;
         foreach ($items as $item) {
             if ($item['module'] == "booking") {
-                $name = $modelBooking->getName($item['id_content']);
+                $name = $modelBooking->getName($id_space, $item['id_content']);
                 $quantity = $item['quantity'];
-                $unitprice = $modelBookingPrices->getPrice($item['id_content'], $info['id_pricing']);
+                $unitprice = $modelBookingPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);
             } else if ($item['module'] == "services") {
-                $name = $modelServices->getItemName($item['id_content']);
+                $name = $modelServices->getItemName($id_space, $item['id_content']);
                 $quantity = $item['quantity'];
-                $unitprice = $modelServicesPrices->getPrice($item['id_content'], $info['id_pricing']);
+                $unitprice = $modelServicesPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);
             }
             $table[] = array('name'=> $name, 'comment'=> $item['comment'], 'quantity'=>$quantity, 'unit_price'=>$unitprice, 'total'=>$itemtotal);
@@ -376,15 +376,15 @@ class QuotelistController extends CoresecureController {
 
     public function deleteAction($id_space, $id) {
         $modelQuote = new Quote();
-        $modelQuote->delete($id);
+        $modelQuote->delete($id_space, $id);
 
         $this->redirect("quote/" . $id_space);
     }
 
     public function itemdelete($id_space, $id_item) {
         $modelQuote = new QuoteItem();
-        $info = $modelQuote->get($id_item);
-        $modelQuote->delete($id_item);
+        $info = $modelQuote->get($id_space, $id_item);
+        $modelQuote->delete($id_space, $id_item);
 
         $this->redirect("quotedit/" . $id_space . '/' . $info["id_quote"]);
     }

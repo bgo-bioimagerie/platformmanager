@@ -1,5 +1,6 @@
 <?php
 
+require_once 'Framework/Form.php';
 require_once 'Framework/Controller.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
@@ -25,10 +26,9 @@ class CoresettingsController extends CoresecureController {
      * @see Controller::index()
      */
     public function indexAction() {
-
-
         // get the available modules settings
         $modules = Configuration::get("modules");
+        $modules = is_array($modules) ? $modules : [$modules];
         $modulesControllers = array();
         $i = -1;
         foreach ($modules as $module) {
@@ -36,19 +36,16 @@ class CoresettingsController extends CoresecureController {
             $controllerName = ucfirst(strtolower($controllerName));
 
             $fileController = 'Modules/' . $module . "/Controller/" . $controllerName . "Controller.php";
-            //echo "file controller = " . $fileController . "<br/>";
             if (file_exists($fileController)) {
                 $i++;
                 $modulesControllers[$i]["module"] = $module;
                 $modulesControllers[$i]["controller"] = $controllerName;
             }
         }
-
         $lang = $this->getLanguage();
         return $this->render(array(
-            "lang" => $lang,
-            'modulesControllers' => $modulesControllers
+            'lang' => $lang,
+            'modulesControllers' => $modulesControllers,
         ));
     }
-
 }

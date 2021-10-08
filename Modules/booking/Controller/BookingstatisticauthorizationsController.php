@@ -398,8 +398,6 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         } else {
             $statUserModel->authorizedUsers($resource_id, $id_space, $lang);
         }
-
-        return;
     }
 
 }

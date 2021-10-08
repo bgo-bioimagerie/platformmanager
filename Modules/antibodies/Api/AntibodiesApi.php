@@ -29,7 +29,7 @@ class AntibodiesApi extends CoresecureController {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         
         $modelTissus = new Tissus();
-        $data = $modelTissus->getTissusById($id_tissus);
+        $data = $modelTissus->getTissusById($id_space, $id_tissus);
         
         echo json_encode($data);
     }
@@ -42,7 +42,7 @@ class AntibodiesApi extends CoresecureController {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         
         $model = new AcOwner();
-        $data = $model->get($id_owner);
+        $data = $model->get($id_space, $id_owner);
         
         echo json_encode($data);
     }

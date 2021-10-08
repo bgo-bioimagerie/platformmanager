@@ -70,13 +70,19 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_INFLUXDB_TOKEN: ${PFM_INFLUXDB_TOKEN}  # influxdb access token
   * PFM_INFLUXDB_ORG: pfm  # influxdb default organization
 * PFM_ALLOW_REGISTRATION: 0  # (dis)allow user self registration
-* PFM_JWT_SECRET: XXXX  # JWT tokens secret
+* PFM_JWT_SECRET: ${PFM_JWT_SECRET}  # JWT tokens secret
 * PFM_MODULES:   # comma separated list of modules to load (in addition to those defined in conf.ini)
 * PFM_REDIS_HOST: redis # optional, redis host name, needed for prometheus stats
 * PFM_GRAFANA_URL: http://grafana:3000  # optional, grafana url
   * PFM_GRAFANA_USER: admin
   * PFM_GRAFANA_PASSWORD: ${PFM_ADMIN_PASSWORD}
 * PFM_SENTRY_DSN: # optional, catch errors and send to an external Sentry server
+* PFM_HELPDESK_EMAIL: # optional, base email used for helpdesk module  support@pfm.org for example, users will write to support+space1@pfm.org
+  * PFM_HELPDESK_IMAP_SERVER: ${PFM_HELPDESK_IMAP_SERVER}  # hostname of imap provider
+  * PFM_HELPDESK_IMAP_PORT: 110 # optional port of imap
+  * PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER} # mail account name
+  * PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password
+  * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
 
 And .env file should define (according to variables used):
 
@@ -94,3 +100,9 @@ And .env file should define (according to variables used):
   * PFM_OPENID_GOOGLE_CLIENT_SECRET=XXX
 * MYSQL_ROOT_PASSWORD=XXX
 * MYSQL_PASSWORD=XXX
+* PFM_JWT_SECRET=xxxx
+* PFM_HELPDESK_EMAIL=myemail@mydomain
+* PFM_HELPDESK_IMAP_SERVER=x.y.z
+* PFM_HELPDESK_IMAP_USER=yyyy
+* PFM_HELPDESK_IMAP_PASSWORD=xxxxx
+

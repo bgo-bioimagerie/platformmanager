@@ -10,6 +10,9 @@ require_once 'Modules/core/Model/CoreStatus.php';
 
 class CoreUser extends Model {
 
+    public static $USER = 1;
+    public static $ADMIN = 5;
+
     public function __construct() {
         $this->tableName = "core_users";
         $this->setColumnsInfo("id", "int(11)", "");
@@ -99,6 +102,10 @@ class CoreUser extends Model {
         $apikey = bin2hex($bytes);
         $sql = "UPDATE core_users SET apikey=? WHERE id=?";
         $this->runRequest($sql, array($apikey, $id));
+        Events::send([
+            "action" => Events::ACTION_USER_APIKEY,
+            "user" => ["id" => intval($id), "apikey" => $apikey]
+        ]);
     }
 
     public function getByApiKey($apikey) {
@@ -156,21 +163,21 @@ class CoreUser extends Model {
 
         $sql = null;
         $req = [];
-        $nodate = '0000-00-00';
+        // $nodate = '0000-00-00';
         if($expireDelay!=null && $expireContract) {
             $sql = "SELECT * FROM core_users WHERE".
-                " (date_last_login!=? AND date_last_login<? ) "
-                . "OR (date_end_contract!=? AND date_end_contract < ?)";
-            $req = $this->runRequest($sql, array($nodate, $expireDelay, $nodate, $date))->fetchAll();
+                " (date_last_login is not null AND date_last_login<? ) "
+                . "OR (date_end_contract is not null AND date_end_contract < ?)";
+            $req = $this->runRequest($sql, array($expireDelay, $date))->fetchAll();
 
         } else if($expireDelay!=null && !$expireContract) {
             $sql = "SELECT * FROM core_users WHERE ".
-                "(date_last_login!=? AND date_last_login<? ) ";
-            $req = $this->runRequest($sql, array($nodate, $expireDelay))->fetchAll();
+                "(date_last_login is not null AND date_last_login<? ) ";
+            $req = $this->runRequest($sql, array($expireDelay))->fetchAll();
         } else if($expireDelay==null && $expireContract) {
             $sql = "SELECT * FROM core_users WHERE ".
-                "(date_end_contract!=? AND date_end_contract < ?)";
-            $req = $this->runRequest($sql, array($nodate, $date))->fetchAll();
+                "(date_end_contract is not null AND date_end_contract < ?)";
+            $req = $this->runRequest($sql, array($date))->fetchAll();
         }
 
         if($sql == null) {
@@ -181,6 +188,18 @@ class CoreUser extends Model {
             $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
             if($remove) {
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_UNJOIN,
+                    "space" => ["id" => 0],
+                    "user" => ["id" => intval($r['id'])],
+                ]); 
+            } else {
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                    "space" => ["id" => 0],
+                    "user" => ["id" => intval($r['id'])],
+                    "role" => 0
+                ]); 
             }
             $this->runRequest($sql, array($r['id']));
 
@@ -263,13 +282,23 @@ class CoreUser extends Model {
         return 0;
     }
 
+    /**
+     * Returns super administrators
+     */
+    public function superAdmins() {
+        $sql = "SELECT * from core_users WHERE status_id=?";
+        return $this->runRequest($sql, array(CoreStatus::$ADMIN))->fetchAll();
+    }
+
     public function installDefault() {
         $admin_user = Configuration::get('admin_user', 'admin');
         $email = Configuration::get('admin_email', 'admin@pfm.org');
         $pwd = Configuration::get('admin_password', 'admin');
+
         $bytes = random_bytes(10);
         // $apikey = bin2hex($bytes);
         $apikey = Configuration::get('admin_apikey', bin2hex($bytes));
+
         try {
             $this->getUserByLogin($admin_user);
             Configuration::getLogger()->info('Admin user already exists, skipping creation');
@@ -429,7 +458,7 @@ class CoreUser extends Model {
      * @return array User info (id, login, pwd, id_status, is_active)
      */
     public function getUserByLogin($login) {
-        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email
+        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email, apikey
             from core_users where login=?";
         $user = $this->runRequest($sql, array(
             $login
@@ -578,7 +607,7 @@ class CoreUser extends Model {
             $contractDate = $user ["date_end_contract"];
             $today = date("Y-m-d", time());
 
-            if ($contractDate != "0000-00-00") {
+            if ($contractDate != null) {
                 if ($contractDate < $today) {
                     $this->setactive($user["id"], 0);
 
@@ -607,7 +636,7 @@ class CoreUser extends Model {
 
             // get the last login date in second
             $lastLoginDate = $user ["date_last_login"];
-            if ($lastLoginDate != "0000-00-00") {
+            if ($lastLoginDate != null) {
 
                 $lastLoginDate = explode("-", $lastLoginDate);
                 $timell = mktime(0, 0, 0, $lastLoginDate [1], $lastLoginDate [2], $lastLoginDate [0]);
@@ -648,13 +677,63 @@ class CoreUser extends Model {
         ));
     }
 
-    public function isLogin($login) {
+    /**
+     * 
+     * Check if this login is linked to an account
+     * Can exclude a specific login from the research 
+     * 
+     * @param string $login
+     * @param (optional) string $filteredLogin we want to exclude from the research
+     * 
+     * @return bool
+     */
+    public function isLogin($login, $filteredLogin = false) {
         $sql = "select * from core_users where login=?";
-        $user = $this->runRequest($sql, array($login));
+        $params = array($login);
+        if ($filteredLogin === $login) {
+            return false;
+        }
+        $user = $this->runRequest($sql, $params);
         if ($user->rowCount() == 1) {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 
+     * Check if an email is linked to an existing account
+     * Can exclude a specific email from the research
+     * 
+     * @param string $email
+     * @param (optional) string $filteredEmail we want to exclude from the research
+     * 
+     * @return bool
+     */
+    public function isEmail($email, $filteredEmail = false) {
+        $sql = "select email from core_users where email=?";
+        $params = array($email);
+        if ($filteredEmail === $email) {
+            return false;
+        }
+        $email = $this->runRequest($sql, $params);
+        if ($email->rowCount() >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * Check if an email matches with the regexp in set in env or Configuration
+     * 
+     * @param string $email
+     * 
+     * @return bool
+     */
+    public function isEmailFormat($email) {
+        $regexp = Configuration::get('email_regexp');
+        return preg_match(Configuration::get('email_regexp'), $email); 
     }
 
     /**
@@ -816,11 +895,40 @@ class CoreUser extends Model {
         $names[] = "";
         $ids[] = "";
         foreach ($users as $res) {
+            if(!$res['is_active']) {
+                continue;
+            }
             $names[] = $res["name"] . " " . $res["firstname"];
             $ids[] = $res["id"];
         }
         return array("names" => $names, "ids" => $ids);
     }
+
+    public function getSpaceActiveUsersForSelect($id_space, $sortentry) {
+            $sql = "SELECT core_j_spaces_user.id_user AS id,"
+                    . "core_users.name AS name,core_users.firstname AS firstname "
+                    . "FROM core_j_spaces_user "
+                    . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1";
+            $users = $this->runRequest($sql, array($id_space))->fetchAll();
+            $names = array();
+            $ids = array();
+            $names[] = "";
+            $ids[] = "";
+            foreach ($users as $res) {
+                $names[] = $res["name"] . " " . $res["firstname"];
+                $ids[] = $res["id"];
+            }
+            return array("names" => $names, "ids" => $ids);
+    }
+
+    public function getSpaceActiveUsers($id_space) {
+        $sql = "SELECT core_users.*"
+                . "FROM core_j_spaces_user "
+                . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                . "WHERE core_j_spaces_user.id_space=?";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+}
 
     /**
      * get the informations of a user from it's id
@@ -847,10 +955,10 @@ class CoreUser extends Model {
                 "pwd" => '',
                 "id_status" => 1,
                 "convention" => 0,
-                "date_convention" => '0000-00-00',
-                "date_created" => '0000-00-00',
-                "date_last_login" => '0000-00-00',
-                "date_end_contract" => '0000-00-00',
+                "date_convention" => null,
+                "date_created" => null,
+                "date_last_login" => null,
+                "date_end_contract" => null,
                 "is_active" => 1,
                 "source" => 'local');
         }

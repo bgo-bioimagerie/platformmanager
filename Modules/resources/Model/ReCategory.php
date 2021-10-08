@@ -23,18 +23,18 @@ class ReCategory extends Model {
         $this->primaryKey = "id";
     }
 
-    public function get($id) {
-        $sql = "SELECT * FROM re_category WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+    public function get($id_space, $id) {
+        $sql = "SELECT * FROM re_category WHERE id=? AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
     public function getBySpace($id_space) {
-        $sql = "SELECT * FROM re_category WHERE id_space=?";
+        $sql = "SELECT * FROM re_category WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
     public function getIdFromNameSpace($name, $id_space){
-        $sql = "SELECT id FROM re_category WHERE name=? AND id_space=?";
+        $sql = "SELECT id FROM re_category WHERE name=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($name, $id_space));
         if($req->rowCount() > 0){
             $tmp = $req->fetch();
@@ -44,9 +44,9 @@ class ReCategory extends Model {
     }
 
     public function set($id, $name, $id_space) {
-        if ($this->exists($id)) {
-            $sql = "UPDATE re_category SET name=?, id_space=? WHERE id=?";
-            $this->runRequest($sql, array($name, $id_space, $id));
+        if ($this->exists($id_space, $id)) {
+            $sql = "UPDATE re_category SET name=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($name, $id, $id_space));
             return $id;
         } else {
             $sql = "INSERT INTO re_category (name, id_space) VALUES (?, ?)";
@@ -56,9 +56,9 @@ class ReCategory extends Model {
         
     }
 
-    public function exists($id) {
-        $sql = "SELECT id from re_category WHERE id=?";
-        $req = $this->runRequest($sql, array($id));
+    public function exists($id_space, $id) {
+        $sql = "SELECT id from re_category WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -72,9 +72,9 @@ class ReCategory extends Model {
      * @throws Exception if the resources category is not found
      * @return mixed array
      */
-    public function getName($id) {
-        $sql = "select name from re_category where id=?";
-        $unit = $this->runRequest($sql, array($id));
+    public function getName($id_space, $id) {
+        $sql = "select name from re_category where id=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];  // get the first line of the result
@@ -82,9 +82,9 @@ class ReCategory extends Model {
         return "";
     }
     
-    public function getIdFromName($name){
-        $sql = "select id from re_category where name=?";
-        $unit = $this->runRequest($sql, array($name));
+    public function getIdFromName($id_space, $name){
+        $sql = "SELECT id from re_category where name=? AND id_space=? AND deleted=0";
+        $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];  // get the first line of the result
@@ -96,9 +96,10 @@ class ReCategory extends Model {
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($id) {
-        $sql = "DELETE FROM re_category WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE re_category SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        // $sql = "DELETE FROM re_category WHERE id = ? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

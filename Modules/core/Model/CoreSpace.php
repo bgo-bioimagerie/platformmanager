@@ -136,7 +136,7 @@ class CoreSpace extends Model {
     }
 
     public function doesManageSpace($id_user) {
-        $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > 2";
+        $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=? AND status > ".CoreSpace::$USER;
         $req = $this->runRequest($sql, array($id_user));
         if ($req->rowCount() > 0) {
             return true;
@@ -173,7 +173,7 @@ class CoreSpace extends Model {
      * @return array list of strings
      */
     public function getEmailsSpaceManagers($id_space) {
-        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>2)";
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status>".CoreSpace::$USER.")";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
@@ -187,7 +187,7 @@ class CoreSpace extends Model {
      * @return array list of strings
      */
     public function getEmailsSpaceActiveUsers($id_space) {
-        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status=2)";
+        $sql = "SELECT email FROM core_users WHERE id IN (SELECT id_user FROM core_j_spaces_user WHERE id_space=? AND status=".CoreSpace::$USER.")";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
@@ -448,7 +448,7 @@ class CoreSpace extends Model {
             Events::send([
                 "action" => Events::ACTION_SPACE_USER_JOIN,
                 "space" => ["id" => intval($id_space)],
-                "user" => ["id" => intval($id_user)]
+                "user" => ["id" => intval($id_user)],
             ]);
         }
     }
@@ -457,13 +457,19 @@ class CoreSpace extends Model {
         if ($this->isUser($id_user, $id_space)) {
             $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
             $this->runRequest($sql, array($status, $id_user, $id_space));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)],
+                "role" => $status
+            ]); 
         } else {
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $status));
             Events::send([
                 "action" => Events::ACTION_SPACE_USER_JOIN,
                 "space" => ["id" => intval($id_space)],
-                "user" => ["id" => intval($id_user)]
+                "user" => ["id" => intval($id_user)],
             ]);
         }
     }
@@ -493,9 +499,11 @@ class CoreSpace extends Model {
                 . "core_users.name AS name, core_users.firstname AS firstname "
                 . "FROM core_j_spaces_user "
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
-                . "WHERE id_space=?";
+                . "WHERE core_j_spaces_user.id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+
+    
 
     public function countUsers($id_space) {
         $sql = "SELECT count(*) FROM core_j_spaces_user WHERE id_space=?";
@@ -511,6 +519,9 @@ class CoreSpace extends Model {
         foreach ($alreadyAdmins as $aadm) {
             $found = false;
             foreach ($id_admins as $cidadm) {
+                if(!$cidadm) {
+                    continue;
+                }
                 if ($cidadm == $aadm["id_user"]) {
                     $found = true;
                     break;
@@ -526,7 +537,9 @@ class CoreSpace extends Model {
 
         // add admins
         foreach ($id_admins as $adm) {
-            $this->setUser($adm, $id, CoreSpace::$ADMIN);
+            if($adm) {
+                $this->setUser($adm, $id, CoreSpace::$ADMIN);
+            }
         }
     }
 

@@ -20,7 +20,7 @@ class ServicesRouting extends Routing {
 
 
         // stock
-        $this->addRoute("servicesstock", "servicesstock", "services", "stock", array("id_space"), array(""));
+        $this->addRoute("servicesstock", "servicesstock", "serviceslisting", "stock", array("id_space"), array(""));
 
         // purchase
         $this->addRoute("servicespurchase", "servicespurchase", "servicespurchase", "index", array("id_space"), array(""));
@@ -61,9 +61,9 @@ class ServicesRouting extends Routing {
         $this->addRoute("servicesprojectfollowup", "servicesprojectfollowup", "servicesprojects", "followup", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojectsclosing", "servicesprojectclosing", "servicesprojects", "closing", array("id_space", "id"), array("", ""));
         $this->addRoute("servicesprojectsample", "servicesprojectsample", "servicesprojects", "samplestock", array("id_space", "id"), array("", ""));
-        
+        //@deprecated
         $this->addRoute("servicesprojecteditentry", "servicesprojecteditentry", "servicesprojects", "editentry", array("id_space", "id"), array("", ""));
-        $this->addRoute("servicesprojecteditentryquery", "servicesprojecteditentryquery", "servicesprojects", "editentryquery", array("id_space", "id"), array("", ""));
+        $this->addRoute("servicesprojecteditentryquery", "servicesprojecteditentryquery", "servicesprojects", "editentryquery", array("id_space"), array(""));
         $this->addRoute("servicesprojectdeleteentry", "servicesprojectdeleteentry", "servicesprojects", "deleteentry", array("id_space", "id_project", "id"), array("", "", ""));
 
         $this->addRoute("servicesprojectgantt", "servicesprojectgantt", "servicesprojectgantt", "index", array("id_space", "allPeriod", "incharge"), array("", "", ""));

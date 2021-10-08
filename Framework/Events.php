@@ -1,11 +1,29 @@
 <?php
 
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Model.php';
+require_once 'Framework/Statistics.php';
+
+require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreUser.php';
+
+require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/invoices/Model/InInvoice.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+
+class EventModel extends Model {
+
+    public function runRequest($sql, $args=array()) {
+        return parent::runRequest($sql, $args);
+    }   
+
+}
 
 class EventHandler {
 
@@ -20,14 +38,16 @@ class EventHandler {
         $model = new CoreSpace();
         $nbSpaces = $model->countSpaces();
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
-        Statistics::stat(Configuration::get('influxdb_org', 'pfm'), $stat);
+        $statHandler = new Statistics();
+        $statHandler->record(Configuration::get('influxdb_org', 'pfm'), $stat);
     }
 
     public function spaceCreate($msg) {
         $this->logger->debug('[spaceCreate]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
-        Statistics::createDB($space['shortname']);
+        $statHandler = new Statistics();
+        $statHandler->createDB($space['shortname']);
         $this->spaceCount($msg);
     }
 
@@ -41,7 +61,24 @@ class EventHandler {
         $space = $model->getSpace($msg['space']['id']);
         $nbUsers = $model->countUsers($msg['space']['id']);
         $stat = ['name' => 'users', 'fields' => ['value' => $nbUsers]];
-        Statistics::stat($space['shortname'], $stat);
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    }
+
+    public function spaceUserRoleUpdate($msg) {
+        $this->logger->debug('[spaceUserRoleUpdate][TODO]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
+        $role = $msg["role"];
+        $u = new CoreUser();
+        $user = $u->getInfo($msg['user']['id']);
+        $login = $user['login'];
+        $m = new CoreHistory();
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login role update [role=$role]");
+        // TODO
+    }
+
+    public function userApiKey($msg) {
+        $this->logger->debug('[userApiKey][TODO]', ['user' => $msg['user']]);
+        // TODO
     }
 
     public function spaceUserJoin($msg) {
@@ -51,7 +88,7 @@ class EventHandler {
         $user = $u->getInfo($msg['user']['id']);
         $login = $user['login'];
         $m = new CoreHistory();
-        $m->add( $msg['space']['id'], $msg['_user'], "User $login joined space");
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login joined space");
     }
 
     public function spaceUserUnjoin($msg) {
@@ -61,7 +98,119 @@ class EventHandler {
         $user = $u->getInfo($msg['user']['id']);
         $login = $user['login'];
         $m = new CoreHistory();
-        $m->add( $msg['space']['id'], $msg['_user'], "User $login left space");
+        $m->add( $msg['space']['id'], $msg['_user'] ?? null, "User $login left space");
+    }
+
+    private function _calEntryStat($space, $entry, $value){
+        $id_space = $space['id'];
+        $timestamp = $entry['start_time'];
+        $r = new ResourceInfo();
+        $resource = $r-> get($id_space, $entry['resource_id']);
+        $u = new CoreUser();
+        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        $user = $u->userAllInfo($id_user);
+        $client = ['name' => 'unknown'];
+        if($entry['responsible_id']) {
+            $c = new ClClient();
+            $is_client = $c->get($id_space, $entry['responsible_id']);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    }
+
+    public function calentryImport() {
+        $em = new EventModel();
+        $sql = "SELECT * FROM `bk_calendar_entry`;";
+        $resdb = $em->runRequest($sql);
+        while($res = $resdb->fetch()) {
+            $this->calentryEdit(["action" => Events::ACTION_CAL_ENTRY_EDIT, "bk_calendar_entry_old" => null, "bk_calendar_entry" => ["id" => intval($res['id']), "id_space" => $res['id_space']]]);
+        }
+    }
+
+    public function calentryEdit($msg) {
+        $this->logger->debug('[calentryEdit]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
+        $id_space = $msg['bk_calendar_entry']['id_space'];
+
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        
+        if($msg['bk_calendar_entry_old']) {
+            $old = $msg['bk_calendar_entry_old'];
+            $this->_calEntryStat($space, $old, 0);
+        }
+
+        $m = new BkCalendarEntry();
+        $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
+        if(!$entry) {
+            Configuration::getLogger()->debug('[calentryEdit] id not found', ['id' => $msg['bk_calendar_entry']['id'], 'id_space' => $id_space]);
+            return;
+        }
+
+        $this->_calEntryStat($space, $entry, 1);
+    }
+
+    public function invoiceImport() {
+        $em = new EventModel();
+        $sql = "SELECT * FROM `in_invoice`;";
+        $resdb = $em->runRequest($sql);
+        $i = 0;
+        while($res = $resdb->fetch()) {
+            //echo "??".$res["date_generated"];
+            //$date_generated = date("Y-m-d", $res["date_generated"]);
+            $dt = DateTime::createFromFormat("Y-m-d H:i:s", $res["date_generated"]." 00:00:00");
+            $timestamp = $dt->getTimestamp() + $i;
+            $i++;
+            $this->invoiceEdit(["action" => Events::ACTION_INVOICE_EDIT, "invoice" => ["id" => intval($res['id']), "created_at" => $timestamp], "id_space" => $res['id_space']]);
+        }
+    }
+
+
+    public function invoiceEdit($msg) {
+        $this->logger->debug('[invoiceEdit]', ['id_invoice' => $msg['invoice']['id']]);
+        $im = new InInvoice();
+        $invoice = $im->admGetBy('in_invoice', 'id', $msg['invoice']['id']);
+        $id_space = $invoice['id_space'];
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        $client = ['name' => 'unknown'];
+        if($invoice['id_responsible']) {
+            $c = new ClClient();
+            $is_client = $c->get($id_space, $invoice['id_responsible']);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $total = floatval($invoice['total_ht']) - floatval($invoice['discount']);
+        $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
+        $stat = ['name' => 'invoice', 'fields' => ['value' => $total], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
+        $this->logger->debug('[invoiceEdit]', ['stat' => $stat]);
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    }
+
+    public function invoiceDelete($msg) {
+        $this->logger->debug('[invoiceDelete]', ['id_invoice' => $msg['invoice']['id']]);
+        $im = new InInvoice();
+        $invoice = $im->admGetBy('in_invoice', 'id', $msg['invoice']['id']);
+        $id_space = $invoice['id_space'];
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        $client = ['name' => 'unknown'];
+        if($invoice['responsible_id']) {
+            $c = new ClClient();
+            $is_client = $c->get($id_space, $invoice['responsible_id']);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
+        $stat = ['name' => 'invoice', 'fields' => ['value' => 0], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
     }
 
     /**
@@ -91,11 +240,26 @@ class EventHandler {
                 case Events::ACTION_SPACE_USER_UNJOIN:
                     $this->spaceUserUnjoin($data);
                     break;
+                case Events::ACTION_SPACE_USER_ROLEUPDATE:
+                    $this->spaceUserRoleUpdate($data);
+                    break;
+                case Events::ACTION_USER_APIKEY:
+                    $this->userApikey($data);
+                    break;
+                case Events::ACTION_CAL_ENTRY_EDIT:
+                    $this->calentryEdit($data);
+                    break;
+                case Events::ACTION_INVOICE_EDIT:
+                    $this->invoiceEdit($data);
+                    break;
+                case Events::ACTION_INVOICE_DELETE:
+                    $this->invoiceDelete($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $action]);
                     break;
             }
-        } catch(Exception $e) {
+        } catch(Throwable $e) {
             $this->logger->error('[message] error', ['message' => $e->getMessage()]);
         }
     }
@@ -108,6 +272,13 @@ class Events {
     public const ACTION_SPACE_DELETE = 1;
     public const ACTION_SPACE_USER_JOIN = 2;
     public const ACTION_SPACE_USER_UNJOIN = 3;
+    public const ACTION_SPACE_USER_ROLEUPDATE = 4;
+    public const ACTION_USER_APIKEY = 5;
+    public const ACTION_CAL_ENTRY_EDIT = 100;
+    public const HELPDESK_TICKET = 200;
+
+    public const ACTION_INVOICE_EDIT = 300;
+    public const ACTION_INVOICE_DELETE = 301;
 
     private static $connection;
     private static $channel;
@@ -138,6 +309,7 @@ class Events {
         if(self::$channel != null) {
             self::$channel->close();
             self::$connection->close();
+            self::$channel = null;
         }
     }
         

@@ -84,11 +84,11 @@ class FormAdd {
     
     /**
      * Add a select field 
-     * @param type $name Field name
-     * @param type $label Field label
-     * @param type $choices List of choices names
-     * @param type $choicesid List of choices Ids
-     * @param type $values List of default values
+     * @param string $name Field name
+     * @param string $label Field label
+     * @param array $choices List of choices names
+     * @param array $choicesid List of choices Ids
+     * @param array $values List of default values
      */
     public function addSelect($name, $label, $choices, $choicesid, $values = array()) {
         $this->types[] = "select";
@@ -140,6 +140,22 @@ class FormAdd {
      */
     public function addNumber($name, $label, $values = array()) {
         $this->types[] = "number";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($name, $values);
+        $this->isMandatory[] = false;
+        $this->choices[] = "";
+        $this->choicesid[] = "";
+    }
+
+         /**
+     * Add number field with step="any"
+     * @param type $name Field name
+     * @param type $label Field label
+     * @param type $values Field default values
+     */
+    public function addFloat($name, $label, $values = array()) {
+        $this->types[] = "float";
         $this->names[] = $name;
         $this->labels[] = $label;
         $this->setValue($name, $values);
@@ -206,6 +222,8 @@ class FormAdd {
                         $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true, $lang);
                     } else if ($this->types[$j] == "number") {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
+                    } else if ($this->types[$j] == "float") {
+                        $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true, true);
                     } else if ($this->types[$j] == "hidden") {
                         $html .= $formHtml->inlineHidden($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "l"){
@@ -232,6 +250,8 @@ class FormAdd {
                     $html .= $formHtml->inlineDate($this->names[$j], "", true, $lang);
                 } else if ($this->types[$j] == "number") {
                     $html .= $formHtml->inlineNumber($this->names[$j], "", false, true);
+                } else if ($this->types[$j] == "float") {
+                    $html .= $formHtml->inlineNumber($this->names[$j], "", false, true, true);
                 } else if ($this->types[$j] == "hidden") {
                     $html .= $formHtml->inlineHidden($this->names[$j], "", false, true);
                 }

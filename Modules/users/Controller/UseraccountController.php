@@ -59,6 +59,7 @@ class UseraccountController extends CoresecureController {
         $form->addText("phone", UsersTranslator::Phone($lang), false, $userInfo["phone"] ?? "");
         $form->addUpload("avatar", UsersTranslator::Avatar($lang), $userInfo["avatar"] ?? "");
         $form->addTextArea("bio", UsersTranslator::Bio($lang), false, $userInfo["bio"] ?? "");
+
         $form->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "usersmyaccount");
@@ -131,12 +132,15 @@ class UseraccountController extends CoresecureController {
         }
         
         $_SESSION["redirect"] = "usersmyaccount";
+
+        unset($userCore['password']);
         // render the View
         $this->render(array(
             'lang' => $lang,
             'formHtml' => $form->getHtml($lang),
             'providers' => $providers,
-            'linked' => $linked
+            'linked' => $linked,
+            'data' => ['user' => $userCore]
         ));
     }
 

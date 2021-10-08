@@ -28,6 +28,8 @@ require_once 'Modules/invoices/Model/InInvoice.php';
  * @author sprigent
  * Controller for the home page
  */
+
+ // @deprecated?
 class ServicesstatisticsorderController extends CoresecureController {
 
     private $serviceModel;
@@ -47,7 +49,6 @@ class ServicesstatisticsorderController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space) {
-
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -93,12 +94,12 @@ class ServicesstatisticsorderController extends CoresecureController {
         // get the bill manager list
         $modelBillManager = new InInvoice();
         $controller = "servicesinvoiceorder";
-        $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd);
+        $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space);
 
-        $this->makeBalanceXlsFile($periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet);
+        $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet);
     }
 
-    private function makeBalanceXlsFile($periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null) {
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null) {
 
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
@@ -216,13 +217,20 @@ class ServicesstatisticsorderController extends CoresecureController {
         foreach ($openedOrders as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
-            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
 
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+            // getting client from user
+            $id_user = $modelUser->getInfo($proj["id_user"]);
+            $modelClUser = new ClClientUser();
+            // FIXME: array to string conversion that is displayed in generated spreadsheet instead of anything else when in debug mode
+            // Should work not in debug mode
+            $client = $modelClUser->getUserClientAccounts($id_space, $id_user);
+            $clientName = $client ? $client[0]["name"] : "n/a";
+            // $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
+
+           $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $clientName /*$modelUser->getUserFUllName($proj["id_resp"])*/);
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
 
-            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
+            $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $clientName);
             $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
@@ -232,7 +240,7 @@ class ServicesstatisticsorderController extends CoresecureController {
             $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $dateClosed = "";
-            if ($proj["date_close"] != "0000-00-00") {
+            if ($proj["date_close"] && $proj["date_close"] != "0000-00-00") {
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
             }
             $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
@@ -254,6 +262,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         // ////////////////////////////////////////////////////
         //                Services billed details
         // ////////////////////////////////////////////////////
+       
         $objWorkSheet = $spreadsheet->createSheet();
         $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(1);
@@ -278,7 +287,7 @@ class ServicesstatisticsorderController extends CoresecureController {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item);
+            $name = $modelItem->getItemName($id_space, $item);
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -287,7 +296,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         $orders = $ordersBilledBalance["orders"];
         foreach ($orders as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -363,7 +372,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelClient->getInstitution($invoice["id_responsible"]);
+            $unitName = $modelClient->getInstitution($id_space, $invoice["id_responsible"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -421,7 +430,7 @@ class ServicesstatisticsorderController extends CoresecureController {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item[0]);
+            $name = $modelItem->getItemName($id_space, $item[0]);
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -442,7 +451,7 @@ class ServicesstatisticsorderController extends CoresecureController {
         //print_r($projects);
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -457,7 +466,7 @@ class ServicesstatisticsorderController extends CoresecureController {
             //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $dateClosed = "";
-            if ($proj["date_close"] != "0000-00-00") {
+            if ($proj["date_close"] && $proj["date_close"] != "0000-00-00") {
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
             }
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 1) . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
@@ -518,10 +527,8 @@ class ServicesstatisticsorderController extends CoresecureController {
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
-
         // write excel file
-        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
-
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-projet-bilan.xlsx"');

@@ -82,7 +82,7 @@ class ClientspricingsController extends CoresecureController {
             $pricing = array("id" => 0, "name" => "");
         }
         else{
-            $pricing = $this->pricingModel->get($id);
+            $pricing = $this->pricingModel->get($id_space, $id);
         }
         
         
@@ -139,7 +139,7 @@ class ClientspricingsController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         
         // query to delete the provider
-        $this->pricingModel->delete($id);
+        $this->pricingModel->delete($id_space, $id);
         
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clpricings/" . $id_space);

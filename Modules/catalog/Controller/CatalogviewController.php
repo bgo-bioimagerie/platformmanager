@@ -47,7 +47,7 @@ class CatalogviewController extends CoresecureController {
         }
 
         $modelEntry = new CaEntry();
-        $entries = $modelEntry->getCategoryEntries($idCategory);
+        $entries = $modelEntry->getCategoryEntries($id_space, $idCategory);
 
         $modelCoreConfig = new CoreConfig();
 
@@ -85,10 +85,10 @@ class CatalogviewController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $modelAntibody = new Anticorps();
-        $entries = $modelAntibody->getAnticorpsInfoCatalog();
+        $entries = $modelAntibody->getAnticorpsInfoCatalog($id_space);
 
         $statusModel = new Status();
-        $status = $statusModel->getStatus();
+        $status = $statusModel->getBySpace($id_space);
         //print_r();
         // view
         $this->render(array(

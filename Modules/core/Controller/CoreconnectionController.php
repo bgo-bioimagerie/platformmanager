@@ -199,6 +199,9 @@ class CoreconnectionController extends CorecookiesecureController {
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
 
                     $userInfo = $this->user->getUserByLogin($login);
+                    if(!$userInfo['apikey']) {
+                        $this->user->newApiKey($userInfo['idUser']);
+                    }
                     //print_r($userInfo);
 
                     $modelSpace = new CoreSpace();

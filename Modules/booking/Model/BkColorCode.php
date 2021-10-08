@@ -35,11 +35,11 @@ class BkColorCode extends Model {
 
     public function getDefault() {
         return array("id" => 0, "name" => "", "color" => "#ffffff", "text" => "#000000",
-            "display_order" => 0, "id_space" => 1, "who_can_use" => 1);
+            "display_order" => 0, "id_space" => 0, "who_can_use" => 1);
     }
     
     public function getIdByNameSpace($name, $id_space){
-        $sql = "SELECT id FROM bk_color_codes WHERE name=? AND id_space=?";
+        $sql = "SELECT id FROM bk_color_codes WHERE name=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($name, $id_space));
         if($req->rowCount() > 0){
             $tmp = $req->fetch();
@@ -50,13 +50,14 @@ class BkColorCode extends Model {
 
     /**
      * Create the default empty SyColorCode
+     * @deprecated
      * 
      * @return PDOStatement
      */
     public function createDefaultColorCode() {
 
         if (!$this->isColorCode("default", "b2dfee")) {
-            $sql = "INSERT INTO bk_color_codes (name, color, text) VALUES(?,?,?)";
+            $sql = "INSERT INTO bk_color_codes (name, color, text, id_space) VALUES(?,?,?,0)";
             $this->runRequest($sql, array("default", "b2dfee", "000000"));
         }
     }
@@ -69,13 +70,13 @@ class BkColorCode extends Model {
      */
     public function getColorCodes($id_space, $sortentry = 'id') {
 
-        $sql = "select * from bk_color_codes WHERE id_space=? order by " . $sortentry . " ASC;";
+        $sql = "select * from bk_color_codes WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
     public function getColorCodesForListUser($id_space, $userSPaceRole, $sortentry = 'id') {
-        $sql = "select * from bk_color_codes WHERE id_space=? AND who_can_use<=? order by " . $sortentry . " ASC;";
+        $sql = "select * from bk_color_codes WHERE id_space=? AND deleted=0 AND who_can_use<=? order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space, $userSPaceRole));
         $data = $user->fetchAll();
         $names = array();
@@ -89,7 +90,7 @@ class BkColorCode extends Model {
 
     public function getColorCodesForList($id_space, $sortentry = 'id') {
 
-        $sql = "select * from bk_color_codes WHERE id_space=? order by " . $sortentry . " ASC;";
+        $sql = "select * from bk_color_codes WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         $data = $user->fetchAll();
         $names = array();
@@ -106,21 +107,21 @@ class BkColorCode extends Model {
      * @param unknown $id
      * @return mixed
      */
-    public function getColorCode($id) {
+    public function getColorCode($id_space, $id) {
 
-        $sql = "SELECT * FROM bk_color_codes WHERE id=?";
-        $user = $this->runRequest($sql, array($id));
+        $sql = "SELECT * FROM bk_color_codes WHERE id=? AND id_space=?";
+        $user = $this->runRequest($sql, array($id, $id_space));
         return $user->fetch();
     }
 
     public function getForSpace($id_space) {
-        $sql = "SELECT * FROM bk_color_codes WHERE id_space=?";
+        $sql = "SELECT * FROM bk_color_codes WHERE id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
     public function getForList($id_space) {
-        $sql = "SELECT * FROM bk_color_codes WHERE id_space=?";
+        $sql = "SELECT * FROM bk_color_codes WHERE id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
         $names = array();
         $ids = array();
@@ -135,25 +136,27 @@ class BkColorCode extends Model {
 
     /**
      * get the names of all the SyColorCodes
+     * @deprecated
      *
      * @return multitype: array
      */
-    public function colorCodesName() {
+    public function colorCodesName($id_space) {
 
-        $sql = "select name from bk_color_codes";
-        $SyColorCodes = $this->runRequest($sql);
+        $sql = "select name from bk_color_codes WHERE deleted=0 AND id_space=?";
+        $SyColorCodes = $this->runRequest($sql, array($id_space));
         return $SyColorCodes->fetchAll();
     }
 
     /**
      * Get the SyColorCodes ids and names
+     * @deprecated
      *
      * @return array
      */
-    public function colorCodesIDName() {
+    public function colorCodesIDName($id_space) {
 
-        $sql = "select id, name from bk_color_codes";
-        $SyColorCodes = $this->runRequest($sql);
+        $sql = "select id, name from bk_color_codes WHERE deleted=0 AND id_space=?";
+        $SyColorCodes = $this->runRequest($sql, array($id_space));
         return $SyColorCodes->fetchAll();
     }
 
@@ -171,9 +174,9 @@ class BkColorCode extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function setColorWhoCanUse($id, $who_can_use) {
-        $sql = "UPDATE bk_color_codes SET who_can_use=? WHERE id=?";
-        $this->runRequest($sql, array($who_can_use, $id));
+    public function setColorWhoCanUse($id_space, $id, $who_can_use) {
+        $sql = "UPDATE bk_color_codes SET who_can_use=? WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($who_can_use, $id, $id_space));
     }
 
     /**
@@ -185,12 +188,12 @@ class BkColorCode extends Model {
      */
     public function updateColorCode($id, $name, $color, $text_color, $id_space, $display_order) {
 
-        $sql = "update bk_color_codes set name=?, color=?, text=?, id_space=?, display_order=? where id=?";
-        $this->runRequest($sql, array("" . $name . "", "" . $color . "", $text_color, $id_space, $display_order, $id));
+        $sql = "UPDATE bk_color_codes SET name=?, color=?, text=?, display_order=? WHERE id=? AND deleted=0 AND id_space=?";
+        $this->runRequest($sql, array("" . $name . "", "" . $color . "", $text_color, $display_order, $id, $id_space));
     }
 
     public function editColorCode($id, $name, $color, $text_color, $id_space, $display_order) {
-        if ($this->isColorCodeId($id)) {
+        if ($this->isColorCodeId($id_space, $id)) {
             $this->updateColorCode($id, $name, $color, $text_color, $id_space, $display_order);
             return $id;
         } else {
@@ -203,14 +206,10 @@ class BkColorCode extends Model {
      * @param unknown $name
      * @return boolean
      */
-    public function isColorCode($name) {
-        $sql = "select * from bk_color_codes where name=?";
-        $SyColorCode = $this->runRequest($sql, array($name));
-        if ($SyColorCode->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+    public function isColorCode($id_space, $name) {
+        $sql = "SELECT * FROM bk_color_codes WHERE name=? AND deleted=0 AND id_space=?";
+        $colorCode = $this->runRequest($sql, array($name, $id_space));
+        return ($colorCode->rowCount() == 1);
     }
 
     /**
@@ -218,14 +217,10 @@ class BkColorCode extends Model {
      * @param unknown $id
      * @return boolean
      */
-    public function isColorCodeId($id) {
-        $sql = "select * from bk_color_codes where id=?";
-        $SyColorCode = $this->runRequest($sql, array($id));
-        if ($SyColorCode->rowCount() == 1) {
-            return true;
-        } else {
-            return false;
-        }
+    public function isColorCodeId($id_space, $id) {
+        $sql = "select * from bk_color_codes where id=? AND deleted=0 AND id_space=?";
+        $colorCode = $this->runRequest($sql, array($id, $id_space));
+        return ($colorCode->rowCount() == 1);
     }
 
     /**
@@ -235,9 +230,9 @@ class BkColorCode extends Model {
      * @throws Exception id the SyColorCode is not found
      * @return mixed array
      */
-    public function getColorCodeValue($id) {
-        $sql = "select color from bk_color_codes where id=?";
-        $SyColorCode = $this->runRequest($sql, array($id));
+    public function getColorCodeValue($id_space, $id) {
+        $sql = "select color from bk_color_codes where id=? AND deleted=0 AND id_space=?";
+        $SyColorCode = $this->runRequest($sql, array($id, $id_space));
         if ($SyColorCode->rowCount() == 1) {
             $tmp = $SyColorCode->fetch();
             return $tmp[0];  // get the first line of the result
@@ -253,9 +248,9 @@ class BkColorCode extends Model {
      * @throws Exception id the SyColorCode is not found
      * @return mixed array
      */
-    public function getColorCodeText($id) {
-        $sql = "select text from bk_color_codes where id=?";
-        $SyColorCode = $this->runRequest($sql, array($id));
+    public function getColorCodeText($id_space, $id) {
+        $sql = "select text from bk_color_codes where id=? AND deleted=0 AND id_space=?";
+        $SyColorCode = $this->runRequest($sql, array($id, $id_space));
         if ($SyColorCode->rowCount() == 1) {
             $tmp = $SyColorCode->fetch();
             return $tmp[0];  // get the first line of the result
@@ -271,9 +266,9 @@ class BkColorCode extends Model {
      * @throws Exception if the SyColorCode is not found
      * @return mixed array
      */
-    public function getColorCodeName($id) {
-        $sql = "select name from bk_color_codes where id=?";
-        $SyColorCode = $this->runRequest($sql, array($id));
+    public function getColorCodeName($id_space, $id) {
+        $sql = "select name from bk_color_codes where id=? AND deleted=0 AND id_space=?";
+        $SyColorCode = $this->runRequest($sql, array($id, $id_space));
         if ($SyColorCode->rowCount() == 1) {
             $tmp = $SyColorCode->fetch();
             return $tmp[0];  // get the first line of the result
@@ -284,13 +279,14 @@ class BkColorCode extends Model {
 
     /**
      * get the id of a SyColorCode from it's name
+     * @deprecated
      * 
      * @param string $name Name of the SyColorCode
      * @throws Exception if the SyColorCode connot be found
      * @return mixed array
      */
     public function getColorCodeId($name, $id_space) {
-        $sql = "select id from bk_color_codes where name=? and id_space=?";
+        $sql = "SELECT id FROM bk_color_codes WHERE name=? AND id_space=? AND deleted=0";
         $SyColorCode = $this->runRequest($sql, array($name, $id_space));
         if ($SyColorCode->rowCount() == 1) {
             $tmp = $SyColorCode->fetch();
@@ -304,9 +300,9 @@ class BkColorCode extends Model {
      * Remove a color code
      * @param unknown $id
      */
-    public function delete($id) {
-        $sql = "DELETE FROM bk_color_codes WHERE id = ?";
-        $req = $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE bk_color SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

@@ -20,12 +20,12 @@ class CoreSpaceUser extends Model {
 
         $this->tableName = "core_j_spaces_user";
         $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_user", "varchar(100)", "");
-        $this->setColumnsInfo("id_space", "varchar(100)", "");
+        $this->setColumnsInfo("id_user", "int(11)", "");
+        $this->setColumnsInfo("id_space", "int(11)", "");
         $this->setColumnsInfo("status", "varchar(100)", "");
-        $this->setColumnsInfo("date_convention", "date", "0000-00-00");
+        $this->setColumnsInfo("date_convention", "date", "");
         $this->setColumnsInfo("convention_url", "varchar(255)", "");
-        $this->setColumnsInfo("date_contract_end", "date", "0000-00-00");
+        $this->setColumnsInfo("date_contract_end", "date", "");
         $this->primaryKey = "id";
 
     }
@@ -34,10 +34,21 @@ class CoreSpaceUser extends Model {
         if ( !$this->exists($id_user, $id_space) ){
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_user, $id_space, $role));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_JOIN,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
+            ]);
         }
         else{
             $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
-            $this->runRequest($sql, array($role, $id_user, $id_space));    
+            $this->runRequest($sql, array($role, $id_user, $id_space));
+            Events::send([
+                "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)],
+                "role" => $role
+            ]);    
         }
         
         if ( $role > 0 ){
@@ -56,11 +67,17 @@ class CoreSpaceUser extends Model {
     }
 
     public function setDateEndContract($id_user, $id_space, $date_contract_end){
+        if($date_contract_end == "") {
+            $date_contract_end = null;
+        }
         $sql = "UPDATE core_j_spaces_user SET date_contract_end=? WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($date_contract_end, $id_user, $id_space));
     }
     
     public function setDateConvention($id_user, $id_space, $date_convention){
+        if($date_convention == "") {
+            $date_convention = null;
+        }
         $sql = "UPDATE core_j_spaces_user SET date_convention=? WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($date_convention, $id_user, $id_space));        
     }

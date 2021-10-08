@@ -5,6 +5,7 @@ require_once 'Framework/Model.php';
 /**
  * Class defining the Project model.
  * This is a minimal project. Extend it to create your own project manager module.
+ * @deprecated
  * 
  *
  * @author Sylvain Prigent

@@ -71,7 +71,7 @@ class StockshelfController extends CoresecureController {
         // get belonging info
         $unit = array("id" => 0, "name" => "", "id_cabinet" => 0);
         if ($id > 0) {
-            $unit = $this->model->getOne($id);
+            $unit = $this->model->getOne($id_space ,$id);
         }
 
         // lang
@@ -94,7 +94,7 @@ class StockshelfController extends CoresecureController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("id_cabinet")); 
+            $this->model->set($id_space ,$form->getParameter("id"), $form->getParameter("name"), $form->getParameter("id_cabinet")); 
             $this->redirect("stockshelfs/" . $id_space);
         } else {
             // set the view
@@ -114,7 +114,7 @@ class StockshelfController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->model->delete($id);
+        $this->model->delete($id_space ,$id);
         $this->redirect("stockshelfs/" . $id_space);
     }
 

@@ -24,18 +24,18 @@ class BkNightWE extends Model {
         $this->primaryKey = "id";
     }
 
-    public function isNight($id) {
-        $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_night=?";
-        $req = $this->runRequest($sql, array($id, 1));
+    public function isNight($id_space, $id) {
+        $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_night=? AND deleted=0 AND id_space=?";
+        $req = $this->runRequest($sql, array($id, 1, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function isWe($id) {
-        $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_we=?";
-        $req = $this->runRequest($sql, array($id, 1));
+    public function isWe($id_space, $id) {
+        $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_we=? AND deleted=0 AND id_space=?";
+        $req = $this->runRequest($sql, array($id, 1, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -48,7 +48,7 @@ class BkNightWE extends Model {
      * @return multitype:
      */
     public function getSpacePrices($id_space, $sortEntry = 'id') {
-        $sql = "select * from bk_nightwe WHERE id_space=? order by " . $sortEntry . " ASC;";
+        $sql = "select * from bk_nightwe WHERE id_space=? AND deleted=0 order by " . $sortEntry . " ASC;";
         $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }
@@ -60,7 +60,7 @@ class BkNightWE extends Model {
      * @return mixed
      */
     public function getPricing($id, $id_space) {
-        $sql = "select * from bk_nightwe where id_belonging=? AND id_space=?";
+        $sql = "select * from bk_nightwe where id_belonging=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space));
         if ($data->rowCount() > 0) {
             return $data->fetch();  // get the first line of the result
@@ -103,8 +103,7 @@ class BkNightWE extends Model {
     public function addPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char) {
         $sql = "INSERT INTO bk_nightwe (id_belonging, id_space, tarif_unique, tarif_night, night_start,
 				                        night_end, tarif_we, choice_we ) VALUES(?,?,?,?,?,?,?,?)";
-        $pdo = $this->runRequest($sql, array($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char));
-        return $pdo;
+        return $this->runRequest($sql, array($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char));
     }
 
     /**
@@ -118,9 +117,9 @@ class BkNightWE extends Model {
      * @param unknown $we_char
      */
     public function editPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char) {
-        $sql = "update bk_nightwe set tarif_unique=?, tarif_night=?, night_start=?,
+        $sql = "UPDATE bk_nightwe SET tarif_unique=?, tarif_night=?, night_start=?,
 				                      night_end=?, tarif_we=?, choice_we=?
-									  where id_belonging=? AND id_space=?";
+									  WHERE id_belonging=? AND id_space=?";
         $this->runRequest($sql, array($tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char, $id_belonging, $id_space));
     }
 
@@ -130,14 +129,9 @@ class BkNightWE extends Model {
      * @return boolean
      */
     private function isPricing($id_belonging, $id_space) {
-        $sql = "select * from bk_nightwe where id_belonging=? AND id_space=?;";
+        $sql = "SELECT * FROM bk_nightwe WHERE id_belonging=? AND id_space=? AND deleted=0;";
         $data = $this->runRequest($sql, array($id_belonging, $id_space));
-        if ($data->rowCount() == 1){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return ($data->rowCount() == 1);
     }
 
     /**
@@ -160,9 +154,10 @@ class BkNightWE extends Model {
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($id) {
-        $sql = "DELETE FROM bk_nightwe WHERE id = ?";
-        $this->runRequest($sql, array($id));
+    public function delete($id_space, $id) {
+        $sql = "UPDATE bk_nightwe SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        // $sql = "DELETE FROM bk_nightwe WHERE id = ? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

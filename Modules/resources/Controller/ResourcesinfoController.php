@@ -61,14 +61,16 @@ class ResourcesinfoController extends CoresecureController {
         );
 
         $modelResource = new ResourceInfo();
-        $resources = $modelResource->getBySpace($id_space);
-
+        $resources = $modelResource->getBySpaceWithoutCategory($id_space);
 
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
         for ($i = 0; $i < count($resources); $i++) {
-            $resources[$i]["area"] = $modelArea->getName($resources[$i]["id_area"]);
-            $resources[$i]["category"] = $modelCategory->getName($resources[$i]["id_category"]);
+            $resources[$i]["area"] = $modelArea->getName($id_space, $resources[$i]["id_area"]);
+            $resources[$i]["category"] = $modelCategory->getName($id_space, $resources[$i]["id_category"]);
+            if ($resources[$i]["category"] === "") {
+                $_SESSION["flash"] = ResourcesTranslator::NoCategoryWarning($resources[$i]['name'], $lang);
+            }
         }
 
         $tableHtml = $table->view($resources, $headers);
@@ -103,7 +105,7 @@ class ResourcesinfoController extends CoresecureController {
         $modelResource = new ResourceInfo();
         $data = $modelResource->getDefault();
         if ($id > 0) {
-            $data = $modelResource->get($id);
+            $data = $modelResource->get($id_space, $id);
         }
         // form
 
@@ -112,8 +114,8 @@ class ResourcesinfoController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
         $form->addText("brand", ResourcesTranslator::Brand($lang), false, $data["brand"]);
         $form->addText("type", ResourcesTranslator::Type($lang), false, $data["type"]);
-        $form->addSelect("id_category", ResourcesTranslator::Category($lang), $choicesC, $choicesidC, $data["id_category"]);
-        $form->addSelect("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
+        $form->addSelectMandatory("id_category", ResourcesTranslator::Category($lang), $choicesC, $choicesidC, $data["id_category"]);
+        $form->addSelectMandatory("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
         $form->addNumber("display_order", ResourcesTranslator::Display_order($lang), false, $data["display_order"]);
         $form->addUpload("image", CoreTranslator::Image($lang), $data["image"]);
         $form->addText("description", ResourcesTranslator::Description($lang), false, $data["description"], true);
@@ -125,7 +127,16 @@ class ResourcesinfoController extends CoresecureController {
         $form->setColumnsWidth(2, 10);
 
         if ($form->check()) {
-            $id = $modelResource->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("brand"), $form->getParameter("type"), $form->getParameter("description"), $form->getParameter("long_description"), $form->getParameter("id_category"), $form->getParameter("id_area"), $id_space, $form->getParameter("display_order"));
+            $id = $modelResource->set($form->getParameter("id"),
+            $form->getParameter("name"),
+            $form->getParameter("brand"),
+            $form->getParameter("type"),
+            $form->getParameter("description"),
+            $form->getParameter("long_description"),
+            $form->getParameter("id_category"),
+            $form->getParameter("id_area"),
+            $id_space,
+            $form->getParameter("display_order"));
             
             // upload image
             $target_dir = "data/resources/";
@@ -135,7 +146,7 @@ class ResourcesinfoController extends CoresecureController {
                 $url = $id . "." . $ext;
                 FileUpload::uploadFile($target_dir, "image", $url);
 
-                $modelResource->setImage($id, $target_dir . $url);
+                $modelResource->setImage($id_space, $id, $target_dir . $url);
             }
             
             $this->redirect("resources/" . $id_space);
@@ -162,18 +173,18 @@ class ResourcesinfoController extends CoresecureController {
         );
 
         $modelResource = new ResourceInfo();
-        $resourceInfo = $modelResource->get($id);
+        $resourceInfo = $modelResource->get($id_space, $id);
 
         $modelEvent = new ReEvent();
         $modelUser = new CoreUser();
         $modelState = new ReState();
         $modelEventType = new ReEventType();
-        $events = $modelEvent->getByResource($id);
+        $events = $modelEvent->getByResource($id_space, $id);
 
         for ($i = 0; $i < count($events); $i++) {
             $events[$i]["user"] = $modelUser->getUserFUllName($events[$i]["id_user"]);
-            $events[$i]["eventtype"] = $modelEventType->getName($events[$i]["id_eventtype"]);
-            $events[$i]["state"] = $modelState->getName($events[$i]["id_state"]);
+            $events[$i]["eventtype"] = $modelEventType->getName($id_space, $events[$i]["id_eventtype"]);
+            $events[$i]["state"] = $modelState->getName($id_space, $events[$i]["id_state"]);
             $events[$i]["date"] = CoreTranslator::dateFromEn($events[$i]["date"], $lang);
         }
 
@@ -207,12 +218,12 @@ class ResourcesinfoController extends CoresecureController {
         $modelUser = new CoreUser();
         $modelState = new ReState();
         $modelEventType = new ReEventType();
-        $events = $modelEvent->getByResource($id);
+        $events = $modelEvent->getByResource($id_space, $id);
 
         for ($i = 0; $i < count($events); $i++) {
             $events[$i]["user"] = $modelUser->getUserFUllName($events[$i]["id_user"]);
-            $events[$i]["eventtype"] = $modelEventType->getName($events[$i]["id_eventtype"]);
-            $events[$i]["state"] = $modelState->getName($events[$i]["id_state"]);
+            $events[$i]["eventtype"] = $modelEventType->getName($id_space, $events[$i]["id_eventtype"]);
+            $events[$i]["state"] = $modelState->getName($id_space, $events[$i]["id_state"]);
             $events[$i]["date"] = CoreTranslator::dateFromEn($events[$i]["date"], $lang);
         }
 
@@ -227,7 +238,7 @@ class ResourcesinfoController extends CoresecureController {
     public function deleteeventAction($id_space, $id_resource, $id) {
 
         $modelEvent = new ReEvent();
-        $modelEvent->delete($id);
+        $modelEvent->delete($id_space, $id);
 
         $this->redirect("resourcesevents/" . $id_space . "/" . $id_resource);
     }
@@ -236,10 +247,10 @@ class ResourcesinfoController extends CoresecureController {
 
         $lang = $this->getLanguage();
         $formEvent = $this->createEventForm($id_space, $id_resource, $id_event, $lang, false);
-        $filesTable = $this->createFilesTable($id_event, $lang);
+        $filesTable = $this->createFilesTable($id_space, $id_event, $lang);
 
         $modelResource = new ResourceInfo();
-        $resourceInfo = $modelResource->get($id_resource);
+        $resourceInfo = $modelResource->get($id_space, $id_resource);
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formEvent" => $formEvent->getHtml($lang),
             "filesTable" => $filesTable, "resourceInfo" => $resourceInfo, "id_event" => $id_event));
@@ -254,7 +265,7 @@ class ResourcesinfoController extends CoresecureController {
 
         if ($id_event == 0) {
             $modelEvent = new ReEvent();
-            $id_event = $modelEvent->addDefault($id_resource, $_SESSION["id_user"]);
+            $id_event = $modelEvent->addDefault($id_space, $id_resource, $_SESSION["id_user"]);
             $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
             return;
         }
@@ -265,7 +276,7 @@ class ResourcesinfoController extends CoresecureController {
         if ($formEvent->check()) {
 
             $modelEvent = new ReEvent();
-            $modelEvent->set($id_event, $id_resource, CoreTranslator::dateToEn($formEvent->getParameter("date"), $lang), $formEvent->getParameter("id_user"), $formEvent->getParameter("id_eventtype"), $formEvent->getParameter("id_state"), $formEvent->getParameter("comment"));
+            $modelEvent->set($id_space , $id_event, $id_resource, CoreTranslator::dateToEn($formEvent->getParameter("date"), $lang), $formEvent->getParameter("id_user"), $formEvent->getParameter("id_eventtype"), $formEvent->getParameter("id_state"), $formEvent->getParameter("comment"));
 
             $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
             return;
@@ -273,7 +284,7 @@ class ResourcesinfoController extends CoresecureController {
         $formDownload = $this->createDownloadForm($id_space, $id_resource, $id_event, $lang);
 
         $formDownloadHtml = $formDownload->getHtml($lang);
-        $filesTable = $this->createFilesTable($id_event, $lang);
+        $filesTable = $this->createFilesTable($id_space, $id_event, $lang);
 
         $headerInfo["curentTab"] = "events";
         $headerInfo["resourceId"] = $id_resource;
@@ -294,13 +305,13 @@ class ResourcesinfoController extends CoresecureController {
             FileUpload::uploadFile($target_dir, "file_url", $id_event . "_" . $ext);
 
             $modelEventData = new ReEventData();
-            $modelEventData->addFile($id_event, $target_dir . $id_event . "_" . $ext);
+            $modelEventData->addFile($id_space, $id_event, $target_dir . $id_event . "_" . $ext);
         }
 
         $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
     }
 
-    protected function createFilesTable($id_event, $lang) {
+    protected function createFilesTable($id_space, $id_event, $lang) {
 
         $table = new TableView();
         $table->setTitle(ResourcesTranslator::Files($lang), 3);
@@ -309,7 +320,7 @@ class ResourcesinfoController extends CoresecureController {
 
         $headers = array("name" => CoreTranslator::Name($lang));
         $modelEventData = new ReEventData();
-        $events = $modelEventData->getByEvent($id_event);
+        $events = $modelEventData->getByEvent($id_space, $id_event);
         for ($i = 0; $i < count($events); $i++) {
             $events[$i]["name"] = str_replace("data/resources/events/" . $id_event . "_", "", $events[$i]["url"]);
         }
@@ -335,7 +346,7 @@ class ResourcesinfoController extends CoresecureController {
 
         $modelEvent = new ReEvent();
         $modelUser = New CoreUser();
-        $users = $modelUser->getActiveUsersInfo(1);
+        $users = $modelUser->getSpaceActiveUsers($id_space);
         $choicesU = array();
         $choicesidU = array();
         foreach ($users as $user) {
@@ -370,12 +381,12 @@ class ResourcesinfoController extends CoresecureController {
                 "comment" => ""
             );
         } else {
-            $data = $modelEvent->get($id_event);
+            $data = $modelEvent->get($id_space, $id_event);
             $data["date"] = CoreTranslator::dateFromEn($data["date"], $lang);
         }
 
         $form = new Form($this->request, "editevent");
-        $form->addSeparator(ResourcesTranslator::Edit_event_for($lang) . " " . $modelResources->getName($id_resource));
+        $form->addSeparator(ResourcesTranslator::Edit_event_for($lang) . " " . $modelResources->getName($id_space, $id_resource));
         $form->addDate("date", CoreTranslator::Date($lang), true, CoreTranslator::dateFromEn($data["date"], $lang));
         $form->addHidden("id_resource", $id_resource);
         $form->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $data["id_user"]);
@@ -395,7 +406,7 @@ class ResourcesinfoController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $modelResps = new ReResps();
-        $respsData = $modelResps->getResps($id_resource);
+        $respsData = $modelResps->getResps($id_space, $id_resource);
         $resps = array();
         $rstatus = array();
         foreach ($respsData as $r) {
@@ -404,7 +415,7 @@ class ResourcesinfoController extends CoresecureController {
         }
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getActiveUsersInfo(1);
+        $users = $modelUser->getSpaceActiveUsers();
         $choicesU = array();
         $choicesidU = array();
         foreach ($users as $user) {
@@ -440,9 +451,9 @@ class ResourcesinfoController extends CoresecureController {
             $id_statuss = $this->request->getParameter("id_status");
 
             for ($i = 0; $i < count($id_users); $i++) {
-                $modelResps->setResp($id_resource, $id_users[$i], $id_statuss[$i]);
+                $modelResps->setResp($id_space, $id_resource, $id_users[$i], $id_statuss[$i]);
             }
-            $modelResps->clean($id_resource, $id_users);
+            $modelResps->clean($id_space ,$id_resource, $id_users);
             $this->redirect("resourcesresp/" . $id_space . "/" . $id_resource);
             return;
         }
@@ -456,7 +467,7 @@ class ResourcesinfoController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $modelResource = new ResourceInfo();
-        $modelResource->delete($id);
+        $modelResource->delete($id_space, $id);
 
         $this->redirect("resources/" . $id_space);
     }

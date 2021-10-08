@@ -56,7 +56,7 @@ class MailerController extends CoresecureController {
             $modelResource = new ResourceInfo();
             $resourcesList = array();
             foreach ($areasList as $area) {
-                $resourcesList[] = $modelResource->resourceIDNameForArea($area["id"]);
+                $resourcesList[] = $modelResource->resourceIDNameForArea($id_space, $area["id"]);
             }
         }
 
@@ -82,11 +82,11 @@ class MailerController extends CoresecureController {
             if ($toEx[0] == "a") { // area
                 // get all the adresses of users who book in this area
                 $modelCalEntry = new BkCalendarEntry();
-                $to = $modelCalEntry->getEmailsBookerArea($toEx[1]);
+                $to = $modelCalEntry->getEmailsBookerArea($id_space, $toEx[1]);
             } elseif ($toEx[0] == "r") { // resource
                 // get all the adresses of users who book in this resource
                 $modelCalEntry = new BkCalendarEntry();
-                $to = $modelCalEntry->getEmailsBookerResource($toEx[1]);
+                $to = $modelCalEntry->getEmailsBookerResource($id_space, $toEx[1]);
             }
         }
 

@@ -44,7 +44,7 @@ class FixativeController extends CoresecureController {
 
         // get isotype info
         $lang = $this->getLanguage();
-        $fixative = $this->model->get($id);
+        $fixative = $this->model->get($id_space,$id);
         
         $form = new Form($this->request, "fixativeeditform");
         $form->setTitle("Modifier fixative");
@@ -73,7 +73,7 @@ class FixativeController extends CoresecureController {
     public function deleteAction($id_space, $id) {
 
         // get source info
-        $this->model->delete($id);
+        $this->model->delete($id_space,$id);
         $this->redirect("fixative/" . $id_space);
     }
 

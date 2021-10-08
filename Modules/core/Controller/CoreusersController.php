@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Errors.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
@@ -48,7 +49,9 @@ class CoreusersController extends CoresecureController {
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll();
         $modelStatus = new CoreStatus();
+        $users = [];
         for ($i = 0; $i < count($data); $i++) {
+            $users[] = $data[$i];
             $data[$i]["status"] = CoreTranslator::Translate_status($lang, $modelStatus->getStatusName($data[$i]["status_id"]));
             if ($data[$i]["is_active"] == 1) {
                 $data[$i]["is_active"] = CoreTranslator::yes($lang);
@@ -57,10 +60,13 @@ class CoreusersController extends CoresecureController {
             }
 
             $data[$i]["date_last_login"] = CoreTranslator::dateFromEn($data[$i]["date_last_login"], $lang);
+            unset($data[$i]['password']);
+            unset($data[$i]['apikey']);
+
         }
 
         $tableHtml = $table->view($data, $header);
-        return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang));
+        return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang, "data" => ["users" => $users]));
     }
 
     public function editAction($id) {
@@ -80,16 +86,15 @@ class CoreusersController extends CoresecureController {
             $form->setTitle(CoreTranslator::Add_User($lang));
         }
         $form->addHidden("id", $user["id"]);
-        // #105: add readonly
         $isLoginLocked = (!$id) ? false : true;
-        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked);
+        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked, checkUnicity: !$isLoginLocked);
         if (!$id) {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
             $form->addPassword("pwdconfirm", CoreTranslator::Password($lang));
         }
-        $form->addText("name", CoreTranslator::Name($lang), false, $user["name"]);
-        $form->addText("firstname", CoreTranslator::Firstname($lang), false, $user["firstname"]);
-        $form->addEmail("email", CoreTranslator::Email($lang), false, $user["email"]);
+        $form->addText("name", CoreTranslator::Name($lang), true, $user["name"]);
+        $form->addText("firstname", CoreTranslator::Firstname($lang), true, $user["firstname"]);
+        $form->addEmail("email", CoreTranslator::Email($lang), true, $user["email"], true);
 
         $modelStatus = new CoreStatus();
         $status = $modelStatus->allStatusInfo();
@@ -119,16 +124,45 @@ class CoreusersController extends CoresecureController {
         }
         $script = "";
         if ($form->check()) {
-            if (!$id && $modelUser->isLogin($this->request->getParameter('login'))) {
-                $script .= '<script language="javascript">';
-                $script .= 'alert("' . CoreTranslator::LoginAlreadyExists($lang) . '")';
-                $script .= '</script>';
-            } else {
+            $canEditUser = true;
+            if (!$id) {
+                if ($modelUser->isLogin($this->request->getParameter('login'))) {
+                    $canEditUser = false;
+                    $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
+                    $_SESSION["flashClass"] = "danger";
+                }
+                if(!$modelUser->isEmailFormat($form->getParameter("email"))) {
+                    // if email already exists, warn user
+                    $canEditUser = false;
+                    $_SESSION["flash"] = CoreTranslator::EmailInvalid($lang);
+                    $_SESSION["flashClass"] = "danger";
+                }
+                if($modelUser->isEmail($form->getParameter("email"))) {
+                    // if email already exists, warn user
+                    $canEditUser = false;
+                    $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                    $_SESSION["flashClass"] = "danger";
+                }
+            }
+
+            if ($modelUser->isEmail($form->getParameter("email")) && (($form->getParameter("email") != $user["email"]) || false )) {
+                // if email, excepting user's one, already exists, warn user
+                $canEditUser = false;
+                $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                $_SESSION["flashClass"] = "danger";
+            }
+
+            if ($canEditUser) {
+                $_SESSION["flash"] = (!$id)
+                    ? CoreTranslator::AccountHasBeenCreated($lang)
+                    : CoreTranslator::AccountHasBeenModified($lang);
+                $_SESSION["flashClass"] = "success";
                 $id_user = $this->editQuery($form, $modelUser, $lang);
                 $user = $modelUser->getInfo($id_user);
                 $this->redirect("coreusers", [], ['user' => $user]);
                 return;
             }
+                
         }
         if ($id > 0 && $formPwd->check()) {
             $this->editPwdQuery($form, $modelUser, $lang);
@@ -140,7 +174,8 @@ class CoreusersController extends CoresecureController {
         if ($id > 0) {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
-        return $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+
+        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
     }
 
     protected function editPwdQuery($formPwd, $modelUser, $lang) {
@@ -148,10 +183,13 @@ class CoreusersController extends CoresecureController {
         $pwd = $formPwd->getParameter("pwd");
         $pwdconfirm = $formPwd->getParameter("pwdconfirm");
         if ($pwd != $pwdconfirm) {
-            throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
+            $_SESSION['flash'] = CoreTranslator::TheTwoPasswordAreDifferent($lang);
+            $_SESSION["flashClass"] = "danger";
+        } else {
+            $modelUser->changePwd($formPwd->getParameter("id"), $pwd);
+            $_SESSION['flash'] = CoreTranslator::PasswordHasBeenChanged($lang);
+            $_SESSION["flashClass"] = "success";
         }
-
-        $modelUser->changePwd($formPwd->getParameter("id"), $pwd);
     }
 
     protected function editQuery($form, $modelUser, $lang) {
@@ -161,14 +199,31 @@ class CoreusersController extends CoresecureController {
             $pwd = $form->getParameter("pwd");
             $pwdconfirm = $form->getParameter("pwdconfirm");
             if ($pwd != $pwdconfirm) {
-                throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
+                $_SESSION['flash'] = CoreTranslator::TheTwoPasswordAreDifferent($lang);
+                $_SESSION["flashClass"] = "danger";
+                $this->redirect("coreusers");
+            } else {
+                $id = $modelUser->add(
+                    $form->getParameter("login"),
+                    $form->getParameter("pwd"),
+                    $form->getParameter("name"),
+                    $form->getParameter("firstname"),
+                    $form->getParameter("email"),
+                    $form->getParameter("status_id"),
+                    $form->getParameter("date_end_contract"),
+                    $form->getParameter("is_active")
+                );
             }
-            $id = $modelUser->add(
-                $form->getParameter("login"), $form->getParameter("pwd"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
-            );
         } else {
             $modelUser->edit(
-                    $id, $form->getParameter("login"), $form->getParameter("name"), $form->getParameter("firstname"), $form->getParameter("email"), $form->getParameter("status_id"), $form->getParameter("date_end_contract"), $form->getParameter("is_active")
+                $id,
+                $form->getParameter("login"),
+                $form->getParameter("name"),
+                $form->getParameter("firstname"),
+                $form->getParameter("email"),
+                $form->getParameter("status_id"),
+                $form->getParameter("date_end_contract"),
+                $form->getParameter("is_active")
             );
         }
         return $id;
@@ -226,7 +281,7 @@ class CoreusersController extends CoresecureController {
             return;
         }
 
-        return $this->render(array(
+        $this->render(array(
             "lang" => $lang,
             "formHtml" => $formPwd->getHtml($lang)
         ));
@@ -243,11 +298,72 @@ class CoreusersController extends CoresecureController {
             if ($pwd == $pwdc) {
                 $modelUser->changePwd($id, $pwd);
             } else {
-                throw new Exception(CoreTranslator::TheTwoPasswordAreDifferent($lang));
+                throw new PfmException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
             }
         } else {
-            throw new Exception(CoreTranslator::The_curent_password_is_not_correct($lang));
+            throw new PfmException(CoreTranslator::The_curent_password_is_not_correct($lang), 403);
         }
+    }
+
+    /**
+     * 
+     * Generates form for users to choose their default language
+     * 
+     * @return view default language editing screen
+     * 
+     */
+    public function languageeditAction() {
+        // language form
+        $id_user = $_SESSION["id_user"];
+        $userSettingsModel = new CoreUserSettings();
+
+        $lang = $this->getLanguage();
+        $choicesview = array(CoreTranslator::English($lang), CoreTranslator::French($lang));
+        $choicesidview = array("en", "fr");
+
+        $form = new Form($this->request, "languageForm");
+        $form->setTitle(CoreTranslator::Default_language($lang));  
+        $form->addSelect(
+            "language",
+            CoreTranslator::Default_language($lang),
+            $choicesview,
+            $choicesidview,
+            $lang
+        );
+        $form->setButtonsWidth(4, 8);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "coreuserslanguageedit");
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "coresettings");
+
+        if ($form->check()){
+            $lang = $this->request->getParameter("language");
+            $userSettingsModel->setSettings($id_user, "language", $lang);
+            $userSettingsModel->updateSessionSettingVariable();
+            $this->redirect("coresettings");
+        }
+
+        return $this->render(array(
+            'lang' => $lang,
+            'form' => $form->getHtml($lang)
+        ));
+    }
+
+    public function isuniqueAction($type, $value, $id_user) {
+        $modelUser = new CoreUser();
+        $email = "";
+        $login = "";
+        if ($id_user && $id_user > 0) {
+          $user = $modelUser->getInfo($id_user);
+          $email = $user['email'];
+          $login = $user['login'];
+        }
+        if ($type === "email") {
+            $isUnique = !$modelUser->isEmail($value, $email);
+        } else if ($type === "login") {
+            $isUnique = !$modelUser->isLogin($value, $login);
+        } else {
+            $isUnique = "wrong type";
+        }
+        $this->render(['data' => ['isUnique' => $isUnique]]);
     }
 
 }

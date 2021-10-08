@@ -2,6 +2,8 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
+require_once 'Framework/FCache.php';
+
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
@@ -19,9 +21,13 @@ function version()
 $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
+    ->opt('from', 'Force install from release', false, 'integer')
+    ->command('routes')
+    ->description('manage routes')
+    ->opt('reload:r', 'Reload routes from code', false, 'boolean')
     ->command('expire')
     ->description('Expire in spaces old users (according to global config)')
-    ->opt('del:d', 'Remove use from space, else just set as inactive', false, 'boolean')
+    ->opt('del:d', 'Remove user from space, else just set as inactive', false, 'boolean')
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean');
@@ -31,7 +37,14 @@ $args = $cli->parse($argv);
 try {
     switch ($args->getCommand()) {
         case 'install':
-            cliInstall();
+            cliInstall($args->getOpt('from', -1));
+            break;
+        case 'routes':
+            if($args->getOpt('reload')) {
+                $modelCache = new FCache();
+                $modelCache->freeTableURL();
+                $modelCache->load();
+            }
             break;
         case 'expire':
             $logger = Configuration::getLogger();
@@ -58,12 +71,16 @@ try {
     Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
 }
 
-function cliInstall() {
+function cliInstall($from=-1) {
     $logger = Configuration::getLogger();
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
     // Create db release table if not exists
     $cdb = new CoreDB();
+    $freshInstall = $cdb->isFreshInstall();
+    if($from == -1 && !$freshInstall) {
+        $from = 0;
+    }
     $cdb->createTable();
 
     $modelCreateDatabase = new CoreInstall();
@@ -105,7 +122,7 @@ function cliInstall() {
     }
 
     // update db release and launch upgrade
-    $cdb->upgrade();
+    $cdb->upgrade($from);
 
     $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 
