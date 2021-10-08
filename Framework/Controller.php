@@ -66,6 +66,23 @@ abstract class Controller {
     }
 
     /**
+     * Return json encoded data with expected content-type
+     */
+    protected function api($data = array()) {
+        header('Content-Type: application/json');
+        if($data) {
+            ob_start();
+            try {
+                echo json_encode($data);
+            } catch(Exception $e) {
+                Configuration::getLogger()->error('[api] json error', ['error', $e->getMessage()]);
+            }
+            ob_end_flush();
+            flush();
+        }
+    }
+
+    /**
      * Define the default action
      */
     //public abstract function indexAction();
