@@ -592,27 +592,32 @@ class CoreDB extends Model {
             $updateFromRelease = $oldRelease;
             $updateToRelease = $updateFromRelease + 1;
             $updateOK = true;
-            while ($updateFromRelease < DB_VERSION) {
-                Configuration::getLogger()->info("[db] Migrating", ["from" => $updateFromRelease, "to" => $updateToRelease]);
-                $upgradeMethod = "upgrade_v".$updateFromRelease."_v".$updateToRelease;
-                if (method_exists($this, $upgradeMethod)) {
-                    try {
-                        $this->$upgradeMethod();
-                    } catch(Throwable $e) {
-                        $updateOK = false;
-                        Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease, "error" => $e]);
-                        break;
+            try {
+                while ($updateFromRelease < DB_VERSION) {
+                    Configuration::getLogger()->info("[db] Migrating", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+                    $upgradeMethod = "upgrade_v".$updateFromRelease."_v".$updateToRelease;
+                    if (method_exists($this, $upgradeMethod)) {
+                        try {
+                            $this->$upgradeMethod();
+                        } catch(Throwable $e) {
+                            $updateOK = false;
+                            Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease, "error" => $e]);
+                            break;
+                        }
+                    } else {
+                        Configuration::getLogger()->info("[db] No migration available", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                     }
-                } else {
-                    Configuration::getLogger()->info("[db] No migration available", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+
+                    Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
+                    $sql = "update pfm_db set version=? where id=?";
+                    $this->runRequest($sql, array($updateToRelease, $release['id']));
+
+                    $updateFromRelease = $updateToRelease;
+                    $updateToRelease = $updateFromRelease + 1;
                 }
-
-                Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
-                $sql = "update pfm_db set version=? where id=?";
-                $this->runRequest($sql, array($updateToRelease, $release['id']));
-
-                $updateFromRelease = $updateToRelease;
-                $updateToRelease = $updateFromRelease + 1;
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error("[db] migration error", ["error" => $e->getMessage()]);
+                $updateOK = false;
             }
             if ($updateOK) {
                 Configuration::getLogger()->info("[db] database migration over");
