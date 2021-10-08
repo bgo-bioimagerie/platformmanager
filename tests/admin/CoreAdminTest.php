@@ -155,7 +155,7 @@ class CoreTest extends TestCase
             }
         }
         $this->assertTrue($userId > 0);
-        self::$allUsers[] = ["name" => "user1", "id" => intval($userId)];
+        self::$allUsers[] = ["name" => $userName, "id" => intval($userId)];
 
         $sm = new CoreSpace();
         $role = $sm->getUserSpaceRole($space['id'], $userId);
@@ -168,7 +168,11 @@ class CoreTest extends TestCase
         $this->asAdmin();
 
         $space = self::$allSpaces[0];
-        $user = self::$allUsers[0];
+        $user = self::$allUsers[1];
+        Configuration::getLogger()->error('??', [
+            'users' => self::$allUsers,
+            'spaces' => self::$allSpaces
+        ]);
         $pm = new CorePendingAccount();
         $pendings = $pm->getBySpaceIdAndUserId($space['id'], $user['id']);
 

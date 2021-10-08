@@ -40,6 +40,16 @@ define("DB_VERSION", 3);
  */
 class CoreDB extends Model {
 
+    public function dropAll() {
+        $sql = "show tables";
+        $tables = $this->runRequest($sql)->fetchAll();
+        foreach ($tables as $tb) {
+            $table = $tb[0];
+            Configuration::getLogger()->warning('Drop', ["table" => $table]);
+            $sql = "delete from ".$table;
+            $this->runRequest($sql);
+        }
+    }
 
     public function isFreshInstall() {
         $sql = "show tables";
@@ -50,7 +60,6 @@ class CoreDB extends Model {
         }
         return $freshInstall;
     }
-
 
     public function upgrade_v0_v1() {
 
