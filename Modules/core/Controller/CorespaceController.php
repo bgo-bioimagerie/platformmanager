@@ -38,6 +38,16 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
+     * List all spaces
+     * API call only
+     */
+    public function spacesAction() {
+        $sm = new CoreSpace();
+        $spaces = $sm->getSpaces('id');
+        $this->api(["spaces" => $spaces]);
+    }
+
+    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

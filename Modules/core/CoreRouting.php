@@ -10,6 +10,7 @@ class CoreRouting extends Routing{
         $router->map('GET', '/corespaceaccess/[i:id_space]/unimpersonate', 'core/corespaceaccess/unimpersonate', 'user_unimpersonate');
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
         $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
+        $router->map('GET', '/corespaces', 'core/corespace/spaces', 'core_space_list');
     }
     
     public function listRoutes(){
