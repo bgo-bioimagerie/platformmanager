@@ -105,3 +105,4 @@ And .env file should define (according to variables used):
 * PFM_HELPDESK_IMAP_SERVER=x.y.z
 * PFM_HELPDESK_IMAP_USER=yyyy
 * PFM_HELPDESK_IMAP_PASSWORD=xxxxx
+

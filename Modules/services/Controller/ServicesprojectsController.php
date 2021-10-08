@@ -183,6 +183,7 @@ class ServicesprojectsController extends CoresecureController {
                     !($entriesArray[$i]["time_limit"] == null || $entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00")
                 )
             ) {
+
                 $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
                 $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
 
@@ -199,6 +200,7 @@ class ServicesprojectsController extends CoresecureController {
 
             // get the pricing color
             $clientAccounts = $modelClient->get($id_space ,$entriesArray[$i]["id_resp"]);
+
             $entriesArray[$i]["resp_name"] = $clientAccounts["name"];
             $pricingInfo = $modelPricing->get($id_space ,$clientAccounts["pricing"]);
             
