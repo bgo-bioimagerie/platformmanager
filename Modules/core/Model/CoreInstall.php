@@ -40,6 +40,9 @@ define("DB_VERSION", 3);
  */
 class CoreDB extends Model {
 
+    /**
+     * Drops all tables content
+     */
     public function dropAll() {
         $sql = "show tables";
         $tables = $this->runRequest($sql)->fetchAll();
