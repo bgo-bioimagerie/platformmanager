@@ -169,10 +169,6 @@ class CoreTest extends TestCase
 
         $space = self::$allSpaces[0];
         $user = self::$allUsers[1];
-        Configuration::getLogger()->error('??', [
-            'users' => self::$allUsers,
-            'spaces' => self::$allSpaces
-        ]);
         $pm = new CorePendingAccount();
         $pendings = $pm->getBySpaceIdAndUserId($space['id'], $user['id']);
 
