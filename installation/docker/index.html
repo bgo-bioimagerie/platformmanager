@@ -1006,7 +1006,7 @@ instances.</p>
 <li><a class="gdoc-markdown__link" href="mailto:PFM_ADMIN_EMAIL=admin@pfm.org">PFM_ADMIN_EMAIL=admin@pfm.org</a></li>
 <li>PFM_ADMIN_APIKEY=123456</li>
 <li>PFM_INFLUXDB_TOKEN=123456</li>
-<li>PFM_OPENID=  # comma separated list of supported providers</li>
+<li>PFM_OPENID=  # comma separated list of supported providers, if empty no external auth</li>
 <li>If PFM_OPENID is defined:
 <ul>
 <li>PFM_OPENID_GOOGLE_URL=https://oauth2.googleapis.com/token</li>
@@ -1017,9 +1017,9 @@ instances.</p>
 </li>
 <li>MYSQL_ROOT_PASSWORD=XXX</li>
 <li>MYSQL_PASSWORD=XXX</li>
-<li>PFM_JWT_SECRET=xxxx</li>
+<li>PFM_JWT_SECRET=xxxx  # used for jwt messages in different actions</li>
 <li>PFM_HELPDESK_EMAIL=myemail@mydomain</li>
-<li>PFM_HELPDESK_IMAP_SERVER=x.y.z</li>
+<li>PFM_HELPDESK_IMAP_SERVER=x.y.z  # keep empty if not using helpdesk</li>
 <li>PFM_HELPDESK_IMAP_USER=yyyy</li>
 <li>PFM_HELPDESK_IMAP_PASSWORD=xxxxx</li>
 </ul>
