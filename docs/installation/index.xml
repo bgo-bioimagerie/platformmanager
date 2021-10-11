@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Installation on Platform Manager</title>
+    <link>https://bgo-bioimagerie.github.io/platformmanager/installation/</link>
+    <description>Recent content in Installation on Platform Manager</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Jun 2021 18:13:29 +0200</lastBuildDate><atom:link href="https://bgo-bioimagerie.github.io/platformmanager/installation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Requirements</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/</link>
+      <pubDate>Wed, 23 Jun 2021 15:52:39 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/</guid>
+      <description>Install from source     Database: mysql &amp;gt; 5.6, tested on 8 PHP:  version &amp;gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support   Apache server with:  PHP enabled rewrite, headers, proxy_http modules use of .htaccess    Apache should also have specific pfm configuration:
+&amp;lt;Location /update&amp;gt; Order deny,allow Deny from all Allow from 127.0.0.1 &amp;lt;/Location&amp;gt; &amp;lt;Directory &amp;quot;^${docroot}/data&amp;quot;&amp;gt; &amp;lt;FilesMatch &amp;quot;.</description>
+    </item>
+    
+    <item>
+      <title>Source</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/source/</link>
+      <pubDate>Wed, 23 Jun 2021 18:13:29 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/source/</guid>
+      <description>Install from source code    Clone git repository from https://github.com/bgo-bioimagerie/platformmanager.
+Stable code is in master branch.
+Releases can also be download from https://github.com/bgo-bioimagerie/platformmanager/releases.
+Code contains some .htaccess to limit access to specific directories. If not using Apache as frontend, you need to restrict access yourself based on .htaccess files definition.
+In Config, define a conf.ini (see Configuration) with appropriate setup.</description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/docker/</link>
+      <pubDate>Wed, 23 Jun 2021 15:51:32 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/docker/</guid>
+      <description>Using docker    setup    Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
+Update docker-compose.yml file environment sections with your setup.
+Some variables are defined in a .env file for sensitive data.
+Example:
+PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx  Exemple docker-compose.yml use local docker volumes to save database etc. Only local host mounted volume is data directory which contains space upload files, which should be writable by container www-data user and shared among pfm instances.</description>
+    </item>
+    
+    <item>
+      <title>Upgrade</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/</link>
+      <pubDate>Wed, 23 Jun 2021 16:05:10 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/</guid>
+      <description>For first installation, and for any later upgrade, at code root location:
+php cli/phm-cli.php install  This will setup database i.e create tables, migrate/update schemas etc..</description>
+    </item>
+    
+    <item>
+      <title>Configuration</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/installation/configuration/</link>
+      <pubDate>Wed, 23 Jun 2021 16:05:10 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/configuration/</guid>
+      <description>General configuration    Configuration file, located in Config/conf.ini defines base configuration and the list of modules globally activated.
+Example file is available with conf.ini.sample.
+Mandatory sections are:
+ Installation: base setup with public url access and optional url prefix Modules: list of modules DB: mysql connection information Admin: super administrator information (created at install if not exists), admin secrets (password, apikey) should not be exposed in config file and should rather be defined via env variables (see below).</description>
+    </item>
+    
+  </channel>
+</rss>

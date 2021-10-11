@@ -105,7 +105,7 @@ class MailerTranslator {
         if ($lang == "fr") {
             return "Le message a bien été envoyé. Vous devriez en recevoir une copie par email.";
         }
-        return "Message has been sent. You should recieve a copy of this email in your email box";
+        return "Message has been sent. You should receive a copy of this email in your email box";
     }
 
     public static function Message_Not_Send($lang) {

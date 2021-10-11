@@ -86,6 +86,30 @@ class CoreFiles extends Model {
         return sprintf("%s/data/files/%s/%s/%s", $rootDir, $file['id_space'], $file['module'], $this->internalName($file));
     }
 
+    /*
+    * Copy file located at $path (uploaded, saved, ..) to expected location
+    */
+    public function copyFile($file, $path) {
+        $dest = $this->path($file);
+        $destDirName = dirname($dest);
+        if(!is_dir($destDirName)) {
+            mkdir($destDirName, 0777, true);
+        }
+        copy($path, $dest);
+    }
+
+    /*
+    * Copy data to expected location
+    */
+    public function copyData($file, $data) {
+        $dest = $this->path($file);
+        $destDirName = dirname($dest);
+        if(!is_dir($destDirName)) {
+            mkdir($destDirName, 0777, true);
+        }
+        file_put_contents($dest, $data);
+    }
+
     /**
      * Get file entry
      */
@@ -112,11 +136,11 @@ class CoreFiles extends Model {
      */
     public function set($id, $id_space, $name, $role, $module, $id_user) {
         if (!$id) {
-            $sql = 'INSERT INTO core_files (id_space, name, module, role, id_user) VALUES (?,?,?,?,?)';
+            $sql = 'INSERT INTO core_files (id_space, `name`, module, `role`, id_user) VALUES (?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE core_files SET id_space=?, name=?, module=?, role=?, id_user=?, WHERE id=?';
+            $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=?, WHERE id=?';
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user, $id));
             return $id;
         }

@@ -20,12 +20,12 @@ class CoreSpaceUser extends Model {
 
         $this->tableName = "core_j_spaces_user";
         $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_user", "varchar(100)", "");
-        $this->setColumnsInfo("id_space", "varchar(100)", "");
+        $this->setColumnsInfo("id_user", "int(11)", "");
+        $this->setColumnsInfo("id_space", "int(11)", "");
         $this->setColumnsInfo("status", "varchar(100)", "");
-        $this->setColumnsInfo("date_convention", "date", "0000-00-00");
+        $this->setColumnsInfo("date_convention", "date", "");
         $this->setColumnsInfo("convention_url", "varchar(255)", "");
-        $this->setColumnsInfo("date_contract_end", "date", "0000-00-00");
+        $this->setColumnsInfo("date_contract_end", "date", "");
         $this->primaryKey = "id";
 
     }
@@ -72,11 +72,17 @@ class CoreSpaceUser extends Model {
     }
 
     public function setDateEndContract($id_user, $id_space, $date_contract_end){
+        if($date_contract_end == "") {
+            $date_contract_end = null;
+        }
         $sql = "UPDATE core_j_spaces_user SET date_contract_end=? WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($date_contract_end, $id_user, $id_space));
     }
     
     public function setDateConvention($id_user, $id_space, $date_convention){
+        if($date_convention == "") {
+            $date_convention = null;
+        }
         $sql = "UPDATE core_j_spaces_user SET date_convention=? WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($date_convention, $id_user, $id_space));        
     }

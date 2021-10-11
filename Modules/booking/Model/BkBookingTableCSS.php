@@ -60,7 +60,7 @@ class BkBookingTableCSS extends Model {
     public function getAreaCss($id_space, $id) {
 
         $sql = "select * from bk_bookingcss where id_area=? AND id_space=? AND deleted=0;";
-        $data = $this->runRequest($sql, array($id));
+        $data = $this->runRequest($sql, array($id, $id_space));
         if ($data->rowCount() == 1) {
             return $data->fetch();
         } else {
@@ -139,7 +139,6 @@ class BkBookingTableCSS extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE bk_bookingcss set deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
-        // $sql = "DELETE FROM bk_bookingcss WHERE id = ? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
     }
 

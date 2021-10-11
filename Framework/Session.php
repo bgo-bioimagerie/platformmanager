@@ -61,4 +61,8 @@ class Session {
         }
     }
 
+    public function unset($name) {
+        unset($_SESSION[$name]);
+    }
+
 }

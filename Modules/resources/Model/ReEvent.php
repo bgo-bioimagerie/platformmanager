@@ -36,7 +36,7 @@ class ReEvent extends Model {
         $sql = "SELECT re_state.color as color"
                 . " FROM re_event "
                 . " INNER JOIN re_state ON re_event.id_state = re_state.id"
-                . " WHERE id_resource=? AND id_space=? AND deleted=0 ORDER BY date DESC;";
+                . " WHERE id_resource=? AND re_event.id_space=? AND re_event.deleted=0 ORDER BY date DESC;";
         $data = $this->runRequest($sql, array($id_resource, $id_space))->fetch();
         return  $data ? $data[0] : null;
         
@@ -60,6 +60,9 @@ class ReEvent extends Model {
     }
 
     public function set($id_space, $id, $id_resource, $date, $id_user, $id_eventtype, $id_state, $comment) {
+        if($date == "") {
+            $date = null;
+        }
         if ($this->exists($id_space, $id)) {
             $sql = "UPDATE re_event SET date=?, id_resource=?, id_user=?, id_eventtype=?, id_state=?, comment=? WHERE id=? id_space=? AND deleted=0";
             $id = $this->runRequest($sql, array($date, $id_resource, $id_user, $id_eventtype, $id_state, $comment, $id));

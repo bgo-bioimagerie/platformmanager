@@ -341,24 +341,26 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
             $dateClosed = "";
             $visaClosed = "";
-            if ($proj["date_close"] != "0000-00-00") {
+            if ($proj["date_close"] && $proj["date_close"] != "0000-00-00") {
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
-                $visaClosed = $proj["closed_by_in"];
+                $proj["closed_by_in"] = array_key_exists("closed_by_in", $proj) ?: "n/a";
             }
 
-            $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, $modelOrigin->getName($proj["id_origin"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, $modelOrigin->getName($id_space, $proj["id_origin"]));
             $spreadsheet->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
             $spreadsheet->getActiveSheet()->SetCellValue('K' . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
             
             $outDelay = 0;
-            if ($proj["date_close"] != "" && $proj["date_close"] != "0000-00-00"
-                && $proj["time_limit"] != "" && $proj["time_limit"] != "0000-00-00"    ){
-                if ( $proj["date_close"] > $proj["time_limit"]){
+            if (($proj["date_close"] != "" && $proj["date_close"] != "0000-00-00"
+                && $proj["time_limit"] != "" && $proj["time_limit"] != "0000-00-00")
+                && $proj["date_close"] > $proj["time_limit"]){
                     $outDelay = 1;
-                }
             }
+
+            $proj["sample_cabinet"] = array_key_exists("sample_cabinet", $proj) ?: "n/a";
+
             $spreadsheet->getActiveSheet()->SetCellValue('L' . $curentLine, $outDelay);
             $spreadsheet->getActiveSheet()->SetCellValue('M' . $curentLine, $dateClosed);
             
@@ -491,7 +493,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
 
                     $dateClosed = "";
                     $visaClosed = "";
-                    if ($proj["date_close"] != "0000-00-00") {
+                    if ($proj["date_close"] && $proj["date_close"] != "0000-00-00") {
                         $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
                         $visaClosed = $proj["closed_by_in"];
                     }
@@ -790,7 +792,7 @@ class ServicesstatisticsprojectController extends CoresecureController {
             //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $dateClosed = "";
-            if ($proj["date_close"] != "0000-00-00") {
+            if ($proj["date_close"] && $proj["date_close"] != "0000-00-00") {
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
             }
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 1) . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));

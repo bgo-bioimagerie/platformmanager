@@ -31,14 +31,38 @@ require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 require_once 'Modules/core/Model/CoreHistory.php';
+require_once 'Modules/services/Model/SeServiceType.php';
 
 
-define("DB_VERSION", 3);
+define("DB_VERSION", 4);
 /**
  * Class defining the database version installed
  */
 class CoreDB extends Model {
 
+    /**
+     * Drops all tables content
+     */
+    public function dropAll() {
+        $sql = "show tables";
+        $tables = $this->runRequest($sql)->fetchAll();
+        foreach ($tables as $tb) {
+            $table = $tb[0];
+            Configuration::getLogger()->warning('Drop', ["table" => $table]);
+            $sql = "delete from ".$table;
+            $this->runRequest($sql);
+        }
+    }
+
+    public function isFreshInstall() {
+        $sql = "show tables";
+        $nbTables = $this->runRequest($sql)->rowCount();
+        $freshInstall = true;
+        if($nbTables > 0) {
+            $freshInstall = false;
+        }
+        return $freshInstall;
+    }
 
     public function upgrade_v0_v1() {
 
@@ -102,7 +126,6 @@ class CoreDB extends Model {
             $cu->newApiKey($user['id']);
         }
         Configuration::getLogger()->debug("[users] add apikey done!");
-
 
         Configuration::getLogger()->debug("[adminmenu] remove update");
         $cam = new CoreAdminMenu();
@@ -258,9 +281,14 @@ class CoreDB extends Model {
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
                 $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
-                $sql = "UPDATE se_service_types SET id_space=? WHERE id=?";
-                $this->runRequest($sql, array($res['id_space'], $res['type_id']));
+                // update static array to match db state
+                $sem = new SeServiceType();
+                $sem->updateServiceTypesReferences();
                 $sql = "UPDATE se_order_service SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_project_service SET id_space=? WHERE id_service=?";
+                $this->runRequest($sql, array($res['id_space'], $res['id']));
+                $sql = "UPDATE se_purchase_item SET id_space=? WHERE id_service=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
         }
@@ -372,39 +400,106 @@ class CoreDB extends Model {
             $eventHandler->calentryImport();
             Configuration::getLogger()->debug('[stats] import calentry stats, done!');
 
-            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user');
-            $statHandler = new Statistics();
-            $pfmOrg = Configuration::get('influxdb_org', 'pfm');
-            $statHandler->createDB($pfmOrg);
+            Configuration::getLogger()->debug("[stats] import invoice stats");
+            $statHandler = new EventHandler();
+            $statHandler->invoiceImport();
+            Configuration::getLogger()->debug('[stats] import invoice stats, done!');
+	    }
 
-            $eventHandler->spaceCount(null);
-            // create org
-            $g = new Grafana();
-            $g->createOrg($pfmOrg);
-            $u = new CoreUser();
-            $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
-            $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);
-            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user, done!');
+        Configuration::getLogger()->debug('[core_users] fix column types');
+        $sql = "alter table core_users modify phone varchar(255)";
+        $this->runRequest($sql);
+        $sql = "alter table core_users modify date_end_contract date";
+        $this->runRequest($sql);
+        $sql = "update core_users set date_end_contract=null where date_end_contract='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "alter table core_users modify date_last_login date";
+        $this->runRequest($sql);
+        $sql = "update core_users set date_last_login=null where date_last_login='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "alter table core_users modify apikey varchar(30)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[core_users] fix column types, done!');
 
-            // import managers
-            Configuration::getLogger()->debug('[stats] import managers to grafana');
-            $s = new CoreSpace();
-            $spaces = $s->getSpaces('id');
-            foreach($spaces as $space) {
-                $csu = new CoreSpaceUser();
-                $managers = $csu->managersOrAdmin($space['id']);
-                $g = new Grafana();
-                foreach($managers as $manager) {
-                    $u = new CoreUser();
-                    $user = $u->getInfo($manager['id']);
-                    $g->addUser($space['shortname'], $user['login'], $user['apikey']);
-                }
-                $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
-            }
-            Configuration::getLogger()->debug('[stats] import managers to grafana, done!');
+        Configuration::getLogger()->debug('[core_j_spaces_user] fix column types');
+        $sql = "alter table core_j_spaces_user modify id_user int(11) NOT NULL";
+        $this->runRequest($sql);
+        $sql = "alter table core_j_spaces_user modify id_space int(11) NOT NULL";
+        $this->runRequest($sql);
+        $sql = "alter table core_j_spaces_user modify convention_url varchar(255)";
+        $this->runRequest($sql);
+        $sql = "alter table core_j_spaces_user modify date_contract_end date";
+        $this->runRequest($sql);
+        $sql = "alter table core_j_spaces_user modify date_convention date";
+        $this->runRequest($sql);
+        $sql = "update core_j_spaces_user set date_convention=null where date_convention='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update core_j_spaces_user set date_contract_end=null where date_convention='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[core_j_spaces_user] fix column types, done!');
 
+        Configuration::getLogger()->debug('[qo_quotes] fix column types');
+        $sql = "alter table qo_quotes modify date_last_modified date";
+        $this->runRequest($sql);
+        $sql = "update qo_quotes set date_last_modified=null where date_last_modified='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] fix column types, done!');
 
-        }
+        Configuration::getLogger()->debug('[in_invoice] fix column types');
+        $sql = "alter table in_invoice modify date_send date NULL";
+        $this->runRequest($sql);
+        $sql = "update in_invoice set date_send=null where date_send='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "alter table in_invoice modify column period_begin date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table in_invoice modify column period_end date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table in_invoice modify column date_generated date NULL";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[in_invoice] fix column types, done!');
+
+        Configuration::getLogger()->debug('[bk_authorization] fix column types');
+        $sql = "alter table bk_authorization modify `date` date";
+        $this->runRequest($sql);
+        $sql = "update bk_authorization set `date`=null where `date`='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "alter table bk_authorization modify `date_desactivation` date";
+        $this->runRequest($sql);
+        $sql = "update bk_authorization set `date_desactivation`=null where `date_desactivation`='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[bk_authorization] fix column types, done!');
+
+        Configuration::getLogger()->debug('[core_pending_accounts] fix column types');
+        $sql = "alter table core_pending_accounts modify `date` date";
+        $this->runRequest($sql);
+        $sql = "update core_pending_accounts set `date`=null where `date`='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[core_pending_accounts] fix column types, done!');
+
+        Configuration::getLogger()->debug('[se_project] fix column types');
+        $sql = "alter table se_project modify `samplereturndate` date";
+        $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_close date NULL";
+        $this->runRequest($sql);
+        $sql = "update se_project set `samplereturndate`=null where `samplereturndate`='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_project set date_open=null where date_open='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_project set date_close=null where date_close='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_project_service set `date`=null where `date`='0000-00-00'";
+        $this->runRequest($sql);
+
+        Configuration::getLogger()->debug('[se_project] fix column types, done!');
+
+        Configuration::getLogger()->debug('[bk_calendar_period] fix column types');
+        $sql = "alter table bk_calendar_period modify `enddate` date";
+        $this->runRequest($sql);
+        $sql = "update bk_calendar_period set `enddate`=null where `enddate`='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[bk_calendar_period] fix column types, done!');
 
         Configuration::getLogger()->debug('[space] remove super admin from spaces admins');
         $cum = new CoreUser();
@@ -415,9 +510,10 @@ class CoreDB extends Model {
         }
         Configuration::getLogger()->debug('[space] remove super admin from spaces admins, done!');
 
-
-        
-
+        Configuration::getLogger()->debug("[booking] add is_invoicing_unit");
+        $bkqte = new BkCalQuantities();
+        $bkqte->addColumn("bk_calquantities", "is_invoicing_unit", "int(1)", 0);
+        Configuration::getLogger()->debug("[booking] add is_invoicing_unit done!");
     }
 
     public function upgrade_v3_v4() {
@@ -454,6 +550,7 @@ class CoreDB extends Model {
             Configuration::getLogger()->debug('[stats] import managers to grafana, done!');
         }
     }
+
 
     /**
      * Get current database version
@@ -525,9 +622,13 @@ class CoreDB extends Model {
             $isNewRelease = true;
             $reqRelease = $this->runRequest($sqlRelease);
             $release = $reqRelease->fetch();
+            if($from == -1) {
+                Configuration::getLogger()->info("[db] fresh install, no migration needed");
+                return;
+            }
         }
 
-        if($from > 0) {
+        if($from >= 0) {
             $oldRelease = $from;
             $isNewRelease = true;
         }
@@ -538,27 +639,32 @@ class CoreDB extends Model {
             $updateFromRelease = $oldRelease;
             $updateToRelease = $updateFromRelease + 1;
             $updateOK = true;
-            while ($updateFromRelease < DB_VERSION) {
-                Configuration::getLogger()->info("[db] Migrating", ["from" => $updateFromRelease, "to" => $updateToRelease]);
-                $upgradeMethod = "upgrade_v".$updateFromRelease."_v".$updateToRelease;
-                if (method_exists($this, $upgradeMethod)) {
-                    try {
-                        $this->$upgradeMethod();
-                    } catch(Throwable $e) {
-                        $updateOK = false;
-                        Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease, "error" => $e]);
-                        break;
+            try {
+                while ($updateFromRelease < DB_VERSION) {
+                    Configuration::getLogger()->info("[db] Migrating", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+                    $upgradeMethod = "upgrade_v".$updateFromRelease."_v".$updateToRelease;
+                    if (method_exists($this, $upgradeMethod)) {
+                        try {
+                            $this->$upgradeMethod();
+                        } catch(Throwable $e) {
+                            $updateOK = false;
+                            Configuration::getLogger()->error("[db] Migration failed", ["from" => $updateFromRelease, "to" => $updateToRelease, "error" => $e]);
+                            break;
+                        }
+                    } else {
+                        Configuration::getLogger()->info("[db] No migration available", ["from" => $updateFromRelease, "to" => $updateToRelease]);
                     }
-                } else {
-                    Configuration::getLogger()->info("[db] No migration available", ["from" => $updateFromRelease, "to" => $updateToRelease]);
+
+                    Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
+                    $sql = "update pfm_db set version=? where id=?";
+                    $this->runRequest($sql, array($updateToRelease, $release['id']));
+
+                    $updateFromRelease = $updateToRelease;
+                    $updateToRelease = $updateFromRelease + 1;
                 }
-
-                Configuration::getLogger()->info("[db] updating database version...", ["release" => $updateToRelease]);
-                $sql = "update pfm_db set version=? where id=?";
-                $this->runRequest($sql, array($updateToRelease, $release['id']));
-
-                $updateFromRelease = $updateToRelease;
-                $updateToRelease = $updateFromRelease + 1;
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error("[db] migration error", ["error" => $e->getMessage()]);
+                $updateOK = false;
             }
             if ($updateOK) {
                 Configuration::getLogger()->info("[db] database migration over");
@@ -762,7 +868,6 @@ class CoreInstall extends Model {
         $content = "";
         $pos = strpos($buffer, $varName);
         if ($pos === false) {
-
         } else if ($pos == 0) {
             $content = $varName . ' = ' . $varContent . PHP_EOL;
         }

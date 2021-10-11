@@ -16,6 +16,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 class ServicesController extends CoresecureController {
 
     private $serviceModel;
+    private $typeModel;
 
     /**
      * Constructor
@@ -24,6 +25,7 @@ class ServicesController extends CoresecureController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
+        $this->typeModel = new SeServiceType();
     }
 
     public function navbar($id_space) {
@@ -138,7 +140,12 @@ class ServicesController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $data = $this->serviceModel->getAll($id_space);
-        //print_r($data);
+        
+        // set types from services
+        $typesArray = $this->typeModel->getTypes();
+        for ($i = 0; $i < count($data); $i++) {
+            $data[$i]["type"] = $typesArray[$data[$i]["type_id"]];
+        }
 
         $headers = array(
             "id" => "ID",
@@ -157,7 +164,8 @@ class ServicesController extends CoresecureController {
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
-
+    
+    // DEPRECATED ?
     public function editAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -176,7 +184,7 @@ class ServicesController extends CoresecureController {
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $value["display_order"]);
 
         $modelTypes = new SeServiceType();
-        $types = $modelTypes->getAllForSelect($id_space);
+        $types = $modelTypes->getAllForSelect();
 
         $form->addSelect("type_id", CoreTranslator::type($lang), $types["names"], $types["ids"], $value["type_id"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesedit/" . $id_space . "/" . $id);
@@ -215,7 +223,6 @@ class ServicesController extends CoresecureController {
         $table->setTitle(ServicesTranslator::Stock($lang), 3);
 
         $tableHtml = $table->view($data, $headers);
-
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 

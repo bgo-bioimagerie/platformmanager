@@ -140,6 +140,12 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
 
+        Events::send([
+            "action" => Events::ACTION_INVOICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "invoice" => ["id" => intval($id_invoice)]
+        ]);
+
         
         $modelItem = new InInvoiceItem();
         $modelItem->setItemContent($id_space, $id_invoice, $content);
@@ -163,6 +169,11 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 $model->delete($id_space, $id_invoice);
             }
         }
+        Events::send([
+            "action" => Events::ACTION_INVOICE_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "invoice" => ["id" => intval($id_invoice)]
+        ]);
     }
 
     // ////////////////////////////////////////////////////////////////////// //
@@ -317,6 +328,12 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
         $modelInvoiceItem = new InInvoiceItem();
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
+
+        Events::send([
+            "action" => Events::ACTION_INVOICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "invoice" => ["id" => intval($id_invoice)]
+        ]);
     }
 
     protected function generateDetailsTable($id_space, $invoice_id) {

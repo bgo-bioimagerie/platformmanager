@@ -23,7 +23,7 @@ class ClClient extends Model {
     public function getInstitution($id_space, $id){
         $sql = "SELECT * FROM cl_addresses WHERE id=(SELECT address_invoice FROM cl_clients WHERE id=? AND id_space=? AND deleted=0)";
         $address = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $address["institution"];
+        return $address ? $address["institution"] : "";
     }
     
     public function getAddressInvoice($id_space ,$id){
@@ -50,7 +50,7 @@ class ClClient extends Model {
     public function getPricingID($id_space, $id) {
         $sql = "SELECT pricing FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] : null;
     }
 
     public function getAll($id_space) {
@@ -67,20 +67,20 @@ class ClClient extends Model {
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $data[0];
+        return $data ? $data[0] : "";
     }
     
     
     public function getContactName($id_space, $id) {
         $sql = "SELECT contact_name FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $data[0];
+        return $data ? $data[0] : "";
     }
 
     public function getIdFromName($id_space, $name) {
         $sql = "SELECT id FROM cl_clients WHERE name=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($name, $id_space))->fetch();
-        return $data[0];
+        return $data ? $data[0] : null;
     }
 
     public function getForList($id_space) {
@@ -127,7 +127,7 @@ class ClClient extends Model {
     }
 
     public function delete($id_space, $id) {
-        $sql = "UPDATE cl_clients SET deleted=1,deleted_at=NOW() WHERE id_space=? AND deleted=0";
+        $sql = "UPDATE cl_clients SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=? AND deleted=0";
         //$sql = "DELETE FROM cl_clients WHERE id=?  AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
     }

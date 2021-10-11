@@ -61,14 +61,16 @@ class ResourcesinfoController extends CoresecureController {
         );
 
         $modelResource = new ResourceInfo();
-        $resources = $modelResource->getBySpace($id_space);
-
+        $resources = $modelResource->getBySpaceWithoutCategory($id_space);
 
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
         for ($i = 0; $i < count($resources); $i++) {
             $resources[$i]["area"] = $modelArea->getName($id_space, $resources[$i]["id_area"]);
             $resources[$i]["category"] = $modelCategory->getName($id_space, $resources[$i]["id_category"]);
+            if ($resources[$i]["category"] === "") {
+                $_SESSION["flash"] = ResourcesTranslator::NoCategoryWarning($resources[$i]['name'], $lang);
+            }
         }
 
         $tableHtml = $table->view($resources, $headers);
@@ -112,8 +114,8 @@ class ResourcesinfoController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
         $form->addText("brand", ResourcesTranslator::Brand($lang), false, $data["brand"]);
         $form->addText("type", ResourcesTranslator::Type($lang), false, $data["type"]);
-        $form->addSelect("id_category", ResourcesTranslator::Category($lang), $choicesC, $choicesidC, $data["id_category"]);
-        $form->addSelect("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
+        $form->addSelectMandatory("id_category", ResourcesTranslator::Category($lang), $choicesC, $choicesidC, $data["id_category"]);
+        $form->addSelectMandatory("id_area", ResourcesTranslator::Area($lang), $choicesA, $choicesidA, $data["id_area"]);
         $form->addNumber("display_order", ResourcesTranslator::Display_order($lang), false, $data["display_order"]);
         $form->addUpload("image", CoreTranslator::Image($lang), $data["image"]);
         $form->addText("description", ResourcesTranslator::Description($lang), false, $data["description"], true);
@@ -125,7 +127,16 @@ class ResourcesinfoController extends CoresecureController {
         $form->setColumnsWidth(2, 10);
 
         if ($form->check()) {
-            $id = $modelResource->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("brand"), $form->getParameter("type"), $form->getParameter("description"), $form->getParameter("long_description"), $form->getParameter("id_category"), $form->getParameter("id_area"), $id_space, $form->getParameter("display_order"));
+            $id = $modelResource->set($form->getParameter("id"),
+            $form->getParameter("name"),
+            $form->getParameter("brand"),
+            $form->getParameter("type"),
+            $form->getParameter("description"),
+            $form->getParameter("long_description"),
+            $form->getParameter("id_category"),
+            $form->getParameter("id_area"),
+            $id_space,
+            $form->getParameter("display_order"));
             
             // upload image
             $target_dir = "data/resources/";
@@ -335,7 +346,7 @@ class ResourcesinfoController extends CoresecureController {
 
         $modelEvent = new ReEvent();
         $modelUser = New CoreUser();
-        $users = $modelUser->getSpaceActiveUsers();
+        $users = $modelUser->getSpaceActiveUsers($id_space);
         $choicesU = array();
         $choicesidU = array();
         foreach ($users as $user) {
@@ -375,7 +386,7 @@ class ResourcesinfoController extends CoresecureController {
         }
 
         $form = new Form($this->request, "editevent");
-        $form->addSeparator(ResourcesTranslator::Edit_event_for($lang) . " " . $modelResources->getName($id_resource));
+        $form->addSeparator(ResourcesTranslator::Edit_event_for($lang) . " " . $modelResources->getName($id_space, $id_resource));
         $form->addDate("date", CoreTranslator::Date($lang), true, CoreTranslator::dateFromEn($data["date"], $lang));
         $form->addHidden("id_resource", $id_resource);
         $form->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $data["id_user"]);

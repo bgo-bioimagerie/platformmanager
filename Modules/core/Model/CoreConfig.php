@@ -58,8 +58,8 @@ class CoreConfig extends Model {
      * Check if a config key exists
      */
     public function isKey($key, $id_space) {
-        self::loadParams($id_space);
-        if(isset(CoreConfig::$params[$id_space]) && isset(CoreConfig::$params[$id_space][$key])) {
+        $this->loadParams($id_space);
+        if(isset(self::$params[$id_space]) && isset(self::$params[$id_space][$key])) {
             return true;
         }
         return false;
@@ -70,7 +70,7 @@ class CoreConfig extends Model {
      * @param string $id_space
      */
     private function loadParams($id_space) {
-        if(CoreConfig::$params != null) {
+        if (isset(self::$params[$id_space])) {
             return;
         }
         Configuration::getLogger()->debug('load config', ['space' => $id_space]);
@@ -78,10 +78,10 @@ class CoreConfig extends Model {
         $config_params = $this->runRequest($sql, array($id_space));
         $dbconfig = $config_params->fetchAll();
         foreach($dbconfig as $param) {
-            if(!isset(CoreConfig::$params[$param["id_space"]])) {
-                CoreConfig::$params[$param["id_space"]] = [];
+            if(!isset(self::$params[$param["id_space"]])) {
+                self::$params[$param["id_space"]] = [];
             }
-            CoreConfig::$params[$param["id_space"]][$param["keyname"]] = $param["value"];
+            self::$params[$param["id_space"]][$param["keyname"]] = $param["value"];
         }
     }
 
@@ -93,11 +93,10 @@ class CoreConfig extends Model {
     public function addParam($key, $value, $id_space = 0) {
         $sql = "INSERT INTO core_config (keyname, value, id_space) VALUES(?,?,?)";
         $this->runRequest($sql, array($key, $value, $id_space));
-        self::loadParams($id_space);
-        if(!isset(CoreConfig::$params[$id_space])) {
-            CoreConfig::$params[$id_space] = [];
+        if(!isset(self::$params[$id_space])) {
+            self::$params[$id_space] = [];
         }
-        CoreConfig::$params[$id_space][$key] = $value;
+        self::$params[$id_space][$key] = $value;
     }
 
     /**
@@ -108,36 +107,36 @@ class CoreConfig extends Model {
     public function updateParam($key, $value, $id_space = 0) {
         $sql = "update core_config set value=?  where keyname=? AND id_space=?";
         $this->runRequest($sql, array($value, $key, $id_space));
-        self::loadParams($id_space);
-        if(!isset(CoreConfig::$params[$id_space])) {
-            CoreConfig::$params[$id_space] = [];
+        $this->loadParams($id_space);
+        if(!isset(self::$params[$id_space])) {
+            self::$params[$id_space] = [];
         }
-        CoreConfig::$params[$id_space][$key] = $value;
+        self::$params[$id_space][$key] = $value;
     }
 
     /**
      * Get a parameter
      * @param string $key
-     * @return string: value
+     * @return string value
      */
     public function getParam($key) {
-        return self::getParamSpace($key , 0);
+        return $this->getParamSpace($key , 0);
     }
 
    /**
      * Get a parameter
      * @param string $key
-     * @return string: value
+     * @return string value
      */
     public function getParamSpace($key, $id_space) {
-        self::loadParams($id_space);
-        if(!isset(CoreConfig::$params[$id_space])) {
+        $this->loadParams($id_space);
+        if(!isset(self::$params[$id_space])) {
             return "";
         }
-        if(!isset(CoreConfig::$params[$id_space][$key])) {
+        if(!isset(self::$params[$id_space][$key])) {
             return "";
         }
-        return CoreConfig::$params[$id_space][$key];
+        return self::$params[$id_space][$key];
     }
 
     /**
@@ -158,5 +157,4 @@ class CoreConfig extends Model {
             $this->addParam($key, $value);
         }
     }
-
 }

@@ -60,7 +60,7 @@ class DocumentslistController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $model = new Document();

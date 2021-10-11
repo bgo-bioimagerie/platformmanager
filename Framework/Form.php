@@ -30,8 +30,10 @@ class Form {
     private $labels;
     private $isMandatory;
     private $enabled;
-    #105 add readonly
+
     private $readonly;
+    private $checkUnicity;
+
     private $choices;
     private $choicesid;
     private $validated;
@@ -210,6 +212,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -229,6 +232,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -248,6 +252,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -269,6 +274,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -291,6 +297,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -311,6 +318,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->setValue($name, $url);
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -321,7 +329,7 @@ class Form {
      * @param string $value Input default value
      */
     // #105: add readonly
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "") {
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false) {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -334,6 +342,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = $readonly;
+        $this->checkUnicity[] = $checkUnicity;
     }
 
     /**
@@ -355,6 +364,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -378,6 +388,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
@@ -394,6 +405,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
@@ -410,6 +422,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -432,6 +445,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -441,7 +455,7 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addEmail($name, $label, $isMandatory = false, $value = "") {
+    public function addEmail($name, $label, $isMandatory = false, $value = "", $checkUnicity = false) {
         $this->types[] = "email";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -454,6 +468,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = $checkUnicity;
     }
 
     /**
@@ -476,6 +491,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -499,6 +515,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = $submitOnChange;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
     
         /**
@@ -522,6 +539,7 @@ class Form {
         $this->useJavascript[] = false;
         $this->submitOnChange[] = $submitOnChange;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
     
 
@@ -546,6 +564,7 @@ class Form {
         $this->useJavascript[] = $userichtxt;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -567,6 +586,7 @@ class Form {
         $this->enabled[] = "";
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -589,6 +609,7 @@ class Form {
         $this->isFormAdd = true;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
+        $this->checkUnicity[] = false;
     }
 
     /**
@@ -629,11 +650,14 @@ class Form {
 
         // fields
         for ($i = 0; $i < count($this->types ?? []); $i++) {
-
-            // #105: add readonly
             $readonlyElem = false;
             if ($this->readonly[$i]) {
                 $readonlyElem = true;
+            }
+
+            $checkUnicityElem = false;
+            if ($this->checkUnicity[$i]) {
+                $checkUnicityElem = true;
             }
             
             $required = "";
@@ -657,8 +681,7 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                // #105: add readonly
-            $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem);
+                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicity = $checkUnicityElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -676,7 +699,7 @@ class Form {
                 $html .= $formHtml->color($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "email") {
-                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
+                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicity = $checkUnicityElem);
             }
             if ($this->types[$i] == "number") {
                 $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -718,6 +741,11 @@ class Form {
         if ($this->isTextArea == true) {
             $html .= $formHtml->textAreaScript();
         }
+
+        if ($this->checkUnicity == true) {
+            $html .= $formHtml->checkUnicityScript();
+        }
+
         if ($this->isFormAdd == true) {
             $html .= $this->formAdd->getJavascript();
         }
@@ -733,7 +761,6 @@ class Form {
      * @return number
      */
     public function check() {
-
         $formID = $this->request->getParameterNoException("formid");
         if ($formID == $this->id) {
             return 1;

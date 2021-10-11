@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Administration on Platform Manager</title>
+    <link>https://bgo-bioimagerie.github.io/platformmanager/admin/</link>
+    <description>Recent content in Administration on Platform Manager</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Jun 2021 15:44:36 +0200</lastBuildDate><atom:link href="https://bgo-bioimagerie.github.io/platformmanager/admin/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting started</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</link>
+      <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</guid>
+      <description>Setup new spaces    At first, as superadmin you must create a space, create accounts for the future space administrators and give them admin role to this space.
+First step is to connect with the configured admin account.
+Create a space    In the admin menu, go to Spaces
+Add a space
+Space is created, now it is to create menus to access it.
+Create menus    Menus are a way to group spaces in logical groups.</description>
+    </item>
+    
+    <item>
+      <title>Cli</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</link>
+      <pubDate>Wed, 23 Jun 2021 16:11:10 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</guid>
+      <description>cli/pfm-cli.php tool (to be executed in code root directory), helps administrators on different tasks.
+For help commands, execute:
+php cli/pfm-cli.php  Tool can be used to install/upgrade database, expire users, check database version etc.</description>
+    </item>
+    
+  </channel>
+</rss>

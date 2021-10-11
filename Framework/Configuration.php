@@ -71,10 +71,10 @@ class Configuration {
      */
     private static function getParameters() {
         if (self::$parameters == null) {
-
             $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
-                throw new Exception("Unable to find the configuration file");
+                Configuration::getLogger()->warning('No configuration file found, using env vars only');
+                // throw new Exception("Unable to find the configuration file");
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
@@ -87,6 +87,68 @@ class Configuration {
      * Override some config with env variables
      */
     private static function override() {
+
+        if(getenv('MYSQL_HOST')) {
+            self::$parameters['mysql_host']= getenv('MYSQL_HOST');
+        }
+        if(getenv('MYSQL_DBNAME')) {
+            self::$parameters['mysql_dbname']= getenv('MYSQL_DBNAME');
+        }
+        if(getenv('MYSQL_USER')) {
+            self::$parameters['login']= getenv('MYSQL_USER');
+        }
+        if(getenv('MYSQL_PASS')) {
+            self::$parameters['pwd']= getenv('MYSQL_PASS');
+        }
+        if(!isset(self::$parameters['dsn'])) {
+            try {
+                self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
+            } catch(Exception $e) {
+                throw PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+            }
+        }
+
+        if(getenv('PFM_HEADLESS')) {
+            self::$parameters['headless']= intval(getenv('PFM_HEADLESS')) == 1 ? true : false;
+        }
+
+        if(!isset(self::$parameters['rootWeb'])) {
+            self::$parameters['rootWeb'] = '/';
+        }
+        if(getenv('PFM_ROOTWEB')) {
+            self::$parameters['rootWeb']= getenv('PFM_ROOTWEB');
+        }
+
+        if(!isset(self::$parameters['email_regexp'])) {
+            self::$parameters['email_regexp'] = '/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*))@((([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
+        }
+        if(getenv('EMAIL_REGEXP')) {
+            self::$parameters['email_regexp']= getenv('EMAIL_REGEXP');
+        }
+
+        if(!isset(self::$parameters['name'])) {
+            self::$parameters['name'] = 'Platform-Manager';
+        }
+
+        if(!isset(self::$parameters['modules'])) {
+            self::$parameters['modules'] = [
+                'core',
+                'clients',
+                'users',
+                'resources',
+                'services',
+                'booking',
+                'catalog',
+                'invoices',
+                'statistics',
+                'mailer',
+                'documents',
+                'antibodies',
+                'quote',
+                'com'
+            ];
+        }
+
         self::$parameters['smtp_host'] = getenv('SMTP_HOST', '');
         if(!isset(self::$parameters['smtp_port'])) {
             self::$parameters['smtp_port'] = 25;
@@ -215,6 +277,37 @@ class Configuration {
 
         if(getenv('PFM_GRAFANA_PASSWORD')) {
             self::$parameters['grafana_password'] = getenv('PFM_GRAFANA_PASSWORD');
+        }
+
+        if(getenv('PFM_HELPDESK_EMAIL')) {
+            self::$parameters['helpdesk_email'] = getenv('PFM_HELPDESK_EMAIL');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_SERVER')) {
+            self::$parameters['helpdesk_imap_server'] = getenv('PFM_HELPDESK_IMAP_SERVER');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_PORT')) {
+            self::$parameters['helpdesk_imap_port'] = intval(getenv('PFM_HELPDESK_IMAP_PORT'));
+        }
+        if(getenv('PFM_HELPDESK_IMAP_USER')) {
+            self::$parameters['helpdesk_imap_user'] = getenv('PFM_HELPDESK_IMAP_USER');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_PASSWORD')) {
+            self::$parameters['helpdesk_imap_password'] = getenv('PFM_HELPDESK_IMAP_PASSWORD');
+        }
+        if(getenv('PFM_HELPDESK_IMAP_TLS')) {  // empty string if not tls, else /ssl
+            self::$parameters['helpdesk_imap_tls'] = getenv('PFM_HELPDESK_IMAP_TLS');
+        }
+        if(getenv('PFM_ALLOW_REGISTRATION')) {
+            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION'));
+        }
+        if(getenv('PFM_JWT_SECRET')) {
+            self::$parameters['jwt_secret'] = getenv('PFM_JWT_SECRET');
+        }
+        if(getenv('PFM_REDIS_HOST')) {
+            self::$parameters['redis_host'] = getenv('PFM_REDIS_HOST');
+        }
+        if(getenv('PFM_REDIS_PORT')) {
+            self::$parameters['redis_port'] = intval(getenv('PFM_REDIS_PORT'));
         }
 
     }

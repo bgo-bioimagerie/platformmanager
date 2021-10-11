@@ -48,6 +48,20 @@ class CoreUserSpaceSettings extends Model {
     }
 
     /**
+     * Get all users settings for input setting and optional value
+     */
+    public function getUsersForSetting($id_space, $setting, $value=null) {
+        if($value == null) {
+            $sql = "select * from core_user_space_settings where setting=? and id_space=?";
+            $user = $this->runRequest($sql, array($setting, $id_space));
+            return $user->fetchAll();
+        }
+        $sql = "select * from core_user_space_settings where setting=? and value=? and id_space=?";
+        $user = $this->runRequest($sql, array($setting, $value, $id_space));
+        return $user->fetchAll();
+    }
+
+    /**
      * Get a given setting of a given user
      * @param number $id_space space ID
      * @param number $user_id User ID
@@ -68,7 +82,7 @@ class CoreUserSpaceSettings extends Model {
      * @param string $setting Setting key
      * @param string $value Setting value
      */
-    public function setSettings($id_space, $user_id, $setting, $value) {
+    public function setUserSettings($id_space, $user_id, $setting, $value) {
         if (!$this->isSetting($id_space, $user_id, $setting)) {
             $this->addSetting($id_space, $user_id, $setting, $value);
         } else {
@@ -98,7 +112,7 @@ class CoreUserSpaceSettings extends Model {
      */
     protected function addSetting($id_space, $user_id, $setting, $value) {
         $sql = "insert into core_user_space_settings (id_space, user_id, setting, value)
-				 VALUES(?,?,?)";
+				 VALUES(?,?,?,?)";
         $this->runRequest($sql, array($id_space, $user_id, $setting, $value));
     }
 

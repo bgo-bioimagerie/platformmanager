@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Modules on Platform Manager</title>
+    <link>https://bgo-bioimagerie.github.io/platformmanager/modules/</link>
+    <description>Recent content in Modules on Platform Manager</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Aug 2021 13:30:30 +0200</lastBuildDate><atom:link href="https://bgo-bioimagerie.github.io/platformmanager/modules/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Antibodies</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/antibodies/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/antibodies/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Booking</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Catalog</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Clients</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Com</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Documents</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/documents/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/documents/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Invoices</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mailer</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Quote</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Resources</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Services</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Statistics</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Users</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

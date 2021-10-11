@@ -9,6 +9,9 @@
 class CoreTranslator {
 
     public static function dateToEn($date, $lang) {
+        if($date == null) {
+            return "";
+        }
         //echo "to translate = " . $date . "<br/>";
         if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
@@ -20,14 +23,14 @@ class CoreTranslator {
                 //echo "translated = " . $year . "-" . $month . "-" . $day . "<br/>";
                 return $year . "-" . $month . "-" . $day;
             }
-            return "0000-00-00";
+            return "";
         }
         // En
         return $date;
     }
 
     public static function dateFromEn($date, $lang) {
-        if ($date == "0000-00-00") {
+        if (!$date) {
             return "";
         }
 
@@ -115,6 +118,29 @@ class CoreTranslator {
             return $str . "Compte utilisateur créé";
         }
         return $str . "User account created";
+    }
+
+    public static function AccountPendingCreationSubject($lang) {
+        $str = "[pfm] ";
+        if ($lang == "fr") {
+            return $str . "Compte utilisateur en attente de confirmation";
+        }
+        return $str . "User account pending confirmation";
+    }
+
+    public static function AccountPendingCreationEmail($lang, $jwt, $url) {
+        $confirmUrl = $url."/corecreateaccountconfirm?token=".$jwt;
+        if($lang == "fr") {
+            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl;
+        }
+        return "Please confirm your registration at the following link.\n".$confirmUrl;
+    }
+
+    public static function WaitingAccountMessage($lang) {
+        if($lang == "fr") {
+            return "Un mail a été envoyé avec un lien pour confirmer votre inscription";
+        }
+        return "An email has been sent with a link to confirm your registration";
     }
 
     public static function Settings($lang = "") {
@@ -1097,11 +1123,32 @@ class CoreTranslator {
         return "Private";
     }
 
+    public static function AlreadyExists($elem , $lang) {
+        if ($lang == "fr") {
+            return "Un compte avec " . $elem . " existe déjà";
+        }
+        return "An account with " . $elem . " already exists";
+    }
+
     public static function LoginAlreadyExists($lang) {
         if ($lang == "fr") {
             return "Le login est déjà pris";
         }
-        return "The login already exists";
+        return "Login already exists";
+    }
+
+    public static function EmailAlreadyExists($lang) {
+        if ($lang == "fr") {
+            return "Un compte existe déjà avec cette adresse mail";
+        }
+        return "An account with this email address already exists";
+    }
+
+    public static function EmailInvalid($lang) {
+        if ($lang == "fr") {
+            return "Le format de l'adresse Email est incorrect";
+        }
+        return "The format of the email address is not valid";
     }
 
     public static function Maintenance_Mode($lang) {
@@ -1179,6 +1226,13 @@ class CoreTranslator {
             return "Les deux mots de passe sont différents";
         }
         return "The two password are different";
+    }
+
+    public static function PasswordHasBeenChanged($lang) {
+        if ($lang == "fr") {
+            return "Le mot de passe a bien été modifié";
+        }
+        return "Password has been modified successfully";
     }
 
     public static function The_curent_password_is_not_correct($lang) {
@@ -1438,7 +1492,7 @@ class CoreTranslator {
             return "Votre compte a bien été créé et un email avec vos identifiants vous a été envoyé. Votre compte sera actif lorsqu'un-e responsable"
             . " de l'accès que vous avez demandé l'activera";
         }
-        return "Your account has been created and you will recieve an email with your credentials. You will be able to connect to your account when a manager of"
+        return "Your account has been created and you will receive an email with your credentials. You will be able to connect to your account when a manager of"
         . " the acces you asked for will validate your account";
     }
 
@@ -1793,13 +1847,20 @@ class CoreTranslator {
             return "Le compte a bien été créé";
         }
         return "Account has been created";        
-    }   
+    }
+
+    public static function AccountHasBeenModified($lang){
+        if ($lang == "fr") {
+            return "Le compte a bien été modifié";
+        }
+        return "Account has been modified";        
+    }  
     
     public static function RequestJoin($isMemberOfSpace, $lang){
         if ($lang == "fr") {
-            return $isMemberOfSpace ? "Quitter" : "Rejoindre";
+            return $isMemberOfSpace ? "Se désinscrire" : "Demander l'accès";
         }
-        return $isMemberOfSpace ? "Leave" : "Join"; 
+        return $isMemberOfSpace ? "Unsubscribe" : "Request access"; 
     }
 
     public static function JoinRequested($lang){
@@ -1809,11 +1870,11 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $spaceName, $lang){
+    public static function JoinRequestEmail($login, $spaceName, $userEmail, $lang){
         if ($lang == "fr") {
-            return "Bonjour, <br><br>" . $login . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            return "Bonjour, <br><br>" . $login . " (" . $userEmail . ") demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
         }
-        return "Hi, <br><br>" . $login . " requests to join your space " . $spaceName. " on Platform-Manager";
+        return "Hi, <br><br>" . $login . " (" . $userEmail . ") requests to join your space " . $spaceName. " on Platform-Manager";
     }
 
     public static function JoinRequestSubject($spaceName, $lang){

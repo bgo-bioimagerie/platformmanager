@@ -23,7 +23,7 @@ class InInvoice extends Model {
         $this->setColumnsInfo("period_begin", "date", "");
         $this->setColumnsInfo("period_end", "date", "");
         $this->setColumnsInfo("date_generated", "date", "");
-        $this->setColumnsInfo("date_send", "date", "0000-00-00");
+        $this->setColumnsInfo("date_send", "date", "");
         $this->setColumnsInfo("visa_send", "int(11)", 0);
         $this->setColumnsInfo("date_paid", "date", "");
         $this->setColumnsInfo("id_unit", "int(11)", 0);
@@ -58,6 +58,9 @@ class InInvoice extends Model {
     }
 
     public function setSend($id_space, $id, $date, $visa){
+        if($date == "") {
+            $date = null;
+        }
         $sql = "UPDATE in_invoice SET date_send=?, visa_send=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($date, $visa, $id, $id_space));
     }
@@ -96,11 +99,14 @@ class InInvoice extends Model {
     public function setDatePaid($id_space, $id, $date) {
         //echo "set date = " . $date . "<br/>";
         //echo "where id = " . $id . "<br/>";
-        $sql = "UPDATE in_invoice SET date_paid=? WHERE id=? AND id_space=? AND deleted=0";
+        if($date == "") {
+            $date = null;
+        }
+        $sql = "UPDATE in_invoice SET date_paid=?, is_paid=1 WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($date, $id, $id_space));
         
-        $sql2 = "UPDATE in_invoice SET is_paid=1 WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql2, array($id, $id_space));
+        //$sql2 = "UPDATE in_invoice SET is_paid=1 WHERE id=? AND id_space=? AND deleted=0";
+        //$this->runRequest($sql2, array($id, $id_space));
     }
 
     public function setEditedBy($id_space, $id_invoice, $id_user) {
@@ -108,7 +114,16 @@ class InInvoice extends Model {
         $this->runRequest($sql, array($id_user, $id_invoice, $id_space));
     }
 
-    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = "0000-00-00", $period_end = "0000-00-00", $id_project = 0) {
+    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = null, $period_end = null, $id_project = 0) {
+        if($date_generated == "") {
+            $date_generated = null;
+        }
+        if($period_begin == "") {
+            $period_begin = null;
+        }
+        if($period_end == "") {
+            $period_end = null;
+        }
         $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, 0, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
         return $this->getDatabase()->lastInsertId();
@@ -148,10 +163,10 @@ class InInvoice extends Model {
         
         $dateSendCondition = "";
         if($sent == 0){
-            $dateSendCondition = "AND date_send = '0000-00-00' ";
+            $dateSendCondition = "AND date_send is null ";
         }
         else{
-            $dateSendCondition = "AND date_send != '0000-00-00' ";
+            $dateSendCondition = "AND date_send is not null ";
         }
         
         $sql = "SELECT in_invoice.*, cl_clients.name AS resp "
@@ -171,7 +186,7 @@ class InInvoice extends Model {
             $req = $this->runRequest($sql);
 
             $lastNumber = "";
-            if (count($req->rowCount()) > 0) {
+            if ($req->rowCount() > 0) {
                 $bill = $req->fetch();
                 $lastNumber = $bill["number"];
             }
@@ -255,13 +270,26 @@ class InInvoice extends Model {
     
     public function allYears($id_space) {
 
-        $sql = "SELECT date_generated FROM in_invoice WHERE id_space=? AND deleted=0";
+        $sql = "SELECT date_generated FROM in_invoice WHERE id_space=? AND deleted=0 ORDER BY date_generated ASC";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
 
         if ($data && !empty($data)) {
-            $firstDate = $data[0]["date_generated"];
-            $firstDateInfo = explode("-", $firstDate);
-            $firstYear = $firstDateInfo[0];
+            $firstYear = null;
+            $lastYear = null;
+            foreach($data as $invoice_date) {
+                if($invoice_date["date_generated"] != null) {
+                    $lastDateInfo = explode("-", $invoice_date["date_generated"]);
+                    $lastYear = $lastDateInfo[0];
+                    if($firstYear == null) {
+                        $firstDateInfo = explode("-", $invoice_date["date_generated"]);
+                        $firstYear = $firstDateInfo[0];
+                    }
+                }
+            }
+
+            // $firstDateInfo = explode("-", $firstDate);
+            // $firstYear = $firstDateInfo[0];
+            /*
             $i = 0;
             while ($firstYear == "0000") {
                 $i++;
@@ -270,9 +298,11 @@ class InInvoice extends Model {
                 $firstYear = $firstDateInfo[0];
             }
 
+
             $lastDate = $data[count($data) - 1]["date_generated"];
             $lastDateInfo = explode("-", $lastDate);
             $lastYear = $lastDateInfo[0];
+            */
 
             $years = array();
             for ($i = $firstYear; $i <= $lastYear; $i++) {

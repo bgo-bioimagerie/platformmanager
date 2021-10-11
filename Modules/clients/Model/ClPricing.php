@@ -17,7 +17,7 @@ class ClPricing extends Model {
     }
 
     public function getAll($id_space) {
-        $sql = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=?";
+        $sql = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
@@ -79,8 +79,7 @@ class ClPricing extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE cl_pricings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM cl_pricings WHERE id=?  AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

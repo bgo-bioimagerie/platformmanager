@@ -499,7 +499,7 @@ class CoreSpace extends Model {
                 . "core_users.name AS name, core_users.firstname AS firstname "
                 . "FROM core_j_spaces_user "
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
-                . "WHERE id_space=?";
+                . "WHERE core_j_spaces_user.id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 

@@ -99,6 +99,11 @@ class ResourceInfo extends Model {
                 . "WHERE re_info.id_space=? AND re_info.deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+
+    public function getBySpaceWithoutCategory($id_space) {
+        $sql = "SELECT * FROM re_info WHERE re_info.id_space=? AND re_info.deleted=0";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
     
     public function getIdByName($id_space, $name){
         $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0";
@@ -162,9 +167,9 @@ class ResourceInfo extends Model {
     /**
      * Get the resources IDs and names for a given Area
      * @param unknown $areaId
-     * @return multitype:
+     * @return array
      */
-    public function resourceIDNameForArea($id_space, $areaId) {
+    public function resourceIDNameForArea($id_space, $areaId): array {
         $sql = "SELECT id, name from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order";
         $data = $this->runRequest($sql, array($areaId, $id_space));
         return $data->fetchAll();
@@ -173,18 +178,28 @@ class ResourceInfo extends Model {
     /**
      * Get the resources info for a given area
      * @param unknown $areaId
-     * @return multitype:
+     * @return array
      */
-    public function resourcesForArea($id_space, $areaId) {
+    public function resourcesForArea($id_space, $areaId): array {
         $sql = "SELECT * from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order";
         $data = $this->runRequest($sql, array($areaId, $id_space));
         return $data->fetchAll();
     }
 
+    /**
+     * Get the resources info for a given category
+     * @param unknown $areaId
+     * @return multitype:
+     */
+    public function resourcesForCategory($id_space, $categoryId) {
+        $sql = "SELECT * from re_info where id_category=? AND id_space=? AND deleted=0 ORDER BY display_order";
+        $data = $this->runRequest($sql, array($categoryId, $id_space));
+        return $data->fetchAll();
+    }
+
     public function delete($id_space, $id) {
         $sql = "UPDATE re_info SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        //$sql = "DELETE FROM re_info WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

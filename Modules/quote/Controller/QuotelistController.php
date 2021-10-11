@@ -255,7 +255,7 @@ class QuotelistController extends CoresecureController {
             "items" => $items), 'editnewuserAction');
     }
 
-    public function edititemAction() {
+    public function edititemAction($id_space) {
         $id_quote = $this->request->getParameter("id_quote");
         $id = $this->request->getParameter("id");
         $id_contentform = $this->request->getParameter("id_item");

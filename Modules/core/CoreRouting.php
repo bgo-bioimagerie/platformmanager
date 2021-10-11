@@ -6,6 +6,11 @@ class CoreRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/corefiles/[i:id_space]/[i:id_file]', 'core/corefiles/download', 'files_download');
+        $router->map('GET', '/corespaceaccess/[i:id_space]/impersonate/[i:id_user]', 'core/corespaceaccess/impersonate', 'user_impersonate');
+        $router->map('GET', '/corespaceaccess/[i:id_space]/unimpersonate', 'core/corespaceaccess/unimpersonate', 'user_unimpersonate');
+        $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
+        $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
+        $router->map('GET', '/corespaces', 'core/corespace/spaces', 'core_space_list');
     }
     
     public function listRoutes(){
@@ -22,8 +27,7 @@ class CoreRouting extends Routing{
         
         // create account
         $this->addRoute("corecreateaccount", "corecreateaccount", "coreaccount", "index");
-        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");
-         
+        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");         
          
         // home
         $this->addRoute("corehome", "corehome", "corehome", "index");
@@ -44,6 +48,8 @@ class CoreRouting extends Routing{
         $this->addRoute("coreusersedit", "coreusersedit", "coreusers", "edit", array("id"), array(""));
         $this->addRoute("coreusersdelete", "coreusersdelete", "coreusers", "delete", array("id"), array(""));
         $this->addRoute("coreuserslanguageedit", "coreuserslanguageedit", "coreusers", "languageedit");
+        $this->addRoute("coreusersisunique", "coreusersisunique", "coreusers", "isunique", array("type", "value", "id_user"), array("", "", ""));
+
         // settings
         $this->addRoute("coremyaccount", "coremyaccount", "coreusers", "myaccount");
         $this->addRoute("coresettings", "coresettings", "coresettings", "index");

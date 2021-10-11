@@ -78,12 +78,9 @@ abstract class CoresecureController extends CorecookiesecureController {
      * @see Controller::runAction()
      */
     public function runAction($module, $action, $args = array()) {
-
         $modelConfig = new CoreConfig();
-        if ($modelConfig->getParam("is_maintenance")) {
-            if ($this->request->getSession()->getAttribut("user_status") < 4) {
+        if ($modelConfig->getParam("is_maintenance") && ($this->request->getSession()->getAttribut("user_status") < 4)) {
                 throw new PfmException($modelConfig->getParam("maintenance_message"), 503);
-            }
         }
 
         $cookieCheck = $this->checkRememberMeCookie();
@@ -108,6 +105,13 @@ abstract class CoresecureController extends CorecookiesecureController {
 
         // check if there is a session    
         if ($this->request->getSession()->isAttribut("id_user")) {
+            $logged_in_space = 0;
+            if($this->request->getSession()->isAttribut("logged_id_space")) {
+                $logged_in_space = $this->request->getSession()->getAttribut("logged_id_space");
+            }
+            if(array_key_exists('id_space', $args) && $args['id_space'] > 0 && $logged_in_space > 0 && $logged_in_space != $args['id_space']) {
+                throw new PfmException("Space not allowed with impersonification", 403);
+            }
 
             $login = $this->request->getSession()->getAttribut("login");
             $company = $this->request->getSession()->getAttribut("company");

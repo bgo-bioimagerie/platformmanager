@@ -132,6 +132,11 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
             $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
             $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
+            Events::send([
+                "action" => Events::ACTION_INVOICE_EDIT,
+                "space" => ["id" => intval($id_space)],
+                "invoice" => ["id" => intval($id_invoice)]
+            ]);
             $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
             return;
         }
@@ -366,13 +371,18 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelInvoiceItem->setItem($id_space ,0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
         $modelInvoice->setTitle($id_space, $id_invoice, $title);
+        Events::send([
+            "action" => Events::ACTION_INVOICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "invoice" => ["id" => intval($id_invoice)]
+        ]);
 
         return $id_invoice;
     }
 
-    protected function getProjectsResp($id_projects) {
+    protected function getProjectsResp($id_space, $id_projects) {
 
-        if (count($id_projects) == 0) {
+        if (empty($id_projects) == 0) {
             throw new Exception("You need to select at least one project");
         }
 

@@ -725,6 +725,13 @@ class BookingTranslator {
         return "Is mandatory";
     }
 
+    public static function Is_invoicing_unit($lang) {
+        if ($lang == "fr") {
+            return "Utiliser comme unité de facturation";
+        }
+        return "Use as invoicing unit";
+    }
+
     public static function Supplementaries_saved($lang) {
         if ($lang == "fr") {
             return "Les suppléments ont été sauvegardés";
@@ -1299,6 +1306,13 @@ class BookingTranslator {
         return "Reservation unit";
     }
 
+    public static function Reservation_per_client($lang) {
+        if ($lang == "fr") {
+            return "Réservations par clients";
+        }
+        return "Reservation per client";
+    }
+
     public static function Reservation_per_responsible($lang) {
         if ($lang == "fr") {
             return "Réservations par responsable";
@@ -1313,11 +1327,25 @@ class BookingTranslator {
         return "Number reservations per unit from ";
     }
 
+    public static function NumberResaPerClientFrom($lang) {
+        if ($lang == "fr") {
+            return "Nombre de réservations par client sur la période du ";
+        }
+        return "Number reservations per client from ";
+    }
+
     public static function TimeResaPerUnitFrom($lang) {
         if ($lang == "fr") {
             return "Durée de réservations par unités sur la période du ";
         }
         return "Time reservations per unit from ";
+    }
+
+    public static function TimeResaPerClientFrom($lang) {
+        if ($lang == "fr") {
+            return "Durée de réservations par client sur la période du ";
+        }
+        return "Time reservations per client from ";
     }
 
     public static function To($lang) {
@@ -1339,6 +1367,13 @@ class BookingTranslator {
             return "Générer les statistiques par unité ?";
         }
         return "Generate stats per unit ?";
+    }
+
+    public static function GenerateStatsPerClient($lang) {
+        if ($lang == "fr") {
+            return "Générer les statistiques par client ?";
+        }
+        return "Generate stats per client ?";
     }
 
     public static function Use_Auth_Visa($lang) {
@@ -1594,4 +1629,25 @@ class BookingTranslator {
         return "Booking access";
     }
 
+    public static function MissingColorCode($lang) {
+        if ($lang == "fr") {
+            return "Vous devez créer au moins un code couleur afin de pouvoir éditer les horaires";
+        }
+        return "You need to create at least one color code to be able to edit schedulings";
+    }
+
+    public static function noBookingArea($lang) {
+        if ($lang == "fr") {
+            return "Erreur : Aucun domaine et / ou aucune ressource n'a été créé";
+        }
+        return "Error: No resource and/or area has been created";
+    }
+
+    public static function maxInvoicingUnits($lang) {
+        if ($lang == "fr") {
+            return "Seule une quantité peut être utilisée comme unité de facturation pour une ressource. Merci de passer \"Utiliser comme unité de facturation\" à \"non\" pour les autres quantités concernées.";
+        } else {
+            return "Only one quantity can be used as an invoicing unit for one resource. Please set \"Use as invoicing unit\" to \"no\" for other quantites.";
+        }
+    }
 }

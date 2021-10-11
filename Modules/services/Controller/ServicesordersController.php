@@ -120,7 +120,7 @@ class ServicesordersController extends CoresecureController {
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->serviceModel->delete($id);
+        $this->serviceModel->delete($id_space, $id);
         $this->redirect("servicesorders/" . $id_space);
     }
 
@@ -173,12 +173,17 @@ class ServicesordersController extends CoresecureController {
 
         if ($form->check()) {
 
-            $id_order = $modelOrder->setOrder($id, $id_space, $this->request->getParameter("id_user"), 
+            $id_order = $modelOrder->setOrder(
+                    $id,
+                    $id_space,
+                    $this->request->getParameter("id_user"), 
                     $this->request->getParameter("no_identification"), 
                     $_SESSION["id_user"], 
                     CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
                     date("Y-m-d", time()), 
-                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang));
+                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang)
+                );
+                
             $modelOrder->setModifiedBy($id_space, $id, $_SESSION["id_user"]);
             
             $servicesIds = $this->request->getParameter("services");

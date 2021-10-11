@@ -1,12 +1,69 @@
-# 2.1
+# Changes
 
+## 2.1.2
+
+* Fix servicesprojects edition #324
+* [booking] getSpaceActiveUsersForSelect, order users by name Closes #323
+* fix booking calendar display Closes #322
+* add id_space to ClAddress::set() (#320)
+
+## 2.1.1
+
+* [helpdesk] fix remind call
+* [deps] fix influxdb/guzzle deps versions Closes #318
+* [cli] fix fresh install detection
+* Update BkBookingTableCSS.php, add id_space to getAreaCss()
+* [helpdesk] if mail not for a space, skip
+
+## 2.1
+
+* fix resources visa listing
+* #234 fix defaults in db schema
+* #230 generate apikey on ldap login
+* #233 fix schema of core_j_spaces_user
 * #218 allow user to define default language
+* Add prometheus statistics
+* #225 bug fixes
+* #235 use static data for se_service_types
+* #246 allow user self registration (via config)
+* #244 Allow impersonation
+* #142 fix resource with no category handling
+* #272 allow to display news in popup on space home page
+* #275 Fix color codes error in booking schedulings 
+* #292 [ServicesinvoiceorderController] calls to deprecated function createByUnitForm()
+* #298 Add invoice by quantities
+* #281 Add front-end controls in user forms. Improves ergonomy
+* #302 fix_pendings_users_couldnt_unsubscribe
 
-# 2.0
+## 2.0.5
+
+* Fix #293 quote edition not working
+
+## 2.0.4
+
+* Fix admin space to edit space
+* Fix clientuserdelete params
+* Add user email to notification for join requests and to pending users accounts list
+
+## 2.0.3
+
+* Bug fix release (routes on antibodies and history)
+
+## 2.0.2
+
+* fix servicesprojecteditentryquery route parameters #253
+* add route reload command in cli
+* Fix antibodieslist action parameter name (route expects sortentry but function defines letter)
+
+## 2.0.1
+
+* #245 fix count calls on int
+
+## 2.0
 
 * Fix multi-tenant (still have pending issues for some modules,
   will be fixed in next release)
-* Fix multi-tenant issues for email 
+* Fix multi-tenant issues for email
 * #206 fix booking invoices creation when night and weekend
   prices option not set
 * #189 fix booking blocking errors

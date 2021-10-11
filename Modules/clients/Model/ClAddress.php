@@ -42,15 +42,14 @@ class ClAddress extends Model {
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE cl_addresses SET institution=?, building_floor=?, service=?, address=?, zip_code=?, city=?, country=? WHERE id=? AND id_space=? AND deleted=0';
-            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $id));
+            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $id, $id_space));
             return $id;
         }
     }
 
     public function delete($id_space, $id) {
         $sql = "UPDATE cl_addresses SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM cl_addresses WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
 }

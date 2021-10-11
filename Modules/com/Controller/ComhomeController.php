@@ -42,6 +42,12 @@ class ComhomeController extends CoresecureController {
         ));
     }
 
+    public function getnewsAction($id_space) {
+        $modelNews = new ComNews();
+        $news = $modelNews->getByDate($id_space, 10);
+        $this->render(['data' => ['news' => $news]]);
+    }
+
     public function getTweets($id_space) {
         $modelParam = new CoreConfig();
         require_once('externals/twitter-api/TwitterAPIExchange.php');
