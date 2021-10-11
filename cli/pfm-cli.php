@@ -78,7 +78,7 @@ function cliInstall($from=-1) {
     // Create db release table if not exists
     $cdb = new CoreDB();
     $freshInstall = $cdb->isFreshInstall();
-    if($from == -1 && !$freshInstall) {
+    if($from == -1 && $freshInstall) {
         $from = 0;
     }
     $cdb->createTable();
