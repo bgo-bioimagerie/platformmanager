@@ -448,7 +448,7 @@ class BkCalendarEntry extends Model {
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                $userInfo = $modelUser->userAllInfo($id_space, $rid);
+                $userInfo = $modelUser->userAllInfo($rid);
                 $data[$i]["recipient_fullname"] = $userInfo["name"] . " " . $userInfo["firstname"];
                 $data[$i]["phone"] = "";
                 if (isset($userInfo["phone"])) {
