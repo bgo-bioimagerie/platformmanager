@@ -2,6 +2,7 @@
 
 ## 2.1.2
 
+* day area dayafter and daybefore actions fixed, closes #326, closes #299
 * Fix servicesprojects edition #324
 * [booking] getSpaceActiveUsersForSelect, order users by name Closes #323
 * fix booking calendar display Closes #322
