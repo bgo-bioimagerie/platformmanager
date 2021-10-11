@@ -70,7 +70,7 @@ class ServicesRouting extends Routing {
 
 
 
-        $this->addRoute("servicesgetprojectentry", "servicesgetprojectentry", "servicesproject", "getprojectentry", array("id", "id_space"), array("", ""), true);
+        $this->addRoute("servicesgetprojectentry", "servicesgetprojectentry", "servicesproject", "getprojectentry", array("id_space", "id"), array("", ""), true);
         $this->addRoute("servicesgetprices", "servicesgetprices", "servicesprices", "getprices", array("id_space", "id_service"), array("", ""), true);
 
 

@@ -15,7 +15,7 @@
                 var strid = this.id;
                 var arrayid = strid.split("_");
                 //alert("add note clicked " + arrayid[1]);
-                showEditEntryForm(arrayid[1], <?php echo $projectEntries[$i]["id_space"]?>);
+                showEditEntryForm(<?php echo $projectEntries[$i]["id_space"]?>, arrayid[1]);
             });
     <?php
 }
@@ -35,9 +35,9 @@
         })
         ;
 
-        function showEditEntryForm(id, id_space) {
+        function showEditEntryForm(id_space, id) {
             $.post(
-                    'servicesgetprojectentry/' + id + '/' + id_space,
+                    'servicesgetprojectentry/' + id_space + '/' + id,
                     {},
                     function (data) {
                         $('#formprojectentryprojectid').val(data.id_project);
