@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a00a9a66d656068f7d32e90aa59d6785",
+    "content-hash": "7ac2b655547b290324bfc1f0c92ec858",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -403,16 +403,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.8.2",
+            "version": "1.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "dc960a912984efb74d0a90222870c72c87f10c91"
+                "reference": "1afdd860a2566ed3c2b0b4a3de6e23434a79ec85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/dc960a912984efb74d0a90222870c72c87f10c91",
-                "reference": "dc960a912984efb74d0a90222870c72c87f10c91",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/1afdd860a2566ed3c2b0b4a3de6e23434a79ec85",
+                "reference": "1afdd860a2566ed3c2b0b4a3de6e23434a79ec85",
                 "shasum": ""
             },
             "require": {
@@ -472,9 +472,23 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/1.8.2"
+                "source": "https://github.com/guzzle/psr7/tree/1.8.3"
             },
-            "time": "2021-04-26T09:17:50+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/Nyholm",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/guzzlehttp/psr7",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-10-05T13:56:00+00:00"
         },
         {
             "name": "http-interop/http-factory-guzzle",
@@ -536,16 +550,16 @@
         },
         {
             "name": "influxdata/influxdb-client-php",
-            "version": "2.0.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/influxdata/influxdb-client-php.git",
-                "reference": "fe584654f303edb6e77951ff9817daa62e59ce85"
+                "reference": "d1eac5fcc8527c00da150145391ef042191fa2cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/influxdata/influxdb-client-php/zipball/fe584654f303edb6e77951ff9817daa62e59ce85",
-                "reference": "fe584654f303edb6e77951ff9817daa62e59ce85",
+                "url": "https://api.github.com/repos/influxdata/influxdb-client-php/zipball/d1eac5fcc8527c00da150145391ef042191fa2cc",
+                "reference": "d1eac5fcc8527c00da150145391ef042191fa2cc",
                 "shasum": ""
             },
             "require": {
@@ -577,9 +591,9 @@
             ],
             "support": {
                 "issues": "https://github.com/influxdata/influxdb-client-php/issues",
-                "source": "https://github.com/influxdata/influxdb-client-php/tree/2.0.0"
+                "source": "https://github.com/influxdata/influxdb-client-php/tree/2.2.0"
             },
-            "time": "2021-07-09T06:32:34+00:00"
+            "time": "2021-09-17T06:58:50+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
