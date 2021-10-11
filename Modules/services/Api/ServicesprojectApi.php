@@ -51,12 +51,12 @@ class ServicesprojectApi extends CoresecureController {
         echo json_encode($data);
     }
 
-    public function getprojectentryAction($id) {
+    public function getprojectentryAction($id, $id_space) {
         
         $lang = $this->getLanguage();
         $modelProject = new SeProject();
 
-        $data = $modelProject->getProjectEntry($id);
+        $data = $modelProject->getProjectEntry($id_space, $id);
         $data["date"] = CoreTranslator::dateFromEn($data["date"], $lang);
         
         echo json_encode($data);
