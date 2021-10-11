@@ -34,7 +34,7 @@ require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 
 
-define("DB_VERSION", 3);
+define("DB_VERSION", 4);
 /**
  * Class defining the database version installed
  */
