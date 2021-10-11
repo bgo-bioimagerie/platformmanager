@@ -137,6 +137,9 @@ class EventHandler {
 
         $model = new CoreSpace();
         $space = $model->getSpace($id_space);
+        if(!$space) {
+            return;
+        }
         
         if($msg['bk_calendar_entry_old']) {
             $old = $msg['bk_calendar_entry_old'];
@@ -176,6 +179,9 @@ class EventHandler {
         $id_space = $invoice['id_space'];
         $model = new CoreSpace();
         $space = $model->getSpace($id_space);
+        if(!$space) {
+            return;
+        }
         $client = ['name' => 'unknown'];
         if($invoice['id_responsible']) {
             $c = new ClClient();
