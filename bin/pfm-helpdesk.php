@@ -183,7 +183,8 @@ while(true) {
                     }
                 }
                 if($id_space == 0) {
-                    Configuration::getLogger()->info("Message not related to a space", ["space" => $to]);
+                    Configuration::getLogger()->info("Message not related to a space", ["to" => $to, "from" => $from, "subject" => $mail->subject]);
+                    continue;
                 }
 
                 $spaceNames[$id_space] = true;
