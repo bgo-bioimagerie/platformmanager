@@ -1,5 +1,20 @@
 # Changes
 
+## 2.1.2
+
+* Fix servicesprojects edition #324
+* [booking] getSpaceActiveUsersForSelect, order users by name Closes #323
+* fix booking calendar display Closes #322
+* add id_space to ClAddress::set() (#320)
+
+## 2.1.1
+
+* [helpdesk] fix remind call
+* [deps] fix influxdb/guzzle deps versions Closes #318
+* [cli] fix fresh install detection
+* Update BkBookingTableCSS.php, add id_space to getAreaCss()
+* [helpdesk] if mail not for a space, skip
+
 ## 2.1
 
 * fix resources visa listing
