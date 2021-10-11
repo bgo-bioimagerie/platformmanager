@@ -420,6 +420,41 @@ class CoreDB extends Model {
 
     }
 
+    public function upgrade_v3_v4() {
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user');
+            $statHandler = new Statistics();
+            $pfmOrg = Configuration::get('influxdb_org', 'pfm');
+            $statHandler->createDB($pfmOrg);
+            $eventHandler = new EventHandler();
+            $eventHandler->spaceCount(null);
+            // create org
+            $g = new Grafana();
+            $g->createOrg($pfmOrg);
+            $u = new CoreUser();
+            $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
+            $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user, done!');
+
+            // import managers
+            Configuration::getLogger()->debug('[stats] import managers to grafana');
+            $s = new CoreSpace();
+            $spaces = $s->getSpaces('id');
+            foreach($spaces as $space) {
+                $csu = new CoreSpaceUser();
+                $managers = $csu->managersOrAdmin($space['id']);
+                $g = new Grafana();
+                foreach($managers as $manager) {
+                    $u = new CoreUser();
+                    $user = $u->getInfo($manager['id']);
+                    $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                }
+                $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
+            }
+            Configuration::getLogger()->debug('[stats] import managers to grafana, done!');
+        }
+    }
+
     /**
      * Get current database version
      */
