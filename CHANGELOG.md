@@ -2,6 +2,9 @@
 
 ## 2.1.3
 
+* [db] fix upgrade_v2_v3 migration script on bk_authorizations
+  **Warning**: if you installed release >=2.1 < 2.1.3 you need to run a db fix script
+  php cli/pfm-cli.php repair --bug 332
 * [sql] fix ReEventType getName sql request
 * fix call to getSpaceActiveUsers in resourcesinfo respsAction
 
