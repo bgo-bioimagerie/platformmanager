@@ -2,6 +2,7 @@
 
 ## 2.1.4
 
+* [module:clients] fix clients company settings when not found in db (PFM-1M)
 * [module:services] fix invoice call with wrong SQL (PFM-1S)
 * [module:projects] fix project dates parsing (PFM-1Q)
 * [sql] fix sql request on document, missing space id (PFM-1P)
