@@ -51,6 +51,37 @@ class CoreDB extends Model {
         return $freshInstall;
     }
 
+    /**
+     * For tests only
+     */
+    public function repair0() {
+        Configuration::getLogger()->info("No bug 0, nothing to repair");
+    }
+
+    /**
+     * Fix for bug #332 introduced by release 2.1
+     * if you installed 2.1->2.1.2 this patch needs to be used to fix database
+     * Not needed after 2.1.3
+     * 
+     * How-to:
+     * 
+     * require_once 'Framework/Configuration.php';
+     * require_once 'Modules/core/Model/CoreInstall.php';
+     * $cdb = new CoreDB();
+     * $cdb->repair332();
+     *
+     */
+    public function repair332() {
+        Configuration::getLogger()->info("Run repair script for bug 332");
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+        Configuration::getLogger()->info("Done!");
+    }
+
 
     public function upgrade_v0_v1() {
 
@@ -129,8 +160,6 @@ class CoreDB extends Model {
         foreach ($resdb as $res) {
             $sql = "UPDATE bk_access SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calendar_entry SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calquantities SET id_space=? WHERE id_resource=?";
@@ -148,6 +177,13 @@ class CoreDB extends Model {
             $sql = "UPDATE re_event SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE re_resps SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
