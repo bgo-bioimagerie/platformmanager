@@ -1,5 +1,10 @@
 # Changes
 
+## 2.1.4
+
+* [module:projects] fix project dates parsing (PFM-1Q)
+* [sql] fix sql request on document, missing space id (PFM-1P)
+
 ## 2.1.3
 
 * [db] fix upgrade_v2_v3 migration script on bk_authorizations
