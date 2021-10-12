@@ -51,7 +51,7 @@ class ServicesInvoice extends InvoiceModel {
         $orders = $modelOrder->openedForRespPeriod($beginPeriod, $endPeriod, $id_resp, $id_space);
 
         // get all projects
-        $sqlps = "SELECT * FROM se_project WHERE id_space=? AND id_resp=? AND date_close is null)";
+        $sqlps = "SELECT * FROM se_project WHERE id_space=? AND id_resp=? AND date_close is null";
         $projects = $this->runRequest($sqlps, array($id_space, $id_resp))->fetchAll();
 
         $modelPrice = new SePrice();
