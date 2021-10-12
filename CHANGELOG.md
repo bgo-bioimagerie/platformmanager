@@ -3,6 +3,7 @@
 ## 2.1.3
 
 * [sql] fix ReEventType getName sql request
+* fix call to getSpaceActiveUsers in resourcesinfo respsAction
 
 ## 2.1.2
 
