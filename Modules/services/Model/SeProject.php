@@ -175,11 +175,11 @@ class SeProject extends Model {
             $lastYear = null;
             foreach($data as $date) {
                 if($date != null) {
-                    $lastDate = $date;
+                    $lastDate = $date[0];
                     $lastDateInfo = explode("-", $lastDate);
                     $lastYear = $lastDateInfo[0];
                     if($firstYear == null) {
-                        $firstDate = $date;
+                        $firstDate = $date[0];
                         $firstDateInfo = explode("-", $firstDate);
                         $firstYear = $firstDateInfo[0];      
                     }
@@ -223,11 +223,11 @@ class SeProject extends Model {
             $lastYear = null;
             foreach($data as $date) {
                 if($date != null) {
-                    $lastDate = $date;
+                    $lastDate = $date[0];
                     $lastDateInfo = explode("-", $lastDate);
                     $lastYear = $lastDateInfo[0];
                     if($firstYear == null) {
-                        $firstDate = $date;
+                        $firstDate = $date[0];
                         $firstDateInfo = explode("-", $firstDate);
                         $firstYear = $firstDateInfo[0];      
                     }
