@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.3
+
+* [sql] fix ReEventType getName sql request
+
 ## 2.1.2
 
 * day area dayafter and daybefore actions fixed, closes #326, closes #299
