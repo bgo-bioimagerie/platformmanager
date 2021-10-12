@@ -18,7 +18,7 @@ class ServicesInvoice extends InvoiceModel {
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
         
         // projects
-        $sqlps = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND id_resp=? AND date_close is NULL)";
+        $sqlps = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND id_resp=? AND date_close is NULL";
         $projects = $this->runRequest($sqlps, array($id_space, $id_resp))->fetchAll();
         foreach ($projects as $p){
             
