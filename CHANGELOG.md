@@ -2,6 +2,8 @@
 
 ## 2.1.4
 
+* [module:booking] fix phpoffice worksheet calls
+* [sql] fix ReEvent:set sql missing id_space
 * [module:booking] fix generateStats (missing id_space)
 * [sql] fix sql request on revisa (PFM-1X)
 * [module:booking] if start/end minutes are empty, set to 0
