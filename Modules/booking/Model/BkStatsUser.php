@@ -660,7 +660,7 @@ class BkStatsUser extends Model {
         //$objDrawing->setWorksheet($sheet);
 
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         $writer->save('./data/' . $nom);
         header('Content-Type: application/vnd.ms-excel');
