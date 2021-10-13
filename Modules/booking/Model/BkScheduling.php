@@ -55,6 +55,9 @@ class BkScheduling extends Model {
     }
 
     public function getClosestMinutes($id_space, $id_resource, $minutes){
+        if($minutes == "") {
+            $minutes = 0;
+        }
         $sql = "SELECT size_bloc_resa FROM bk_schedulings WHERE id=(SELECT id_area FROM re_info WHERE id=? AND deleted=0 AND id_space=? )";
         $req = $this->runRequest($sql, array($id_resource, $id_space));
         if ($req->rowCount() > 0){
