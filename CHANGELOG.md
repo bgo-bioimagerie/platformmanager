@@ -2,6 +2,8 @@
 
 ## 2.1.4
 
+* [excel] use Xlsx instead of 2007 writer
+* [module:booking][stats] fix sql and unit ref for stats
 * [module:booking] fix phpoffice worksheet calls
 * [sql] fix ReEvent:set sql missing id_space
 * [module:booking] fix generateStats (missing id_space)
