@@ -345,7 +345,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
      */
 
     protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $number = "") {
-
         $lang = $this->getLanguage();
 
         require_once 'Modules/booking/Model/BkPackage.php';
@@ -406,10 +405,15 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $userTime["nb_hours_we"] = 0;
             $userTime["ratio_bookings_day"] = 0;
             $userTime["ratio_bookings_night"] = 0;
-            $userTime["ratio_bookings_we"] = 0;      
-            $totalQte = 0; // $totalQte = total number of items booked
+            $userTime["ratio_bookings_we"] = 0;
 
+            $userTime["dayQte"] = 0;
+            $userTime["nightQte"] = 0;
+            $userTime["weQte"] = 0;
+
+            $totalQte = 0; // $totalQte = total number of items booked
             foreach ($reservations as $reservation) {
+                
                 // count: day night we, packages
                 if ($reservation["package_id"] > 0) {
                     $userPackages[$reservation["package_id"]] ++;
@@ -432,9 +436,16 @@ class BookinginvoiceController extends InvoiceAbstractController {
                             $qte = 0;
                         }
                         $totalQte += $qte;
-                        $userTime["ratio_bookings_day"] += $resaDayNightWe["ratio_bookings_day"];
-                        $userTime["ratio_bookings_night"] += $resaDayNightWe["ratio_bookings_night"];
-                        $userTime["ratio_bookings_we"] += $resaDayNightWe["ratio_bookings_we"];
+
+                        // get ratios of this reservation quantity to invoice at night, day or we price
+                        $tmpDayQte = $qte * $resaDayNightWe["ratio_bookings_day"];
+                        $tmpNightQte = $qte * $resaDayNightWe["ratio_bookings_night"];
+                        $tmpWeQte = $qte * $resaDayNightWe["ratio_bookings_we"];
+
+                        $userTime["dayQte"] += $tmpDayQte;
+                        $userTime["nightQte"] += $tmpNightQte;
+                        $userTime["weQte"] += $tmpWeQte;
+                        
                     } else {
                         $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
                         $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
@@ -466,18 +477,18 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 }
                 // manage quantity
                 if ($totalQte > 0) {
-                    if ($userTime["ratio_bookings_day"] > 0) {
-                        $dayQte = $totalQte * $userTime["ratio_bookings_day"];
+                    if ($userTime["dayQte"] > 0) {
+                        $dayQte = $userTime["dayQte"];
                         $content .= $res["id"] . "_day=" . $dayQte . "=" . $timePrices[$res["id"]]["price_day"] . ";";
                         $total_ht += floatval($dayQte) * floatval($timePrices[$res["id"]]["price_day"]);
                     }
-                    if ($userTime["ratio_bookings_night"] > 0) {
-                        $nightQte = $totalQte * $userTime["ratio_bookings_night"];
+                    if ($userTime["nightQte"] > 0) {
+                        $nightQte = $userTime["nightQte"];
                         $content .= $res["id"] . "_night=" . $nightQte . "=" . $timePrices[$res["id"]]["price_night"] . ";";
                         $total_ht += floatval($nightQte) * floatval($timePrices[$res["id"]]["price_night"]);
                     }
-                    if ($userTime["ratio_bookings_we"] > 0) {
-                        $weQte = $totalQte * $userTime["ratio_bookings_we"];
+                    if ($userTime["weQte"] > 0) {
+                        $weQte = $userTime["weQte"];
                         $content .= $res["id"] . "_we=" . $weQte . "=" . $timePrices[$res["id"]]["price_we"] . ";";
                         $total_ht += floatval($weQte) * floatval($timePrices[$res["id"]]["price_we"]);
                     }

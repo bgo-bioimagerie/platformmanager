@@ -90,6 +90,7 @@ class BookingquantitiesController extends CoresecureController {
                         $_SESSION["flash"] = BookingTranslator::maxInvoicingUnits($lang);
                         $_SESSION["flashClass"] = "danger";
                         $this->redirect("bookingquantities/".$id_space);
+                        return;
                     } else {
                         array_push($invoicingUnitsResources, $resource);
                     }
