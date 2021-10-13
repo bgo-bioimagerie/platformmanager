@@ -268,6 +268,9 @@ class AntibodieslistController extends CoresecureController {
             $anticorps = $this->antibody->getAnticorpsFromId($id_space, $id);
         } else {
             $anticorps = $this->antibody->getDefaultAnticorps();
+            // get and increment last n°H2P2
+            $newNumber = intval($this->antibody->getLargerNoH2P2($id_space)) + 1;
+            $anticorps['no_h2p2'] = $newNumber;
         }
         $form = $this->createEditForm($id_space, $anticorps, $id);
         if ($form->check()) {
