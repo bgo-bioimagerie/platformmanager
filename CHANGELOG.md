@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.5
+
+* [module:catalog] fix missing id_space
+
 ## 2.1.4
 
 * fix invoicing units
