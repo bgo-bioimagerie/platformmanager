@@ -301,9 +301,6 @@ class BookingController extends BookingabstractController {
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
-        } else {
-            $_SESSION['bk_curentDate'] = date("Y-m-d", time());
-            $curentDate = $_SESSION['bk_curentDate'];
         }
 
         if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {

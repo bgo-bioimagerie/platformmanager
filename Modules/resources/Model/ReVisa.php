@@ -274,7 +274,7 @@ class ReVisa extends Model {
     }
 
     public function getAllInstructors($id_space) {
-        $sql = "select distinct id_instructor from re_visas WHERE delete=0 AND id_resource_category IN (SELECT id FROM re_category WHERE id_space=? AND deleted=0)";
+        $sql = "select distinct id_instructor from re_visas WHERE deleted=0 AND id_resource_category IN (SELECT id FROM re_category WHERE id_space=? AND deleted=0)";
         $req = $this->runRequest($sql, array($id_space));
         $instructors = $req->fetchAll();
 
