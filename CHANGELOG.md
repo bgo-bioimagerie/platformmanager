@@ -3,6 +3,7 @@
 ## 2.1.5
 
 * [module:catalog] fix missing id_space
+* [module:booking,service] fix mktime errors
 
 ## 2.1.4
 
