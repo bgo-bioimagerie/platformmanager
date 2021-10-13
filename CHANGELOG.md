@@ -2,6 +2,7 @@
 
 ## 2.1.4
 
+* [module:booking] if start/end minutes are empty, set to 0
 * [module:clients] fix clients company settings when not found in db (PFM-1M)
 * [module:services] fix invoice call with wrong SQL (PFM-1S)
 * [module:projects] fix project dates parsing (PFM-1Q)
