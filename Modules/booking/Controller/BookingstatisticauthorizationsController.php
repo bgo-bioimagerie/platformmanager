@@ -91,7 +91,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         // by instructor
         foreach ($resources as $resource) {
             foreach ($instructors as $instructor) {
-                $authorizations = $modelAuthorizations->getForResourceInstructorPeriod($resource["id"], $instructor["id_instructor"], $period_begin, $period_end);
+                $authorizations = $modelAuthorizations->getForResourceInstructorPeriod($id_space, $resource["id"], $instructor["id_instructor"], $period_begin, $period_end);
                 $countResourcesInstructor[$resource["id"]][$instructor["id_instructor"]] = count($authorizations);
             }
         }
@@ -103,7 +103,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         $countResourcesUnit = array();
         foreach ($resources as $resource) {
             foreach ($units as $unit) {
-                $authorizations = $modelAuthorizations->getFormResourceUnitPeriod($resource["id"], $unit["id"], $period_begin, $period_end);
+                $authorizations = $modelAuthorizations->getFormResourceUnitPeriod($id_space, $resource["id"], $unit["id"], $period_begin, $period_end);
                 $countResourcesUnit[$resource["id"]][$unit["id"]] = count($authorizations);
             }
         }

@@ -2,6 +2,7 @@
 
 ## 2.1.4
 
+* [module:booking] fix generateStats (missing id_space)
 * [sql] fix sql request on revisa (PFM-1X)
 * [module:booking] if start/end minutes are empty, set to 0
 * [module:clients] fix clients company settings when not found in db (PFM-1M)
