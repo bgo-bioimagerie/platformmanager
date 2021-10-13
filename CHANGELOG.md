@@ -2,6 +2,7 @@
 
 ## 2.1.4
 
+* fix invoicing units
 * [excel] use Xlsx instead of 2007 writer
 * [module:booking][stats] fix sql and unit ref for stats
 * [module:booking] fix phpoffice worksheet calls
