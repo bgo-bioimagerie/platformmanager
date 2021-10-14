@@ -285,7 +285,7 @@ class BookingstatisticsController extends CoresecureController {
         $date_end = $this->request->getParameterNoException("date_end");
         if ($date_end == "") {
             $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
-            // if a default date is set, get it, if not, get actual date - 1 year
+            // if a default date is set, get it, if not, get actual date
             if ($date_end === "") {
                 $date_end = CoreTranslator::dateFromEn(date("Y-m-d"), $lang);
             } else {
