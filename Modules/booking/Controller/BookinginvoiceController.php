@@ -793,12 +793,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $details = $this->detailsTable($id_space, $invoice["id"], $lang);
         
         $modelClient = new ClClient();
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $unit = "";
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
-        $resp = $modelClient->getContactName($id_space, $invoice["id_responsible"]);
+        $resp = $clientInfos["contact_name"];
         $useTTC = true;
 
-        $this->genreratePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details);
+        $this->genreratePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos);
     }
 
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
@@ -808,12 +809,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $total = $tabledata["total"];
 
         $modelClient = new ClClient();
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $unit = "";
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
-        $resp = $modelClient->getContactName($id_space, $invoice["id_responsible"]);
+        $resp = $clientInfos["contact_name"];
         
         $useTTC = true;
-        $this->genreratePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC);
+        $this->genreratePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos);
     }
 
     protected function unparseContent($id_space, $id_item, $lang) {

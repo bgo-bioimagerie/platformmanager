@@ -201,7 +201,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 $itemServices[] = $data[0];
                 $itemQuantities[] = $data[1];
                 $itemPrices[] = $data[2];
-                $total += $data[1] * $data[2];
+                $total += floatval($data[1]) * floatval($data[2]);
                 if (count($data) == 4) {
                     $itemComments[] = $data[3];
                 } else {
@@ -417,6 +417,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $total = 0;
         foreach ($content as $d) {
             
+            $d[1] = floatval($d[1]);
+            $d[2] = floatval($d[2]);
             $quantity = $d[1];
             $unitPrice = $d[2];
             if($quantity == 1){
@@ -452,8 +454,9 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelClient = new ClClient();
         $unit = "";
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
-        $resp = $modelClient->getContactName($id_space ,$invoice["id_responsible"]);
-        $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
+        $resp = $clientInfos["contact_name"];
+        $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
     }
 
 }
