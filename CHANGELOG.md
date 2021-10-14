@@ -2,6 +2,7 @@
 
 ## 2.1.5
 
+* [module:booking] set resources qtes default value to empty string
 * [module:catalog] fix missing id_space
 * [module:booking,service] fix mktime errors
 
