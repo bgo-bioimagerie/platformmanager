@@ -382,7 +382,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
     protected function getProjectsResp($id_space, $id_projects) {
 
-        if (empty($id_projects) == 0) {
+        if (empty($id_projects)) {
             throw new Exception("You need to select at least one project");
         }
 
