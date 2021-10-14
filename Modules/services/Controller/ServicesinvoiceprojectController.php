@@ -338,14 +338,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 }
             }
 
-            //echo "services = ";
-            //print_r($services); echo "<br/>";
-            //echo "servicesMerged = ";
-            //print_r($servicesMerged); echo "<br/>";
             for ($i = 0; $i < count($servicesMerged); $i++) {
                 $addedServices[] = $servicesMerged[$i]["id_service"];
                 $quantity = floatval($servicesMerged[$i]["quantity"]);
-                $price = $modelPrice->getPrice($id_space, $servicesMerged[$i]["id_service"], $id_belonging);
+                $price = floatval($modelPrice->getPrice($id_space, $servicesMerged[$i]["id_service"], $id_belonging));
                 $addedServicesCount[] = $quantity;
                 $addedServicesPrice[] = $price;
                 $addedServicesComment[] = $servicesMerged[$i]["comment"];

@@ -2,7 +2,8 @@
 
 ## 2.1.5
 
-* [module:services] fix invoice by project
+* [module:services] fix invoice by project - typeError
+* [module:services] fix invoice by project - no project selected error
 * [module:booking] set resources qtes default value to empty string
 * [module:catalog] fix missing id_space
 * [module:booking,service] fix mktime errors
