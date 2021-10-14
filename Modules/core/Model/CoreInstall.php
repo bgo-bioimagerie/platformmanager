@@ -82,6 +82,23 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("Done!");
     }
 
+    public function repair337() {
+        Configuration::getLogger()->debug('set ac_anticorps counters');
+        $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $redis = new Redis();
+            $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+            $res = $resdb->fetchAll();
+            foreach($res as $sp_anticorps) {
+                $sp = $sp_anticorps[1];
+                $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
+            }
+            $redis->close();
+        }
+        Configuration::getLogger()->debug('set ac_anticorps counters, done!');
+    }
+
 
     public function upgrade_v0_v1() {
 
@@ -400,15 +417,6 @@ class CoreDB extends Model {
             $counter = intval($resdb['counter']);
         }
 
-        $sql = "SELECT max(no_h2p2) as counter FROM ac_anticorps";
-        $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            $res = $resdb->fetch();
-            if($res && intval($res['counter']) > $counter) {
-                $counter = intval($res['counter']);
-            }
-        }
-
         $i = 0;
         while($i <= $counter) {
             $cvm = new CoreVirtual();
@@ -417,6 +425,21 @@ class CoreDB extends Model {
         }
 
         Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
+
+        Configuration::getLogger()->debug('set ac_anticorps counters');
+        $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $redis = new Redis();
+            $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+            $res = $resdb->fetchAll();
+            foreach($res as $sp_anticorps) {
+                $sp = $sp_anticorps[1];
+                $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
+            }
+            $redis->close();
+        }
+        Configuration::getLogger()->debug('set ac_anticorps counters, done!');
 
         if(Statistics::enabled()) {
             Configuration::getLogger()->debug("[stats] import calentry stats");

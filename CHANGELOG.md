@@ -2,10 +2,11 @@
 
 ## 2.1.5
 
+* [module:antibodies] fix antibody number incrementation (need to follow, by space)
 * [module:services] fix invoice by project
 * [module:booking] set resources qtes default value to empty string
 * [module:catalog] fix missing id_space
-* [module:booking,service] fix mktime errors
+* [module:booking,service,stats] fix mktime errors
 
 ## 2.1.4
 
