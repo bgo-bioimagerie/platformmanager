@@ -645,7 +645,7 @@ class BookingdefaultController extends BookingabstractController {
                 $name .= "*";
             }
             $key = array_search($q["id"], $qDataId);
-            $value = ($key!==false) ? $qDataValue[$key] : 1;
+            $value = ($key!==false) ? $qDataValue[$key] : "";
             $form->addNumber("q" . $q["id"], $q["name"], $q["mandatory"], $value);
         }
 
