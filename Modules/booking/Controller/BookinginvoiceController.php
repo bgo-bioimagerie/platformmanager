@@ -11,6 +11,7 @@ require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkOwnerPrice.php';
+require_once 'Modules/booking/Model/BkCalQuantities.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
@@ -110,10 +111,9 @@ class BookinginvoiceController extends InvoiceAbstractController {
             return;
         }
 
-        //print_r($id_items);
         // unparse details
         $detailsData = array();
-        if (count($id_items) > 0) {
+        if (!empty($id_items) > 0) {
             $item = $modelInvoiceItem->getItem($id_space, $id_items[0]["id"]);
             $details = $item["details"];
             
@@ -128,7 +128,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         // create edit form
         $idItem = 0;
-        if (count($id_items) > 0) {
+        if (!empty($id_items) > 0) {
             $idItem = $id_items[0]["id"];
         }
         $form = $this->editForm($idItem, $id_space, $id_invoice, $lang);
@@ -193,17 +193,14 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $itemPrices = array();
         $modelInvoiceItem = new InInvoiceItem();
         $modelInvoice = new InInvoice();
-        //$modelUser = new CoreUser();
         $modelClient = new ClClient();
         
         $invoiceInfo = $modelInvoice->get($id_space ,$id_invoice);
 
         $clientInfo = $modelClient->get($id_space ,$invoiceInfo["id_responsible"]);
-        $id_belonging = $clientInfo["id_pricing"];
+        $id_belonging = $clientInfo["pricing"];
         
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
-        
-        
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         foreach ($contentArray as $content) {
@@ -218,13 +215,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
         }
 
         $listResources = $this->getResourcesList($id_space, $id_belonging, $lang);
-        //echo "id_belonging = " . $id_belonging . "<br/>";
-        //print_r($listResources);
-
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
-        $formAdd->addText("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addText("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addNumber("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addFloat("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
@@ -282,8 +276,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form = new Form($this->request, "BookingInvoiceAllForm");
         $form->addSeparator(InvoicesTranslator::Invoice_All($lang));
 
-        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
-        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
+        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
+        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
 
         $form->setButtonsWidth(2, 9);
 
@@ -295,8 +289,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form = new Form($this->request, "ByPeriodForm");
         $form->addSeparator(InvoicesTranslator::Invoice_Responsible($lang));
 
-        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
-        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
+        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
+        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
         $respId = $this->request->getParameterNoException("id_resp");
 
         $modelClient = new ClClient();
@@ -316,15 +310,12 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $modelCal = new BkCalendarEntry();
         $modelInvoice = new InInvoice();
-        
         $modelClient = new ClClient();
         $resps = $modelClient->getAll($id_space);
         
         $number = "";
         foreach ($resps as $resp) {
-            //print_r($resp);
             $billIt = $modelCal->hasResponsibleEntry($id_space, $resp["id"], $beginPeriod, $endPeriod);
-            //echo "billIt = " . $billIt . "<br/>";
             if ($billIt) {
                 $number = $modelInvoice->getNextNumber($number);
                 $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"], $number);
@@ -332,8 +323,28 @@ class BookinginvoiceController extends InvoiceAbstractController {
         }
     }
 
-    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $number = "") {
+    /**
+     * Generate an invoice for the chosen period.
+     * 
+     * To be noticed:
+     * For each reservation, calculate its price (using $this->calculateTimeResDayNightWe()).
+     * 2 general cases:
+     * - resource booked price depends on duration, then it costs Unit price * reservation duration (in hours)
+     * - resource booked price depends on a quantity of elements, then it costs Unit price * nb elements (quantity)
+     * 
+     * Unit prices can depend on the period booked (day, night, week-end)
+     * 
+     * Specific case:
+     * - if a reservation depending on quantity of elements is stradding 2 types of period (i.e. night and day),
+     * then applies a ratio.
+     * example:
+     * for a reservation covering 2 night hours and 6 day hours => nightRatio = 0.25 and dayRatio = 0.75
+     * if nightPrice = 20 / element and dayPrice = 10 / element,
+     * total price = nbElements * (nightPrice * nightRatio) + nbElements * (dayPrice * dayRatio)
+     * 
+     */
 
+    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $number = "") {
         $lang = $this->getLanguage();
 
         require_once 'Modules/booking/Model/BkPackage.php';
@@ -345,17 +356,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelResouces = new ResourceInfo();
         $resources = $modelResouces->getBySpace($id_space);
 
-        //echo "LABpricingid = " . $LABpricingid . "<br/>";
         // get the pricing
-        $timePrices = $this->getUnitTimePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp, $id_space);
-        //echo "pass 1<br/>";
+        $timePrices = $this->getUnitTimePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
         $packagesPrices = $this->getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
-        //echo "pass 2<br/>";
+        
         // add the invoice to the database
         $modelInvoice = new InInvoice();
-        if ($number == "") {
-            $number = $modelInvoice->getNextNumber();
-        }
+        $number = ($number === "") ? $modelInvoice->getNextNumber() : $number;
         $module = "booking";
         $controller = "Bookinginvoice";
         $date_generated = date("Y-m-d", time());
@@ -367,8 +374,24 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $content = "";
         $total_ht = 0;
         $modelCal = new BkCalendarEntry();
+        $bkCalQuantitiesModel = new BkCalQuantities();
         foreach ($resources as $res) {
+            // get reservations
             $reservations = $modelCal->getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $res["id"], $id_resp);
+
+            // get list of quantities
+            $calQuantities = $bkCalQuantitiesModel->calQuantitiesByResource($id_space, $res["id"]);
+            $calQuantities = ($calQuantities != null) ? $calQuantities : [];
+
+            // tell if there's an invoicing unit for this resource amongst quantities and get its ID
+            $isInvoicingUnit = false;
+            $calQuantityId = "";
+            foreach ($calQuantities as $calQuantity) {
+                if ($calQuantity["is_invoicing_unit"] && intval($calQuantity["is_invoicing_unit"]) === 1) {
+                    $calQuantityId = $calQuantity["id"];
+                    $isInvoicingUnit = true;
+                }
+            }
 
             // get all packages
             $userPackages = array();
@@ -377,28 +400,63 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
 
             $userTime = array();
-            //print_r($reservations);
             $userTime["nb_hours_day"] = 0;
             $userTime["nb_hours_night"] = 0;
             $userTime["nb_hours_we"] = 0;
-            foreach ($reservations as $reservation) {
+            $userTime["ratio_bookings_day"] = 0;
+            $userTime["ratio_bookings_night"] = 0;
+            $userTime["ratio_bookings_we"] = 0;
 
+            $userTime["dayQte"] = 0;
+            $userTime["nightQte"] = 0;
+            $userTime["weQte"] = 0;
+
+            $totalQte = 0; // $totalQte = total number of items booked
+            foreach ($reservations as $reservation) {
+                
                 // count: day night we, packages
                 if ($reservation["package_id"] > 0) {
                     $userPackages[$reservation["package_id"]] ++;
                 } else {
-                    $resaDayNightWe = $this->calculateTimeResDayNightWe($id_space ,$reservation, $timePrices[$res["id"]]);
-                    $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
-                    $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
-                    $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
+                    $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
+                    if ($isInvoicingUnit) {
+                        if ($reservation["quantities"] && $reservation["quantities"] != null) {
+                            // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
+                            // get number of resources booked
+                            $strToFind = strval($calQuantityId) . "=";
+                            $lastPos = 0;
+                            $positions = array();
+                            while(($lastPos = strpos($reservation["quantities"], $strToFind, $lastPos))!==false) {
+                                $positions[] = $lastPos;
+                                $lastPos = $lastPos + strlen($strToFind);
+                            }
+                            $foundStr = substr($reservation["quantities"], $positions[0]);
+                            $qte = intval(explode("=", $foundStr)[1]);
+                        } else {
+                            $qte = 0;
+                        }
+                        $totalQte += $qte;
+
+                        // get ratios of this reservation quantity to invoice at night, day or we price
+                        $tmpDayQte = $qte * $resaDayNightWe["ratio_bookings_day"];
+                        $tmpNightQte = $qte * $resaDayNightWe["ratio_bookings_night"];
+                        $tmpWeQte = $qte * $resaDayNightWe["ratio_bookings_we"];
+
+                        $userTime["dayQte"] += $tmpDayQte;
+                        $userTime["nightQte"] += $tmpNightQte;
+                        $userTime["weQte"] += $tmpWeQte;
+                        
+                    } else {
+                        $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
+                        $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
+                        $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
+                    }
                 }
-                
+                // Record that an invoice was generated for this reservation (so that we can't re-invoice if existing)
                 $modelCal->setReservationInvoice($id_space, $reservation["id"], $invoice_id);
             }
             // fill content
             if (count($reservations) > 0) {
-                //echo "<br/> user time day = " . $userTime["nb_hours_day"] . "<br/>";
-
                 if ($userTime["nb_hours_day"] > 0) {
                     $content .= $res["id"] . "_day=" . $userTime["nb_hours_day"] . "=" . $timePrices[$res["id"]]["price_day"] . ";";
                     $total_ht += floatval($userTime["nb_hours_day"]) * floatval($timePrices[$res["id"]]["price_day"]);
@@ -417,8 +475,25 @@ class BookinginvoiceController extends InvoiceAbstractController {
                         $total_ht += floatval($userPackages[$p["id"]]) * floatval($p["price"]);
                     }
                 }
+                // manage quantity
+                if ($totalQte > 0) {
+                    if ($userTime["dayQte"] > 0) {
+                        $dayQte = $userTime["dayQte"];
+                        $content .= $res["id"] . "_day=" . $dayQte . "=" . $timePrices[$res["id"]]["price_day"] . ";";
+                        $total_ht += floatval($dayQte) * floatval($timePrices[$res["id"]]["price_day"]);
+                    }
+                    if ($userTime["nightQte"] > 0) {
+                        $nightQte = $userTime["nightQte"];
+                        $content .= $res["id"] . "_night=" . $nightQte . "=" . $timePrices[$res["id"]]["price_night"] . ";";
+                        $total_ht += floatval($nightQte) * floatval($timePrices[$res["id"]]["price_night"]);
+                    }
+                    if ($userTime["weQte"] > 0) {
+                        $weQte = $userTime["weQte"];
+                        $content .= $res["id"] . "_we=" . $weQte . "=" . $timePrices[$res["id"]]["price_we"] . ";";
+                        $total_ht += floatval($weQte) * floatval($timePrices[$res["id"]]["price_we"]);
+                    }
+                }
             }
-            //echo "<br/> content: $content <br/>";
         }
 
         // details
@@ -437,7 +512,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         ]);
     }
 
-    protected function getUnitPackagePricesForEachResource($resources, $LABpricingid, $id_client) {
+    protected function getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_client) {
 
         // calculate the reservations for each equipments
         $packagesPrices = array();
@@ -460,31 +535,55 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
             $packagesPrices[$resource["id"]] = $pricesPackages;
         }
-
-        //print_r($packagesPrices);
         return $packagesPrices;
     }
 
-    protected function getUnitTimePricesForEachResource($resources, $LABpricingid, $id_cient, $id_space) {
+    protected function getUnitTimePricesForEachResource($id_space, $resources, $LABpricingid, $id_cient) {
 
         
         
         // get the pricing informations
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
-        //echo "getUnitTimePricesForEachResource 1 <br>";
-        //$tarif_name = $pricingInfo['tarif_name'];
-        $tarif_unique = $pricingInfo['tarif_unique'];
-        $tarif_nuit = $pricingInfo['tarif_night'];
-        $tarif_we = $pricingInfo['tarif_we'];
-        $night_start = $pricingInfo['night_start'];
-        $night_end = $pricingInfo['night_end'];
-        $we_array1 = explode(",", $pricingInfo['choice_we']);
-        $we_array = array();
-        for ($s = 0; $s < count($we_array1); $s++) {
-            if ($we_array1[$s] > 0) {
-                $we_array[] = $s + 1;
+        if (!empty($pricingInfo)) {
+            $tarif_unique = $pricingInfo['tarif_unique'];
+            $tarif_nuit = $pricingInfo['tarif_night'];
+            $tarif_we = $pricingInfo['tarif_we'];
+            $night_start = $pricingInfo['night_start'];
+            $night_end = $pricingInfo['night_end'];
+            $we_array1 = explode(",", $pricingInfo['choice_we']);
+            $we_array = array();
+            for ($s = 0; $s < count($we_array1); $s++) {
+                if ($we_array1[$s] > 0) {
+                    $we_array[] = $s + 1;
+                }
             }
+        } else {
+            // Set default values for invoice generation
+            $tarif_unique = 1;
+            $tarif_nuit = 0;
+            $tarif_we = 0;
+            $night_start = 19;
+            $night_end = 8;
+            $we_array = array(0, 0, 0, 0, 0, 1, 1);
+
+            // Insert default values in bk_nightwe table
+            $bkNightWeModel = new BkNightWE();
+            $we_char = "";
+            foreach ($we_array as $day) {
+                $we_char .= $day . ",";
+            }
+            $we_char = substr($we_char, 0, -1);
+            $bkNightWeModel->addPricing(
+                $LABpricingid,
+                $id_space,
+                $tarif_unique,
+                $tarif_nuit,
+                $night_start,
+                $night_end,
+                $tarif_we,
+                $we_char
+            );
         }
 
         $timePrices = array();
@@ -524,11 +623,14 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $timePrices;
     }
 
+    /**
+     * Refer to $this->invoice() for details
+     * 
+     */
     protected function calculateTimeResDayNightWe($reservation, $timePrices) {
 
         // initialize output
         $nb_hours_day = 0;
-
         $nb_hours_night = 0;
         $nb_hours_we = 0;
 
@@ -541,7 +643,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $searchDate_end = $reservation["end_time"];
 
         // calulate pricing
-        if ($timePrices["tarif_unique"] > 0) { // unique pricing
+        if (intval($timePrices["tarif_unique"]) === 1) { // unique pricing
             $nb_hours_day = ($searchDate_end - $searchDate_start);
         } else {
             $gap = 60;
@@ -567,8 +669,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resaDayNightWe["nb_hours_night"] = round($nb_hours_night / 3600, 1);
         $resaDayNightWe["nb_hours_we"] = round($nb_hours_we / 3600, 1);
 
-        //print_r($resaDayNightWe);
-        //echo "<br/>";
+        // manage cases where a booking is between day and night hours => get a ratio
+        $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
+        $resaDayNightWe["ratio_bookings_day"] = round($nb_hours_day / $totalHours, 2);
+        $resaDayNightWe["ratio_bookings_night"] = round($nb_hours_night / $totalHours, 2);
+        $resaDayNightWe["ratio_bookings_we"] = round($nb_hours_we / $totalHours, 2);
         return $resaDayNightWe;
     }
 
@@ -685,8 +790,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $tabledata = $this->invoiceTable($id_space, $invoice, $id_item, $lang);
         $table = $tabledata["table"];
         $total = $tabledata["total"];
-        $details = $this->detailsTable($id_space, invoice["id"], $lang);
-
+        $details = $this->detailsTable($id_space, $invoice["id"], $lang);
+        
         $modelClient = new ClClient();
         $unit = "";
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);

@@ -31,7 +31,10 @@ class ClCompany extends Model {
     public function getForSpace($id_space) {
         $sql = "SELECT * FROM cl_company WHERE id_space=? AND deleted=0";
         $clCompany = $this->runRequest($sql, array($id_space))->fetch();
-        $clCompany = !($clCompany === false) ?: [];
+        if ($clCompany === false) {
+            return [];
+        }
+        //$clCompany = !($clCompany === false) ?: [];
         return $clCompany;
     }
 

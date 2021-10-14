@@ -260,8 +260,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $form = new Form($this->request, "ByPeriodForm");
         $form->addSeparator(ServicesTranslator::By_period($lang));
 
-        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
-        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
+        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
+        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
         $respId = $this->request->getParameterNoException("id_resp");
 
         $modelClient = new ClClient();
@@ -382,7 +382,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
     protected function getProjectsResp($id_space, $id_projects) {
 
-        if (empty($id_projects) == 0) {
+        if (empty($id_projects)) {
             throw new Exception("You need to select at least one project");
         }
 

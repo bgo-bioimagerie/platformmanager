@@ -30,6 +30,7 @@ class CoreaccountController extends Controller {
     }
 
     public function confirmAction() {
+        $lang = $this->getLanguage();
         $token = $this->request->getParameter("token");
         $decoded = JWT::decode($token, Configuration::get('jwt_secret'), array('HS256'));
         $decoded_array = (array) $decoded;

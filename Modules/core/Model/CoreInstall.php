@@ -51,6 +51,37 @@ class CoreDB extends Model {
         return $freshInstall;
     }
 
+    /**
+     * For tests only
+     */
+    public function repair0() {
+        Configuration::getLogger()->info("No bug 0, nothing to repair");
+    }
+
+    /**
+     * Fix for bug #332 introduced by release 2.1
+     * if you installed 2.1->2.1.2 this patch needs to be used to fix database
+     * Not needed after 2.1.3
+     * 
+     * How-to:
+     * 
+     * require_once 'Framework/Configuration.php';
+     * require_once 'Modules/core/Model/CoreInstall.php';
+     * $cdb = new CoreDB();
+     * $cdb->repair332();
+     *
+     */
+    public function repair332() {
+        Configuration::getLogger()->info("Run repair script for bug 332");
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+        Configuration::getLogger()->info("Done!");
+    }
+
 
     public function upgrade_v0_v1() {
 
@@ -115,7 +146,6 @@ class CoreDB extends Model {
         }
         Configuration::getLogger()->debug("[users] add apikey done!");
 
-
         Configuration::getLogger()->debug("[adminmenu] remove update");
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
@@ -129,8 +159,6 @@ class CoreDB extends Model {
         $resdb = $this->runRequest($sql)->fetchAll();
         foreach ($resdb as $res) {
             $sql = "UPDATE bk_access SET id_space=? WHERE id_resource=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calendar_entry SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -149,6 +177,13 @@ class CoreDB extends Model {
             $sql = "UPDATE re_event SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE re_resps SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
@@ -435,7 +470,7 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[qo_quotes] fix column types, done!');
 
         Configuration::getLogger()->debug('[in_invoice] fix column types');
-        $sql = "alter table in_invoice modify date_send date";
+        $sql = "alter table in_invoice modify date_send date NULL";
         $this->runRequest($sql);
         $sql = "update in_invoice set date_send=null where date_send='0000-00-00'";
         $this->runRequest($sql);
@@ -444,8 +479,6 @@ class CoreDB extends Model {
         $sql = "alter table in_invoice modify column period_end date NULL";
         $this->runRequest($sql);
         $sql = "alter table in_invoice modify column date_generated date NULL";
-        $this->runRequest($sql);
-        $sql = "alter table in_invoice modify column date_send date NULL";
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[in_invoice] fix column types, done!');
 
@@ -469,6 +502,10 @@ class CoreDB extends Model {
 
         Configuration::getLogger()->debug('[se_project] fix column types');
         $sql = "alter table se_project modify `samplereturndate` date";
+        $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_project modify column date_close date NULL";
         $this->runRequest($sql);
         $sql = "update se_project set `samplereturndate`=null where `samplereturndate`='0000-00-00'";
         $this->runRequest($sql);
@@ -497,6 +534,10 @@ class CoreDB extends Model {
         }
         Configuration::getLogger()->debug('[space] remove super admin from spaces admins, done!');
 
+        Configuration::getLogger()->debug("[booking] add is_invoicing_unit");
+        $bkqte = new BkCalQuantities();
+        $bkqte->addColumn("bk_calquantities", "is_invoicing_unit", "int(1)", 0);
+        Configuration::getLogger()->debug("[booking] add is_invoicing_unit done!");
     }
 
 

@@ -129,14 +129,14 @@ class BkStatsUser extends Model {
         // Mise en page de la feuille
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
         //$sheet->getPageSetup()->setFitToWidth(1);
         //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
@@ -445,14 +445,14 @@ class BkStatsUser extends Model {
         // Mise en page de la feuille
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
         //$sheet->getPageSetup()->setFitToWidth(1);
         //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
@@ -660,7 +660,7 @@ class BkStatsUser extends Model {
         //$objDrawing->setWorksheet($sheet);
 
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         $writer->save('./data/' . $nom);
         header('Content-Type: application/vnd.ms-excel');

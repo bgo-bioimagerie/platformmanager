@@ -587,9 +587,9 @@ class BkAuthorization extends Model {
     // TODO: to be tested
     public function getActiveAuthorizationSummaryForResourceCategory($id_space, $resource_id, $lang) {
 
-        $sql = "SELECT DISTINCT core_users.name, auth.visa_id, auth.date, core_users.firstname, core_users.email, core_users.id as user_id" .
+        $sql = "SELECT DISTINCT core_users.name, auth.visa_id, auth.date, core_users.firstname, core_users.email, core_users.id as user_id " .
                 "FROM bk_authorization AS auth " .
-                "INNER JOIN core_users ON auth.user_id = core_users.id " .
+                "INNER JOIN core_users ON auth.user_id=core_users.id " .
                 "WHERE auth.resource_id=? AND auth.is_active=1 AND auth.id_space=? AND auth.deleted=0 "
                 . " ORDER BY core_users.name ASC;";
 
@@ -599,11 +599,11 @@ class BkAuthorization extends Model {
         $modelVisa = new ReVisa();
         $modelClient = new ClClientUser();
         for ($i = 0; $i < count($auth); $i++) {
-            $auth[$i]["visa"] = $modelVisa->getVisaShortDescription($auth[$i]["visa_id"], $lang);
+            $auth[$i]["visa"] = $modelVisa->getVisaShortDescription($id_space, $auth[$i]["visa_id"], $lang);
             $uc = $modelClient->getUserClientAccounts($auth[$i]["user_id"], $id_space);
             $auth[$i]["unitName"] = "";
             if($uc && !empty($uc)) {
-                $auth[$i]["unitName"] = $uc[0];
+                $auth[$i]["unitName"] = $uc[0]["name"];
             }
         }
         return $auth;
@@ -633,7 +633,7 @@ class BkAuthorization extends Model {
             $uc = $modelClient->getUserClientAccounts($auth[$i]["user_id"], $id_space);
             $auth[$i]["unitName"] = "";
             if($uc && !empty($uc)) {
-                $auth[$i]["unitName"] = $uc[0];
+                $auth[$i]["unitName"] = $uc[0]["name"];
             }
         }
 

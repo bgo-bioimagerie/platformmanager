@@ -301,7 +301,7 @@ class BkColorCode extends Model {
      * @param unknown $id
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE bk_color_codes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE bk_color SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

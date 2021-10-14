@@ -447,14 +447,15 @@ class FormHtml {
      * @param type $vect
      * @return string
      */
-    static public function inlineNumber($name, $value, $required = false, $vect = false) {
+    static public function inlineNumber($name, $value, $required = false, $vect = false, $isFloat = false) {
 
         $vectv = "";
         if ($vect) {
             $vectv = "[]";
         }
+        $float = $isFloat ? "step=\"any\"" : "";
         $html = "<input class=\"form-control\" type=\"number\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
-        $html .= " value=\"" . $value . "\"" . $required . " ";
+        $html .= " value=\"" . $value . "\"" . $required . " " . $float;
         $html .= "/>";
 
         return $html;

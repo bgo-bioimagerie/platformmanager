@@ -268,7 +268,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (empty($menuData["resources"])) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         // view
@@ -301,8 +302,8 @@ class BookingController extends BookingabstractController {
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
         } else {
-            $_SESSION['bk_curentDate'] = date("Y-m-d", time());
-            $curentDate = $_SESSION['bk_curentDate'];
+            // set a default value to currentDate to today => avoids mkTime() errors
+            $curentDate = date("Y-m-d");
         }
 
         if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
@@ -365,8 +366,10 @@ class BookingController extends BookingabstractController {
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $curentDate);
+
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
+
         for ($t = 0; $t < count($resourcesBase); $t++) {
             $calEntries[] = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resourcesBase[$t]["id"]);
         }
@@ -393,7 +396,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         // view
@@ -424,6 +428,9 @@ class BookingController extends BookingabstractController {
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
+        } else {
+            // set a default value to currentDate to today => avoids mkTime() errors
+            $curentDate = date("Y-m-d");
         }
 
         if ($curentAreaId == "") {
@@ -482,7 +489,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (!$resourceInfo) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         $modelRes = new ResourceInfo();
@@ -550,6 +558,9 @@ class BookingController extends BookingabstractController {
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
+        } else {
+            // set a default value to currentDate to today => avoids mkTime() errors
+            $curentDate = date("Y-m-d");
         }
 
         if ($curentAreaId == "") {
@@ -582,8 +593,6 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d", time());
         }
 
-        //echo "curent date n = " . $curentDate . "<br/>";
-        // get the closest monday to curent day
         $i = 0;
         $curentDateE = explode("-", $curentDate);
         while (date('D', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - $i, $curentDateE[0])) != "Mon") {
@@ -596,9 +605,6 @@ class BookingController extends BookingabstractController {
 
 
         // save the menu info in the session
-        
-        // $_SESSION['id_resource'] = $curentResource;
-        // $_SESSION['id_area'] = $curentAreaId;
         $_SESSION['curentDate'] = $curentDate;
          
         // get the area info
@@ -655,7 +661,8 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
         // view
@@ -690,6 +697,9 @@ class BookingController extends BookingabstractController {
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
+        } else {
+            // set a default value to currentDate to today => avoids mkTime() errors
+            $curentDate = date("Y-m-d");
         }
 
         if ($curentAreaId == "") {
@@ -750,11 +760,10 @@ class BookingController extends BookingabstractController {
 
         // Setting an error message if no resource exists
         if (!$resourceInfo) {
-            $_SESSION["message"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
+            $_SESSION["flashClass"] = "danger";
         }
 
-        // $modelRes = new ResourceInfo();
-        // $resourceBase = $modelRes->get($id_space, $curentResource);
         $resourcesBase = $resourceInfo;
 
         // get the entries for this resource

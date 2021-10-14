@@ -537,7 +537,7 @@ class ServicesbalanceController extends CoresecureController {
 
 
         // write excel file
-        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
 
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu

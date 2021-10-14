@@ -92,7 +92,7 @@ And .env file should define (according to variables used):
 * PFM_ADMIN_EMAIL=admin@pfm.org
 * PFM_ADMIN_APIKEY=123456
 * PFM_INFLUXDB_TOKEN=123456
-* PFM_OPENID=  # comma separated list of supported providers
+* PFM_OPENID=  # comma separated list of supported providers, if empty no external auth
 * If PFM_OPENID is defined:
   * PFM_OPENID_GOOGLE_URL=https://oauth2.googleapis.com/token
   * PFM_OPENID_GOOGLE_LOGIN=https://accounts.google.com/o/oauth2/v2/auth
@@ -100,8 +100,9 @@ And .env file should define (according to variables used):
   * PFM_OPENID_GOOGLE_CLIENT_SECRET=XXX
 * MYSQL_ROOT_PASSWORD=XXX
 * MYSQL_PASSWORD=XXX
-* PFM_JWT_SECRET=xxxx
+* PFM_JWT_SECRET=xxxx  # used for jwt messages in different actions
 * PFM_HELPDESK_EMAIL=myemail@mydomain
-* PFM_HELPDESK_IMAP_SERVER=x.y.z
+* PFM_HELPDESK_IMAP_SERVER=x.y.z  # keep empty if not using helpdesk
 * PFM_HELPDESK_IMAP_USER=yyyy
 * PFM_HELPDESK_IMAP_PASSWORD=xxxxx
+
