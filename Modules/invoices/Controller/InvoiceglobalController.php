@@ -101,7 +101,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
     public function pdfAction($id_space, $id_invoice, $details = 0) {
         $lang = $this->getLanguage();
-        Configuration::getLogger()->debug("[TEST][GLOBALCTRL]", ["in pdf action"]);
         $modelInvoice = new InInvoice();
         $invoice = $modelInvoice->get($id_space, $id_invoice);
 

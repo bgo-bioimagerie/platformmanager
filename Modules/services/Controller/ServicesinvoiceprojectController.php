@@ -399,8 +399,6 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
     }
 
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
-        Configuration::getLogger()->debug("[TEST][ServInvProjCTRL]", ["in generatePDFInvoice"]);
-
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
                         <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
@@ -411,11 +409,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 </table>
         ";
 
-
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
         $content = $this->unparseContent($id_space, $id_item);
-        Configuration::getLogger()->debug("[TEST][ServInvProjCTRL]", ["content" => $content]);
-        
         $total = 0;
         foreach ($content as $d) {
             $rawQuantity = floatval($d[1]);

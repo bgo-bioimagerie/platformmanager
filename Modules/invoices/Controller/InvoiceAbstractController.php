@@ -32,10 +32,6 @@ abstract class InvoiceAbstractController extends CoresecureController {
     
 
     public function genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true, $details = "") {
-        Configuration::getLogger()->debug("[TEST][ABSTRACTCTRL]", ["in generatePdf"]);
-        // Configuration::getLogger()->debug("[TEST][ABSTRACTCTRL]", ["table" => $table]);
-        // Configuration::getLogger()->debug("[TEST][ABSTRACTCTRL]", ["details" => $details]);
-        
         $adress = nl2br($adress);
         $date = CoreTranslator::dateFromEn($date, 'fr');
         
