@@ -138,11 +138,12 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $quantity = $this->request->getParameter("quantity");
             $unit_price = $this->request->getParameter("unit_price");
             $content = "";
+            $id_services = is_array($id_services) ? $id_services : [];
             for ($i = 0; $i < count($id_services); $i++) {
                 $content .= $id_services[$i] . "=" . $quantity[$i] . "=" . $unit_price[$i] . ";";
-                $total_ht += $quantity[$i] * $unit_price[$i];
+                $total_ht += floatval($quantity[$i]) * floatval($unit_price[$i]);
             }
-            if (count($id_items) > 0) {
+            if (!empty($id_items)) {
                 $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
             }
             // apply discount
@@ -709,15 +710,15 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 if (!in_array($services[$i]["id_service"], $addedServices)) {
                     $addedServices[] = $services[$i]["id_service"];
                     $quantity = floatval($services[$i]["quantity"]);
-                    $price = $modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_belonging);
+                    $price = floatval($modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_belonging));
                     $addedServicesCount[] = $quantity;
                     $addedServicesPrice[] = $price;
-                    $total_ht += $quantity * $price;
+                    $total_ht += floatval($quantity) * floatval($price);
                 } else {
                     $key = array_search($services[$i]["id_service"], $addedServices);
                     $quantity = floatval($services[$i]["quantity"]);
                     $addedServicesCount[$key] += $quantity;
-                    $total_ht += $quantity * $addedServicesPrice[$key];
+                    $total_ht += floatval($quantity) * floatval($addedServicesPrice[$key]);
                 }
             }
         }
