@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.6
+
+* [module:booking] fix BkAccess::set missing id_space
+
 ## 2.1.5
 
 * [module:antibodies] fix antibody number incrementation (need to follow, by space)
