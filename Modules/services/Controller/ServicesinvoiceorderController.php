@@ -381,13 +381,13 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $table .= "</tr>";
         }
         $table .= "</table>";
-
-        $modelUnit = new EcUnit();
-        $unit = $modelUnit->getUnitName($id_space, $invoice["id_unit"]);
-        $adress = $modelUnit->getAdress($id_space, $invoice["id_unit"]);
-        $modelUser = new CoreUser();
-        $resp = $modelUser->getUserFUllName($invoice["id_responsible"]);
-        $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
+        
+        $modelClient = new ClClient();
+        $unit = "";
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
+        $resp = $clientInfos["contact_name"];
+        $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
     }
 
 }
