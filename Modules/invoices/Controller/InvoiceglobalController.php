@@ -197,12 +197,12 @@ class InvoiceglobalController extends InvoiceAbstractController {
         foreach ($content as $c) {
 
             foreach ($c["data"]["count"] as $d) {
-                if ($d["unitprice"] > 0) {
+                if (floatval($d["unitprice"] > 0)) {
                     $table .= "<tr>";
                     $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d["label"] . "</td>";
-                    $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format($d["quantity"], 2, ',', ' ') . "</td>";
-                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d["unitprice"], 2, ',', ' ') . " &euro;</td>";
-                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d["quantity"] * $d["unitprice"], 2, ',', ' ') . " &euro;</td>";
+                    $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format(floatval($d["quantity"]), 2, ',', ' ') . "</td>";
+                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d["unitprice"]), 2, ',', ' ') . " &euro;</td>";
+                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d["quantity"]) * floatval($d["unitprice"]), 2, ',', ' ') . " &euro;</td>";
                     $table .= "</tr>";
                     $total += floatval($d["quantity"]) * floatval($d["unitprice"]);
                 }
