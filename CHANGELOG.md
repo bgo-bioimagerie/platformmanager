@@ -6,6 +6,7 @@
 
 ## 2.1.5
 
+* [module:invoice] expose client infos to invoice templates
 * [module:antibodies] fix antibody number incrementation (need to follow, by space)
 * [module:services] fix invoice by project
 * [module:booking] set resources qtes default value to empty string

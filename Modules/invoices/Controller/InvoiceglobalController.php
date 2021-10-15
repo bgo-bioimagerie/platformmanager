@@ -109,21 +109,20 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $invoiceItem = $modelItem->getForInvoice($id_space, $id_invoice);
 
         $modelClient = new ClClient();
-        
+
         $number = $invoice["number"];
         $date = $invoice["date_generated"];
         $unit = "";
-        $resp = $modelClient->getContactName($id_space, $invoice["id_responsible"]);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
+        $resp = $clientInfos["contact_name"];
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $content = json_decode($invoiceItem["content"], true);
         $table = $this->invoiceTable($content, $invoice, $lang);
-
         $detailsTable = "";
         if ($details > 0) {
             $detailsTable = $this->generateDetailsTable($id_space, $id_invoice);
         }
-
-        $this->genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable);
+        $this->genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos);
     }
 
     public function editqueryAction($id_space, $id_invoice) {
