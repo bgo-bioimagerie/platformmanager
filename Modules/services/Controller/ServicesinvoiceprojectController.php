@@ -399,6 +399,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
     }
 
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
+        Configuration::getLogger()->debug("[TEST][ServInvProjCTRL]", ["in generatePDFInvoice"]);
 
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
@@ -413,28 +414,23 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
         $content = $this->unparseContent($id_space, $id_item);
-        //print_r($invoice);
+        Configuration::getLogger()->debug("[TEST][ServInvProjCTRL]", ["content" => $content]);
+        
         $total = 0;
         foreach ($content as $d) {
-            
-            $quantity = $d[1];
-            $unitPrice = $d[2];
-            if($quantity == 1){
-                $quantity = "";
-                $unitPrice = "";
-            }
-            else{
-                $quantity = number_format($d[1], 2, ',', ' ');
-                $unitPrice = number_format($d[2], 2, ',', ' ') . "&euro;";
-            }
+            $rawQuantity = floatval($d[1]);
+            $rawUunitPrice = floatval($d[2]);
+            $name = $d[0];
+            $formattedQuantity = number_format($rawQuantity, 2, ',', ' ');
+            $formattedUnitPrice = number_format($rawUunitPrice, 2, ',', ' ') . "&euro;";
             
             $table .= "<tr>";
-            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . $quantity . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $unitPrice . " </td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[1] * $d[2], 2, ',', ' ') . " &euro;</td>";
+            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $name . "</td>";
+            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . $formattedQuantity . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $formattedUnitPrice . " </td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($rawQuantity * $rawUunitPrice, 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
-            $total += $d[1] * $d[2];
+            $total += $rawQuantity * $rawUunitPrice;
         }
         
         $discount = floatval($invoice["discount"]);
@@ -451,7 +447,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $modelClient = new ClClient();
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $resp = $modelClient->getContactName($id_space ,$invoice["id_responsible"]);
         $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
     }

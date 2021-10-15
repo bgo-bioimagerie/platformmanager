@@ -21,7 +21,7 @@ abstract class InvoiceAbstractController extends CoresecureController {
     }
     
     /**
-     * To desplay the form that allows to edit an order and xport as pdf
+     * To desplay the form that allows to edit an order and xport as pdfs
      */
     public abstract function editAction($id_space, $id_invoice, $pdf);
     
@@ -32,6 +32,9 @@ abstract class InvoiceAbstractController extends CoresecureController {
     
 
     public function genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true, $details = "") {
+        Configuration::getLogger()->debug("[TEST][ABSTRACTCTRL]", ["in generatePdf"]);
+        // Configuration::getLogger()->debug("[TEST][ABSTRACTCTRL]", ["table" => $table]);
+        // Configuration::getLogger()->debug("[TEST][ABSTRACTCTRL]", ["details" => $details]);
         
         $adress = nl2br($adress);
         $date = CoreTranslator::dateFromEn($date, 'fr');
