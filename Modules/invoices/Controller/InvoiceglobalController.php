@@ -122,7 +122,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
         if ($details > 0) {
             $detailsTable = $this->generateDetailsTable($id_space, $id_invoice);
         }
-        // TODO set all client infos as optional parameter
         $this->genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos);
     }
 
