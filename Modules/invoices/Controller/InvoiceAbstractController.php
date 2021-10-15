@@ -21,7 +21,7 @@ abstract class InvoiceAbstractController extends CoresecureController {
     }
     
     /**
-     * To desplay the form that allows to edit an order and xport as pdfs
+     * To desplay the form that allows to edit an order and xport as pdf
      */
     public abstract function editAction($id_space, $id_invoice, $pdf);
     
@@ -31,7 +31,7 @@ abstract class InvoiceAbstractController extends CoresecureController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true, $details = "") {
+    public function genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true, $details = "", $clientInfos = null) {
         $adress = nl2br($adress);
         $date = CoreTranslator::dateFromEn($date, 'fr');
         
