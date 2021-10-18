@@ -183,7 +183,8 @@ while(true) {
                     }
                 }
                 if($id_space == 0) {
-                    Configuration::getLogger()->info("Message not related to a space", ["space" => $to]);
+                    Configuration::getLogger()->info("Message not related to a space", ["to" => $to, "from" => $from, "subject" => $mail->subject]);
+                    continue;
                 }
 
                 $spaceNames[$id_space] = true;
@@ -234,6 +235,7 @@ while(true) {
                 Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($key)]]);
             }
 
+            $hm = new Helpdesk();
             $hm->remind();
         } catch(Throwable $e) {
             Configuration::getLogger()->error('[helpdesk] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);

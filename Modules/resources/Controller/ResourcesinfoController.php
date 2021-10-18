@@ -415,7 +415,7 @@ class ResourcesinfoController extends CoresecureController {
         }
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getSpaceActiveUsers();
+        $users = $modelUser->getSpaceActiveUsers($id_space);
         $choicesU = array();
         $choicesidU = array();
         foreach ($users as $user) {

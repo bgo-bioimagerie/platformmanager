@@ -909,7 +909,7 @@ class CoreUser extends Model {
                     . "core_users.name AS name,core_users.firstname AS firstname "
                     . "FROM core_j_spaces_user "
                     . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
-                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1";
+                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1 ORDER BY core_users.name";
             $users = $this->runRequest($sql, array($id_space))->fetchAll();
             $names = array();
             $ids = array();

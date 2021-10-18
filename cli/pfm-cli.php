@@ -30,12 +30,17 @@ $cli = Cli::create()
     ->opt('del:d', 'Remove user from space, else just set as inactive', false, 'boolean')
     ->command('version')
     ->description('Show version')
-    ->opt('db:d', 'Show installed and expected db version', false, 'boolean');
+    ->opt('db:d', 'Show installed and expected db version', false, 'boolean')
+    ->command('repair')
+    ->opt('bug', 'Bug number', 0, 'integer');
 
 $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'repair':
+            cliFix($args->getOpt('bug', 0));
+            break;
         case 'install':
             cliInstall($args->getOpt('from', -1));
             break;
@@ -71,6 +76,19 @@ try {
     Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
 }
 
+function cliFix($bug=0) {
+    if($bug<=0) {
+        Configuration::getLogger()->error('No bug specified', []);
+        return;
+    }
+    $cdb = new CoreDB();
+    try {
+        call_user_func_array(array($cdb, 'repair'.$bug), []);
+    } catch(Throwable $e) {
+        Configuration::getLogger()->error('Repair error', ['error' => $e->getMessage()]);
+    }
+}
+
 function cliInstall($from=-1) {
     $logger = Configuration::getLogger();
     $logger->info("Installing database from ". Configuration::getConfigFile());
@@ -78,7 +96,7 @@ function cliInstall($from=-1) {
     // Create db release table if not exists
     $cdb = new CoreDB();
     $freshInstall = $cdb->isFreshInstall();
-    if($from == -1 && !$freshInstall) {
+    if($from == -1 && $freshInstall) {
         $from = 0;
     }
     $cdb->createTable();

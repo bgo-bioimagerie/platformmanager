@@ -43,7 +43,7 @@ class CaEntry extends Model {
 
     public function setImageUrl($id_space, $id, $url) {
         $sql = "update ca_entries set image_url=? where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($url, $id));
+        $this->runRequest($sql, array($url, $id, $id_space));
     }
 
     public function edit($id, $id_space, $id_category, $title, $short_desc, $full_desc) {

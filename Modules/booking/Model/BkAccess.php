@@ -22,7 +22,7 @@ class BkAccess extends Model {
     }
 
     public function set($id_space, $id_resources, $id_access){
-        if ($this->exists($id_resources)){
+        if ($this->exists($id_space, $id_resources)){
             $sql = "UPDATE bk_access SET id_access=? WHERE id_resource=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($id_access, $id_resources, $id_space));
         }

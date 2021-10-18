@@ -65,7 +65,7 @@ class ReEvent extends Model {
         }
         if ($this->exists($id_space, $id)) {
             $sql = "UPDATE re_event SET date=?, id_resource=?, id_user=?, id_eventtype=?, id_state=?, comment=? WHERE id=? id_space=? AND deleted=0";
-            $id = $this->runRequest($sql, array($date, $id_resource, $id_user, $id_eventtype, $id_state, $comment, $id));
+            $id = $this->runRequest($sql, array($date, $id_resource, $id_user, $id_eventtype, $id_state, $comment, $id, $id_space));
         } else {
             $sql = "INSERT INTO re_event (date, id_resource, id_user, id_eventtype, id_state, comment, id_space) VALUES (?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($date, $id_resource, $id_user, $id_eventtype, $id_state, $comment, $id_space));
