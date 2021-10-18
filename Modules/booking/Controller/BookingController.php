@@ -244,6 +244,7 @@ class BookingController extends BookingabstractController {
         $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
 
         // curentdate unix
+        $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
 
@@ -458,12 +459,13 @@ class BookingController extends BookingabstractController {
 
         // get the closest monday to curent day
         $i = 0;
+        $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
         $curentDateE = explode("-", $curentDate);
-        while (date('D', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - $i, $curentDateE[0])) != "Mon") {
+        while (date('D', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - $i, intval($curentDateE[0]))) != "Mon") {
             $i++;
         }
-        $mondayDate = date('Y-m-d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - ($i), $curentDateE[0]));
-        $sundayDate = date('Y-m-d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - ($i) + 6, $curentDateE[0]));
+        $mondayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
+        $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
@@ -594,12 +596,13 @@ class BookingController extends BookingabstractController {
         }
 
         $i = 0;
+        $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
         $curentDateE = explode("-", $curentDate);
-        while (date('D', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - $i, $curentDateE[0])) != "Mon") {
+        while (date('D', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - $i, intval($curentDateE[0]))) != "Mon") {
             $i++;
         }
-        $mondayDate = date('Y-m-d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - ($i), $curentDateE[0]));
-        $sundayDate = date('Y-m-d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - ($i) + 6, $curentDateE[0]));
+        $mondayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
+        $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
@@ -729,12 +732,13 @@ class BookingController extends BookingabstractController {
 
         // get the closest monday to curent day
         $i = 0;
+        $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
         $curentDateE = explode("-", $curentDate);
-        while (date('d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - $i, $curentDateE[0])) != 1) {
+        while (date('d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - $i, intval($curentDateE[0]))) != 1) {
             $i++;
         }
-        $mondayDate = date('Y-m-d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - ($i), $curentDateE[0]));
-        $sundayDate = date('Y-m-d', mktime(0, 0, 0, $curentDateE[1], $curentDateE[2] - ($i) + 31, $curentDateE[0]));
+        $mondayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
+        $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 31, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
