@@ -2,6 +2,7 @@
 
 ## 2.1.6
 
+* [module:booking] add controls to avoid mktime typeErrors
 * [module:invoice] add missing casts to invoice related controllers
 * [module:booking] fix BkAccess::set missing id_space
 
