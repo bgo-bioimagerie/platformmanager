@@ -270,21 +270,31 @@ class BookingstatisticsController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
         $date_begin = $this->request->getParameterNoException("date_begin");
         if ($date_begin == "") {
+            // if a default date is set, get it, if not, get actual date - 1 year
             $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
-            $dateArray = explode("-", $date_begin);
-            $y = date("Y") - 1;
-            $m = $dateArray[1];
-            $d = $dateArray[2];
-            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            if ($date_begin === "") {
+                $date_begin = CoreTranslator::dateFromEn(date("Y-m-d", strtotime("-1 years")), $lang);
+            } else {
+                $dateArray = explode("-", $date_begin);
+                $y = date("Y") - 1;
+                $m = $dateArray[1];
+                $d = $dateArray[2];
+                $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            }
         }
         $date_end = $this->request->getParameterNoException("date_end");
         if ($date_end == "") {
             $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
-            $dateArray = explode("-", $date_end);
-            $y = date("Y");
-            $m = $dateArray[1];
-            $d = $dateArray[2];
-            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            // if a default date is set, get it, if not, get actual date
+            if ($date_end === "") {
+                $date_end = CoreTranslator::dateFromEn(date("Y-m-d"), $lang);
+            } else {
+                $dateArray = explode("-", $date_end);
+                $y = date("Y");
+                $m = $dateArray[1];
+                $d = $dateArray[2];
+                $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            }
         }
 
         // build the form

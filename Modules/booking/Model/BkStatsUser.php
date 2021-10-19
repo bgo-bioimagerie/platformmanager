@@ -129,14 +129,14 @@ class BkStatsUser extends Model {
         // Mise en page de la feuille
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
         //$sheet->getPageSetup()->setFitToWidth(1);
         //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
@@ -445,14 +445,14 @@ class BkStatsUser extends Model {
         // Mise en page de la feuille
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
-        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_ROW);
-        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E55', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E110', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
+        $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+        $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
         //$sheet->getPageSetup()->setFitToWidth(1);
         //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
@@ -660,7 +660,7 @@ class BkStatsUser extends Model {
         //$objDrawing->setWorksheet($sheet);
 
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         $writer->save('./data/' . $nom);
         header('Content-Type: application/vnd.ms-excel');
@@ -671,16 +671,13 @@ class BkStatsUser extends Model {
     }
 
     public function bookingUsers($id_space, $startdate, $enddate) {
-
         // convert start date to unix date
         $tabDate = explode("-", $startdate);
-        $date_debut = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
-        $searchDate_start = mktime(0, 0, 0, $tabDate[1], $tabDate[2], $tabDate[0]);
+        $searchDate_start = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]), intval($tabDate[0]));        
 
         // convert end date to unix date
         $tabDate = explode("-", $enddate);
-        $date_fin = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
-        $searchDate_end = mktime(0, 0, 0, $tabDate[1], $tabDate[2] + 1, $tabDate[0]);
+        $searchDate_end = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]) + 1, intval($tabDate[0]));
 
         //  get all the booking users
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'space' => $id_space);

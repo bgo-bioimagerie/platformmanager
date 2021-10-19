@@ -64,6 +64,55 @@ class CoreDB extends Model {
         return $freshInstall;
     }
 
+    /**
+     * For tests only
+     */
+    public function repair0() {
+        Configuration::getLogger()->info("No bug 0, nothing to repair");
+    }
+
+    /**
+     * Fix for bug #332 introduced by release 2.1
+     * if you installed 2.1->2.1.2 this patch needs to be used to fix database
+     * Not needed after 2.1.3
+     * 
+     * How-to:
+     * 
+     * require_once 'Framework/Configuration.php';
+     * require_once 'Modules/core/Model/CoreInstall.php';
+     * $cdb = new CoreDB();
+     * $cdb->repair332();
+     *
+     */
+    public function repair332() {
+        Configuration::getLogger()->info("Run repair script for bug 332");
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+        Configuration::getLogger()->info("Done!");
+    }
+
+    public function repair337() {
+        Configuration::getLogger()->debug('set ac_anticorps counters');
+        $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $redis = new Redis();
+            $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+            $res = $resdb->fetchAll();
+            foreach($res as $sp_anticorps) {
+                $sp = $sp_anticorps[1];
+                $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
+            }
+            $redis->close();
+        }
+        Configuration::getLogger()->debug('set ac_anticorps counters, done!');
+    }
+
+
     public function upgrade_v0_v1() {
 
         Configuration::getLogger()->debug("[db] Old existing db patch");
@@ -141,8 +190,6 @@ class CoreDB extends Model {
         foreach ($resdb as $res) {
             $sql = "UPDATE bk_access SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calendar_entry SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calquantities SET id_space=? WHERE id_resource=?";
@@ -160,6 +207,13 @@ class CoreDB extends Model {
             $sql = "UPDATE re_event SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE re_resps SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
@@ -376,15 +430,6 @@ class CoreDB extends Model {
             $counter = intval($resdb['counter']);
         }
 
-        $sql = "SELECT max(no_h2p2) as counter FROM ac_anticorps";
-        $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            $res = $resdb->fetch();
-            if($res && intval($res['counter']) > $counter) {
-                $counter = intval($res['counter']);
-            }
-        }
-
         $i = 0;
         while($i <= $counter) {
             $cvm = new CoreVirtual();
@@ -393,6 +438,21 @@ class CoreDB extends Model {
         }
 
         Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
+
+        Configuration::getLogger()->debug('set ac_anticorps counters');
+        $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $redis = new Redis();
+            $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+            $res = $resdb->fetchAll();
+            foreach($res as $sp_anticorps) {
+                $sp = $sp_anticorps[1];
+                $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
+            }
+            $redis->close();
+        }
+        Configuration::getLogger()->debug('set ac_anticorps counters, done!');
 
         if(Statistics::enabled()) {
             Configuration::getLogger()->debug("[stats] import calentry stats");

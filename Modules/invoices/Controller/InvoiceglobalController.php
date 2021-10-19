@@ -109,21 +109,20 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $invoiceItem = $modelItem->getForInvoice($id_space, $id_invoice);
 
         $modelClient = new ClClient();
-        
+
         $number = $invoice["number"];
         $date = $invoice["date_generated"];
         $unit = "";
-        $resp = $modelClient->getContactName($id_space, $invoice["id_responsible"]);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
+        $resp = $clientInfos["contact_name"];
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $content = json_decode($invoiceItem["content"], true);
         $table = $this->invoiceTable($content, $invoice, $lang);
-
         $detailsTable = "";
         if ($details > 0) {
             $detailsTable = $this->generateDetailsTable($id_space, $id_invoice);
         }
-
-        $this->genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable);
+        $this->genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos);
     }
 
     public function editqueryAction($id_space, $id_invoice) {
@@ -198,12 +197,12 @@ class InvoiceglobalController extends InvoiceAbstractController {
         foreach ($content as $c) {
 
             foreach ($c["data"]["count"] as $d) {
-                if ($d["unitprice"] > 0) {
+                if (floatval($d["unitprice"]) > 0) {
                     $table .= "<tr>";
                     $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d["label"] . "</td>";
-                    $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format($d["quantity"], 2, ',', ' ') . "</td>";
-                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d["unitprice"], 2, ',', ' ') . " &euro;</td>";
-                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d["quantity"] * $d["unitprice"], 2, ',', ' ') . " &euro;</td>";
+                    $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format(floatval($d["quantity"]), 2, ',', ' ') . "</td>";
+                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d["unitprice"]), 2, ',', ' ') . " &euro;</td>";
+                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d["quantity"]) * floatval($d["unitprice"]), 2, ',', ' ') . " &euro;</td>";
                     $table .= "</tr>";
                     $total += floatval($d["quantity"]) * floatval($d["unitprice"]);
                 }
@@ -231,8 +230,8 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $form = new Form($this->request, "GlobalInvoiceAllForm");
         $form->addSeparator(InvoicesTranslator::Invoice_All($lang));
 
-        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
-        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
+        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
+        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
 
         $form->setButtonsWidth(2, 9);
 
@@ -244,8 +243,8 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $form = new Form($this->request, "ByPeriodForm");
         $form->addSeparator(InvoicesTranslator::Invoice_Responsible($lang));
 
-        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
-        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
+        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
+        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
         $respId = $this->request->getParameterNoException("id_resp");
 
         $modelClients = new ClClient();

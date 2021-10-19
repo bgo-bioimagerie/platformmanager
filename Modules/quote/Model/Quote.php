@@ -51,10 +51,11 @@ class Quote extends Model {
 
             $data["recipient"] = $modelUser->getUserFUllName($data["id_user"]);
             $resps = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space);
-            if (count($resps) > 0) {
+            if ($resps && !empty($resps)) {
                 $data["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]["id"]);
                 $data["id_belonging"] = $resps[0]["id"];
                 $data["id_pricing"] = $resps[0]["pricing"];
+                $data["client"] = $resps;
             }
         }
         return $data;

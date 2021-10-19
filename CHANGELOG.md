@@ -1,7 +1,46 @@
 # Changes
 
+## 2.1.6
+
+* [module:booking] add controls to avoid mktime typeErrors
+* [module:invoice] add missing casts to invoice related controllers
+* [module:booking] fix BkAccess::set missing id_space
+
+## 2.1.5
+
+* [module:invoice] expose client infos to invoice templates
+* [module:antibodies] fix antibody number incrementation (need to follow, by space)
+* [module:services] fix invoice by project
+* [module:booking] set resources qtes default value to empty string
+* [module:catalog] fix missing id_space
+* [module:booking,service,stats] fix mktime errors
+
+## 2.1.4
+
+* fix invoicing units
+* [excel] use Xlsx instead of 2007 writer
+* [module:booking][stats] fix sql and unit ref for stats
+* [module:booking] fix phpoffice worksheet calls
+* [sql] fix ReEvent:set sql missing id_space
+* [module:booking] fix generateStats (missing id_space)
+* [sql] fix sql request on revisa (PFM-1X)
+* [module:booking] if start/end minutes are empty, set to 0
+* [module:clients] fix clients company settings when not found in db (PFM-1M)
+* [module:services] fix invoice call with wrong SQL (PFM-1S)
+* [module:projects] fix project dates parsing (PFM-1Q)
+* [sql] fix sql request on document, missing space id (PFM-1P)
+
+## 2.1.3
+
+* [db] fix upgrade_v2_v3 migration script on bk_authorizations
+  **Warning**: if you installed release >=2.1 < 2.1.3 you need to run a db fix script
+  php cli/pfm-cli.php repair --bug 332
+* [sql] fix ReEventType getName sql request
+* fix call to getSpaceActiveUsers in resourcesinfo respsAction
+
 ## 2.1.2
 
+* day area dayafter and daybefore actions fixed, closes #326, closes #299
 * Fix servicesprojects edition #324
 * [booking] getSpaceActiveUsersForSelect, order users by name Closes #323
 * fix booking calendar display Closes #322
