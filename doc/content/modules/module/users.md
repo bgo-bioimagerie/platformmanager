@@ -18,7 +18,7 @@ Within this module, you can:
 
 A **user** is linked to an account. Within a space, it can be attributed different [*roles*](./#user-space-roles) , like *admin*, *manager*, *user* or *visitor*.
 
-A *user* is defined by its ("*" for *mandatory*):
+A *user* is defined by its ("\*" for *mandatory*):
 
 - In Platform-Manager
     - Login*

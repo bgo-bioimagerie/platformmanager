@@ -16,7 +16,7 @@ Within this module, you can:
 
 A **client** is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the *client*. A user can't be invoiced directly.
 
-A *client* is defined by its ("*" for *mandatory*):
+A *client* is defined by its ("\*" for *mandatory*):
 - Identifier*
 - Contact name
 - Phone

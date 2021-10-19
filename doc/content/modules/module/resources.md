@@ -19,7 +19,7 @@ Within this module, you can:
 ## Item definition
 
 A **resource** is a bookable item.
-It is defined by its ("*" for _mandatory_):
+It is defined by its ("\*" for *mandatory*):
 - name*
 - [category*](./#category)
 - [area*](./#area)
