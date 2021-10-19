@@ -592,6 +592,14 @@ class CoreDB extends Model {
             $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);
             Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user, done!');
 
+            // Create org for existing spaces
+            $cp = new CoreSpace();
+            $statHandler = new EventHandler();
+            $spaces = $cp->getSpaces('id');
+            foreach ($spaces as $space) {
+                $g->createOrg($space['shortname']);
+            }
+
             // import managers
             Configuration::getLogger()->debug('[stats] import managers to grafana');
             $s = new CoreSpace();
@@ -602,7 +610,8 @@ class CoreDB extends Model {
                 $g = new Grafana();
                 foreach($managers as $manager) {
                     $u = new CoreUser();
-                    $user = $u->getInfo($manager['id']);
+                    $user = $u->getInfo($manager['id_user']);
+                    Configuration::getLogger()->debug('[stats] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
                     $g->addUser($space['shortname'], $user['login'], $user['apikey']);
                 }
                 $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
