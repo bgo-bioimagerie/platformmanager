@@ -2,13 +2,14 @@
 
 ## 2.1.6
 
+* [module:resources] fix resources events edition
 * [module:booking] add controls to avoid mktime typeErrors
 * [module:invoice] add missing casts to invoice related controllers
 * [module:booking] fix BkAccess::set missing id_space
+* [module:invoice] expose client infos to invoice templates
 
 ## 2.1.5
 
-* [module:invoice] expose client infos to invoice templates
 * [module:antibodies] fix antibody number incrementation (need to follow, by space)
 * [module:services] fix invoice by project
 * [module:booking] set resources qtes default value to empty string
