@@ -13,6 +13,8 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
+require_once 'Modules/helpdesk/Model/Helpdesk.php';
+
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -33,6 +35,17 @@ class EventHandler {
         $this->logger = Configuration::getLogger();
     }
 
+    private function ticketCount($msg) {
+        $hm = new Helpdesk();
+        $model = new CoreSpace();
+        $space = $model->getSpace($msg['space']['id']);
+        $statHandler = new Statistics();
+        $counts = $hm->count($msg['space']['id']);
+        foreach ($counts as $count) {
+            $stat = ['name' => 'tickets', 'fields' => ['value' => $count['total'], 'tags' =>['status' => $count['status']]]];
+            $statHandler->record($space['shortname'], $stat);
+        }
+    }
 
     private function spaceCount($msg) {
         $model = new CoreSpace();
@@ -261,6 +274,9 @@ class EventHandler {
                 case Events::ACTION_INVOICE_DELETE:
                     $this->invoiceDelete($data);
                     break;
+                case Events::ACTION_HELPDESK_TICKET:
+                    $this->ticketCount($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     break;
@@ -281,7 +297,7 @@ class Events {
     public const ACTION_SPACE_USER_ROLEUPDATE = 4;
     public const ACTION_USER_APIKEY = 5;
     public const ACTION_CAL_ENTRY_EDIT = 100;
-    public const HELPDESK_TICKET = 200;
+    public const ACTION_HELPDESK_TICKET = 200;
 
     public const ACTION_INVOICE_EDIT = 300;
     public const ACTION_INVOICE_DELETE = 301;

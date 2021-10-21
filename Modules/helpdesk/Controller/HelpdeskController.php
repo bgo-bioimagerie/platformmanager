@@ -190,7 +190,7 @@ class HelpdeskController extends CoresecureController {
         }
         $hm->notify($id_space, $id_ticket, "en", $isNew);
 
-        Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+        Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
 
         
         $this->render(['data' => ['message' => ['id' => $id], 'ticket' => ['id' => $ticket['id']]]]);

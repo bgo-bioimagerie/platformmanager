@@ -232,7 +232,7 @@ while(true) {
             imap_close($mbox, CL_EXPUNGE);
 
             foreach ($spaceNames as $key => $value) {
-                Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($key)]]);
+                Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($key)]]);
             }
 
             $hm = new Helpdesk();

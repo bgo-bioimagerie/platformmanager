@@ -3,6 +3,7 @@
 ## 2.2
 
 * [module:booking_settings] fix display edition
+* [stats] count number of tickets per status
 
 ## 2.1.6
 
