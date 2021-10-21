@@ -262,7 +262,7 @@ class EventHandler {
                     $this->invoiceDelete($data);
                     break;
                 default:
-                    $this->logger->error('[message] unknown message', ['action' => $action]);
+                    $this->logger->error('[message] unknown message', ['action' => $data]);
                     break;
             }
         } catch(Throwable $e) {
