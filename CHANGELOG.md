@@ -1,5 +1,9 @@
 # Changes
 
+## 2.2
+
+* [module:booking_settings] fix display edition
+
 ## 2.1.6
 
 * [module:resources] fix resources events edition

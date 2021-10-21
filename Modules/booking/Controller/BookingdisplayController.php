@@ -72,7 +72,7 @@ class BookingdisplayController extends CoresecureController {
         $form->setColumnsWidth(3, 9);
         $form->setButtonsWidth(3, 9);
         if ($form->check()) {
-            $modelCSS->setAreaCss($id, $this->request->getParameter("header_background"), $this->request->getParameter("header_color"), $this->request->getParameter("header_font_size"), $this->request->getParameter("resa_font_size"), $this->request->getParameter("header_height"), $this->request->getParameter("line_height"));
+            $modelCSS->setAreaCss($id_space, $id, $this->request->getParameter("header_background"), $this->request->getParameter("header_color"), $this->request->getParameter("header_font_size"), $this->request->getParameter("resa_font_size"), $this->request->getParameter("header_height"), $this->request->getParameter("line_height"));
             $this->redirect("bookingdisplayedit/".$id_space. "/" . $id);
         }
         $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang)));
