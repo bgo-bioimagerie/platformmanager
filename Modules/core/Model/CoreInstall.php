@@ -563,6 +563,12 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug("[booking] add is_invoicing_unit done!");
     }
 
+    public function upgrade_v3_v4() {
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN id_client INT(11) NOT NULL";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+    }
 
     /**
      * Get current database version

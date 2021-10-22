@@ -14,6 +14,7 @@ class Quote extends Model {
         $this->setColumnsInfo("address", "text", "");
         $this->setColumnsInfo("id_belonging", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", "");
+        $this->setColumnsInfo("id_client", "int(11)", "");
         $this->setColumnsInfo("date_open", "date", "");
         $this->setColumnsInfo("date_last_modified", "date", "");
         $this->primaryKey = "id";
@@ -61,25 +62,27 @@ class Quote extends Model {
         return $data;
     }
 
-    public function set($id, $id_space, $recipient, $address, $id_belonging, $id_user, $date_open) {
+    public function set($id, $id_space, $recipient, $address, $id_belonging, $id_user, $id_client, $date_open) {
         if($date_open == "") {
             $date_open = null;
         }
+        if($id_client == "") {
+            $id_client = 0;
+        }
         $date_last_modified = date('Y-m-d');
         if (!$id) {
-            $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?)';
+            $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, id_client, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?, ?)';
             $this->runRequest($sql, array($id_space, $recipient, $address, $id_belonging, $id_user, $date_open, $date_last_modified));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE qo_quotes SET recipient=?, address=?, id_belonging=?, id_user=?, date_open=?, date_last_modified=? WHERE id=? AND id_space=?';
-            $this->runRequest($sql, array($recipient, $address, $id_belonging, $id_user, $date_open, $date_last_modified, $id, $id_space));
+            $sql = 'UPDATE qo_quotes SET recipient=?, address=?, id_belonging=?, id_user=?, id_client=?, date_open=?, date_last_modified=? WHERE id=? AND id_space=?';
+            $this->runRequest($sql, array($recipient, $address, $id_belonging, $id_user, $id_client, $date_open, $date_last_modified, $id, $id_space));
             return $id;
         }
     }
 
     public function delete($id_space, $id) {
         $sql = "UPDATE qo_quotes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM qo_quotes WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 
