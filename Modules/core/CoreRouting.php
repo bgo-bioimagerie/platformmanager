@@ -11,6 +11,7 @@ class CoreRouting extends Routing{
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
         $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
         $router->map('GET', '/corespaces', 'core/corespace/spaces', 'core_space_list');
+        $router->map('GET', '/coreabout', 'core/coreabout/index', 'core_about');
     }
     
     public function listRoutes(){
