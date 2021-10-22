@@ -1,0 +1,20 @@
+{% extends "Modules/layout.twig" %}
+
+{% block title %}
+Platform-Manager
+{% endblock %}
+
+{% block stylesheet %}
+
+{% endblock %}
+
+{% block content %}
+<h3>PFM installation</h3>
+
+<div>
+    <ul>
+        <li>Code version: {{ data["tag"] }}</li>
+        <li>DB version: {{ data["db"] }}</li>
+    </ul>
+</div>
+{% endblock %}
