@@ -298,10 +298,10 @@ class CoreusersController extends CoresecureController {
             if ($pwd == $pwdc) {
                 $modelUser->changePwd($id, $pwd);
             } else {
-                throw new PfmException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
+                throw new PfmAuthException(CoreTranslator::TheTwoPasswordAreDifferent($lang), 403);
             }
         } else {
-            throw new PfmException(CoreTranslator::The_curent_password_is_not_correct($lang), 403);
+            throw new PfmAuthException(CoreTranslator::The_curent_password_is_not_correct($lang), 403);
         }
     }
 
