@@ -27,9 +27,13 @@ abstract class Controller {
         if(!is_dir('/tmp/pfm')) {
             mkdir('/tmp/pfm');
         }
-        $this->twig = new \Twig\Environment($loader, [
-            'cache' => '/tmp/pfm'
-        ]);
+        if(getenv('PFM_MODE')=='dev') {
+            $this->twig = new \Twig\Environment($loader, []);
+        } else {
+            $this->twig = new \Twig\Environment($loader, [
+                'cache' => '/tmp/pfm'
+            ]);
+        }
     }
 
     /**
