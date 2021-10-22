@@ -8,6 +8,30 @@ require_once 'Modules/core/Model/CorePendingAccount.php';
 
 require_once 'Framework/Events.php';
 
+class CoreSpaceMenus extends Model {
+    public function __construct() {
+        $this->tableName = 'core_space_menus';
+    }
+
+    public function createTable() {
+        $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+                `id_space` int(1) NOT NULL DEFAULT 1,
+		`module` varchar(60) NOT NULL DEFAULT '',
+                `url` varchar(120) NOT NULL DEFAULT '',
+                `icon` varchar(120) NOT NULL DEFAULT '',
+                `user_role` int(1) NOT NULL DEFAULT 1,
+                `display_order` int(11) NOT NULL DEFAULT 0,
+                PRIMARY KEY (`id`)
+		);";
+        $this->runRequest($sql3);
+
+        $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
+        $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
+        $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+    }
+}
+
 /**
  * Class defining the Status model
  *
@@ -57,31 +81,8 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
 
-        /* Created in CoreSpaceUser
-        $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
-		`id_user` int(11) NOT NULL DEFAULT 1,
-		`id_space` int(11) NOT NULL DEFAULT 1,
-                `status` int(1) NOT NULL DEFAULT 1
-		);";
-        $this->runRequest($sql2);
-        */
-
-        // name = module
-        $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_space` int(1) NOT NULL DEFAULT 1,
-		`module` varchar(60) NOT NULL DEFAULT '',
-                `url` varchar(120) NOT NULL DEFAULT '',
-                `icon` varchar(120) NOT NULL DEFAULT '',
-                `user_role` int(1) NOT NULL DEFAULT 1,
-                `display_order` int(11) NOT NULL DEFAULT 0,
-                PRIMARY KEY (`id`)
-		);";
-        $this->runRequest($sql3);
-
-        $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
-        $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
-        $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+        $csm = new CoreSpaceMenus();
+        $csm->createTable();
     }
 
     /**

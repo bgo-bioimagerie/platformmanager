@@ -20,6 +20,10 @@ require_once 'Modules/antibodies/Model/Acii.php';
  */
 class AcProtocol extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_protocol";
+    }
+
     /**
      * Create the protocols table
      * 
@@ -46,8 +50,7 @@ class AcProtocol extends Model {
 				PRIMARY KEY (`id`)
 				);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        return $this->runRequest($sql);
     }
 
     public function addManualProtocol($id_space) {

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class AcStaining extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_stainings";
+    }
+
     /**
      * Create the espece table
      * 

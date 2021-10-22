@@ -12,6 +12,10 @@ class CoreConfig extends Model {
 
     private static $params = null;
 
+    public function __construct() {
+        $this->tableName = "core_config";
+    }
+
     /**
      * Create the table
      *

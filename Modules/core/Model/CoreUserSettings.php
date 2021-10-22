@@ -11,6 +11,10 @@ require_once 'Modules/core/Model/CoreConfig.php';
  */
 class CoreUserSettings extends Model {
 
+    public function __construct() {
+        $this->tableName = 'core_users_settings';
+    }
+
     /**
      * Create the user settings table
      * 

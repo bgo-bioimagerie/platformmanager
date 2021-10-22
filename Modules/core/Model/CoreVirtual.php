@@ -8,6 +8,10 @@ require_once 'Framework/Configuration.php';
  */
 class CoreVirtual extends Model {
 
+    public function __construct() {
+        $this->tableName = 'core_virtual';
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_virtual` (
         `id` int(11) NOT NULL AUTO_INCREMENT,

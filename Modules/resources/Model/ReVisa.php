@@ -14,6 +14,10 @@ function cmpvisas($a, $b) {
  */
 class ReVisa extends Model {
 
+    public function __construct() {
+        $this->tableName = 're_visas';
+    }
+
     /**
      * Create the table
      * 

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkCalSupInfo extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calsupinfo";
+    }
+
     /**
      * Create the calsupplementaries table
      *

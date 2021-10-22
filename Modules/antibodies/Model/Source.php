@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Source extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_sources";
+    }
+    
     /**
      * Create the source table
      * 

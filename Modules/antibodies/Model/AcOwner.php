@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class AcOwner extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_j_user_anticorps";
+    }
+
     /**
      * Create the isotype table
      * 
@@ -26,6 +30,8 @@ class AcOwner extends Model {
                     );";
 
         $this->runRequest($sql);
+        $this->addColumn("ac_j_user_anticorps", "id_space", "INT(11)", 0);
+
     }
 
     public function get($id_space, $id) {

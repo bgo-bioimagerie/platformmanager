@@ -21,6 +21,8 @@ class SeServiceType extends Model {
         self::$serviceTypes[4] = "Price";
         self::$serviceTypes[5] = "Half day";
         self::$serviceTypes[6] = "Day";
+        $this->tableName = 'se_service_types';
+
     }
 
     public function updateServiceTypesReferences() {

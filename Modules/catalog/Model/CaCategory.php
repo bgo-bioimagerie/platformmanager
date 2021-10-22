@@ -9,6 +9,11 @@ require_once 'Framework/Model.php';
  */
 class CaCategory extends Model {
 
+    public function __construct() {
+        $this->tableName = "ca_categories";
+    }
+
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `ca_categories` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,

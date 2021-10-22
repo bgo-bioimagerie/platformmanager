@@ -2,12 +2,36 @@
 
 require_once 'Framework/Model.php';
 
+class BkPackagePrices extends Model {
+    public function __construct() {
+        $this->tableName = "bk_j_packages_prices";
+    }
+
+    public function createTable() {
+
+        $sql2 = "CREATE TABLE IF NOT EXISTS `bk_j_packages_prices` (
+		`id_package` int(11) NOT NULL,
+		`id_pricing` int(11) NOT NULL,
+		`price` decimal(10,2) NOT NULL
+		);";
+        $this->runRequest($sql2);
+
+        // delete package with zero id
+        $sql3 = "DELETE FROM bk_j_packages_prices WHERE id_package IN(SELECT id FROM bk_packages WHERE id_package=0)";
+        $this->runRequest($sql3);
+    }
+}
+
 /**
  * Class defining the area model
  *
  * @author Sylvain Prigent
  */
 class BkPackage extends Model {
+
+    public function __construct() {
+        $this->tableName = "bk_packages";
+    }
 
     /**
      * Create the area table
@@ -27,19 +51,11 @@ class BkPackage extends Model {
 
         $this->addColumn("bk_packages", "id_package", "int(11)", 0);
 
-        $sql2 = "CREATE TABLE IF NOT EXISTS `bk_j_packages_prices` (
-		`id_package` int(11) NOT NULL,
-		`id_pricing` int(11) NOT NULL,
-		`price` decimal(10,2) NOT NULL
-		);";
-        $this->runRequest($sql2);
-
-        // delete package with zero id
-        $sql3 = "DELETE FROM bk_j_packages_prices WHERE id_package IN(SELECT id FROM bk_packages WHERE id_package=0)";
-        $this->runRequest($sql3);
-
         $sql4 = "DELETE FROM bk_packages WHERE id_package = 0";
         $this->runRequest($sql4);
+
+        $bkpp = new BkPackagePrices();
+        $bkpp->createTable();
     }
 
     public function getByResource($id_space, $id_resource) {

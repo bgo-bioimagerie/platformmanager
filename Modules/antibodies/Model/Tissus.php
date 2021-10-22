@@ -10,6 +10,10 @@ require_once 'Modules/antibodies/Model/AcProtocol.php';
  */
 class Tissus extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_j_tissu_anticorps";
+    }
+
     /**
      * Create the isotype table
      * 
