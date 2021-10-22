@@ -19,8 +19,21 @@ abstract class Controller {
     /** recieved request */
     protected $request;
 
+    protected $twig;
+
     public function __construct(Request $request) {
         $this->request = $request;
+        $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/..');
+        if(!is_dir('/tmp/pfm')) {
+            mkdir('/tmp/pfm');
+        }
+        if(getenv('PFM_MODE')=='dev') {
+            $this->twig = new \Twig\Environment($loader, []);
+        } else {
+            $this->twig = new \Twig\Environment($loader, [
+                'cache' => '/tmp/pfm'
+            ]);
+        }
     }
 
     /**
@@ -135,6 +148,18 @@ abstract class Controller {
         // Geneate the view
         // echo "controllerView = " . $controllerView . "<br/>";
         //echo "parent = " . basename(__DIR__) . "<br/>";
+        if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
+            try {
+                echo $this->twig->render("Modules/core/View/$controllerView/$actionView.twig", $dataView);
+                return;
+            } catch(Throwable $e) {
+                Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
+                $view = new View($actionView, $controllerView, $this->module);
+                $view->generate($dataView);
+                return;
+            }
+        }
+
         $view = new View($actionView, $controllerView, $this->module);
         $view->generate($dataView);
     }

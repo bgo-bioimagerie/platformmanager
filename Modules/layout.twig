@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="{{lang | default('en')}}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="{{metadesc | default('')}}"/>
+        <meta name="mode" description="{{isdev}}">
+        <base href="{{rootWeb}}" >
+        <title>
+            {% block title %}{% endblock %}
+        </title>
+        {% if dev %}
+            <script src="externals/vuejs/vue.js"></script>
+            {{_debugbarRenderer.renderHeader()}}
+        {% else %}
+            <script src="externals/vuejs/vue.min.js"></script>
+        {% endif %}
+
+        {% block stylesheet %}
+        <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="Modules/core/Theme/core.css">
+        {% endblock %}
+
+    </head>
+    <body style="background-color: #e7ecf0;">
+        {% block navbar %}
+        {% endblock %}
+
+        {% block spacenavbar %}
+        {% endblock %}
+        <div id="app">
+        {% if flash %}
+            <div class="alert alert-{{flash['class']}} alert-dismissible  show" role="alert">
+                {{flash['msg']}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+        </div>
+
+        {% block footer %}
+        {% endblock %}
+
+        {% if dev %}
+            {{_debugbarRenderer.renderHeader()}}
+        {% endif %}
+    </body>
+</html>
