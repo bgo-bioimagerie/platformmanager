@@ -142,8 +142,7 @@ class ResourcesinfoController extends CoresecureController {
             $target_dir = "data/resources/";
             if ($_FILES["image"]["name"] != "") {
                 $ext = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
-
-                $url = $id . "." . $ext;
+                $url = $id_space."_".$id . "." . $ext;
                 FileUpload::uploadFile($target_dir, "image", $url);
 
                 $modelResource->setImage($id_space, $id, $target_dir . $url);
@@ -302,10 +301,11 @@ class ResourcesinfoController extends CoresecureController {
         $target_dir = "data/resources/events/";
         if ($_FILES["file_url"]["name"] != "") {
             $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
-            FileUpload::uploadFile($target_dir, "file_url", $id_event . "_" . $ext);
+            $target = $id_space . "_" . $id_event . "_" . $ext;
+            FileUpload::uploadFile($target_dir, "file_url", $target);
 
             $modelEventData = new ReEventData();
-            $modelEventData->addFile($id_space, $id_event, $target_dir . $id_event . "_" . $ext);
+            $modelEventData->addFile($id_space, $id_event, $target_dir . $target);
         }
 
         $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);

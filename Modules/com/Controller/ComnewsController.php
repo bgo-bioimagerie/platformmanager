@@ -86,9 +86,9 @@ class ComnewsController extends CoresecureController {
             $target_dir = "data/com/news/";
             if ($_FILES["media"]["name"] != "") {
                 $ext = pathinfo($_FILES["media"]["name"], PATHINFO_BASENAME);
-                FileUpload::uploadFile($target_dir, "media", $idNew . "_" . $ext);
-
-                $modelComNews->setMedia($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
+                $targetName = $id_space. '_' . $idNew . "_" . $ext;
+                FileUpload::uploadFile($target_dir, "media", $targetName);
+                $modelComNews->setMedia($id_space, $idNew, $target_dir . $targetName);
             }
 
             // redirect

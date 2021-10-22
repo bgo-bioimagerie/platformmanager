@@ -81,9 +81,10 @@ class DocumentslistController extends CoresecureController {
             $target_dir = "data/documents/";
             if ($_FILES["file_url"]["name"] != "") {
                 $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
-                FileUpload::uploadFile($target_dir, "file_url", $idNew . "_" . $ext);
+                $target = $id_space . '_' . $idNew . '_' .$ext;
+                FileUpload::uploadFile($target_dir, "file_url", $target);
 
-                $model->setUrl($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
+                $model->setUrl($id_space, $idNew, $target_dir . $target);
             }
 
             $this->redirect("documents/" . $id_space);
