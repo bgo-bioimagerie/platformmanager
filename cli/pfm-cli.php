@@ -57,6 +57,15 @@ try {
                 foreach ($rl as $rll) {
                     echo "* $rll[0] - $rll[1]\n";
                 }
+                $fc = new FCache();
+                $rl = $fc->listAll();
+                foreach ($rl as $rll) {
+                    $url = "* GET|POST - $rll[0] /$rll[0]";
+                    for($i=1;$i<count($rll);$i++) {
+                        $url .= "/[i:".$rll[$i]."]";
+                    }
+                    echo "$url\n";
+                }
             }
             break;
         case 'expire':
