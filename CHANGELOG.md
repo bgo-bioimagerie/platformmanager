@@ -2,6 +2,7 @@
 
 ## 2.1.6
 
+* [module:quote] expose client infos to invoice templates
 * [module:resources] fix resources events edition
 * [module:booking] add controls to avoid mktime typeErrors
 * [module:invoice] add missing casts to invoice related controllers

@@ -314,6 +314,10 @@ class QuotelistController extends CoresecureController {
         // generate pdf
         $adress = nl2br($info["address"]);
         $resp = $info["recipient"];
+        $clientInfos["email"] = "";
+        if (is_array($info["client"]) && !empty($info["client"])) {
+            $clientInfos = $info["client"][0];
+        }
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
         $isquote = true;
