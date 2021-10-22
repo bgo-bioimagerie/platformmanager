@@ -3,6 +3,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
+require_once 'Framework/Router.php';
 
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -49,6 +50,13 @@ try {
                 $modelCache = new FCache();
                 $modelCache->freeTableURL();
                 $modelCache->load();
+            } else {
+                $r = new Router();
+                $rl = $r->listRoutes();
+                echo "Routes:\n";
+                foreach ($rl as $rll) {
+                    echo "* $rll[0] - $rll[1]\n";
+                }
             }
             break;
         case 'expire':
