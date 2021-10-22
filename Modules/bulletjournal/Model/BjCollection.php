@@ -17,10 +17,21 @@ class BjCollection extends Model {
     public function __construct() {
 
         $this->tableName = "bj_collections";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_space", "int(11)", 0);
-        $this->setColumnsInfo("name", "varchar(250)", "");
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", 0);
+        //$this->setColumnsInfo("name", "varchar(250)", "");
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `bj_collections` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL,
+            `name` varchar(150) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        );";
+    
+        $this->runRequest($sql);
     }
 
     public function get($id_space, $id) {
@@ -43,7 +54,7 @@ class BjCollection extends Model {
             $this->runRequest($sql, array($id_space, $name));
             return $this->getDatabase()->lastInsertId();
         }
-        return $id;
+        // return $id;
     }
 
     public function exists($id_space, $id) {
