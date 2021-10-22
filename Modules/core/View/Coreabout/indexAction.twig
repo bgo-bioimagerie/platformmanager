@@ -14,7 +14,8 @@ Platform-Manager
 <div>
     <ul>
         <li>Code version: {{ data["tag"] }}</li>
-        <li>DB version: {{ data["db"] }}</li>
+        <li>Expected DB version: {{ data["edb"] }}</li>
+        <li>Current DB version: {{ data["cdb"] }}</li>
     </ul>
 </div>
 {% endblock %}

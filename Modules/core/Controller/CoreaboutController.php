@@ -23,11 +23,16 @@ class CoreaboutController extends CorecookiesecureController {
      */
     public function indexAction() {
         $tag = trim(exec('git describe --tags'));
+
+        $cdb = new CoreDB();
+        $crel = $cdb->getRelease();
+
             return $this->render(array(
                 'metadesc' => 'pfm about page',
                 'data' => [
                     'tag' => $tag,
-                    'db' => DB_VERSION
+                    'edb' => $cdb->getVersion(),
+                    'cdb' => $crel
                 ]
             ));
         
