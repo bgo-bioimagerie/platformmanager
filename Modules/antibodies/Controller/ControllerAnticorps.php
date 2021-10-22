@@ -375,7 +375,7 @@ class ControllerAnticorps extends ControllerSecureNav {
                 $modelAnticorps->setImageDesc($id_space,$id, $image_desc);
                 if ($_FILES["image_url"]["name"] != ""){
                     // download file
-                    $filename =$this->downloadIllustration($id_space);
+                    $filename =$this->uploadIllustration($id_space);
 				
                     // set filename to database
                     $modelAnticorps->setImageUrl($id_space, $id, $filename);
@@ -386,29 +386,19 @@ class ControllerAnticorps extends ControllerSecureNav {
 	    
 	}
         
-    protected function downloadIllustration($id_space){
+    protected function uploadIllustration($id_space){
 		$target_dir = "data/antibodies/";
 		$filename = $id_space."_".$_FILES["image_url"]["name"];
 		$target_file = $target_dir . $filename;
-		//echo "target file = " . $target_file . "<br/>";
-		$uploadOk = 1;
-
 		// Check file size
 		if ($_FILES["image_url"]["size"] > 500000000) {
 			throw PfmException("file too large.", 500);
-			//$uploadOk = 0;
 		}
-                
-		// Check if $uploadOk is set to 0 by an error
-		if ($uploadOk == 0) {
-			throw PfmException("there was an error uploading your file.", 500);
-			// if everything is ok, try to upload file
+
+		if (move_uploaded_file($_FILES["image_url"]["tmp_name"], $target_file)) {
+			return  $filename;
 		} else {
-			if (move_uploaded_file($_FILES["image_url"]["tmp_name"], $target_file)) {
-				return  $filename;
-			} else {
-				throw PfmException("there was an error uploading your file.", 500);
-			}
+			throw PfmException("there was an error uploading your file.", 500);
 		}
 	}
 	

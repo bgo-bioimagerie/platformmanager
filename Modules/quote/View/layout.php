@@ -19,7 +19,7 @@ if (!$headless) {
     $pmspaceheadercontent = "pm-space-content";
     $pmspaceheadernavbar = "pm-space-navbar";
     ?>
-    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <?php
 }
 ?>

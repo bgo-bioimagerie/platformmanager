@@ -146,12 +146,11 @@ class CatalogadminController extends CoresecureController {
             } else {
                 $id = $modelEntry->add($id_space, $id_category, $title, $short_desc, $full_desc);
             }
-            //echo "file = " . $_FILES["illustration"]["name"] . "<br/>";
             if ($_FILES["illustration"]["name"] != "") {
                 // download file
-                $this->downloadIllustration();
+                $filename = $this->uploadIllustration($id_space);
                 // set filename to database
-                $modelEntry->setImageUrl($id_space, $id, $_FILES["illustration"]["name"]);
+                $modelEntry->setImageUrl($id_space, $id, $filename);
             }
             $this->redirect("catalogprestations/".$id_space);
         } else {
@@ -164,28 +163,23 @@ class CatalogadminController extends CoresecureController {
             ));
         }
     }
-    protected function downloadIllustration() {
+    protected function uploadIllustration($id_space) {
         $target_dir = "data/catalog/";
-        $target_file = $target_dir . $_FILES["illustration"]["name"];
-        //echo "target file = " . $target_file . "<br/>";
-        $uploadOk = 1;
-        //$imageFileType = pathinfo($_FILES["illustration"]["name"],PATHINFO_EXTENSION);
+        $filename = $id_space."_".$_FILES["illustration"]["name"];
+
+        $target_file = $target_dir . $filename;
+
         // Check file size
         if ($_FILES["illustration"]["size"] > 500000000) {
-            return "Error: your file is too large.";
-            //$uploadOk = 0;
+            throw new PfmException("Error: your file is too large.", 500);
         }
-        // Check if $uploadOk is set to 0 by an error
-        if ($uploadOk == 0) {
-            return "Error: your file was not uploaded.";
-            // if everything is ok, try to upload file
+
+        if (move_uploaded_file($_FILES["illustration"]["tmp_name"], $target_file)) {
+            return $filename;
         } else {
-            if (move_uploaded_file($_FILES["illustration"]["tmp_name"], $target_file)) {
-                return "The file logo file" . basename($_FILES["illustration"]["name"]) . " has been uploaded.";
-            } else {
-                return "Error, there was an error uploading your file.";
-            }
+            throw new PfmException("Error, there was an error uploading your file.", 500);
         }
+
     }
     public function prestationdeleteAction($id_space, $id) {
         $modelCategory = new CaEntry();

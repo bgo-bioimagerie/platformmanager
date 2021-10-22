@@ -28,6 +28,10 @@ class CatalogInstall extends Model {
         if (!file_exists('data/catalog/')) {
             mkdir('data/catalog/', 0777, true);
         }
+
+        if (!file_exists('data/catalog/logos/')) {
+            mkdir('data/catalog/logos/', 0777, true);
+        }
     }
 
 }

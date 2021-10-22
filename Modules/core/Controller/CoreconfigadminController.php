@@ -140,7 +140,7 @@ class CoreconfigadminController extends CoresecureController {
             $css = str_replace("navbar_text_color", $this->request->getParameter("navbar_text_color"), $css);
             $css = str_replace("navbar_text_highlight", $this->request->getParameter("navbar_text_highlight"), $css);
 
-            file_put_contents("data/core/theme/navbar-fixed-top.css", $css);
+            file_put_contents("externals/core/theme/navbar-fixed-top.css", $css);
 
             $this->redirect("coreconfigadmin");
             return;

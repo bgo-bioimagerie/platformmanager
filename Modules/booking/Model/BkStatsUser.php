@@ -35,7 +35,7 @@ class BkStatsUser extends Model {
 
         // file name
         $id = $resource_id;
-        $nom = date('Y-m-d-H-i') . "_" . $id . ".xlsx";
+        $nom = $id_space."_".date('Y-m-d-H-i') . "_$id.xlsx";
         $teamName = Configuration::get("name");
         $footer = "" . $teamName . "/exportFiles/" . $nom;
 
@@ -328,12 +328,13 @@ class BkStatsUser extends Model {
         // $writer = PHPExcel_IOFactory::createWriter($spreadsheet, 'Excel2007');
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
-        $writer->save('./data/' . $nom);
+        $writer->save('./data/statistics/' . $nom);
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $nom . '"');
         header('Cache-Control: max-age=0');
 
         $writer->save('php://output');
+        unlink('./data/statistics/' . $nom);
     }
 
     /**
@@ -359,7 +360,7 @@ class BkStatsUser extends Model {
 
         // file name
         $id = $resource_id;
-        $nom = date('Y-m-d-H-i') . "_" . $id . ".xlsx";
+        $nom = $id_space.'_'.date('Y-m-d-H-i') . "_" . $id . ".xlsx";
         $teamName = Configuration::get("name");
         $footer = "platform-manager/" . $teamName . "/exportFiles/" . $nom;
 
@@ -662,12 +663,13 @@ class BkStatsUser extends Model {
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
-        $writer->save('./data/' . $nom);
+        $writer->save('./data/statistics/' . $nom);
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $nom . '"');
         header('Cache-Control: max-age=0');
 
         $writer->save('php://output');
+        unlink('./data/statistics/' . $nom);
     }
 
     public function bookingUsers($id_space, $startdate, $enddate) {

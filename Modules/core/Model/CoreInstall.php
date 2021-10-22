@@ -796,6 +796,15 @@ class CoreInstall extends Model {
             mkdir('data/conventions/', 0777, true);
         }
 
+        if (!file_exists('data/core/menu/')) {
+			mkdir('data/core/menu/', 0777, true);
+		}
+
+        if (!file_exists('data/files/')) {
+			mkdir('data/files/', 0777, true);
+		}
+
+
     }
     /**
      * Test if the database informations are correct

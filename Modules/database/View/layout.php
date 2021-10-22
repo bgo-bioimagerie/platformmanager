@@ -8,7 +8,7 @@
         
     <?php startblock('stylesheet') ?>
     <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
-    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <link rel="stylesheet" href="Modules/core/Theme/core.css">
     <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
     <?php endblock() ?>
