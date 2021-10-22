@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.7
+
+* [module:booking] fix BkCalendarPeriod missing id_space
+
 ## 2.1.6
 
 * [module:resources] fix resources events edition
