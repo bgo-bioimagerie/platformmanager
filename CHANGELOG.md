@@ -4,6 +4,7 @@
 
 * [module:booking_settings] fix display edition
 * [stats] count number of tickets per status
+* [stats] add stat calentry_cancel on booking cancel
 
 ## 2.1.7
 

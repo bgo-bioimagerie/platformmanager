@@ -114,6 +114,28 @@ class EventHandler {
         $m->add( $msg['space']['id'], $msg['_user'] ?? null, "User $login left space");
     }
 
+    private function _calEntryRemoveStat($space, $entry){
+        $id_space = $space['id'];
+        $timestamp = $entry['start_time'];
+        $r = new ResourceInfo();
+        $resource = $r-> get($id_space, $entry['resource_id']);
+        $u = new CoreUser();
+        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        $user = $u->userAllInfo($id_user);
+        $client = ['name' => 'unknown'];
+        if($entry['responsible_id']) {
+            $c = new ClClient();
+            $is_client = $c->get($id_space, $entry['responsible_id']);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $value = time() - $timestamp;
+        $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    } 
+
     private function _calEntryStat($space, $entry, $value){
         $id_space = $space['id'];
         $timestamp = $entry['start_time'];
@@ -167,6 +189,27 @@ class EventHandler {
         }
 
         $this->_calEntryStat($space, $entry, 1);
+    }
+
+    public function calentryRemove($msg) {
+        $this->logger->debug('[calentryRemove]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
+        $id_space = $msg['bk_calendar_entry']['id_space'];
+
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        if(!$space) {
+            return;
+        }
+
+        $m = new BkCalendarEntry();
+        $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
+        if(!$entry) {
+            Configuration::getLogger()->debug('[calentryEdit] id not found', ['id' => $msg['bk_calendar_entry']['id'], 'id_space' => $id_space]);
+            return;
+        }
+        $this->_calEntryStat($space, $entry, 0);
+        $this->_calEntryRemoveStat($space, $entry);
+
     }
 
     public function invoiceImport() {
@@ -268,6 +311,8 @@ class EventHandler {
                 case Events::ACTION_CAL_ENTRY_EDIT:
                     $this->calentryEdit($data);
                     break;
+                case Events::ACTION_CAL_ENTRY_REMOVE:
+                    $this->calentryRemove($data);
                 case Events::ACTION_INVOICE_EDIT:
                     $this->invoiceEdit($data);
                     break;
@@ -297,6 +342,7 @@ class Events {
     public const ACTION_SPACE_USER_ROLEUPDATE = 4;
     public const ACTION_USER_APIKEY = 5;
     public const ACTION_CAL_ENTRY_EDIT = 100;
+    public const ACTION_CAL_ENTRY_REMOVE = 101;
     public const ACTION_HELPDESK_TICKET = 200;
 
     public const ACTION_INVOICE_EDIT = 300;
