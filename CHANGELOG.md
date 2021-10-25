@@ -8,6 +8,7 @@
 
 ## 2.1.7
 
+* [module:invoices] fix set floats for items quantities
 * [module:booking] fix BkCalendarPeriod missing id_space
 
 ## 2.1.6
