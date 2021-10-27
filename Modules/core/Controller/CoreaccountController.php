@@ -95,7 +95,7 @@ class CoreaccountController extends Controller {
         $form->setTitle(CoreTranslator::CreateAccount($lang));
         $form->addText("name", CoreTranslator::Name($lang), true);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true);
-        $form->addText("login", CoreTranslator::Login($lang), true, checkUnicity: true);
+        $form->addText("login", CoreTranslator::Login($lang), true, checkUnicity: true, suggestLogin: true);
         $form->addEmail("email", CoreTranslator::email($lang), true, checkUnicity: true);
         $form->addText("phone", CoreTranslator::Phone($lang), false);
         $form->addText("organization", CoreTranslator::Organization($lang), false);

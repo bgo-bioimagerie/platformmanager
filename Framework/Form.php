@@ -33,6 +33,7 @@ class Form {
 
     private $readonly;
     private $checkUnicity;
+    private $suggestLogin;
 
     private $choices;
     private $choicesid;
@@ -213,6 +214,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -233,6 +235,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -253,6 +256,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -275,6 +279,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -298,6 +303,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -319,6 +325,7 @@ class Form {
         $this->setValue($name, $url);
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -329,7 +336,7 @@ class Form {
      * @param string $value Input default value
      */
     // #105: add readonly
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false) {
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false, $suggestLogin = false) {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -343,6 +350,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = $readonly;
         $this->checkUnicity[] = $checkUnicity;
+        $this->suggestLogin[] = $suggestLogin;
     }
 
     /**
@@ -365,6 +373,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -389,6 +398,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
@@ -406,6 +416,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
@@ -423,6 +434,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -446,6 +458,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -469,6 +482,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = $checkUnicity;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -492,6 +506,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -516,6 +531,7 @@ class Form {
         $this->submitOnChange[] = $submitOnChange;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
     
         /**
@@ -540,6 +556,7 @@ class Form {
         $this->submitOnChange[] = $submitOnChange;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
     
 
@@ -565,6 +582,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -587,6 +605,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -610,6 +629,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->suggestLogin[] = false;
     }
 
     /**
@@ -659,6 +679,11 @@ class Form {
             if ($this->checkUnicity[$i]) {
                 $checkUnicityElem = true;
             }
+
+            $suggestLoginElem = false;
+            if ($this->suggestLogin[$i]) {
+                $suggestLoginElem = true;
+            }
             
             $required = "";
             if ($this->isMandatory[$i]) {
@@ -681,7 +706,7 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicity = $checkUnicityElem);
+                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicity = $checkUnicityElem, $suggestLogin = $suggestLoginElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -744,6 +769,10 @@ class Form {
 
         if ($this->checkUnicity == true) {
             $html .= $formHtml->checkUnicityScript();
+        }
+
+        if ($this->suggestLogin) {
+            $html .= $formHtml->suggestLoginScript();
         }
 
         if ($this->isFormAdd == true) {

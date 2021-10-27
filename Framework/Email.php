@@ -173,7 +173,6 @@ class Email extends Model {
                     $idSpace = $params["id_space"];
                     break;
                 case "self_registration":
-                    Configuration::getLogger()->debug("[TEST]", ["jwt" => $params['jwt']]);
                     $idSpace = $params['supData']['id_space'];
                     $spaceName = $modelSpace->getSpaceName($idSpace);
                     $userLogin = $params['supData']['login'];

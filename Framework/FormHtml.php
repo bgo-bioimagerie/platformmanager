@@ -146,7 +146,7 @@ class FormHtml {
      * @return string
      */
     // #105: add readonly
-    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false, $checkUnicity = false) {
+    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false, $checkUnicity = false, $suggestLogin = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
@@ -743,6 +743,14 @@ class FormHtml {
      */
     static public function checkUnicityScript() {
         return file_get_contents("Framework/checkUnicity_script.php");
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    static public function suggestLoginScript() {
+        return file_get_contents("Framework/suggestLogin_script.php");
     }
 
 }

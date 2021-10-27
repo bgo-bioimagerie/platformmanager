@@ -2,6 +2,10 @@
 
 ## 2.1.7
 
+* [self_registration] add *Organization* and *Team* inputs
+* [self_registration] add login suggestion
+* [self_registration] add unicity checks to login and email inputs
+* [self_registration] fix email sent to space admins
 * [module:invoices] fix set floats for items quantities
 * [module:booking] fix BkCalendarPeriod missing id_space
 
