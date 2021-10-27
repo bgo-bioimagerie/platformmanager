@@ -8,7 +8,8 @@ if (document.getElementById("id")) {
 }
 
 form = document.getElementById("editForm")
-    || document.getElementById("createuseraccountform");
+    || document.getElementById("createuseraccountform")
+    || document.getElementById("createaccountform");
     
 saveBtn = document.getElementById("editFormsubmit");
 inputs = form.getElementsByTagName("input");

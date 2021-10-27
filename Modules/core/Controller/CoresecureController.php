@@ -103,7 +103,16 @@ abstract class CoresecureController extends CorecookiesecureController {
             }
         }
 
-        // check if there is a session    
+        // get to know if we are calling a route for checking credentials unicity in case of an account self creation. Allows to pass through.
+        $checkingUnicity = false;
+        $path = $this->request->getParameterNoException("path");
+        if ($path) {
+            $charPos = strpos($path, '/') | 1;
+            $splitPath = str_split($path, $charPos);
+            $checkingUnicity = $splitPath[0] === "coreusersisunique";
+        }
+
+        // check if there is a session
         if ($this->request->getSession()->isAttribut("id_user")) {
             $logged_in_space = 0;
             if($this->request->getSession()->isAttribut("logged_id_space")) {
@@ -128,6 +137,9 @@ abstract class CoresecureController extends CorecookiesecureController {
                 $this->redirect("coreconnection");
                 return;
             }
+            // if checking unicity, pursue requested action 
+        } else if ($checkingUnicity) {
+            parent::runAction($module, $action, $args);
         } else {
             Configuration::getLogger()->debug('no session');
             if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
