@@ -2,6 +2,7 @@
 
 ## 2.1.7
 
+* [module:booking] fix supplementaries deletion
 * [module:invoices] fix set floats for items quantities
 * [module:booking] fix BkCalendarPeriod missing id_space
 
