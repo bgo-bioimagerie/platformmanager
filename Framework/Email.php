@@ -160,14 +160,33 @@ class Email extends Model {
      * @param string $lang
      */
     public function notifyAdminsByEmail($params, $origin, $lang = "") {
-        if ($origin === "new_join_request") {
+        $mailingCases = ["new_join_request", "self_registration"];
+        if (in_array($origin, $mailingCases)) {
             $modelSpace = new CoreSpace();
             $from = Configuration::get('smtp_from');
-            $spaceName = ($params["space_name"] !== null) ? $params["space_name"] : "";
             $fromName = "Platform-Manager";
-            $subject = CoreTranslator::JoinRequestSubject($params["space_name"], $lang);
-            $content = CoreTranslator::JoinRequestEmail($_SESSION['login'], $spaceName, $params['user_email'], $lang);
-            $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($params["id_space"]));
+            switch($origin) {
+                case "new_join_request":
+                    $spaceName = $params["space_name"] ?? '';
+                    $userLogin = $_SESSION['login'];
+                    $userEmail = $params['user_email'];
+                    $idSpace = $params["id_space"];
+                    break;
+                case "self_registration":
+                    Configuration::getLogger()->debug("[TEST]", ["jwt" => $params['jwt']]);
+                    $idSpace = $params['supData']['id_space'];
+                    $spaceName = $modelSpace->getSpaceName($idSpace);
+                    $userLogin = $params['supData']['login'];
+                    $userEmail = $params['email'];
+                    $organization = $params['supData']['organization'];
+                    $team = $params['supData']['team'];
+                    break;
+                default:
+                    break;
+            }
+            $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
+            $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $lang, $organization ?? '', $team ?? '');
+            $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($idSpace));
             $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {
             Configuration::getLogger()->error(

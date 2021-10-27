@@ -98,6 +98,8 @@ class CoreaccountController extends Controller {
         $form->addText("login", CoreTranslator::Login($lang), true, checkUnicity: true);
         $form->addEmail("email", CoreTranslator::email($lang), true, checkUnicity: true);
         $form->addText("phone", CoreTranslator::Phone($lang), false);
+        $form->addText("organization", CoreTranslator::Organization($lang), false);
+        $form->addText("team", CoreTranslator::Team($lang), false);
         $form->addSelectMandatory("id_space", CoreTranslator::AccessTo($lang), $spaces["names"], $spaces["ids"]);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "corecreateaccount");
@@ -122,6 +124,8 @@ class CoreaccountController extends Controller {
                     "firstname" => $form->getParameter("firstname"),
                     "email" => $form->getParameter("email"),
                     "phone" => $form->getParameter("phone") ?? '',
+                    "organization" => $form->getParameter("organization") ?? '',
+                    "team" => $form->getParameter("team") ?? '',
                     "id_space" => $form->getParameter("id_space")
                 ]
             );
@@ -137,9 +141,11 @@ class CoreaccountController extends Controller {
             $mailParams = [
                 "jwt" => $jwt,
                 "url" => Configuration::get('public_url'),
-                "email" => $form->getParameter("email")
+                "email" => $form->getParameter("email"),
+                "supData" => $payload['data']
             ];
             $email->notifyUserByEmail($mailParams, "add_new_user_waiting", $lang);
+            $email->notifyAdminsByEmail($mailParams, "self_registration", $lang);
             $this->redirect("coreuserwaiting");
             return;
         }
