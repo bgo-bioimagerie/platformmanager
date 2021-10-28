@@ -267,16 +267,9 @@ class CoreTranslator {
 
     public static function Organization($lang) {
         if ($lang == "fr") {
-            return "Organisation, tutelle ou entreprise";
+            return "Organisation";
         }
         return "Organization";
-    }
-
-    public static function Team($lang) {
-        if ($lang == "fr") {
-            return "Equipe, labo ou service";
-        }
-        return "Team or lab";
     }
 
     public static function Responsible($lang) {

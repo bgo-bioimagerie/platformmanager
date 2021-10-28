@@ -9,6 +9,9 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 
+// Dependency with UsersInfo class
+require_once 'Modules/users/Model/UsersInfo.php';
+
 require_once 'Framework/Email.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
@@ -38,6 +41,7 @@ class CoreaccountController extends Controller {
         Configuration::getLogger()->debug('[account] registration confirmation', ['user' => $data]);
 
         $modelCoreUser = new CoreUser();
+        $modelUsersInfo = new UsersInfo();
 
         if ($modelCoreUser->isLogin($data["login"])) {
             throw new PfmException("Error:". CoreTranslator::LoginAlreadyExists($lang), 403);
@@ -54,6 +58,12 @@ class CoreaccountController extends Controller {
         if($data["phone"]??"") {
             $modelCoreUser->setPhone($id_user, $data["phone"]);
         }
+        $modelUsersInfo->set(
+            $id_user,
+            $data["phone"] ?? '',
+            $data['unit'] ?? '',
+            $data['organization'] ?? ''
+        );
         $modelPeningAccounts = new CorePendingAccount();
         $modelPeningAccounts->add($id_user, $data["id_space"]);
 
@@ -99,7 +109,7 @@ class CoreaccountController extends Controller {
         $form->addEmail("email", CoreTranslator::email($lang), true, checkUnicity: true);
         $form->addText("phone", CoreTranslator::Phone($lang), false);
         $form->addText("organization", CoreTranslator::Organization($lang), false);
-        $form->addText("team", CoreTranslator::Team($lang), false);
+        $form->addText("unit", CoreTranslator::Unit($lang), false);
         $form->addSelectMandatory("id_space", CoreTranslator::AccessTo($lang), $spaces["names"], $spaces["ids"]);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "corecreateaccount");
@@ -125,7 +135,7 @@ class CoreaccountController extends Controller {
                     "email" => $form->getParameter("email"),
                     "phone" => $form->getParameter("phone") ?? '',
                     "organization" => $form->getParameter("organization") ?? '',
-                    "team" => $form->getParameter("team") ?? '',
+                    "unit" => $form->getParameter("unit") ?? '',
                     "id_space" => $form->getParameter("id_space")
                 ]
             );
