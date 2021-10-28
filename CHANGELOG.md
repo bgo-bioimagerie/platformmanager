@@ -2,6 +2,7 @@
 
 ## 2.1.7
 
+* [users] change checkunicity routes
 * [self_registration] add *Organization* and *Team* inputs
 * [self_registration] add login suggestion
 * [self_registration] add unicity checks to login and email inputs

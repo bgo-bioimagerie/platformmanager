@@ -185,4 +185,23 @@ class CoreaccountController extends Controller {
         ));
     }
 
+    public function isuniqueAction($type, $value, $id_user) {
+        $modelUser = new CoreUser();
+        $email = "";
+        $login = "";
+        if ($id_user && $id_user > 0) {
+          $user = $modelUser->getInfo($id_user);
+          $email = $user['email'];
+          $login = $user['login'];
+        }
+        if ($type === "email") {
+            $isUnique = !$modelUser->isEmail($value, $email);
+        } else if ($type === "login") {
+            $isUnique = !$modelUser->isLogin($value, $login);
+        } else {
+            $isUnique = "wrong type";
+        }
+        $this->render(['data' => ['isUnique' => $isUnique]]);
+    }
+
 }

@@ -102,7 +102,7 @@ function validateUserForm(origin) {
         // Do we still need errordISPLAYED ?
         let errorDisplayed = (errors.length > 0);
         let invalidEmail = (type === "email") && !validateEmail(value);
-        fetch(`coreusersisunique/` + type + "/" + value + "/" + userId, cfg, true).
+        fetch(`coreaccountisunique/` + type + "/" + value + "/" + userId, cfg, true).
             then((response) => response.json()).
             then(data => {
                 console.log("data", data);
