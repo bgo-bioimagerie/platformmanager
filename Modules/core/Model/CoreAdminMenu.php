@@ -17,13 +17,25 @@ class CoreAdminMenu extends Model {
     public function __construct() {
 
         $this->tableName = "core_adminmenu";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("name", "varchar(40)", "");
-        $this->setColumnsInfo("link", "varchar(150)", "");
-        $this->setColumnsInfo("icon", "varchar(40)", "");
-        $this->setColumnsInfo("display_order", "int(11)", 0);
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("name", "varchar(40)", "");
+        //$this->setColumnsInfo("link", "varchar(150)", "");
+        //$this->setColumnsInfo("icon", "varchar(40)", "");
+        //$this->setColumnsInfo("display_order", "int(11)", 0);
+        //$this->primaryKey = "id";
     }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `core_adminmenu` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `name` varchar(40) DEFAULT NULL,
+            `link` varchar(150) DEFAULT NULL,
+            `icon` varchar(40) DEFAULT NULL,
+            `display_order` int NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
+    } 
 
     public function setAdminMenu($name, $link, $icon, $status) {
         if ($status > 0) {

@@ -49,7 +49,7 @@ class BkPackage extends Model {
 		);";
         $this->runRequest($sql);
 
-        $this->addColumn("bk_packages", "id_package", "int(11)", 0);
+        //$this->addColumn("bk_packages", "id_package", "int(11)", 0);
 
         $sql4 = "DELETE FROM bk_packages WHERE id_package = 0";
         $this->runRequest($sql4);

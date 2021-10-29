@@ -57,9 +57,16 @@ class SeProject extends Model {
         `id_origin` int(11) NOT NULL DEFAULT 0,
         `closed_by` int(11) NOT NULL DEFAULT 0,
         `in_charge` int(11) NOT NULL DEFAULT 0,
+        `samplereturn` text,
+        `samplereturndate` date DEFAULT NULL,
+        `id_sample_cabinet` int NOT NULL DEFAULT '0',
+        `samplestocked` int NOT NULL DEFAULT '0',
+        `samplescomment` text,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+
+        /*
         $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
         $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
         $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
@@ -68,6 +75,7 @@ class SeProject extends Model {
         $this->addColumn('se_project', 'id_sample_cabinet', 'int(11)', 0);
         $this->addColumn('se_project', 'samplestocked', 'int(1)', 0);
         $this->addColumn('se_project', 'samplescomment', 'TEXT', "");
+        */
 
 
         $seps = new SeProjectService();

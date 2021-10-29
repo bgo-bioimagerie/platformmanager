@@ -7,17 +7,35 @@ class ClClient extends Model {
 
     public function __construct() {
         $this->tableName = "cl_clients";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_space", "int(11)", 0);
-        $this->setColumnsInfo("name", "varchar(255)", "");
-        $this->setColumnsInfo("contact_name", "varchar(255)", "");
-        $this->setColumnsInfo("address_delivery", "int(11)", 0);
-        $this->setColumnsInfo("address_invoice", "int(11)", 0);
-        $this->setColumnsInfo("phone", "varchar(20)", "");
-        $this->setColumnsInfo("email", "varchar(255)", "");
-        $this->setColumnsInfo("pricing", "int(11)", "");
-        $this->setColumnsInfo("invoice_send_preference", "int(11)", 0); // 1 email; 2 postal
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", 0);
+        //$this->setColumnsInfo("name", "varchar(255)", "");
+        //$this->setColumnsInfo("contact_name", "varchar(255)", "");
+        //$this->setColumnsInfo("address_delivery", "int(11)", 0);
+        //$this->setColumnsInfo("address_invoice", "int(11)", 0);
+        //$this->setColumnsInfo("phone", "varchar(20)", "");
+        //$this->setColumnsInfo("email", "varchar(255)", "");
+        //$this->setColumnsInfo("pricing", "int(11)", "");
+        //$this->setColumnsInfo("invoice_send_preference", "int(11)", 0); // 1 email; 2 postal
         $this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `cl_clients` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT '0',
+            `name` varchar(255) DEFAULT NULL,
+            `contact_name` varchar(255) DEFAULT NULL,
+            `address_delivery` int NOT NULL DEFAULT '0',
+            `address_invoice` int NOT NULL DEFAULT '0',
+            `phone` varchar(20) DEFAULT NULL,
+            `email` varchar(255) DEFAULT NULL,
+            `pricing` int DEFAULT NULL,
+            `invoice_send_preference` int NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+    
+        $this->runRequest($sql);
     }
     
     public function getInstitution($id_space, $id){

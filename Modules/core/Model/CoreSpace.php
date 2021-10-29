@@ -15,20 +15,23 @@ class CoreSpaceMenus extends Model {
 
     public function createTable() {
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+		        `id` int(11) NOT NULL AUTO_INCREMENT,
                 `id_space` int(1) NOT NULL DEFAULT 1,
-		`module` varchar(60) NOT NULL DEFAULT '',
+		        `module` varchar(60) NOT NULL DEFAULT '',
                 `url` varchar(120) NOT NULL DEFAULT '',
                 `icon` varchar(120) NOT NULL DEFAULT '',
                 `user_role` int(1) NOT NULL DEFAULT 1,
                 `display_order` int(11) NOT NULL DEFAULT 0,
+                `has_sub_menu` int(1) NOT NULL DEFAULT 1,
+                `color` varchar(7) DEFAULT NULL,
                 PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql3);
-
+        /*
         $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+        */
     }
 }
 
@@ -77,9 +80,11 @@ class CoreSpace extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        /*
         $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
+        */
 
         $csm = new CoreSpaceMenus();
         $csm->createTable();

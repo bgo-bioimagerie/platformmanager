@@ -25,8 +25,8 @@ class CaCategory extends Model {
 
         $this->runRequest($sql);
 
-        $this->addColumn("ca_categories", "display_order", "int(4)", 0);
-        $this->addColumn("ca_categories", "id_space", "int(11)", 0);
+        //$this->addColumn("ca_categories", "display_order", "int(4)", 0);
+        //$this->addColumn("ca_categories", "id_space", "int(11)", 0);
         
     }
 

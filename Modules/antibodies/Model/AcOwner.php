@@ -30,7 +30,7 @@ class AcOwner extends Model {
                     );";
 
         $this->runRequest($sql);
-        $this->addColumn("ac_j_user_anticorps", "id_space", "INT(11)", 0);
+        // $this->addColumn("ac_j_user_anticorps", "id_space", "INT(11)", 0);
 
     }
 

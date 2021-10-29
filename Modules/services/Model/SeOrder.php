@@ -52,10 +52,12 @@ class SeOrder extends Model {
 		);";
         $this->runRequest($sql);
 
+        /*
         $this->addColumn("se_order", "id_resp", "int(11)", 0);
         $this->addColumn("se_order", "id_invoice", "int(11)", 0);
         $this->addColumn("se_order", "created_by_id", "int(11)", 0);
         $this->addColumn("se_order", "modified_by_id", "int(11)", 0);
+        */
 
         $seos = new SeOrderService();
         $seos->createTable();

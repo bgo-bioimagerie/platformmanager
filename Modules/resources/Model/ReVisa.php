@@ -35,7 +35,7 @@ class ReVisa extends Model {
 		);";
 
         $pdo = $this->runRequest($sql);
-        $this->addColumn('re_visas', 'is_active', 'int(0)', 1);
+        //$this->addColumn('re_visas', 'is_active', 'int(0)', 1);
         return $pdo;
     }
 

@@ -27,6 +27,7 @@ class CaEntry extends Model {
 
         $this->runRequest($sql);
 
+        /*
         // add columns if no exists
         $sql2 = "SHOW COLUMNS FROM `ca_entries` LIKE 'image_url'";
         $pdo = $this->runRequest($sql2);
@@ -37,6 +38,7 @@ class CaEntry extends Model {
         }
         
         $this->addColumn("ca_entries", "id_space", "int(11)", 0);
+        */
     }
 
     public function add($id_space, $id_category, $title, $short_desc, $full_desc) {

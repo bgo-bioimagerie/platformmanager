@@ -26,7 +26,7 @@ class BjTask extends Model {
     }
     
     public function createTable() {
-        $sql = "CREATE TABLE IF NOT EXISTS `bj_notes` (
+        $sql = "CREATE TABLE IF NOT EXISTS `bj_tasks` (
             `id` int NOT NULL AUTO_INCREMENT,
             `id_space` int NOT NULL,
             `id_note` int NOT NULL DEFAULT '0',

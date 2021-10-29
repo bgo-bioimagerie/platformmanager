@@ -22,7 +22,7 @@ class SeOrigin extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
-        $this->addColumn('se_origin', 'display_order', 'int(11)', 0);
+        //$this->addColumn('se_origin', 'display_order', 'int(11)', 0);
     }
     
     public function getName($id_space, $id){

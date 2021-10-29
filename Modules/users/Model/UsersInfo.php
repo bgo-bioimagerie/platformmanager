@@ -6,13 +6,26 @@ class UsersInfo extends Model {
 
     public function __construct() {
         $this->tableName = "users_info";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_core", "int(11)", 0);
-        $this->setColumnsInfo("phone", "varchar(100)", "");
-        $this->setColumnsInfo("unit", "varchar(255)", "");
-        $this->setColumnsInfo("avatar", "varchar(255)", "");
-        $this->setColumnsInfo("bio", "text", "");
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_core", "int(11)", 0);
+        //$this->setColumnsInfo("phone", "varchar(100)", "");
+        //$this->setColumnsInfo("unit", "varchar(255)", "");
+        //$this->setColumnsInfo("avatar", "varchar(255)", "");
+        //$this->setColumnsInfo("bio", "text", "");
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `users_info` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_core` int NOT NULL DEFAULT '0',
+            `phone` varchar(100) DEFAULT NULL,
+            `unit` varchar(255) DEFAULT NULL,
+            `avatar` varchar(255) DEFAULT NULL,
+            `bio` text,
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
     }
 
     public function get($id_core) {

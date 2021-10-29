@@ -34,7 +34,7 @@ class BkColorCode extends Model {
 
         $this->runRequest($sql);
 
-        $this->addColumn("bk_color_codes", "who_can_use", "int(11)", 1);
+        // $this->addColumn("bk_color_codes", "who_can_use", "int(11)", 1);
     }
 
     public function getDefault() {
