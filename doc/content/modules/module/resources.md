@@ -95,3 +95,6 @@ In order to manage specific authorisations in resources booking, you can add *vi
 You can add a visa by clicking the '+' icon next to *Visas* in the left side menu.
 
 ![basic configuration](../../../resources_module_5.png)
+
+### Manage resources Accessibilities
+See [booking settings accessibilities](../booking#accessibilities)

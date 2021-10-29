@@ -121,10 +121,22 @@ Set, for each [*area*](../resources/#area):
 Set the colors and text options of the calendar view interface.
 
 #### Accessibilities
+**Warning** *for versions < 2.2*
+Default booking authorizations show *User* by default, but are set to *Manager*
+
+Need to be saved a first time to be taken into account.
+
+Same each time you add a new resource, its authorizations are set to *Manager* even if it shows *User*.
 
 ![booking_settings](../../../booking_settings_module_5.png)
 
-Set booking authorizations (*User*, *authorized user list*, *Manager*, *Admin*) by resource.
+Set booking authorizations (*User*, *Authorized users list*, *Manager*, *Admin*) by resource for members of your space.
+
+Options:
+- **User**: every user is authorized to book this resource
+- **Authorized users list**: only users with booking access for this resource's category are allowed to make a reservation (+ managers and admins)
+- **Manager**: only managers and admins are allowed to make a reservation
+- **Admin**: only admins are allowed to make a reservation
 
 #### Restrictions
 
