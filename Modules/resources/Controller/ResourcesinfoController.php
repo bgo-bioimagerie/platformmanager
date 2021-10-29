@@ -141,7 +141,9 @@ class ResourcesinfoController extends CoresecureController {
 
             // set default authorizations in bk_access
             $modelBkAccess = new BkAccess();
-            $modelBkAccess->set($id_space, $id, 3); // 3 for 'manager'
+            if (!$modelBkAccess->get($id_space, $id)) {
+                $modelBkAccess->set($id_space, $id, 3); // 3 for 'manager'    
+            }
             
             // upload image
             $target_dir = "data/resources/";
@@ -476,7 +478,10 @@ class ResourcesinfoController extends CoresecureController {
         
         // get resource bk_access and delete it
         $modelBkAccess = new BkAccess();
-        $modelBkAccess->delete($id_space, $id);
+        if ($modelBkAccess->get($id_space, $id)) {
+            $modelBkAccess->delete($id_space, $id);
+        }
+        
 
         $this->redirect("resources/" . $id_space);
     }
