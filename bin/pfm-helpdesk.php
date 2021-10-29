@@ -187,9 +187,6 @@ while(true) {
                     continue;
                 }
 
-                $spaceNames[$id_space] = true;
-
-
                 Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
                 $um = new CoreUser();
                 $userEmail = $from[0]->mailbox."@".$from[0]->host;
@@ -218,6 +215,7 @@ while(true) {
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
                 if($newTicket['is_new']) {
+                    Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
                     $from = Configuration::get('smtp_from');
                     $fromInfo = explode('@', $from);
                     $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
@@ -230,10 +228,6 @@ while(true) {
                 $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
             imap_close($mbox, CL_EXPUNGE);
-
-            foreach ($spaceNames as $key => $value) {
-                Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($key)]]);
-            }
 
             $hm = new Helpdesk();
             $hm->remind();

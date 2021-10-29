@@ -392,40 +392,44 @@ class CorespaceaccessController extends CoresecureController {
     public function pendingusereditAction($id_space, $id) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
+    
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
 
         $modelPending = new CorePendingAccount();
         $pendingInfo = $modelPending->get($id);
+        $userId = $pendingInfo["id_user"];
 
         $modelUser = new CoreUser();
-        $fullname = $modelUser->getUserFUllName($pendingInfo["id_user"]);
+        $fullname = $modelUser->getUserFUllName($userId);
         $modelStatus = new CoreSpace();
         $roles = $modelStatus->roles($lang);
+        $userRole = $modelStatus->getUserSpaceRole($id_space, $userId);
 
         $form = new Form($this->request, "pendingusereditactionform");
         $form->setTitle(CoreTranslator::Activate($lang) . ": " . $fullname);
-        $form->addSelect("role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"]);
+        $form->addSelect("role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"], $userRole);
         $form->setValidationButton(CoreTranslator::Save($lang), "corespacependinguseredit/".$id_space."/".$id);
 
         if ( $form->check() ){
 
-            $modelUser->validateAccount($pendingInfo["id_user"]);
-            $modelSpace->setUserIfNotExist($pendingInfo["id_user"], $id_space, $form->getParameter("role"));
+            $modelUser->validateAccount($userId);
+            $modelSpace->setUserIfNotExist($userId, $id_space, $form->getParameter("role"));
             $modelPending->validate($id, $_SESSION["id_user"]);
 
             $mailParams = [
                 "id_space" => $id_space,
-                "id_user" => $pendingInfo["id_user"],
+                "id_user" => $userId,
                 "space_name" => $space["name"]
             ];
 
             $email = new Email();
             $email->notifyUserByEmail($mailParams, "accept_pending_user", $this->getLanguage());
 
-            $_SESSION["message"] = CoreTranslator::UserAccountHasBeenActivated($lang);
-            $this->redirect("corespacependinguseredit/".$id_space."/".$id, [], ['message' => 'user activated']);
+            $_SESSION["flash"] = CoreTranslator::UserAccountHasBeenActivated($lang);
+            $_SESSION["flashClass"] = "success";
+            $this->redirect("corespaceaccess/".$id_space."/All/active", [], ['message' => 'user activated']);
+            return;
         }
 
         return $this->render(array(

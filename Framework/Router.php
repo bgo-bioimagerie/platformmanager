@@ -26,6 +26,25 @@ class Router {
         $this->router = new AltoRouter();
     }
 
+    public function listRoutes() {
+        $modulesNames = Configuration::get("modules");
+        $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
+        foreach ($modulesNames as $moduleName) {
+            // get the routing class
+            $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
+            if (file_exists($routingClassUrl)) {
+                require_once ($routingClassUrl);
+                $className = ucfirst($moduleName) . "Routing";
+                $routingClass = new $className ();
+                if(method_exists($routingClass, "routes")){
+                    Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
+                    $routingClass->routes($this->router);
+                }
+            }
+        }
+        return $this->router->getRoutes();
+    }
+
     private function call($target, $args, $request) {
         if(isset($args['id_space'])){
             $_SESSION['id_space'] = $args['id_space'];

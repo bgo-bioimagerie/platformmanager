@@ -45,7 +45,7 @@ class BkCalendarPeriod extends Model {
     }
 
     public function setPeriod($id_space, $id, $choice, $option) {
-        if ($this->isCalPeriod($id)) {
+        if ($this->isCalPeriod($id_space, $id)) {
             $sql = "UPDATE bk_calendar_period SET choice=?, optionval=? WHERE id=? AND id_space=?";
             $this->runRequest($sql, array($choice, $option, $id, $id_space));
             return $id;

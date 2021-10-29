@@ -1,14 +1,27 @@
 # Changes
 
+## 2.2
+
+* [module:booking_settings] fix display edition
+* [stats] count number of tickets per status
+* [stats] add stat calentry_cancel on booking cancel
+
+## 2.1.7
+
+* [module:booking] fix supplementaries deletion
+* [module:invoices] fix set floats for items quantities
+* [module:booking] fix BkCalendarPeriod missing id_space
+
 ## 2.1.6
 
+* [module:resources] fix resources events edition
 * [module:booking] add controls to avoid mktime typeErrors
 * [module:invoice] add missing casts to invoice related controllers
 * [module:booking] fix BkAccess::set missing id_space
+* [module:invoice] expose client infos to invoice templates
 
 ## 2.1.5
 
-* [module:invoice] expose client infos to invoice templates
 * [module:antibodies] fix antibody number incrementation (need to follow, by space)
 * [module:services] fix invoice by project
 * [module:booking] set resources qtes default value to empty string

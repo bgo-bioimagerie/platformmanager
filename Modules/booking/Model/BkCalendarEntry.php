@@ -617,6 +617,7 @@ class BkCalendarEntry extends Model {
     public function removeEntry($id_space, $id) {
         $sql = "UPDATE bk_calendar_entry SET deleted=?,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array(1, $id, $id_space));
+        Events::send(["action" => Events::ACTION_CAL_ENTRY_REMOVE, "bk_calendar_entry" => ["id" => intval($id), "id_space" => $id_space]]);
     }
 
     /**
