@@ -473,6 +473,10 @@ class ResourcesinfoController extends CoresecureController {
 
         $modelResource = new ResourceInfo();
         $modelResource->delete($id_space, $id);
+        
+        // get resource bk_access and delete it
+        $modelBkAccess = new BkAccess();
+        $modelBkAccess->delete($id_space, $id);
 
         $this->redirect("resources/" . $id_space);
     }
