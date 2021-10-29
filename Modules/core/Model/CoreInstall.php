@@ -73,6 +73,8 @@ class CoreDB extends Model {
 
     public function repair1() {
         Configuration::getLogger()->info("Upgrade db columns from pfm v1");
+        $this->addColumn("cache_urls", "isapi", "int(1)", 0);
+
         $this->addColumn("ac_j_user_anticorps", "id_space", "int(11)", 0);
 
         $this->addColumn("ac_anticorps", "id_staining", "float(11)", 1);

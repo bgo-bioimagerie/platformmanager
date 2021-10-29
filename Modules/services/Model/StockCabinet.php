@@ -24,7 +24,6 @@ class StockCabinet extends Model {
             `id_space` int NOT NULL DEFAULT '0',
             `name` varchar(255) DEFAULT NULL,
             `room_number` varchar(255) DEFAULT NULL,
-            `id_space` int NOT NULL DEFAULT '0',
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
