@@ -578,24 +578,11 @@ class CoreDB extends Model {
 
     public function upgrade_v3_v4() {
         if(Statistics::enabled()) {
-            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user');
-            $statHandler = new Statistics();
-            $pfmOrg = Configuration::get('influxdb_org', 'pfm');
-            $statHandler->createDB($pfmOrg);
             $eventHandler = new EventHandler();
-            $eventHandler->spaceCount(null);
-            // create org
             $g = new Grafana();
-            $g->createOrg($pfmOrg);
-            $u = new CoreUser();
-            $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
-            $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);
-            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user, done!');
-
             Configuration::getLogger()->debug('[grafana] create orgs');
             // Create org for existing spaces
             $cp = new CoreSpace();
-            $statHandler = new EventHandler();
             $spaces = $cp->getSpaces('id');
             foreach ($spaces as $space) {
                 $g->createOrg($space['shortname']);
@@ -830,6 +817,22 @@ class CoreInstall extends Model {
 
         $modelStatistics = new BucketStatistics();
         $modelStatistics->createTable();
+
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user');
+            $statHandler = new Statistics();
+            $pfmOrg = Configuration::get('influxdb_org', 'pfm');
+            $statHandler->createDB($pfmOrg);
+            $eventHandler = new EventHandler();
+            $eventHandler->spaceCount(null);
+            // create org
+            $g = new Grafana();
+            $g->createOrg($pfmOrg);
+            $u = new CoreUser();
+            $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
+            $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user, done!');
+        }
 
         $modelCoreFiles = new CoreFiles();
         $modelCoreFiles->createTable();
