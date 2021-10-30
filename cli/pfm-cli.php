@@ -3,10 +3,12 @@ require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
-
+require_once 'Framework/Events.php';
+require_once 'Framework/Statistics.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+
 
 use Garden\Cli\Cli;
 
@@ -31,6 +33,8 @@ $cli = Cli::create()
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean')
+    ->command('stats')
+    ->opt('import', '(re)import all stats', false, 'boolean')
     ->command('repair')
     ->opt('bug', 'Bug number', 0, 'integer');
 
@@ -60,6 +64,11 @@ try {
             $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
             $logger->info("Expired ".$count. " users");
             break;
+        case 'stats':
+            $logger = Configuration::getLogger();
+            $logger->info("Import stats");
+            statsImport();
+            break;
         case 'version':
             echo "Version: ".version()."\n";
             if ($args->getOpt('db')) {
@@ -74,6 +83,27 @@ try {
     }
 } catch(Throwable $e) {
     Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+}
+
+function statsImport() {
+    $cp = new CoreSpace();
+    Configuration::getLogger()->debug("[stats] create bucket");
+    $spaces = $cp->getSpaces('id');
+    foreach ($spaces as $space) {
+        $statHandler = new Statistics();
+        $statHandler->createDB($space['shortname']);
+    }
+    Configuration::getLogger()->debug("[stats] create bucket, done!");
+
+    Configuration::getLogger()->debug("[stats] import calentry stats");
+    $eventHandler = new EventHandler();
+    $eventHandler->calentryImport();
+    Configuration::getLogger()->debug('[stats] import calentry stats, done!');
+
+    Configuration::getLogger()->debug("[stats] import invoice stats");
+    $statHandler = new EventHandler();
+    $statHandler->invoiceImport();
+    Configuration::getLogger()->debug('[stats] import invoice stats, done!');
 }
 
 function cliFix($bug=0) {
