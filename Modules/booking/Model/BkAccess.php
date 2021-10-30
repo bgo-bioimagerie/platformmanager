@@ -38,9 +38,9 @@ class BkAccess extends Model {
         return $user->fetchAll();
     }
 
-    public function get($id_space, $id) {
+    public function get($id_space, $id_resource) {
         $sql = "SELECT * FROM bk_access WHERE id_resource=? AND id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($id, $id_space));
+        $user = $this->runRequest($sql, array($id_resource, $id_space));
         return $user->fetch();
     }
     
@@ -69,9 +69,9 @@ class BkAccess extends Model {
      * Remove a color code
      * @param unknown $id
      */
-    public function delete($id_space, $id) {
-        $sql = "UPDATE bk_access SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+    public function delete($id_space, $id_resource) {
+        $sql = "UPDATE bk_access SET deleted=1,deleted_at=NOW() WHERE id_resource=? AND id_space=?";
+        $this->runRequest($sql, array($id_resource, $id_space));
     }
 
 }
