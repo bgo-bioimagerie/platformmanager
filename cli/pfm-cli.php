@@ -5,6 +5,8 @@ require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
 require_once 'Framework/Events.php';
 require_once 'Framework/Statistics.php';
+require_once 'Framework/Router.php';
+
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
@@ -35,6 +37,9 @@ $cli = Cli::create()
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean')
     ->command('stats')
     ->opt('import', '(re)import all stats', false, 'boolean')
+    ->command('cache')
+    ->opt('clear', 'Clear caches', false, 'boolean')
+    ->opt('dry', 'Dry run', false, 'boolean')
     ->command('repair')
     ->opt('bug', 'Bug number', 0, 'integer');
 
@@ -53,6 +58,22 @@ try {
                 $modelCache = new FCache();
                 $modelCache->freeTableURL();
                 $modelCache->load();
+            } else {
+                $r = new Router();
+                $rl = $r->listRoutes();
+                echo "Routes:\n";
+                foreach ($rl as $rll) {
+                    echo "* $rll[0] - $rll[1]\n";
+                }
+                $fc = new FCache();
+                $rl = $fc->listAll();
+                foreach ($rl as $rll) {
+                    $url = "* GET|POST - $rll[0] /$rll[0]";
+                    for($i=1;$i<count($rll);$i++) {
+                        $url .= "/[i:".$rll[$i]."]";
+                    }
+                    echo "$url\n";
+                }
             }
             break;
         case 'expire':
@@ -76,6 +97,11 @@ try {
                 $crel = $cdb->getRelease();
                 echo "DB installed version: ".$crel."\n";
                 echo "DB expected version: ".$cdb->getVersion()."\n";
+            }
+            break;
+        case 'cache':
+            if($args->getOpt('clear')) {
+                cacheClear($args->getOpt('dry'));
             }
             break;
         default:
@@ -104,6 +130,46 @@ function statsImport() {
     $statHandler = new EventHandler();
     $statHandler->invoiceImport();
     Configuration::getLogger()->debug('[stats] import invoice stats, done!');
+
+    Configuration::getLogger()->debug("[stats] import customer stats");
+    $eventHandler->customerImport();
+    Configuration::getLogger()->debug("[stats] import customer stats, done!");
+
+    Configuration::getLogger()->debug("[stats] import tickets stats");
+    foreach ($spaces as $space) {
+        $eventHandler->ticketCount(["space" => ["id" => $space["id"]]])
+    }
+    Configuration::getLogger()->debug("[stats] import tickets stats, done!");
+
+
+}
+
+function cacheClear($dry) {
+    if(is_dir('/tmp/pfm')) {
+       removeDirectory('/tmp/pfm', $dry);
+       Configuration::getLogger()->info('cache cleared');
+    } else {
+        Configuration::getLogger()->info('nothing to do');
+    }
+}
+
+function removeFile($path, $dry=false) {
+    if($dry) {
+        Configuration::getLogger()->info('[delete]', ['path' => $path]);
+    } else {
+	    unlink($path);
+    }
+}
+function removeDirectory($path, $dry=false) {
+	$files = glob($path . '/*');
+	foreach ($files as $file) {
+		is_dir($file) ? removeDirectory($file, $dry) : removeFile($file, $dry);
+	}
+    if($dry) {
+        Configuration::getLogger()->info('[delete]', ['path' => $path]);
+    } else {
+	    rmdir($path);
+    }
 }
 
 function cliFix($bug=0) {

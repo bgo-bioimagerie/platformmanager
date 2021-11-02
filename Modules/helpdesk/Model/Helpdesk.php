@@ -350,6 +350,14 @@ class Helpdesk extends Model {
         }
     }
 
+    /**
+     * count number of tickets per status per space
+     */
+    public function count($id_space) {
+        $sql = "SELECT count(*) as total, status FROM hp_tickets WHERE id_space=? GROUP BY status";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
 }
 
 ?>

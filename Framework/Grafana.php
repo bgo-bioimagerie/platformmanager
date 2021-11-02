@@ -55,6 +55,73 @@ class Grafana {
         return $json["id"];
     }
 
+    public function dashboardsImport($space) {
+        $orgID = $this->getOrg($space);
+        if(! $orgID) {
+            Configuration::getLogger()->debug("[grafana][dashboard][import] org does not exists", ["org" => $space]);
+            return false;
+        }
+        # switch to org
+        $client = new Client([
+            'base_uri' => Configuration::get('grafana_url'),
+            'timeout'  => 2.0,
+        ]);
+
+        $req = [];
+        $client->request('POST',
+            '/api/user/using/'.$orgID,
+            [
+                'headers' => [
+                    'Accept' => 'application/json'
+                ],
+                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                'http_errors' => false
+            ]
+        );
+
+
+        $templates = scandir('externals/grafana/templates');
+        $ok = true;
+        foreach($templates as $tmpl) {
+            if (! str_ends_with($tmpl, ".json")) {
+                continue;
+            }
+            $template_name = str_replace(".json", "", $tmpl);
+            $template = file_get_contents("externals/grafana/templates/$tmpl");
+            $template = str_replace("space1", $space, $template);
+
+            $dashboard = json_decode($template, true);
+            $dashboard["id"] = null;
+            $dashboard["uid"] = "pfm_$template_name";
+            $req = ['dashboard' => $dashboard, "folderId" => 0, "overwrite" => true];
+
+            $client = new Client([
+                'base_uri' => Configuration::get('grafana_url'),
+                'timeout'  => 2.0,
+            ]);
+
+            # Create template
+            $response =  $client->request('POST',
+                '/api/dashboards/db',
+                [
+                    'headers' => [
+                        'Accept' => 'application/json'
+                    ],
+                    'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                    'json' => $req,
+                    'http_errors' => false
+                ]
+            );
+
+            $status = $response->getStatusCode();
+            if ($status != 200) {
+                Configuration::getLogger()->error('[grafana][error] failed to create dashboard', ["org" => $space, "err" => $response->getBody()]);
+                $ok = false;
+            }
+        }
+        return $ok;
+    }
+
     /**
      * @param string $space shortname of the space
      */
@@ -164,38 +231,9 @@ class Grafana {
             return false;
         }
 
-        if(!file_exists('externals/grafana/dashboard.tmpl')) {
-            return true;
-        }
+        $status = dashboardsImport($space);
 
-        $template = file_get_contents('externals/grafana/dashboard.tmpl');
-        $template = str_replace("space1", $space, $template);
-        $template = str_replace("space1", $space, $template);
-        $dashboard = json_decode($template, true);
-        $dashboard["id"] = null;
-        $dashboard["uid"] = null;
-        $req = ['dashboard' => $dashboard, "folderId" => 0, "overwrite" => false];
-
-        # Create template
-        $response =  $client->request('POST',
-            '/api/dashboards/db',
-            [
-                'headers' => [
-                    'Accept' => 'application/json'
-                ],
-                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
-                'json' => $req,
-                'http_errors' => false
-            ]
-        );
-
-        $status = $response->getStatusCode();
-        if ($status != 200) {
-            Configuration::getLogger()->error('[grafana][error] failed to create dashboard', ["org" => $space, "err" => $response->getBody()]);
-            return false;
-        }
-        return true;
-        
+        return $status;
     }
 
 

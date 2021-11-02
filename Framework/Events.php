@@ -15,6 +15,8 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
+require_once 'Modules/helpdesk/Model/Helpdesk.php';
+
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -35,6 +37,38 @@ class EventHandler {
         $this->logger = Configuration::getLogger();
     }
 
+    public function ticketCount($msg) {
+        $hm = new Helpdesk();
+        $model = new CoreSpace();
+        $space = $model->getSpace($msg['space']['id']);
+        $statHandler = new Statistics();
+        $timestamp = time();
+        $counts = $hm->count($msg['space']['id']);
+        foreach ($counts as $count) {
+            $tag = "";
+            switch ($count['status']) {
+                case Helpdesk::$STATUS_NEW:
+                    $tag = "new";
+                    break;
+                case Helpdesk::$STATUS_OPEN:
+                    $tag = "open";
+                    break;
+                case Helpdesk::$STATUS_REMINDER:
+                    $tag = "reminder";
+                    break;
+                case Helpdesk::$STATUS_CLOSED:
+                    $tag = "closed";
+                    break;
+                case Helpdesk::$STATUS_SPAM:
+                    continue;
+                default:
+                    $tag = "unknown";
+                    break;
+            }
+            $stat = ['name' => 'tickets', 'fields' => ['value' => intval($count['total'])], 'tags' =>['status' =>$tag], 'time' => $timestamp];
+            $statHandler->record($space['shortname'], $stat);
+        }
+    }
 
     public function spaceCount($msg) {
         $model = new CoreSpace();
@@ -84,7 +118,7 @@ class EventHandler {
     }
 
     public function spaceUserRoleUpdate($msg) {
-        $this->logger->debug('[spaceUserRoleUpdate][TODO]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
+        $this->logger->debug('[spaceUserRoleUpdate]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
         $role = $msg["role"];
         $u = new CoreUser();
         $user = $u->getInfo($msg['user']['id']);
@@ -161,6 +195,28 @@ class EventHandler {
         }
     }
 
+    private function _calEntryRemoveStat($space, $entry){
+        $id_space = $space['id'];
+        $timestamp = $entry['start_time'];
+        $r = new ResourceInfo();
+        $resource = $r-> get($id_space, $entry['resource_id']);
+        $u = new CoreUser();
+        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        $user = $u->userAllInfo($id_user);
+        $client = ['name' => 'unknown'];
+        if($entry['responsible_id']) {
+            $c = new ClClient();
+            $is_client = $c->get($id_space, $entry['responsible_id']);
+            if($is_client) {
+                $client = $is_client;
+            }
+        }
+        $value = time() - $timestamp;
+        $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+    } 
+
     private function _calEntryStat($space, $entry, $value){
         $id_space = $space['id'];
         $timestamp = $entry['start_time'];
@@ -222,6 +278,27 @@ class EventHandler {
         }
 
         $this->_calEntryStat($space, $entry, 1);
+    }
+
+    public function calentryRemove($msg) {
+        $this->logger->debug('[calentryRemove]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
+        $id_space = $msg['bk_calendar_entry']['id_space'];
+
+        $model = new CoreSpace();
+        $space = $model->getSpace($id_space);
+        if(!$space) {
+            return;
+        }
+
+        $m = new BkCalendarEntry();
+        $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
+        if(!$entry) {
+            Configuration::getLogger()->debug('[calentryEdit] id not found', ['id' => $msg['bk_calendar_entry']['id'], 'id_space' => $id_space]);
+            return;
+        }
+        $this->_calEntryStat($space, $entry, 0);
+        $this->_calEntryRemoveStat($space, $entry);
+
     }
 
     public function invoiceImport() {
@@ -323,6 +400,8 @@ class EventHandler {
                 case Events::ACTION_CAL_ENTRY_EDIT:
                     $this->calentryEdit($data);
                     break;
+                case Events::ACTION_CAL_ENTRY_REMOVE:
+                    $this->calentryRemove($data);
                 case Events::ACTION_INVOICE_EDIT:
                     $this->invoiceEdit($data);
                     break;
@@ -333,8 +412,11 @@ class EventHandler {
                 case Events::ACTION_CUSTOMER_DELETE:
                     $this->spaceCustomerEdit($data);
                     break;
+                case Events::ACTION_HELPDESK_TICKET:
+                    $this->ticketCount($data);
+                    break;
                 default:
-                    $this->logger->error('[message] unknown message', ['action' => $action]);
+                    $this->logger->error('[message] unknown message', ['action' => $data]);
                     break;
             }
         } catch(Throwable $e) {
@@ -353,7 +435,8 @@ class Events {
     public const ACTION_SPACE_USER_ROLEUPDATE = 4;
     public const ACTION_USER_APIKEY = 5;
     public const ACTION_CAL_ENTRY_EDIT = 100;
-    public const HELPDESK_TICKET = 200;
+    public const ACTION_CAL_ENTRY_REMOVE = 101;
+    public const ACTION_HELPDESK_TICKET = 200;
 
     public const ACTION_INVOICE_EDIT = 300;
     public const ACTION_INVOICE_DELETE = 301;
