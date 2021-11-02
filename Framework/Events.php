@@ -113,6 +113,18 @@ class EventHandler {
         $gm->updateUserPassword($user['login'], $user['apikey']);
     }
 
+    public function spaceCustomerEdit($msg) {
+        $this->logger->debug('[spaceCustomerEdit]', ['space_id' => $msg['space']['id']]);
+        $model = new CoreSpace();
+        $space = $model->getSpace($msg['space']['id']);
+        $modelClient = new ClClient();
+        $nbCustomers = $modelClient->count($msg['space']['id']);
+        $stat = ['name' => 'customers', 'fields' => ['value' => $nbCustomers]];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+
+    }
+
     public function spaceUserJoin($msg) {
         $this->logger->debug('[spaceUserJoin]', ['space_id' => $msg['space']['id']]);
         $this->spaceUserCount($msg);
@@ -168,6 +180,14 @@ class EventHandler {
         $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
+    }
+
+    public function customerImport() {
+        $cp = new CoreSpace();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $this->spaceCustomerEdit(['space' => ['id' => $space['id']]]);
+        }
     }
 
     public function calentryImport() {
@@ -309,6 +329,10 @@ class EventHandler {
                 case Events::ACTION_INVOICE_DELETE:
                     $this->invoiceDelete($data);
                     break;
+                case Events::ACTION_CUSTOMER_EDIT:
+                case Events::ACTION_CUSTOMER_DELETE:
+                    $this->spaceCustomerEdit($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $action]);
                     break;
@@ -333,6 +357,9 @@ class Events {
 
     public const ACTION_INVOICE_EDIT = 300;
     public const ACTION_INVOICE_DELETE = 301;
+
+    public const ACTION_CUSTOMER_EDIT = 400;
+    public const ACTION_CUSTOMER_DELETE = 401;
 
     private static $connection;
     private static $channel;

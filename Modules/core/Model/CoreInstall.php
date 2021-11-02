@@ -607,6 +607,13 @@ class CoreDB extends Model {
                 $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
             }
             Configuration::getLogger()->debug('[grafana] import managers to grafana, done!');
+
+            if(Statistics::enabled()) {
+                Configuration::getLogger()->debug('[stats] improt clients');
+                $eventHandler = new EventHandler();
+                $eventHandler->customerImport();
+                Configuration::getLogger()->debug('[stats] improt clients, done!');
+            }
         }
     }
 
