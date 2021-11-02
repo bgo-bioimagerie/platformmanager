@@ -14,7 +14,7 @@ Platform-Manager
     $headless = Configuration::get("headless");
     if(!$headless){
         ?>
-        <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+        <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
         <?php
     }
 ?>
