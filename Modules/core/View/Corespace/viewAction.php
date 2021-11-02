@@ -123,6 +123,12 @@ if ($space['color'] == "") {
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::History($lang) ?></span>
                             </a>
                         </li>
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="/grafana">
+                                <span class="pm-tiles glyphicon glyphicon-stats" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::GrafanaStats($lang) ?></span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

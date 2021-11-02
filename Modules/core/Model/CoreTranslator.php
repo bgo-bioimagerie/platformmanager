@@ -1932,6 +1932,13 @@ class CoreTranslator {
         return "History";
     }
 
+    public static function GrafanaStats($lang = "") {
+        if ($lang == "fr") {
+            return "Tableau de bord";
+        }
+        return "Statistics dashboard";
+    }
+
     public static function Default_language($lang = "") {
         if ($lang == "fr") {
             return "Langue par défaut";
