@@ -60,13 +60,15 @@ class EventHandler {
                     $tag = "closed";
                     break;
                 case Helpdesk::$STATUS_SPAM:
-                    continue;
+                    break;
                 default:
                     $tag = "unknown";
                     break;
             }
-            $stat = ['name' => 'tickets', 'fields' => ['value' => intval($count['total'])], 'tags' =>['status' =>$tag], 'time' => $timestamp];
-            $statHandler->record($space['shortname'], $stat);
+            if($tag) {
+                $stat = ['name' => 'tickets', 'fields' => ['value' => intval($count['total'])], 'tags' =>['status' =>$tag], 'time' => $timestamp];
+                $statHandler->record($space['shortname'], $stat);
+            }
         }
     }
 

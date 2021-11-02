@@ -79,7 +79,6 @@ class Grafana {
             ]
         );
 
-
         $templates = scandir('externals/grafana/templates');
         $ok = true;
         foreach($templates as $tmpl) {
@@ -105,7 +104,8 @@ class Grafana {
                 '/api/dashboards/db',
                 [
                     'headers' => [
-                        'Accept' => 'application/json'
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/json'
                     ],
                     'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                     'json' => $req,
