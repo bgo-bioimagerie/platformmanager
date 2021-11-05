@@ -4,6 +4,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Processor\TagProcessor;
 use Monolog\Formatter\LineFormatter;
 
+require_once 'Framework/Errors.php';
+
 /**
  * Class that manage the configuration parameters
  * 
@@ -104,7 +106,7 @@ class Configuration {
             try {
                 self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
             } catch(Exception $e) {
-                throw PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+                throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
             }
         }
 

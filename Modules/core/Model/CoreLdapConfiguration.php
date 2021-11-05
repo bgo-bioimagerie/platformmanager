@@ -44,7 +44,7 @@ class CoreLdapConfiguration
         	$urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
                 Configuration::getLogger()->error('[ldap] no config file found');
-                throw new Exception("Unable to find the configuration file");
+                throw new PfmFileException("Unable to find the configuration file", 404);
             }
             else {
                 self::$parameters = parse_ini_file($urlFile);

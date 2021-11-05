@@ -101,11 +101,11 @@ class BookingauthorisationsController extends CoresecureController {
         $idArray = explode("_", $id);
         $id_resource_category = intval($idArray[0]);
         if (!is_int($id_resource_category)) {
-            throw new Exception("id resource category is not an int");
+            throw new PfmException("id resource category is not an int");
         }
         $id_user = intval($idArray[1]);
         if (!is_int($id_user)) {
-            throw new Exception("id user is not an int");
+            throw new PfmException("id user is not an int");
         }
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
@@ -162,11 +162,11 @@ class BookingauthorisationsController extends CoresecureController {
         $idArray = explode("_", $id);
         $id_resource_category = intval($idArray[0]);
         if (!is_int($id_resource_category)) {
-            throw new Exception("id resource category is not an int");
+            throw new PfmParamException("id resource category is not an int");
         }
         $id_user = intval($idArray[1]);
         if (!is_int($id_user)) {
-            throw new Exception("id user is not an int");
+            throw new PfmParamException("id user is not an int");
         }
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
