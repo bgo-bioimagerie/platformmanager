@@ -4,6 +4,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Processor\TagProcessor;
 use Monolog\Formatter\LineFormatter;
 
+require_once 'Framework/Errors.php';
+
 /**
  * Class that manage the configuration parameters
  * 

@@ -50,7 +50,7 @@ class Grafana {
         $response = $client->request('GET',
         '/api/orgs/name/'.$name,
         [
-            'headers' => ['Accept' => 'application/json'],
+            'headers' => ['Accept' => Constants::APPLICATION_JSON],
             'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
             'http_errors' => false
         ]
@@ -81,7 +81,7 @@ class Grafana {
             '/api/user/using/'.$orgID,
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'http_errors' => false
@@ -113,8 +113,8 @@ class Grafana {
                 '/api/dashboards/db',
                 [
                     'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-Type' => 'application/json'
+                        'Accept' => Constants::APPLICATION_JSON,
+                        'Content-Type' => Constants::APPLICATION_JSON
                     ],
                     'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                     'json' => $req,
@@ -153,7 +153,7 @@ class Grafana {
                 '/api/orgs',
                 [
                     'headers' => [
-                        'Accept' => 'application/json',
+                        'Accept' => Constants::APPLICATION_JSON,
                     ],
                     'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                     'json' => $req,
@@ -184,7 +184,7 @@ class Grafana {
             '/api/user/using/'.$orgID,
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'http_errors' => false
@@ -225,7 +225,7 @@ class Grafana {
             '/api/datasources',
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'json' => $req,
@@ -258,7 +258,7 @@ class Grafana {
             '/api/users/lookup',
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'query' => ['loginOrEmail' => $name],
@@ -297,7 +297,7 @@ class Grafana {
             "/api/admin/users/".$user."/password",
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'json' => $req,
@@ -335,7 +335,7 @@ class Grafana {
             "/api/admin/users",
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'json' => $req,
@@ -355,7 +355,7 @@ class Grafana {
             "/api/orgs/1/users/".$user,
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'http_errors' => false
@@ -403,7 +403,7 @@ class Grafana {
             "/api/orgs/".$orgID."/users",
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'json' => $req,
@@ -444,7 +444,7 @@ class Grafana {
             "/api/orgs/".$orgID."/users/".$user,
             [
                 'headers' => [
-                    'Accept' => 'application/json'
+                    'Accept' => Constants::APPLICATION_JSON
                 ],
                 'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
                 'http_errors' => false
