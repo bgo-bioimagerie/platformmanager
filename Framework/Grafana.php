@@ -4,6 +4,7 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Framework/Statistics.php';
+require_once 'Framework/Constants.php';
 
 use GuzzleHttp\Client;
 
@@ -25,12 +26,20 @@ use GuzzleHttp\Client;
  * |> last()
  */
 
+
 class Grafana {
+
+    public function configured() {
+        if(!Configuration::get('grafana_url')) {
+            Configuration::getLogger()->info("[grafana] grafana not configured");
+            return false;
+        }
+        return true;
+    }
 
 
     public function getOrg($name) {
-        if(!Configuration::get('grafana_url')) {
-            Configuration::getLogger()->info("[grafana] grafana not configured");
+        if(!$this->configured()) {
             return null;
         }
         $client = new Client([
@@ -126,8 +135,7 @@ class Grafana {
      * @param string $space shortname of the space
      */
     public function createOrg($space) {
-        if(!Configuration::get('grafana_url')) {
-            Configuration::getLogger()->info("[grafana] grafana not configured");
+        if(!$this->configured()) {
             return false;
         }
         Configuration::getLogger()->debug("[grafana] create org", ["org" => $space]);
@@ -231,15 +239,14 @@ class Grafana {
             return false;
         }
 
-        $status = dashboardsImport($space);
+        $status = $this->dashboardsImport($space);
 
         return $status;
     }
 
 
     public function getUser($name) {
-        if(!Configuration::get('grafana_url')) {
-            Configuration::getLogger()->info("[grafana] grafana not configured");
+        if(!$this->configured()) {
             return null;
         }
         $client = new Client([
@@ -270,8 +277,7 @@ class Grafana {
     }
 
     public function updateUserPassword($name, $apikey) {
-        if(!Configuration::get('grafana_url')) {
-            Configuration::getLogger()->info("[grafana] grafana not configured");
+        if(!$this->configured()) {
             return false;
         }
         $user = $this->getUser($name);
@@ -309,9 +315,8 @@ class Grafana {
     /**
      * Create user and remove from main org
      */
-    public function createUser($orgID, $name, $apikey) {
-        if(!Configuration::get('grafana_url')) {
-            Configuration::getLogger()->info("[grafana] grafana not configured");
+    public function createUser($name, $apikey) {
+        if(!$this->configured()) {
             return null;
         }
         $client = new Client([
@@ -360,6 +365,9 @@ class Grafana {
             Configuration::getLogger()->debug('[grafana][user_create] failed to remove from main org', ["name" => $name, "err" => $response->getBody()]);
         }
 
+        Configuration::getLogger()->debug('[grafana][user_create] created', ["name" => $name]);
+
+
         return $user;
     }
 
@@ -367,8 +375,7 @@ class Grafana {
      * Create user if needed and add to org
      */
     public function addUser($space, $name, $apikey) {
-        if(!Configuration::get('grafana_url')) {
-            Configuration::getLogger()->info("[grafana] grafana not configured");
+        if(!$this->configured()) {
             return false;
         }
         $orgID = $this->getOrg($space);
@@ -378,7 +385,7 @@ class Grafana {
         }
         $user = $this->getUser($name);
         if(!$user) {
-            $user = $this->createUser($orgID, $name, $apikey);
+            $this->createUser($name, $apikey);
         }
 
         // Add editor role to user in org
@@ -408,6 +415,7 @@ class Grafana {
             Configuration::getLogger()->debug('[grafana][user_add] add failed', ["space" => $space, "name" => $name, "err" => $response->getBody()]);
             return false;
         }
+        Configuration::getLogger()->debug('[grafana][user_add] added', ["space" => $space, "name" => $name]);
         return true;
     }
 
@@ -415,8 +423,7 @@ class Grafana {
      * Remove user role from org
      */
     public function delUser($space, $name) {
-        if(!Configuration::get('grafana_url')) {
-            Configuration::getLogger()->info("[grafana] grafana not configured");
+        if(!$this->configured()) {
             return false;
         }
         $orgID = $this->getOrg($space);
