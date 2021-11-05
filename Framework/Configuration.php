@@ -106,7 +106,7 @@ class Configuration {
             try {
                 self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
             } catch(Exception $e) {
-                throw PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+                throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
             }
         }
 

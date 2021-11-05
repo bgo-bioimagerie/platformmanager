@@ -395,19 +395,19 @@ class ControllerAnticorps extends ControllerSecureNav {
 
 		// Check file size
 		if ($_FILES["image_url"]["size"] > 500000000) {
-			throw PfmException("file too large.", 500);
+			throw new PfmException("file too large.", 500);
 			//$uploadOk = 0;
 		}
                 
 		// Check if $uploadOk is set to 0 by an error
 		if ($uploadOk == 0) {
-			throw PfmException("there was an error uploading your file.", 500);
+			throw new PfmException("there was an error uploading your file.", 500);
 			// if everything is ok, try to upload file
 		} else {
 			if (move_uploaded_file($_FILES["image_url"]["tmp_name"], $target_file)) {
 				return  $filename;
 			} else {
-				throw PfmException("there was an error uploading your file.", 500);
+				throw new PfmException("there was an error uploading your file.", 500);
 			}
 		}
 	}

@@ -180,7 +180,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
 
         if (count($orders) == 0) {
-            throw new Exception("there are no orders open for this responsible");
+            throw new PfmException("there are no orders open for this responsible");
             //echo "there are no orders open for this responsible";
             //return;
         }

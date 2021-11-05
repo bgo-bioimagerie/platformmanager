@@ -846,7 +846,7 @@ class BookingController extends BookingabstractController {
 
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             } else {
-                throw new Exception("Unable to find the controller file '$fileController' ");
+                throw new PfmException("Unable to find the controller file '$fileController' ", 404);
             }
         }
     }

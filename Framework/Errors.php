@@ -17,3 +17,6 @@ class PfmAuthException extends PfmException {
 
 class PfmFileException extends PfmException {
 }
+
+class PfmParamException extends PfmException {
+}

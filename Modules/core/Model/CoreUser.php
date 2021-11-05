@@ -181,7 +181,7 @@ class CoreUser extends Model {
         }
 
         if($sql == null) {
-            throw new Exception('something went wrong!');
+            throw new PfmException('something went wrong!');
         }
 
         foreach ($req as $r) {
@@ -466,7 +466,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new Exception("Cannot find the user using the given parameters");
+            throw new PfmParamException("Cannot find the user using the given parameters", 404);
         }
     }
 
