@@ -198,7 +198,7 @@ class Helpdesk extends Model {
      */
     public function ticketFromSubject($subject) {
         preg_match('/\[Ticket #(\d+)\]/', $subject, $matches, PREG_OFFSET_CAPTURE);
-        Configuration::getLogger()->debug('[helpdesk] check if linked to other ticket', ['subject' => $subject, 'matches' => $matcjes]);
+        Configuration::getLogger()->debug('[helpdesk] check if linked to other ticket', ['subject' => $subject, 'matches' => $matches]);
         if(!$matches) {
             return 0;
         }
