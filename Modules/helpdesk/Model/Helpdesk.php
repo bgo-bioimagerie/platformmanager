@@ -243,7 +243,7 @@ class Helpdesk extends Model {
             return $this->runRequest($sql, array($status, $id_space, $id_user, $id_user))->fetchAll();
         }
         $sql .= " ORDER BY id LIMIT ".$limit." OFFSET ".$offset;
-        return $this->runRequest($sql, array($status))->fetchAll();
+        return $this->runRequest($sql, array($status, $id_space))->fetchAll();
     }
 
     public function get($id_ticket) {
