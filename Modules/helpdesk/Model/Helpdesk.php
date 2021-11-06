@@ -237,10 +237,10 @@ class Helpdesk extends Model {
     }
 
     public function list($id_space, $status=0, $id_user=0, $offset=0, $limit=50) {
-        $sql = "SELECT * FROM hp_tickets WHERE `status`=?";
+        $sql = "SELECT * FROM hp_tickets WHERE `status`=? AND id_space=?";
         if($id_user) {
             $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id LIMIT ".$limit." OFFSET ".$offset;
-            return $this->runRequest($sql, array($status, $id_user, $id_user))->fetchAll();
+            return $this->runRequest($sql, array($status, $id_space, $id_user, $id_user))->fetchAll();
         }
         $sql .= " ORDER BY id LIMIT ".$limit." OFFSET ".$offset;
         return $this->runRequest($sql, array($status))->fetchAll();

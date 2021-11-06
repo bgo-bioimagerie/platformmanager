@@ -167,6 +167,9 @@ while(true) {
                 foreach($to as $dest) {
                     if($dest->host == $originDomain) {
                         $recipient = explode('+', $dest->mailbox);
+                        if (count($recipient) == 1 || $recipient[1] == '') {
+                            continue;
+                        }
                         $spaceName = $recipient[1];
                         if($spaceName == 'donotreply') {
                             Configuration::getLogger()->debug("[helpdesk] reply to a donotreply!", ['dest' => $dest->host, 'from' => $from]);
