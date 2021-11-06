@@ -101,7 +101,7 @@ $port = intval(Configuration::get('helpdesk_imap_port', 110));
 $login = Configuration::get('helpdesk_imap_user');
 $password = Configuration::get('helpdesk_imap_password');
 $tls = Configuration::get('helpdesk_imap_tls');  //   '/ssl'
-$origin = Configuration::get('helpdesk_email') || Configuration::get('mail_from');
+$origin = Configuration::get('helpdesk_email') ? Configuration::get('helpdesk_email') : Configuration::get('mail_from');
 $originInfo = explode('@', $origin);
 $originDomain = $originInfo[1];
 
