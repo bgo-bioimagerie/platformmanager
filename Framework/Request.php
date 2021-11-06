@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Session.php';
+require_once 'Framework/Errors.php';
 
 /**
  * Class defining a request.
@@ -72,7 +73,7 @@ class Request {
      *
      * @param string $name
      *        	Name of the parameter
-     * @return string Value of the parameter
+     * @return array|string Value of the parameter
      * @throws Exception If the parameter does not exist in the request
      */
     public function getParameter($name, $clean = true) {
@@ -84,7 +85,7 @@ class Request {
                 return $this->parameters [$name];    
             }
         } else {
-            throw new Exception("Parameter '$name' is not in the request");
+            throw new PfmParamException("Parameter '$name' is not in the request");
         }
     }
 
