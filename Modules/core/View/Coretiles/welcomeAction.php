@@ -33,10 +33,9 @@ if (!$headless) {
 <div class="col-xs-12 pm-tile-container"  >
     <div class="container" style="margin-top: 50px;">
 
-        
+        <?php echo $content; ?>
         <div class="bs-glyphicons">
             <ul class="bs-glyphicons-list">
-                Welcome
                 
             </ul>
         </div>

@@ -10,6 +10,8 @@ require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 
+use League\CommonMark\CommonMarkConverter;
+
 
 /**
  * 
@@ -72,8 +74,25 @@ class CoretilesController extends CorecookiesecureController {
 
         if ($id == 0) {
             $lang = $this->getLanguage();
+            $content_files = ['data/welcome_'.$lang.'.md', 'data/welcome_'.$lang.'.html', 'data/welcome.md', 'data/welcome.html'];
+            $content = '';
+            foreach($content_files as $content_file) {
+                if (file_exists($content_file)) {
+                    $content = file_get_contents($content_file);
+                    if (str_ends_with($content_file, '.md')) {
+                        $converter = new CommonMarkConverter([
+                            'html_input' => 'strip',
+                            'allow_unsafe_links' => false,
+                        ]);
+                        $content = $converter->convertToHtml($content);
+                    }
+                    break;
+                }
+            }
+            
             return $this->render(array(
                 'lang' => $lang,
+                'content' => $content,
                 'mainSubMenus' => [],
                 'showSubBar' => false
                 ), "welcomeAction");
