@@ -801,7 +801,7 @@ class BookingdefaultController extends BookingabstractController {
                 "content" => $content
             ];
             $email = new Email();
-            $email->sendEmailToSpaceMembers($params, $this->getLanguage());
+            $email->sendEmailToSpaceMembers($params, $this->getLanguage(), mailing: "booking@$id_space");
         }
 
         $modelCalEntry->removeEntry($id_space, $id);

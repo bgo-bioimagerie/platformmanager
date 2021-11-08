@@ -12,6 +12,7 @@ class CoreRouting extends Routing{
         $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
         $router->map('GET', '/corespaces', 'core/corespace/spaces', 'core_space_list');
         $router->map('GET', '/coreabout', 'core/coreabout/index', 'core_about');
+        $router->map('GET|POST', '/coremail/[i:id_space]', 'core/coremail/index', 'core_mail');
     }
     
     public function listRoutes(){

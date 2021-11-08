@@ -98,7 +98,7 @@ class MailerController extends CoresecureController {
             "from" => $from,
             "to" => $to,
         ];
-        $message = $email->sendEmailToSpaceMembers($mailParams, $this->getLanguage());
+        $message = $email->sendEmailToSpaceMembers($mailParams, $this->getLanguage(), mailing: "mailer@$id_space");
 
         $this->render(array(
             'lang' => $this->getLanguage(),

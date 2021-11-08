@@ -83,6 +83,14 @@ if ($space['color'] == "") {
                         <?php
                     }
                     ?>
+                    <?php if($role > 0) { ?>
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="<?php echo "coremail/" . $space["id"] ?>">
+                                <span class="pm-tiles glyphicon glyphicon-bell" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class">Notifications</span>
+                            </a>
+                        </li>
+                    <?php } ?>
                     <ul/>
             </div>
         </div>
