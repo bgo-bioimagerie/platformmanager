@@ -9,6 +9,7 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
+require_once 'Modules/core/Model/CoreStar.php';
 
 use League\CommonMark\CommonMarkConverter;
 
@@ -72,7 +73,20 @@ class CoretilesController extends CorecookiesecureController {
             $id = $modelSubMenu->getFirstIdx();
         }
 
+        $modelCoreConfig = new CoreConfig();
+
+
         if ($id == 0) {
+            $starModel = new CoreStar();
+            $spaceModel = new CoreSpace();
+            
+            $spaces = [];
+            if(isset($_SESSION["id_user"])) {
+                $starSpaces = $starModel->stars($_SESSION["id_user"]);
+                foreach($starSpaces as $starSpace) {
+                    $spaces[] = $spaceModel->getSpace($starSpace["id_space"]);
+                }
+            }
             $lang = $this->getLanguage();
             $content_files = ['data/welcome_'.$lang.'.md', 'data/welcome_'.$lang.'.html', 'data/welcome.md', 'data/welcome.html'];
             $content = '';
@@ -93,7 +107,9 @@ class CoretilesController extends CorecookiesecureController {
             return $this->render(array(
                 'lang' => $lang,
                 'content' => $content,
+                'spaces' => $spaces,
                 'mainSubMenus' => [],
+                'iconType' => $modelCoreConfig->getParam("space_icon_type"),
                 'showSubBar' => false
                 ), "welcomeAction");
         }
@@ -117,11 +133,19 @@ class CoretilesController extends CorecookiesecureController {
         }
         
         $lang = $this->getLanguage();
-        $modelCoreConfig = new CoreConfig();
         $userSpaces = $this->getUserSpaces();
+
+        $starModel = new CoreStar();
+        $starList = $starModel->stars($_SESSION["id_user"]);
+        $stars = [];
+        foreach($starList as $star) {
+            $stars[$star["id_space"]] = true;
+        }
 
         return $this->render(array(
             'lang' => $lang,
+            'star' => $stars,
+            'submenu' => $id,
             'iconType' => $modelCoreConfig->getParam("space_icon_type"),
             'showSubBar' => $showSubBar,
             'items' => $items,
@@ -138,6 +162,18 @@ class CoretilesController extends CorecookiesecureController {
         return $this->render(array(
             "lang" => $this->getLanguage()
         ));
+    }
+
+    public function corestarAction($level, $id, $id_space) {
+        $starModel = new CoreStar();
+        $starModel->star($_SESSION["id_user"], $id_space);
+        $this->redirect("coretiles/$level/$id");
+    }
+
+    public function coreunstarAction($level, $id, $id_space) {
+        $starModel = new CoreStar();
+        $starModel->delete($_SESSION["id_user"], $id_space);
+        $this->redirect("coretiles/$level/$id");
     }
 
 

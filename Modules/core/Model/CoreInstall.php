@@ -29,6 +29,7 @@ require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/core/Model/CoreStar.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
@@ -791,6 +792,9 @@ class CoreInstall extends Model {
         $modelVirtual->createTable();
         $modelHistory = new CoreHistory();
         $modelHistory->createTable();
+
+        $modelStar = new CoreStar();
+        $modelStar->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

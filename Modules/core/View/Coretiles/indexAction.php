@@ -82,7 +82,14 @@ if (!$headless) {
                             </p>
                             <!-- TITLE -->
                             <p style="color:#018181; ">
-                                <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> </a>
+                                <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
+                                <?php if(isset($_SESSION["login"])) { ?>
+                                    <?php if(isset($star[$item["id"]])) { ?>
+                                        <a href="<?php echo "coretiles/1/".$submenu."/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
+                                    <?php } else { ?>
+                                        <a href="<?php echo "coretiles/1/".$submenu."/star/".$item["id"] ?>"><span class="glyphicon glyphicon-star-empty"></span></a>
+                                    <?php } ?>
+                                <?php } ?>
                             </p>
 
                             <!-- DESC -->
