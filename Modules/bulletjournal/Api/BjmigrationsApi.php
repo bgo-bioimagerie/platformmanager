@@ -24,18 +24,4 @@ class BjmigrationsApi extends CoresecureController {
         //$this->checkAuthorizationMenu("bulletjournal");
     }
 
-    /**
-     * (non-PHPdoc)
-     * @see Controller::indexAction()
-     */
-    public function migratetaskAction($id_space, $id) {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
-        //$lang = $this->getLanguage();
-
-        $model = new BjTask();
-        $model->migrate($id);
-        
-        $data = array("id" => $id);
-        echo json_encode($data);
-    }
 }

@@ -61,11 +61,11 @@ class BjNote extends Model {
         }
         
         // get notes info
-        return $this->getNoteInfos($id_space, $notes);
+        return $this->getNoteInfos($notes);
         
     }
     
-    public function getNoteInfos($id_space, $notes){
+    public function getNoteInfos($notes){
         for($i = 0 ; $i < count($notes) ; $i++){
             if($notes[$i]["type"] == 2){
                 $sql = "SELECT * FROM bj_tasks WHERE id_note=?";

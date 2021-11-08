@@ -650,16 +650,4 @@ class BkAuthorization extends Model {
         $this->runRequest($sql, array($id, $id_space));
     }
 
-    /**
-     * @deprecated
-     */
-    public function desactivateUnactiveUserAuthorizations($id_space) {
-        $sql = "SELECT * FROM core_users WHERE is_active=0";
-        $req = $this->runRequest($sql);
-        $users = $req->fetchAll();
-        foreach ($users as $user) {
-            $this->desactivateAuthorizationsForUser($user['id']);  // @bug DOES NOT EXISTS!!!!
-        }
-    }
-
 }

@@ -215,6 +215,7 @@ class Helpdesk extends Model {
         // create attachements
         // send message
     }
+
     public function assign($id_ticket, $id_user) {
         $um = new CoreUser();
         $login = $um->getUserLogin($id_user);
