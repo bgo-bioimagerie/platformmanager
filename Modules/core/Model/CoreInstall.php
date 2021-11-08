@@ -609,10 +609,10 @@ class CoreDB extends Model {
             Configuration::getLogger()->debug('[grafana] import managers to grafana, done!');
 
             if(Statistics::enabled()) {
-                Configuration::getLogger()->debug('[stats] improt clients');
+                Configuration::getLogger()->debug('[stats] import clients');
                 $eventHandler = new EventHandler();
                 $eventHandler->customerImport();
-                Configuration::getLogger()->debug('[stats] improt clients, done!');
+                Configuration::getLogger()->debug('[stats] import clients, done!');
             }
         }
     }
