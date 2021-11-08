@@ -239,6 +239,7 @@ while(true) {
 
             $hm = new Helpdesk();
             $hm->remind();
+            $hm->trashSpam();
         } catch(Throwable $e) {
             Configuration::getLogger()->error('[helpdesk] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }

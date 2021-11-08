@@ -223,11 +223,6 @@ class Helpdesk extends Model {
     }
 
     public function setStatus($id_ticket, $status, $reminder_date=null) {
-        if($status == self::$STATUS_SPAM) {
-            $this->trash($id_ticket);
-        }
-
-
         if($status === self::$STATUS_REMINDER) {
             $sql = "UPDATE hp_tickets set `status`=?, reminder=?, reminder_set=0 WHERE id=?";
             $this->runRequest($sql, array($status, $reminder_date, $id_ticket));
@@ -278,6 +273,15 @@ class Helpdesk extends Model {
     public function move($id_ticket, $queue) {
         $sql = "UPDATE hp_tickets SET `queue`=? WHERE id=?";
         $this->runRequest($sql, array($queue, $id_ticket));
+    }
+
+    // Delete all tickets in spam status for more than 1 day
+    public function trashSpam() {
+        $sql = "SELECT * FROM hp_ticket WHERE status=? AND updated_at > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)";
+        $spams = $this->runRequest($sql, array(self::$STATUS_SPAM))->fetchAll();
+        foreach($spams as $spam) {
+            $this->trash($spam['id']);
+        }
     }
 
     public function trash($id_ticket) {
