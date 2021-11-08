@@ -47,7 +47,7 @@ class EventHandler {
         }
     }
 
-    private function spaceCount($msg) {
+    private function spaceCount() {
         $model = new CoreSpace();
         $nbSpaces = $model->countSpaces();
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
@@ -61,12 +61,12 @@ class EventHandler {
         $space = $model->getSpace($msg['space']['id']);
         $statHandler = new Statistics();
         $statHandler->createDB($space['shortname']);
-        $this->spaceCount($msg);
+        $this->spaceCount();
     }
 
     public function spaceDelete($msg) {
         $this->logger->debug('[spaceDelete]', ['space_id' => $msg['space']['id']]);
-        $this->spaceCount($msg);
+        $this->spaceCount();
     }
 
     public function spaceUserCount($msg){
