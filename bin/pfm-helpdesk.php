@@ -101,13 +101,18 @@ $port = intval(Configuration::get('helpdesk_imap_port', 110));
 $login = Configuration::get('helpdesk_imap_user');
 $password = Configuration::get('helpdesk_imap_password');
 $tls = Configuration::get('helpdesk_imap_tls');  //   '/ssl'
-$origin = Configuration::get('helpdesk_email') ? Configuration::get('helpdesk_email') : Configuration::get('mail_from');
+$origin = Configuration::get('helpdesk_email');
 $originInfo = explode('@', $origin);
 $originDomain = $originInfo[1];
 
 
 if(!$inbox) {
     exit(0);
+}
+
+if(!$origin) {
+    Configuration::getLogger()->error('No helpdesk_email defined');
+    exit(1);
 }
 
 Configuration::getLogger()->debug('Connecting...', ['url' => $inbox.':'.$port.'/pop3'.$tls, 'login' => $login, 'tls' => $tls]);
@@ -221,7 +226,7 @@ while(true) {
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
                 if($newTicket['is_new']) {
-                    $from = Configuration::get('smtp_from');
+                    $from = Configuration::get('helpdesk_email');
                     $fromInfo = explode('@', $from);
                     $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
                     $fromName = $fromInfo[0]. '+' . $spaceName;
