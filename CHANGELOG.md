@@ -14,6 +14,7 @@
 * [module:booking] fix BkCalendarPeriod missing id_space
 * [helpdesk] fix list of tickets and mail origin
 * [configuration] use env var SMTP_FROM instead of MAIL_FROM (deprecated)
+* [module:booking] for mails check user still have a role in space #383
 
 ## 2.1.6
 
