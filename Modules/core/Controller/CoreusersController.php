@@ -125,16 +125,17 @@ class CoreusersController extends CoresecureController {
         $script = "";
         if ($form->check()) {
             $canEditUser = true;
+
+            if(!$form->getParameter("email") || !$modelUser->isEmailFormat($form->getParameter("email"))) {
+                $canEditUser = false;
+                $_SESSION["flash"] = CoreTranslator::EmailInvalid($lang);
+                $_SESSION["flashClass"] = "danger";
+            }
             if (!$id) {
+                // creating a new user
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
                     $canEditUser = false;
                     $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
-                    $_SESSION["flashClass"] = "danger";
-                }
-                if(!$modelUser->isEmailFormat($form->getParameter("email"))) {
-                    // if email already exists, warn user
-                    $canEditUser = false;
-                    $_SESSION["flash"] = CoreTranslator::EmailInvalid($lang);
                     $_SESSION["flashClass"] = "danger";
                 }
                 if($modelUser->isEmail($form->getParameter("email"))) {
@@ -143,13 +144,14 @@ class CoreusersController extends CoresecureController {
                     $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
                     $_SESSION["flashClass"] = "danger";
                 }
-            }
-
-            if ($modelUser->isEmail($form->getParameter("email")) && (($form->getParameter("email") != $user["email"]) || false )) {
-                // if email, excepting user's one, already exists, warn user
-                $canEditUser = false;
-                $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
-                $_SESSION["flashClass"] = "danger";
+            } else {
+                // updating an existing user
+                if ($modelUser->isEmail($form->getParameter("email")) && ($form->getParameter("email") != $user["email"])) {
+                    // if email, excepting user's one, already exists, warn user
+                    $canEditUser = false;
+                    $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
+                    $_SESSION["flashClass"] = "danger";
+                }
             }
 
             if ($canEditUser) {

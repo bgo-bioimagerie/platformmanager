@@ -209,6 +209,13 @@ class CorespaceaccessController extends CoresecureController {
                 $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
                 $_SESSION["flashClass"] = "danger";
             }
+
+            if(!$form->getParameter("email") || !$modelCoreUser->isEmailFormat($form->getParameter("email"))) {
+                $canEditUser = false;
+                $_SESSION["flash"] = CoreTranslator::EmailInvalid($lang);
+                $_SESSION["flashClass"] = "danger";
+            }
+
             if($modelCoreUser->isEmail($form->getParameter("email"))) {
                 // if email alreday exists, warn user
                 $canEditUser = false;
