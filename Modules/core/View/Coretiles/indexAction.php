@@ -95,7 +95,7 @@ if (!$headless) {
 
                             <!-- JOIN BUTTON -->
                             <?php
-                                if (!in_array($item["id"], $spacesUserIsAdminOf)) {
+                                if (!in_array($item["id"], $spacesUserIsAdminOf) && isset($_SESSION["login"])) {
                                     if (!in_array($item["id"], $userPendingSpaces)) {
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                                         if(!$isMemberOfSpace) {

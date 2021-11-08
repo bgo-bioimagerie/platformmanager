@@ -16,14 +16,15 @@ require_once 'Modules/core/Model/CorePendingAccount.php';
  * @author sprigent
  * Controller for the home page
  */
-class CoretilesController extends CoresecureController {
+class CoretilesController extends CorecookiesecureController {
 
     /**
      * Constructor
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->checkAuthorization(CoreStatus::$USER);
+        $this->user = new CoreUser();
+        //$this->checkAuthorization(CoreStatus::$USER);
     }
 
     /**
@@ -34,8 +35,10 @@ class CoretilesController extends CoresecureController {
         if ( $id < 0 ){
             $this->redirect("coretilesdoc");
         }
-        
-        if ( $level == 1 ){
+        if ( $level == 0) {
+            $this->showMainSubMenu(0);
+        }
+        else if ( $level == 1 ){
             $this->showMainMenu($id);
         }
         else if ($level == 2){
@@ -66,11 +69,22 @@ class CoretilesController extends CoresecureController {
         if ($id < 0){
             $id = $modelSubMenu->getFirstIdx();
         }
+
+        if ($id == 0) {
+            $lang = $this->getLanguage();
+            return $this->render(array(
+                'lang' => $lang,
+                'mainSubMenus' => [],
+                'showSubBar' => false
+                ), "welcomeAction");
+        }
         
+        $mainSubMenus = [];
+        $showSubBar = false;
+
         $modelMainMenuItem = new CoreMainMenuItem();
         $mainSubMenus = $modelSubMenu->getForMenu($modelSubMenu->getMainMenu($id));
-        
-        $showSubBar = false;
+
         if ( $modelMainMenuItem->haveAllSingleItem($mainSubMenus) ){
             $items = $modelMainMenuItem->getSpacesFromSingleItemList($mainSubMenus);
             $title = $modelSubMenu->getMainMenuName($id);
@@ -117,6 +131,13 @@ class CoretilesController extends CoresecureController {
      * @return array of arrays: [userSpaceIds, userPendingSpaceIds, SpacesUserIsAdminOf]
      */
     public function getUserSpaces() {
+        if(!isset($_SESSION["id_user"])) {
+            return array(
+                "userSpaceIds" => [],
+                "userPendingSpaceIds" => [],
+                "spacesUserIsAdminOf" => []
+            );
+        }
         $modelSpacePending = new CorePendingAccount();
         $data = $modelSpacePending->getSpaceIdsForPending($_SESSION["id_user"]);
         $userPendingSpaceIds = array();
