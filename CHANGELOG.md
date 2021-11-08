@@ -12,7 +12,8 @@
 * [module:booking] fix supplementaries deletion
 * [module:invoices] fix set floats for items quantities
 * [module:booking] fix BkCalendarPeriod missing id_space
-* [helpdesk] fix list of tickets
+* [helpdesk] fix list of tickets and mail origin
+* [configuration] use env var SMTP_FROM instead of MAIL_FROM (deprecated)
 
 ## 2.1.6
 
