@@ -120,6 +120,7 @@ if (!$headless) {
             <div @click="setFilter(1)">Open {{unread["s1"]}}</div>
             <div @click="setFilter(2)">Reminder {{unread["s2"]}}</div>
             <div @click="setFilter(3)">Closed {{unread["s3"]}}</div>
+            <div @click="setFilter(4)">Spam</div>
             <?php
             if ($role > CoreSpace::$MANAGER) {
             ?>
@@ -507,6 +508,8 @@ var app = new Vue({
                     return 'Reminder';
                 case 3:
                     return 'Closed';
+                case 4:
+                    return 'Spam';
                 default:
                     return 'Unknown';
             }

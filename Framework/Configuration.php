@@ -168,10 +168,14 @@ class Configuration {
             self::$parameters['debug_influxdb'] = boolval(getenv('DEBUG_INFLUXDB'));
         }
         if(!isset(self::$parameters['smtp_from'])) {
-            self::$parameters['smtp_from'] = 'donotreply@pfm.org';
+            self::$parameters['smtp_from'] = 'pfm+donotreply@pfm.org';
         }
         if(getenv('MAIL_FROM')) {
+            self::getLogger()->info('MAIL_FROM is deprecated, use SMTP_FROM');
             self::$parameters['smtp_from'] = getenv('MAIL_FROM');
+        }
+        if(getenv('SMTP_FROM')) {
+            self::$parameters['smtp_from'] = getenv('SMTP_FROM');
         }
         if(getenv('PFM_ADMIN_USER')) {
             self::$parameters['admin_user'] = getenv('PFM_ADMIN_USER');

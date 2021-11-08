@@ -105,12 +105,18 @@ class ResourceInfo extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
+    /**
+    * @deprecated
+    */
     public function getIdByName($id_space, $name){
-        $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0";
-        $tmp = $this->runRequest($sql, array($name))->fetch();
+        $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0 AND id_space=?";
+        $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
         return $tmp[0];
     }
     
+    /**
+    * @deprecated
+    */
     public function getIdByNameSpace($name, $id_space){
         $sql = "SELECT id FROM re_info WHERE name=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
