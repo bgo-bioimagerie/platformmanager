@@ -8,4 +8,3 @@ The full documentation is available here: http://bgo-bioimagerie.github.io/platf
 
 To deploy with docker [https://github.com/bgo-bioimagerie/platformmanager](https://github.com/bgo-bioimagerie/platformmanager).
 
-Pfm is under heavy development, doc is under rewrite...
