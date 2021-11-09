@@ -41,7 +41,7 @@ if (!$headless) {
             <div class="row">
                 <div class="col-xs-12 col-md-4 col-lg-2 modulebox" v-for="space in matches" :key="space.id">
                     <a :href="`corespace/${space.id}`">
-                    <img v-if="space.image" :src="space.image" alt="logo" style="margin-left: -15px;width:218px;height:150px">
+                    <img v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="margin-left: -15px;width:218px;height:150px">
                     </a>
                     <p></p>
                     <p style="color:#018181; ">
@@ -71,7 +71,7 @@ if (!$headless) {
 
             <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
                 <a href="<?php echo "corespace/" . $item["id"] ?>">
-                <?php if(isset($icon)) {?><img aria-label="space logo" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                <?php if(isset($icon)) {?><img aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
                 </a>
                 <p></p>
                 <p style="color:#018181; ">
