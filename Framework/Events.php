@@ -3,9 +3,11 @@
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
 require_once 'Framework/Statistics.php';
+require_once 'Framework/Grafana.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreSpaceUser.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
@@ -35,19 +37,42 @@ class EventHandler {
         $this->logger = Configuration::getLogger();
     }
 
-    private function ticketCount($msg) {
+    public function ticketCount($msg) {
         $hm = new Helpdesk();
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $statHandler = new Statistics();
+        $timestamp = time();
         $counts = $hm->count($msg['space']['id']);
         foreach ($counts as $count) {
-            $stat = ['name' => 'tickets', 'fields' => ['value' => $count['total'], 'tags' =>['status' => $count['status']]]];
-            $statHandler->record($space['shortname'], $stat);
+            $tag = "";
+            switch ($count['status']) {
+                case Helpdesk::$STATUS_NEW:
+                    $tag = "new";
+                    break;
+                case Helpdesk::$STATUS_OPEN:
+                    $tag = "open";
+                    break;
+                case Helpdesk::$STATUS_REMINDER:
+                    $tag = "reminder";
+                    break;
+                case Helpdesk::$STATUS_CLOSED:
+                    $tag = "closed";
+                    break;
+                case Helpdesk::$STATUS_SPAM:
+                    break;
+                default:
+                    $tag = "unknown";
+                    break;
+            }
+            if($tag) {
+                $stat = ['name' => 'tickets', 'fields' => ['value' => intval($count['total'])], 'tags' =>['status' =>$tag], 'time' => $timestamp];
+                $statHandler->record($space['shortname'], $stat);
+            }
         }
     }
 
-    private function spaceCount() {
+    public function spaceCount() {
         $model = new CoreSpace();
         $nbSpaces = $model->countSpaces();
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
@@ -62,6 +87,13 @@ class EventHandler {
         $statHandler = new Statistics();
         $statHandler->createDB($space['shortname']);
         $this->spaceCount();
+        // create org
+        $g = new Grafana();
+        $g->createOrg($space['shortname']);
+        // add pfm super admin
+        $u = new CoreUser();
+        $user = $u->getUserByLogin(Configuration::get('admin_user'));
+        $g->addUser($space['shortname'], $user['login'], $user['apikey']);
     }
 
     public function spaceDelete($msg) {
@@ -78,20 +110,55 @@ class EventHandler {
         $statHandler->record($space['shortname'], $stat);
     }
 
+    private function isSpaceOwner($id_space, $id_user) {
+        $sum = new CoreSpaceUser();
+        $link = $sum->getUserSpaceInfo2($id_space, $id_user);
+        if($link['status'] >= CoreSpace::$MANAGER) {
+            return true;
+        }
+        return false;
+    }
+
     public function spaceUserRoleUpdate($msg) {
-        $this->logger->debug('[spaceUserRoleUpdate][TODO]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
+        $this->logger->debug('[spaceUserRoleUpdate]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
         $role = $msg["role"];
         $u = new CoreUser();
         $user = $u->getInfo($msg['user']['id']);
         $login = $user['login'];
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login role update [role=$role]");
-        // TODO
+
+        // If owner, add to or remove from grafana 
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        if($role >= CoreSpace::$MANAGER) {
+            $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+        } else {
+            $g->delUser($space['shortname'], $user['login']);
+        }
     }
 
     public function userApiKey($msg) {
-        $this->logger->debug('[userApiKey][TODO]', ['user' => $msg['user']]);
-        // TODO
+        $this->logger->debug('[userApiKey]', ['user' => $msg['user']]);
+        // TODO do nothing if not a space manager/admin
+        $gm = new Grafana();
+        $u = new CoreUser();
+        $id_user = $msg['user']['id'];
+        $user = $u->userAllInfo($id_user);
+        $gm->updateUserPassword($user['login'], $user['apikey']);
+    }
+
+    public function spaceCustomerEdit($msg) {
+        $this->logger->debug('[spaceCustomerEdit]', ['space_id' => $msg['space']['id']]);
+        $model = new CoreSpace();
+        $space = $model->getSpace($msg['space']['id']);
+        $modelClient = new ClClient();
+        $nbCustomers = $modelClient->count($msg['space']['id']);
+        $stat = ['name' => 'customers', 'fields' => ['value' => $nbCustomers]];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+
     }
 
     public function spaceUserJoin($msg) {
@@ -102,6 +169,14 @@ class EventHandler {
         $login = $user['login'];
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login joined space");
+
+        // If owner, add to grafana
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
+            $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+        }
     }
 
     public function spaceUserUnjoin($msg) {
@@ -112,6 +187,14 @@ class EventHandler {
         $login = $user['login'];
         $m = new CoreHistory();
         $m->add( $msg['space']['id'], $msg['_user'] ?? null, "User $login left space");
+
+        // If owner, remove from grafana
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
+            $g->delUser($space['shortname'], $user['login']);
+        }
     }
 
     private function _calEntryRemoveStat($space, $entry){
@@ -131,7 +214,7 @@ class EventHandler {
             }
         }
         $value = time() - $timestamp;
-        $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
     } 
@@ -152,9 +235,17 @@ class EventHandler {
                 $client = $is_client;
             }
         }
-        $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
+    }
+
+    public function customerImport() {
+        $cp = new CoreSpace();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $this->spaceCustomerEdit(['space' => ['id' => $space['id']]]);
+        }
     }
 
     public function calentryImport() {
@@ -218,8 +309,6 @@ class EventHandler {
         $resdb = $em->runRequest($sql);
         $i = 0;
         while($res = $resdb->fetch()) {
-            //echo "??".$res["date_generated"];
-            //$date_generated = date("Y-m-d", $res["date_generated"]);
             $dt = DateTime::createFromFormat("Y-m-d H:i:s", $res["date_generated"]." 00:00:00");
             $timestamp = $dt->getTimestamp() + $i;
             $i++;
@@ -319,6 +408,10 @@ class EventHandler {
                 case Events::ACTION_INVOICE_DELETE:
                     $this->invoiceDelete($data);
                     break;
+                case Events::ACTION_CUSTOMER_EDIT:
+                case Events::ACTION_CUSTOMER_DELETE:
+                    $this->spaceCustomerEdit($data);
+                    break;
                 case Events::ACTION_HELPDESK_TICKET:
                     $this->ticketCount($data);
                     break;
@@ -347,6 +440,9 @@ class Events {
 
     public const ACTION_INVOICE_EDIT = 300;
     public const ACTION_INVOICE_DELETE = 301;
+
+    public const ACTION_CUSTOMER_EDIT = 400;
+    public const ACTION_CUSTOMER_DELETE = 401;
 
     private static $connection;
     private static $channel;

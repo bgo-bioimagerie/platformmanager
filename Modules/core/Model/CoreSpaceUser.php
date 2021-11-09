@@ -29,6 +29,11 @@ class CoreSpaceUser extends Model {
         $this->primaryKey = "id";
 
     }
+
+    public function managersOrAdmin($id_space) {
+        $sql = "SELECT * from core_j_spaces_user WHERE id_space=? AND status>".CoreSpace::$USER;
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
     
     public function setRole($id_user, $id_space, $role){
         if ( !$this->exists($id_user, $id_space) ){
