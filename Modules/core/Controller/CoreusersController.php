@@ -128,29 +128,29 @@ class CoreusersController extends CoresecureController {
 
             if(!$form->getParameter("email") || !$modelUser->isEmailFormat($form->getParameter("email"))) {
                 $canEditUser = false;
-                $_SESSION["flash"] = CoreTranslator::EmailInvalid($lang);
-                $_SESSION["flashClass"] = "danger";
+                $this->displayFormWarnings("EmailInvalid", $id, $lang);
+                return;
             }
             if (!$id) {
                 // creating a new user
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
                     $canEditUser = false;
-                    $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
-                    $_SESSION["flashClass"] = "danger";
+                    $this->displayFormWarnings("LoginAlreadyExists", $id, $lang);
+                    return;
                 }
                 if($modelUser->isEmail($form->getParameter("email"))) {
                     // if email already exists, warn user
                     $canEditUser = false;
-                    $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
-                    $_SESSION["flashClass"] = "danger";
+                    $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
+                    return;
                 }
             } else {
                 // updating an existing user
                 if ($modelUser->isEmail($form->getParameter("email")) && ($form->getParameter("email") != $user["email"])) {
                     // if email, excepting user's one, already exists, warn user
                     $canEditUser = false;
-                    $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
-                    $_SESSION["flashClass"] = "danger";
+                    $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
+                    return;
                 }
             }
 
@@ -178,6 +178,12 @@ class CoreusersController extends CoresecureController {
         }
 
         $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+    }
+
+    protected function displayFormWarnings($cause, $id, $lang) {
+        $_SESSION["flash"] = CoreTranslator::$cause($lang);
+        $_SESSION["flashClass"] = "danger";
+        $this->redirect("coreusersedit/" . $id ?? 0);
     }
 
     protected function editPwdQuery($formPwd, $modelUser, $lang) {
