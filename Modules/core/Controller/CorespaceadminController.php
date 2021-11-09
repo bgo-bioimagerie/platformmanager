@@ -109,7 +109,7 @@ class CorespaceadminController extends CoresecureController {
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
             # $shortname = str_replace(" ", "", $shortname);
-            $shortname = preg_replace('/[^a-z0-9\-_]/', '', $string);
+            $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
             if($space && $space['shortname']) {
                 // Cannot modify shortname once set
                 $shortname = $space['shortname'];
