@@ -8,6 +8,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreMail.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * 
@@ -33,10 +34,12 @@ class CoremailController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space) {
-
+        $spaceModel = new CoreSpace();
+        $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if ($role < CoreSpace::$USER) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
         $modules = Configuration::get("modules");
-        //echo "modules = " ;print_r($modules);
-        //return;
         $cm = new CoreMail();
         $mods = array();
         for ($i = 0; $i < count($modules); ++$i) {
