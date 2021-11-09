@@ -213,7 +213,7 @@ class BkCalSupInfo extends Model {
     public function removeUnlistedSupInfos($id_space, $packageID) {
 
         $sql = "SELECT id, id_supinfo FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql);
+        $req = $this->runRequest($sql, array($id_space));
         $databasePackages = $req->fetchAll();
 
         foreach ($databasePackages as $dbPackage) {

@@ -1,8 +1,17 @@
 # Changes
 
-## 2.1.7
+## 2.1.8
 
 * [module:quote] expose client infos to invoice templates
+
+## 2.1.7
+
+* [module:booking] fix supplementaries deletion
+* [module:invoices] fix set floats for items quantities
+* [module:booking] fix BkCalendarPeriod missing id_space
+* [helpdesk] fix list of tickets and mail origin
+* [configuration] use env var SMTP_FROM instead of MAIL_FROM (deprecated)
+* [module:booking] for mails check user still have a role in space #383
 
 ## 2.1.6
 
