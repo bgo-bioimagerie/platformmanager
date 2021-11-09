@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Users] Improve users creation forms controls
 * [resources] set default booking authorizations at resource creation
 * [module:booking_settings] fix display edition
 * [stats] count number of tickets per status

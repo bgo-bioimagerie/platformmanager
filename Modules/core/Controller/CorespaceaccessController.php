@@ -206,14 +206,21 @@ class CorespaceaccessController extends CoresecureController {
             $canEditUser = true;
             if ($modelCoreUser->isLogin($this->request->getParameter('login'))) {
                 $canEditUser = false;
-                $_SESSION["flash"] = CoreTranslator::LoginAlreadyExists($lang);
-                $_SESSION["flashClass"] = "danger";
+                $this->displayFormWarnings("LoginAlreadyExists", $id_space, $lang);
+                return;
             }
+
+            if(!$form->getParameter("email") || !$modelCoreUser->isEmailFormat($form->getParameter("email"))) {
+                $canEditUser = false;
+                $this->displayFormWarnings("EmailInvalid", $id_space, $lang);
+                return;
+            }
+
             if($modelCoreUser->isEmail($form->getParameter("email"))) {
                 // if email alreday exists, warn user
                 $canEditUser = false;
-                $_SESSION["flash"] = CoreTranslator::EmailAlreadyExists($lang);
-                $_SESSION["flashClass"] = "danger";
+                $this->displayFormWarnings("EmailAlreadyExists", $id_space, $lang);
+                return;
             }
 
             if ($canEditUser) {
@@ -262,6 +269,12 @@ class CorespaceaccessController extends CoresecureController {
             'space' => $space,
             "formHtml" => $form->getHtml($lang)
         ));
+    }
+
+    protected function displayFormWarnings($cause, $id_space, $lang) {
+        $_SESSION["flash"] = CoreTranslator::$cause($lang);
+        $_SESSION["flashClass"] = "danger";
+        $this->redirect("corespaceaccessuseradd/" . $id_space);
     }
 
     public function usereditAction($id_space, $id){
