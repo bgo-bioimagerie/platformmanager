@@ -561,15 +561,12 @@ class CoreDB extends Model {
         $bkqte = new BkCalQuantities();
         $bkqte->addColumn("bk_calquantities", "is_invoicing_unit", "int(1)", 0);
         Configuration::getLogger()->debug("[booking] add is_invoicing_unit done!");
-    }
 
-    public function upgrade_v3_v4() {
         Configuration::getLogger()->debug("[users_info] add organization");
         $usersInfo = new UsersInfo();
         $usersInfo->addColumn("users_info", "organization", "varchar(255)", "");
         Configuration::getLogger()->debug("[users_info] add organization done!");
     }
-
 
     /**
      * Get current database version

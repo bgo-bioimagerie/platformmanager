@@ -3,7 +3,7 @@
 ## 2.1.8
 
 * [users] change checkunicity routes
-* [self_registration] add *Organization* and *Team* inputs
+* [self_registration] add *Organization* and *Unit* inputs
 * [self_registration] add login suggestion
 * [self_registration] add unicity checks to login and email inputs
 * [self_registration] fix email sent to space admins

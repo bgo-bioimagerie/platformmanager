@@ -8,6 +8,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 
 /**
@@ -47,7 +48,7 @@ class CoreusersController extends CoresecureController {
             "is_active" => CoreTranslator::Is_user_active($lang),
             "date_last_login" => CoreTranslator::Last_connection($lang));
         $modelUser = new CoreUser();
-        $data = $modelUser->selectAll();
+        $data = $modelUser->selectAll() ?? [];
         $modelStatus = new CoreStatus();
         $users = [];
         for ($i = 0; $i < count($data); $i++) {
@@ -72,10 +73,13 @@ class CoreusersController extends CoresecureController {
     public function editAction($id) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelUser = new CoreUser();
+        $modelUsersInfo = new UsersInfo();
         if ($id > 0) {
             $user = $modelUser->getUser($id);
+            $userInfo = $modelUsersInfo->get($id);
         } else {
             $user = $modelUser->getEmpty();
+            $userInfo = [];
         }
 
         $lang = $this->getLanguage();
@@ -95,6 +99,8 @@ class CoreusersController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $user["name"]);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true, $user["firstname"]);
         $form->addEmail("email", CoreTranslator::Email($lang), true, $user["email"], true);
+        $form->addText("unit", CoreTranslator::Unit($lang), false, $userInfo["unit"] ?? "", true);
+        $form->addText("organization", CoreTranslator::Organization($lang), false, $userInfo["organization"] ?? "", true);
 
         $modelStatus = new CoreStatus();
         $status = $modelStatus->allStatusInfo();
@@ -157,13 +163,13 @@ class CoreusersController extends CoresecureController {
                     ? CoreTranslator::AccountHasBeenCreated($lang)
                     : CoreTranslator::AccountHasBeenModified($lang);
                 $_SESSION["flashClass"] = "success";
-                $id_user = $this->editQuery($form, $modelUser, $lang);
+                $id_user = $this->editQuery($form, $modelUser, $modelUsersInfo, $lang);
                 $user = $modelUser->getInfo($id_user);
                 $this->redirect("coreusers", [], ['user' => $user]);
                 return;
             }
-                
         }
+        
         if ($id > 0 && $formPwd->check()) {
             $this->editPwdQuery($form, $modelUser, $lang);
             $this->redirect("coreusers");
@@ -192,7 +198,7 @@ class CoreusersController extends CoresecureController {
         }
     }
 
-    protected function editQuery($form, $modelUser, $lang) {
+    protected function editQuery($form, $modelUser, $modelUsersInfo, $lang) {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $id = $form->getParameter("id");
         if (!$id) {
@@ -213,6 +219,12 @@ class CoreusersController extends CoresecureController {
                     $form->getParameter("date_end_contract"),
                     $form->getParameter("is_active")
                 );
+                $modelUsersInfo->set(
+                    $id,
+                    "",
+                    $form->getParameter("unit"), 
+                    $form->getParameter("organization")
+                );
             }
         } else {
             $modelUser->edit(
@@ -224,6 +236,12 @@ class CoreusersController extends CoresecureController {
                 $form->getParameter("status_id"),
                 $form->getParameter("date_end_contract"),
                 $form->getParameter("is_active")
+            );
+            $modelUsersInfo->set(
+                $id,
+                "",
+                $form->getParameter("unit"), 
+                $form->getParameter("organization")
             );
         }
         return $id;
