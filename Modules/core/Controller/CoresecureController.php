@@ -118,24 +118,31 @@ abstract class CoresecureController extends CorecookiesecureController {
 
             $modelUser = new CoreUser();
 
-            //$connect = $modelUser->connect2($login, $pwd);
-            //echo "connect = " . $connect . "</br>";
             if ($modelUser->isUser($login) && Configuration::get("name") == $company) {
                 parent::runAction($module, $action, $args);
-                return;
             } else {
-                //$this->callAction("connection");
+                if($this->request->getSession()->getAttribut("id_user") == -1) {
+                    Configuration::getLogger()->debug("[core] anonymous");
+                    parent::runAction($module, $action, $args);
+                    return;
+                }
+                Configuration::getLogger()->debug("[core] unknown user redirect to login");                
                 $this->redirect("coreconnection");
-                return;
             }
         } else {
-            Configuration::getLogger()->debug('no session');
+            Configuration::getLogger()->debug('no session, anonymous user');
             if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
                 throw new PfmAuthException('not connected', 401);
             }
-            $this->redirect("coreconnection");
-            //$this->callAction("connection");
-            return;
+
+            $this->request->getSession()->setAttribut("id_user", -1);
+            $this->request->getSession()->setAttribut("login", "anonymous");
+            $this->request->getSession()->setAttribut("email", "");
+            $this->request->getSession()->setAttribut("company", Configuration::get("name"));
+            $this->request->getSession()->setAttribut("user_status", CoreStatus::$USER);
+
+            //$this->redirect("coreconnection");
+            parent::runAction($module, $action, $args);
         }
     }
 

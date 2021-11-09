@@ -1921,6 +1921,13 @@ class CoreTranslator {
         return "Support email";
     }
 
+    public static function Visibility($lang = "") {
+        if ($lang == "fr") {
+            return "Visibilité";
+        }
+        return "Visibility";    
+    }
+
     public static function MailSubjectPrefix($spaceName = "") {
         return ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
     }

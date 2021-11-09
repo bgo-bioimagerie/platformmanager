@@ -53,7 +53,7 @@ class Configuration {
      * 
      * @param string $name Name of the parameter
      * @param string $defaultValue Value returned by default
-     * @return string Value of the configuration parameter
+     * @return string|array Value of the configuration parameter
      */
     public static function get($name, $defaultValue = null) {
         $parameters = self::getParameters();
