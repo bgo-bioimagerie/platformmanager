@@ -9,11 +9,11 @@ weight: 3
 ### setup
 
 Docker images are available at quay.io/bgo_bioimagerie,
-see [docker-compose.yml](https://github.com/bgo-bioimagerie/docker-platformmanager/blob/master/docker-compose.yml) as compose example.
+see [docker-compose.yml](docker/docker-compose.yml) as compose example.
 
 Update docker-compose.yml file environment sections with your setup.
 
-Some variables are defined in a *.env* file for sensitive data.
+Some variables are defined in a *.env* file for sensitive and custom data.
 
 Example:
 
@@ -27,6 +27,9 @@ Example:
     PFM_INFLUXDB_TOKEN=123456
     MYSQL_ROOT_PASSWORD=xxxx
     MYSQL_PASSWORD=xxxx
+    ....
+
+See example docker/env.example for your .env file.
 
 Exemple docker-compose.yml use local docker volumes to save database etc.
 Only local host mounted volume is *data* directory which contains space upload files,
@@ -48,7 +51,7 @@ Following env variables can be used to override Config/conf.ini:
   * MYSQL_PASS: platform_manager # Password to connect to mysql
 * SMTP_HOST: mailhog  # smtp host name
 * SMTP_PORT: 25  # smtp port
-* MAIL_FROM: support@genouest.org  # mail *from* address
+* SMTP_FROM: support@genouest.org  # mail *from* address
 * PFM_MODE: prod  # optional [dev|*prod*|test], dev mode adds a console in browser with sql info
 * PFM_ADMIN_USER: pfmadmin  # superadmin user name (automatically created)
 * PFM_ADMIN_EMAIL: admin@pfm.org  # superadmin email
@@ -83,26 +86,3 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER} # mail account name
   * PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password
   * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
-
-And .env file should define (according to variables used):
-
-* PFM_WEB_URL=http://localhost:4000
-* PFM_ADMIN=pfmadmin
-* PFM_ADMIN_PASSWORD=admin4genouest  # min 8 characters
-* PFM_ADMIN_EMAIL=admin@pfm.org
-* PFM_ADMIN_APIKEY=123456
-* PFM_INFLUXDB_TOKEN=123456
-* PFM_OPENID=  # comma separated list of supported providers
-* If PFM_OPENID is defined:
-  * PFM_OPENID_GOOGLE_URL=https://oauth2.googleapis.com/token
-  * PFM_OPENID_GOOGLE_LOGIN=https://accounts.google.com/o/oauth2/v2/auth
-  * PFM_OPENID_GOOGLE_CLIENT_ID=XXX
-  * PFM_OPENID_GOOGLE_CLIENT_SECRET=XXX
-* MYSQL_ROOT_PASSWORD=XXX
-* MYSQL_PASSWORD=XXX
-* PFM_JWT_SECRET=xxxx
-* PFM_HELPDESK_EMAIL=myemail@mydomain
-* PFM_HELPDESK_IMAP_SERVER=x.y.z
-* PFM_HELPDESK_IMAP_USER=yyyy
-* PFM_HELPDESK_IMAP_PASSWORD=xxxxx
-
