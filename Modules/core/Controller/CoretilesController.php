@@ -11,6 +11,10 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreStar.php';
 
+require_once 'Modules/catalog/Model/CaEntry.php';
+require_once 'Modules/resources/Model/ResourceInfo.php';
+
+
 use League\CommonMark\CommonMarkConverter;
 
 
@@ -103,11 +107,24 @@ class CoretilesController extends CorecookiesecureController {
                     break;
                 }
             }
+
+            $allSpaces = $spaceModel->getSpaces('id');
+            $spaceMap = [];
+            foreach($allSpaces as $space) {
+                $spaceMap[$space["id"]] = $space; // name, description
+            }
+            $catalogModel = new CaEntry();
+            $catalog = $catalogModel->list();  // title, short_desc, full_desc
+            $resourceModel = new ResourceInfo();
+            $resources = $resourceModel->getAll(); // name, description, long_description
             
             return $this->render(array(
                 'lang' => $lang,
                 'content' => $content,
                 'spaces' => $spaces,
+                'spaceMap' => $spaceMap,
+                'catalog' => $catalog,
+                'resources' => $resources,
                 'mainSubMenus' => [],
                 'iconType' => $modelCoreConfig->getParam("space_icon_type"),
                 'showSubBar' => false
@@ -136,7 +153,10 @@ class CoretilesController extends CorecookiesecureController {
         $userSpaces = $this->getUserSpaces();
 
         $starModel = new CoreStar();
-        $starList = $starModel->stars($_SESSION["id_user"]);
+        $starList = [];
+        if(isset($_SESSION["id_user"])) {
+            $starList = $starModel->stars($_SESSION["id_user"]);
+        }
         $stars = [];
         foreach($starList as $star) {
             $stars[$star["id_space"]] = true;

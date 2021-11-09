@@ -32,38 +32,118 @@ if (!$headless) {
 
 <div class="col-xs-12 pm-tile-container"  >
     <div class="container" style="margin-top: 50px;">
-
+    <div id="spacesearch" class="col-md-12">
+        <div class="row">
+            <div class="col-xs-6">
+                <input id="search" type="form-control" v-model="search" placeholder="search"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-4 col-lg-2 modulebox" v-for="space in matches" :key="space.id">
+                <a :href="`corespace/${space.id}`">
+                <img v-if="space.image" :src="space.image" alt="logo" style="margin-left: -15px;width:218px;height:150px">
+                </a>
+                <p></p>
+                <p style="color:#018181; ">
+                    <a :href="`corespace/${space.id}`">{{space.name}}</a>
+                </p>
+                <p style="color:#a1a1a1; font-size:12px;">{{space.description}}</p>
+                <div style="position: absolute; bottom: 0px">
+                    <small v-if="space.support">
+                    support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
         <?php echo $content; ?>
         <?php foreach($spaces as $item) { ?>
 
             <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
-                            <!-- IMAGE -->
-                            <a href="<?php echo "corespace/" . $item["id"] ?>">
-                            <?php if(isset($icon)) {?><img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
-                            </a>
-                            <p>
-                            </p>
-                            <!-- TITLE -->
-                            <p style="color:#018181; ">
-                                <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
-                                <?php if(isset($_SESSION["login"])) { ?>
-                                        <a href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
-                                <?php } ?>
-                            </p>
-
-                            <!-- DESC -->
-                            <p style="color:#a1a1a1; font-size:12px;">
-                                <?php echo $item["description"] ?>
-                            </p>
-                            <div style="position: absolute; bottom: 0px"><small>
-                            <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
-                            </small></div>
-                        </div>  
+                <a href="<?php echo "corespace/" . $item["id"] ?>">
+                <?php if(isset($icon)) {?><img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                </a>
+                <p></p>
+                <p style="color:#018181; ">
+                    <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
+                    <?php if(isset($_SESSION["login"])) { ?>
+                            <a href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
+                    <?php } ?>
+                </p>
+                <p style="color:#a1a1a1; font-size:12px;">
+                    <?php echo $item["description"] ?>
+                </p>
+                <div style="position: absolute; bottom: 0px">
+                    <small>
+                    <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
+                    </small>
+                </div>
+            </div>  
 
 
 
         <?php } ?>
     </div>
 </div> <!-- /container -->
+<script>
+let spaces = <?php echo json_encode($spaceMap); ?>;
+let resources = <?php echo json_encode($resources); ?>;
+let catalog = <?php echo json_encode($catalog); ?>;
+
+var app = new Vue({
+    el: '#spacesearch',
+    data () {
+        return {
+            spaces: <?php echo json_encode($spaceMap); ?> ,
+            catalog: <?php echo json_encode($resources); ?>,
+            resources: <?php echo json_encode($catalog); ?>,
+            search: '',
+            matches: []
+        }
+    },
+    watch: {
+        search(search_event) {
+            //let event = evt.target.value;
+            if(search_event.length < 3) {
+                this.matches = []
+                return
+            }
+            let event = search_event.toLowerCase();
+            let spaces = []
+            let slist = {}
+            Object.keys(this.spaces).forEach(s => {
+                let space = this.spaces[s]
+                if(space.name?.toLowerCase().includes(event) || space.description?.toLowerCase().includes(event)){
+                    spaces.push(space)
+                    slist[space.id] = true
+                }
+            })
+            this.catalog.forEach(c => {
+                if (slist[c.id_space]) {
+                    return
+                }
+                if (c.title?.toLowerCase().includes(event) || c.short_desc?.toLowerCase().includes(event) || c.full_desc?.toLowerCase().includes(event)) {
+                    spaces.push(this.spaces[c.id_space])
+                    slist[c.id_space] = true
+                }
+            })
+            this.resources.forEach(c => {
+                if (slist[c.id_space]) {
+                    return
+                }
+                if (c.name?.toLowerCase().includes(event) || c.description?.toLowerCase().includes(event) || c.long_description?.toLowerCase().includes(event)) {
+                    spaces.push(this.spaces[c.id_space])
+                    slist[c.id_space] = true
+                }
+            })
+            this.matches = spaces
+        }
+    },
+    methods: {
+    }
+})
+
+
+</script>
 <?php
 endblock();
