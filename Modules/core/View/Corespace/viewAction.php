@@ -129,7 +129,7 @@ if ($space['color'] == "") {
             <?php
         }
         ?>
-        <?php if($role<CoreSpace::$MANAGER && $role > 0) { ?>
+        <?php if($_SESSION['id_user'] > 0 && $role<CoreSpace::$MANAGER && $role > 0) { ?>
         <div class="page-header">
                 <h2>
                     <?php echo CoreTranslator::RequestJoin(true, $lang)."?" ?>

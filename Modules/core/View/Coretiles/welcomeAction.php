@@ -32,31 +32,41 @@ if (!$headless) {
 
 <div class="col-xs-12 pm-tile-container"  >
     <div class="container" style="margin-top: 50px;">
-    <div id="spacesearch" class="col-md-12">
-        <div class="row">
-            <div class="col-xs-6">
-                <input id="search" type="form-control" v-model="search" placeholder="search"/>
+        <div id="spacesearch" class="col-xs-12" style="margin: 50px;">
+            <div class="row">
+                <div class="col-xs-6">
+                    <input id="search" type="form-control" v-model="search" placeholder="search"/>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12 col-md-4 col-lg-2 modulebox" v-for="space in matches" :key="space.id">
-                <a :href="`corespace/${space.id}`">
-                <img v-if="space.image" :src="space.image" alt="logo" style="margin-left: -15px;width:218px;height:150px">
-                </a>
-                <p></p>
-                <p style="color:#018181; ">
-                    <a :href="`corespace/${space.id}`">{{space.name}}</a>
-                </p>
-                <p style="color:#a1a1a1; font-size:12px;">{{space.description}}</p>
-                <div style="position: absolute; bottom: 0px">
-                    <small v-if="space.support">
-                    support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
-                    </small>
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-lg-2 modulebox" v-for="space in matches" :key="space.id">
+                    <a :href="`corespace/${space.id}`">
+                    <img v-if="space.image" :src="space.image" alt="logo" style="margin-left: -15px;width:218px;height:150px">
+                    </a>
+                    <p></p>
+                    <p style="color:#018181; ">
+                        <a :href="`corespace/${space.id}`">{{space.name}}</a>
+                    </p>
+                    <p style="color:#a1a1a1; font-size:12px;">{{space.description}}</p>
+                    <div>
+                        <small v-if="space.support">
+                        support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
+                        </small>
+                    </div>
+                    <div v-if="space.join" style="position: absolute; bottom: 20px; right: 10px">
+                        <a :href="`coretilesselfjoinspace/${space.id}`">
+                            <button type="button" class="btn btn-md btn-success">{{space.join}}</button>
+                        </a>
+                    </div>
+                    <div v-if="space.join_requested" style="position: absolute; bottom: 20px; right: 10px">
+                        <button type="button" class="btn btn-md btn-info" disabled>{{space.join_requested}}</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-        <?php echo $content; ?>
+        <div class="col-xs-12">
+            <?php echo $content; ?>
+        </div>
         <?php foreach($spaces as $item) { ?>
 
             <div class="col-xs-12 col-md-4 col-lg-2 modulebox">

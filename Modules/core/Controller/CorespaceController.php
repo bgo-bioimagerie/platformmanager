@@ -57,8 +57,12 @@ class CorespaceController extends CoresecureController {
     public function viewAction($id_space) {
 
         $space = $this->spaceModel->getSpace($id_space);
-        if(!$space["public"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
+        if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
+        Configuration::getLogger()->error('????', ['space' => $space, 'user' => $_SESSION['id_user']]);
+        if(!$space['status'] && $_SESSION['id_user'] < 0) {
+            throw new PfmAuthException("Error 403: anonymous access denied", 403);
         }
 
         $modelConfig = new CoreConfig();
@@ -80,6 +84,9 @@ class CorespaceController extends CoresecureController {
             $role = CoreSpace::$ADMIN;
         } else {
             $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
+            if ($role == -1) {
+                $role = CoreSpace::$VISITOR;
+            }
             if ($role > CoreSpace::$MANAGER) {
                 $showAdmMenu = true;
             }

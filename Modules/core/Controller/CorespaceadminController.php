@@ -86,7 +86,6 @@ class CorespaceadminController extends CoresecureController {
         $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
         $form->addText("support", CoreTranslator::Support($lang), false, $space["support"]);
-        $form->AddSelect("visibility", CoreTranslator::Visibility($lang), array("Private", "Public"), array(0, 1), $space["public"]);
 
         $modelUser = new CoreUser();
         $users = $modelUser->getActiveUsers("name");
@@ -140,8 +139,6 @@ class CorespaceadminController extends CoresecureController {
 
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
-            Configuration::getLogger()->error("VISIB", ["data"=>$this->request->getParameter("visibility")]);
-            $modelSpace->setVisibility($id, $this->request->getParameter("visibility"));
             
             // upload image
             $target_dir = "data/core/menu/";

@@ -79,13 +79,20 @@ class CoretilesController extends CorecookiesecureController {
 
         $modelCoreConfig = new CoreConfig();
 
+        $lang = $this->getLanguage();
+        $userSpaces = $this->getUserSpaces();
+
 
         if ($id == 0) {
             $starModel = new CoreStar();
             $spaceModel = new CoreSpace();
             
             $spaces = [];
+            $logged = false;
             if(isset($_SESSION["id_user"])) {
+                if($_SESSION["id_user"] > 0) {
+                    $logged = true;
+                }
                 $starSpaces = $starModel->stars($_SESSION["id_user"]);
                 foreach($starSpaces as $starSpace) {
                     $spaces[] = $spaceModel->getSpace($starSpace["id_space"]);
@@ -111,6 +118,16 @@ class CoretilesController extends CorecookiesecureController {
             $allSpaces = $spaceModel->getSpaces('id');
             $spaceMap = [];
             foreach($allSpaces as $space) {
+                if ($logged && !in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
+                    if (!in_array($space["id"], $userSpaces['userPendingSpaceIds'])) {
+                        $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
+                        if(!$isMemberOfSpace) {
+                            $space['join'] = CoreTranslator::RequestJoin($isMemberOfSpace, $lang);
+                        }
+                    } else {
+                        $space['join_requested'] = CoreTranslator::JoinRequested($lang);
+                    }
+                }
                 $spaceMap[$space["id"]] = $space; // name, description
             }
             $catalogModel = new CaEntry();
@@ -148,9 +165,6 @@ class CoretilesController extends CorecookiesecureController {
             $items = $modelMainMenuItem->getSpacesFromSubMenu($id);
             $title = $modelSubMenu->getName($id);
         }
-        
-        $lang = $this->getLanguage();
-        $userSpaces = $this->getUserSpaces();
 
         $starModel = new CoreStar();
         $starList = [];

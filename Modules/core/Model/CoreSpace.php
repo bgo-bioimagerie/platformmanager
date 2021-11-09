@@ -49,16 +49,13 @@ class CoreSpace extends Model {
         `image` varchar(255) NOT NULL DEFAULT '',
         `shortname` varchar(30) NOT NULL DEFAULT '',
         `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
-        `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
-        `public` int(1) NOT NULL DEFAULT 0,
+        `support` varchar(100) NOT NULL DEFAULT ''  /* support email contact for space */
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
         $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
-
-        $this->addColumn('core_spaces', 'public', "int(1)", 0);
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
@@ -345,6 +342,9 @@ class CoreSpace extends Model {
                 return 1;
             } else {
                 $userRole = $this->getUserSpaceRole($id_space, $id_user);
+                if($userRole == -1) {
+                    $userRole = CoreSpace::$VISITOR;
+                }
                 if ($userRole >= $menuRole) {
                     return 1;
                 }
@@ -400,11 +400,6 @@ class CoreSpace extends Model {
     public function setDescription($id, $description){
         $sql = "UPDATE core_spaces SET description=? WHERE id=?";
         $this->runRequest($sql, array($description, $id));
-    }
-
-    public function setVisibility($id, $isPublic) {
-        $sql = "UPDATE core_spaces SET public=? WHERE id=?";
-        $this->runRequest($sql, array($isPublic, $id)); 
     }
 
     public function setShortname($id, $shortname){

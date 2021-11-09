@@ -96,7 +96,7 @@ if (!$headless) {
                             <p style="color:#a1a1a1; font-size:12px;">
                                 <?php echo $item["description"] ?>
                             </p>
-                            <div style="position: absolute; bottom: 0px"><small>
+                            <div ><small>
                             <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
                             </small></div>
 
