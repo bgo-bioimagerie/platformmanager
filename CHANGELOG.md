@@ -6,6 +6,7 @@
 * [module:booking_settings] fix display edition
 * [stats] count number of tickets per status
 * [stats] add stat calentry_cancel on booking cancel
+* [mail] allow users to unsubscribe to notifications #382
 
 ## 2.1.7
 

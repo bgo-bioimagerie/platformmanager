@@ -32,6 +32,7 @@ require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
+require_once 'Modules/core/Model/CoreMail.php';
 
 
 define("DB_VERSION", 4);
@@ -791,6 +792,9 @@ class CoreInstall extends Model {
         $modelVirtual->createTable();
         $modelHistory = new CoreHistory();
         $modelHistory->createTable();
+
+        $modelMail = new CoreMail();
+        $modelMail->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);
