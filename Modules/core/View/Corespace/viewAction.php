@@ -7,7 +7,7 @@
 $headless = Configuration::get("headless");
 if (!$headless) {
     ?>
-    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <?php
 }
 ?>
@@ -83,6 +83,14 @@ if ($space['color'] == "") {
                         <?php
                     }
                     ?>
+                    <?php if($role > 0) { ?>
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="<?php echo "coremail/" . $space["id"] ?>">
+                                <span class="pm-tiles glyphicon glyphicon-bell" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class">Notifications</span>
+                            </a>
+                        </li>
+                    <?php } ?>
                     <ul/>
             </div>
         </div>
@@ -121,6 +129,12 @@ if ($space['color'] == "") {
                             <a href="<?php echo "corespacehistory/" . $space["id"] ?>">
                                 <span class="pm-tiles glyphicon glyphicon-th-list" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::History($lang) ?></span>
+                            </a>
+                        </li>
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="/grafana">
+                                <span class="pm-tiles glyphicon glyphicon-stats" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::GrafanaStats($lang) ?></span>
                             </a>
                         </li>
                     </ul>

@@ -27,9 +27,9 @@ class CaEntry extends Model {
         $sql2 = "SHOW COLUMNS FROM `ca_entries` LIKE 'image_url'";
         $pdo = $this->runRequest($sql2);
         $isColumn = $pdo->fetch();
-        if ($isColumn == false) {
+        if ($isColumn === false) {
             $sql = "ALTER TABLE `ca_entries` ADD `image_url` varchar(300) NOT NULL";
-            $pdo = $this->runRequest($sql);
+            $this->runRequest($sql);
         }
         
         $this->addColumn("ca_entries", "id_space", "int(11)", 0);

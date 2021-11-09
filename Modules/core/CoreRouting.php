@@ -14,6 +14,7 @@ class CoreRouting extends Routing{
         $router->map('GET', '/coreabout', 'core/coreabout/index', 'core_about');
         $router->map('GET', '/coretiles/[i:level]/[i:id]/star/[i:id_space]', 'core/coretiles/corestar', 'core_star');
         $router->map('GET', '/coretiles/[i:level]/[i:id]/unstar/[i:id_space]', 'core/coretiles/coreunstar', 'core_unstar');
+        $router->map('GET|POST', '/coremail/[i:id_space]', 'core/coremail/index', 'core_mail');
     }
     
     public function listRoutes(){

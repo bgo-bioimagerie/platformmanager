@@ -33,6 +33,7 @@ require_once 'Modules/core/Model/CoreStar.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
+require_once 'Modules/core/Model/CoreMail.php';
 
 
 define("DB_VERSION", 4);
@@ -457,8 +458,8 @@ class CoreDB extends Model {
 
         if(Statistics::enabled()) {
             Configuration::getLogger()->debug("[stats] import calentry stats");
-            $statHandler = new EventHandler();
-            $statHandler->calentryImport();
+            $eventHandler = new EventHandler();
+            $eventHandler->calentryImport();
             Configuration::getLogger()->debug('[stats] import calentry stats, done!');
 
             Configuration::getLogger()->debug("[stats] import invoice stats");
@@ -575,6 +576,47 @@ class CoreDB extends Model {
         $bkqte = new BkCalQuantities();
         $bkqte->addColumn("bk_calquantities", "is_invoicing_unit", "int(1)", 0);
         Configuration::getLogger()->debug("[booking] add is_invoicing_unit done!");
+    }
+
+    public function upgrade_v3_v4() {
+        if(Statistics::enabled()) {
+            $eventHandler = new EventHandler();
+            $g = new Grafana();
+            Configuration::getLogger()->debug('[grafana] create orgs');
+            // Create org for existing spaces
+            $cp = new CoreSpace();
+            $spaces = $cp->getSpaces('id');
+            foreach ($spaces as $space) {
+                $g->createOrg($space['shortname']);
+            }
+            Configuration::getLogger()->debug('[grafana] create orgs, done!');
+
+
+            // import managers
+            Configuration::getLogger()->debug('[grafana] import managers to grafana');
+            $s = new CoreSpace();
+            $spaces = $s->getSpaces('id');
+            foreach($spaces as $space) {
+                $csu = new CoreSpaceUser();
+                $managers = $csu->managersOrAdmin($space['id']);
+                $g = new Grafana();
+                foreach($managers as $manager) {
+                    $u = new CoreUser();
+                    $user = $u->getInfo($manager['id_user']);
+                    Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
+                    $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                }
+                $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
+            }
+            Configuration::getLogger()->debug('[grafana] import managers to grafana, done!');
+
+            if(Statistics::enabled()) {
+                Configuration::getLogger()->debug('[stats] import clients');
+                $eventHandler = new EventHandler();
+                $eventHandler->customerImport();
+                Configuration::getLogger()->debug('[stats] import clients, done!');
+            }
+        }
     }
 
 
@@ -785,6 +827,22 @@ class CoreInstall extends Model {
         $modelStatistics = new BucketStatistics();
         $modelStatistics->createTable();
 
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user');
+            $statHandler = new Statistics();
+            $pfmOrg = Configuration::get('influxdb_org', 'pfm');
+            $statHandler->createDB($pfmOrg);
+            $eventHandler = new EventHandler();
+            $eventHandler->spaceCount(null);
+            // create org
+            $g = new Grafana();
+            $g->createOrg($pfmOrg);
+            $u = new CoreUser();
+            $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
+            $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user, done!');
+        }
+
         $modelCoreFiles = new CoreFiles();
         $modelCoreFiles->createTable();
 
@@ -795,6 +853,8 @@ class CoreInstall extends Model {
 
         $modelStar = new CoreStar();
         $modelStar->createTable();
+        $modelMail = new CoreMail();
+        $modelMail->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

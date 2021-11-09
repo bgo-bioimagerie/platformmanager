@@ -364,7 +364,7 @@ class BkCalendarEntry extends Model {
      */
     public function isCalEntry($id_space, $id) {
         $sql = "select * from bk_calendar_entry where id=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id));
+        $req = $this->runRequest($sql, array($id, $id_space));
         return ($req->rowCount() == 1);
     }
 

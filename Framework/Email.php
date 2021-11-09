@@ -3,6 +3,9 @@
 require_once 'Framework/Model.php';
 require_once 'Modules/mailer/Model/MailerTranslator.php';
 require_once 'Modules/core/Model/CoreFiles.php';
+require_once 'Modules/core/Model/CoreMail.php';
+require_once 'Modules/core/Model/CoreUser.php';
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -25,7 +28,7 @@ class Email extends Model {
      * @param array  list of CoreFiles to attach to email
      * @param bool   set toAddress as Bcc:, defaults to true, else just set in To:
      */
-    public function sendEmail($from, $fromName, $toAddress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true ) {        
+    public function sendEmail($from, $fromName, $toAddress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true, $mailing=null) {        
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -39,14 +42,34 @@ class Email extends Model {
         // parse content
         $content = preg_replace("/\r\n|\r/", "<br />", $content);
         $content = trim($content);
-        $mail->Body = $content;
+        if($mailing) {
+            $mailingInfo = explode("@", $mailing);
+            $url = Configuration::get('PFM_PUBLIC_URL')."/coremail/$mailingInfo[1]";
+            $mail->Body = $content . "<br/><small>You are registered to the pfm $mailingInfo[0] mailing list. To unsubscribe: <a href=\"$url\">$url</a></small>";
+        } else {
+            $mail->Body = $content;
+        }
 
         if ($sentCopyToFrom){
             $mail->AddCC($from);
         }
 
+        // filter email if user unsubscribed
+        $cm = new CoreMail();
+        $cu = new CoreUser();
         if (is_array($toAddress)){
             foreach($toAddress as $address){
+                if($mailing) {
+                    $mailingInfo = explode("@", $mailing);
+                    $user = $cu->getUserByEmail($address);
+                    if(!$user) {
+                        Configuration::getLogger()->debug('[mail] user not found', ["mail" => $mailing, "user" => $address]);
+                    }
+                    if ($user && $cm->unsubscribed($user["id"], $mailingInfo[1], $mailingInfo[0])) {
+                        Configuration::getLogger()->debug('[mail] user unsubscribed', ["mail" => $mailing, "user" => $address]);
+                        continue;
+                    }
+                }
                 if($bcc) {            
                     $mail->addBCC($address);
                 } else {
@@ -101,10 +124,11 @@ class Email extends Model {
      * @param array $params
      *          required to fill sendEmail() parameters. Depends on why we want to notify space admins
      * @param string $lang
+     * @param string $mailing  module name for mailing lists (will check that user did not unsubscribed)
      * 
      * @return string result of call to function sendMail() telling if mail was sent or not
      */
-    public function sendEmailToSpaceMembers($params, $lang = "") {
+    public function sendEmailToSpaceMembers($params, $lang = "", $mailing=null) {
         $modelSpace = new CoreSpace();
         $spaceId = $params["id_space"];
         //$from = Configuration::get('smtp_from');
@@ -146,7 +170,8 @@ class Email extends Model {
             $toAddress,
             $subject,
             $params["content"],
-            $mailerSetCopyToFrom
+            $mailerSetCopyToFrom,
+            mailing: $mailing
         );
     }
 
