@@ -214,7 +214,7 @@ class EventHandler {
             }
         }
         $value = time() - $timestamp;
-        $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
     } 
@@ -235,7 +235,7 @@ class EventHandler {
                 $client = $is_client;
             }
         }
-        $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'user' => $user['login'], 'client' => $client['name']], 'time' => $timestamp];
+        $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
     }
@@ -309,8 +309,6 @@ class EventHandler {
         $resdb = $em->runRequest($sql);
         $i = 0;
         while($res = $resdb->fetch()) {
-            //echo "??".$res["date_generated"];
-            //$date_generated = date("Y-m-d", $res["date_generated"]);
             $dt = DateTime::createFromFormat("Y-m-d H:i:s", $res["date_generated"]." 00:00:00");
             $timestamp = $dt->getTimestamp() + $i;
             $i++;
