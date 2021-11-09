@@ -9,6 +9,7 @@ require_once 'Framework/Email.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
@@ -118,11 +119,16 @@ class CorespaceaccessController extends CoresecureController {
         }
 
         // get user list
+        
         $usersArray = array();
         $isActive = ($active === "active") ? 1 : 0;
         $modelSpaceUser = new CoreSpaceUser();
+        $modelUsersInfo = new UsersInfo();
         $users = $modelSpaceUser->getUsersOfSpaceByLetter($id_space, $letter, $isActive);
         foreach ($users as $user) {
+            $userSupInfos = $modelUsersInfo->get($user['id']);
+            $user['unit'] = $userSupInfos['unit'] ?? '';
+            $user['organization'] = $userSupInfos['organization'] ?? '';
             $user["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
             $user["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
             array_push($usersArray, $user);
@@ -152,6 +158,8 @@ class CorespaceaccessController extends CoresecureController {
             "firstname" => CoreTranslator::Firstname($lang),
             "login" => CoreTranslator::Login($lang),
             "email" => CoreTranslator::Email($lang),
+            "unit" => CoreTranslator::Unit($lang),
+            "organization" => CoreTranslator::Organization($lang),
             "phone" => CoreTranslator::Phone($lang),
             // "spaces" => CoreTranslator::Spaces($lang),
             "date_convention" => CoreTranslator::Convention($lang),
@@ -351,14 +359,18 @@ class CorespaceaccessController extends CoresecureController {
 
         $modelSpacePending = new CorePendingAccount();
         $modelUser = new CoreUser();
+        $modelUserInfos = new UsersInfo();
 
         $pendingUsers = [];
         $data = $modelSpacePending->getPendingForSpace($id_space);
         for ($i = 0; $i < count($data); $i++) {
             $pendingUsers[] = $data[$i];
             $userInfos = $modelUser->getInfo($data[$i]['id_user']);
+            $userSupInfos = $modelUserInfos->get($data[$i]['id_user']);
             $data[$i]['fullname'] = $userInfos['name'] . " " . $userInfos['firstname'];
             $data[$i]['email'] = $userInfos['email'];
+            $data[$i]['unit'] = $userSupInfos['unit'] ?? '';
+            $data[$i]['organization'] = $userSupInfos['organization'] ?? '';
             $data[$i]["date_created"] = $userInfos['date_created'];
         }
 
@@ -370,6 +382,8 @@ class CorespaceaccessController extends CoresecureController {
         $headers = array(
             'fullname' => CoreTranslator::Name($lang),
             'email' => CoreTranslator::Email($lang),
+            'unit' => CoreTranslator::Unit($lang),
+            'organization' => CoreTranslator::Organization($lang),
             'date_created' => CoreTranslator::DateCreated($lang)
         );
         $tableHtml = $table->view($data, $headers);

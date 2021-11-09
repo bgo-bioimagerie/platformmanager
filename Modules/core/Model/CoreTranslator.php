@@ -267,9 +267,9 @@ class CoreTranslator {
 
     public static function Organization($lang) {
         if ($lang == "fr") {
-            return "Organisation";
+            return "Organisation/entreprise";
         }
-        return "Organization";
+        return "Organization/Company";
     }
 
     public static function Responsible($lang) {
