@@ -76,7 +76,7 @@ if (!$headless) {
                         <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
                             <!-- IMAGE -->
                             <a href="<?php echo "corespace/" . $item["id"] ?>">
-                            <?php if(isset($icon)) {?><img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                            <?php if(isset($item["image"])) {?><img onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
                             </a>
                             <p>
                             </p>
@@ -85,10 +85,11 @@ if (!$headless) {
                                 <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
                                 <?php if(isset($_SESSION["login"])) { ?>
                                     <?php if(isset($star[$item["id"]])) { ?>
-                                        <a href="<?php echo "coretiles/1/".$submenu."/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
+                                        <a aria-label="remove from favorites" href="<?php echo "coretiles/1/".$submenu."/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
                                     <?php } else { ?>
-                                        <a href="<?php echo "coretiles/1/".$submenu."/star/".$item["id"] ?>"><span class="glyphicon glyphicon-star-empty"></span></a>
+                                        <a aria-label="add to favorites" href="<?php echo "coretiles/1/".$submenu."/star/".$item["id"] ?>"><span class="glyphicon glyphicon-star-empty"></span></a>
                                     <?php } ?>
+                                    <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
                                 <?php } ?>
                             </p>
 

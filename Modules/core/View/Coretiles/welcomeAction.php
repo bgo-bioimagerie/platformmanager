@@ -45,7 +45,7 @@ if (!$headless) {
                     </a>
                     <p></p>
                     <p style="color:#018181; ">
-                        <a :href="`corespace/${space.id}`">{{space.name}}</a>
+                        <a :href="`corespace/${space.id}`">{{space.name}}  <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="glyphicon glyphicon-lock"></span></a>
                     </p>
                     <p style="color:#a1a1a1; font-size:12px;">{{space.description}}</p>
                     <div>
@@ -71,14 +71,15 @@ if (!$headless) {
 
             <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
                 <a href="<?php echo "corespace/" . $item["id"] ?>">
-                <?php if(isset($icon)) {?><img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                <?php if(isset($icon)) {?><img aria-label="space logo" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
                 </a>
                 <p></p>
                 <p style="color:#018181; ">
                     <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
                     <?php if(isset($_SESSION["login"])) { ?>
-                            <a href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
+                            <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="glyphicon glyphicon-star"></span></a>
                     <?php } ?>
+                    <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
                 </p>
                 <p style="color:#a1a1a1; font-size:12px;">
                     <?php echo $item["description"] ?>
