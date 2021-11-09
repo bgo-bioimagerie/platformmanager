@@ -4,6 +4,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Processor\TagProcessor;
 use Monolog\Formatter\LineFormatter;
 
+require_once 'Framework/Errors.php';
+
 /**
  * Class that manage the configuration parameters
  * 
@@ -104,7 +106,7 @@ class Configuration {
             try {
                 self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
             } catch(Exception $e) {
-                throw PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+                throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
             }
         }
 
@@ -166,10 +168,14 @@ class Configuration {
             self::$parameters['debug_influxdb'] = boolval(getenv('DEBUG_INFLUXDB'));
         }
         if(!isset(self::$parameters['smtp_from'])) {
-            self::$parameters['smtp_from'] = 'donotreply@pfm.org';
+            self::$parameters['smtp_from'] = 'pfm+donotreply@pfm.org';
         }
         if(getenv('MAIL_FROM')) {
+            self::getLogger()->info('MAIL_FROM is deprecated, use SMTP_FROM');
             self::$parameters['smtp_from'] = getenv('MAIL_FROM');
+        }
+        if(getenv('SMTP_FROM')) {
+            self::$parameters['smtp_from'] = getenv('SMTP_FROM');
         }
         if(getenv('PFM_ADMIN_USER')) {
             self::$parameters['admin_user'] = getenv('PFM_ADMIN_USER');
