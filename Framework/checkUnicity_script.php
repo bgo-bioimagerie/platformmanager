@@ -11,12 +11,12 @@ form = document.getElementById("editForm")
     || document.getElementById("createuseraccountform");
     
 saveBtn = document.getElementById("editFormsubmit");
-inputs = form.getElementsByTagName("input");
+inputs = form ? form.getElementsByTagName("input") : [];
 isPwd = [...inputs].filter(input => input.id === "pwd").length > 0;
 pwdInput = "";
 pwdConfirmInput = "";
 // check elements when submitting form
-form.setAttribute("onsubmit", "return validateUserForm(event)");
+form?.setAttribute("onsubmit", "return validateUserForm(event)");
 
 
 // prepare unique elements checking
