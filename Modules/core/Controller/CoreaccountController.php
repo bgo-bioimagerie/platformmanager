@@ -203,7 +203,8 @@ class CoreaccountController extends Controller {
         } else if ($type === "login") {
             $isUnique = !$modelUser->isLogin($value, $login);
         } else {
-            $isUnique = "wrong type";
+            Configuration::getLogger()->error("[coreaccount:isunique] Invalid type received", ["type" => $type]);
+            $isUnique = false;
         }
         $this->render(['data' => ['isUnique' => $isUnique]]);
     }
