@@ -50,10 +50,10 @@ class UseraccountController extends CoresecureController {
 
         $form = new Form($this->request, "usermyaccountedit");
         $form->setTitle(UsersTranslator::Informations($lang));
-        
+        $form->addHidden("id", $id_user);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true, $userCore["firstname"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $userCore["name"]);
-        $form->addEmail("email", CoreTranslator::Email($lang), true, $userCore["email"]);
+        $form->addEmail("email", CoreTranslator::Email($lang), true, $userCore["email"], true);
         $form->addText("organization", CoreTranslator::Organization($lang), false, $userInfo["organization"] ?? "");
         $form->addText("unit", CoreTranslator::Unit($lang), false, $userInfo["unit"] ?? "");
         $form->addText("phone", UsersTranslator::Phone($lang), false, $userInfo["phone"] ?? "");

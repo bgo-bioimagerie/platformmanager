@@ -10,6 +10,7 @@ class CoreRouting extends Routing{
         $router->map('GET', '/corespaceaccess/[i:id_space]/unimpersonate', 'core/corespaceaccess/unimpersonate', 'user_unimpersonate');
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
         $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
+        $router->map('GET|POST', '/coreaccountisunique', 'core/coreaccount/isunique', 'core_unique');
     }
     
     public function listRoutes(){
@@ -27,7 +28,6 @@ class CoreRouting extends Routing{
         // create account
         $this->addRoute("corecreateaccount", "corecreateaccount", "coreaccount", "index");
         $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");
-        $this->addRoute("coreaccountisunique", "coreaccountisunique", "coreaccount", "isunique", array("type", "value", "id_user"), array("", "", ""));
          
         // home
         $this->addRoute("corehome", "corehome", "corehome", "index");
@@ -35,7 +35,6 @@ class CoreRouting extends Routing{
         // tiles
         $this->addRoute("coretiles", "coretiles", "coretiles", "index", array("level", "id"), array("", ""));
         $this->addRoute("coretilesdoc", "coretilesdoc", "coretiles", "doc");
-        // multi-tenant feature: route for adding a user to space pending users
         $this->addRoute("coretilesselfjoinspace", "coretilesselfjoinspace", "coretiles", "selfjoinspace", array("id_space"), array(""));
         
         

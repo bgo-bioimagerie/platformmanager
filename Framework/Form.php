@@ -706,7 +706,7 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicity = $checkUnicityElem, $suggestLogin = $suggestLoginElem);
+                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicityElem, $suggestLoginElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -724,7 +724,7 @@ class Form {
                 $html .= $formHtml->color($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "email") {
-                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicity = $checkUnicityElem);
+                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicityElem);
             }
             if ($this->types[$i] == "number") {
                 $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -767,11 +767,11 @@ class Form {
             $html .= $formHtml->textAreaScript();
         }
 
-        if ($this->checkUnicity == true) {
+        if (in_array(true, $this->checkUnicity)) {
             $html .= $formHtml->checkUnicityScript();
         }
-
-        if ($this->suggestLogin) {
+        
+        if (in_array(true, $this->suggestLogin)) {
             $html .= $formHtml->suggestLoginScript();
         }
 

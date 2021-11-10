@@ -185,14 +185,18 @@ class CoreaccountController extends Controller {
         ));
     }
 
-    public function isuniqueAction($type, $value, $id_user) {
+    public function isuniqueAction() {
+        $params = $this->request->params();
+        $type = $params["type"];
+        $value = $params["value"];
+        $id_user = $params["user"] ?? 0;
         $modelUser = new CoreUser();
         $email = "";
         $login = "";
         if ($id_user && $id_user > 0) {
-          $user = $modelUser->getInfo($id_user);
-          $email = $user['email'];
-          $login = $user['login'];
+            $user = $modelUser->getInfo($id_user);
+            $email = $user['email'];
+            $login = $user['login'];
         }
         if ($type === "email") {
             $isUnique = !$modelUser->isEmail($value, $email);
@@ -203,5 +207,4 @@ class CoreaccountController extends Controller {
         }
         $this->render(['data' => ['isUnique' => $isUnique]]);
     }
-
 }
