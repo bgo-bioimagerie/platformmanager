@@ -91,7 +91,7 @@ class CoreusersController extends CoresecureController {
         }
         $form->addHidden("id", $user["id"]);
         $isLoginLocked = (!$id) ? false : true;
-        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked, checkUnicity: !$isLoginLocked);
+        $form->addText("login", CoreTranslator::Login($lang), !$isLoginLocked, $user["login"], readonly: $isLoginLocked, checkUnicity: !$isLoginLocked, suggestLogin: !$isLoginLocked);
         if (!$id) {
             $form->addPassword("pwd", CoreTranslator::Password($lang));
             $form->addPassword("pwdconfirm", CoreTranslator::Password($lang));

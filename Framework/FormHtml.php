@@ -146,7 +146,7 @@ class FormHtml {
      * @return string
      */
     // #105: add readonly
-    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false, $checkUnicity = false, $suggestLogin = false) {
+    static public function text($validated, $label, $name, $value, $enabled, $required = false, $labelWidth = 2, $inputWidth = 9, $readonly = false, $checkUnicity = false) {
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
