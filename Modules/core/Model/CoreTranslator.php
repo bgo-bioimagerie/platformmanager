@@ -1148,7 +1148,7 @@ class CoreTranslator {
         if ($lang == "fr") {
             return "Le format de l'adresse Email est incorrect";
         }
-        return "The format of the email address is not valid";
+        return "Email Address in invalid format";
     }
 
     public static function Maintenance_Mode($lang) {

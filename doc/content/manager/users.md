@@ -48,3 +48,34 @@ When activated, users are notified by email that they have now access to your sp
 If you go back to Active Users screen (and set the filter by letter to *All*), you can now see the user you just activated.
 
 ![user creation](../../create_user_9.png)
+
+## Promote a user to space administration
+
+There are two ways to set a user as space admin:
+
+1. By setting their role to *admin* in *Users module*
+2. By affecting user to space administration in *Space module*
+
+### Setting user role to admin
+
+Inside your space, go into *Users module* and click *Access* button for the user you want to set as space admin.
+
+![user creation](../../create_user_9.png)
+
+![admin access](../../give_admin_access_1.png)
+
+Then, under *Role*, select *Admin*.
+When validated (*Save* button), user will automatically rejoin Admin users list for this space.
+
+### Affecting user to space administration
+
+Inside your space, go into *Space module*.
+
+![admin access](../../give_admin_access_2.png)
+
+Then, under *Admin* selection, click *Add*.
+
+![admin access](../../give_admin_access_3.png)
+
+You can now select an admin for this space amongst space users.
+When validated(*Save* button), user will automatically set to *Admin* for this space.
