@@ -293,6 +293,7 @@ class UsersPatch extends Model {
         Configuration::getLogger()->info('[user][patch] changeRespIdsToClientIdsInBookingAndServices done');
     }
 
+    // @deprecated - can't work anyway
     protected function copyEcUsersToUsers() {
         Configuration::getLogger()->info('[user][patch] copy ecusers to users');
         $modelUserInfo = new UsersInfo();
@@ -300,9 +301,9 @@ class UsersPatch extends Model {
         $sql = "SELECT * FROM ec_users";
         $ecusers = $this->runRequest($sql)->fetchAll();
         foreach ($ecusers as $ecuser) {
-
+            $organization = "";
             $unit = $this->getEcUnitName($ecuser["id_unit"]);
-            $modelUserInfo->set($ecuser["id"], $ecuser["phone"], $unit);
+            $modelUserInfo->set($ecuser["id"], $ecuser["phone"], $unit, $organization);
         }
 
         Configuration::getLogger()->info('[user][patch] copy ecusers to users done');

@@ -8,7 +8,9 @@ if (document.getElementById("id")) {
 }
 
 form = document.getElementById("editForm")
-    || document.getElementById("createuseraccountform");
+    || document.getElementById("createuseraccountform")
+    || document.getElementById("createaccountform")
+    || document.getElementById("usermyaccountedit");
     
 saveBtn = document.getElementById("editFormsubmit");
 inputs = form.getElementsByTagName("input");
@@ -84,12 +86,14 @@ function validateUserForm(origin) {
         // check if passwords match
         pwdIdentical = isPwd ? validatePasswords() : true;
     }
+
     const headers = new Headers();
-        headers.append('Content-Type','application/json');
-        headers.append('Accept', 'application/json');
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
     const cfg = {
         headers: headers,
-        method: 'GET',
+        method: 'POST',
+        body: null
     };
     
     // for each element fetch unicity info then display or delete warnings
@@ -97,14 +101,18 @@ function validateUserForm(origin) {
         const elemHTML = document.getElementById(elem.id);
         const value = elemHTML.value;
         const type = elemHTML.id;
+        cfg.body = JSON.stringify({
+            type: type,
+            value: value,
+            user: this.userId
+        });
         let errors = elemHTML.parentElement.getElementsByClassName("errorMessage");
         // Do we still need errordISPLAYED ?
         let errorDisplayed = (errors.length > 0);
         let invalidEmail = (type === "email") && !validateEmail(value);
-        fetch(`coreusersisunique/` + type + "/" + value + "/" + userId, cfg, true).
+        fetch(`coreaccountisunique`, cfg, true).
             then((response) => response.json()).
             then(data => {
-                console.log("data", data);
                 if (!data.isUnique || invalidEmail) {
                     // Data is not valid
                     unicity = false;
@@ -120,7 +128,6 @@ function validateUserForm(origin) {
                     if (submissionRequest) {
                         elemHTML.focus();
                     }
-                    console.error("not submitting")
                 } else {
                     if (errorDisplayed) {
                         hideErrors(errors, elemHTML)
@@ -129,10 +136,7 @@ function validateUserForm(origin) {
                         /* submission has been requested
                         AND all unique inputs have been tested and have returned true
                         AND, if password input, passwords match */
-                        console.error("submitting");
                         form.submit();
-                    } else {
-                        console.error("not submitting")
                     }
                 }
             });

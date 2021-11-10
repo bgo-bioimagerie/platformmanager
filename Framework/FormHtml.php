@@ -745,4 +745,12 @@ class FormHtml {
         return file_get_contents("Framework/checkUnicity_script.php");
     }
 
+    /**
+     * 
+     * @return type
+     */
+    static public function suggestLoginScript() {
+        return file_get_contents("Framework/suggestLogin_script.php");
+    }
+
 }

@@ -98,7 +98,21 @@ class CorePendingAccount extends Model {
     }
  
     public function getPendingForSpace($id_space){
-        $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND validated=0 AND validated_by=0";
+        // Left outer join on users_info because a core_user does not always have a line in users_infos
+        $sql =
+            "SELECT pending.*,
+                user.name,
+                user.firstname,
+                user.email,
+                user.date_created,
+                infos.unit,
+                infos.organization
+                FROM core_pending_accounts as pending
+                INNER JOIN core_users as user
+                ON user.id = pending.id_user
+                LEFT OUTER JOIN users_info as infos
+                ON infos.id_core = pending.id_user
+                WHERE pending.id_space=? AND pending.validated=0 AND pending.validated_by=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 

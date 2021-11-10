@@ -42,20 +42,20 @@ class UseraccountController extends CoresecureController {
         
 
         // Query to the database
-        $modelUser = new UsersInfo();
-        $userInfo = $modelUser->get($id_user);
+        $modelUsersInfo = new UsersInfo();
+        $userInfo = $modelUsersInfo->get($id_user);
         
         $modelCoreUser = new CoreUser();
         $userCore = $modelCoreUser->getUser($id_user);
 
         $form = new Form($this->request, "usermyaccountedit");
         $form->setTitle(UsersTranslator::Informations($lang));
-        
+        $form->addHidden("id", $id_user);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true, $userCore["firstname"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $userCore["name"]);
-        $form->addEmail("email", CoreTranslator::Email($lang), true, $userCore["email"]);
-        
-        $form->addText("unit", UsersTranslator::Unit($lang), false, $userInfo["unit"] ?? "");
+        $form->addEmail("email", CoreTranslator::Email($lang), true, $userCore["email"], true);
+        $form->addText("organization", CoreTranslator::Organization($lang), false, $userInfo["organization"] ?? "");
+        $form->addText("unit", CoreTranslator::Unit($lang), false, $userInfo["unit"] ?? "");
         $form->addText("phone", UsersTranslator::Phone($lang), false, $userInfo["phone"] ?? "");
         $form->addUpload("avatar", UsersTranslator::Avatar($lang), $userInfo["avatar"] ?? "");
         $form->addTextArea("bio", UsersTranslator::Bio($lang), false, $userInfo["bio"] ?? "");
@@ -111,8 +111,8 @@ class UseraccountController extends CoresecureController {
                     $form->getParameter("email")
             );
             $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
-            $modelUser->set($id_user, $form->getParameter("phone"), $form->getParameter("unit"));
-            $modelUser->setBio($id_user, $form->getParameter("bio"));
+            $modelUsersInfo->set($id_user, $form->getParameter("phone"), $form->getParameter("unit"), $form->getParameter("organization"));
+            $modelUsersInfo->setBio($id_user, $form->getParameter("bio"));
             
             // upload avatar
             $target_dir = "data/users/avatar/";
@@ -122,7 +122,7 @@ class UseraccountController extends CoresecureController {
                 $url = $id_user . "." . $ext;
                 FileUpload::uploadFile($target_dir, "avatar", $url);
 
-                $modelUser->setAvatar($id_user, $target_dir . $url);
+                $modelUsersInfo->setAvatar($id_user, $target_dir . $url);
             }
             
             $_SESSION["message"] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
