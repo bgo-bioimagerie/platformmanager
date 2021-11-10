@@ -9,6 +9,16 @@
 * [stats] add stat calentry_cancel on booking cancel
 * [mail] allow users to unsubscribe to notifications #382
 
+## 2.1.8
+
+* [users] change checkunicity routes
+* [coreInstall] add repair371() function
+* [module:users] add *Organization* and *Unit* to users listing arrays
+* [self_registration] add *Organization* and *Unit* inputs
+* [self_registration] add login suggestion
+* [self_registration] add unicity checks to login and email inputs
+* [self_registration] fix email sent to space admins
+
 ## 2.1.7
 
 * [module:booking] fix supplementaries deletion

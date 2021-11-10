@@ -30,6 +30,7 @@ require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
+require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/core/Model/CoreMail.php';
@@ -113,6 +114,11 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('set ac_anticorps counters, done!');
     }
 
+    public function repair371() {
+        Configuration::getLogger()->info("Run repair script 371 (PR #371)");
+        $this->addColumn("users_info", "organization", "varchar(255)", "");
+        Configuration::getLogger()->info("Run repair script 371 (PR #371)");
+    }
 
     public function upgrade_v0_v1() {
 
@@ -575,6 +581,11 @@ class CoreDB extends Model {
         $bkqte = new BkCalQuantities();
         $bkqte->addColumn("bk_calquantities", "is_invoicing_unit", "int(1)", 0);
         Configuration::getLogger()->debug("[booking] add is_invoicing_unit done!");
+
+        Configuration::getLogger()->debug("[users_info] add organization");
+        $usersInfo = new UsersInfo();
+        $usersInfo->addColumn("users_info", "organization", "varchar(255)", "");
+        Configuration::getLogger()->debug("[users_info] add organization done!");
     }
 
     public function upgrade_v3_v4() {
@@ -617,6 +628,7 @@ class CoreDB extends Model {
             }
         }
     }
+
 
 
     /**

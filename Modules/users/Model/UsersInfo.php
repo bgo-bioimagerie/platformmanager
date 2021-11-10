@@ -10,6 +10,7 @@ class UsersInfo extends Model {
         $this->setColumnsInfo("id_core", "int(11)", 0);
         $this->setColumnsInfo("phone", "varchar(100)", "");
         $this->setColumnsInfo("unit", "varchar(255)", "");
+        $this->setColumnsInfo("organization", "varchar(255)", "");
         $this->setColumnsInfo("avatar", "varchar(255)", "");
         $this->setColumnsInfo("bio", "text", "");
         $this->primaryKey = "id";
@@ -20,13 +21,13 @@ class UsersInfo extends Model {
         return $this->runRequest($sql, array($id_core))->fetch();
     }
 
-    public function set($id_core, $phone, $unit) {
+    public function set($id_core, $phone, $unit, $organization) {
         if (!$this->exists($id_core)) {
-            $sql = 'INSERT INTO users_info (id_core, phone, unit) VALUES (?,?,?)';
-            $this->runRequest($sql, array($id_core, $phone, $unit));
+            $sql = 'INSERT INTO users_info (id_core, phone, unit, organization) VALUES (?,?,?,?)';
+            $this->runRequest($sql, array($id_core, $phone, $unit, $organization));
         } else {
-            $sql = 'UPDATE users_info SET phone=?, unit=? WHERE id_core=?';
-            $this->runRequest($sql, array($phone, $unit, $id_core));
+            $sql = 'UPDATE users_info SET phone=?, unit=?, organization=? WHERE id_core=?';
+            $this->runRequest($sql, array($phone, $unit, $organization, $id_core));
         }
     }
     

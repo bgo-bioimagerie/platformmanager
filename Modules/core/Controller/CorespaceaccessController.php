@@ -118,6 +118,7 @@ class CorespaceaccessController extends CoresecureController {
         }
 
         // get user list
+        
         $usersArray = array();
         $isActive = ($active === "active") ? 1 : 0;
         $modelSpaceUser = new CoreSpaceUser();
@@ -152,6 +153,8 @@ class CorespaceaccessController extends CoresecureController {
             "firstname" => CoreTranslator::Firstname($lang),
             "login" => CoreTranslator::Login($lang),
             "email" => CoreTranslator::Email($lang),
+            "unit" => CoreTranslator::Unit($lang),
+            "organization" => CoreTranslator::Organization($lang),
             "phone" => CoreTranslator::Phone($lang),
             // "spaces" => CoreTranslator::Spaces($lang),
             "date_convention" => CoreTranslator::Convention($lang),
@@ -363,16 +366,11 @@ class CorespaceaccessController extends CoresecureController {
         $space = $modelSpace->getSpace($id_space);
 
         $modelSpacePending = new CorePendingAccount();
-        $modelUser = new CoreUser();
-
         $pendingUsers = [];
         $data = $modelSpacePending->getPendingForSpace($id_space);
         for ($i = 0; $i < count($data); $i++) {
             $pendingUsers[] = $data[$i];
-            $userInfos = $modelUser->getInfo($data[$i]['id_user']);
-            $data[$i]['fullname'] = $userInfos['name'] . " " . $userInfos['firstname'];
-            $data[$i]['email'] = $userInfos['email'];
-            $data[$i]["date_created"] = $userInfos['date_created'];
+            $data[$i]['fullname'] = $data[$i]['name'] . " " . $data[$i]['firstname'];
         }
 
         $table = new TableView();
@@ -383,6 +381,8 @@ class CorespaceaccessController extends CoresecureController {
         $headers = array(
             'fullname' => CoreTranslator::Name($lang),
             'email' => CoreTranslator::Email($lang),
+            'unit' => CoreTranslator::Unit($lang),
+            'organization' => CoreTranslator::Organization($lang),
             'date_created' => CoreTranslator::DateCreated($lang)
         );
         $tableHtml = $table->view($data, $headers);

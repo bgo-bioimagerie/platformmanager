@@ -103,7 +103,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             }
         }
 
-        // check if there is a session    
+        // check if there is a session
         if ($this->request->getSession()->isAttribut("id_user")) {
             $logged_in_space = 0;
             if($this->request->getSession()->isAttribut("logged_id_space")) {
