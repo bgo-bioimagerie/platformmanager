@@ -3,6 +3,8 @@
 ## 2.1.8
 
 * [users] change checkunicity routes
+* [coreInstall] add repair371() function
+* [module:users] add *Organization* and *Unit* to users listing arrays
 * [self_registration] add *Organization* and *Unit* inputs
 * [self_registration] add login suggestion
 * [self_registration] add unicity checks to login and email inputs
