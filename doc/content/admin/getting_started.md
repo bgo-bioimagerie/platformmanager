@@ -73,8 +73,11 @@ Creating a *user* creates an *account*.
 
 There are two ways to create a new user:
 
-1. As a superadmin
-2. As a space admin
+- As a space admin
+- As a superadmin
+
+### Create a user as a space admin
+See [Users management](../../manager/users/#creat-a-user-as-a-space-admin)
 
 ### Create a user as a superadmin
 
@@ -95,34 +98,6 @@ A user can be member of multiple spaces.
 ![user creation](../../create_user_4.png)
 
 ## Set a space admin
-
-There are two ways to set a user as space admin:
-
-1. By setting their role to *admin* in *Users module*
-2. By affecting user to space administration in *Space module*
-
-### Setting user role to admin
-
-Inside your space, go into *Users module* and click *Access* button for the user you want to set as space admin.
-
-![user creation](../../create_user_9.png)
-
-![admin access](../../give_admin_access_1.png)
-
-Then, under *Role*, select *Admin*.
-When validated (*Save* button), user will automatically rejoin Admin users list for this space.
-
-### Affecting user to space administration
-
-Inside your space, go into *Space module*.
-
-![admin access](../../give_admin_access_2.png)
-
-Then, under *Admin* selection, click *Add*.
-
-![admin access](../../give_admin_access_3.png)
-
-You can now select an admin for this space amongst space users.
-When validated(*Save* button), user will automatically set to *Admin* for this space.
+See [Promote a user to space administration](../../manager/users/#promote-a-user-to-space-administration)
 
 Now user can access space and configure it! :-)
