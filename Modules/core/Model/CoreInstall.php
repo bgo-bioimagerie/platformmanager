@@ -30,6 +30,7 @@ require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
+require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 
@@ -101,8 +102,7 @@ class CoreDB extends Model {
 
     public function repair371() {
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
-        $usersInfo = new UsersInfo();
-        $usersInfo->addColumn("users_info", "organization", "varchar(255)", "");
+        $this->addColumn("users_info", "organization", "varchar(255)", "");
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
     }
 
