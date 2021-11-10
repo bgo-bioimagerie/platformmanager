@@ -163,7 +163,7 @@ class CoreusersController extends CoresecureController {
                     ? CoreTranslator::AccountHasBeenCreated($lang)
                     : CoreTranslator::AccountHasBeenModified($lang);
                 $_SESSION["flashClass"] = "success";
-                $id_user = $this->editQuery($form, $modelUser, $modelUsersInfo, $lang);
+                $id_user = $this->editQuery($form, $lang);
                 $user = $modelUser->getInfo($id_user);
                 $this->redirect("coreusers", [], ['user' => $user]);
                 return;
@@ -171,7 +171,7 @@ class CoreusersController extends CoresecureController {
         }
         
         if ($id > 0 && $formPwd->check()) {
-            $this->editPwdQuery($form, $modelUser, $lang);
+            $this->editPwdQuery($form, $lang);
             $this->redirect("coreusers");
             return;
         }
@@ -184,7 +184,8 @@ class CoreusersController extends CoresecureController {
         $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
     }
 
-    protected function editPwdQuery($formPwd, $modelUser, $lang) {
+    protected function editPwdQuery($formPwd, $lang) {
+        $modelUser = new CoreUser();
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $pwd = $formPwd->getParameter("pwd");
         $pwdconfirm = $formPwd->getParameter("pwdconfirm");
@@ -198,7 +199,9 @@ class CoreusersController extends CoresecureController {
         }
     }
 
-    protected function editQuery($form, $modelUser, $modelUsersInfo, $lang) {
+    protected function editQuery($form, $lang) {
+        $modelUser = new CoreUser();
+        $modelUsersInfo = new UsersInfo();
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $id = $form->getParameter("id");
         if (!$id) {
