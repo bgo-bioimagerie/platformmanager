@@ -43,10 +43,11 @@ done
 echo "Command args: tag=${CMDTAG}, branch=${CMDBRANCH}, dry=${DRY}"
 if [ -z $CMDTAG ]; then
   echo "No tag specified, guess it"
-  if [ -z "$GITHUB_REF"]; then
+  if [ -z "$GITHUB_REF" ]; then
     CURRENT=`git describe --tags --abbrev=0`
     TAGS+=("${CURRENT}")
   else
+    echo "Use GITHUB_REF ${GITHUB_REF}"
     GHTAG=$GITHUB_REF
     if [[ "${GHTAG}" =~ refs/tags/(.*) ]]; then
       CURRENT="${BASH_REMATCH[1]}"
