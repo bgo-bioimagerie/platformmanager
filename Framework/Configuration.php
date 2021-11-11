@@ -171,7 +171,7 @@ class Configuration {
             self::$parameters['smtp_from'] = 'pfm+donotreply@pfm.org';
         }
         if(getenv('MAIL_FROM')) {
-            self::getLogger()->info('MAIL_FROM is deprecated, use SMTP_FROM');
+            self::getLogger()->debug('MAIL_FROM is deprecated, use SMTP_FROM');
             self::$parameters['smtp_from'] = getenv('MAIL_FROM');
         }
         if(getenv('SMTP_FROM')) {
