@@ -8,6 +8,7 @@
 * [stats] count number of tickets per status
 * [stats] add stat calentry_cancel on booking cancel
 * [mail] allow users to unsubscribe to notifications #382
+* [helpdesk] ignore delivery status notifications (do not reply)
 
 ## 2.1.8
 
