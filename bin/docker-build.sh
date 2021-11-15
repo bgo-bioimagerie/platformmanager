@@ -114,7 +114,7 @@ done
 for i in "${TAGS[@]}"
 do
   echo "Push image ${REPO}/${NAMESPACE}/${IMAGE}:${i}"
-  if [ "$DRY" == "YES" ]; then
+  if [ "$DRY" == "NO" ]; then
     echo "  docker push ${REPO}/${NAMESPACE}/${IMAGE}:${i}"
   fi
 done
