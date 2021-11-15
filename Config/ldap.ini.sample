@@ -1,6 +1,16 @@
 ; Configuration for ldap
-ldapAdress = "ldapglobal.univ-rennes1.fr"
-ldapPort = "389"
-ldapId = ""
-ldapPwd = ""
-ldapBaseDN = "ou=people,dc=univ-rennes1,dc=fr"
+; deprecated
+;ldapAdress = "ldapglobal.univ-rennes1.fr"
+;ldapPort = "389"
+;ldapId = ""
+;ldapPwd = ""
+;ldapBaseDN = "ou=people,dc=univ-rennes1,dc=fr"
+
+ldap_host = ""
+ldap_port = 389
+ldap_user = ""
+ldap_password = ""
+ldap_base_dn = "dc=pfm,dc=org"
+ldap_search_dn = "ou=people,dc=pfm,dc=org"
+; use TLS for ldap connection: 0 | 1
+ldap_tls = 0
