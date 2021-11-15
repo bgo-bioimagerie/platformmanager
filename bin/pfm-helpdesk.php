@@ -10,7 +10,10 @@ require_once 'Framework/Events.php';
 
 use League\HTMLToMarkdown\HtmlConverter;
 
-function ignore($subject) {
+function ignore($from, $subject) {
+    if ($from->mailbox == "MAILER-DAEMON") {
+        return true;
+    }
     if (str_contains($subject, 'Delivery Status Notification')) {
         return true;
     }
@@ -229,7 +232,8 @@ while(true) {
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
                 if($newTicket['is_new']) {
-                    if (ignore($mail->subject)) {
+                    if(ignore($from[0], $mail->subject)) {
+                        Configuration::getLogger()->debug('[helpdesk] auto reply email, skip response');
                         continue;
                     }
                     Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
