@@ -627,6 +627,11 @@ class CoreDB extends Model {
                 Configuration::getLogger()->debug('[stats] import clients, done!');
             }
         }
+
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN id_client INT(11) NOT NULL";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
     }
 
 

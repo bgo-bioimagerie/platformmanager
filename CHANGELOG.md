@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [module:quote] expose client infos to invoice templates
 * [Users] Improve users creation forms controls
 * [resources] set default booking authorizations at resource creation
 * [module:booking_settings] fix display edition

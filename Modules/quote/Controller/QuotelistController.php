@@ -120,6 +120,7 @@ class QuotelistController extends CoresecureController {
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         $form->addSelect('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
+        // TODO: choose client after user selected (as in booking)
 
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled');
@@ -132,11 +133,15 @@ class QuotelistController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-
-            //echo "date open = " . $form->getParameter('date_open') . "<br/>";
-            //return;
-            $id = $modelQuote->set($id, $id_space, "", "", "", $form->getParameter('id_user'),
-                    $this->request->getParameterNoException('date_open')
+            $id = $modelQuote->set(
+                $id,
+                $id_space,
+                "",
+                "",
+                "",
+                $form->getParameter('id_user'),
+                $form->getParameter('id_client'),
+                $this->request->getParameterNoException('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $this->redirect("quoteuser/" . $id_space . "/" . $id);
@@ -239,7 +244,9 @@ class QuotelistController extends CoresecureController {
         if ($form->check()) {
             $id = $modelQuote->set($id, $id_space, $form->getParameter('recipient'),
                     $form->getParameter('address'),
-                    $form->getParameter('id_belonging'), 0,
+                    $form->getParameter('id_belonging'),
+                    0,
+                    $form->getParameter('id_client'),
                     $form->getParameter('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
@@ -283,6 +290,10 @@ class QuotelistController extends CoresecureController {
         // get the list of items
         $modelQuote = new Quote();
         $info = $modelQuote->getAllInfo($id_space, $id);
+        $quote = $modelQuote->get($id_space, $id);
+        $modelClient = new ClClient();
+        $clientInfosTest = $modelClient->get($id_space, $quote["id_responsible"]);
+        Configuration::getLogger()->debug("[TEST]", ["clientInfosTest" => $clientInfosTest]);
 
         $modelQuoteitems = new QuoteItem();
         $items = $modelQuoteitems->getAll($id_space, $id);
@@ -311,9 +322,15 @@ class QuotelistController extends CoresecureController {
         $lang = $this->getLanguage();
         $table = $this->makePDFTable($table, $lang);
 
+        Configuration::getLogger()->debug("[TEST]", ["infos" => $info]);
+
         // generate pdf
         $adress = nl2br($info["address"]);
         $resp = $info["recipient"];
+        $clientInfos["email"] = "";
+        if (is_array($info["client"]) && !empty($info["client"])) {
+            $clientInfos = $info["client"][0];
+        }
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
         $isquote = true;
