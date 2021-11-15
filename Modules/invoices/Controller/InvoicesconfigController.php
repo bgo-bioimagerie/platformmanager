@@ -86,7 +86,13 @@ class InvoicesconfigController extends CoresecureController {
 
         $formDownload = new Form($this->request, "formDownloadTemplate");
         $formDownload->setTitle(InvoicesTranslator::currentTemplate($lang));
-        $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'data/invoices/' . $id_space . '/template.php', true);
+        if(file_exists('data/invoices/' . $id_space . '/template.twig')) {
+            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'data/invoices/' . $id_space . '/template.twig', true);
+        } else if (file_exists('data/invoices/' . $id_space . '/template.php')) {
+            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'data/invoices/' . $id_space . '/template.php', true);
+        } else {
+            $formDownload->addDownloadButton("url", InvoicesTranslator::DownloadTemplate($lang), 'externals/pfm/templates/invoice_template.twig', true);
+        }
         if ($formDownload->check()) {
 
             $file = $this->request->getParameter('url');
@@ -111,7 +117,7 @@ class InvoicesconfigController extends CoresecureController {
             if (!file_exists('data/invoices/' . $id_space)) {
                 mkdir('data/invoices/' . $id_space, 0777, true);
             }
-            FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'template', 'template.php');
+            FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'template', 'template.twig');
 
             $_SESSION["message"] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang) ;
             $this->redirect('invoicepdftemplate/' . $id_space);
@@ -140,7 +146,7 @@ class InvoicesconfigController extends CoresecureController {
         $files = scandir('data/invoices/' . $id_space);
         $data = array();
         foreach ($files as $file) {
-            if (strpos($file, ".") > 0 && $file != "template.php") {
+            if (strpos($file, ".") > 0 && $file != "template.twig") {
                 $data[] = array('name' => $file, 'id' => str_replace('.', "__pm__", $file));
             }
         }

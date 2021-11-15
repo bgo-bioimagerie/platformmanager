@@ -31,26 +31,42 @@ abstract class InvoiceAbstractController extends CoresecureController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table, $total, $useTTC = true, $details = "", $clientInfos = null) {
-        $adress = nl2br($adress);
+    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null) {
+        $address = nl2br($address);
         $date = CoreTranslator::dateFromEn($date, 'fr');
         
         $modelInvoice = new InInvoice();
         $invoiceInfo = $modelInvoice->getByNumber($id_space, $number);
         
-        ob_start();
-        include('data/invoices/'.$id_space.'/template.php');
-        $content = ob_get_clean();
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && file_exists('data/invoices/'.$id_space.'/template.php')) {
+            // backwark, templates were in PHP and no twig template available use old template
+            ob_start();
+            include('data/invoices/'.$id_space.'/template.php');
+            $content = ob_get_clean();
+        } else {
+            $content = $this->twig->render('data/invoices/'.$id_space.'/template.twig', [
+                'id_space' => $id_space,
+                'number' => $number,
+                'date' => $date,
+                'unit' => $unit,
+                'resp' => $resp,
+                'address' => $address,
+                'adress' => $address,  // backward compat
+                'table' => $table,
+                'total' => $total,
+                'useTTC' => $useTTC,
+                'details' => $details,
+                'clientsInfos' => $clientInfos,
+                'invoiceInfo' => $invoiceInfo,
+            ]);
+        }
         
         // convert in PDF
         // require_once('externals/html2pdf/vendor/autoload.php');
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
-            //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
-            //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
             $html2pdf->writeHTML($content);
-            //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>"; 
             $html2pdf->Output($unit . "_" . $resp . " " . $number . '.pdf');
             return;
         } catch (Exception $e) {

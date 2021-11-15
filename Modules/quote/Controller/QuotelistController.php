@@ -312,7 +312,7 @@ class QuotelistController extends CoresecureController {
         $table = $this->makePDFTable($table, $lang);
 
         // generate pdf
-        $adress = nl2br($info["address"]);
+        $address = nl2br($info["address"]);
         $resp = $info["recipient"];
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
@@ -322,9 +322,34 @@ class QuotelistController extends CoresecureController {
         $invoiceInfo["title"] = "";
         $number = "";
         $unit = "";
-        ob_start();
-        include('data/invoices/'.$id_space.'/template.php');
-        $content = ob_get_clean();
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && file_exists('data/invoices/'.$id_space.'/template.php')) {
+            // backwark, templates were in PHP and no twig template available use old template
+            ob_start();
+            include('data/invoices/'.$id_space.'/template.php');
+            $content = ob_get_clean();
+        } else {
+            $content = $this->twig->render('data/invoices/'.$id_space.'/template.twig', [
+                'id_space' => $id_space,
+                'id' => $id,
+                'number' => $number,
+                'date' => $date,
+                'unit' => $unit,
+                'resp' => $resp,
+                'address' => $address,
+                'adress' => $address,  // backward compat
+                'table' => $table,
+                'total' => $total,
+                'useTTC' => $useTTC,
+                'details' => $details,
+                'clientsInfos' => null,
+                'invoiceInfo' => $invoiceInfo,
+                'isquote' => $isquote
+            ]);
+        }
+
+
+
 
         // convert in PDF
         // require_once('externals/html2pdf/vendor/autoload.php');
