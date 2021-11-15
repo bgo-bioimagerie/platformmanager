@@ -10,6 +10,12 @@ require_once 'Framework/Events.php';
 
 use League\HTMLToMarkdown\HtmlConverter;
 
+function ignore($subject) {
+    if (str_contains($subject, 'Delivery Status Notification')) {
+        return true;
+    }
+    return false;
+}
 
 function _get_body_attach($mbox, $mid) {
     $struct = imap_fetchstructure($mbox, $mid);
@@ -165,6 +171,7 @@ while(true) {
 
                 $from=$header->from;
                 $to = $header->to;
+
                 $id_space = 0;
                 $toSpace = null;
                 $otherDests = [];
@@ -226,6 +233,10 @@ while(true) {
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
                 if($newTicket['is_new']) {
+                    if(ignore($mail->subject)) {
+                        continue;
+                    }
+                    Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
                     $from = Configuration::get('helpdesk_email');
                     $fromInfo = explode('@', $from);
                     $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
@@ -238,10 +249,6 @@ while(true) {
                 $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
             imap_close($mbox, CL_EXPUNGE);
-
-            foreach ($spaceNames as $key => $value) {
-                Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($key)]]);
-            }
 
             $hm = new Helpdesk();
             $hm->remind();
