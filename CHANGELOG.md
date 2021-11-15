@@ -9,6 +9,7 @@
 * [self_registration] add login suggestion
 * [self_registration] add unicity checks to login and email inputs
 * [self_registration] fix email sent to space admins
+* [helpdesk] ignore delivery status notifications
 
 ## 2.1.7
 
