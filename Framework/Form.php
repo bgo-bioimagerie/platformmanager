@@ -33,6 +33,7 @@ class Form {
 
     private $readonly;
     private $checkUnicity;
+    private $suggestLogin;
 
     private $choices;
     private $choicesid;
@@ -84,6 +85,7 @@ class Form {
         $this->isFormAdd = false;
         $this->externalButtons = array();
         $this->useAjax = $useAjax;
+        $this->suggestLogin = false;
 
         $this->parseRequest = false;
         $formID = $request->getParameterNoException("formid");
@@ -329,7 +331,7 @@ class Form {
      * @param string $value Input default value
      */
     // #105: add readonly
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false) {
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false, $suggestLogin = false) {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -343,6 +345,9 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = $readonly;
         $this->checkUnicity[] = $checkUnicity;
+        if ($suggestLogin) {
+            $this->suggestLogin = true;
+        }
     }
 
     /**
@@ -681,7 +686,7 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicity = $checkUnicityElem);
+                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicityElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -699,7 +704,7 @@ class Form {
                 $html .= $formHtml->color($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "email") {
-                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicity = $checkUnicityElem);
+                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicityElem);
             }
             if ($this->types[$i] == "number") {
                 $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -742,8 +747,12 @@ class Form {
             $html .= $formHtml->textAreaScript();
         }
 
-        if ($this->checkUnicity == true) {
+        if (in_array(true, $this->checkUnicity)) {
             $html .= $formHtml->checkUnicityScript();
+        }
+        
+        if ($this->suggestLogin) {
+            $html .= $formHtml->suggestLoginScript();
         }
 
         if ($this->isFormAdd == true) {

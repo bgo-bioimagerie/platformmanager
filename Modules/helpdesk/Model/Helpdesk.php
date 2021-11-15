@@ -198,7 +198,7 @@ class Helpdesk extends Model {
      */
     public function ticketFromSubject($subject) {
         preg_match('/\[Ticket #(\d+)\]/', $subject, $matches, PREG_OFFSET_CAPTURE);
-        Configuration::getLogger()->debug('[helpdesk] check if linked to other ticket', ['subject' => $subject, 'matches' => $matcjes]);
+        Configuration::getLogger()->debug('[helpdesk] check if linked to other ticket', ['subject' => $subject, 'matches' => $matches]);
         if(!$matches) {
             return 0;
         }
@@ -215,6 +215,7 @@ class Helpdesk extends Model {
         // create attachements
         // send message
     }
+
     public function assign($id_ticket, $id_user) {
         $um = new CoreUser();
         $login = $um->getUserLogin($id_user);
@@ -223,11 +224,6 @@ class Helpdesk extends Model {
     }
 
     public function setStatus($id_ticket, $status, $reminder_date=null) {
-        if($status == self::$STATUS_SPAM) {
-            $this->trash($id_ticket);
-        }
-
-
         if($status === self::$STATUS_REMINDER) {
             $sql = "UPDATE hp_tickets set `status`=?, reminder=?, reminder_set=0 WHERE id=?";
             $this->runRequest($sql, array($status, $reminder_date, $id_ticket));
@@ -237,13 +233,13 @@ class Helpdesk extends Model {
     }
 
     public function list($id_space, $status=0, $id_user=0, $offset=0, $limit=50) {
-        $sql = "SELECT * FROM hp_tickets WHERE `status`=?";
+        $sql = "SELECT * FROM hp_tickets WHERE `status`=? AND id_space=?";
         if($id_user) {
-            $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id LIMIT ".$limit." OFFSET ".$offset;
-            return $this->runRequest($sql, array($status, $id_user, $id_user))->fetchAll();
+            $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id LIMIT ".intval($limit)." OFFSET ".intval($offset);
+            return $this->runRequest($sql, array($status, $id_space, $id_user, $id_user))->fetchAll();
         }
-        $sql .= " ORDER BY id LIMIT ".$limit." OFFSET ".$offset;
-        return $this->runRequest($sql, array($status))->fetchAll();
+        $sql .= " ORDER BY id LIMIT ".intval($limit)." OFFSET ".intval($offset);
+        return $this->runRequest($sql, array($status, $id_space))->fetchAll();
     }
 
     public function get($id_ticket) {
@@ -278,6 +274,15 @@ class Helpdesk extends Model {
     public function move($id_ticket, $queue) {
         $sql = "UPDATE hp_tickets SET `queue`=? WHERE id=?";
         $this->runRequest($sql, array($queue, $id_ticket));
+    }
+
+    // Delete all tickets in spam status for more than 1 day
+    public function trashSpam() {
+        $sql = "SELECT * FROM hp_ticket WHERE status=? AND updated_at > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)";
+        $spams = $this->runRequest($sql, array(self::$STATUS_SPAM))->fetchAll();
+        foreach($spams as $spam) {
+            $this->trash($spam['id']);
+        }
     }
 
     public function trash($id_ticket) {
@@ -348,6 +353,14 @@ class Helpdesk extends Model {
                 $this->runRequest($sql, array($ticket["id"]));
             }
         }
+    }
+
+    /**
+     * count number of tickets per status per space
+     */
+    public function count($id_space) {
+        $sql = "SELECT count(*) as total, status FROM hp_tickets WHERE id_space=? GROUP BY status";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
 }

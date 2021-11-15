@@ -111,7 +111,7 @@ class CorenavbarController extends CoresecureController {
 
             return ob_get_clean();
         } else {
-            throw new Exception("unable to find the file: '$file' ");
+            throw new PfmFileException("unable to find the file: '$file' ", 404);
         }
     }
 

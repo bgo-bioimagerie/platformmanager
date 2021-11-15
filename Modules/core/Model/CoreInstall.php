@@ -30,11 +30,13 @@ require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/users/Model/UsersPatch.php';
+require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
+require_once 'Modules/core/Model/CoreMail.php';
 
 
-define("DB_VERSION", 3);
+define("DB_VERSION", 4);
 /**
  * Class defining the database version installed
  */
@@ -62,6 +64,60 @@ class CoreDB extends Model {
             $freshInstall = false;
         }
         return $freshInstall;
+    }
+
+    /**
+     * For tests only
+     */
+    public function repair0() {
+        Configuration::getLogger()->info("No bug 0, nothing to repair");
+    }
+
+    /**
+     * Fix for bug #332 introduced by release 2.1
+     * if you installed 2.1->2.1.2 this patch needs to be used to fix database
+     * Not needed after 2.1.3
+     * 
+     * How-to:
+     * 
+     * require_once 'Framework/Configuration.php';
+     * require_once 'Modules/core/Model/CoreInstall.php';
+     * $cdb = new CoreDB();
+     * $cdb->repair332();
+     *
+     */
+    public function repair332() {
+        Configuration::getLogger()->info("Run repair script for bug 332");
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+        Configuration::getLogger()->info("Done!");
+    }
+
+    public function repair337() {
+        Configuration::getLogger()->debug('set ac_anticorps counters');
+        $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $redis = new Redis();
+            $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+            $res = $resdb->fetchAll();
+            foreach($res as $sp_anticorps) {
+                $sp = $sp_anticorps[1];
+                $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
+            }
+            $redis->close();
+        }
+        Configuration::getLogger()->debug('set ac_anticorps counters, done!');
+    }
+
+    public function repair371() {
+        Configuration::getLogger()->info("Run repair script 371 (PR #371)");
+        $this->addColumn("users_info", "organization", "varchar(255)", "");
+        Configuration::getLogger()->info("Run repair script 371 (PR #371)");
     }
 
     public function upgrade_v0_v1() {
@@ -141,8 +197,6 @@ class CoreDB extends Model {
         foreach ($resdb as $res) {
             $sql = "UPDATE bk_access SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
-            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
-            $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calendar_entry SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE bk_calquantities SET id_space=? WHERE id_resource=?";
@@ -160,6 +214,13 @@ class CoreDB extends Model {
             $sql = "UPDATE re_event SET id_space=? WHERE id_resource=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
             $sql = "UPDATE re_resps SET id_space=? WHERE id_resource=?";
+            $this->runRequest($sql, array($res['id_space'], $res['id']));
+        }
+
+        $sql = "SELECT * FROM `re_category`;";
+        $resdb = $this->runRequest($sql)->fetchAll();
+        foreach ($resdb as $res) {
+            $sql = "UPDATE bk_authorization SET id_space=? WHERE resource_id=?";
             $this->runRequest($sql, array($res['id_space'], $res['id']));
         }
 
@@ -376,15 +437,6 @@ class CoreDB extends Model {
             $counter = intval($resdb['counter']);
         }
 
-        $sql = "SELECT max(no_h2p2) as counter FROM ac_anticorps";
-        $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            $res = $resdb->fetch();
-            if($res && intval($res['counter']) > $counter) {
-                $counter = intval($res['counter']);
-            }
-        }
-
         $i = 0;
         while($i <= $counter) {
             $cvm = new CoreVirtual();
@@ -394,10 +446,25 @@ class CoreDB extends Model {
 
         Configuration::getLogger()->debug('[virtual counter] init virtual counter, done!');
 
+        Configuration::getLogger()->debug('set ac_anticorps counters');
+        $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
+        $resdb = $this->runRequest($sql);
+        if($resdb!=null) {
+            $redis = new Redis();
+            $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+            $res = $resdb->fetchAll();
+            foreach($res as $sp_anticorps) {
+                $sp = $sp_anticorps[1];
+                $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
+            }
+            $redis->close();
+        }
+        Configuration::getLogger()->debug('set ac_anticorps counters, done!');
+
         if(Statistics::enabled()) {
             Configuration::getLogger()->debug("[stats] import calentry stats");
-            $statHandler = new EventHandler();
-            $statHandler->calentryImport();
+            $eventHandler = new EventHandler();
+            $eventHandler->calentryImport();
             Configuration::getLogger()->debug('[stats] import calentry stats, done!');
 
             Configuration::getLogger()->debug("[stats] import invoice stats");
@@ -514,7 +581,54 @@ class CoreDB extends Model {
         $bkqte = new BkCalQuantities();
         $bkqte->addColumn("bk_calquantities", "is_invoicing_unit", "int(1)", 0);
         Configuration::getLogger()->debug("[booking] add is_invoicing_unit done!");
+
+        Configuration::getLogger()->debug("[users_info] add organization");
+        $usersInfo = new UsersInfo();
+        $usersInfo->addColumn("users_info", "organization", "varchar(255)", "");
+        Configuration::getLogger()->debug("[users_info] add organization done!");
     }
+
+    public function upgrade_v3_v4() {
+        if(Statistics::enabled()) {
+            $eventHandler = new EventHandler();
+            $g = new Grafana();
+            Configuration::getLogger()->debug('[grafana] create orgs');
+            // Create org for existing spaces
+            $cp = new CoreSpace();
+            $spaces = $cp->getSpaces('id');
+            foreach ($spaces as $space) {
+                $g->createOrg($space['shortname']);
+            }
+            Configuration::getLogger()->debug('[grafana] create orgs, done!');
+
+
+            // import managers
+            Configuration::getLogger()->debug('[grafana] import managers to grafana');
+            $s = new CoreSpace();
+            $spaces = $s->getSpaces('id');
+            foreach($spaces as $space) {
+                $csu = new CoreSpaceUser();
+                $managers = $csu->managersOrAdmin($space['id']);
+                $g = new Grafana();
+                foreach($managers as $manager) {
+                    $u = new CoreUser();
+                    $user = $u->getInfo($manager['id_user']);
+                    Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
+                    $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                }
+                $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
+            }
+            Configuration::getLogger()->debug('[grafana] import managers to grafana, done!');
+
+            if(Statistics::enabled()) {
+                Configuration::getLogger()->debug('[stats] import clients');
+                $eventHandler = new EventHandler();
+                $eventHandler->customerImport();
+                Configuration::getLogger()->debug('[stats] import clients, done!');
+            }
+        }
+    }
+
 
 
     /**
@@ -724,6 +838,22 @@ class CoreInstall extends Model {
         $modelStatistics = new BucketStatistics();
         $modelStatistics->createTable();
 
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user');
+            $statHandler = new Statistics();
+            $pfmOrg = Configuration::get('influxdb_org', 'pfm');
+            $statHandler->createDB($pfmOrg);
+            $eventHandler = new EventHandler();
+            $eventHandler->spaceCount(null);
+            // create org
+            $g = new Grafana();
+            $g->createOrg($pfmOrg);
+            $u = new CoreUser();
+            $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
+            $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);
+            Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user, done!');
+        }
+
         $modelCoreFiles = new CoreFiles();
         $modelCoreFiles->createTable();
 
@@ -731,6 +861,9 @@ class CoreInstall extends Model {
         $modelVirtual->createTable();
         $modelHistory = new CoreHistory();
         $modelHistory->createTable();
+
+        $modelMail = new CoreMail();
+        $modelMail->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0777, true);

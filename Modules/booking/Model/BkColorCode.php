@@ -292,7 +292,7 @@ class BkColorCode extends Model {
             $tmp = $SyColorCode->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
-            throw new Exception("Cannot find the SyColorCode using the given name");
+            throw new PfmException("Cannot find the SyColorCode using the given name", 404);
         }
     }
 

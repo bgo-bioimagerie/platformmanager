@@ -95,7 +95,7 @@ if (getenv('PFM_MODE') != 'dev') {
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
 
-                        <?php if(Configuration::get('allow_registration', 0) == 1) { ?>
+                        <?php if(Configuration::get('allow_registration', false)) { ?>
                         <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
                             <br/>
                             <p class="text-center">

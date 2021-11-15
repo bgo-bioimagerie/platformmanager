@@ -19,6 +19,7 @@ require_once 'Modules/resources/Model/ReEventType.php';
 require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
+require_once 'Modules/booking/Model/BkAccess.php';
 
 
 /**
@@ -137,6 +138,12 @@ class ResourcesinfoController extends CoresecureController {
             $form->getParameter("id_area"),
             $id_space,
             $form->getParameter("display_order"));
+
+            // set default authorizations in bk_access
+            $modelBkAccess = new BkAccess();
+            if (!$modelBkAccess->get($id_space, $id)) {
+                $modelBkAccess->set($id_space, $id, 3); // 3 for 'manager'    
+            }
             
             // upload image
             $target_dir = "data/resources/";
@@ -415,7 +422,7 @@ class ResourcesinfoController extends CoresecureController {
         }
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getSpaceActiveUsers();
+        $users = $modelUser->getSpaceActiveUsers($id_space);
         $choicesU = array();
         $choicesidU = array();
         foreach ($users as $user) {
@@ -468,6 +475,13 @@ class ResourcesinfoController extends CoresecureController {
 
         $modelResource = new ResourceInfo();
         $modelResource->delete($id_space, $id);
+        
+        // get resource bk_access and delete it
+        $modelBkAccess = new BkAccess();
+        if ($modelBkAccess->get($id_space, $id)) {
+            $modelBkAccess->delete($id_space, $id);
+        }
+        
 
         $this->redirect("resources/" . $id_space);
     }

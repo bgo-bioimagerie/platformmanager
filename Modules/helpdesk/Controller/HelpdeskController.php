@@ -190,7 +190,7 @@ class HelpdeskController extends CoresecureController {
         }
         $hm->notify($id_space, $id_ticket, "en", $isNew);
 
-        Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+        Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
 
         
         $this->render(['data' => ['message' => ['id' => $id], 'ticket' => ['id' => $ticket['id']]]]);
@@ -270,7 +270,6 @@ class HelpdeskController extends CoresecureController {
         }
         $hm = new Helpdesk();
         $tickets = $hm->unread($id_space);
-        //$this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
         $this->render(['data' => ['unread' => $tickets]]);
     }
 
@@ -308,7 +307,6 @@ class HelpdeskController extends CoresecureController {
 
         $tickets = $hm->list($id_space, $status, $id_user, $offset, $limit);
 
-        //$this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
         $this->render(['data' => ['tickets' => $tickets, 'offset' => $offset, 'limit' => $limit]]);
     }
 

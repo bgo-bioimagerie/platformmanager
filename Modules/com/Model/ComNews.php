@@ -77,7 +77,7 @@ class ComNews extends Model {
 
     public function getMedia($id_space, $id) {
         $sql = "SELECT media FROM com_news WHERE id=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id))->fetch();
+        $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req[0];
     }
 
@@ -94,8 +94,7 @@ class ComNews extends Model {
             );
         }
         $sql = "SELECT * FROM com_news WHERE id=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $req;
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
     public function delete($id_space, $id) {
