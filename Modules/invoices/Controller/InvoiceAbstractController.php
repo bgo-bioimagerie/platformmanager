@@ -44,7 +44,9 @@ abstract class InvoiceAbstractController extends CoresecureController {
             include('data/invoices/'.$id_space.'/template.php');
             $content = ob_get_clean();
         } else {
-            $content = $this->twig->render('data/invoices/'.$id_space.'/template.twig', [
+            $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../..');
+            $twig = new \Twig\Environment($loader, []);
+            $content = $twig->render('data/invoices/'.$id_space.'/template.twig', [
                 'id_space' => $id_space,
                 'number' => $number,
                 'date' => $date,
