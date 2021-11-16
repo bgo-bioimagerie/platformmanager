@@ -76,8 +76,8 @@ if (getenv('PFM_MODE') != 'dev') {
 
                             <form class="form-signin" action="corelogin" method="post">
                                 <input name="redirection" type="hidden" value="<?php echo $redirection ?>">
-                                <input name="login" autocomplete="username" type="text" class="form-control log" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
-                                <input name="pwd" autocomplete="current-password" type="password" class="form-control pass" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
+                                <input id="login" name="login" autocomplete="username" type="text" class="form-control log" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
+                                <input id="password" name="pwd" autocomplete="current-password" type="password" class="form-control pass" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
                                 <div class="checkbox">
                                     <label><input type="checkbox" name="remember" value=""><?php echo CoreTranslator::RememberMe($language) ?></label>
                                 </div>
