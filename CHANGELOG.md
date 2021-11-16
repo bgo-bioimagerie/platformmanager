@@ -10,6 +10,10 @@
 * [mail] allow users to unsubscribe to notifications #382
 * [helpdesk] ignore delivery status notifications (do not reply)
 
+## 2.1.9
+
+* [users] fix users_info sql
+
 ## 2.1.8
 
 * [users] change checkunicity routes
