@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.9
+
+* [users] fix users_info sql
+
 ## 2.1.8
 
 * [users] change checkunicity routes
