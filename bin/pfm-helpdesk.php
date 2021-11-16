@@ -10,14 +10,54 @@ require_once 'Framework/Events.php';
 
 use League\HTMLToMarkdown\HtmlConverter;
 
-function ignore($from, $subject) {
+function isReply($mail, $headersDetailed) {
+    $isReply = array_key_exists("X-PFM-ID", $headersDetailed);
+    if(!$isReply) {
+        $isReply = array_key_exists("X-PFM", $headersDetailed);
+    }
+    if(!$isReply) {
+        $isReply = array_key_exists("Auto-Submitted", $headersDetailed) &&
+            $headersDetailed["Auto-Submitted"] != "no";
+    }
+    if(!$isReply) {
+        try {
+            $isReply = $mail->in_reply_to ? true : false;
+        } catch(Exception){
+            // not in header, that's fine
+        }
+    }
+    if(!$isReply) {
+        try {
+            $isReply = $mail->references ? true : false;
+        } catch(Exception){
+            // not in header, that's fine
+        }
+    }
+    return $isReply;
+}
+
+
+function ignore($from) {
     if ($from->mailbox == "MAILER-DAEMON") {
         return true;
     }
-    if (str_contains($subject, 'Delivery Status Notification')) {
-        return true;
-    }
     return false;
+}
+
+function parse_rfc822_all_headers(string $header_string): array {
+    // Reference:
+    // * Base: https://stackoverflow.com/questions/5631086/getting-x-mailer-attribute-in-php-imap/5631445#5631445
+    // * Improved regex: https://stackoverflow.com/questions/5631086/getting-x-mailer-attribute-in-php-imap#comment61912182_5631445
+    preg_match_all(
+        "/([^:\s]+): (.*(?:\r\n\s(?:.+))*)/m",
+        $header_string,
+        $matches
+    );
+    $headers = [];
+    foreach ($matches[1] as $i => $k) {
+        $headers[$k][] = $matches[2][$i];
+    }
+    return $headers;
 }
 
 function _get_body_attach($mbox, $mid) {
@@ -168,6 +208,7 @@ while(true) {
             foreach ($mails as $mail) {
                 $headerText = imap_fetchHeader($mbox, $mail->uid, FT_UID);
                 $header = imap_rfc822_parse_headers($headerText);
+                $headersDetailed = parse_rfc822_all_headers($headerText);
 
                 $mailContent = _get_body_attach($mbox, $mail->uid);
                 imap_delete($mbox, $mail->uid);
@@ -232,9 +273,9 @@ while(true) {
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
                 if($newTicket['is_new']) {
-                    if(ignore($from[0], $mail->subject)) {
-                        Configuration::getLogger()->debug('[helpdesk] auto reply email, skip response');
-                        continue;
+                    if(isReply($mail, $headersDetailed) || ignore($from[0])) {
+                        Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip response', ['from' => $from[0]]);
+                        continue;   
                     }
                     Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
                     $from = Configuration::get('helpdesk_email');
@@ -244,9 +285,7 @@ while(true) {
                     $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
                     $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
                     $e = new Email();
-                    // DO NOT ACK FOR THE MOMENT
-                    // Difficult to detect daemon auto-reply, user auto-reply (out of office etc....)
-                    // $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
+                    $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
                 }
                 $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
