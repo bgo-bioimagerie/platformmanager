@@ -3,6 +3,7 @@
 ## 2.1.9
 
 * [users] fix users_info sql
+* [helpdesk] check if message is an auto-reply and log
 
 ## 2.1.8
 
