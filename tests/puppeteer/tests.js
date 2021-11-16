@@ -7,7 +7,8 @@ import PfmPuppet from './PfmPuppet.js';
     const puppet = new PfmPuppet();
     await puppet.init();
     await puppet.connection();
-    // await puppet.createMenu();
+    await puppet.createNewSpace("monEspace");
+    
 })().catch(err => {
     console.error(err);
 });
