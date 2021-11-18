@@ -10,6 +10,15 @@ require_once 'Framework/Events.php';
 
 use League\HTMLToMarkdown\HtmlConverter;
 
+function ignore($from, $subject) {
+    if ($from->mailbox == "MAILER-DAEMON") {
+        return true;
+    }
+    if (str_contains($subject, 'Delivery Status Notification')) {
+        return true;
+    }
+    return false;
+}
 
 function _get_body_attach($mbox, $mid) {
     $struct = imap_fetchstructure($mbox, $mid);
@@ -223,6 +232,10 @@ while(true) {
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
                 if($newTicket['is_new']) {
+                    if(ignore($from[0], $mail->subject)) {
+                        Configuration::getLogger()->debug('[helpdesk] auto reply email, skip response');
+                        continue;
+                    }
                     Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
                     $from = Configuration::get('helpdesk_email');
                     $fromInfo = explode('@', $from);
@@ -231,7 +244,9 @@ while(true) {
                     $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
                     $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
                     $e = new Email();
-                    $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
+                    // DO NOT ACK FOR THE MOMENT
+                    // Difficult to detect daemon auto-reply, user auto-reply (out of office etc....)
+                    // $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
                 }
                 $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }

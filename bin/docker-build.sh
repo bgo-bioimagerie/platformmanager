@@ -96,7 +96,7 @@ echo "Build image ${REPO}/${NAMESPACE}/${IMAGE}/${CURRENT} from ${BRANCH}"
 if [ "$DRY" == "YES" ]; then
   echo "  docker build -f docker/Dockerfile --build-arg BRANCH=${BRANCH} -t ${REPO}/${NAMESPACE}/${IMAGE}:${CURRENT} ./docker"
 else
-  docker build -f docker/Dockerfile --build-arg BRANCH=${BRANCH} -t ${REPO}/${NAMESPACE}/${IMAGE}:${CURRENT} ./docker
+  docker build -f docker/Dockerfile --no-cache --build-arg BRANCH=${BRANCH} -t ${REPO}/${NAMESPACE}/${IMAGE}:${CURRENT} ./docker
 fi
 
 for i in "${TAGS[@]}"
@@ -114,7 +114,7 @@ done
 for i in "${TAGS[@]}"
 do
   echo "Push image ${REPO}/${NAMESPACE}/${IMAGE}:${i}"
-  if [ "$DRY" == "YES" ]; then
-    echo "  docker push ${REPO}/${NAMESPACE}/${IMAGE}:${i}"
+  if [ "$DRY" == "NO" ]; then
+    docker push ${REPO}/${NAMESPACE}/${IMAGE}:${i}
   fi
 done

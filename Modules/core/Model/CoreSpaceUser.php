@@ -159,7 +159,7 @@ class CoreSpaceUser extends Model {
             FROM core_users
             INNER JOIN core_j_spaces_user
             ON core_users.id = core_j_spaces_user.id_user
-            INNER JOIN users_info
+            LEFT JOIN users_info
             ON users_info.id_core = core_users.id
             WHERE core_j_spaces_user.id_space=?
             AND core_users.is_active=1
