@@ -23,6 +23,7 @@ class UsersInfo extends Model {
             `unit` varchar(255) DEFAULT NULL,
             `avatar` varchar(255) DEFAULT NULL,
             `bio` text,
+            `organization` varchar(255) DEFAULT '',
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
