@@ -196,6 +196,9 @@ class BkCalSupInfo extends Model {
     public function getSupInfoData($id_space, $id) {
         $sql = "SELECT supplementaries FROM bk_calendar_entry WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
+        if(!$req) {
+            return array();
+        }
         $tmp = $req->fetch();
         $sups = explode(";", $tmp[0]);
         $supData = array();
@@ -214,6 +217,9 @@ class BkCalSupInfo extends Model {
 
         $sql = "SELECT id, id_supinfo FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_space));
+        if (!$req) {
+            return;
+        }
         $databasePackages = $req->fetchAll();
 
         foreach ($databasePackages as $dbPackage) {

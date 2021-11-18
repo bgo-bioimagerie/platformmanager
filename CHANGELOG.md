@@ -7,6 +7,7 @@
 * [booking][invoice] fix sql
 * [booking][colorcode] fix sql
 * [sql] fix wrong space_id error => id_space (param and sql)
+* [booking][calsup] fix remove unlisted supinfo
 
 ## 2.1.8
 
