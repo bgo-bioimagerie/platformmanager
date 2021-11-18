@@ -9,6 +9,7 @@
 * [stats] add stat calentry_cancel on booking cancel
 * [mail] allow users to unsubscribe to notifications #382
 * [helpdesk] ignore delivery status notifications (do not reply)
+* [helpdesk] let user select multiple tickets to spam them #393
 
 ## 2.1.9
 
