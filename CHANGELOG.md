@@ -6,6 +6,7 @@
 * [helpdesk] check if message is an auto-reply and log
 * [booking][invoice] fix sql
 * [booking][colorcode] fix sql
+* [sql] fix wrong space_id error => id_space (param and sql)
 
 ## 2.1.8
 
