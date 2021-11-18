@@ -6,7 +6,6 @@ const fs = require('fs');
 
 
  export default class PfmPuppet {
-
     password;
     login;
     host;
@@ -15,6 +14,9 @@ const fs = require('fs');
     page = null;
     envVars = Object();
     
+    /**
+     * Initializes test environnement, launch browser and connect to pfm
+     */
     async init() {
         this.getEnvVars(".env").then((response) => {
             this.envVars = response;
@@ -32,15 +34,17 @@ const fs = require('fs');
         console.log('page created');
     }
 
-    async closeBrowser() {
-        await this.browser.close();
-    }
-
+    /**
+     * Gets environnement variables
+     * 
+     * @param {string} path 
+     * @returns {Promise<>}
+     */
     async getEnvVars(path) {
         return new Promise((resolve) => {
             fs.readFile(path, (err, data) => {
                 if (err) {
-                    throw("can't read file", err);
+                    reject(err);
                 }
                 let lines = data.toString().split("\n");
                 let keyValuePair = [];
@@ -57,27 +61,40 @@ const fs = require('fs');
         });
     }
 
+    /**
+     * Tests connection to PFM
+     */
     async connection() {
+        console.log("connecting to PFM");
         await this.page.goto(this.host);
         try {
             console.log("typing login and password");
-            await this.page.waitForSelector('#login');
-            await this.page.evaluate(val => document.querySelector('#login').value = val, this.login);
-            await this.page.waitForSelector('#password');
-            await this.page.evaluate(val => document.querySelector('#password').value = val, this.password);
-            await this.page.evaluate(val => document.querySelector('button').click());
+            let credentials = {login: this.login, password: this.password};
+            await this.page.waitForSelector('#app');
+            this.page.evaluate(cred => {
+                document.getElementById('login').value = cred.login;
+                document.getElementById('password').value = cred.password;
+            }, credentials);
+            await this.page.evaluate(() => document.getElementById('connectionBtn').click());
         } catch (err) {
             console.error("connection failed: ", err.message);
         }
     }
 
-    async createNewSpace(spaceName = "spaceTest") {
+    /**
+     * Tests menus and space creation
+     * 
+     * @param {SpaceConfig} spaceConfig
+     * 
+     */
+    async createNewSpace(spaceConfig) {
         console.log("creating menu, space, submenu and item");
         await this.createMenu();
-        await this.createSpace(spaceName);
+        await this.createSpace(spaceConfig);
+        await this.checkSpaceCreation(spaceConfig);
     }
 
-    async createMenu(menuName = "menuTest") {
+    async createMenu(menuName = "puppetMenu") {
         console.log("creating menu");
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
         [this.page] = await this.browser.pages();
@@ -85,19 +102,25 @@ const fs = require('fs');
 
         try {
             console.log("accessing to menu creation page");
-            await this.page.evaluate(val => document.querySelector('#addmenu').click());
+            await this.page.evaluate(() => document.getElementById('addmenu').click());
         
             console.log("filling menu form");
             await this.page.waitForSelector('#name');
-            await this.page.evaluate(val => document.querySelector('#name').value = val, menuName);
+            await this.page.evaluate(val => document.getElementById('name').value = val, menuName);
             await this.page.waitForSelector('#editmainmenuformsubmit');
-            await this.page.evaluate(val => document.querySelector('#editmainmenuformsubmit').click());
+            await this.page.evaluate(() => document.getElementById('editmainmenuformsubmit').click());
         } catch (err) {
             console.error("menu creation failed", err.message);
         }
     }
 
-    async createSpace(spaceName) {
+    /**
+     * Creates a new space then checks if creation went right
+     * 
+     * @param {SpaceConfig} spaceConfig
+     * 
+     */
+    async createSpace(spaceConfig) {
         console.log("creating space");
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
         [this.page] = await this.browser.pages();
@@ -105,18 +128,134 @@ const fs = require('fs');
 
         try {
             console.log("accessing to space creation page");
-            await this.page.evaluate(val => document.querySelector('#addspace').click());
+            await this.page.evaluate(() => document.getElementById('addspace').click());
 
             console.log("filling space form");
-            await this.page.waitForSelector('#name');
-            await this.page.evaluate(val => document.querySelector('#name').value = val, spaceName);
-            await this.page.waitForSelector('#editmainmenuformsubmit');
-            await this.page.evaluate(val => document.querySelector('#corespaceadmineditsubmit').click());
+            
+            // Fill form fields
+            await this.page.waitForSelector('#admins');
+            await this.page.evaluate(config => {
+                Object.entries(config).forEach((entry) => {
+                    if (entry[0] != "adminFullName") {
+                        document.getElementById(entry[0]).value = entry[1];
+                    }
+                });
+                
+               let element = document.getElementById('admins');
+               let options = [...element.options].map(function(el) {
+                    return {id: el.value, name: el.text};
+               });
+               element.value = options.find(option => option.name == config.adminFullName).id;
+            }, spaceConfig);
+
+            // Click save button
+            await this.page.waitForSelector('#corespaceadmineditsubmit');
+            await this.page.evaluate(val => document.getElementById('corespaceadmineditsubmit').click());
+
+            // if "space already exist" page, log then continue
+            let spaceCheck = await this.isErrorPage();
+            if (spaceCheck.error) {
+                throw Error(spaceCheck.text);
+            }
         } catch (err) {
-            console.error("connection failed", err.message);
+            console.error("space creation failed:", err.message);
         }
     }
 
+    /**
+     * Checks if space exists and has the right attributes
+     * 
+     * @param {SpaceConfig} spaceConfig
+     * 
+     */
+    async checkSpaceCreation(spaceConfig) {
+        // check if space exists and has the right attributes
+        try {
+            // go find our new space id
+            await this.page.goto(this.host + '/spaceadmin');
+            await this.page.waitForSelector('#app');
+            let spaceId = await this.page.evaluate((config) => {
+                let tableCells = document.getElementsByTagName('td');
+                let newSpaceNameCell = [...tableCells].find(cell => {
+                    return cell.innerText === config.name;
+                });
+                if (newSpaceNameCell) {
+                    let newSpaceLine = newSpaceNameCell.parentElement;
+                    return [...newSpaceLine.children].find(child => {
+                        return child.innerText.includes("corespace");
+                    }).innerText.split('corespace/').pop();
+                } else {
+                    throw Error("our new space hasn't been found");
+                }
+            }, spaceConfig);
+
+            // navigate to its space edition page then compare its values with our config values
+            await this.page.goto(this.host + '/spaceadminedit/' + spaceId);
+            await this.page.waitForSelector('#app');
+
+            let inputFields = {
+                name: spaceConfig.name,
+                contact: spaceConfig.contact,
+                status: spaceConfig.status,
+                support: spaceConfig.support
+            };
+            let selectors = {admins: spaceConfig.adminFullName};
+            let isSpaceOk = this.compareWithFormValues(inputFields, selectors);
+            if (!isSpaceOk) {
+                throw Error("space data do not match");
+            }
+            console.log("space creation ok");
+        } catch(err) {
+            console.error("space check failed", err.message);
+        }
+    }
+
+    ///// UTILS /////
+
+    /**
+     * Check if an object properties match in edition form
+     * @typedef {Object} FormData
+     * @property {key: value} property to check in form
+     * 
+     * @param {FormData} inputFields
+     * @param {FormData} selectors 
+     * @returns {Promise<Boolean>} dataMatch
+     */
+    async compareWithFormValues(inputFields = {}, selectors = {}) {
+        let dataToCompare = {inputFields: inputFields, selectors: selectors}
+
+        await this.page.waitForSelector('#app');
+        return this.page.evaluate(data => {
+            let dataMatch = true;
+            
+            Object.entries(data.inputFields).forEach((entry) => {
+                // Test input fields
+                if (document.getElementById(entry[0]).value != entry[1]) {
+                    dataMatch = false;
+                }
+            });
+            
+            Object.entries(data.selectors).forEach((entry) => {
+                // Test selectors
+                let selector = document.getElementById(entry[0]);
+                let selectedText = selector.options[selector.selectedIndex].text;
+                if (selectedText != entry[1]) {
+                    dataMatch = false;
+                }
+            });
+
+            return dataMatch;
+        }, dataToCompare);
+    }
+
+    /**
+     * Extracts page name from an url:
+     * - removes host name
+     * - removes parameters
+     * 
+     * @param {string} url
+     * @returns {string} page name
+     */
     pageNameFromUrl(url) {
         let pageName = "";
         let str = url.split(this.host).pop();
@@ -125,15 +264,33 @@ const fs = require('fs');
         return pageName;
     }
 
-    async clickButtonAndCheckRoute(buttonId, targetUrl) {
-        console.log("in clickButtonAndCheckRoute()");
-        // Doesn't work : buttonId is not defined => context problem ?
-        await this.page.evaluate(val => document.querySelector('#' + buttonId).click());
-        await this.page.on('load', () => {
-            if (this.pageNameFromUrl(this.page.url()) != (targetUrl)) {
-                throw Error("error trying to connect to coremainmenuedit");
+    /**
+     * Checks if current page is an error page
+     * @typedef {Object} CustomError
+     * @property {boolean} error - does an error text display?
+     * @property {string} text - text displayed
+     *  
+     * @returns {CustomError} error
+     */
+    async isErrorPage() {
+        await this.page.waitForSelector('#app');
+        return this.page.evaluate(() => {
+            let errorText = "";
+            let error = document.getElementById('error'); 
+            if (error) {
+                errorText = document.getElementById('errorcontent').innerText;
+            } else {
+                error = false;
             }
+            return {error: error, text: errorText};
         });
+    }
+
+    /**
+     * Closes browser
+     */
+    async closeBrowser() {
+        await this.browser.close();
     }
 
 }

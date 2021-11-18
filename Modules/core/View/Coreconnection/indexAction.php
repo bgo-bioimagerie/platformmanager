@@ -82,7 +82,7 @@ if (getenv('PFM_MODE') != 'dev') {
                                     <label><input type="checkbox" name="remember" value=""><?php echo CoreTranslator::RememberMe($language) ?></label>
                                 </div>
 
-                                <button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
+                                <button id="connectionBtn" class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
                             </form>
 
                         </div>
