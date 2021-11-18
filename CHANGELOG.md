@@ -4,6 +4,7 @@
 
 * [users] fix users_info sql
 * [helpdesk] check if message is an auto-reply and log
+* [booking][invoice] fix sql
 
 ## 2.1.8
 
