@@ -7,7 +7,6 @@ require_once 'Framework/Form.php';
 require_once 'Framework/FileUpload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreInstall.php';
-require_once 'Modules/core/Model/CoreBackupDatabase.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
@@ -49,21 +48,7 @@ class CoreconfigadminController extends CoresecureController {
             return;
         }
 
-        /*
-          // maintenance form
-          $formMenusactivation = $this->menusactivationForm($lang);
-          if ($formMenusactivation->check()) {
-
-          $modelMenu = new CoreMenu();
-          $modelMenu->setDataMenu("users", "coreusers", $this->request->getParameter("usermenustatus"), "glyphicon-user");
-
-          $this->redirect("coreconfigadmin");
-          return;
-          }
-
-         */
-
-        // maintenance form
+        // ldap form
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
 
@@ -154,15 +139,6 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
-        // backup form
-        $formBackup = $this->backupForm($lang);
-        if ($formBackup->check()) {
-            $modelBackup = new CoreBackupDatabase();
-            $modelBackup->run();
-            $this->redirect("coreconfigadmin");
-            return;
-        }
-
 
         // view
         $forms = array($formMaintenance->getHtml($lang),
@@ -171,9 +147,10 @@ class CoreconfigadminController extends CoresecureController {
             $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang),
             $formDeleteUser->getHtml($lang),
-            $formEmail->getHtml($lang), $formNavbar->getHtml($lang), $formBackup->getHtml($lang));
+            $formEmail->getHtml($lang), $formNavbar->getHtml($lang)
+        );
 
-        return $this->render(array("forms" => $forms, "lang" => $lang));
+        $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
     /**
