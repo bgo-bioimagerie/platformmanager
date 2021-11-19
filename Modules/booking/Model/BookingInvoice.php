@@ -154,11 +154,11 @@ class BookingInvoice extends InvoiceModel {
     public function details($id_space, $invoice_id, $lang){
 
         // all users in the invoice
-        $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE invoice_id=? AND AND deleted=0 AND id_space=?";
+        $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE invoice_id=? AND deleted=0 AND id_space=?";
         $users = $this->runRequest($sql, array($invoice_id, $id_space))->fetchAll();
 
         // all resources in the invoice
-        $sqlr = "SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE invoice_id=? AND AND deleted=0 AND id_space=?";
+        $sqlr = "SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE invoice_id=? AND deleted=0 AND id_space=?";
         $resources = $this->runRequest($sqlr, array($invoice_id, $id_space))->fetchAll();
 
 

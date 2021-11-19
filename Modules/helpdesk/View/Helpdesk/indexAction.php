@@ -51,6 +51,10 @@ pre {
 blockquote {
     all: unset;
 }
+
+.selection {
+    background-color: #d9edf7;
+}
 </style>
 
 <?php endblock() ?>
@@ -116,11 +120,11 @@ if (!$headless) {
         <div class="col-sm-2 text-center">
             <div @click="newTicket()">Create</div>
             <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
-            <div @click="setFilter(0)">New {{unread["s0"]}}</div>
-            <div @click="setFilter(1)">Open {{unread["s1"]}}</div>
-            <div @click="setFilter(2)">Reminder {{unread["s2"]}}</div>
-            <div @click="setFilter(3)">Closed {{unread["s3"]}}</div>
-            <div @click="setFilter(4)">Spam</div>
+            <div v-bind:class="filter==0 ? 'selection':''"  @click="setFilter(0)">New {{unread["s0"]}}</div>
+            <div v-bind:class="filter==1 ? 'selection':''" @click="setFilter(1)">Open {{unread["s1"]}}</div>
+            <div v-bind:class="filter==2 ? 'selection':''" @click="setFilter(2)">Reminder {{unread["s2"]}}</div>
+            <div v-bind:class="filter==3 ? 'selection':''" @click="setFilter(3)">Closed {{unread["s3"]}}</div>
+            <div v-bind:class="filter==4 ? 'selection':''" @click="setFilter(4)">Spam</div>
             <?php
             if ($role > CoreSpace::$MANAGER) {
             ?>
@@ -257,7 +261,9 @@ if (!$headless) {
                     </tr>
                 </thead>
                 <tbody>
+                <tr><td><input type="checkbox" v-bind:checked="selectAll" @click="selectTicket(null)"/></td><td></td><td><button @click="spamSelected()" class="btn btn-warning">Spam selected</button></td></tr>
                 <tr v-for="ticket in tickets" :key="ticket.id" v-bind:class="ticket.unread=='1' ? 'alert alert-warning':''">
+                <td><input @click="selectTicket(ticket.id)" v-bind:checked="ticket?.selected" type="checkbox"/></td>
                 <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
                 <td>{{ticket.created_at}}</td>
                 <td>{{ticket.subject}}</td>
@@ -281,6 +287,7 @@ var app = new Vue({
     el: '#helpdeskapp',
     data () {
         return {
+            selectAll: false,
             current_filter: 'New' ,
             filter: 0,  // ticket status filter
             addType: 1,  // note
@@ -306,6 +313,63 @@ var app = new Vue({
         echo "this.fetchTicket(".$ticket['id'].")";
     } ?> },
     methods: {
+        spam(id) {
+            return new Promise((resolve, reject) => {
+                console.debug('spam', id)
+                let headers = new Headers()
+                headers.append('Content-Type','application/json')
+                headers.append('Accept', 'application/json')
+                let cfg = {
+                    headers: headers,
+                    method: 'POST',
+                }
+                fetch(`/helpdesk/<?php echo $id_space ?>/${id}/status/4`, cfg).
+                then(() => {
+                    resolve()
+                }).catch(err => {
+                    console.error('failed to spam', id)
+                    reject(err)
+                })
+            })
+        },
+        spamSelected() {
+            this.tickets.forEach(async (ticket) => {
+                if (ticket?.selected) {
+                    console.debug('should spam ', ticket.id)
+                    try {
+                        await this.spam(ticket.id)
+                    } catch(err) {
+                    }
+                }
+            })
+        },
+        selectTicket(id) {
+            if (id === null) {
+                let tickets = [...this.tickets]
+                if (this.select) {
+                    console.debug('unselect all')
+                    tickets.forEach((ticket) => {
+                        ticket.selected = false;
+                    })
+                } else {
+                    console.debug('select all')
+                    tickets.forEach((ticket) => {
+                        ticket.selected = true;
+                    })
+                }
+                this.select = !this.select
+                this.tickets = tickets
+                return
+            }
+            let tickets = [...this.tickets]
+            tickets.forEach((ticket) => {
+                if(ticket.id === id) {
+                    console.debug('select/unselect ', id)
+                    ticket.selected = !ticket.selected;
+                }
+            })
+            this.tickets = tickets
+        },
         nextPage() {
             if(this.tickets.length == 0) {
                 return;
@@ -387,6 +451,8 @@ var app = new Vue({
                 this.current_filter = 'Reminder'
             } else if(f==3) {
                 this.current_filter = 'Closed'
+            } else if (f==4) {
+                this.current_filter = 'Spam'
             }
             this.settings = false;
             this.filter = f;
