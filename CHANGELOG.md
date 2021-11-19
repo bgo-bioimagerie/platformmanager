@@ -10,6 +10,7 @@
 * [mail] allow users to unsubscribe to notifications #382
 * [helpdesk] ignore delivery status notifications (do not reply)
 * [helpdesk] let user select multiple tickets to spam them #393
+* [core] limit file uploads name to alphanumeric # 402
 
 ## 2.1.9
 
