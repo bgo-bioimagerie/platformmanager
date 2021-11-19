@@ -289,7 +289,7 @@ while(true) {
                 if($newTicket['is_new']) {
                     if(isReply($mail, $headersDetailed) || ignore($from[0])) {
                         Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip response', ['from' => $from[0]]);
-                        continue;   
+                        continue;
                     }
                     Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
                     $from = Configuration::get('helpdesk_email');
