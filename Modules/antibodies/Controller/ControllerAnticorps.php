@@ -388,8 +388,14 @@ class ControllerAnticorps extends ControllerSecureNav {
         
     protected function downloadIllustration($id_space){
 		$target_dir = "data/antibodies/";
-		$filename = $id_space."_".$_FILES["image_url"]["name"];
-		$target_file = $target_dir . $filename;
+		$fileName = $id_space."_".$_FILES["image_url"]["name"];
+		$fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $fileName, $matches);
+		if(! $fileNameOK) {
+			throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+		}
+
+
+		$target_file = $target_dir . $fileName;
 		//echo "target file = " . $target_file . "<br/>";
 		$uploadOk = 1;
 
@@ -405,7 +411,7 @@ class ControllerAnticorps extends ControllerSecureNav {
 			// if everything is ok, try to upload file
 		} else {
 			if (move_uploaded_file($_FILES["image_url"]["tmp_name"], $target_file)) {
-				return  $filename;
+				return  $fileName;
 			} else {
 				throw new PfmException("there was an error uploading your file.", 500);
 			}

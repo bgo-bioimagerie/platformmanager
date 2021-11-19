@@ -145,6 +145,10 @@ class HelpdeskController extends CoresecureController {
                 $role = CoreSpace::$MANAGER;
                 $module = "helpdesk";
                 $name = $_FILES[$fid]['name'];
+                $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $name, $matches);
+                if(! $fileNameOK) {
+                    throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+                }
                 $attachId = $c->set(0, $id_space, $name, $role, $module, $_SESSION['id_user']);
                 $file = $c->get($attachId);
                 $attachementFiles[] = $file;

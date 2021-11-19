@@ -167,6 +167,12 @@ class CatalogadminController extends CoresecureController {
     protected function downloadIllustration() {
         $target_dir = "data/catalog/";
         $target_file = $target_dir . $_FILES["illustration"]["name"];
+
+        $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $_FILES["illustration"]["name"], $matches);
+        if(! $fileNameOK) {
+            throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+        }
+
         //echo "target file = " . $target_file . "<br/>";
         $uploadOk = 1;
         //$imageFileType = pathinfo($_FILES["illustration"]["name"],PATHINFO_EXTENSION);
