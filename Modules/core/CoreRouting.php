@@ -42,8 +42,8 @@ class CoreRouting extends Routing{
         
         
         // Update
-        $this->addRoute("update", "update", "coreupdate", "update");
-        $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
+        // $this->addRoute("update", "update", "coreupdate", "update");
+        // $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
         
         // Users
         $this->addRoute("coreusers", "coreusers", "coreusers", "index");
