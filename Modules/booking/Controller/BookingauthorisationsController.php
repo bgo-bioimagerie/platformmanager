@@ -226,6 +226,7 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelResourcesCategories = new ReCategory();
         // $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
+        $id_resource_category = $data["resource_id"];
         $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
         $categoryName = $recat['name'];
 

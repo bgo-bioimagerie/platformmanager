@@ -201,7 +201,7 @@ class BookingstatisticsController extends CoresecureController {
      * @deprecated
      */
     public function statreservationsqueryAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $month_start = $this->request->getParameter("month_start");
         $year_start = $this->request->getParameter("year_start");

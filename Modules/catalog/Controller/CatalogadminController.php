@@ -29,6 +29,7 @@ class CatalogadminController extends CoresecureController {
      * @see Controller::categoriesAction()
      */
     public function categoriesAction($id_space) {
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
         $modelCategory = new CaCategory();
@@ -44,6 +45,7 @@ class CatalogadminController extends CoresecureController {
         ));
     }
     public function categoryeditAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get name
         $name = "";
@@ -82,12 +84,14 @@ class CatalogadminController extends CoresecureController {
      * Remove a category from the database
      */
     public function categorydeleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $modelCategory = new CaCategory();
         $modelCategory->delete($id_space, $id);
         // generate view
         $this->redirect("catalogcategories/".$id_space);
     }
     public function prestationsAction($id_space) {
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
         $modelEntry = new CaEntry();
@@ -110,6 +114,7 @@ class CatalogadminController extends CoresecureController {
         ));
     }
     public function prestationeditAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get info
         $modelEntry = new CaEntry();
@@ -185,6 +190,7 @@ class CatalogadminController extends CoresecureController {
     }
 
     public function prestationdeleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $modelCategory = new CaEntry();
         $modelCategory->delete($id_space ,$id);
         // generate view

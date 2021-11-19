@@ -125,6 +125,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function editreservationqueryAction($id_space) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         //FIXME: editng an existing reservation does not seem to work
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
@@ -766,6 +767,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteperiodAction($id_space, $id_period){
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $modelCalEntry = new BkCalendarPeriod();
         $modelCalEntry->deleteAllPeriod($id_space, $id_period);
 
@@ -773,6 +775,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $sendEmail = intval($this->request->getParameter("sendmail"));
         $modelCalEntry = new BkCalendarEntry();
         if ($sendEmail == 1) {

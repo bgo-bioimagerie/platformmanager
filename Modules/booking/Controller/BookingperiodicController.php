@@ -99,7 +99,7 @@ class BookingdefaultController extends BookingabstractController {
     }
     
     public function editreservationqueryAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $responsible_id = $this->request->getParameterNoException("responsible_id"); 
         
         $id = $this->request->getParameter("id");
@@ -449,6 +449,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id){
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $sendEmail = intval($this->request->getParameter("sendmail"));
         if ($sendEmail == 1) {
             // get the resource

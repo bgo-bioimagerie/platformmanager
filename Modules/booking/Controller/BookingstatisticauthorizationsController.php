@@ -369,7 +369,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
      * Form to export the list of authorized user per resource category
      */
     public function authorizedusersAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the resource list
         $resourceModel = new ReCategory();
         $resourcesCategories = $resourceModel->getBySpace($id_space);
@@ -385,7 +385,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
      * Query to export the list of authorized user per resource category
      */
     public function authorizedusersqueryAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the selected resource id
         $resource_id = $this->request->getParameter("resource_id");
         $email = $this->request->getParameterNoException("email");
