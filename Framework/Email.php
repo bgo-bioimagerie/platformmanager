@@ -38,6 +38,7 @@ class Email extends Model {
         $mail->CharSet = "utf-8";
         $mail->SetFrom($from, $fromName);
         $mail->Subject = $subject;
+        $mail->addCustomHeader("X-PFM", "1");
 
         // parse content
         $content = preg_replace("/\r\n|\r/", "<br />", $content);
