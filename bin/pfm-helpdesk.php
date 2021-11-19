@@ -22,6 +22,7 @@ function isReply($mail, $headersDetailed) {
     if(!$isReply) {
         try {
             $isReply = $mail->in_reply_to ? true : false;
+            Configuration::getLogger()->debug('[helpdesk] is in-reply-to?', ["references" => $mail->in_reply_to]);
         } catch(Exception){
             // not in header, that's fine
         }
@@ -29,10 +30,23 @@ function isReply($mail, $headersDetailed) {
     if(!$isReply) {
         try {
             $isReply = $mail->references ? true : false;
+            Configuration::getLogger()->debug('[helpdesk] is reference?', ["references" => $mail->references]);
+
         } catch(Exception){
             // not in header, that's fine
         }
     }
+    if(!$isReply) {
+        $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? $headersDetailed["X-GND-Status"] == "BOUNCE" : false;
+        if($isReply) {
+            Configuration::getLogger()->debug('[helpdesk] bounce');
+        }
+    }
+    Configuration::getLogger()->debug('[helpdesk] is reply?', [
+        'headers' => $headersDetailed,
+        'subject' => $mail->subject,
+        'reply' => $isReply
+    ]);
     return $isReply;
 }
 
