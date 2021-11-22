@@ -11,7 +11,7 @@ require_once 'Modules/core/Model/CoreStatus.php';
 
 
 /**
- * 
+ * @deprecated
  * @author sprigent
  * Manage the modules: starting page to install and config each module	
  */

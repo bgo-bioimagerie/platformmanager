@@ -265,6 +265,13 @@ class CoreTranslator {
         return "Phone";
     }
 
+    public static function Organization($lang) {
+        if ($lang == "fr") {
+            return "Organisation/entreprise";
+        }
+        return "Organization/Company";
+    }
+
     public static function Responsible($lang) {
         if ($lang == "fr") {
             return "Responsable";
@@ -1870,11 +1877,25 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $spaceName, $userEmail, $lang){
+    public static function JoinRequestEmail($login, $spaceName, $userEmail, $lang, $organization = null, $team = null) {
         if ($lang == "fr") {
-            return "Bonjour, <br><br>" . $login . " (" . $userEmail . ") demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            $message = "Bonjour, <br><br>" . $login . " (" . $userEmail . ") demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            if ($organization) {
+                $message .= ("<br>Organisation : " . $organization);
+            }
+            if ($team) {
+                $message .= ("<br>Equipe : " . $team);
+            }
+            return $message;
         }
-        return "Hi, <br><br>" . $login . " (" . $userEmail . ") requests to join your space " . $spaceName. " on Platform-Manager";
+        $message = "Hi, <br><br>" . $login . " (" . $userEmail . ") requests to join your space " . $spaceName. " on Platform-Manager";
+        if ($organization) {
+            $message .= ("<br>Organization: " . $organization);
+        }
+        if ($team) {
+            $message .= ("<br>Team: " . $team);
+        }
+        return $message;
     }
 
     public static function JoinRequestSubject($spaceName, $lang){

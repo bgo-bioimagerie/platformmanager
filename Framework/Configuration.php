@@ -171,7 +171,7 @@ class Configuration {
             self::$parameters['smtp_from'] = 'pfm+donotreply@pfm.org';
         }
         if(getenv('MAIL_FROM')) {
-            self::getLogger()->info('MAIL_FROM is deprecated, use SMTP_FROM');
+            self::getLogger()->debug('MAIL_FROM is deprecated, use SMTP_FROM');
             self::$parameters['smtp_from'] = getenv('MAIL_FROM');
         }
         if(getenv('SMTP_FROM')) {
@@ -304,7 +304,7 @@ class Configuration {
             self::$parameters['helpdesk_imap_tls'] = getenv('PFM_HELPDESK_IMAP_TLS');
         }
         if(getenv('PFM_ALLOW_REGISTRATION')) {
-            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION'));
+            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION')) ? true : false;
         }
         if(getenv('PFM_JWT_SECRET')) {
             self::$parameters['jwt_secret'] = getenv('PFM_JWT_SECRET');

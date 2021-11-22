@@ -151,12 +151,16 @@ class CoreSpaceUser extends Model {
         $letter = ($letter === "All") ? "" : $letter;
         $sql =
             "SELECT core_users.*,
+                users_info.unit,
+                users_info.organization,
                 core_j_spaces_user.date_convention,
                 core_j_spaces_user.date_contract_end,
                 convention_url
             FROM core_users
             INNER JOIN core_j_spaces_user
             ON core_users.id = core_j_spaces_user.id_user
+            LEFT JOIN users_info
+            ON users_info.id_core = core_users.id
             WHERE core_j_spaces_user.id_space=?
             AND core_users.is_active=1
             AND core_users.validated=1";

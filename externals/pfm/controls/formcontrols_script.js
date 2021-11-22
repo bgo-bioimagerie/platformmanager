@@ -27,7 +27,7 @@ export class FormControls {
         if(!firstNameElt.value || !lastNameElt.value) {
             return
         }
-        elt.value = (firstNameElt.value[0] + lastNameElt.slice(1)).toLowerCase()
+        elt.value = (firstNameElt.value[0] + lastNameElt.value.slice(0,10)).toLowerCase()
     }
 
 

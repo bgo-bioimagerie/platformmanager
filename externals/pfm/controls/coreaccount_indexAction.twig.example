@@ -58,7 +58,7 @@
                 <div class="form-group">
                     <label class="control-label col-xs-4">Login*</label>
                     <div class="col-xs-6">
-                        <input class="form-control" x-unique="login" type="text" id="login" name="login" value="" required="">
+                        <input class="form-control" x-suggest="firstname,name" x-unique="login" type="text" id="login" name="login" value="" required="">
                     </div>
                 </div>
                 <div class="form-group ">
@@ -96,6 +96,11 @@
         </div>
     </div>
 </div>
-<script type="module" src='/externals/pfm/controls.js'></script>
+
+<script type="module">
+    import {FormControls} from '/externals/pfm/controls/formcontrols_script.js';
+    let control = new FormControls(null);
+    control.load();
+</script>
 
 {% endblock %}

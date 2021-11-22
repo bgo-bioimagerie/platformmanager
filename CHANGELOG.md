@@ -8,6 +8,28 @@
 * [stats] count number of tickets per status
 * [stats] add stat calentry_cancel on booking cancel
 * [mail] allow users to unsubscribe to notifications #382
+* [helpdesk] ignore delivery status notifications (do not reply)
+* [helpdesk] let user select multiple tickets to spam them #393
+* [core] limit file uploads name to alphanumeric # 402
+
+## 2.1.9
+
+* [users] fix users_info sql
+* [helpdesk] check if message is an auto-reply and log
+* [booking][invoice] fix sql
+* [booking][colorcode] fix sql
+* [sql] fix wrong space_id error => id_space (param and sql)
+* [booking][calsup] fix remove unlisted supinfo
+
+## 2.1.8
+
+* [users] change checkunicity routes
+* [coreInstall] add repair371() function
+* [module:users] add *Organization* and *Unit* to users listing arrays
+* [self_registration] add *Organization* and *Unit* inputs
+* [self_registration] add login suggestion
+* [self_registration] add unicity checks to login and email inputs
+* [self_registration] fix email sent to space admins
 
 ## 2.1.7
 
