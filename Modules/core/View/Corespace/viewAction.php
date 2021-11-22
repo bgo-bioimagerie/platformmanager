@@ -83,7 +83,7 @@ if ($space['color'] == "") {
                         <?php
                     }
                     ?>
-                    <?php if($role > 0) { ?>
+                    <?php if($role > 1) { ?>
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "coremail/" . $space["id"] ?>">
                                 <span class="pm-tiles glyphicon glyphicon-bell" aria-hidden="true"></span>
@@ -91,7 +91,7 @@ if ($space['color'] == "") {
                             </a>
                         </li>
                     <?php } ?>
-                    <ul/>
+                </ul>
             </div>
         </div>
         <?php
