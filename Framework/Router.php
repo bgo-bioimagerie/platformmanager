@@ -225,7 +225,7 @@ class Router {
 
     /**
      * Install request 
-     * @param type $request
+     * @param Request $request
      * @return boolean
      * @throws Exception
      */

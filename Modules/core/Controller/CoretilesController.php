@@ -39,6 +39,12 @@ class CoretilesController extends CorecookiesecureController {
      * @see Controller::index()
      */
     public function indexAction($level = 1, $id = -1) {
+        if($level === "") {
+            $level = 1;
+        }
+        if($id === "") { // welcome page
+            $id = 0;
+        }
         if ( $id < 0 ){
             $this->redirect("coretilesdoc");
         }
