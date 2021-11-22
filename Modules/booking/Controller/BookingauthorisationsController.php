@@ -30,7 +30,7 @@ class BookingauthorisationsController extends CoresecureController {
 
     public function indexAction($id_space, $id) {
 
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get all the resources
@@ -95,7 +95,7 @@ class BookingauthorisationsController extends CoresecureController {
 
     public function historyAction($id_space, $id) {
 
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $idArray = explode("_", $id);
@@ -156,7 +156,7 @@ class BookingauthorisationsController extends CoresecureController {
     }
 
     public function addAction($id_space, $id) {
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $idArray = explode("_", $id);
@@ -214,7 +214,7 @@ class BookingauthorisationsController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelAuth = new BkAuthorization();

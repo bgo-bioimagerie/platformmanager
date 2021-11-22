@@ -203,6 +203,8 @@ abstract class CoresecureController extends CorecookiesecureController {
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
+        } else {
+            return true;
         }
     }
 
