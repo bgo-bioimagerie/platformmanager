@@ -35,10 +35,6 @@ services:
       PFM_HELPDESK_IMAP_TLS:
     working_dir: /var/www/platformmanager
     entrypoint: ["/pfmextra-entrypoint.sh", "helpdesk"]
-    depends_on:
-        - mysql
-        - pfm-rabbitmq
-        - influxdb
     volumes:
       - ./data:/var/www/platformmanager/data # Mount the application data directory
 
@@ -72,6 +68,7 @@ services:
       PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER}
       PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
       PFM_HELPDESK_IMAP_TLS:
+      PFM_JWT_SECRET: ${PFM_JWT_SECRET}
     depends_on:
         - mysql
         - pfm-rabbitmq
@@ -107,8 +104,7 @@ services:
       PFM_INFLUXDB_ORG: pfm
       PFM_REDIS_HOST: redis
       PFM_ALLOW_REGISTRATION: 0
-      PFM_JWT_SECRET: 123456
-      PFM_REDIS_HOST: redis
+      PFM_JWT_SECRET: ${PFM_JWT_SECRET}
       PFM_GRAFANA_URL: http://grafana:3000
       PFM_GRAFANA_USER: admin
       PFM_GRAFANA_PASSWORD: ${PFM_ADMIN_PASSWORD}

@@ -504,6 +504,10 @@ class AntibodieslistController extends CoresecureController {
             //echo "upload image " . $_FILES["tissusfiles"]["name"][$i] . "<br/>";
             //$ext = pathinfo($_FILES["image_url"]["name"], PATHINFO_EXTENSION);
             $fileName = $id_space."_".$_FILES["image_url"]["name"];
+            $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $fileName, $matches);
+            if(! $fileNameOK) {
+                throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+            }
 
             $target_file = $target_dir . $fileName;
             $uploadOk = 1;

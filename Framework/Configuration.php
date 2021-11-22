@@ -285,7 +285,7 @@ class Configuration {
             self::$parameters['helpdesk_imap_tls'] = getenv('PFM_HELPDESK_IMAP_TLS');
         }
         if(getenv('PFM_ALLOW_REGISTRATION')) {
-            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION'));
+            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION')) ? true : false;
         }
         if(getenv('PFM_JWT_SECRET')) {
             self::$parameters['jwt_secret'] = getenv('PFM_JWT_SECRET');

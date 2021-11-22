@@ -92,7 +92,7 @@ class CoreaccountController extends Controller {
      * @see Controller::index()
      */
     public function indexAction() {
-        if(intval(Configuration::get('allow_registration', 0)) != 1) {
+        if(! Configuration::get('allow_registration', false)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
 

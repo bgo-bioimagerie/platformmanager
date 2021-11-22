@@ -10,7 +10,7 @@ Platform-Manager
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <?php
 if (getenv('PFM_MODE') != 'dev') {
-    echo "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
+    echo "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'\">\n";
 } else {
     echo "<meta http-equiv=\"Content-Security-Policy-Report-Only\" content=\"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'\">\n";
 }

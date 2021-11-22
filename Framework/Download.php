@@ -1,15 +1,13 @@
 <?php
 
 /**
- * Upload a file from a form input
+ * Download a file from a form input
  */
 class Download {
 
     /**
      * 
-     * @param type $target_dir
-     * @param type $uploadFile_id
-     * @param type $target_file
+     * @param string $file
      * @return string
      */
     public static function downloadFile($file) {
@@ -17,7 +15,7 @@ class Download {
         if (file_exists($file)) {
             
             $fileNameArray = explode("/", $file);
-            $fileName = $fileNameArray(count($fileNameArray-1));
+            $fileName = $fileNameArray[count($fileNameArray)-1];
             
             header("Content-Type: application/json");
             header("Content-Disposition: attachment; filename=$fileName");
