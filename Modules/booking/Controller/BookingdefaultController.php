@@ -778,9 +778,19 @@ class BookingdefaultController extends BookingabstractController {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $sendEmail = intval($this->request->getParameter("sendmail"));
         $modelCalEntry = new BkCalendarEntry();
+        $entryInfo = $modelCalEntry->getEntry($id_space, $id);
+        if (!$entryInfo) {
+            throw new PfmDbException("reservation not found", 404);
+        }
+        $id_resource = $entryInfo["resource_id"];
+        $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
+        if (!$canEdit) {
+            throw new PfmException("ERROR: You're not allowed to modify this reservation");
+        }
+
+
         if ($sendEmail == 1) {
-            $entryInfo = $modelCalEntry->getEntry($id_space, $id);
-            $id_resource = $entryInfo["resource_id"];
+            
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
 
