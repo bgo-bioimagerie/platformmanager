@@ -174,10 +174,11 @@ abstract class CoresecureController extends CorecookiesecureController {
     }
 
     /**
-     * 
+     * @deprecated
      * @param type $menuName
      * @throws Exception
      */
+    /*
     public function checkAuthorizationMenu($menuName) {
         $auth = $this->isUserMenuAuthorized($menuName);
         if ($auth == 0) {
@@ -187,6 +188,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             $this->redirect("coreconnection");
         }
     }
+    */
 
     /**
      * 
@@ -241,7 +243,7 @@ abstract class CoresecureController extends CorecookiesecureController {
     }
 
     /**
-     * 
+     * @deprecated
      * @param type $menuName
      * @return type
      */

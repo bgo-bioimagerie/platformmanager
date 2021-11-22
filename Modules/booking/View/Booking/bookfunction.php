@@ -11,26 +11,16 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$resourceID = $_SESSION["bk_id_resource"];
 	}
 	$dateString = date("Y-m-d", $date_unix);
-	//$ModulesManagerModel = new CoreMenu();
 	$modelBookingSupplemetary = new BkCalSupInfo();
-	$isProjectMode = false;
-	if ($isProjectMode > 0){
-		$isProjectMode = true;
-	}
-	else{
-		$isProjectMode = false;
-	}
+	
 	if ($size_bloc_resa == 900){
 		// resa
 		$caseTimeBegin = $date_unix + $day_begin*3600 - 900;
 		$caseTimeEnd = $date_unix + $day_begin*3600;
 		$caseTimeLength = 900;
 		
-		//echo "cal entries size = " . count($calEntries) . "--";
-		//print_r($calEntries);
 		$modelBookingSetting = new BkBookingSettings();
 		$leftBlocks = ($day_end*3600 - $day_begin*3600)/900;
-		//echo "leftBlocks = " . $leftBlocks . "</br>";
 		$lineColorId = 0;
 		for ($h = $day_begin ; $h < $day_end ; $h = $h+0.25){
 				
@@ -58,9 +48,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						$pixelHeight = $blocNumber*$agendaStyle["line_height"];
 				
 						$shortDescription = $calEntry['short_description'];
-						if ($isProjectMode){
-							$shortDescription = $moduleProject->getProjectName($calEntry['short_description']);
-						}
+						
 						$text = "";
 						if ($blocNumber <= 2){
 							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
@@ -98,9 +86,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					$pixelHeight = $blocNumber*$agendaStyle["line_height"];
 						
 					$shortDescription = $calEntry['short_description'];
-					if ($isProjectMode){
-						$shortDescription = $moduleProject->getProjectName($calEntry['short_description']);
-					}
+					
 					$text = "";
 					if ($blocNumber <= 2){
 						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
@@ -135,22 +121,26 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			    	}
 			    	?>
 						<div class="text-center" id="tcell" style="height: <?php echo $agendaStyle["line_height"]?>px; background-color: <?php echo $bgColor?>;">
-						<?php if ($isDayAvailable){?>
-						<?php if ($isUserAuthorizedToBook){		
-							$h2 = str_replace(".", "-", $h);
-							$he = explode("-", $h2);
-							if (count($he) == 1){$he[1] = "00";}
-							if ($he[1] == "25"){$he[1] = "15";}
-							if ($he[1] == "50"){$he[1] = "30";}
-							if ($he[1] == "5"){$he[1] = "30";}
-							if ($he[1] == "75"){$he[1] = "45";}
-							if ($he[0] < 10){$he[0] = "0". $he[0];}
-							$hed = $he[0] . "-" .$he[1];
-							if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-								$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
-								?>
-						<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
-						<?php }}}?>
+						<?php if ($isDayAvailable){
+						?>
+							<?php if ($isUserAuthorizedToBook){		
+								$h2 = str_replace(".", "-", $h);
+								$he = explode("-", $h2);
+								if (count($he) == 1){$he[1] = "00";}
+								if ($he[1] == "25"){$he[1] = "15";}
+								if ($he[1] == "50"){$he[1] = "30";}
+								if ($he[1] == "5"){$he[1] = "30";}
+								if ($he[1] == "75"){$he[1] = "45";}
+								if ($he[0] < 10){$he[0] = "0". $he[0];}
+								$hed = $he[0] . "-" .$he[1];
+								if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+									$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
+							?>
+							<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
+							<?php }
+							}
+					}
+					?>
 						</div>
 					<?php 
 					}	
@@ -163,9 +153,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$caseTimeBegin = $date_unix + $day_begin*3600 - 1800;
 		$caseTimeEnd = $date_unix + $day_begin*3600;
 		$caseTimeLength = 1800;
-		
-		//echo "cal entries size = " . count($calEntries) . "--";
-		//print_r($calEntries);
+
 		$leftBlocks = ($day_end*3600 - $day_begin*3600)/1800;
 		$modelBookingSetting = new BkBookingSettings();
 		$lineColorId = 0;
@@ -195,9 +183,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						$pixelHeight = $blocNumber*$agendaStyle["line_height"];
 				
 						$shortDescription = $calEntry['short_description'];
-						if ($isProjectMode){
-							$shortDescription = $moduleProject->getProjectName($calEntry['short_description']);
-						}
+						
 						$text = "";
 						if ($blocNumber <= 2){
 							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
@@ -235,9 +221,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					$pixelHeight = $blocNumber*$agendaStyle["line_height"];
 					
 					$shortDescription = $calEntry['short_description'];
-					if ($isProjectMode){
-						$shortDescription = $moduleProject->getProjectName($calEntry['short_description']);
-					}
+					
 					$text = "";
 					if ($blocNumber <= 2){
 						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
@@ -264,7 +248,6 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			?>
 			   
 			    <?php 
-			    //echo "lineColorId = " . $lineColorId . "<br>";
 			    while ($lineColorId > 4){
 			    	$lineColorId -= 4;
 			    }
@@ -298,9 +281,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$caseTimeBegin = $date_unix + $day_begin*3600 - 3600;
 		$caseTimeEnd = $date_unix + $day_begin*3600;
 		$caseTimeLength = 3600;
-		
-		//echo "cal entries size = " . count($calEntries) . "--";
-		//print_r($calEntries);
+
 		$leftBlocks = ($day_end*3600 - $day_begin*3600)/3600;
 		$modelBookingSetting = new BkBookingSettings();
 		$lineColorId = 0;
@@ -329,9 +310,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						$pixelHeight = $blocNumber*$agendaStyle["line_height"];
 						
 						$shortDescription = $calEntry['short_description'];
-						if ($isProjectMode){
-							$shortDescription = $moduleProject->getProjectName($calEntry['short_description']);
-						}
+
 						$text = "";
 						if ($blocNumber <= 2){
 							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
@@ -369,9 +348,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					$pixelHeight = $blocNumber*$agendaStyle["line_height"];
 						
 					$shortDescription = $calEntry['short_description'];
-					if ($isProjectMode){
-						$shortDescription = $moduleProject->getProjectName($calEntry['short_description']);
-					}
+
 					$text = "";
 					if ($blocNumber <= 2){
 						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);

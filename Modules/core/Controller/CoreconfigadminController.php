@@ -194,38 +194,6 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function menusactivationForm($lang) {
-
-        $modelMenu = new CoreMenu();
-        $statusUserMenu = $modelMenu->getDataMenusUserType("users");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $modelStatus = new CoreStatus();
-        $status = $modelStatus->allStatusInfo();
-
-        $choices = array();
-        $choicesid = array();
-        $choices[] = CoreTranslator::disable($lang);
-        $choicesid[] = 0;
-        for ($i = 0; $i < count($status); $i++) {
-            $choices[] = CoreTranslator::Translate_status($lang, $status[$i]["name"]);
-            $choicesid[] = $status[$i]["id"];
-        }
-
-        $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $choices, $choicesid, $statusUserMenu);
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    /**
-     *
-     * @param type $lang
-     * @return \Form
-     */
     protected function ldapForm($lang) {
 
         $form = new Form($this->request, "ldapForm");
