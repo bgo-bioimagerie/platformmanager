@@ -57,6 +57,12 @@ class CaEntry extends Model {
         return $req->fetchAll();
     }
 
+    public function list() {
+        $sql = "SELECT * FROM ca_entries WHERE deleted=0";
+        $req = $this->runRequest($sql);
+        return $req->fetchAll();   
+    }
+
     public function getInfo($id_space, $id) {
         $sql = "SELECT * FROM ca_entries WHERE id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));

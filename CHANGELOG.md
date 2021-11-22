@@ -8,9 +8,11 @@
 * [stats] count number of tickets per status
 * [stats] add stat calentry_cancel on booking cancel
 * [mail] allow users to unsubscribe to notifications #382
+* [core][ldap] rename base config parameters for ldap auth
 * [helpdesk] ignore delivery status notifications (do not reply)
 * [helpdesk] let user select multiple tickets to spam them #393
 * [core] limit file uploads name to alphanumeric # 402
+* [core] add welcome page and use it as default entry url
 
 ## 2.1.9
 

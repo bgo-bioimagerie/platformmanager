@@ -11,14 +11,15 @@ require_once 'Modules/core/Model/CoreMainMenuItem.php';
  * @author sprigent
  * Controller for the home page
  */
-class CorehomeController extends CoresecureController {
+class CorehomeController extends CorecookiesecureController {
 
     /**
      * Constructor
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->checkAuthorization(CoreStatus::$USER);
+        $this->user = new CoreUser();
+        //$this->checkAuthorization(CoreStatus::$USER);
     }
 
     /**
@@ -26,15 +27,14 @@ class CorehomeController extends CoresecureController {
      * @see Controller::index()
      */
     public function indexAction() {
-
         $lang = $this->getLanguage();
         
         // get the first menu
         $modelMainMenu = new CoreMainMenu();
         $menus = $modelMainMenu->getAll();
         
-        if (!empty($menus)) {  
-            $this->redirect("coretiles/1/" . $menus[0]["id"]);            
+        if (!empty($menus)) {
+            $this->redirect("coretiles/1/0");            
         }
         else{
             return $this->render(array(

@@ -65,7 +65,7 @@ if ($menuUrl != ""){
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<?php if($impersonate!=null) { ?><li><a href="/corespaceaccess/0/unimpersonate"><button class="btn btn-danger">Log back to <?php echo $impersonate; ?></button></a></li><?php } ?>
-
+				<?php if(isset($_SESSION["login"]) && $_SESSION["id_user"] > 0) { ?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img onerror="this.style.display='none'" alt="avatar" src="<?php echo "https://www.gravatar.com/avatar/" . md5( strtolower( trim( $_SESSION['email'] ) ) ) . "?s=20"; ?>"/> <?php echo  $userName ?> <span class="caret"></span></a>
 					<ul class="dropdown-menu" role="menu">
@@ -75,6 +75,10 @@ if ($menuUrl != ""){
         				<li><a href=corelogout> <?php echo  CoreTranslator::logout($lang) ?> </a></li>
 					</ul>
 				</li>
+				<?php } else { ?>
+					<li><a href="/coreconnection">Login</a></li>
+					<?php if(intval(Configuration::get('allow_registration', 0)) == 1) { ?><li><a href="/corecreateaccount"><?php echo CoreTranslator::CreateAccount($lang) ?></a></li><?php } ?>
+				<?php }?>
 			</ul>
 		</div><!--/.nav-collapse -->
 	</div>

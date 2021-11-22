@@ -194,25 +194,6 @@ class Configuration {
             self::$parameters['public_url'] = getenv('PFM_PUBLIC_URL');
         }
 
-        if(getenv('PFM_LDAP_HOST')) {
-            self::$parameters['ldap_host'] = getenv('PFM_LDAP_HOST');
-        }
-        if(getenv('PFM_LDAP_PORT')) {
-            self::$parameters['ldap_port']= intval(getenv('PFM_LDAP_PORT'));
-        }
-        if(getenv('PFM_LDAP_USER')) {
-            self::$parameters['ldap_admin'] = getenv('PFM_LDAP_USER');
-        }
-        if(getenv('PFM_LDAP_PASSWORD')) {
-            self::$parameters['ldap_password'] = getenv('PFM_LDAP_PASSWORD');
-        }
-        if(getenv('PFM_LDAP_BASEDN')) {
-            self::$parameters['ldap_dn'] = getenv('PFM_LDAP_BASEDN');
-        }
-        if(getenv('PFM_LDAP_BASESEARCH')) {
-            self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_BASESEARCH');
-        }
-
         if(getenv('PFM_AMQP_HOST')) {
             self::$parameters['amqp_host'] = getenv('PFM_AMQP_HOST');
         }
