@@ -37,6 +37,10 @@ abstract class InvoiceAbstractController extends CoresecureController {
         
         $modelInvoice = new InInvoice();
         $invoiceInfo = $modelInvoice->getByNumber($id_space, $number);
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
+            throw new PfmFileException("No template found", 404);
+        }
         
         if(!file_exists('data/invoices/'.$id_space.'/template.twig') && file_exists('data/invoices/'.$id_space.'/template.php')) {
             // backwark, templates were in PHP and no twig template available use old template
