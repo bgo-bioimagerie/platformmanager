@@ -9,9 +9,9 @@ require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 
 /**
- * 
+ * @deprecated
  * @author sprigent
- * Controller for the home page
+ * Only index still used to redirect to serviceslisting
  */
 class ServicesController extends CoresecureController {
 
@@ -165,7 +165,9 @@ class ServicesController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
     
-    // DEPRECATED ?
+    /*
+    * @deprecated
+    */
     public function editAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
