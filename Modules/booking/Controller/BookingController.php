@@ -65,7 +65,8 @@ class BookingController extends BookingabstractController {
 
     public function indexAction($id_space) {
 
-        // $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        
 
         $id_area = $this->request->getParameterNoException("id_area");
         $id_resource = $this->request->getParameterNoException("id_resource");

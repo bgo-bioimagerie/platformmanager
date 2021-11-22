@@ -338,16 +338,13 @@ class CoreSpace extends Model {
         $menuRole = $roleArrray[0];
 
         if ($this->isSpacePublic($id_space)) {
-            if ($menuRole < CoreSpace::$MANAGER) {
+            $userRole = $this->getUserSpaceRole($id_space, $id_user);
+            if($userRole == -1) {
+                $userRole = CoreSpace::$VISITOR;
+            }
+            if ($userRole >= $menuRole) {
                 return 1;
             } else {
-                $userRole = $this->getUserSpaceRole($id_space, $id_user);
-                if($userRole == -1) {
-                    $userRole = CoreSpace::$VISITOR;
-                }
-                if ($userRole >= $menuRole) {
-                    return 1;
-                }
                 return 0;
             }
         } else {
