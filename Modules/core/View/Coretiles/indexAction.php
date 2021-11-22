@@ -76,26 +76,34 @@ if (!$headless) {
                         <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
                             <!-- IMAGE -->
                             <a href="<?php echo "corespace/" . $item["id"] ?>">
-                            <?php if(isset($icon)) {?><img src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                            <?php if(isset($item["image"])) {?><img onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
                             </a>
                             <p>
                             </p>
                             <!-- TITLE -->
                             <p style="color:#018181; ">
-                                <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> </a>
+                                <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
+                                <?php if(isset($_SESSION["login"])) { ?>
+                                    <?php if(isset($star[$item["id"]])) { ?>
+                                        <a aria-label="remove from favorites" href="<?php echo "coretiles/1/".$submenu."/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
+                                    <?php } else { ?>
+                                        <a aria-label="add to favorites" href="<?php echo "coretiles/1/".$submenu."/star/".$item["id"] ?>"><span class="glyphicon glyphicon-star-empty"></span></a>
+                                    <?php } ?>
+                                    <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
+                                <?php } ?>
                             </p>
 
                             <!-- DESC -->
                             <p style="color:#a1a1a1; font-size:12px;">
                                 <?php echo $item["description"] ?>
                             </p>
-                            <div style="position: absolute; bottom: 0px"><small>
+                            <div ><small>
                             <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
                             </small></div>
 
                             <!-- JOIN BUTTON -->
                             <?php
-                                if (!in_array($item["id"], $spacesUserIsAdminOf)) {
+                                if (!in_array($item["id"], $spacesUserIsAdminOf) && isset($_SESSION["login"])) {
                                     if (!in_array($item["id"], $userPendingSpaces)) {
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                                         if(!$isMemberOfSpace) {

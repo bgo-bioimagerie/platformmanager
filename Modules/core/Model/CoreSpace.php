@@ -342,6 +342,9 @@ class CoreSpace extends Model {
                 return 1;
             } else {
                 $userRole = $this->getUserSpaceRole($id_space, $id_user);
+                if($userRole == -1) {
+                    $userRole = CoreSpace::$VISITOR;
+                }
                 if ($userRole >= $menuRole) {
                     return 1;
                 }

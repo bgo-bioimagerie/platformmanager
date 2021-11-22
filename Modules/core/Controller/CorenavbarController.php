@@ -18,7 +18,7 @@ class CorenavbarController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $this->checkAuthorization(CoreStatus::$USER);
+        //$this->checkAuthorization(CoreStatus::$USER);
     }
     
     /**
@@ -33,8 +33,11 @@ class CorenavbarController extends CoresecureController {
      * @return string
      */
     public function navbar() {
-        
-        $menu = $this->buildNavBar($_SESSION["login"]);
+        $login = '';
+        if(isset($_SESSION["login"])) {
+            $login = $_SESSION["login"];
+        }
+        $menu = $this->buildNavBar($login);
         return $menu;
     }
 
@@ -60,6 +63,9 @@ class CorenavbarController extends CoresecureController {
      * @return multitype: Amdin menu
      */
     public function getAdminMenu() {
+        if(!isset($_SESSION["user_status"])) {
+            return null;
+        }
         $user_status_id = $_SESSION["user_status"];
 
         $toolAdmin = null;
