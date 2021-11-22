@@ -16,7 +16,7 @@ class FileUpload {
      * @param type $uploadFile_id
      * @return string
      */
-    public static function uploadFile($target_dir, $uploadFile_id, $targetName) {
+    public static function uploadFile($target_dir, $uploadFile_id, $targetName="") {
         $target_file = $target_dir . $targetName;
         if ($targetName == "") {
             $target_file = $target_dir . $_FILES[$uploadFile_id]["name"];
