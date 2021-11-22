@@ -49,7 +49,7 @@ class CoreSpace extends Model {
         `image` varchar(255) NOT NULL DEFAULT '',
         `shortname` varchar(30) NOT NULL DEFAULT '',
         `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
-        `support` varchar(100) NOT NULL DEFAULT ''  /* support email contact for space */
+        `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
