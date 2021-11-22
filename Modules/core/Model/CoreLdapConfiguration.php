@@ -49,6 +49,7 @@ class CoreLdapConfiguration
             else {
                 self::$parameters = parse_ini_file($urlFile);
             }
+            self::override();
         }
         return self::$parameters;
     }
@@ -56,6 +57,76 @@ class CoreLdapConfiguration
     public static function getConfigFile(){
     	return "Config/ldap.ini";
     }
+
+/**
+     * Override some config with env variables
+     */
+    private static function override() {
+
+        // Backward compatibility
+        if (self::$parameters['ldapAdress'] != null) {
+            Configuration::getLogger()->debug('[deprecated] using ldapAdress instead of ldap_host');
+            self::$parameters['ldap_host'] = self::$parameters['ldapAdress'];
+        }
+        if (self::$parameters['ldapPort'] != null) {
+            Configuration::getLogger()->debug('[deprecated] using ldapPort instead of ldap_port');
+            self::$parameters['ldap_port'] = intval(self::$parameters['ldapPort']);
+        }
+        if (self::$parameters['ldapId'] != null) {
+            Configuration::getLogger()->debug('[deprecated] using ldapId instead of ldap_user');
+            self::$parameters['ldap_user'] = self::$parameters['ldapId'];
+        }
+        if (self::$parameters['ldapPwd'] != null) {
+            Configuration::getLogger()->debug('[deprecated] using ldapPwd instead of ldap_password');
+            self::$parameters['ldap_password'] = self::$parameters['ldapPwd'];
+        }
+        if (self::$parameters['ldapBaseDN'] != null) {
+            Configuration::getLogger()->debug('[deprecated] using ldapBaseDN instead of ldap_search_dn');
+            self::$parameters['ldap_search_dn'] = self::$parameters['ldapBaseDN'];
+        }
+        if (self::$parameters['ldapUseTls'] != null) {
+            Configuration::getLogger()->debug('[deprecated] using ldapUseTls instead of ldap_tls');
+            self::$parameters['ldap_tls'] = (
+                self::$parameters['ldapUseTls'] == "TRUE" ||
+                self::$parameters['ldapUseTls'] == "1" ||
+                self::$parameters['ldapUseTls'] == 1
+                ) ? true :  false;
+        }
+
+        // Check env vars
+        if(getenv('PFM_LDAP_HOST')) {
+            self::$parameters['ldap_host'] = getenv('PFM_LDAP_HOST');
+        }
+        if(getenv('PFM_LDAP_PORT')) {
+            self::$parameters['ldap_port']= intval(getenv('PFM_LDAP_PORT'));
+        }
+        if(getenv('PFM_LDAP_USER')) {
+            self::$parameters['ldap_user'] = getenv('PFM_LDAP_USER');
+        }
+        if(getenv('PFM_LDAP_PASSWORD')) {
+            self::$parameters['ldap_password'] = getenv('PFM_LDAP_PASSWORD');
+        }
+        if(getenv('PFM_LDAP_DN')) {
+            self::$parameters['ldap_dn'] = getenv('PFM_LDAP_DN');
+        }
+        if(getenv('PFM_LDAP_SEARCH_DN')) {
+            self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_SEARCH_DN');
+        }
+        if(getenv('PFM_LDAP_TLS')) {  // 1 or 0
+            self::$parameters['ldap_tls'] = getenv('PFM_LDAP_TLS') == "1" ? true : false;
+        }
+
+
+        if(!isset(self::$parameters['ldap_port']) || self::$parameters['ldap_port'] == "") {
+            if (isset(self::$parameters['ldap_tls']) && self::$parameters['ldap_tls']) {
+                self::$parameters['ldap_port'] = 636;
+            } else {
+                self::$parameters['ldap_port'] = 389;
+            }
+        }
+
+    }
+
 
 }
 
