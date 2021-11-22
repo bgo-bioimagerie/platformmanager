@@ -144,7 +144,7 @@ class RevisasController extends CoresecureController {
      * Export the visas in an xls file
      */
     public function exportAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get all the resources categories
@@ -199,7 +199,7 @@ class RevisasController extends CoresecureController {
 
     
     public function deleteAction($id_space, $id){
-        
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelVisa = new ReVisa();
         $modelVisa->delete($id_space, $id);
         

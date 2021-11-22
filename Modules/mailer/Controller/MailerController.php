@@ -72,6 +72,7 @@ class MailerController extends CoresecureController {
     }
 
     public function sendAction($id_space) {
+        $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
         $from = $this->request->getParameter("from");
         $to = $this->request->getParameter("to");
         $subject = $this->request->getParameter("subject");

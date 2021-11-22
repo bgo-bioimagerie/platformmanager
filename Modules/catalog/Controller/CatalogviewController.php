@@ -81,7 +81,7 @@ class CatalogviewController extends CoresecureController {
     }
 
     public function antibodiesAction($id_space, $categories) {
-
+        $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelAntibody = new Anticorps();
@@ -102,7 +102,7 @@ class CatalogviewController extends CoresecureController {
     }
 
     public function resourcesAction($id_space, $categories){
-        
+        $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         
         $modelResources = new ResourceInfo();

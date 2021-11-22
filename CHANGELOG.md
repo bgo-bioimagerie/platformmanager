@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Security] Add missing access authorization controls
 * [Users] Improve users creation forms controls
 * [resources] set default booking authorizations at resource creation
 * [module:booking_settings] fix display edition

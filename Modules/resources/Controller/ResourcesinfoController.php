@@ -166,7 +166,6 @@ class ResourcesinfoController extends CoresecureController {
     }
 
     public function eventsroAction($id_space, $id) {
-
         $lang = $this->getLanguage();
 
         $table = new TableView();
@@ -243,7 +242,7 @@ class ResourcesinfoController extends CoresecureController {
     }
 
     public function deleteeventAction($id_space, $id_resource, $id) {
-
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelEvent = new ReEvent();
         $modelEvent->delete($id_space, $id);
 

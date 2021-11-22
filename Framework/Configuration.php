@@ -26,7 +26,6 @@ class Configuration {
             if(Configuration::get('debug', false)) {
                 $level = Logger::DEBUG;
             }
-            //$output = "[%datetime%] %channel%.%level_name%: %message%\n";
             $formatter = new LineFormatter(LineFormatter::SIMPLE_FORMAT, LineFormatter::SIMPLE_DATE);
             $formatter->includeStacktraces(true);
             $streamHandler = new StreamHandler('php://stderr', $level);
@@ -53,7 +52,7 @@ class Configuration {
      * 
      * @param string $name Name of the parameter
      * @param string $defaultValue Value returned by default
-     * @return string|array Value of the configuration parameter
+     * @return string|int|array Value of the configuration parameter
      */
     public static function get($name, $defaultValue = null) {
         $parameters = self::getParameters();
@@ -76,7 +75,6 @@ class Configuration {
             $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
                 Configuration::getLogger()->warning('No configuration file found, using env vars only');
-                // throw new Exception("Unable to find the configuration file");
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
