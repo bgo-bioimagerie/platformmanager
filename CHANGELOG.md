@@ -8,6 +8,7 @@
 * [stats] count number of tickets per status
 * [stats] add stat calentry_cancel on booking cancel
 * [mail] allow users to unsubscribe to notifications #382
+* [core][ldap] rename base config parameters for ldap auth
 
 ## 2.1.8
 

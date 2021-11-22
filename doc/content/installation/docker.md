@@ -86,3 +86,10 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER} # mail account name
   * PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password
   * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
+* PFM_LDAP_HOST: # optional LDAP configuration overiding ldap.ini, leave empty if non
+  * PFM_LDAP_PORT: 389  # ldap port to use, default 389 or 636 if tls enabled
+  * PFM_LDAP_USER: ""  # ldap user id if not anonymous search/bind
+  * PFM_LDAP_PASSWORD: ""  # ldap user password
+  * PFM_LDAP_DN: ""  # base dn for ldap (dc=pfm,dc=org for example)
+  * PFM_LDAP_SEARCH_DN: ""  # base dn for user search and binding (ou=people,dc=pfm,dc=org for example)
+  * PFM_LDAP_TLS: [0|1]  # use TLS
