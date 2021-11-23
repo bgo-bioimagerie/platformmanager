@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [self_registration] fix selfregistration email sending order
 * [Security] Add missing access authorization controls
 * [Users] Improve users creation forms controls
 * [resources] set default booking authorizations at resource creation
