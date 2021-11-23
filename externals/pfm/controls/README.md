@@ -15,7 +15,7 @@ Include in html as:
     # To load a module dynamically and call it
     <script type="module">
         import {FormControls} from '/externals/pfm/controls/formcontrols_script.js';
-        let control = new FormControls(null);
+        let control = new FormControls();
         control.load();
     </script>
 
