@@ -364,13 +364,8 @@ class Router {
      *        	Thrown exception
      */
     private function manageError(Throwable $exception, $type = '') {
-        $sendToSentry = true;
 
-        if ($exception instanceof PfmAuthException) {
-            $sendToSentry = false;
-        }
-
-        if($sendToSentry && Configuration::get('sentry_dsn', '')) {
+        if($exception->sendReports && Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($exception);
         }
 
