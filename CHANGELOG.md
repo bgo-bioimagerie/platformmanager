@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Exceptions] Add PfmUserException class
 * [Security] Add missing access authorization controls
 * [Users] Improve users creation forms controls
 * [resources] set default booking authorizations at resource creation
