@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Users] Remove login from edit function
 * [self_registration] fix selfregistration email sending order
 * [Security] Add missing access authorization controls
 * [Users] Improve users creation forms controls
