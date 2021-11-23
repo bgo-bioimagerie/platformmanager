@@ -4,6 +4,7 @@
  * 
  * * x-form in form elements, checks that all controls are ok before submit
  * * x-unique="xx" check unicity in db of input for type xxx
+ * * x-id="xx" if present, for x-unique, gives user id
  * * x-equal="xx" check inputs with same xx key are equal
  * * x-email checks email input format
  * * x-suggest="aa,bb" suggest an input based in elements with id aa and bb (firstname, lastname)
@@ -11,13 +12,8 @@
  */
 export class FormControls {
 
-    /**
-     * 
-     * @param {*} userId Id of user else null
-     */
-    constructor(userId) {
+    constructor() {
         this.checks = {}
-        this.userId = userId
     }
 
     suggest(eltId, firstnameEltId, lastnameEltId) {
@@ -69,7 +65,11 @@ export class FormControls {
         if(elt.value.length < 3) {
             return
         }
-        this.isUnique(tag, elt.value).then((ok) => {
+        let userId = null
+        if (elt.hasAttribute('x-id')) {
+            userId = elt.getAttribute('x-id')
+        }
+        this.isUnique(tag, elt.value, userId).then((ok) => {
             console.log('isunique?', ok)
             if(ok) {
                 this.clearErrors(`unique-${tag}`)
@@ -80,7 +80,7 @@ export class FormControls {
         })
     }
 
-    isUnique(kind, value) {
+    isUnique(kind, value, userId) {
         return new Promise((resolve, reject) => {
             const headers = new Headers();
                 headers.append('Content-Type','application/json');
@@ -91,7 +91,7 @@ export class FormControls {
                 body: JSON.stringify({
                     kind: kind,
                     value: value,
-                    user: this.userId
+                    user: userId
                 })
             };
             fetch(`coreaccountisunique`, cfg).
