@@ -11,7 +11,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 /**
  * 
  * @author sprigent
- * Controller for the home page
+ * Controller for services list page
  */
 class ServiceslistingController extends CoresecureController {
 

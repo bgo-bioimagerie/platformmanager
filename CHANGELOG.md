@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Services] Remove deprecated functions from servicesController
 * [Users] Remove login from edit function
 * [self_registration] fix selfregistration email sending order
 * [Security] Add missing access authorization controls
