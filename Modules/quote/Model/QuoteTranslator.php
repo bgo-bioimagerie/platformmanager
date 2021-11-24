@@ -124,9 +124,9 @@ class QuoteTranslator {
 
     public static function Presta($lang) {
         if ($lang == "fr") {
-            return "Prestations";
+            return "Prestation";
         }
-        return "Quantities";
+        return "Service";
     }
 
     public static function EditQuote($lang) {

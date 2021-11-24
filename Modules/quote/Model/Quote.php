@@ -33,6 +33,7 @@ class Quote extends Model {
                 "address" => "",
                 "id_belonging" => 0,
                 "id_user" => 0,
+                "id_client" => 0,
                 "date_open" => "",
                 "date_last_modified" => ""
             ];
@@ -83,8 +84,8 @@ class Quote extends Model {
             $id_client = 0;
         }
         if (!$id) {
-            $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, id_client, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?, ?)';
-            $this->runRequest($sql, array($id_space, $recipient, $address, $id_belonging, $id_user, $date_open, $date_last_modified));
+            $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, id_client, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?,?)';
+            $this->runRequest($sql, array($id_space, $recipient, $address, $id_belonging, $id_user, $id_client, $date_open, $date_last_modified));
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE qo_quotes SET recipient=?, address=?, id_belonging=?, id_user=?, id_client=?, date_open=?, date_last_modified=? WHERE id=? AND id_space=?';

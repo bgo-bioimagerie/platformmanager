@@ -99,4 +99,12 @@ class ClientsusersController extends CoresecureController {
         $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
     }
 
+    public function getUserClientsAction() {
+        $params = $this->request->params();
+        $id_user = $params["id_user"];
+        $id_space = $params["id_space"];
+        $modelClientUser = new ClClientUser();
+        $this->render(['data' => ['user_clients' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
+    }
+
 }

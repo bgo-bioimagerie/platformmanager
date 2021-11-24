@@ -121,20 +121,31 @@ class QuotelistController extends CoresecureController {
 
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
+        $form->addHidden('id_space', $id_space);
         $form->addSelect('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
-        // TODO: choose client after user selected (as in booking) => show dynamically clients for this user
-        $form->addSelect('id_user', CoreTranslator::Client($lang), $users["names"], $users["ids"], $info['id_user']);
+
+        $clientSelect['choices'] = [""];
+        $clientSelect['choicesid'] = [""];
+        $clientSelect['value'] = "";
 
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled');
-            //$form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
+            $form->addHidden('date_open', $info['date_open']);
+            $modelClientUser = new ClClientUser();
+            $userClients = $modelClientUser->getUserClientAccounts($info['id_user'], $id_space);
+            foreach($userClients as $client) {
+                array_push($clientSelect['choices'], $client['name']);
+                array_push($clientSelect['choicesid'], $client['id']);
+            }
+            $clientSelect['value'] = ($info['id_client'] != 0) ? $info['id_client'] : $userClients[0]['id'];
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
         }
 
+        $form->addSelect('id_client', CoreTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
-
+        // TODO: fix that => date_open is null when update
         if ($form->check()) {
             $id = $modelQuote->set(
                 $id,
@@ -144,7 +155,7 @@ class QuotelistController extends CoresecureController {
                 "",
                 $form->getParameter('id_user'),
                 $form->getParameter('id_client'),
-                $this->request->getParameterNoException('date_open')
+                $this->request->getParameter('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $this->redirect("quoteuser/" . $id_space . "/" . $id);
