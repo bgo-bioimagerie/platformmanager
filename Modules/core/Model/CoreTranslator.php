@@ -511,6 +511,13 @@ class CoreTranslator {
         return "User";
     }
 
+    public static function Client($lang = "") {
+        if ($lang == "fr") {
+            return "Client";
+        }
+        return "Client";
+    }
+
     public static function Users($lang = "") {
         if ($lang == "fr") {
             return "Utilisateurs";

@@ -122,7 +122,8 @@ class QuotelistController extends CoresecureController {
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         $form->addSelect('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
-        // TODO: choose client after user selected (as in booking)
+        // TODO: choose client after user selected (as in booking) => show dynamically clients for this user
+        $form->addSelect('id_user', CoreTranslator::Client($lang), $users["names"], $users["ids"], $info['id_user']);
 
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled');
@@ -294,14 +295,10 @@ class QuotelistController extends CoresecureController {
     public function pdfAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
-        // get the list of items
         $modelQuote = new Quote();
         $info = $modelQuote->getAllInfo($id_space, $id);
-        $quote = $modelQuote->get($id_space, $id);
-        $modelClient = new ClClient();
-        $clientInfosTest = $modelClient->get($id_space, $quote["id_responsible"]);
-        Configuration::getLogger()->debug("[TEST]", ["clientInfosTest" => $clientInfosTest]);
 
+        // get the list of items
         $modelQuoteitems = new QuoteItem();
         $items = $modelQuoteitems->getAll($id_space, $id);
         $table = array();
@@ -328,8 +325,6 @@ class QuotelistController extends CoresecureController {
 
         $lang = $this->getLanguage();
         $table = $this->makePDFTable($table, $lang);
-
-        Configuration::getLogger()->debug("[TEST]", ["infos" => $info]);
 
         // generate pdf
         $adress = nl2br($info["address"]);

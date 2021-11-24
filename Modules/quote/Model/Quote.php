@@ -51,12 +51,24 @@ class Quote extends Model {
             $modelClient = new ClClient();
 
             $data["recipient"] = $modelUser->getUserFUllName($data["id_user"]);
-            $resps = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space);
-            if ($resps && !empty($resps)) {
-                $data["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]["id"]);
-                $data["id_belonging"] = $resps[0]["id"];
-                $data["id_pricing"] = $resps[0]["pricing"];
-                $data["client"] = $resps;
+
+            // get client
+            if ($data["id_client"] && $data["id_client"] != 0) {
+                // quote was edited with a client => get its client
+                $client = $modelClient->get($id_space, $data["id_client"]);
+                $data["address"] = $modelClient->getAddressInvoice($id_space, $client["id"]);
+                $data["id_belonging"] = $client["id"];
+                $data["id_pricing"] = $client["pricing"];
+                $data["client"] = $client;
+            } else {
+                // get first client from user's clients (original behaviour)
+                $resps = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space);
+                if ($resps && !empty($resps)) {
+                    $data["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]["id"]);
+                    $data["id_belonging"] = $resps[0]["id"];
+                    $data["id_pricing"] = $resps[0]["pricing"];
+                    $data["client"] = $resps;
+                }
             }
         }
         return $data;

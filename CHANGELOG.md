@@ -2,13 +2,10 @@
 
 ## 2.2
 
-<<<<<<< HEAD
 * [module:quote] expose client infos to invoice templates
-=======
 * [Users] Remove login from edit function
 * [self_registration] fix selfregistration email sending order
 * [Security] Add missing access authorization controls
->>>>>>> pfm2
 * [Users] Improve users creation forms controls
 * [resources] set default booking authorizations at resource creation
 * [module:booking_settings] fix display edition
