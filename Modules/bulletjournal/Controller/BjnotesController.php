@@ -4,7 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/bulletjournal/Model/BulletjournalTranslator.php';
-require_once 'Modules/bulletjournal/Model/Bjnote.php';
+require_once 'Modules/bulletjournal/Model/BjNote.php';
 
 /**
  * 

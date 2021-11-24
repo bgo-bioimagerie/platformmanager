@@ -16,14 +16,26 @@
             
 <!-- content -->
 
-    <?php startblock('navbar') ?>
-    <?php
+<?php
+startblock('navbar');
+$headless = Configuration::get('headless');
+if (!$headless) {
     require_once 'Modules/core/Controller/CorenavbarController.php';
     $navController = new CorenavbarController(new Request(array(), false));
     echo $navController->navbar();
-    
-    ?> 
-    <?php include 'Modules/core/View/spacebar.php'; ?>
-    <div class="col-xs-12" id="pm-content">
-    <?php include 'Modules/bulletjournal/View/navbar.php'; ?>
-    <?php endblock();
+}
+endblock();
+?>
+
+
+<?php startblock('spacenavbar'); ?>
+<?php
+$headless = Configuration::get('headless');
+if (!$headless) {
+    require_once 'Modules/core/Controller/CorespaceController.php';
+    $spaceController = new CorespaceController(new Request(array(), false));
+    echo $spaceController->navbar($id_space);
+}
+?>
+
+<?php endblock(); ?>
