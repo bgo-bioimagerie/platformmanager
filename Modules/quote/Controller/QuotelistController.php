@@ -84,6 +84,7 @@ class QuotelistController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
         $modelQuote = new Quote();
         $info = $modelQuote->get($id_space, $id);
 
@@ -95,6 +96,7 @@ class QuotelistController extends CoresecureController {
     }
 
     public function editexistinguserAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -205,6 +207,7 @@ class QuotelistController extends CoresecureController {
     }
 
     public function editnewuserAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -263,6 +266,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function edititemAction($id_space) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         $id_quote = $this->request->getParameter("id_quote");
         $id = $this->request->getParameter("id");
         $id_contentform = $this->request->getParameter("id_item");
@@ -287,6 +292,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function pdfAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         // get the list of items
         $modelQuote = new Quote();
         $info = $modelQuote->getAllInfo($id_space, $id);
@@ -392,6 +399,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function deleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         $modelQuote = new Quote();
         $modelQuote->delete($id_space, $id);
 
@@ -399,6 +408,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function itemdelete($id_space, $id_item) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         $modelQuote = new QuoteItem();
         $info = $modelQuote->get($id_space, $id_item);
         $modelQuote->delete($id_space, $id_item);

@@ -336,24 +336,12 @@ class CoreSpace extends Model {
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
         $roleArrray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
         $menuRole = $roleArrray[0];
+        $userRole = $this->getUserSpaceRole($id_space, $id_user);
 
-        if ($this->isSpacePublic($id_space)) {
-            if ($menuRole < CoreSpace::$MANAGER) {
-                return 1;
-            } else {
-                $userRole = $this->getUserSpaceRole($id_space, $id_user);
-                if ($userRole >= $menuRole) {
-                    return 1;
-                }
-                return 0;
-            }
-        } else {
-            $userRole = $this->getUserSpaceRole($id_space, $id_user);
-            if ($userRole >= $menuRole) {
-                return 1;
-            }
-            return 0;
+        if ($this->isSpacePublic($id_space) && $userRole == -1) {    
+                $userRole = CoreSpace::$VISITOR;
         }
+        return ($userRole >= $menuRole) ? 1 : 0;
     }
 
     public function isSpacePublic($id_space) {

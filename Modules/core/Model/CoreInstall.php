@@ -29,6 +29,7 @@ require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/core/Model/CoreStar.php';
 require_once 'Modules/users/Model/UsersPatch.php';
 require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreHistory.php';
@@ -867,6 +868,8 @@ class CoreInstall extends Model {
         $modelHistory = new CoreHistory();
         $modelHistory->createTable();
 
+        $modelStar = new CoreStar();
+        $modelStar->createTable();
         $modelMail = new CoreMail();
         $modelMail->createTable();
 
@@ -971,7 +974,9 @@ class CoreInstall extends Model {
         $content = "";
         $pos = strpos($buffer, $varName);
         if ($pos === false) {
-        } else if ($pos == 0) {
+            return $content;
+        }
+        if ($pos == 0) {
             $content = $varName . ' = ' . $varContent . PHP_EOL;
         }
         return $content;

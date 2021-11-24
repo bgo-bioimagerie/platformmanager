@@ -125,6 +125,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function editreservationqueryAction($id_space) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         //FIXME: editng an existing reservation does not seem to work
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
@@ -766,6 +767,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteperiodAction($id_space, $id_period){
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $modelCalEntry = new BkCalendarPeriod();
         $modelCalEntry->deleteAllPeriod($id_space, $id_period);
 
@@ -773,11 +775,22 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $sendEmail = intval($this->request->getParameter("sendmail"));
         $modelCalEntry = new BkCalendarEntry();
+        $entryInfo = $modelCalEntry->getEntry($id_space, $id);
+        if (!$entryInfo) {
+            throw new PfmDbException("reservation not found", 404);
+        }
+        $id_resource = $entryInfo["resource_id"];
+        $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
+        if (!$canEdit) {
+            throw new PfmException("ERROR: You're not allowed to modify this reservation");
+        }
+
+
         if ($sendEmail == 1) {
-            $entryInfo = $modelCalEntry->getEntry($id_space, $id);
-            $id_resource = $entryInfo["resource_id"];
+            
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
 

@@ -78,21 +78,12 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                     <?php
                     $found = false;
                     $modelBookingSetting = new BkBookingSettings();
-                    //$moduleProject = new CoreProject();
-                    //$ModulesManagerModel = new CoreMenu();
-                    $isProjectMode = false; //$ModulesManagerModel->getDataMenusUserType("projects");
-                    if ($isProjectMode > 0) {
-                        $isProjectMode = true;
-                    } else {
-                        $isProjectMode = false;
-                    }
+                    // $isProjectMode = false;
+                    
                     foreach ($entries as $entry) {
                         if (date("d", $entry["start_time"]) <= $i && date("d", $entry["end_time"]) >= $i) {
                             $found = true;
                             $shortDescription = $entry['short_description'];
-                            if ($isProjectMode) {
-                                $shortDescription = $moduleProject->getProjectName($entry['short_description']);
-                            }
                             ?>
                         <a href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry["id"] ?>">
 

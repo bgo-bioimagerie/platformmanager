@@ -48,7 +48,7 @@ class BookingdisplayController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCSS = new BkBookingTableCSS();

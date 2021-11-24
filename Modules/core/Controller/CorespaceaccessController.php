@@ -110,7 +110,7 @@ class CorespaceaccessController extends CoresecureController {
 
         // check input active
         $_SESSION["user_last_letter"] = $letter;
-        $this->checkAuthorizationMenuSpace("users/institutions", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         if ($active == "") {
             $active = isset($_SESSION["users_lastvisited"])
                 ? $_SESSION["users_lastvisited"]

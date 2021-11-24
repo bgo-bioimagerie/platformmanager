@@ -240,7 +240,6 @@ class CoreusersController extends CoresecureController {
         } else {
             $modelUser->edit(
                 $id,
-                "",
                 $form->getParameter("name"),
                 $form->getParameter("firstname"),
                 $form->getParameter("email"),

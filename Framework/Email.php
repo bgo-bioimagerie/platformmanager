@@ -38,6 +38,7 @@ class Email extends Model {
         $mail->CharSet = "utf-8";
         $mail->SetFrom($from, $fromName);
         $mail->Subject = $subject;
+        $mail->addCustomHeader("X-PFM", "1");
 
         // parse content
         $content = preg_replace("/\r\n|\r/", "<br />", $content);
@@ -200,16 +201,16 @@ class Email extends Model {
                 case "self_registration":
                     $idSpace = $params['supData']['id_space'];
                     $spaceName = $modelSpace->getSpaceName($idSpace);
-                    $userLogin = $params['supData']['login'];
+                    $userLogin = $params['login'];
                     $userEmail = $params['email'];
                     $organization = $params['supData']['organization'];
-                    $team = $params['supData']['team'];
+                    $unit = $params['supData']['unit'];
                     break;
                 default:
                     break;
             }
             $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
-            $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $lang, $organization ?? '', $team ?? '');
+            $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $lang, $organization ?? '', $unit ?? '');
             $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($idSpace));
             $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {

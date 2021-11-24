@@ -914,7 +914,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
     }
 
     public function detailsAction($id_space, $id_invoice) {
-
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $data = $this->detailsData($id_space, $id_invoice);
         $lang = $this->getLanguage();
 
