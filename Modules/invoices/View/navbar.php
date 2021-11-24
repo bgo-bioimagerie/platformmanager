@@ -21,7 +21,8 @@ Platform-Manager
 
 <?php startblock('navbar'); 
 require_once 'Modules/core/Controller/CorenavbarController.php';
-$navController = new CorenavbarController();
+require_once 'Modules/core/Controller/CorespaceController.php';
+$navController = new CorenavbarController(new Request(array(), false));
 echo $navController->navbar();
  endblock(); ?>
 
@@ -30,7 +31,7 @@ echo $navController->navbar();
 <div class="col-md-2 pm-space-navbar">
 <?php
 require_once 'Modules/core/Controller/CorespaceController.php';
-$spaceController = new CorespaceController();
+$spaceController = new CorespaceController(new Request(array(), false));
 echo $spaceController->navbar($id_space);
 ?>
 </div> 

@@ -30,8 +30,8 @@ if (!$headless) {
 <?php startblock('content') ?>
 
 
-<div class="col-xs-12 pm-tile-container"  >
-    <div class="container" style="margin-top: 50px;">
+<div class="col-xs-12 pm-tile-container" style="margin-top: 50px;" >
+    <div class="container">
         <div id="spacesearch" class="col-xs-12" style="margin: 50px;">
             <div class="row">
                 <div class="col-xs-6">
@@ -63,10 +63,12 @@ if (!$headless) {
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-xs-12">
-            <?php echo $content; ?>
-        </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <?php echo $content; ?>
+                </div>
+            </div>
+
         <?php foreach($spaces as $item) { ?>
 
             <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
@@ -94,6 +96,7 @@ if (!$headless) {
 
 
         <?php } ?>
+        </div>
     </div>
 </div> <!-- /container -->
 <script>

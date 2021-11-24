@@ -7,7 +7,7 @@
     <?php include('Modules/core/View/Coremainmenu/navbar.php'); ?>
 </div>    
 
-<div class="col-md-12 pm-top-double-bar">
+<div class="col-md-12">
     <div class="container pm-table">
         <?php 
         if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 

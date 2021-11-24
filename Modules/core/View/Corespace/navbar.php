@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top" style="margin-top: 50px; background-color: #ffffff; z-index: 12;">
+<nav class="navbar navbar-default" style="background-color: #ffffff; z-index: 12;">
     <div class="container-fluid">
         <div class="navbar-header">
             <a href="corespace/{{space.id}}"><h3 style="color: #444; text-align: center; font-size: 16px;">{{space.name}}</h3></a>

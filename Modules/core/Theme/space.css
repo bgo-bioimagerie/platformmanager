@@ -134,11 +134,11 @@ section{
 }
 
 .pm-space-content{
-    margin-top: 50px;
+    /* margin-top: 50px; */
 }
 
 .pm-space-navbar{
-    margin-top: 50px;
+    /* margin-top: 50px; */
     background-color: #e7ecf0;
     padding-right: 0px;
     padding-left: 0px;

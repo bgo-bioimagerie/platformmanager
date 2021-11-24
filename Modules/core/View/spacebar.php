@@ -1,3 +1,6 @@
+<?php
+require_once 'Modules/core/Controller/CorespaceController.php';
+?>
 <div class="col-md-12" style="background-color: #428bca;">
     <div class="col-md-2">
         <div class="dropdown">
@@ -7,7 +10,7 @@
             <div class="dropdown-menu col-md-2" aria-labelledby="dLabel">
                 <?php
                 require_once 'Modules/core/Controller/CorespaceController.php';
-                $spaceMenu = new CorespaceController();
+                $spaceMenu = new CorespaceController(new Request(array(), false));
                 ?>
                 <?php echo $spaceMenu->menu($id_space); ?>
             </div>
@@ -16,7 +19,7 @@
     <div class="col-md-8" style="text-align: center;">
 
         <p style="color:#fff;">
-            <b><?php echo $spaceMenu->spaceName($id_space); ?></b>
+            <strong><?php echo $spaceMenu->spaceName($id_space); ?></strong>
         </p>
 
     </div>
