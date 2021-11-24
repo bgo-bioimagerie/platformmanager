@@ -44,7 +44,7 @@ class CoreaccountController extends Controller {
         $modelUsersInfo = new UsersInfo();
 
         if ($modelCoreUser->isLogin($data["login"])) {
-            throw new PfmException("Error:". CoreTranslator::LoginAlreadyExists($lang), 403);
+            throw new PfmUserException("Error:". CoreTranslator::LoginAlreadyExists($lang), 403);
         }
         $pwd = $modelCoreUser->generateRandomPassword();
 

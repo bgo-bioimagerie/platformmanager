@@ -3,6 +3,7 @@
 ## 2.2
 
 * [module:quote] expose client infos to invoice templates
+* [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
 * [self_registration] fix selfregistration email sending order
 * [Security] Add missing access authorization controls
