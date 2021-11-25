@@ -26,7 +26,11 @@ if ($id_quote > 0) {
         ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
         <?php echo $formHtml ?>
-        <script type="text/javascript" src="/Framework/utilities/dynamicSelector.js"></script>
+        <script type="module">
+            import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+            let dynamicForms = new DynamicForms();
+            dynamicForms.dynamicSelectors("id_user", "id_client", `clientusersgetuserclients`);
+        </script>
     </div>
 
     <?php

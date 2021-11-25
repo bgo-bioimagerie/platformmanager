@@ -101,10 +101,10 @@ class ClientsusersController extends CoresecureController {
 
     public function getUserClientsAction() {
         $params = $this->request->params();
-        $id_user = $params["id_user"];
+        $id_user = $params["id"];
         $id_space = $params["id_space"];
         $modelClientUser = new ClClientUser();
-        $this->render(['data' => ['user_clients' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
+        $this->render(['data' => ['elements' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
     }
 
 }
