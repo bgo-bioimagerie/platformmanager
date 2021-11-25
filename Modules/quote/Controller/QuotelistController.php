@@ -145,7 +145,7 @@ class QuotelistController extends CoresecureController {
         $form->addSelect('id_client', CoreTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
-        // TODO: fix that => date_open is null when update
+        
         if ($form->check()) {
             $id = $modelQuote->set(
                 $id,
@@ -342,8 +342,12 @@ class QuotelistController extends CoresecureController {
         $resp = $info["recipient"];
         $clientInfos["email"] = "";
         if (is_array($info["client"]) && !empty($info["client"])) {
-            $clientInfos = $info["client"][0];
+            $clientInfos = $info["client"];
+            $clientInfos["email"] = $info["client"]["email"] ?? "";
         }
+        
+
+        Configuration::getLogger()->debug("[TEST]", ["clientInfos" => $clientInfos]);
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
         $isquote = true;

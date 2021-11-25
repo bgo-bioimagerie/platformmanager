@@ -68,7 +68,7 @@ class Quote extends Model {
                     $data["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]["id"]);
                     $data["id_belonging"] = $resps[0]["id"];
                     $data["id_pricing"] = $resps[0]["pricing"];
-                    $data["client"] = $resps;
+                    $data["client"] = $resps[0];
                 }
             }
         }
