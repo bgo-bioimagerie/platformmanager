@@ -3,9 +3,9 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-table">
+<div class="col-md-10 pm-table">
     
-    <div class="col-md-12">
+    <div class="col-md-10">
         <div id="invoice-message-div" class="alert alert-success">
             
         </div>

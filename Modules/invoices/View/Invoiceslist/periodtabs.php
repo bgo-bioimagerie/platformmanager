@@ -1,4 +1,4 @@
-<div class="col-xs-12" style="border-bottom: 1px solid #e1e1e1; margin-bottom: 14px; padding-bottom: 7px;">
+<div class="col-xs-10" style="border-bottom: 1px solid #e1e1e1; margin-bottom: 14px; padding-bottom: 7px;">
     <form name="projectTab" method="get" action="projectedittab/"><br>
     <div class="col-sm-offset-3 col-sm-6 text-center">
         <div class="btn-group" data-toggle="buttons">

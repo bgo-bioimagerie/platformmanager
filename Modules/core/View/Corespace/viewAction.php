@@ -1,25 +1,5 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<?php startblock('stylesheet') ?>
-
-<link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
-<?php
-$headless = Configuration::get("headless");
-if (!$headless) {
-    ?>
-    <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-    <?php
-}
-?>
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/core.css' />
-
-
-<?php endblock(); ?>
-
-<?php startblock('spacenavbar'); ?>
-
-<?php endblock(); ?>
-
 <!-- body -->     
 <?php startblock('content') ?>
 
@@ -35,7 +15,7 @@ if (!$headless) {
 <?php
     }
 ?>
-</div>
+
 
 <?php
 if ($space['color'] == "") {
@@ -43,17 +23,12 @@ if ($space['color'] == "") {
 }
 ?>
 
-<div class="col-xs-12 text-center" style="color: #fff; background-color: <?php echo $space['color'] ?>; height: 35px;">
-    <h4><?php echo $space['name'] ?></h4>
-</div>
-
-<div>
     <!-- display com popup -->
 
-
+<div class="row">
 <div class="col-xs-12" style="background-color: #fff; height: 2000px;">
 
-    <div class="container" style="background-color: #fff;">
+    <div style="background-color: #fff;">
 
         <?php
         require_once 'Modules/com/Controller/ComtileController.php';
@@ -161,6 +136,7 @@ if ($space['color'] == "") {
 
 
     </div> <!-- /container -->
+</div>
 </div>
 <?php
 endblock();

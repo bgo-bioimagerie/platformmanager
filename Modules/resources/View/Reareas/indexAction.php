@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-    <div class="col-md-12 pm-table">
+    <div class="col-md-10 pm-table">
         <div class="col-md-6">  
             <?php if (isset($_SESSION["message"]) && $_SESSION["message"] != "") { ?>
                 <div class="alert alert-danger alert-dismissible">

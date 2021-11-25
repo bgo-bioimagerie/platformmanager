@@ -13,8 +13,6 @@ $available_days = explode(",", $available_days);
 $dayWidth = 100 / 8;
 ?>
 
-<head>
-
     <style>
         .row {
             display: table;
@@ -64,15 +62,13 @@ $dayWidth = 100 / 8;
                 color: <?php echo "" . $agendaStyle["header_background"] ?>;
             }
         </style>
-    </head>
 
-    <!-- Add the table title -->
 
-    <div class="col-md-12"  style="background-color: #ffffff; padding-top: 12px;">
-        <div class="col-md-10 col-md-offset-1">
+    <div class="col-sm-12"  style="background-color: #ffffff; padding-top: 12px;">
+        <div class="col-sm-10 col-sm-offset-1">
             <?php
             $message = "";
-            if (isset($_SESSION["message"])) {
+            if (isset($_SESSION["message"]) && $_SESSION["message"]) {
                 $message = $_SESSION["message"];
             }
             ?>
@@ -95,7 +91,7 @@ $dayWidth = 100 / 8;
                 ?>
             </div>
 
-            <div class="col-md-12"  style="background-color: #ffffff; padding-bottom: 12px;">
+            <div class="col-sm-12"  style="background-color: #ffffff; padding-bottom: 12px;">
 
                 <div class="col-md-6 text-left">
                     <div class="btn-group" role="group" aria-label="...">

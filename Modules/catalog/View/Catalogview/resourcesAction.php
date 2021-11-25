@@ -1,5 +1,7 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
+<?php startblock('content') ?>
+
 <?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
 
 <div class="col-md-12" style="background-color:#ffffff;">
@@ -39,4 +41,4 @@
 </div>
 
 
-
+<?php endblock(); ?>

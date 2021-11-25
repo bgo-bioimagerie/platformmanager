@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-form">
+<div class="col-md-10 pm-form">
     <form role="form" class="form-horizontal" action="bookingblockquery/<?php echo $id_space ?>"
           method="post">
 

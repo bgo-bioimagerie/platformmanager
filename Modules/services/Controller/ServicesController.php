@@ -11,7 +11,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 /**
  * @deprecated
  * @author sprigent
- * Only index still used to redirect to serviceslisting
+ * Only index still used to redirect to serviceslisting  and navbar
  */
 class ServicesController extends CoresecureController {
 
@@ -32,9 +32,9 @@ class ServicesController extends CoresecureController {
 
         $lang = $this->getLanguage();
 
-        $html  = '<div class="col-xs-12" style="border: none; margin-top: 7px; padding-right: 0px; padding-left: 0px;">';
-        $html .= '<div class="col-xs-12" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href=""> {{title}}'; 
+        $html  = '<div class="">';
+        $html .= '<div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
+        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href="/serviceslisting/'.$id_space.'"> {{title}}'; 
         $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
@@ -99,11 +99,8 @@ class ServicesController extends CoresecureController {
 
         $html .= $htmlListing;
 
-        $html.= "</ul>";
-        $html.= "   </ul>";
         $html.= "</div>";
-        $html.= "</div>";
-        $html.= "</nav>";
+  
 
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("services", $id_space);

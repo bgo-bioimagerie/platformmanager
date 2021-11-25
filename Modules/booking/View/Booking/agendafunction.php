@@ -11,16 +11,10 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
     ?>
 
 
-    <!-- <div style="min-width:900px;">  -->
     <div class="col-xs-12">
-
-        <!-- 
-        <caption><?php echo $mois_fr[$mois] . " " . $annee ?></caption>
-        -->
 
         <table class="tableau">
             <caption>
-
                 <div class="col-md-3" style="text-align: left;">
                     <div class="btn-group" role="group" aria-label="...">
                         <button type="button" onclick="location.href = 'bookingmonth/<?php echo $id_space ?>/daymonthbefore'" class="btn btn-default"> &lt; </button>
@@ -60,25 +54,25 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 </div>
                 </div>
             </caption>
-            <tr><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Sam</th><th>Dim</th></tr>
+            <tr><th scope="col">Lun</th><th scope="col">Mar</th><th scope="col">Mer</th><th scope="col">Jeu</th><th scope="col">Ven</th><th scope="col">Sam</th><th scope="col">Dim</th></tr>
             <tr>
                 <?php
                 $case = 0;
-                if ($x > 1)
+                if ($x > 1) {
                     for ($i = 1; $i < $x; $i++) {
                         echo '<td class="desactive">&nbsp;</td>';
                         $case++;
                     }
+                }
                 for ($i = 1; $i < ($l_day + 1); $i++) {
-                    $f = $y = date("N", mktime(0, 0, 0, $mois, $i, $annee));
-                    $da = $annee . "-" . $mois . "-" . $i;
+                    $y = date("N", mktime(0, 0, 0, $mois, $i, $annee));
+                    //$da = $annee . "-" . $mois . "-" . $i;
                     echo "<td>";
                     ?>
                 <div style="text-align:right; font-size:12px; color:#999999;"> <?php echo $i ?> </div>
                     <?php
                     $found = false;
                     $modelBookingSetting = new BkBookingSettings();
-                    // $isProjectMode = false;
                     
                     foreach ($entries as $entry) {
                         if (date("d", $entry["start_time"]) <= $i && date("d", $entry["end_time"]) >= $i) {
@@ -111,7 +105,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                                 <?php
                             }
                         }
-                        if ($found == false) {
+                        if (!$found) {
                             ?>
                     <div style="height:45px;"> </div>
                     <?php

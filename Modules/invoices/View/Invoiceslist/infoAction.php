@@ -3,8 +3,8 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-form">
-    <div class="col-md-12">
+<div class="col-md-10 pm-form">
+    <div class="col-md-10">
         <?php
         if (isset($_SESSION["message"])) {
             if (substr($_SESSION["message"], 0, 3) === "Err") {

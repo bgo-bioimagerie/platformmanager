@@ -8,22 +8,21 @@ require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/agendafunction.php';
 ?>
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link href="Modules/booking/Theme/styleagenda.css" rel="stylesheet" type="text/css" />
-</head>
+
+<link href="Modules/booking/Theme/styleagenda.css" rel="stylesheet" type="text/css" />
+
 
 <?php
     if (empty($resourceInfo)) {
 ?>
-    <div class="col-lg-12" style="background-color: #ffffff; padding-top: 12px;">
-    <div class="col-lg-10 col-lg-offset-1">
+    <div class="col-sm-12" style="background-color: #ffffff; padding-top: 12px;">
+    <div class="col-sm-10 col-sm-offset-1">
     <?php
             $message = "";
-                if (isset($_SESSION["message"])){
+                if (isset($_SESSION["message"]) && $_SESSION["message"]){
                 $message = $_SESSION["message"];
             } ?>
-        <?php if ($message != ""): 
+            <?php if ($message != ""): 
             if (strpos($message, "Err") === false){?>
                 <div class="alert alert-success text-center">	
             <?php 

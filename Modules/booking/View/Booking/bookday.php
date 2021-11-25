@@ -8,7 +8,6 @@ require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/bookfunction.php';
 ?>	
 	
-<head>
  
 <style>
 
@@ -45,17 +44,15 @@ a{
 }
 
 </style>
-</head>
 
 <!-- Add the table title -->
-<div class="col-lg-12" style="background-color: #ffffff; padding-top: 12px;">
-<div class="col-lg-10 col-lg-offset-1" style="background-color: #ffffff;">
+<div class="col-sm-12" style="background-color: #ffffff; padding-top: 12px;">
         <?php
         $message = "";
             if (isset($_SESSION["message"])){
             $message = $_SESSION["message"];
         } ?>
-	<?php if ($message != ""): 
+		<?php if ($message != ""): 
 		if (strpos($message, "Err") === false){?>
 			<div class="alert alert-success text-center">	
 		<?php 
@@ -65,14 +62,14 @@ a{
 		 	<div class="alert alert-danger text-center">
 		<?php 
 		}
-	?>
+		?>
     	<p><?php echo  $message ?></p>
     	</div>
 	<?php endif; unset($_SESSION["message"])?>
 
+
 </div>
-</div>
-<div class="col-lg-12" style="background-color: #ffffff; padding-bottom: 12px;">
+<div class="col-sm-12" style="background-color: #ffffff; padding-bottom: 12px;">
 
 <div class="col-md-6 text-left">
     <div class="btn-group" role="group" aria-label="...">
@@ -112,13 +109,6 @@ $day_position = ($day_position === "0") ? 7 : intval($day_position);
             <a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Month($lang) ?></a>
         </div>
         
-        <!--
-        <button type="button" class="btn btn-default active" ><?php echo  BookingTranslator::Day($lang) ?></button>
-        <button type="button" onclick="location.href='bookingdayarea/<?php echo $id_space ?>'"class="btn btn-default"><?php echo  BookingTranslator::Day_Area($lang) ?></button>
-        <button type="button" onclick="location.href='bookingweek/<?php echo $id_space ?>'" class="btn btn-default "><?php echo  BookingTranslator::Week($lang) ?></button>
-        <button type="button" onclick="location.href='bookingweekarea/<?php echo $id_space ?>'" class="btn btn-default "><?php echo  BookingTranslator::Week_Area($lang) ?></button>
-        <button type="button" onclick="location.href='bookingmonth/<?php echo $id_space ?>'" class="btn btn-default"><?php echo  BookingTranslator::Month($lang) ?></button>
-        -->
         </div>
     </div>
 </div>
@@ -127,17 +117,15 @@ $day_position = ($day_position === "0") ? 7 : intval($day_position);
 $day_begin = $this->clean($scheduling['day_begin']);
 $day_end = $this->clean($scheduling['day_end']);
 $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
-//$available_days = $this->clean($scheduling['available_days']);
-//$available_days = explode(",", $available_days);
+
 ?>
 
 <!-- hours column -->
-<div class="col-xs-12" style="background-color: #ffffff;">
-<div class="col-xs-1" id="colDiv">
-
+<div class="col-sm-12" style="background-color: #ffffff;">
+<div class="col-sm-1" id="colDiv">
 	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color:<?php echo $agendaStyle["header_background"]?>;">
+</div>
 
-	</div>
 	<?php 
 	// Hours
 	for ($h = $day_begin ; $h < $day_end ; $h++){
@@ -151,20 +139,21 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 		else if($size_bloc_resa == 3600){
 			$heightCol = $agendaStyle["line_height"] . "px";;
 		}
-		?>
+	?>
 	
 	
 	
-		<div id="tcell" style="height: <?php echo $heightCol?>; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
+		<div  id="tcell" style="height: <?php echo $heightCol?>; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
 		<?php echo $h?>:00
 		</div>
 	<?php 	
 	}
-	?>	
+	?>
+
 </div>	
 	
 <!-- hours reservation -->	
-<div class="col-xs-11" id="colDiv">
+<div class="col-sm-11" id="colDiv">
 
 	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
 	<p class="text-center"><b><?php echo  $this->clean($resourceBase['name']) ?></b><br/><?php echo  $this->clean($resourceBase['description']) ?>
@@ -194,7 +183,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 </div>
 </div>
 
-<div class="col-xs-12" style="background-color: #ffffff;">
+<div class="col-sm-12" style="background-color: #ffffff;">
 
 <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
 

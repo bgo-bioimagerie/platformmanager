@@ -20,8 +20,6 @@ for($c = 0 ; $c < count($available_days) ; $c++){
 $dayWidth = 100/$dayWidth;
 ?>
 
-<head>
-
 <style>
 
 a{
@@ -86,17 +84,16 @@ img{
 }
 
 </style>
-</head>
 
 <!-- Add the table title -->
-<div class="col-lg-12" style="background-color: #ffffff; padding-top: 12px;">
-<div class="col-lg-10 col-lg-offset-1">
+<div class="col-sm-12" style="background-color: #ffffff; padding-top: 12px;">
+<div class="col-sm-10 col-sm-offset-1">
 <?php
         $message = "";
-            if (isset($_SESSION["message"])){
+        if (isset($_SESSION["message"])){
             $message = $_SESSION["message"];
         } ?>
-	<?php if ($message != ""): 
+		<?php if ($message != ""): 
 		if (strpos($message, "Err") === false){?>
 			<div class="alert alert-success text-center">	
 		<?php 
@@ -114,7 +111,7 @@ img{
 </div>
 </div>
 
-<div class="col-lg-12"  style="background-color: #ffffff; padding-bottom: 12px;">
+<div class="col-sm-12"  style="background-color: #ffffff; padding-bottom: 12px;">
 
 <div class="col-md-6 text-left">
     <div class="btn-group" role="group" aria-label="...">
@@ -176,8 +173,8 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 ?>
 
 <!-- hours column -->
-<div class="col-xs-12">
-<div class="col-xs-1" id="colDiv">
+<div class="col-sm-12">
+<div class="col-sm-1" id="colDiv">
 
 <?php 
 $heightCol = "0px";
@@ -212,7 +209,7 @@ else if($size_bloc_resa == 3600){
 	if (!empty($resourceInfo)) {
 ?>
 
-	<div class="col-xs-11" id="colDiv">
+	<div class="col-sm-11" id="colDiv">
 
 		<div id="tcelltop" style="width:100%; height: <?php echo $agendaStyle["header_height"] ?>px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
 		<p class="text-center"><b><?php echo  $this->clean($resourcesBase['name']) ?></b><br/><?php echo  $this->clean($resourcesBase['description']) ?>
@@ -285,7 +282,7 @@ else if($size_bloc_resa == 3600){
 ?>
 
 
-<div class="col-xs-12">
+<div class="col-sm-12">
 
 <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
 

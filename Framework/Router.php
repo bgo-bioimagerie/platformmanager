@@ -138,34 +138,33 @@ class Router {
                 $params = array_merge($_GET, $_POST);
             }
             $request = new Request($params);
-            if (!$this->install($request)) {
-                $reqRoute = $this->route($request);
-                if ($reqRoute) {
-                    $reqEnd = microtime(true);
-                    $this->prometheus($reqStart, $reqEnd, $reqRoute);
-                    return;
-                }
-
-                $urlInfo = $this->getUrlData($request);
-                if(!$urlInfo['pathInfo']) {
-                    $this->logger->warning('no route found, redirect to homepage', [
-                        'url' => $request->getParameter('path'),
-                    ]);
-                    $this->call('core/coretiles/index', [], $request);
-                    return;
-                }
-                $controller = $this->createController($urlInfo, $request);
-                $action = $urlInfo["pathInfo"]["action"];
-                $reqRoute = $urlInfo["pathInfo"]["module"]."_".$urlInfo["pathInfo"]["controller"]."_".$action;
-                $args = $this->getArgs($urlInfo);
-                if(isset($args['id_space'])){
-                    $_SESSION['id_space'] = $args['id_space'];
-                }
-
-                $this->logger->debug('[router][old] call', ["controller" => $controller, "action" => $action, "args" => $args]);
-                $this->runAction($controller, $urlInfo, $action, $args);
+            
+            $reqRoute = $this->route($request);
+            if ($reqRoute) {
                 $reqEnd = microtime(true);
+                $this->prometheus($reqStart, $reqEnd, $reqRoute);
+                return;
             }
+
+            $urlInfo = $this->getUrlData($request);
+            if(!$urlInfo['pathInfo']) {
+                $this->logger->warning('no route found, redirect to homepage', [
+                    'url' => $request->getParameter('path'),
+                ]);
+                $this->call('core/coretiles/index', [], $request);
+                return;
+            }
+            $controller = $this->createController($urlInfo, $request);
+            $action = $urlInfo["pathInfo"]["action"];
+            $reqRoute = $urlInfo["pathInfo"]["module"]."_".$urlInfo["pathInfo"]["controller"]."_".$action;
+            $args = $this->getArgs($urlInfo);
+            if(isset($args['id_space'])){
+                $_SESSION['id_space'] = $args['id_space'];
+            }
+
+            $this->logger->debug('[router][old] call', ["controller" => $controller, "action" => $action, "args" => $args]);
+            $this->runAction($controller, $urlInfo, $action, $args);
+            $reqEnd = microtime(true);
         } catch (Throwable $e) {
             Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
             $reqEnd = microtime(true);
@@ -230,6 +229,8 @@ class Router {
      * @throws Exception
      */
     private function install($request) {
+        throw new PfmDbException("Install not supported anymore");
+        /*
         $path = "";
         if ($request->isParameterNotEmpty('path')) {
             $path = $request->getParameter('path');
@@ -252,6 +253,7 @@ class Router {
             return true;
         }
         return false;
+        */
     }
 
     /**

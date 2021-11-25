@@ -6,11 +6,11 @@
 <?php
 if ($id_quote > 0) {
     ?>
-    <div class="col-md-12 pm-form-short">
+    <div class="col-md-10 pm-form-short">
         <?php
     } else {
         ?>
-        <div class="col-md-12 pm-form">
+        <div class="col-md-10 pm-form">
             <?php
         }
         ?>

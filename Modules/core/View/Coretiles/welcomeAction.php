@@ -2,18 +2,6 @@
 
 <?php startblock('stylesheet') ?>
 
-<link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
-<?php
-$headless = Configuration::get("headless");
-if (!$headless) {
-    ?>
-    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
-    <?php
-}
-?>
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/core.css' />
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
-
 <style>
     .modulebox{
         border: solid 1px #e1e1e1; 
@@ -22,7 +10,8 @@ if (!$headless) {
         width:220px; 
         margin-left: 25px;
         margin-top: 25px;
-    }    
+    }
+
 </style>
 
 <?php endblock(); ?>
@@ -30,8 +19,8 @@ if (!$headless) {
 <?php startblock('content') ?>
 
 
-<div class="col-xs-12 pm-tile-container" style="margin-top: 50px;" >
-    <div class="container">
+<div class="pm-tile-container">
+    <div class="">
         <div id="spacesearch" class="col-xs-12" style="margin: 50px;">
             <div class="row">
                 <div class="col-xs-6">
