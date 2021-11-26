@@ -12,23 +12,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 <?php endblock() ?> 
 
 
-<?php startblock('spacemenu'); ?>
-        <?php include 'Modules/core/View/Corespaceaccess/navbar.php' ?>
-<?php endblock(); ?>
-
-<?php startblock('spacenavbar'); ?>
-<?php
-if($id_space) {
-    $nullrequest = new Request(array(), false);
-    $spaceController = new CorespaceController($nullrequest);
-    echo $spaceController->navbar($id_space);
-}
-?>
-</div> 
-<?php
--endblock(); ?>
-
-
 <?php startblock('content') ?>
 <?php endblock() ?>
 

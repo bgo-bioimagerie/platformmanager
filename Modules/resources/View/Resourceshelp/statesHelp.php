@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
 <h4 id="pm-help-h4">Etats</h4>
     <p id="pm-help-p">
         <b>Des alertes peuvent etre automatiquement envoyées</b> aux responsables 

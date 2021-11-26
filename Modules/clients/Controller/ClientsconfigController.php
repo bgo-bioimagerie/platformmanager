@@ -49,7 +49,8 @@ class ClientsconfigController extends CoresecureController {
                     $this->request->getParameter("clientsmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     1,
-                    $this->request->getParameter("colorMenu")
+                    $this->request->getParameter("colorMenu"),
+                    $this->request->getParameter("colorTxtMenu")
                     );
             
             $modelAccess = new CoreSpaceAccessOptions();
@@ -82,6 +83,7 @@ class ClientsconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "clients");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "clients");
         $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "clients");
+        $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "clients");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -91,6 +93,7 @@ class ClientsconfigController extends CoresecureController {
         $form->addSelect("clientsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
+        $form->addColor("colorTxtMenu", CoreTranslator::text_color($lang), false, $colorTxtMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "clientsconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

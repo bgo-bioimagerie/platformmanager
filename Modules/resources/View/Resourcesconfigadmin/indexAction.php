@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-xs-12 col-md-12">
+<div class="">
     
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <h1><?php echo ResourcesTranslator::configuration($lang) ?></h1>

@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10 pm-table">
+<div class="pm-table">
     <h3><?php echo InvoicesTranslator::NewInvoice($lang) ?> </h3>
     
     <div class="col-md-10">

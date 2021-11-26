@@ -48,13 +48,15 @@ class BookingconfigController extends CoresecureController {
                     $this->request->getParameter("bookingmenustatus"),
                     $this->request->getParameter("displayBookingMenu"),
                     0,
-                    $this->request->getParameter("colorBookingMenu")
+                    $this->request->getParameter("colorBookingMenu"),
+                    $this->request->getParameter("colorTxtBookingMenu")
                     );
             $modelSpace->setSpaceMenu($id_space, "booking", "bookingsettings", "glyphicon glyphicon-calendar", 
                     $this->request->getParameter("bookingsettingsmenustatus"),
                     $this->request->getParameter("displaySettingsMenu"),
                     1,
-                    $this->request->getParameter("colorSettingsMenu")
+                    $this->request->getParameter("colorSettingsMenu"),
+                    $this->request->getParameter("colorTxtSettingsMenu")
                     );
             
             if ( $this->request->getParameter("bookingsettingsmenustatus") > 0 ){
@@ -134,7 +136,7 @@ class BookingconfigController extends CoresecureController {
         
         $setbookingoptionsquery = $this->request->getParameterNoException("setbookingoptionsquery");
         if ($setbookingoptionsquery == "yes") {
-            $bookingSettings = $this->optionsQuery($id_space);
+            // $bookingSettings = $this->optionsQuery($id_space);
             
             $this->redirect("bookingconfig/".$id_space);
             return;
@@ -208,11 +210,10 @@ class BookingconfigController extends CoresecureController {
             
         $form = new Form($this->request, "bookingOptionForm");
         $form->addSeparator(BookingTranslator::Edit_booking_options($lang));
-        //$form->addComment(BookingTranslator::Edit_booking_options($lang));
         
         $choices = array(BookingTranslator::Both_short_and_full_description($lang),
         BookingTranslator::Only_short_description($lang),
-	BookingTranslator::Only_full_description($lang));
+	    BookingTranslator::Only_full_description($lang));
         $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(1,2,3), $BkDescriptionFields);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
@@ -240,10 +241,12 @@ class BookingconfigController extends CoresecureController {
         $statusBookingMenu = $modelMenu->getSpaceMenusRole($id_space, "booking");
         $displayBookingMenu = $modelMenu->getSpaceMenusDisplay($id_space, "booking");
         $colorBookingMenu = $modelMenu->getSpaceMenusColor($id_space, "booking");
+        $colorTxtBookingMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "booking");
 
         $statusSettingsMenu = $modelMenu->getSpaceMenusRole($id_space, "bookingsettings");
         $displaySettingsMenu = $modelMenu->getSpaceMenusDisplay($id_space, "bookingsettings");
         $colorSettingsMenu = $modelMenu->getSpaceMenusColor($id_space, "bookingsettings");
+        $colorTxtSettingsMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "bookingsettings");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -257,10 +260,12 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("bookingmenustatus", BookingTranslator::Booking($lang), $status["names"], $status["ids"], $statusBookingMenu);
         $form->addNumber("displayBookingMenu", CoreTranslator::Display_order($lang), false, $displayBookingMenu);
         $form->addColor("colorBookingMenu", CoreTranslator::color($lang), false, $colorBookingMenu);
+        $form->addColor("colorTxtBookingMenu", CoreTranslator::text_color($lang), false, $colorTxtBookingMenu);
         
         $form->addSelect("bookingsettingsmenustatus", BookingTranslator::Booking_settings($lang), $status["names"], $status["ids"], $statusSettingsMenu);
         $form->addNumber("displaySettingsMenu", CoreTranslator::Display_order($lang), false, $displaySettingsMenu);
         $form->addColor("colorSettingsMenu", CoreTranslator::color($lang), false, $colorSettingsMenu);
+        $form->addColor("colorTxtSettingsMenu", CoreTranslator::text_color($lang), false, $colorTxtSettingsMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

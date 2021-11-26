@@ -80,37 +80,41 @@ img{
 
 </style>
 
-<div class="col-sm-12">
+
 <!-- Add the table title -->
 <div class="row"  style="background-color: #ffffff; padding-top: 12px;">
 		<?php
 			$message = "";
-				if (isset($_SESSION["message"]) && $_SESSION["message"]){
+			if (isset($_SESSION["message"]) && $_SESSION["message"]){
 				$message = $_SESSION["message"];
-			} ?>
-			<?php if ($message != ""): 
-			if (strpos($message, "Err") === false){?>
+			}
+			if ($message) {
+		?>
+		<?php
+			if (strpos($message, "Err") === false){
+		?>
 				<div class="alert alert-success text-center">	
-			<?php 
+		<?php 
 			}
 			else{
-			?>
+		?>
 				<div class="alert alert-danger text-center">
-			<?php 
+		<?php 
 			}
 		?>
 			<p><?php echo  $message ?></p>
 			</div>
-		<?php endif; unset($_SESSION["message"])?>
+		<?php } ?>
+		<?php unset($_SESSION["message"])?>
 </div>
 
 <div class="row" style="background-color: #ffffff; padding-bottom: 12px;">
 
-	<div class="col-md-6 text-left">
+	<div class="col-md-6 col-lg-6 text-left">
 		<div class="btn-group" role="group" aria-label="...">
-	<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/daybefore'"> &lt; </button>
-	<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/dayafter'"> > </button>
-	<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/today'"><?php echo  BookingTranslator::Today($lang) ?></button>
+			<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/daybefore'"> &lt; </button>
+			<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/dayafter'"> > </button>
+			<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/today'"><?php echo  BookingTranslator::Today($lang) ?></button>
 		</div>
 
 		<?php 
@@ -128,7 +132,7 @@ img{
 	</div>
 
 
-	<div class="col-md-6 text-right">
+	<div class="col-md-6 col-lg-6 text-right">
 		<div class="btn-group" role="group" aria-label="...">
 			
 			<div class="btn btn-default" type="button">
@@ -160,9 +164,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 <!-- hours column -->
 <div class="row">
 	<div class="col-xs-1" id="colDiv">
-
 		<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color:<?php echo $agendaStyle["header_background"]?>;">
-
 		</div>
 		<?php 
 		// Hours
@@ -172,19 +174,19 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 				$heightCol = 4*$agendaStyle["line_height"] . "px";
 			}
 			else if($size_bloc_resa == 1800){
-				$heightCol = 2*$agendaStyle["line_height"] . "px";;
+				$heightCol = 2*$agendaStyle["line_height"] . "px";
 			}
 			else if($size_bloc_resa == 3600){
-				$heightCol = $agendaStyle["line_height"] . "px";;
+				$heightCol = $agendaStyle["line_height"] . "px";
 			}
 			?>
 		
 			<div id="tcell" style="text-align: center; height: <?php echo  $heightCol ?>; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
 			<?php echo $h?>:00
 			</div>
-		<?php 	
-		}
-		?>	
+			<?php 	
+			}
+			?>	
 	</div>	
 		
 	<!-- hours reservation -->	
@@ -195,56 +197,54 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 		for($r = 0 ; $r < count($resourcesBase) ; $r++){
 		?>
 		
-		<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="colDiv">
+			<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="colDiv">
 
-		<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
-		<p class="text-center"><b><?php echo  $this->clean($resourcesBase[$r]['name']) ?>
-				<br/><?php echo  $this->clean($resourcesBase[$r]['description']) ?>
-				<?php
-					if($resourcesBase[$r]['last_state'] != ""){
-						?>
-							<br/>
-							<a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+				<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
+				<p class="text-center"><strong><?php echo  $this->clean($resourcesBase[$r]['name']) ?></strong>
+						<br/><?php echo  $this->clean($resourcesBase[$r]['description']) ?>
 						<?php
-					}
-				?>
-			</p>
-		</div>
+							if($resourcesBase[$r]['last_state'] != ""){
+								?>
+									<br/>
+									<a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+								<?php
+							}
+						?>
+					</p>
+				</div>
 
-		<?php 
+			<?php 
 			$available_days = $scheduling["is_monday"] . "," . $scheduling["is_tuesday"]. "," . $scheduling["is_wednesday"]. "," . $scheduling["is_thursday"]. "," . $scheduling["is_friday"]. "," . $scheduling["is_saturday"]. "," . $scheduling["is_sunday"];
-		//$available_days = $this->clean($scheduling['available_days']);
-		$available_days = explode(",", $available_days);
-		
-		$curentDay = date("w", $date_unix);
+			$available_days = explode(",", $available_days);
+			
+			$curentDay = date("w", $date_unix);
 
-		$curentDay--;
-		if ($curentDay == -1){
-			$curentDay = 6;
-		}
+			$curentDay--;
+			if ($curentDay == -1){
+				$curentDay = 6;
+			}
 
-		$isAvailableDay = false;
-		if ($available_days[$curentDay] == 1){
-			$isAvailableDay = true;
-		}
-		
-		bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries[$r], $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]["id"]);
-		?>
-		
-		</div>
+			$isAvailableDay = false;
+			if ($available_days[$curentDay] == 1){
+				$isAvailableDay = true;
+			}
+			
+			bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries[$r], $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]["id"]);
+			?>
+			
+			</div>
 		<?php 
 		}
 		?>
+		</div>
 	</div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12">
-
+	<div class="col-sm-12">
 	<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
-
 	</div>
 </div>
-</div>
+
 <?php endblock();
 

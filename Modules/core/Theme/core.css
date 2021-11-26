@@ -4,6 +4,14 @@ body{
     padding-top: 60px;
 }
 
+#sideMenu {
+    padding-left: 5px;
+}
+
+#mainMenu {
+    
+}
+
 
 .select {
     -moz-appearance: none;

@@ -396,6 +396,8 @@ class Router {
         $view = new View('error');
         $view->setFile('Modules/error.php');
         $view->generate(array(
+            'mainMenu' => null,
+            'sideMenu' => null,
             'type' => $type,
             'message' => $exception->getMessage()
         ));

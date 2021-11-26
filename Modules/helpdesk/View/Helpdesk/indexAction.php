@@ -3,7 +3,6 @@
 
 
 <?php startblock('stylesheet') ?>
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/spacemenu.css' />
 <script src="https://unpkg.com/marked@0.3.6"></script>
 <script src="https://unpkg.com/lodash@4.16.0"></script>
 <style>
@@ -34,21 +33,10 @@ blockquote {
 <?php endblock() ?>
 
 
-<?php startblock('spacenavbar'); ?>
-<?php
-    require_once 'Modules/core/Controller/CorespaceController.php';
-    $spaceController = new CorespaceController(new Request(array(), false));
-    echo $spaceController->navbar($id_space);
-?>
-
-<?php endblock(); ?>
-
-
-
 <!-- body -->
 <?php startblock('content') ?>
 
-<div id="helpdeskapp" class="col-md-12" style="background-color: #fff; height:100%">
+<div id="helpdeskapp" style="background-color: #fff; height:100%">
     <div class="row">
         <!-- Message -->
         <div class="col-sm-10 col-sm-offset-1 text-center">
@@ -77,7 +65,7 @@ blockquote {
         <div v-if="message" class="col-sm-12 text-center">
             <div class="alert alert-warning">{{message}}</div>
         </div>
-        <div class="col-sm-2 text-center">
+        <div class="col-sm-2 text-center" style="background-color: <?php echo $menuInfo["color"] ?> ; color: <?php echo $menuInfo["txtcolor"] ?>">
             <div @click="newTicket()">Create</div>
             <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
             <div v-bind:class="filter==0 ? 'selection':''"  @click="setFilter(0)">New {{unread["s0"]}}</div>

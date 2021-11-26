@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
 <h4 id="pm-help-h4">Catégorie</h4>
     <p id="pm-help-p">
         <b>Une ressource est classée dans une catégorie</b>. Les catégories sont 

@@ -5,6 +5,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/bulletjournal/Model/BulletjournalTranslator.php';
 require_once 'Modules/bulletjournal/Model/BjNote.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -19,6 +20,15 @@ class BjnotesController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("bulletjournal");
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
     }
     
     /**

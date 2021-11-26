@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="col-md-10 pm-table">
+<div class="pm-table">
 
     <div class="col-md-12" style="height:7px;">
     </div>

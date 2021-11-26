@@ -40,7 +40,13 @@ class ComconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "com", "com", "glyphicon-info-sign", $this->request->getParameter("commenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("commenucolor")
+            $modelSpace->setSpaceMenu(
+                $id_space, "com", "com", "glyphicon-info-sign",
+                $this->request->getParameter("commenustatus"),
+                $this->request->getParameter("displayMenu"),
+                1,
+                $this->request->getParameter("commenucolor"),
+                $this->request->getParameter("commenutxtcolor")
             );
 
             $this->redirect("comconfig/" . $id_space);
@@ -90,6 +96,7 @@ class ComconfigController extends CoresecureController {
         $statusComMenu = $modelSpace->getSpaceMenusRole($id_space, "com");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "com");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "com");
+        $displayTxtColor = $modelSpace->getSpaceMenusTxtColor($id_space, "com");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -99,6 +106,7 @@ class ComconfigController extends CoresecureController {
         $form->addSelect("commenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusComMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("commenucolor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor("commenutxtcolor", CoreTranslator::text_color($lang), false, $displayTxtColor);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "comconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);

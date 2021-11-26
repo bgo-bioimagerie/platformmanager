@@ -1,4 +1,4 @@
-<div class="col-md-2">
+<div class="">
     <div class="" style="height: 50px; padding-top: 15px; background-color:<?php echo $space["color"] ?>; border-bottom: 1px solid #fff;">
         <a  style="background-color:<?php echo $space["color"] ?>; color: #fff;" href=""> <?php echo CoreTranslator::Users($lang) ?> 
             <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon glyphicon-user"></span>

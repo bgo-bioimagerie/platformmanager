@@ -60,7 +60,6 @@ class CorespaceController extends CoresecureController {
         if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
-        Configuration::getLogger()->error('????', ['space' => $space, 'user' => $_SESSION['id_user']]);
         if(!$space['status'] && $_SESSION['id_user'] < 0) {
             throw new PfmAuthException("Error 403: anonymous access denied", 403);
         }

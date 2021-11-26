@@ -7,9 +7,9 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * @deprecated
  * @author sprigent
  * Only index still used to redirect to serviceslisting  and navbar
  */
@@ -17,6 +17,21 @@ class ServicesController extends CoresecureController {
 
     private $serviceModel;
     private $typeModel;
+
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
+    public function sideMenu() {
+        $id_space = $this->args['id_space'];
+        return $this->navbar($id_space);
+    }
 
     /**
      * Constructor
@@ -32,9 +47,9 @@ class ServicesController extends CoresecureController {
 
         $lang = $this->getLanguage();
 
-        $html  = '<div class="">';
+        $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href="/serviceslisting/'.$id_space.'"> {{title}}'; 
+        $html .= '<a  style="background-color:{{bgcolor}}; color: {{color}};" href="/serviceslisting/'.$id_space.'"> {{title}}'; 
         $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
@@ -105,6 +120,7 @@ class ServicesController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("services", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
+        $html = str_replace('{{color}}', $menuInfo['txtcolor'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', ServicesTranslator::Services($lang), $html);
 

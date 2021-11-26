@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-    <div class="col-md-10 pm-form">
+    <div class="pm-form">
         <?php echo $formHtml ?>
     </div>
 

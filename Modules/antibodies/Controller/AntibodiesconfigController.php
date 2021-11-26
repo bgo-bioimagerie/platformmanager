@@ -48,7 +48,8 @@ class AntibodiesconfigController extends CoresecureController {
                     $this->request->getParameter("antibodiesmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     1,
-                    $this->request->getParameter("displayColor")
+                    $this->request->getParameter("displayColor"),
+                    $this->request->getParameter("displayTxtColor")
                     );
             
             $this->redirect("antibodiesconfig/".$id_space);
@@ -67,7 +68,8 @@ class AntibodiesconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "antibodies");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "antibodies");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "antibodies");
-        
+        $displayTxtColor = $modelSpace->getSpaceMenusTxtColor($id_space, "antibodies");
+
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
@@ -76,6 +78,7 @@ class AntibodiesconfigController extends CoresecureController {
         $form->addSelect("antibodiesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber('displayMenu', CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor('displayColor', CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor('displayTxtColor', CoreTranslator::text_color($lang), false, $displayTxtColor);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "antibodiesconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

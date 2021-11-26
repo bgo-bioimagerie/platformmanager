@@ -26,9 +26,9 @@ if ($space['color'] == "") {
     <!-- display com popup -->
 
 <div class="row">
-<div class="col-xs-12" style="background-color: #fff; height: 2000px;">
+<div class="" style="background-color: #fff; ">
 
-    <div style="background-color: #fff;">
+    <div class="container" style="background-color: #fff;">
 
         <?php
         require_once 'Modules/com/Controller/ComtileController.php';

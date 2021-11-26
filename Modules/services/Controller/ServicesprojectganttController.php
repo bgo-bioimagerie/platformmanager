@@ -10,13 +10,14 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Model/SeVisa.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicesprojectganttController extends CoresecureController {
+class ServicesprojectganttController extends ServicesController {
 
     private $serviceModel;
 

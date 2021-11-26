@@ -5,8 +5,9 @@ require_once 'Framework/TableView.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/AcProtocol.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
-class ProtocolsController extends CoresecureController {
+class ProtocolsController extends AntibodiesController {
 
     /**
      * User model object
@@ -59,7 +60,14 @@ class ProtocolsController extends CoresecureController {
     }
 
     // DEPRECATED?
+    /**
+     * @deprecated
+     */
+
     public function protoref($id_space) {
+        throw new PfmException("deprecated method", 500);
+
+        /*
         $anticorpsId = 0;
         if ($this->request->isParameterNotEmpty('actionid')) {
             $anticorpsId = $this->request->getParameter("actionid");
@@ -69,13 +77,14 @@ class ProtocolsController extends CoresecureController {
         //echo "action id = " . $anticorpsId . "<br />";
         $protocolesArray = $this->protocolModel->getProtocolsByAnticorps($id_space, $anticorpsId);
 
-
+        throw new PfmException("deprecated method", 500)
         // view
-        $navBar = $this->navBar();
+        $navBar = $this->navBar($id_space);
         $this->generateView(array(
             'navBar' => $navBar,
             'protocols' => $protocolesArray
                 ), "index");
+        */
     }
 
     public function editAction($id_space, $id) {

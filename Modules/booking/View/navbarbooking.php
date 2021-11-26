@@ -2,16 +2,15 @@
 require_once 'Modules/core/Model/CoreSpace.php';
 $modelMenu = new CoreSpace();
 
-$menucolortxt = "#ffffff";
 $menucolor = $modelMenu->getSpaceMenusColor($id_space, "booking");
+$menucolortxt = $modelMenu->getSpaceMenusTxtColor($id_space, "booking");
 if ($menucolor == "") {
     $menucolor = "#428bca";
 }
+if ($menucolortxt == "") {
+    $menucolortxt = "#ffffff";
+}
 ?>
-
-    <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-    <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-    <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 
     <style>
         .bs-docs-header {
@@ -44,11 +43,7 @@ if ($menucolor == "") {
             color: <?php echo $menucolortxt ?>;
         }
 
-        #content{
-            margin-top: -15px;
-            margin-left: -15px;
-            margin-right: -15px;
-        }
+
 
     </style>
 
@@ -58,7 +53,7 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 ?>
 
-    <div class="container bs-docs-header" id="">
+    <div class="bs-docs-header" id="">
         
             <form role="form" class="form-horizontal" action="booking/<?php echo $id_space ?>" method="post" id="navform">
 
@@ -142,7 +137,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                     </fieldset>
                 </div>   
             </form>
-        </div>
+    </div>
     
 
 <?php include "Framework/timepicker_script.php" ?>

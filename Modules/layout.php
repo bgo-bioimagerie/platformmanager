@@ -44,6 +44,8 @@ if($isdev) {
         <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
         <script src="externals/jquery-1.11.1.js"></script>
         <script src="externals/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+        <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
@@ -58,14 +60,18 @@ if($isdev) {
                 echo $navController->navbar();
             ?>
         <?php endblock() ?>
-        <?php startblock('spacenavbar') ?>
-        <?php endblock() ?>
-        <div class="container row">
-                <?php startblock('spacemenu') ?>
-                <?php endblock() ?>
 
+        <div id="mainmenu">
+        <?php
+        if ($mainMenu) {
+            echo $mainMenu;
+        }
+        ?>
+        </div>
 
-                <div id="app" class="container">
+        <div class="row">
+
+                <div id="app" class="">
                     <?php if (isset($flash) && $flash) { ?>
                         <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
                             <?php echo $flash['msg']; ?>
@@ -74,9 +80,25 @@ if($isdev) {
                             </button>
                         </div>
                     <?php }?>
-                    
+                    <div class="col-md-12 col-lg-12">
+                        <?php startblock('spacemenu') ?>
+                        <?php endblock() ?>
+                    </div>
+                    <?php
+                    if ($sideMenu) {
+                    ?>
+                    <div class="col-md-2 col-lg-2" id="sidemenu">
+                    <?php
+                        echo $sideMenu;
+                    ?>
+                    </div>
+                    <div class="col-md-10 col-lg-10" id="content">
+                    <?php } else { ?>
+                    <div class="col-md-12 col-lg-12" id="content">
+                    <?php } ?>
                     <?php startblock('content') ?>
                     <?php endblock() ?>
+                    </div>
 
             </div>
         </div>

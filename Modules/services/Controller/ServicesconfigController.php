@@ -43,7 +43,16 @@ class ServicesconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "services", "services", "glyphicon glyphicon-plus", $this->request->getParameter("servicesmenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("displayColor")
+            $modelSpace->setSpaceMenu(
+                $id_space,
+                "services",
+                "services",
+                "glyphicon glyphicon-plus",
+                $this->request->getParameter("servicesmenustatus"),
+                $this->request->getParameter("displayMenu"),
+                1,
+                $this->request->getParameter("displayColor"),
+                $this->request->getParameter("displayColorTxt")
             );
 
             $this->redirect("servicesconfig/" . $id_space);
@@ -115,6 +124,7 @@ class ServicesconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "services");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "services");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "services");
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "services");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -124,6 +134,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addSelect("servicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor("displayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);

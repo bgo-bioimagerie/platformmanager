@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10 pm-table">
+<div class="pm-table">
     
     <?php 
     if(count($years) > 0){

@@ -106,9 +106,11 @@ class FormHtml {
      * @return string HTML code
      */
     static public function hidden($name, $value, $required) {
-        $html = "<input class=\"form-control\" type=\"hidden\" id=\"" . $name . "\" name=\"" . $name . "\"";
+        $html = "<div class=\"form-group\">";
+        $html .= "<input class=\"form-control\" type=\"hidden\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
+        $html .= "</div>";
         return $html;
     }
 
@@ -534,9 +536,9 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function downloadbutton($formid, $label, $name, $value, $manual = false, $labelWidth = 2, $inputWidth = 9) {
+    static public function downloadbutton($formid, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
-        if ($manual) {
+        //if ($manual) {
             $html = "<div class=\"form-group\">";
             $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . "</label>";
             $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
@@ -544,6 +546,7 @@ class FormHtml {
             $html .= "<input type=\"submit\" id=\"" . $formid . "submit" . "\" class=\"btn btn-default\" value=\"" . $label . "\" />";
             $html .= "</div>";
             $html .= "</div>";
+        /*
         } else {
             
             $html = "<form role=\"form\" id=\"" . $formid . "filetransfert\" class=\"form-horizontal\" action=\"transfersimplefiledownload\" method=\"POST\">";
@@ -555,18 +558,8 @@ class FormHtml {
             $html .= "</div>";
             $html .= "</div>";
             $html .= "</form>";
-            
-            
-            /*
-            $html = "<div class=\"form-group\">";
-            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
-            $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-            $html .= "<button class=\"btn  btn-default\" id=\"" . $name . "\" type=\"button\" onclick=\"location.href = './" . $name . "'\">" . $label . "</button>";
-            $html .= "</div>";
-            $html .= "</div>";
-             * 
-             */
         }
+        */
 
         return $html;
     }

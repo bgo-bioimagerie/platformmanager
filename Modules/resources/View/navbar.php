@@ -100,12 +100,6 @@ if ($ecmenucolortxt == "") {
             <a id="menu-button" href="reeventtypes/<?php echo $id_space ?>"><?php echo ResourcesTranslator::Event_Types($lang) ?></a>
             <a href="reeventtypesedit/<?php echo $id_space ?>/0">+</a>      
         </div>
-
-        <!--
-        <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="resalert/<?php echo $id_space ?>"><?php echo ResourcesTranslator::Alerts($lang) ?></a>
-        </div>
-        -->
         
     </div>
 

@@ -1,16 +1,5 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-<?php startblock('spacenavbar'); ?>
-<?php
-if($id_space) {
-    require_once 'Modules/core/Controller/CorespaceController.php';
-    $nullrequest = new Request(array(), false);
-    $spaceController = new CorespaceController($nullrequest);
-    echo $spaceController->navbar($id_space);
-}
-?>
-</div> 
-<?php endblock(); ?>
 
 
 <?php startblock('content') ?>

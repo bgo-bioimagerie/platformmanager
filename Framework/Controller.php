@@ -5,107 +5,6 @@ require_once 'Request.php';
 require_once 'View.php';
 require_once 'Errors.php';
 
-class Navbar {
-
-    /**
-     * Get the navbar content
-     * @return string
-     */
-    public function nav() {
-        $login = '';
-        if(isset($_SESSION["login"])) {
-            $login = $_SESSION["login"];
-        }
-        return $this->buildNavBar($login);
-    }
-
-    public function getLanguage() {
-        $lang = substr(filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'), 0, 2);
-        if (isset($_SESSION["user_settings"]["language"])) {
-            $lang = $_SESSION["user_settings"]["language"];
-        }
-        return $lang;
-    }
-
-    /**
-     * Get the tool menu
-     * @return multitype: tool menu content
-     */
-    public function getMenu() {
-        
-        $modelMainMenus = new CoreMainMenu();
-        $mainMenu = $modelMainMenus->getAll();
-        
-        $modelMainSubMenus = new CoreMainSubMenu();
-        
-        for($i = 0 ; $i < count($mainMenu) ; $i++){
-            $mainMenu[$i]["items"] = $modelMainSubMenus->getForMenu($mainMenu[$i]["id"]);
-        }
-        return $mainMenu;
-    }
-    
-    /**
-     * Get the admin menu
-     * @return multitype: Amdin menu
-     */
-    public function getAdminMenu() {
-        if(!isset($_SESSION["user_status"])) {
-            return null;
-        }
-        $user_status_id = $_SESSION["user_status"];
-
-        $toolAdmin = null;
-        if ($user_status_id >= CoreStatus::$ADMIN) {
-            $modulesModel = new CoreAdminMenu();
-            $toolAdmin = $modulesModel->getAdminMenus();
-        }
-        return $toolAdmin;
-    }
-
-    /**
-     * Get the navbar view
-     * @param string $login User login
-     * @return string: Menu view (html) 
-     */
-    public function buildNavBar($login) {
-        $userName = $login;
-        $lang = $this->getLanguage();
-        $toolMenu = $this->getMenu();
-        $toolAdmin = $this->getAdminMenu();
-        
-
-        // get the view menu,fill it, and return the content
-        return $this->generateNavfile(
-                array('userName' => $userName,
-                    'toolMenu' => $toolMenu, 
-                    'toolAdmin' => $toolAdmin,
-                    'impersonate' => $_SESSION['logged_login'] ?? null,
-                    'lang' => $lang));
-    }
-
-    /**
-     * Internal method to build the navbar into HTML
-     * @param  $data navbar content
-     * @throws Exception
-     * @return string Menu view (html) 
-     */
-    private function generateNavfile($data) {
-        $file = 'Modules/core/View/navbar.php';
-        if (file_exists($file)) {
-            extract($data);
-
-            ob_start();
-
-            require $file;
-
-            return ob_get_clean();
-        } else {
-            throw new PfmFileException("unable to find the file: '$file' ", 404);
-        }
-    }
-
-}
-
 
 /**
  * Abstract class defining a controller. 
@@ -117,11 +16,16 @@ abstract class Controller {
     /** Action to run */
     protected $action;
     protected $module;
+    protected $args;
 
     /** recieved request */
     protected $request;
 
     protected $twig;
+
+    public function args() {
+        return $this->args;
+    }
 
     public function __construct(Request $request) {
         $this->request = $request;
@@ -136,6 +40,18 @@ abstract class Controller {
                 'cache' => '/tmp/pfm'
             ]);
         }
+    }
+
+    public function mainMenu() {
+        return null;
+    }
+
+    public function sideMenu() {
+        return null;
+    }
+
+    public function spaceMenu() {
+        return null;
     }
 
     /**
@@ -167,6 +83,7 @@ abstract class Controller {
      */
     public function runAction($module, $action, $args = array()) {
         Configuration::getLogger()->debug("[controller][runAction]", ["module" => $module, "action" => $action, "args" => $args]);
+        $this->args = $args;
         $this->module = strtolower($module);
         $actionName = $action . "Action";
         if (method_exists($this, $actionName)) {
@@ -248,11 +165,15 @@ abstract class Controller {
             $dataView['flash'] = null;
         }
         // Geneate the view
-        // echo "controllerView = " . $controllerView . "<br/>";
-        //echo "parent = " . basename(__DIR__) . "<br/>";
+
+        $dataView["mainMenu"] = $this->mainMenu();
+        $dataView["sideMenu"] = $this->sideMenu();
+        $dataView["spaceMenu"] = $this->spaceMenu();
         if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
             // TODO add navbar generation
-            $dataView["navbar"] = (new Navbar())->nav();
+            require_once 'Modules/core/Controller/CorenavbarController.php';
+            $navController = new CorenavbarController($this->request);
+            $dataView["navbar"] = $navController->navbar();
             try {
                 echo $this->twig->render("Modules/core/View/$controllerView/$actionView.twig", $dataView);
                 return;

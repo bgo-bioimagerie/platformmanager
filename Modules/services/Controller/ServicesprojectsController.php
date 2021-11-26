@@ -17,13 +17,14 @@ require_once 'Modules/services/Model/StockShelf.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicesprojectsController extends CoresecureController {
+class ServicesprojectsController extends ServicesController {
 
     private $serviceModel;
 
@@ -41,10 +42,10 @@ class ServicesprojectsController extends CoresecureController {
         $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
         $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
-        $projectperiodbeginArray = explode("-", $projectperiodbegin);
+        $projectperiodbeginArray = $projectperiodbegin ? explode("-", $projectperiodbegin) : [0,1,1];
         $previousYear = $year - 1;
         $yearBegin = $previousYear . "-" . $projectperiodbeginArray[1] . "-" . $projectperiodbeginArray[2];
-        $projectperiodendArray = explode("-", $projectperiodend);
+        $projectperiodendArray = $projectperiodend ? explode("-", $projectperiodend) : [0,12,31];
         $yearEnd = $year . "-" . $projectperiodendArray[1] . "-" . $projectperiodendArray[2];
 
         return array("yearBegin" => $yearBegin, "yearEnd" => $yearEnd);
@@ -115,8 +116,8 @@ class ServicesprojectsController extends CoresecureController {
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
-            $projectperiodbeginArray = explode("-", $projectperiodbegin);
-            $projectperiodendArray = explode("-", $projectperiodend);
+            $projectperiodbeginArray = $projectperiodbegin ? explode("-", $projectperiodbegin) : [0, 1, 1];
+            $projectperiodendArray = $projectperiodend ? explode("-", $projectperiodend) : [0, 12, 31];
             if ($projectperiodbeginArray[1] <= date("m", time())) {
                 $year = date("Y", time());
             } else {

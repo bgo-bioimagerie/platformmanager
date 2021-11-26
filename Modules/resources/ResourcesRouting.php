@@ -4,6 +4,11 @@ require_once 'Framework/Routing.php';
 
 class ResourcesRouting extends Routing{
     
+    public function routes($router) {
+        $router->map('GET', '/resources/eventfile/[i:id_space]/[i:id]', 'resources/resourcesinfo/downloadeventfile', 'resources_downloadeventfileAction');
+    }
+
+
     public function listRoutes(){
         
         // config

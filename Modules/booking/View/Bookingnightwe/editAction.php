@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-    <div class="col-md-10 pm-form">
+    <div class="pm-form">
         <div class="col-md-8 col-md-offset-2">
             <form role="form" class="form-horizontal" action="bookingnightweeditq/<?php echo $id_space ?>"
                   method="post">

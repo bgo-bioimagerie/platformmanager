@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10 pm-table">
+<div class="pm-table">
 
     <?php include "Modules/resources/View/Resourcesinfo/edittabs.php" ?>
     <div class="col-md-2" style="margin-top: 20px;">

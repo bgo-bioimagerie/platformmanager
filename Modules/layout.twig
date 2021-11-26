@@ -32,15 +32,12 @@
             {{navbar | raw}}
         {% endblock %}
 
-        {% block spacenavbar %}
-        {% endblock %}
-
-        <div class="container row">
-            <?php startblock('spacemenu') ?>
-            <?php endblock() ?>
+        {{mainMenu | raw}}
 
 
-            <div id="app" class="container">
+        <div class="row">
+
+            <div id="app" class="">
             {% if flash %}
                 <div class="alert alert-{{flash['class']}} alert-dismissible  show" role="alert">
                     {{flash['msg']}}
@@ -50,8 +47,22 @@
                 </div>
             {% endif %}
 
+            {{ spaceMenu | raw }}
+
+            {% if sideMenu %}
+                <div class="col-md-2 col-lg-2">
+                    {{sideMenu | raw}}
+                </div>
+                <div class="col-md-10 col-lg-10">
+            {% else %}
+                <div class="col-md-12">
+            {% endif %}
+           
             {% block content %}
             {% endblock %}
+                </div>
+                
+            
 
         </div>
 

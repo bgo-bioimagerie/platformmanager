@@ -15,7 +15,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 <?php
     if (empty($resourceInfo)) {
 ?>
-    <div class="col-sm-12" style="background-color: #ffffff; padding-top: 12px;">
+<div class="row" style="background-color: #ffffff; padding-top: 12px;">
     <div class="col-sm-10 col-sm-offset-1">
     <?php
             $message = "";
@@ -43,14 +43,18 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
     }
 ?>
 
-<div class="col-xs-12" style="background-color: #ffffff;">
-<?php
-drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo);
-?>
+<div class="row" style="background-color: #ffffff;">
+    <div class="col-xs-12">
+    <?php
+    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo);
+    ?>
+    </div>
 </div>
 
-<div class="col-xs-12" style="background-color: #ffffff;">
-<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+<div class="row">
+    <div class="col-xs-12" style="background-color: #ffffff;">
+    <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+    </div>
 </div>
 
 <?php endblock();

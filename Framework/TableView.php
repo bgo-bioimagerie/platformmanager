@@ -71,7 +71,7 @@ class TableView {
 
     /**
      * 
-     * @param type $value
+     * @param int $value
      */
     public function setTextMaxLength($value) {
         $this->textMaxLength = $value;
@@ -410,7 +410,7 @@ class TableView {
     /**
      * 
      * @param type $html
-     * @param type $headerscount
+     * @param int $headerscount
      * @return string
      */
     private function addSearchHeader($html, $headerscount) {
