@@ -23,7 +23,8 @@ class CoreSpaceMenus extends Model {
                 `user_role` int(1) NOT NULL DEFAULT 1,
                 `display_order` int(11) NOT NULL DEFAULT 0,
                 `has_sub_menu` int(1) NOT NULL DEFAULT 1,
-                `color` varchar(7) DEFAULT NULL,
+                `color` varchar(7) NOT NULL DEFAULT '#000000',
+                `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
                 PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql3);
