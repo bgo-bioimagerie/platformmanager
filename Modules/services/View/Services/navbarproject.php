@@ -1,4 +1,4 @@
-<div class="" style="background-color:{{bgcolor}}; color:{{color}}">
+<div  style="background-color:{{bgcolor}}; color:{{color}}">
     {{Projects}}
 </div>
 <div class=" pm-inline-div" style="background-color:{{bgcolor}}; color:{{color}}">
@@ -30,7 +30,7 @@
     <a style="color:{{color}}" class="menu-button" href="servicesvisaedit/{{id_space}}">+</a>
 </div>
 <br/>
-<div class="" style="background-color:{{bgcolor}}; color:{{color}}">
+<div  style="background-color:{{bgcolor}}; color:{{color}}">
     {{stock}}
 </div>
 <div class=" pm-inline-div" style="background-color:{{bgcolor}};">

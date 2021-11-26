@@ -1,11 +1,11 @@
-<div class="" style="">
-    <div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">
+<div  >
+    <div  style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">
         <a  style="background-color:{{bgcolor}}; color: #fff;" href="/bookingsettings/{{id_space}}"> {{title}} 
             <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>
         </a>
     </div>
 
-    <div class="" style="background-color:{{bgcolor}};">
+    <div  style="background-color:{{bgcolor}};">
         <br/>
         {{Calendar_View}}    
     </div>
@@ -30,7 +30,7 @@
         <a style="color: #fff;" id="menu-button" href="bookingcolorcodes/{{id_space}}">{{Color_codes}}</a>
         <a style="color: #fff;" id="menu-button" href="bookingcolorcodeedit/{{id_space}}/0">+</a>
     </div>
-    <div class="" style="background-color:{{bgcolor}};">
+    <div  style="background-color:{{bgcolor}};">
         <br/>
         {{Additional_info}}
     </div>
@@ -46,7 +46,7 @@
     </div>
 
 
-    <div class="" style="background-color:{{bgcolor}};">
+    <div  style="background-color:{{bgcolor}};">
         <br/>
         {{booking}}
     </div>

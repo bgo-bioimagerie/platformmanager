@@ -202,7 +202,7 @@ $dayWidth = 100 / 8;
 
                     <div class="col-lg-12" id="colDiv">
                         <!-- Content of each day -->
-                        <div class="">
+                        <div >
 
                             <!-- Title -->
                             <?php

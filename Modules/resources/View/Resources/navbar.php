@@ -1,5 +1,5 @@
 <div>
-    <div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">
+    <div  style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">
         <a  style="background-color:{{bgcolor}}; color: #fff;" href="/resources/{{id_space}}"> {{title}} 
             <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>
         </a>
@@ -10,7 +10,7 @@
         <a id="menu-button" href="resourcesedit/{{id_space}}/0">+</a>
     </div>
     
-    <div class="" style="background-color:{{bgcolor}};">
+    <div  style="background-color:{{bgcolor}};">
         <br/>
         {{Sorting}}
     </div>

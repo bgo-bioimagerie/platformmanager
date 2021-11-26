@@ -1,4 +1,4 @@
-<div class="" style="background-color:{{bgcolor}}; color:{{color}}">
+<div  style="background-color:{{bgcolor}}; color:{{color}}">
     {{Orders}}
 </div>
 <div class=" pm-inline-div" style="background-color:{{bgcolor}};">

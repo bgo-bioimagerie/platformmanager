@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="">
+<div >
     <?php echo $htmlForm ?>
 </div>
 

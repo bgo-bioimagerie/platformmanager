@@ -48,7 +48,7 @@ class ServicesController extends CoresecureController {
         $lang = $this->getLanguage();
 
         $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
-        $html .= '<div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
+        $html .= '<div  style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
         $html .= '<a  style="background-color:{{bgcolor}}; color: {{color}};" href="/serviceslisting/'.$id_space.'"> {{title}}'; 
         $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';

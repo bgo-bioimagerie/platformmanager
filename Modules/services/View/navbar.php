@@ -42,9 +42,9 @@ if ($ecmenucolortxt == "") {
         }
     </style>
 
-<div class="" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
+<div  style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
 
-    <div class="" style="margin-top: 0px;">
+    <div  style="margin-top: 0px;">
         <h4 style="text-transform: uppercase;"><?php echo ServicesTranslator::services($lang) ?></h4>
     </div>
     
@@ -53,7 +53,7 @@ if ($ecmenucolortxt == "") {
         if($servicesuseproject == 1){
     ?>
     
-    <div class="">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Projects($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesprojectsopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_projects($lang) ?></a>      
@@ -75,7 +75,7 @@ if ($ecmenucolortxt == "") {
     ?>
     
     
-    <div class="">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Opened_orders($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesordersopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_orders($lang) ?></a>      
@@ -99,7 +99,7 @@ if ($ecmenucolortxt == "") {
     $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
         if($servicesusestock == 1){
     ?>
-    <div class="">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesstock/<?php echo $id_space ?>"><?php echo ServicesTranslator::Stock($lang) ?></a>      
@@ -117,7 +117,7 @@ if ($ecmenucolortxt == "") {
         }
     ?>
     
-    <div class="">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Listing($lang) ?></p>
 
         <div  class="btn-block" id="menu-button-div">

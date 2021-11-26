@@ -26,7 +26,7 @@ if ($space['color'] == "") {
     <!-- display com popup -->
 
 <div class="row">
-<div class="" style="background-color: #fff; ">
+<div  style="background-color: #fff; ">
 
     <div class="container" style="background-color: #fff;">
 

@@ -20,7 +20,7 @@
 
 
 <div class="pm-tile-container">
-    <div class="">
+    <div >
         <div id="spacesearch" class="col-xs-12" style="margin: 50px;">
             <div class="row">
                 <div class="col-xs-6">

@@ -1,5 +1,5 @@
 
-<div class="" style="background-color:{{bgcolor}}; color:{{color}}; margin-top: 7px;">
+<div  style="background-color:{{bgcolor}}; color:{{color}}; margin-top: 7px;">
         <br/>
     {{Stock}}
 </div>

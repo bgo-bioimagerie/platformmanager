@@ -1,4 +1,4 @@
-<div class="" style="background-color:{{bgcolor}}; color:{{color}}">
+<div  style="background-color:{{bgcolor}}; color:{{color}}">
     <br/>
     {{Listing}}
 </div>

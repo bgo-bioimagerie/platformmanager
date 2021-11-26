@@ -6,7 +6,7 @@
 
 <?php include( "Modules/core/View/Coreusers/navbar.php" ); ?>
 
-<div class="" style="margin-top:50px;">
+<div  style="margin-top:50px;">
     
     
     <div class="container pm-form">

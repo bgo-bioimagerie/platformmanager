@@ -4,7 +4,7 @@
 
 <?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
 
-<div class="" style="background-color:#ffffff;">
+<div  style="background-color:#ffffff;">
     <br/>
 </div>
 <div class="my-gallery" style="background-color:#ffffff; min-height: 100%" itemscope itemtype="http://schema.org/ImageGallery">

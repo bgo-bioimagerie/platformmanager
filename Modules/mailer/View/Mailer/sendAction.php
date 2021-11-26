@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="">
+<div >
 
     <div class="page-header">
         <h1>
