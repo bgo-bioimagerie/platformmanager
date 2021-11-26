@@ -1,5 +1,11 @@
 # Changes
 
+## 2.1.10
+
+* **Hot security fix**, disable Transfer for file download
+  Impacts download of templates for invoices and service
+  event files.
+
 ## 2.1.9
 
 * [users] fix users_info sql

@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/transfer/Model/TransferTranslator.php';
+require_once 'Framework/Errors.php';
 
 /**
  * 
@@ -30,22 +31,7 @@ class TransfersimplefileController extends CoresecureController {
      * Page showing a table containing all the providers in the database
      */
     public function downloadAction() {
-        
-        $file = $this->request->getParameter("filetransferurl");
-        if (file_exists($file)) {
-            
-            $fileNameArray = explode("/", $file);
-            $fileName = $fileNameArray[ count($fileNameArray) -1];
-            
-            header("Content-Type: application/json");
-            header("Content-Disposition: attachment; filename=$fileName");
-            header("Content-Length: " . filesize("$file"));
-            $fp = fopen("$file", "r");
-            fpassthru($fp);
-        } else {
-            echo "file ".$file." does not exists";
-        }
-        
+        throw new PfmException('Transfer disabled!!', 403);
     }
 
 }
