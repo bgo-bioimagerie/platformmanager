@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.11
+
+* pfm-events: handle helpdesk events (but do nothing)
+
 ## 2.1.10
 
 * **Hot security fix**, disable Transfer for file download
