@@ -149,7 +149,7 @@ class EventHandler {
         $gm->updateUserPassword($user['login'], $user['apikey']);
     }
 
-    public function spaceCustomerEdit($msg) {
+    public function spaceCustomerEdit($action, $msg) {
         $this->logger->debug('[spaceCustomerEdit]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
@@ -158,7 +158,16 @@ class EventHandler {
         $stat = ['name' => 'customers', 'fields' => ['value' => $nbCustomers]];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
-
+        if (array_key_exists('client', $msg)) {
+            $cname = $msg['client']['id'];
+            $msg = "Client id $cname deleted";
+            if ($action == Events::ACTION_CUSTOMER_EDIT) {
+                $cname = $modelClient->getName($msg['space']['id'], $msg['client']['id']);
+                $msg = "Client $cname edited";
+            }
+            $m = new CoreHistory();
+            $m->add($msg['space']['id'], $msg['_user'] ?? null, $msg);
+        }
     }
 
     public function spaceUserJoin($msg) {
@@ -244,7 +253,7 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceCustomerEdit(['space' => ['id' => $space['id']]]);
+            $this->spaceCustomerEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
@@ -410,7 +419,7 @@ class EventHandler {
                     break;
                 case Events::ACTION_CUSTOMER_EDIT:
                 case Events::ACTION_CUSTOMER_DELETE:
-                    $this->spaceCustomerEdit($data);
+                    $this->spaceCustomerEdit($action, $data);
                     break;
                 case Events::ACTION_HELPDESK_TICKET:
                     $this->ticketCount($data);
