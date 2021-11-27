@@ -202,9 +202,9 @@ class EventHandler {
         $timestamp = $entry['start_time'];
         $r = new ResourceInfo();
         $resource = $r-> get($id_space, $entry['resource_id']);
-        $u = new CoreUser();
-        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
-        $user = $u->userAllInfo($id_user);
+        //$u = new CoreUser();
+        //$id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        // $user = $u->userAllInfo($id_user);
         $client = ['name' => 'unknown'];
         if($entry['responsible_id']) {
             $c = new ClClient();
@@ -224,9 +224,9 @@ class EventHandler {
         $timestamp = $entry['start_time'];
         $r = new ResourceInfo();
         $resource = $r-> get($id_space, $entry['resource_id']);
-        $u = new CoreUser();
-        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
-        $user = $u->userAllInfo($id_user);
+        //$u = new CoreUser();
+        //$id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        //$user = $u->userAllInfo($id_user);
         $client = ['name' => 'unknown'];
         if($entry['responsible_id']) {
             $c = new ClClient();
