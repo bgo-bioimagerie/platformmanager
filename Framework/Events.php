@@ -255,6 +255,8 @@ class EventHandler {
                 case Events::ACTION_INVOICE_DELETE:
                     $this->invoiceDelete($data);
                     break;
+                case Events::HELPDESK_TICKET:
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $action]);
                     break;
