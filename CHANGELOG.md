@@ -2,7 +2,8 @@
 
 ## 2.1.11
 
-* pfm-events: handle helpdesk events (but do nothing)
+* [pfm-events] handle helpdesk events (but do nothing)
+* [core] manage db reconnection in case of failure
 
 ## 2.1.10
 
