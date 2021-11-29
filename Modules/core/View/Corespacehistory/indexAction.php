@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div id="logs" class="row">
+<div id="logs" class="row container">
     <div class="col-sm-12">
        <input :value="dateToYYYYMMDD(fromFilter)"
                    @input="fromFilter = $event.target.valueAsDate" type="date"/>
