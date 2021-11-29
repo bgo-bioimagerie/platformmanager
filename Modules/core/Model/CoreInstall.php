@@ -590,7 +590,11 @@ class CoreDB extends Model {
     }
 
     public function upgrade_v3_v4() {
+        Configuration::getLogger()->debug('[core] add txtcolor');
         $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
+        $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
+        Configuration::getLogger()->debug('[core] add txtcolor, done');
+
         if(Statistics::enabled()) {
             $eventHandler = new EventHandler();
             $g = new Grafana();

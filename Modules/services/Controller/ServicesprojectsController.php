@@ -153,7 +153,7 @@ class ServicesprojectsController extends ServicesController {
 
         $table = new TableView();
         $table->setTitle($title, 3);
-        $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color"));
+        $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color", "all_text" => "txtcolor"));
 
         $table->addLineEditButton("servicesprojectsheet/" . $id_space);
         $table->addDeleteButton("servicesprojectdelete/" . $id_space, "id", "id");
@@ -206,6 +206,7 @@ class ServicesprojectsController extends ServicesController {
             $pricingInfo = $modelPricing->get($id_space ,$clientAccounts["pricing"]);
             
             $entriesArray[$i]["color"] = $pricingInfo["color"];
+            $entriesArray[$i]["txtcolor"] = $pricingInfo["txtcolor"];
 
             $entriesArray[$i]["time_color"] = "#ffffff";
             if ($entriesArray[$i]["time_limit"] != "") {
@@ -366,10 +367,10 @@ class ServicesprojectsController extends ServicesController {
 
         if ($id > 0) {
             $value = $modelProject->getEntry($id_space, $id);
-            $items = $modelProject->getProjectServices($id_space, $id);
+            // $items = $modelProject->getProjectServices($id_space, $id);
         } else {
             $value = $modelProject->defaultEntryValues();
-            $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
+            // $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
         }
 
         $modelUser = new CoreUser();

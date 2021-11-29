@@ -15,7 +15,7 @@ if ($id_quote > 0) {
         }
         ?>
         <?php
-        if (isset($_SESSION["message"])) {
+        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             ?>
             <div class="alert alert-success">
                 <?php echo $_SESSION["message"] ?>

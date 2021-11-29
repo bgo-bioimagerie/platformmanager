@@ -33,7 +33,7 @@ if (getenv('PFM_MODE') != 'dev') {
         <!-- Message -->
         <div class="col-sm-10 col-sm-offset-1 text-center">
              <?php
-        if (isset($_SESSION["message"])) {
+        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             if (substr($_SESSION["message"], 0, 3) === "Err") {
                 ?>
                 <div class="alert alert-danger">

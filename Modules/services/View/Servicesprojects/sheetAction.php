@@ -9,11 +9,13 @@
         <h3> <?php echo $projectName ?> </h3>
     </div>
 
-    <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
+    <div class="col-md-12">
+        <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
+    </div>
 
     <div class="col-md-12">
         <?php
-        if (isset($_SESSION["message"])) {
+        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             if (substr($_SESSION["message"], 0, 3) === "Err") {
                 ?>
                 <div class="alert alert-danger">

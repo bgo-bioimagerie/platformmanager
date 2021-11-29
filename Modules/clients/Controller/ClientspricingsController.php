@@ -55,9 +55,13 @@ class ClientspricingsController extends ClientsController {
         $table = new TableView();
         $table->addLineEditButton("clpricingedit/" . $id_space);
         $table->addDeleteButton("clpricingdelete/" . $id_space);
-        $table->setColorIndexes(array("color" => "color"));
-        $tableHtml = $table->view($belongingsArray, array("name" => CoreTranslator::Name($lang),
-            "color" => CoreTranslator::color($lang), "type" => CoreTranslator::type($lang),
+        $table->setColorIndexes(array("color" => "color", "txtcolor" => "txtcolor"));
+        $tableHtml = $table->view(
+            $belongingsArray,
+            array("name" => CoreTranslator::Name($lang),
+            "color" => CoreTranslator::color($lang),
+            "txtcolor" => CoreTranslator::text_color($lang),
+            "type" => CoreTranslator::type($lang),
             "id" => "ID"
         ));
 
@@ -83,7 +87,8 @@ class ClientspricingsController extends ClientsController {
             $pricing = array(
                 "id" => 0,
                 "name" => "",
-                "color" => "#000000",
+                "color" => "#ffffff",
+                "txtcolor" => "#000000",
                 "display_order" => 0,
                 "type" => 0
             );
@@ -101,6 +106,7 @@ class ClientspricingsController extends ClientsController {
         $form->addHidden("id", $pricing["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $pricing["name"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $pricing["color"]);
+        $form->addColor("txtcolor", CoreTranslator::text_color($lang), false, $pricing["txtcolor"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $pricing["display_order"]);
 
         $choices = array(CoreTranslator::Academic($lang), CoreTranslator::Company($lang));
@@ -120,7 +126,8 @@ class ClientspricingsController extends ClientsController {
                     $form->getParameter("name"),
                     $form->getParameter("color"),
                     $form->getParameter("type"),
-                    $form->getParameter("display_order")
+                    $form->getParameter("display_order"),
+                    $form->getParameter("txtcolor"),
                 );   
             
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);

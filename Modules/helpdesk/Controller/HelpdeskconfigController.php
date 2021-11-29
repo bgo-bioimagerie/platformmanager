@@ -56,10 +56,7 @@ class HelpdeskconfigController extends CoresecureController {
                     1,
                     $this->request->getParameter("colorMenu"),
                     $this->request->getParameter("colorTxtMenu")
-                    );
-            
-            //$modelAccess = new CoreSpaceAccessOptions();
-            //$modelAccess->set($id_space, "clientsuseraccounts", "clients", "clientsuseraccounts");
+            );
                 
             $this->redirect("helpdeskconfig/".$id_space);
             return;
