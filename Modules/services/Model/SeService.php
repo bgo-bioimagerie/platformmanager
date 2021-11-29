@@ -25,6 +25,12 @@ class SeService extends Model {
         $this->runRequest($sql);
     }
 
+    public function getName($id_space, $id) {
+        $sql = "SELECT name FROM se_services WHERE id=? AND id_space=? AND deleted=0";
+        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $tmp ? $tmp[0] : null;
+    }
+
     public function getIdFromName($name, $id_space){
         $sql = "SELECT id FROM se_services WHERE name=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($name, $id_space));

@@ -110,7 +110,7 @@ class BkBookingSettings extends Model {
         $sql = "select id from bk_booking_settings where tag_name=? and id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($tag_name, $id_space));
         $tmp = $req->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
 
     /**

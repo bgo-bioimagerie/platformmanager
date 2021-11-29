@@ -111,7 +111,7 @@ class ResourceInfo extends Model {
     public function getIdByName($id_space, $name){
         $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0 AND id_space=?";
         $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
     
     /**
@@ -120,19 +120,19 @@ class ResourceInfo extends Model {
     public function getIdByNameSpace($name, $id_space){
         $sql = "SELECT id FROM re_info WHERE name=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] :  null;
     }
 
     public function getAreaID($id_space, $id){
         $sql = "SELECT id_area FROM re_info WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] : null;
     }
     
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM re_info WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] : null;
     }
 
     public function set($id, $name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order) {
@@ -167,7 +167,7 @@ class ResourceInfo extends Model {
         $sql = "select id from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order ASC;";
         $req = $this->runRequest($sql, array($areaId, $id_space));
         $tmp = $req->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0] : null;
     }
 
     /**
