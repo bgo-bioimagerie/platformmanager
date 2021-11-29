@@ -47,6 +47,13 @@ class ServicesprojectganttController extends ServicesController {
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
+            $today = new DateTime();
+            if ($projectperiodbegin === "") {
+                $projectperiodbegin = $today->format('Y')."-1-1";
+            }
+            if ($projectperiodend === "") {
+                $projectperiodend = $today->format('Y')."-12-31";
+            }
             
             $projectperiodbeginArray = explode("-", $projectperiodbegin);
             $projectperiodendArray = explode("-", $projectperiodend);

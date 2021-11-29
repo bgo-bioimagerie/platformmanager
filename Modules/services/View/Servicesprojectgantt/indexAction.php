@@ -5,7 +5,7 @@
 
 <?php startblock('stylesheet') ?>
 
-<link href="http://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
 <link href="externals/jQueryGantt/css/style.css" type="text/css" rel="stylesheet">
 <link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css" rel="stylesheet" type="text/css">
 <style type="text/css">
