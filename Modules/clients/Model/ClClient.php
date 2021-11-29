@@ -144,6 +144,7 @@ class ClClient extends Model {
         Events::send([
             "action" => Events::ACTION_CUSTOMER_DELETE,
             "space" => ["id" => intval($id_space)],
+            "client" => ["id" => $id]
         ]);
         return $id;
     }

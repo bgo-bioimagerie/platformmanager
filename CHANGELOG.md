@@ -18,6 +18,7 @@
 * [helpdesk] let user select multiple tickets to spam them #393
 * [core] limit file uploads name to alphanumeric # 402
 * [core] add welcome page and use it as default entry url
+* [core] manage db reconnection in case of failure
 
 ## 2.1.9
 
