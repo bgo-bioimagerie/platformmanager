@@ -141,12 +141,17 @@ class ResourceInfo extends Model {
             $sql = "INSERT INTO re_info (name, brand, type, description, long_description, id_category, id_area, id_space, display_order) "
                     . "VALUES (?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order));
-            return $this->getDatabase()->lastInsertId();
+            $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE re_info SET name=?, brand=?, type=?, description=?, long_description=?, id_category=?, id_area=?, display_order=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $display_order, $id, $id_space));
-            return $id;
         }
+        Events::send([
+            "action" => Events::ACTION_RESOURCE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "resource" => ["id" => $id]
+        ]);
+        return $id;
     }
 
     public function exists($id_space, $id) {
@@ -206,6 +211,11 @@ class ResourceInfo extends Model {
     public function delete($id_space, $id) {
         $sql = "UPDATE re_info SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+        Events::send([
+            "action" => Events::ACTION_RESOURCE_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "quote" => ["id" => $id]
+        ]);
     }
 
 }
