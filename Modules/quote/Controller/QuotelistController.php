@@ -240,14 +240,23 @@ class QuotelistController extends CoresecureController {
         if ($tableHtml != "") {
             $form->setTitle(QuoteTranslator::Description($lang));
         }
-
+        $modelClient = new ClClient();
+        $clients = $modelClient->getAll($id_space);
+        $clientIds = [];
+        $clientNames = [];
+        forEach($clients as $client) {
+            array_push($clientIds, $client['id']);
+            array_push($clientNames, $client['name']);
+        }
+        $form->addHidden('id_space', $id_space);
         $form->addText("recipient", QuoteTranslator::Recipient($lang), true, $info['recipient']);
         $form->addTextArea("address", QuoteTranslator::Address($lang), true, $info['address']);
-
+        $form->addSelect('id_client', CoreTranslator::Client($lang), $clientNames, $clientIds, "");
+        // $form->addExternalButton(ClientsTranslator::NewClient($lang), "clclientedit/" . $id_space, "info", true);
 
         $belModel = new ClPricing();
         $bel = $belModel->getForList($id_space);
-        $form->addSelect('id_belonging', ClientsTranslator::Pricings($lang), $bel["names"], $bel["ids"], $info['id_belonging']);
+        $form->addSelect('id_pricing', ClientsTranslator::Pricing($lang), $bel["names"], $bel["ids"], $info['id_belonging']);
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled', $info['date_open']);
             $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));

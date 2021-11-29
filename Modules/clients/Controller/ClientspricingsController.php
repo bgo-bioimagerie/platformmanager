@@ -144,4 +144,13 @@ class ClientspricingsController extends CoresecureController {
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clpricings/" . $id_space);
     }
+
+    public function getClientPricingAction() {
+        $params = $this->request->params();
+        $id_client = $params["id"];
+        $id_space = $params["id_space"];
+        $modelClientPricing = new ClPricing();
+        $this->render(['data' => ['elements' => $modelClientPricing->getPricingByClient($id_space, $id_client)]]);
+    }
+
 }

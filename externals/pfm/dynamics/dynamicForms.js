@@ -33,8 +33,9 @@ export class DynamicForms {
             fetch(apiRoute, cfg, true).
                 then((response) => response.json()).
                 then(data => {
+                    let elements = Array.isArray(data.elements) ? data.elements : [data.elements];
                     secondSelector.options.length = 0;
-                    data.elements.forEach( (element, index) => {
+                    elements.forEach( (element, index) => {
                         secondSelector.options[index] = new Option(element.name, element.id);
                     });
                 });
