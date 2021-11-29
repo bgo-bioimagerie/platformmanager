@@ -38,9 +38,6 @@ if($isdev) {
         <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
         
         <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-        <link rel="stylesheet" href="Modules/core/Theme/core.css">
-        <link rel="stylesheet" href="Modules/core/Theme/space.css">
-        <link rel='stylesheet' href='Modules/core/Theme/spacemenu.css' />
         <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
         <script src="externals/jquery-1.11.1.js"></script>
         <script src="externals/bootstrap/js/bootstrap.min.js"></script>
@@ -49,6 +46,10 @@ if($isdev) {
 
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
+
+        <link rel="stylesheet" href="Modules/core/Theme/core.css">
+        <link rel="stylesheet" href="Modules/core/Theme/space.css">
+        <link rel='stylesheet' href='Modules/core/Theme/spacemenu.css' />
 
     </head>
     <body style="background-color: #e7ecf0;">
