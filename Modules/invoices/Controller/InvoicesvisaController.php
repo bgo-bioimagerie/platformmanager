@@ -8,13 +8,14 @@ require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InVisa.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/invoices/Controller/InvoicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class InvoicesvisaController extends CoresecureController {
+class InvoicesvisaController extends InvoicesController {
 
     private $visaModel;
     

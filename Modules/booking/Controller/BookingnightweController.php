@@ -9,13 +9,14 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingnightweController extends CoresecureController {
+class BookingnightweController extends BookingsettingsController {
 
     /**
      * Constructor

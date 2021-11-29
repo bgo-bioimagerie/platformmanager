@@ -16,6 +16,7 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ReEvent.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 
 /**
@@ -31,6 +32,15 @@ class BookingController extends BookingabstractController {
     public function __construct(Request $request) {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("booking");
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
     }
 
     public function navbar($id_space) {

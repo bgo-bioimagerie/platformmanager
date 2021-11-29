@@ -10,7 +10,8 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
-
+require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
 /**
  *
  * @author sprigent
@@ -25,6 +26,18 @@ class CoreusersController extends CoresecureController {
         parent::__construct($request);
         // $this->checkAuthorization(CoreStatus::$ADMIN);
         //$this->checkAuthorizationMenu("users");
+    }
+
+    public function mainMenu() {
+        $lang = $this->getLanguage();
+        $dataView = [
+            'bgcolor' => '#ffffff',
+            'color' => '#000000',
+            'My_Account' => CoreTranslator::My_Account($lang),
+            'Informations' => CoreTranslator::Informations($lang),
+            'Password' => CoreTranslator::Password($lang),
+        ];
+        return $this->twig->render("Modules/core/View/Coreusers/navbar.twig", $dataView);
     }
 
     /**

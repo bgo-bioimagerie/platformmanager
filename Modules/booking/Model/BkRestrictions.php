@@ -32,7 +32,7 @@ class BkRestrictions extends Model {
     public function getMaxBookingPerDay($id_space, $id_resource){
         $sql = "SELECT maxbookingperday FROM bk_restrictions WHERE id_resource=? AND deleted=0 AND id_space=?";
         $tmp = $this->runRequest($sql, array($id_resource, $id_space))->fetch();
-        return $tmp ? [0] : 0;
+        return $tmp ? $tmp[0] : 0;
     }
     
     public function getForSpace($id_space) {

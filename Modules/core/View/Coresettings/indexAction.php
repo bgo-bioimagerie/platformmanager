@@ -1,7 +1,7 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
 <?php startblock('content') ?>
-<div class="container">
+<div class="row">
     <div class="col-md-10 col-md-offset-1 pm-form">
         <div class="page-header">
             <h1>

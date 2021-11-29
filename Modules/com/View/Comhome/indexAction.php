@@ -2,7 +2,7 @@
 
 <!-- body --> 
 <?php startblock('content') ?>
-<div class="col-md-12">
+<div class="row">
 
     <div class="col-md-12"> 
         <?php echo $message ?>    

@@ -15,6 +15,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -30,6 +31,15 @@ class MailerController extends CoresecureController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("mailer");
         $_SESSION["openedNav"] = "mailer";
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
     }
 
     public function navbar($id_space) {

@@ -4,6 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/com/Model/ComTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -19,6 +20,34 @@ class ComController extends CoresecureController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("com");
         $_SESSION["openedNav"] = "com";
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
+    public function sideMenu() {
+        $id_space = $this->args['id_space'];
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("com", $id_space);
+        
+        $dataView = [
+            'id_space' => $id_space,
+            'title' =>  ComTranslator::Com($lang),
+            'glyphicon' => $menuInfo['icon'],
+            'bgcolor' => $menuInfo['color'],
+            'color' => $menuInfo['txtcolor'] ?? '',
+            'Tilemessage' => ComTranslator::Tilemessage($lang),
+            'News' => ComTranslator::News($lang)
+
+        ];
+        return $this->twig->render("Modules/com/View/Com/navbar.twig", $dataView);
     }
 
     public function indexAction($id_space) {

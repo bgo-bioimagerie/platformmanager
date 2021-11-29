@@ -3,7 +3,6 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<head>
 
     <link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
@@ -27,9 +26,8 @@
             });
         });
     </script>
-</head>
 
-<div class="col-md-12 pm-table">
+<div class="pm-table">
     <div class="col-md-12">
 
         <div class="col-md-10">
@@ -39,7 +37,9 @@
                 </button>
                 <div class="dropdown-menu col-md-12" aria-labelledby="dLabel" style="background-color: transparent; border: none; box-shadow:none;">
                     <?php
-                    include 'Modules/antibodies/View/navbar.php';
+                    //include 'Modules/antibodies/View/navbar.php';
+                    $c = new AntibodiesController(new Request([], false));
+                    echo $c->dropDownMenu($id_space);
                     ?>
                 </div>
             </div>

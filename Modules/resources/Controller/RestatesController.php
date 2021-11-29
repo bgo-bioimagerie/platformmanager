@@ -6,15 +6,15 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReState.php';
-
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class RestatesController extends CoresecureController {
+class RestatesController extends ResourcesBaseController {
 
     /**
      * Constructor

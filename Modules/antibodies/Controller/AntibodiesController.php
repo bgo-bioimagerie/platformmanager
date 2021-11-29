@@ -4,6 +4,8 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
+
 require_once 'Modules/antibodies/Model/AntibodiesTranslator.php';
 require_once 'Modules/antibodies/Model/Anticorps.php';
 require_once 'Modules/antibodies/Model/Espece.php';
@@ -24,6 +26,7 @@ require_once 'Modules/antibodies/Form/OwnerForm.php';
 class AntibodiesController extends CoresecureController {
 
     private $antibody;
+    protected $noSideMenu = false;
 
     /**
      * Constructor
@@ -31,7 +34,50 @@ class AntibodiesController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         $this->antibody = new Anticorps();
-        //$this->checkAuthorizationMenu("antibodies");
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
+    public function dropdownMenu($id_space) {
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
+       
+        $dataView = [
+            'id_space' => $id_space,
+            'title' => AntibodiesTranslator::antibodies($lang),
+            'glyphicon' => $menuInfo['icon'],
+            'bgcolor' => $menuInfo['color'],
+            'color' => $menuInfo['txtcolor'] ?? ''
+        ];
+        return $this->twig->render("Modules/antibodies/View/navbar.twig", $dataView);
+    }
+
+    public function sideMenu() {
+        if($this->noSideMenu) {
+            return null;
+        }
+        $id_space = $this->args['id_space'];
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
+       
+        $dataView = [
+            'id_space' => $id_space,
+            'title' => AntibodiesTranslator::antibodies($lang),
+            'glyphicon' => $menuInfo['icon'],
+            'bgcolor' => $menuInfo['color'],
+            'color' => $menuInfo['txtcolor'] ?? ''
+        ];
+        return $this->twig->render("Modules/antibodies/View/Antibodies/navbar.twig", $dataView);
+        
     }
 
     public function navbar($id_space) {

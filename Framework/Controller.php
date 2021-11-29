@@ -5,6 +5,7 @@ require_once 'Request.php';
 require_once 'View.php';
 require_once 'Errors.php';
 
+
 /**
  * Abstract class defining a controller. 
  * 
@@ -15,11 +16,16 @@ abstract class Controller {
     /** Action to run */
     protected $action;
     protected $module;
+    protected $args;
 
     /** recieved request */
     protected $request;
 
     protected $twig;
+
+    public function args() {
+        return $this->args;
+    }
 
     public function __construct(Request $request) {
         $this->request = $request;
@@ -34,6 +40,18 @@ abstract class Controller {
                 'cache' => '/tmp/pfm'
             ]);
         }
+    }
+
+    public function mainMenu() {
+        return null;
+    }
+
+    public function sideMenu() {
+        return null;
+    }
+
+    public function spaceMenu() {
+        return null;
     }
 
     /**
@@ -65,6 +83,7 @@ abstract class Controller {
      */
     public function runAction($module, $action, $args = array()) {
         Configuration::getLogger()->debug("[controller][runAction]", ["module" => $module, "action" => $action, "args" => $args]);
+        $this->args = $args;
         $this->module = strtolower($module);
         $actionName = $action . "Action";
         if (method_exists($this, $actionName)) {
@@ -146,9 +165,15 @@ abstract class Controller {
             $dataView['flash'] = null;
         }
         // Geneate the view
-        // echo "controllerView = " . $controllerView . "<br/>";
-        //echo "parent = " . basename(__DIR__) . "<br/>";
+
+        $dataView["mainMenu"] = $this->mainMenu();
+        $dataView["sideMenu"] = $this->sideMenu();
+        $dataView["spaceMenu"] = $this->spaceMenu();
         if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
+            // TODO add navbar generation
+            require_once 'Modules/core/Controller/CorenavbarController.php';
+            $navController = new CorenavbarController($this->request);
+            $dataView["navbar"] = $navController->navbar();
             try {
                 echo $this->twig->render("Modules/core/View/$controllerView/$actionView.twig", $dataView);
                 return;

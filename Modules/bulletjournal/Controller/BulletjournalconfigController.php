@@ -26,6 +26,15 @@ class BulletjournalconfigController extends CoresecureController {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
     
     /**
      * (non-PHPdoc)
@@ -81,7 +90,7 @@ class BulletjournalconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("bulletjournalmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("$displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu ?? 0);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bulletjournalconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

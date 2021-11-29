@@ -11,7 +11,6 @@ if ($ecmenucolortxt == "") {
 }
 ?>
 
-<head>
     <style>
         #menu-button-div a{
             font: 12px Arial;
@@ -42,7 +41,6 @@ if ($ecmenucolortxt == "") {
             color: #616161;
         }
     </style>
-</head>
 
 <div class="col-md-2" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
 
@@ -102,12 +100,6 @@ if ($ecmenucolortxt == "") {
             <a id="menu-button" href="reeventtypes/<?php echo $id_space ?>"><?php echo ResourcesTranslator::Event_Types($lang) ?></a>
             <a href="reeventtypesedit/<?php echo $id_space ?>/0">+</a>      
         </div>
-
-        <!--
-        <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="resalert/<?php echo $id_space ?>"><?php echo ResourcesTranslator::Alerts($lang) ?></a>
-        </div>
-        -->
         
     </div>
 

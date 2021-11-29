@@ -47,7 +47,8 @@ class UsersconfigController extends CoresecureController {
                     $this->request->getParameter("usersmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     1,
-                    $this->request->getParameter("colorMenu")
+                    $this->request->getParameter("colorMenu"),
+                    $this->request->getParameter("colorTxtMenu")
                     );
             
             $this->redirect("usersconfig/".$id_space);
@@ -66,6 +67,7 @@ class UsersconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "users");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "users");
         $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "users");
+        $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "users");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -75,6 +77,7 @@ class UsersconfigController extends CoresecureController {
         $form->addSelect("usersmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
+        $form->addColor("colorTxtMenu", CoreTranslator::color($lang), false, $colorTxtMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "usersconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

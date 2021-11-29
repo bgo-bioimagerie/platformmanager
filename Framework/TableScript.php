@@ -1,4 +1,4 @@
-<head>
+
 
     <link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
@@ -23,4 +23,3 @@
             });
         });
     </script>
-</head>
