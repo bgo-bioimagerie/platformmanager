@@ -590,7 +590,7 @@ class CoreDB extends Model {
     }
 
     public function upgrade_v3_v4() {
-        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "");
+        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
         if(Statistics::enabled()) {
             $eventHandler = new EventHandler();
             $g = new Grafana();

@@ -37,14 +37,17 @@ var app = new Vue({
     fromFilter: yesterday,
     toFilter: today
   },
+  mounted() {
+    this.refresh()
+  },
   methods: {
     dateToYYYYMMDD(d) {
       // alternative implementations in https://stackoverflow.com/q/23593052/1850609
     	return d && new Date(d.getTime()-(d.getTimezoneOffset()*60*1000)).toISOString().split('T')[0]
     },
     refresh() {
-        let start = Math.round(+this.fromFilter / 1000);
-        let end = Math.round(+this.toFilter / 1000);
+        let start = Math.round(this.fromFilter / 1000);
+        let end = Math.round(this.toFilter / 1000);
         console.log('refresh', start, end);
         //http://localhost:4000/corespacehistory/6
         let headers = new Headers()
