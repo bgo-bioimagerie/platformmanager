@@ -317,7 +317,7 @@ class SeProject extends Model {
     public function getName($id_space, $id_project) {
         $sql = "SELECT name FROM se_project WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id_project, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
 
     public function getNoInvoicesServices($id_space, $id_project) {

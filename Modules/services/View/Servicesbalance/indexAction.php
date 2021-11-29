@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-10">
+<div >
     <?php echo $htmlForm ?>
 </div>
 

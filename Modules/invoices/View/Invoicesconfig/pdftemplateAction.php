@@ -5,7 +5,7 @@
 
 <div class="col-md-12" style="margin-top: 7px; margin-bottom: -14px;">
     <?php
-    if (isset($_SESSION["message"])) {
+    if (isset($_SESSION["message"]) && $_SESSION["message"]) {
         ?>
         <div class="alert alert-info">
             <?php echo $_SESSION["message"] ?>

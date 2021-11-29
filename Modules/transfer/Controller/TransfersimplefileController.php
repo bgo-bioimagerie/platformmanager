@@ -23,6 +23,7 @@ class TransfersimplefileController extends CoresecureController {
         parent::__construct($request);
     }
 
+
     /**
      * (non-PHPdoc)
      * @see Controller::index()
@@ -30,7 +31,8 @@ class TransfersimplefileController extends CoresecureController {
      * Page showing a table containing all the providers in the database
      */
     public function downloadAction() {
-        
+        throw new Exception("Transfer disabled!!!!!", 500);
+        /*
         $file = $this->request->getParameter("filetransferurl");
         if (file_exists($file)) {
             
@@ -45,6 +47,7 @@ class TransfersimplefileController extends CoresecureController {
         } else {
             echo "file ".$file." does not exists";
         }
+        */
         
     }
 

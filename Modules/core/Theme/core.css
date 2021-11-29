@@ -1,7 +1,17 @@
-body,html{
+body{
     height: 100%;
     background-color: #e7ecf0;
+    padding-top: 60px;
 }
+
+#sideMenu {
+    padding-left: 5px;
+}
+
+#mainMenu {
+    
+}
+
 
 .select {
     -moz-appearance: none;

@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [module:quote] improve new user quote interface
 * [module:quote] expose client infos to invoice templates
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function

@@ -371,14 +371,37 @@ abstract class Model {
         $this->runRequest($sql);
     }
 
-    public function admGetBy($tableName, $key, $value) {
+    public function admGetBy($tableName, $key, $value, $id_space=0) {
         $sql = "SELECT * from $tableName WHERE $key=?";
-        return $this->runRequest($sql, array($value))->fetch();
+        $params = array($value);
+        if ($id_space) {
+            $sql = " AND id_space=?";
+            $params .= [$value, $id_space];
+
+        }
+        return $this->runRequest($sql,$params)->fetch();
     }
 
-    public function admGetAll($tableName) {
+    public function admGetAll($tableName, $id_space=0) {
         $sql = "SELECT * from $tableName";
-        return $this->runRequest($sql)->fetchAll();
+        $params = array();
+        if ($id_space) {
+            $sql .= " WHERE id_space=?";
+            $params = [$id_space];
+
+        }
+        return $this->runRequest($sql, $params)->fetchAll();
+    }
+
+    public function admCount($tableName, $id_space= 0) {
+        $sql = "SELECT count(*) as total from $tableName where deleted=0";
+        $params = array();
+        if ($id_space) {
+            $sql .= " AND id_space=?";
+            $params = [$id_space];
+
+        }
+        return $this->runRequest($sql, $params)->fetch();
     }
 
 }

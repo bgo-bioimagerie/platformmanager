@@ -6,13 +6,14 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClPricing.php';
+require_once 'Modules/clients/Controller/ClientsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientspricingsController extends CoresecureController {
+class ClientspricingsController extends ClientsController {
     
     /**
      * User model object
@@ -54,9 +55,13 @@ class ClientspricingsController extends CoresecureController {
         $table = new TableView();
         $table->addLineEditButton("clpricingedit/" . $id_space);
         $table->addDeleteButton("clpricingdelete/" . $id_space);
-        $table->setColorIndexes(array("color" => "color"));
-        $tableHtml = $table->view($belongingsArray, array("name" => CoreTranslator::Name($lang),
-            "color" => CoreTranslator::color($lang), "type" => CoreTranslator::type($lang),
+        $table->setColorIndexes(array("color" => "color", "txtcolor" => "txtcolor"));
+        $tableHtml = $table->view(
+            $belongingsArray,
+            array("name" => CoreTranslator::Name($lang),
+            "color" => CoreTranslator::color($lang),
+            "txtcolor" => CoreTranslator::text_color($lang),
+            "type" => CoreTranslator::type($lang),
             "id" => "ID"
         ));
 
@@ -79,7 +84,14 @@ class ClientspricingsController extends CoresecureController {
 
         // default empy provider
         if (!$id) {
-            $pricing = array("id" => 0, "name" => "");
+            $pricing = array(
+                "id" => 0,
+                "name" => "",
+                "color" => "#ffffff",
+                "txtcolor" => "#000000",
+                "display_order" => 0,
+                "type" => 0
+            );
         }
         else{
             $pricing = $this->pricingModel->get($id_space, $id);
@@ -94,6 +106,7 @@ class ClientspricingsController extends CoresecureController {
         $form->addHidden("id", $pricing["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $pricing["name"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $pricing["color"]);
+        $form->addColor("txtcolor", CoreTranslator::text_color($lang), false, $pricing["txtcolor"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $pricing["display_order"]);
 
         $choices = array(CoreTranslator::Academic($lang), CoreTranslator::Company($lang));
@@ -113,7 +126,8 @@ class ClientspricingsController extends CoresecureController {
                     $form->getParameter("name"),
                     $form->getParameter("color"),
                     $form->getParameter("type"),
-                    $form->getParameter("display_order")
+                    $form->getParameter("display_order"),
+                    $form->getParameter("txtcolor"),
                 );   
             
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);

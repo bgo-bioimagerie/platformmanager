@@ -6,12 +6,13 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/catalog/Model/CatalogTranslator.php';
 require_once 'Modules/catalog/Model/CaCategory.php';
 require_once 'Modules/catalog/Model/CaEntry.php';
+require_once 'Modules/catalog/Controller/CatalogController.php';
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class CatalogadminController extends CoresecureController {
+class CatalogadminController extends CatalogController {
     /**
      * Constructor
      */

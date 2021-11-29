@@ -15,13 +15,14 @@ require_once 'Modules/antibodies/Model/AcOwner.php';
 
 require_once 'Modules/antibodies/Form/TissusForm.php';
 require_once 'Modules/antibodies/Form/OwnerForm.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class AntibodieslistController extends CoresecureController {
+class AntibodieslistController extends AntibodiesController {
 
     private $antibody;
 
@@ -31,6 +32,7 @@ class AntibodieslistController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         $this->antibody = new Anticorps();
+        $this->noSideMenu = true;
         $_SESSION["openedNav"] = "antibodies";
         //$this->checkAuthorizationMenu("antibodies");
         

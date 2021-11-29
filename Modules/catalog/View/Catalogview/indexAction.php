@@ -1,11 +1,15 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
+
+
+<?php startblock('content') ?>
 <?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
 
-<div class="col-md-12" style="background-color:#ffffff;">
+
+<div class="row" style="background-color:#ffffff;">
     <br/>
 </div>
-<div class="col-md-12 my-gallery" style="background-color:#ffffff; min-height: 100%" itemscope itemtype="http://schema.org/ImageGallery">
+<div class="row my-gallery" style="background-color:#ffffff; min-height: 100%" itemscope itemtype="http://schema.org/ImageGallery">
     <?php foreach ($entries as $entry) {
         ?>
         <div class="col-md-8 col-md-offset-2">
@@ -38,4 +42,4 @@
 </div>
 
 
-
+<?php endblock(); ?>

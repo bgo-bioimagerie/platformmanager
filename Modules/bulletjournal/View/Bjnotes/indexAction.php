@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-
+<div class="row">
 <div class="col-md-10" id="pm-content">
     
     <?php include "Modules/bulletjournal/View/Bjnotes/indexHeader.php" ?>
@@ -14,7 +14,7 @@
         <?php include "Modules/bulletjournal/View/Bjnotes/indexMonth.php" ?>
     </div>
 </div>
-
+</div>
 
 <!--  *************  -->
 <!--  Popup windows  -->

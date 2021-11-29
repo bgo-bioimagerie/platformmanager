@@ -19,7 +19,7 @@ require_once 'Modules/resources/Model/ReEventType.php';
 require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
-
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
  * 
@@ -28,13 +28,6 @@ require_once 'Modules/resources/Model/ReRespsStatus.php';
  */
 class ResourcesController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("resources");
-    }
 
     public function navbar($id_space) {
         

@@ -23,12 +23,13 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 
+require_once 'Modules/quote/Controller/QuoteController.php';
 /**
  *
  * @author sprigent
  * Controller for the home page
  */
-class QuotelistController extends CoresecureController {
+class QuotelistController extends QuoteController {
 
     /**
      * Constructor

@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="col-md-6 col-md-offset-2">
+<div >
 
     <div class="page-header">
         <h1>

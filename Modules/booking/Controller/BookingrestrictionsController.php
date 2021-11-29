@@ -10,6 +10,7 @@ require_once 'Modules/booking/Model/BkAccess.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/booking/Model/BkRestrictions.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 
 /**
@@ -17,7 +18,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
  * @author sprigent
  * Controller for the home page
  */
-class BookingrestrictionsController extends CoresecureController {
+class BookingrestrictionsController extends BookingsettingsController {
 
     /**
      * Constructor

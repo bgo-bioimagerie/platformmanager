@@ -26,13 +26,14 @@ require_once 'Modules/booking/Model/BkGraph.php';
 require_once 'Modules/booking/Model/BkReport.php';
 
 require_once 'Modules/statistics/Model/StatisticsTranslator.php';
+require_once 'Modules/statistics/Controller/StatisticsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingstatisticsController extends CoresecureController {
+class BookingstatisticsController extends StatisticsController {
 
     /**
      * Constructor
@@ -136,8 +137,8 @@ class BookingstatisticsController extends CoresecureController {
             $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
             $dateArray = explode("-", $date_begin);
             $y = date("Y") - 1;
-            $m = $dateArray[1];
-            $d = $dateArray[2];
+            $m = $dateArray[1] ?? '1';
+            $d = $dateArray[2] ?? '1';
             $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
         }
         $date_end = $this->request->getParameterNoException("date_end");
@@ -145,8 +146,8 @@ class BookingstatisticsController extends CoresecureController {
             $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
             $dateArray = explode("-", $date_end);
             $y = date("Y");
-            $m = $dateArray[1];
-            $d = $dateArray[2];
+            $m = $dateArray[1] ?? '12';
+            $d = $dateArray[2] ?? '31';
             $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
         }
 

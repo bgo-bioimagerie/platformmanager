@@ -5,10 +5,12 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/bulletjournal/Model/BulletjournalTranslator.php';
-require_once 'Modules/bulletjournal/Model/Bjnote.php';
+require_once 'Modules/bulletjournal/Model/BjNote.php';
 require_once 'Modules/bulletjournal/Model/BjTask.php';
 require_once 'Modules/bulletjournal/Model/BjEvent.php';
 require_once 'Modules/bulletjournal/Model/BjTaskHistory.php';
+require_once 'Modules/bulletjournal/Model/BjCollectionNote.php';
+
 
 /**
  * 
@@ -34,10 +36,10 @@ class BjcollectionsApi extends CoresecureController {
         //$lang = $this->getLanguage();
 
         $modelCollection = new BjCollectionNote();
-        $collections = $modelCollection->getNoteCollections($id);
+        $collections = $modelCollection->getNoteCollections($id_space, $id);
         
         $model = new BjNote();
-        $noteName = $model->getName($id);
+        $noteName = $model->getName($id_space,$id);
         
         $data = array("collections" => $collections, "id_note" => $id, "noteName" => $noteName);
         echo json_encode($data);

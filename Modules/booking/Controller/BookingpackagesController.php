@@ -7,13 +7,14 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingpackagesController extends CoresecureController {
+class BookingpackagesController extends BookingsettingsController {
 
     /**
      * Constructor

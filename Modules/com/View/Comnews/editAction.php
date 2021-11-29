@@ -2,10 +2,9 @@
 
 <!-- body --> 
 <?php startblock('content') ?>
-
-<div class="col-md-12 pm-form" >
+<div class="pm-form" >
     <?php
-        if (isset($_SESSION["message"])) {
+        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             if (substr($_SESSION["message"], 0, 3) === "Err") {
                 ?>
                 <div class="alert alert-danger">

@@ -72,7 +72,7 @@ class CoreUserSpaceSettings extends Model {
         $sql = "select value from core_user_space_settings where user_id=? and setting=? and id_space=?";
         $user = $this->runRequest($sql, array($user_id, $setting, $id_space));
         $tmp = $user->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
 
     /**

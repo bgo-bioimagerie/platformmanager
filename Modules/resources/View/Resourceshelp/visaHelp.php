@@ -1,4 +1,4 @@
-<div class="col-xs-12">
+<div>
     <h4>Visas</h4>
     <p>
         <b>Chaque ressource peut se voir attribué plusieurs visas</b>. Conformément

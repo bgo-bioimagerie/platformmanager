@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * Manage the units (each user belongs to an unit)
@@ -18,6 +19,15 @@ class DocumentsController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("users/institutions");
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
     }
 
     public function navbar($id_space){

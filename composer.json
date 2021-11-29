@@ -15,7 +15,8 @@
         "spipu/html2pdf": "^5.2",
         "firebase/php-jwt": "^5.4",
         "promphp/prometheus_client_php": "^2.2",
-        "twig/twig": "^3.3"
+        "twig/twig": "^3.3",
+        "j7mbo/twitter-api-php": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

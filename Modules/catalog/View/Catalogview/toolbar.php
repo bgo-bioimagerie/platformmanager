@@ -48,7 +48,7 @@
     a.mybutton:hover { background: #337ab7; color: #ffffff; border: 1px solid #337ab7;}
 
 </style>
-<div class="col-md-12" style="background-color:#ffffff;">
+<div  style="background-color:#ffffff;">
     <div class="page-header">
         <h1> <?php echo CatalogTranslator::Catalog($lang) ?></h1>
     </div>

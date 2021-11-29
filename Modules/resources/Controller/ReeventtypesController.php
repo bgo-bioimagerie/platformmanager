@@ -6,6 +6,7 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReEventType.php';
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 
 /**
@@ -13,7 +14,7 @@ require_once 'Modules/resources/Model/ReEventType.php';
  * @author sprigent
  * Controller for the home page
  */
-class ReeventtypesController extends CoresecureController {
+class ReeventtypesController extends ResourcesBaseController {
 
     /**
      * Constructor
