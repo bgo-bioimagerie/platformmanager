@@ -632,7 +632,12 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[qo_quotes] add column id_client');
         $sql = "ALTER TABLE qo_quotes ADD COLUMN id_client INT(11) NOT NULL";
         $this->runRequest($sql);
-        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client, done!');
+
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN recipient_email VARCHAR(100) NOT NULL";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
     }
 
 

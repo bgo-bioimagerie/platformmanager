@@ -34,7 +34,8 @@ if ($id_quote > 0) {
         <script type="module">
             import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
             let dynamicForms = new DynamicForms();
-            dynamicForms.dynamicSelectors("id_client", "id_pricing", `clientspricingsgetclientpricing`);
+            dynamicForms.dynamicFields("id_client", "id_pricing", `clientspricingsgetclientpricing`);
+            dynamicForms.dynamicFields("id_client", "address", `clientslistgetaddress`);
         </script>
     </div>
 

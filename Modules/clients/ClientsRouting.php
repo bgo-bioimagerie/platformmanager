@@ -7,6 +7,7 @@ class ClientsRouting extends Routing{
     public function routes($router) {
         $router->map('GET|POST', '/clientusersgetuserclients', 'clients/clientsusers/getuserclients', 'clients_getuserclients');
         $router->map('GET|POST', '/clientspricingsgetclientpricing', 'clients/clientspricings/getclientpricing', 'clients_getclientpricing');
+        $router->map('GET|POST', '/clientslistgetaddress', 'clients/clientslist/getaddress', 'clients_getaddress');
     }
     
     public function listRoutes(){

@@ -206,6 +206,17 @@ class ClientslistController extends CoresecureController {
             'formHtml' => $formd->getHtml($lang),
         ));
     }
+
+    /**
+     * Returns client's address
+     */
+    public function getAddressAction() {
+        $params = $this->request->params();
+        $id_client = $params["id"];
+        $id_space = $params["id_space"];
+        $modelClient = new ClClient();
+        $this->render(['data' => ['elements' => $modelClient->getAddressInvoice($id_space, $id_client)]]);
+    }
             
     /**
      * Remove a provider

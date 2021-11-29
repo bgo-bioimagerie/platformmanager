@@ -153,6 +153,7 @@ class QuotelistController extends CoresecureController {
                 "",
                 "",
                 "",
+                "",
                 $form->getParameter('id_user'),
                 $form->getParameter('id_client'),
                 $this->request->getParameter('date_open')
@@ -248,15 +249,30 @@ class QuotelistController extends CoresecureController {
             array_push($clientIds, $client['id']);
             array_push($clientNames, $client['name']);
         }
+        // set selected client by default
+        $selectedClientId = $clientIds[0];
+        $addressToDisplay = "";
+        if ($info['address'] && $info['address'] != "") {
+            $addressToDisplay = $info['address'];
+        } else {
+            $addressToDisplay = $modelClient->getAddressInvoice($id_space, $selectedClientId) ?? "";
+        }
         $form->addHidden('id_space', $id_space);
         $form->addText("recipient", QuoteTranslator::Recipient($lang), true, $info['recipient']);
-        $form->addTextArea("address", QuoteTranslator::Address($lang), true, $info['address']);
-        $form->addSelect('id_client', CoreTranslator::Client($lang), $clientNames, $clientIds, "");
-        // $form->addExternalButton(ClientsTranslator::NewClient($lang), "clclientedit/" . $id_space, "info", true);
+        $form->addEmail("recipient_email", QuoteTranslator::Recipient($lang) . " " . CoreTranslator::Email($lang), false, $info['recipient_email']);
+        $form->addTextArea("address", CoreTranslator::Client($lang) . " " . QuoteTranslator::Address($lang), true, $addressToDisplay);
+        $form->addSelect('id_client', CoreTranslator::Client($lang), $clientNames, $clientIds, $selectedClientId);
 
-        $belModel = new ClPricing();
-        $bel = $belModel->getForList($id_space);
-        $form->addSelect('id_pricing', ClientsTranslator::Pricing($lang), $bel["names"], $bel["ids"], $info['id_belonging']);
+        $modelClientPricing = new ClPricing();
+        $pricings = $modelClientPricing->getPricingByClient($id_space, $selectedClientId);
+        $pricingIds = [];
+        $pricingNames = [];
+        forEach($pricings as $pricing) {
+            array_push($pricingIds, $pricing['id']);
+            array_push($pricingNames, $pricing['name']);
+        }
+ 
+        $form->addSelect('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds);
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled', $info['date_open']);
             $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
@@ -266,15 +282,23 @@ class QuotelistController extends CoresecureController {
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
-            $id = $modelQuote->set($id, $id_space, $form->getParameter('recipient'),
+            $id = $modelQuote->set(
+                    $id,
+                    $id_space,
+                    $form->getParameter('recipient'),
+                    $form->getParameter('recipient_email'),
                     $form->getParameter('address'),
-                    $form->getParameter('id_belonging'),
+                    $form->getParameter('id_pricing'),
                     0,
                     $form->getParameter('id_client'),
                     $form->getParameter('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
-            $this->redirect("quotenew/" . $id_space . "/" . $id);
+            if ($id > 0) {
+                $this->redirect("quotenew/" . $id_space . "/" . $id);
+            } else {
+                $this->redirect("quote/" . $id_space);
+            }
             return;
         }
 
@@ -354,9 +378,6 @@ class QuotelistController extends CoresecureController {
             $clientInfos = $info["client"];
             $clientInfos["email"] = $info["client"]["email"] ?? "";
         }
-        
-
-        Configuration::getLogger()->debug("[TEST]", ["clientInfos" => $clientInfos]);
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
         $isquote = true;
