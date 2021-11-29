@@ -192,7 +192,6 @@ class ServicesconfigController extends CoresecureController {
             $servicesusecommand = 0;
         }
         $form = new Form($this->request, "periodCommandForm");
-        Configuration::getLogger()->error("?????", ["p" => $servicesuseproject, "c" => $servicesusecommand]);
         $form->addSeparator(ServicesTranslator::Project($lang) . " & " . ServicesTranslator::Orders($lang));
         $form->addSelect("servicesuseproject", ServicesTranslator::UseProject($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesuseproject);
         $form->addSelect("servicesusecommand", ServicesTranslator::UseCommand($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusecommand);

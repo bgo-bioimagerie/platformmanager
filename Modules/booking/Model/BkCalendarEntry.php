@@ -430,7 +430,6 @@ class BkCalendarEntry extends Model {
      * 
      */
     public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id) {
-
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
@@ -442,7 +441,6 @@ class BkCalendarEntry extends Model {
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
-
 
         $modelUser = new CoreUser();
         $modelColor = new BkColorCode();
@@ -464,6 +462,7 @@ class BkCalendarEntry extends Model {
                 $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space, $data[$i]["color_type_id"]);
             }
         }
+
         return $data;
     }
 

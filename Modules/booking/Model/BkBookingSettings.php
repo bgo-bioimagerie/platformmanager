@@ -138,7 +138,7 @@ class BkBookingSettings extends Model {
 			                 display_order=?, font=?
 			                 where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($tag_name, $is_visible, $is_tag_visible,
-            $display_order, $font, $id_space, $id));
+            $display_order, $font, $id, $id_space));
     }
 
     /**
@@ -165,13 +165,13 @@ class BkBookingSettings extends Model {
                 $last = true;
             }
             if ($entryList[$i]['tag_name'] == "User") {
-                $summary = $this->summaryEntry($i, $summary, $entryList, $user, $displayHorizontal, BookingTranslator::User($lang), $last);
+                $summary .= $this->summaryEntry($i, $entryList, $user, $displayHorizontal, BookingTranslator::User($lang), $last);
             } elseif ($entryList[$i]['tag_name'] == "Phone") {
-                $summary = $this->summaryEntry($i, $summary, $entryList, $phone, $displayHorizontal, BookingTranslator::Phone($lang), $last);
+                $summary .= $this->summaryEntry($i, $entryList, $phone, $displayHorizontal, BookingTranslator::Phone($lang), $last);
             } elseif ($entryList[$i]['tag_name'] == "Short desc") {
-                $summary = $this->summaryEntry($i, $summary, $entryList, $short_desc, $displayHorizontal, BookingTranslator::Short_desc($lang), $last);
+                $summary .= $this->summaryEntry($i, $entryList, $short_desc, $displayHorizontal, BookingTranslator::Short_desc($lang), $last);
             } elseif ($entryList[$i]['tag_name'] == "Desc") {
-                $summary = $this->summaryEntry($i, $summary, $entryList, $desc, $displayHorizontal, BookingTranslator::Desc($lang), $last);
+                $summary .= $this->summaryEntry($i, $entryList, $desc, $displayHorizontal, BookingTranslator::Desc($lang), $last);
             }
         }
 
@@ -180,17 +180,16 @@ class BkBookingSettings extends Model {
 
     /**
      * Generate an HTML display of a reservation summary
-     * @param unknown $i
-     * @param unknown $summary
-     * @param unknown $entryList
-     * @param unknown $content
-     * @param unknown $displayHorizontal
-     * @param unknown $tagNameTr
+     * @param int $i index in entryList
+     * @param array $entryList
+     * @param string $content
+     * @param bool $displayHorizontal
+     * @param string $tagNameTr  Name of the tag (user, desc, ..)
      * @param unknown $last
      * @return Ambigous <string, unknown>
      */
-    protected function summaryEntry($i, $summary, $entryList, $content, $displayHorizontal, $tagNameTr, $last) {
-
+    protected function summaryEntry($i, $entryList, $content, $displayHorizontal, $tagNameTr, $last) {
+        $summary = "" ;
         if ($entryList[$i]['is_visible'] == 1) {
             if ($entryList[$i]['is_tag_visible'] == 1) {
                 $summary .= "<b>" . $tagNameTr . ": </b>";

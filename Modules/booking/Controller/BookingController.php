@@ -43,6 +43,7 @@ class BookingController extends BookingabstractController {
         return null;
     }
 
+
     public function navbar($id_space) {
         $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
 
@@ -284,6 +285,7 @@ class BookingController extends BookingabstractController {
             $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
             $_SESSION["flashClass"] = "danger";
         }
+        
 
         // view
         $this->render(array(
@@ -838,6 +840,7 @@ class BookingController extends BookingabstractController {
         
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
             $modelDefault = new BookingdefaultController($this->request);
+            $modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
             $modelDefault->editreservationdefault($id_space, $param);
         } else {
 

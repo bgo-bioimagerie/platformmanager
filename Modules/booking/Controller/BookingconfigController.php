@@ -145,7 +145,7 @@ class BookingconfigController extends CoresecureController {
         
         $setbookingoptionsquery = $this->request->getParameterNoException("setbookingoptionsquery");
         if ($setbookingoptionsquery == "yes") {
-            // $bookingSettings = $this->optionsQuery($id_space);
+            $this->optionsQuery($id_space);
             
             $this->redirect("bookingconfig/".$id_space);
             return;

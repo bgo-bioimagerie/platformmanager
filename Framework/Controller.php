@@ -27,6 +27,10 @@ abstract class Controller {
         return $this->args;
     }
 
+    public function setArgs($args) {
+        $this->args = $args;
+    }
+
     public function __construct(Request $request) {
         $this->request = $request;
         $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/..');
