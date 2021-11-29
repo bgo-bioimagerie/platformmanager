@@ -184,9 +184,15 @@ class ServicesconfigController extends CoresecureController {
 
     public function projectCommandForm($modelCoreConfig, $id_space, $lang) {
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        if($servicesuseproject === "") {
+            $servicesuseproject = 0;
+        }
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
-
+        if($servicesusecommand === "") {
+            $servicesusecommand = 0;
+        }
         $form = new Form($this->request, "periodCommandForm");
+        Configuration::getLogger()->error("?????", ["p" => $servicesuseproject, "c" => $servicesusecommand]);
         $form->addSeparator(ServicesTranslator::Project($lang) . " & " . ServicesTranslator::Orders($lang));
         $form->addSelect("servicesuseproject", ServicesTranslator::UseProject($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesuseproject);
         $form->addSelect("servicesusecommand", ServicesTranslator::UseCommand($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusecommand);
@@ -199,7 +205,9 @@ class ServicesconfigController extends CoresecureController {
 
     public function stockForm($modelCoreConfig, $id_space, $lang) {
         $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
-
+        if($servicesusestock === "") {
+            $servicesusestock = 0;
+        }
         $form = new Form($this->request, "stockForm");
         $form->addSeparator(ServicesTranslator::Stock($lang));
         $form->addSelect("servicesusestock", ServicesTranslator::UseStock($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusestock);
