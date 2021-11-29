@@ -120,6 +120,7 @@ class CorespaceController extends CoresecureController {
                 $menuColor = '#428bca';
             }
             $spaceMenuItems[$i]['color'] = $menuColor;
+            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: "#ffffff";
         }
         return $this->render(array(
             "role" => $role,

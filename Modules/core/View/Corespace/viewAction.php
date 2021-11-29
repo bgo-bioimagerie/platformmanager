@@ -49,10 +49,10 @@ if ($space['color'] == "") {
                     $configModel = new CoreConfig();
                     foreach ($spaceMenuItems as $item) {
                         ?>
-                        <li style="background-color:<?php echo $item["color"] ?>;">
+                        <li style="background-color:<?php echo $item["color"]; ?>; <?php echo "; color: ".$item["txtcolor"]; ?>">
                             <a href="<?php echo $item["url"] . "/" . $id_space ?>">
                                 <span class="pm-tiles glyphicon <?php echo $item["icon"] ?>" aria-hidden="true"></span>
-                                <span class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
+                                <span style="<?php echo "color: ".$item["txtcolor"]; ?>" class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
                             </a>
                         </li>
                         <?php
