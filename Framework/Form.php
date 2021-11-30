@@ -136,7 +136,12 @@ class FormInputElement extends FormBaseElement {
 
     function html() : string {
         return '    <input '.$this->options().' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>';
+    }
+}
 
+class FormTextElement extends FormBaseElement {
+    function html() : string {
+        return '    <textarea '.$this->options().'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>';
     }
 }
 
@@ -152,12 +157,54 @@ class FormHiddenElement extends FormInputElement {
 
 }
 
+class FormOptionElement extends FormBaseElement {
+
+    function html(): string {
+        return '<option value="'.$this->value.'">'.$this->name.'</option>';
+    }
+}
+
+class FormSelectElement extends FormBaseElement {
+
+    // FormOptionElement[]
+    private $options = [];
+
+    /**
+     * Set options
+     * 
+     * @var FormOptionElement[] $options
+     */
+    public function setOptions($options) {
+        $this->options = $options;
+    }
+
+    /*
+    * Add option
+    * 
+    * @var FormOptionElement $option
+    */
+   public function setOption($option) {
+       $this->options[] = $option;
+   }
+
+   public function html(): string {
+       $html = '<select class="form-control '.$this->getClasses().'" '.$this->options().' id="'.$this->name.'" name="'.$this->name.'" value="'.$this->value.'">';
+       $html .= "\n";
+       foreach($this->options as $option) {
+           $html .= $option->html()."\n";
+       }
+       $html .= '</select>';
+       return $html;
+   }
+
+
+}
+
 /**
  * TODO 
- * FormFileUpload, 
+ * FormFileUpload, -> type file
  * FormFileDownload,
  * FormCheckBoxes,
- * FormSelect,
  * FormDate  -> type date
  * FormPassword  -> type password
  * FormText (textarea)
@@ -176,6 +223,8 @@ class PfmForm {
     // @var FormBaseElement[]
     private array $elts = [];
 
+    private ?string $cancelUrl = null;
+
     public function __construct($name, $url=null) {
         $this->name = $name;
         $this->url = $url;
@@ -183,6 +232,10 @@ class PfmForm {
 
     public function add(FormBaseElement $elt) {
         $this->elts[] = $elt;
+    }
+
+    public function addCancel(string $url) {
+        $this->cancelUrl = $url;
     }
 
     /**
@@ -193,6 +246,13 @@ class PfmForm {
         foreach ($this->elts as $elt) {
             $html .= '  '.$elt->toHtml();
         }
+        $html .= '<div class="row">';
+        $html .= '<div class="col-xs-12 col-md-4"><button type="submit" class="btn btn-primary">Save</button></div>';
+        if($this->cancelUrl) {
+            $html .= '<div class="col-xs-12 col-md-4"><a href="'.$this->cancelUrl.'"><button type="button" class="btn btn-primary">Cancel</button></a></div>';
+
+        }
+        $html .= '</div>';
         $html .= '</form>';
         return $html;
     }
