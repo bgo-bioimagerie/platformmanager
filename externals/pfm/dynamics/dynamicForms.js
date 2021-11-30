@@ -12,43 +12,43 @@ export class DynamicForms {
      * name of route to call the backend function returning data to fill dependant select options
      *  
      */
-    dynamicFields(field1, field2, apiRoute, spaceId) {
-        apiRoute += ("/" + spaceId);
-        field1.addEventListener("change", (event) => {
-            let id = event.target.value;
-            apiRoute += ("/" + id);
-            const headers = new Headers();
-                    headers.append('Content-Type','application/json');
-                    headers.append('Accept', 'application/json');
-            const cfg = {
-                headers: headers,
-                method: 'POST',
-                body: null
-            };
-            cfg.body = JSON.stringify({
-                id: id,
-                id_space: spaceId
-            });
-            fetch(apiRoute, cfg, true).
-                then((response) => response.json()).
-                then(data => {
-                    switch (field2.nodeName) {
-                        case "SELECT":
-                            let elements = Array.isArray(data.elements) ? data.elements : [data.elements];
-                            field2.options.length = 0;
-                            elements.forEach( (element, index) => {
-                                field2.options[index] = new Option(element.name, element.id);
-                            });
-                            break;
-                        case "#Text":
-                            field2.value = data.elements;
-                            break;
-                        case "TEXTAREA":
-                            field2.value = data.elements;
-                            break;
-                        default:
-                            break;
-                    }
+    dynamicFields(source, targets, spaceId) {
+        const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+        const cfg = {
+            headers: headers,
+            method: 'POST',
+            body: null
+        };
+        source.addEventListener("change", (event) => {
+            targets.forEach(target => {
+                let targetElement = target.element;
+                let apiRoute = target.apiRoute;
+                apiRoute += spaceId;
+                let id = event.target.value;
+                apiRoute += ("/" + id);
+                fetch(apiRoute, cfg, true).
+                    then((response) => response.json()).
+                    then(data => {
+                        switch (targetElement.nodeName) {
+                            case "SELECT":
+                                let elements = Array.isArray(data.elements) ? data.elements : [data.elements];
+                                targetElement.options.length = 0;
+                                elements.forEach( (element, index) => {
+                                    targetElement.options[index] = new Option(element.name, element.id);
+                                });
+                                break;
+                            case "#Text":
+                                targetElement.value = data.elements;
+                                break;
+                            case "TEXTAREA":
+                                targetElement.value = data.elements;
+                                break;
+                            default:
+                                break;
+                        }
+                    });
                 });
             });
     }
