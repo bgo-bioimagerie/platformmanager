@@ -100,10 +100,7 @@ class ClientsusersController extends ClientsController {
         $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
     }
 
-    public function getUserClientsAction() {
-        $params = $this->request->params();
-        $id_user = $params["id"];
-        $id_space = $params["id_space"];
+    public function getUserClientsAction($id_space, $id_user) {
         $modelClientUser = new ClClientUser();
         $this->render(['data' => ['elements' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
     }
