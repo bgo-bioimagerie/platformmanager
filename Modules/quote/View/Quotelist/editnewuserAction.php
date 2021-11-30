@@ -31,11 +31,12 @@ if ($id_quote > 0) {
             </a>
         </div>
         <?php echo $formHtml ?>
+        <?php echo $id_space?>
         <script type="module">
             import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
             let dynamicForms = new DynamicForms();
-            dynamicForms.dynamicFields("id_client", "id_pricing", `clientspricingsgetclientpricing`);
-            dynamicForms.dynamicFields("id_client", "address", `clientslistgetaddress`);
+            dynamicForms.dynamicFields(document.getElementById("id_client"), document.getElementById("id_pricing"), `clientspricingsgetclientpricing`, spaceId);
+            dynamicForms.dynamicFields(document.getElementById("id_client"), document.getElementById("address"), `clientslistgetaddress`, spaceId);
         </script>
     </div>
 

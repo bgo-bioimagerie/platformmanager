@@ -12,12 +12,11 @@ export class DynamicForms {
      * name of route to call the backend function returning data to fill dependant select options
      *  
      */
-    dynamicFields(field1, field2, apiRoute) {
-        const firstField = document.getElementById(field1);
-        firstField.addEventListener("change", (event) => {
+    dynamicFields(field1, field2, apiRoute, spaceId) {
+        apiRoute += ("/" + spaceId);
+        field1.addEventListener("change", (event) => {
             let id = event.target.value;
-            const secondField = document.getElementById(field2);
-            const spaceId = document.getElementById("id_space").value;
+            apiRoute += ("/" + id);
             const headers = new Headers();
                     headers.append('Content-Type','application/json');
                     headers.append('Accept', 'application/json');
@@ -33,19 +32,19 @@ export class DynamicForms {
             fetch(apiRoute, cfg, true).
                 then((response) => response.json()).
                 then(data => {
-                    switch (secondField.nodeName) {
+                    switch (field2.nodeName) {
                         case "SELECT":
                             let elements = Array.isArray(data.elements) ? data.elements : [data.elements];
-                            secondField.options.length = 0;
+                            field2.options.length = 0;
                             elements.forEach( (element, index) => {
-                                secondField.options[index] = new Option(element.name, element.id);
+                                field2.options[index] = new Option(element.name, element.id);
                             });
                             break;
                         case "#Text":
-                            secondField.value = data.elements;
+                            field2.value = data.elements;
                             break;
                         case "TEXTAREA":
-                            secondField.value = data.elements;
+                            field2.value = data.elements;
                             break;
                         default:
                             break;

@@ -211,10 +211,11 @@ class ClientslistController extends ClientsController {
     /**
      * Returns client's address
      */
-    public function getAddressAction() {
-        $params = $this->request->params();
-        $id_client = $params["id"];
-        $id_space = $params["id_space"];
+    public function getAddressAction($id_space, $id_client) {
+        Configuration::getLogger()->debug("", ["id_space" => $id_space]);
+        // $params = $this->request->params();
+        // $id_client = $params["id"];
+        // $id_space = $params["id_space"];
         $modelClient = new ClClient();
         $this->render(['data' => ['elements' => $modelClient->getAddressInvoice($id_space, $id_client)]]);
     }

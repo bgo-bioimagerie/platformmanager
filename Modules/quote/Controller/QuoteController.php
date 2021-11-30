@@ -44,8 +44,7 @@ class QuoteController extends CoresecureController {
             'color' => $menuInfo['txtcolor'] ?? '',
             'Quotes' => QuoteTranslator::Quotes($lang),
             'CreateExistingUserQuote' => QuoteTranslator::CreateExistingUserQuote($lang),
-            'CreateNewUserQuote}}' => QuoteTranslator::CreateNewUserQuote($lang)
-
+            'CreateNewUserQuote' => QuoteTranslator::CreateNewUserQuote($lang)
         ];
         return $this->twig->render("Modules/quote/View/Quote/navbar.twig", $dataView);
     }
