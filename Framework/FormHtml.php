@@ -638,12 +638,12 @@ class FormHtml {
 
     /**
      * 
-     * @param type $label
-     * @param type $choices
-     * @param type $choicesid
-     * @param type $values
-     * @param type $labelWidth
-     * @param type $inputWidth
+     * @param string $label
+     * @param array $choices
+     * @param array $choicesid
+     * @param array $values
+     * @param int $labelWidth
+     * @param int $inputWidth
      * @return string
      */
     static public function choicesList($label, $choices, $choicesid, $values, $labelWidth, $inputWidth) {
