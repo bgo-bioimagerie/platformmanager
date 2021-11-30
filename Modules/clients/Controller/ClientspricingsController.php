@@ -160,9 +160,6 @@ class ClientspricingsController extends ClientsController {
     }
 
     public function getClientPricingAction($id_space, $id_client) {
-        /* $params = $this->request->params();
-        $id_client = $params["id"];
-        $id_space = $params["id_space"]; */
         $modelClientPricing = new ClPricing();
         $this->render(['data' => ['elements' => $modelClientPricing->getPricingByClient($id_space, $id_client)]]);
     }

@@ -48,6 +48,8 @@ export class DynamicForms {
                             default:
                                 break;
                         }
+                    }).catch( error => {
+                        console.error("error in setting " + targetElement.id + " data:", error);
                     });
                 });
             });
