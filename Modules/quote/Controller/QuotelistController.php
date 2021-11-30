@@ -143,7 +143,7 @@ class QuotelistController extends QuoteController {
             $form->addHidden('date_open', date('Y-m-d'));
         }
 
-        $form->addSelect('id_client', CoreTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
+        $form->addSelect('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
         
@@ -261,8 +261,8 @@ class QuotelistController extends QuoteController {
         $form->addHidden('id_space', $id_space);
         $form->addText("recipient", QuoteTranslator::Recipient($lang), true, $info['recipient']);
         $form->addEmail("recipient_email", QuoteTranslator::Recipient($lang) . " " . CoreTranslator::Email($lang), false, $info['recipient_email']);
-        $form->addTextArea("address", CoreTranslator::Client($lang) . " " . QuoteTranslator::Address($lang), true, $addressToDisplay);
-        $form->addSelect('id_client', CoreTranslator::Client($lang), $clientNames, $clientIds, $selectedClientId);
+        $form->addTextArea("address", ClientsTranslator::Client($lang) . " " . QuoteTranslator::Address($lang), true, $addressToDisplay);
+        $form->addSelect('id_client', ClientsTranslator::Client($lang), $clientNames, $clientIds, $selectedClientId);
 
         $modelClientPricing = new ClPricing();
         $pricings = $modelClientPricing->getPricingByClient($id_space, $selectedClientId);

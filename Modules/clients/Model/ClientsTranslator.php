@@ -103,6 +103,13 @@ class ClientsTranslator {
 
     public static function Edit_Client($lang) {
         if ($lang == "fr") {
+            return "Edition Client";
+        }
+        return "Edit Client";
+    }
+
+    public static function Client($lang = "") {
+        if ($lang == "fr") {
             return "Client";
         }
         return "Client";
