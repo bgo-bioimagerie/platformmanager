@@ -4,6 +4,202 @@ require_once 'Framework/Request.php';
 require_once 'Framework/FormAdd.php';
 require_once 'Framework/FormHtml.php';
 
+
+abstract class FormBaseElement {
+
+    protected ?string $label = null;
+    protected string $name = '';
+    protected string|int $value;
+    protected ?string $placeholder = null;
+    protected bool $mandatory = false;
+    protected bool $readOnly = false;
+    // type of input see https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input
+    protected string $type="text";
+    protected ?string $caption = null;
+    protected ?string $autocomplete = null;
+    protected ?string $error = null;
+    protected array $classes = [];
+
+    abstract function html(): string;
+
+    public function __construct($name, $value='', $placeholder=null) {
+        $this->name = $name;
+        $this->value = $value;
+        $this->placeholder = $placeholder;
+    }
+
+    public function setLabel(string $label) : FormBaseElement {
+        $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * Add autocomplete elt
+     * 
+     * https://developer.mozilla.org/fr/docs/Web/HTML/Attributes/autocomplete
+     */
+    public function setAutocomplete(string $auto) : FormBaseElement {
+        $this->autocomplete = $auto;
+        return $this;
+    }
+
+    public function setError(string $error) : FormBaseElement {
+        $this->error = $error;
+        return $this;
+    }
+
+
+    public function setCaption(string $caption) : FormBaseElement {
+        $this->caption = $caption;
+        return $this;
+    }
+
+    public function setType(string $type) : FormBaseElement {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function setMandatory(bool $mandatory=true) : FormBaseElement {
+        $this->mandatory = $mandatory;
+        return $this;
+    }
+
+    public function setReadOnly(bool $readOnly=false) : FormBaseElement {
+        $this->readOnly = $readOnly;
+        return $this;
+    }
+
+    /**
+     * Get common options
+     */
+    protected function options(): string {
+        $options = '';
+        if($this->mandatory) {
+            $options .= ' required';
+        }
+        if($this->readOnly) {
+            $options .= ' readonly';
+        }
+        if($this->autocomplete) {
+            $options .= ' autocomplete="'.$this->autocomplete.'"';
+        }
+        return trim($options);
+    }
+
+    /**
+     * Generate HTML for form element
+     */
+    public function toHtml() : string {
+        $html = '<div class="form-group row">';
+        if ($this->label) {
+            $html .= '  <div class="col-xs-12 col-md-2">';
+            $extra = '';
+            if($this->mandatory) { $extra = '*'; }
+            $html .= '    <label class="form-label" for="'.$this->name.'">'.$this->label.$extra.'</label>';
+            $html .= '  </div>';
+        
+            $html .= '  <div class="col-xs-12 col-md-10">';
+        } else {
+            $html .= '  <div class="col-xs-12">';
+        }
+
+        $html .= $this->html();
+        if ($this->caption) {
+            $html .= '    <small class="form-text text-muted">'.$this->caption.'</small>';
+        }
+        if ($this->error) {
+            $html .= '    <div class="alert alert-error" role="alert">'.$this->error.'</div>';
+        }
+        $html .= '  </div>';
+        $html .= '</div>';
+        return $html;
+    }
+
+    public function getClasses() : string {
+        return implode(" ", $this->classes);
+    }
+
+}
+
+/**
+ * Create an <input> html element
+ * 
+ * $e = new FormInputElement("myinput", "hello");
+ * $e->label("gimme ur name")->setMandatory()
+ */
+class FormInputElement extends FormBaseElement {
+
+    public function __construct($name, $value='', $placeholder=null) {
+        parent::__construct($name, $value, $placeholder);
+        $this->setType('text');
+    }
+
+    function html() : string {
+        return '    <input '.$this->options().' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>';
+
+    }
+}
+
+/**
+ * Not really useful, a ->setType('hidden') is enough...
+ */
+class FormHiddenElement extends FormInputElement {
+
+    public function __construct($name, $value='', $placeholder=null) {
+        parent::__construct($name, $value, $placeholder);
+        $this->setType('hidden');
+    }
+
+}
+
+/**
+ * TODO 
+ * FormFileUpload, 
+ * FormFileDownload,
+ * FormCheckBoxes,
+ * FormSelect,
+ * FormDate  -> type date
+ * FormPassword  -> type password
+ * FormText (textarea)
+ * FormComment // just some text
+ */
+
+/**
+ * Generate an HTML form
+ */
+class PfmForm {
+
+    // Name of form
+    private string $name;
+    // URL to post form
+    private string $url;
+    // @var FormBaseElement[]
+    private array $elts = [];
+
+    public function __construct($name, $url=null) {
+        $this->name = $name;
+        $this->url = $url;
+    }
+
+    public function add(FormBaseElement $elt) {
+        $this->elts[] = $elt;
+    }
+
+    /**
+     * Generate HTML for form element
+     */
+    public function toHtml(): string {
+        $html = '<form class="form" id="'.$this->name.'" method="post" action="'.$this->url.'">';
+        foreach ($this->elts as $elt) {
+            $html .= '  '.$elt->toHtml();
+        }
+        $html .= '</form>';
+        return $html;
+    }
+
+}
+
+
 /**
  * Class allowing to generate and check a form html view. 
  * 
