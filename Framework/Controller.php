@@ -5,6 +5,7 @@ require_once 'Request.php';
 require_once 'View.php';
 require_once 'Errors.php';
 
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * Abstract class defining a controller. 
@@ -46,8 +47,43 @@ abstract class Controller {
         }
     }
 
+    /*
     public function mainMenu() {
         return null;
+    }
+    */
+
+        /**
+     * 
+     * @param int $id_space
+     * @return string
+     */
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if (!$id_space) {
+            return null;
+        }
+        $m = new CoreSpace();
+        $space = $m->getSpace($id_space);
+
+
+        $spaceColor = "#ffffff";
+        if ($space["color"] != "") {
+            $spaceColor = $space["color"];
+        }
+        $spaceTxtColor = "#000000";
+        if ($space['txtcolor'] != "") {
+            $spaceTxtColor = $space["txtcolor"];
+        }
+
+        $dataView = [
+            'id' => $id_space,
+            'name' => $space['name'],
+            'color' => $spaceColor,
+            'txtcolor' => $spaceTxtColor,
+        ];
+
+        return $this->twig->render("Modules/core/View/Corespace/navbar.twig", $dataView);
     }
 
     public function sideMenu() {

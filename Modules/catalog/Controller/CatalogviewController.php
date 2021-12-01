@@ -31,14 +31,6 @@ class CatalogviewController extends CoresecureController {
         //$this->checkAuthorizationMenu("catalog");
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
 
     /**
      * (non-PHPdoc)

@@ -17,15 +17,7 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 use League\CommonMark\CommonMarkConverter;
 
 class HelpdeskController extends CoresecureController {
-    
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
+
 
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);

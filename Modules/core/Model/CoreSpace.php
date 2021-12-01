@@ -45,6 +45,7 @@ class CoreSpace extends Model {
 		`name` varchar(30) NOT NULL DEFAULT '',
         `status` int(1) NOT NULL DEFAULT 0,
         `color` varchar(7) NOT NULL DEFAULT '',
+        `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
         `description` text NOT NULL,
         `image` varchar(255) NOT NULL DEFAULT '',
         `shortname` varchar(30) NOT NULL DEFAULT '',
@@ -56,6 +57,7 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
+        $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
@@ -102,7 +104,8 @@ class CoreSpace extends Model {
             "txtcolor" => "",
             "support" => "",
             "description" => "",
-            "admins" => []
+            "admins" => [],
+            "txtcolor" => "#ffffff"
         ];
     }
     
@@ -383,15 +386,15 @@ class CoreSpace extends Model {
         return intval($res[0]);
     }
 
-    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact) {
+    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor='#ffffff') {
         if ($this->isSpace($id)) {
-            $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact);
+            $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor);
             return $id;
         } else {
             if ($this->alreadyExists('name', $name)) {
                 throw new PfmDbException("Space name already exists", 1);
             }
-            $this->addSpace($name, $status, $color, $shortname, $support, $contact);
+            $this->addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor);
             return $this->getDatabase()->lastInsertId();
         }
     }
@@ -430,17 +433,17 @@ class CoreSpace extends Model {
         return $users;
     }
 
-    public function addSpace($name, $status, $color, $shortname, $support, $contact) {
-        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support) VALUES (?,?,?,?,?,?)";
-        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact));
+    public function addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor) {
+        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support, txtcolor) VALUES (?,?,?,?,?,?, ?)";
+        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $txtcolor));
         $id = $this->getDatabase()->lastInsertId();
         Events::send(["action" => Events::ACTION_SPACE_CREATE, "space" => ["id" => intval($id)]]);
         return $id;
     }
 
-    public function editSpace($id, $name, $status, $color, $shortname, $support, $contact) {
-        $sql = "UPDATE core_spaces SET name=?, status=?, color=?, shortname=?, contact=?, support=? WHERE id=?";
-        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $id));
+    public function editSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor) {
+        $sql = "UPDATE core_spaces SET name=?, status=?, color=?, shortname=?, contact=?, support=?, txtcolor=? WHERE id=?";
+        $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $txtcolor, $id));
     }
 
     public function setUserIfNotExist($id_user, $id_space, $status) {
