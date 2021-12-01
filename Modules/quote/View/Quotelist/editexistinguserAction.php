@@ -30,14 +30,14 @@ if ($id_quote > 0) {
             import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
             let dynamicForms = new DynamicForms();
             let spaceId = <?php echo $id_space?>;
-            let source = document.getElementById("id_user");
+            let sourceId = "id_user";
             let targets = [
                 {
-                    element: document.getElementById("id_client"),
+                    elementId: "id_client",
                     apiRoute: `clientusersgetuserclients/`
                 }
             ];
-            dynamicForms.dynamicFields(source, targets, spaceId);
+            dynamicForms.dynamicFields(sourceId, targets, spaceId);
         </script>
     </div>
 
