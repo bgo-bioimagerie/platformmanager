@@ -26,7 +26,6 @@ class Configuration {
             if(Configuration::get('debug', false)) {
                 $level = Logger::DEBUG;
             }
-            //$output = "[%datetime%] %channel%.%level_name%: %message%\n";
             $formatter = new LineFormatter(LineFormatter::SIMPLE_FORMAT, LineFormatter::SIMPLE_DATE);
             $formatter->includeStacktraces(true);
             $streamHandler = new StreamHandler('php://stderr', $level);
@@ -53,7 +52,7 @@ class Configuration {
      * 
      * @param string $name Name of the parameter
      * @param string $defaultValue Value returned by default
-     * @return string Value of the configuration parameter
+     * @return string|int|array Value of the configuration parameter
      */
     public static function get($name, $defaultValue = null) {
         $parameters = self::getParameters();
@@ -76,7 +75,6 @@ class Configuration {
             $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
                 Configuration::getLogger()->warning('No configuration file found, using env vars only');
-                // throw new Exception("Unable to find the configuration file");
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
@@ -194,25 +192,6 @@ class Configuration {
         }
         if(getenv('PFM_PUBLIC_URL')) {
             self::$parameters['public_url'] = getenv('PFM_PUBLIC_URL');
-        }
-
-        if(getenv('PFM_LDAP_HOST')) {
-            self::$parameters['ldap_host'] = getenv('PFM_LDAP_HOST');
-        }
-        if(getenv('PFM_LDAP_PORT')) {
-            self::$parameters['ldap_port']= intval(getenv('PFM_LDAP_PORT'));
-        }
-        if(getenv('PFM_LDAP_USER')) {
-            self::$parameters['ldap_admin'] = getenv('PFM_LDAP_USER');
-        }
-        if(getenv('PFM_LDAP_PASSWORD')) {
-            self::$parameters['ldap_password'] = getenv('PFM_LDAP_PASSWORD');
-        }
-        if(getenv('PFM_LDAP_BASEDN')) {
-            self::$parameters['ldap_dn'] = getenv('PFM_LDAP_BASEDN');
-        }
-        if(getenv('PFM_LDAP_BASESEARCH')) {
-            self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_BASESEARCH');
         }
 
         if(getenv('PFM_AMQP_HOST')) {

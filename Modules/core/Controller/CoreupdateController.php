@@ -7,20 +7,19 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 
-//require_once 'Modules/core/Model/CoreInstall.php';
-
-
 /**
- * 
+ * @deprecated
  * @author sprigent
  * Manage the modules: starting page to install and config each module	
  */
 class CoreupdateController extends Controller {
 
+    /*
     public function __construct(Request $request) {
         parent::__construct($request);
         //$this->checkAuthorization(CoreStatus::$ADMIN);
     }
+    */
 
     /**
      * (non-PHPdoc)
@@ -50,8 +49,6 @@ class CoreupdateController extends Controller {
                 $installFile = "Modules/" . $modules[$i] . "/Model/" . $moduleName . "Install.php";
                 if (file_exists($installFile)) {
                     
-                    //echo 'update database ' .$modules[$i]  . "<br/>";
-                    
                     if (!$first){
                         $modulesInstalled .= ", ";
                     }
@@ -62,9 +59,7 @@ class CoreupdateController extends Controller {
                     require_once $installFile;
                     $className = $moduleName . "Install";
                     $object = new $className();
-                    $object->createDatabase();
-                    
-                    //echo 'update database ' .$modules[$i]  . "done <br/>";
+                    $object->createDatabase();                    
                 }
             }
         } catch (Exception $e) {

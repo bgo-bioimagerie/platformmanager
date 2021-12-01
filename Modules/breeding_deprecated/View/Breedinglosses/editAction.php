@@ -7,7 +7,7 @@
 </div>
 <div class="col-md-12">
     <?php
-    if (isset($_SESSION["message"])) {
+   if (isset($_SESSION["message"]) && $_SESSION['message']) {
         ?>
         <div class="alert alert-info">
             <?php echo $_SESSION["message"] ?>

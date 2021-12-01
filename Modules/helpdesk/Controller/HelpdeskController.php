@@ -11,17 +11,36 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreFiles.php';
 require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
+
 
 use League\CommonMark\CommonMarkConverter;
 
 class HelpdeskController extends CoresecureController {
     
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $spaceModel = new CoreSpace();
         $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "role" => $role, "ticket" => null));
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("helpdesk", $id_space);
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "role" => $role,
+            "ticket" => null,
+            "menuInfo" => $menuInfo
+        ));
     }
 
     public function setSettingsAction($id_space) {
@@ -145,6 +164,10 @@ class HelpdeskController extends CoresecureController {
                 $role = CoreSpace::$MANAGER;
                 $module = "helpdesk";
                 $name = $_FILES[$fid]['name'];
+                $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $name, $matches);
+                if(! $fileNameOK) {
+                    throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+                }
                 $attachId = $c->set(0, $id_space, $name, $role, $module, $_SESSION['id_user']);
                 $file = $c->get($attachId);
                 $attachementFiles[] = $file;

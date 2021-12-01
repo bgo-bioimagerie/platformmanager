@@ -4,7 +4,7 @@
 <?php startblock('content') ?>
 <div class="container"> 
     
-    <div class="col-md-12 pm-form" >
+    <div class="pm-form" >
         <?php echo $formHtml ?>
     </div>
 </div>

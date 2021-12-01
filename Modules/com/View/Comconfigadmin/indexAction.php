@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-xs-12 col-md-12" style="background-color: #e1e1e1; min-height: 2000px;">
+<div class="row" style="background-color: #e1e1e1; min-height: 2000px;">
     
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <h1><?php echo ComTranslator::configuration($lang) ?></h1>

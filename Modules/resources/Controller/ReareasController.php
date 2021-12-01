@@ -7,13 +7,14 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReArea.php';
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ReareasController extends CoresecureController {
+class ReareasController extends ResourcesBaseController {
 
     /**
      * Constructor

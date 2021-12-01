@@ -1,5 +1,5 @@
 
-<div class="col-xs-12 text-left">
+<div class="col-xs-12 col-md-10 text-left">
     <?php
     $firstDay = $year . "-" . $month . "-1";
     $lastDayIdx = date("t", strtotime($firstDay));

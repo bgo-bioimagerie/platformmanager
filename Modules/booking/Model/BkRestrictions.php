@@ -26,13 +26,13 @@ class BkRestrictions extends Model {
     public function getBookingDelayUserCanEdit($id_space, $id_resource){
         $sql = "SELECT bookingdelayusercanedit FROM bk_restrictions WHERE id_resource=? AND deleted=0 AND id_space=?";
         $tmp = $this->runRequest($sql, array($id_resource, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] : 0;
     }
 
     public function getMaxBookingPerDay($id_space, $id_resource){
         $sql = "SELECT maxbookingperday FROM bk_restrictions WHERE id_resource=? AND deleted=0 AND id_space=?";
         $tmp = $this->runRequest($sql, array($id_resource, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] : 0;
     }
     
     public function getForSpace($id_space) {
@@ -69,7 +69,7 @@ class BkRestrictions extends Model {
     }
 
     public function delete($id_space, $id) {
-        $sql = "UPDATE bk_restrictions SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE bk_restrictions SET deleted=1, deleted_at=NOW() WHERE id=? AND id_space=?";
         // $sql = "DELETE FROM bk_restrictions WHERE id=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }

@@ -335,7 +335,7 @@ class CoreUser extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+    public function edit($id, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
         $sql = "UPDATE core_users SET name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }

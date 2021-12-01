@@ -15,13 +15,14 @@ require_once 'Modules/antibodies/Model/AcOwner.php';
 
 require_once 'Modules/antibodies/Form/TissusForm.php';
 require_once 'Modules/antibodies/Form/OwnerForm.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class AntibodieslistController extends CoresecureController {
+class AntibodieslistController extends AntibodiesController {
 
     private $antibody;
 
@@ -31,6 +32,7 @@ class AntibodieslistController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         $this->antibody = new Anticorps();
+        $this->noSideMenu = true;
         $_SESSION["openedNav"] = "antibodies";
         //$this->checkAuthorizationMenu("antibodies");
         
@@ -504,6 +506,10 @@ class AntibodieslistController extends CoresecureController {
             //echo "upload image " . $_FILES["tissusfiles"]["name"][$i] . "<br/>";
             //$ext = pathinfo($_FILES["image_url"]["name"], PATHINFO_EXTENSION);
             $fileName = $id_space."_".$_FILES["image_url"]["name"];
+            $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $fileName, $matches);
+            if(! $fileNameOK) {
+                throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+            }
 
             $target_file = $target_dir . $fileName;
             $uploadOk = 1;

@@ -4,13 +4,14 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/statistics/Model/StatisticsTranslator.php';
+require_once 'Modules/statistics/Controller/StatisticsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class StatisticslistController extends CoresecureController {
+class StatisticslistController extends StatisticsController {
 
     /**
      * Constructor

@@ -1,4 +1,4 @@
-<div class="col-xs-12">
+<div>
     <form name="projectTab" method="get" action="resourcesedittab/"><br>
     <div class="col-sm-offset-3 col-sm-6 text-center">
         <div class="btn-group" data-toggle="buttons">

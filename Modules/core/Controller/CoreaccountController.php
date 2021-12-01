@@ -44,7 +44,7 @@ class CoreaccountController extends Controller {
         $modelUsersInfo = new UsersInfo();
 
         if ($modelCoreUser->isLogin($data["login"])) {
-            throw new PfmException("Error:". CoreTranslator::LoginAlreadyExists($lang), 403);
+            throw new PfmUserException("Error:". CoreTranslator::LoginAlreadyExists($lang), 403);
         }
         $pwd = $modelCoreUser->generateRandomPassword();
 
@@ -71,9 +71,11 @@ class CoreaccountController extends Controller {
         $mailParams = [
             "email" => $data["email"],
             "login" => $data["login"],
-            "pwd" => $pwd
+            "pwd" => $pwd,
+            "supData" => $data
         ];
         $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
+        $email->notifyAdminsByEmail($mailParams, "self_registration", $lang);
 
         $this->redirect("coreaccountcreated");
     }
@@ -155,7 +157,6 @@ class CoreaccountController extends Controller {
                 "supData" => $payload['data']
             ];
             $email->notifyUserByEmail($mailParams, "add_new_user_waiting", $lang);
-            $email->notifyAdminsByEmail($mailParams, "self_registration", $lang);
             $this->redirect("coreuserwaiting");
             return;
         }
