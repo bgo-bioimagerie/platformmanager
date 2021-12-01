@@ -37,6 +37,15 @@ class ServicesprojectsController extends ServicesController {
         //$this->checkAuthorizationMenu("services");
     }
 
+    public function userAction($id_space) {
+        if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
+            throw new PfmAuthException('need login', 403);
+        }
+        $m = new SeProject();
+        $projects = $m->getUserProjects($id_space, $_SESSION['id_user']);
+        $this->render(['data' => ['projects' => $projects]]);
+    }
+
     protected function getProjectPeriod($id_space, $year) {
         $modelCoreConfig = new CoreConfig();
         $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);

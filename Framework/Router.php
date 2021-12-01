@@ -65,6 +65,7 @@ class Router {
             $controller = $this->createControllerImp('core', 'coretiles', false, $request);
             $action = 'index';
         }
+
         $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
         $controller->runAction($module, $action, $args);
         return $module."_".$controller_name."_".$action;
@@ -148,6 +149,11 @@ class Router {
 
             $urlInfo = $this->getUrlData($request);
             if(!$urlInfo['pathInfo']) {
+                if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
+                    http_response_code(404);
+                    return;
+                }
+
                 $this->logger->warning('no route found, redirect to homepage', [
                     'url' => $request->getParameter('path'),
                 ]);

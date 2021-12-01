@@ -840,4 +840,24 @@ class SeProject extends Model {
         $this->runRequest($sql, array($id, $id_space));
     }
 
+     /**
+     * Get user future bookings
+     */
+    public function getUserProjects($id_space, $id_user): array{
+        $q = array('id_user' => $id_user);
+        $sql = 'SELECT se_project.*, spaces.name as space FROM se_project';
+        $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = se_project.id_space';
+        $sql .= ' WHERE closed_by >= 0 AND in_charge=:id_user';
+        if($id_space && intval($id_space) > 0) {
+            $q['id_space'] = $id_space;
+            $sql .= ' AND se_project.id_space = :id_space';
+        }
+        $sql .= ' ORDER BY se_project.date_open DESC';
+        $req = $this->runRequest($sql, $q);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
+    }
+
 }

@@ -10,6 +10,7 @@
         width:220px; 
         margin-left: 25px;
         margin-top: 25px;
+        background-color: white;
     }    
 </style>
 

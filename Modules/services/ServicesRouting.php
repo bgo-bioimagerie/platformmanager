@@ -4,6 +4,10 @@ require_once 'Framework/Routing.php';
 
 class ServicesRouting extends Routing {
 
+    public function routes($router) {
+        $router->map('GET', '/user/services/projects/[i:id_space]', 'services/servicesprojects/user', 'services_user_projects');
+    }
+
     public function listRoutes() {
 
         // config
