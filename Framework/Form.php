@@ -332,7 +332,7 @@ class Form {
         $this->labelWidth = 4;
         $this->inputWidth = 6;
         $this->buttonsWidth = 12;
-        $this->buttonsOffset = 0;
+        $this->buttonsOffset = 1;
         $this->title = "";
         $this->validationURL = "";
         $this->cancelURL = "";

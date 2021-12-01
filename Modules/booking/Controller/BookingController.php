@@ -17,6 +17,7 @@ require_once 'Modules/resources/Model/ReEvent.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 
 /**
@@ -32,15 +33,6 @@ class BookingController extends BookingabstractController {
     public function __construct(Request $request) {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("booking");
-    }
-
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
     }
 
 
@@ -72,6 +64,15 @@ class BookingController extends BookingabstractController {
         $html = str_replace('{{title}}', BookingTranslator::Booking($lang), $html);
 
         return $html;
+    }
+
+    public function futureAction($id_space, $id_resource) {
+        if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
+            throw new PfmAuthException('need login', 403);
+        }
+        $modelBooking = new BkCalendarEntry();
+        $bookings = $modelBooking->getUserFutureBookings($id_space, $_SESSION["id_user"], $id_resource);
+        $this->render(['data' => ['bookings' => $bookings]]);
     }
 
     public function indexAction($id_space) {

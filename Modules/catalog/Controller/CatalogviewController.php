@@ -13,6 +13,9 @@ require_once 'Modules/antibodies/Model/Status.php';
 require_once 'Modules/antibodies/Model/Anticorps.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
+
+require_once 'Modules/core/Controller/CorespaceController.php';
+
 /**
  * 
  * @author sprigent
@@ -27,6 +30,7 @@ class CatalogviewController extends CoresecureController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("catalog");
     }
+
 
     /**
      * (non-PHPdoc)

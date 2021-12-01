@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Services] Remove deprecated functions from servicesController
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
 * [self_registration] fix selfregistration email sending order

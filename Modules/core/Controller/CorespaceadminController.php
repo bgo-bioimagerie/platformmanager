@@ -81,6 +81,7 @@ class CorespaceadminController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $space["color"]);
+        $form->addColor("txtcolor", CoreTranslator::text_color($lang), false, $space["txtcolor"]);
         $form->addUpload("image", CoreTranslator::Image($lang), $space["image"] ?? null);
         $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
@@ -123,6 +124,7 @@ class CorespaceadminController extends CoresecureController {
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
+                    $this->request->getParameter("txtcolor"),
                     );
             } else {
                 // Space admin can edit
@@ -133,6 +135,7 @@ class CorespaceadminController extends CoresecureController {
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
+                    $this->request->getParameter("txtcolor"),
                     );
             }
 

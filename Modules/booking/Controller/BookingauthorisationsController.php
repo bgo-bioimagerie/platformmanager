@@ -12,6 +12,7 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 

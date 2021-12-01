@@ -24,15 +24,6 @@ class BookingsettingsController extends CoresecureController {
         $_SESSION["openedNav"] = "bookingsettings";
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
-
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
