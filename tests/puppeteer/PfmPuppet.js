@@ -66,7 +66,7 @@ const fs = require('fs');
      */
     async connection() {
         console.log("connecting to PFM");
-        await this.page.goto(this.host);
+        await this.page.goto(this.host + "/coreconnection");
         try {
             console.log("typing login and password");
             let credentials = {login: this.login, password: this.password};
