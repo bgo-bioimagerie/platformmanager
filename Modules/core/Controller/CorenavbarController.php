@@ -49,12 +49,19 @@ class CorenavbarController extends CoresecureController {
         
         $modelMainMenus = new CoreMainMenu();
         $mainMenu = $modelMainMenus->getAll();
-        
+        /*
         $modelMainSubMenus = new CoreMainSubMenu();
+        $submenus = $modelMainSubMenus->getAll();
+        $submap = [];
+        foreach($submenus as $submenu) {
+            $submap[$submenu['id_main_menu']][] = $submenu;
+        }
         
         for($i = 0 ; $i < count($mainMenu) ; $i++){
-            $mainMenu[$i]["items"] = $modelMainSubMenus->getForMenu($mainMenu[$i]["id"]);
+            //$mainMenu[$i]["items"] = $modelMainSubMenus->getForMenu($mainMenu[$i]["id"]);
+            $mainMenu[$i]["items"] = $submap[$mainMenu[$i]['id']] ?? [];
         }
+        */
         return $mainMenu;
     }
     

@@ -3,13 +3,13 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-    <div class="col-md-12 pm-table">
+    <div class="pm-table">
 
-        <div class="col-md-12">
+        <div class="col-md-10">
             <h3><?php echo ResourcesTranslator::Suivi($lang) . ": " . $resourceInfo["name"] ?></h3>
         </div> 
-        <div class="col-xs-12"><p></p></div>
-        <div class="col-xs-12">
+        <div class="col-xs-10"><p></p></div>
+        <div class="col-xs-10">
             <?php echo $tableHtml ?>
         </div>
     </div>

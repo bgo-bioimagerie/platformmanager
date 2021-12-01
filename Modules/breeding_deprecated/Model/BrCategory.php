@@ -37,7 +37,7 @@ class BrCategory extends Model {
     public function getVat($id){
         $sql = "SELECT vat FROM br_categories WHERE id=?";
         $tmp =  $this->runRequest($sql, array($id))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0] : 0;
     }
 
     public function getName($id) {

@@ -6,13 +6,14 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeOrigin.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicesoriginsController extends CoresecureController {
+class ServicesoriginsController extends ServicesController {
 
     private $originModel;
 

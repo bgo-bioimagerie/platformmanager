@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-table">
+<div class="pm-table">
     
     <?php echo $formHtml ?>
     

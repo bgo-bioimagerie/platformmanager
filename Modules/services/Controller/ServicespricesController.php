@@ -13,13 +13,14 @@ require_once 'Modules/clients/Model/ClPricing.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicespricesController extends CoresecureController {
+class ServicespricesController extends ServicesController {
 
     private $serviceModel;
 

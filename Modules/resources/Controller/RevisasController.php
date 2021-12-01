@@ -10,13 +10,14 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 require_once 'Modules/resources/Model/ReCategory.php';
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class RevisasController extends CoresecureController {
+class RevisasController extends ResourcesBaseController {
 
     /**
      * Constructor

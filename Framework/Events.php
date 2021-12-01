@@ -17,6 +17,11 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
 
+require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/resources/Model/ReCategory.php';
+require_once 'Modules/quote/Model/Quote.php';
+require_once 'Modules/services/Model/SeService.php';
+
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -149,7 +154,87 @@ class EventHandler {
         $gm->updateUserPassword($user['login'], $user['apikey']);
     }
 
-    public function spaceCustomerEdit($msg) {
+
+    public function spaceResourceEdit($action, $msg) {
+        $this->logger->debug('[spaceResourceEdit]', ['space_id' => $msg['space']['id']]);
+        $model = new CoreSpace();
+        $space = $model->getSpace($msg['space']['id']);
+        $modelResource = new ResourceInfo();
+        $nbResources = $modelResource->admCount('re_info', $msg['space']['id']);
+        
+        $stat = ['name' => 'resources', 'fields' => ['value' => $nbResources['total']]];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+        if (array_key_exists('resource', $msg)) {
+            $cname = $msg['resource']['id'];
+            if (array_key_exists('name', $msg['resource'])) {
+                $cname = $msg['resource']['name'] . "[$cname]";
+            }
+            $hmsg = "Resource $cname deleted";
+            if ($action == Events::ACTION_RESOURCE_EDIT) {
+                $cname = $modelResource->getName($msg['space']['id'], $msg['resource']['id']);
+                $hmsg = "Resource $cname edited";
+            }
+            $m = new CoreHistory();
+            $m->add($msg['space']['id'], $msg['_user'] ?? null, $hmsg);
+        }
+    }
+
+    public function spaceServiceEdit($action, $msg) {
+        $this->logger->debug('[spaceServiceEdit]', ['space_id' => $msg['space']['id']]);
+        $model = new CoreSpace();
+        $space = $model->getSpace($msg['space']['id']);
+        $modelService = new SeService();
+        $nbServices = $modelService->admCount('se_services', $msg['space']['id']);
+        
+        $stat = ['name' => 'services', 'fields' => ['value' => $nbServices['total']]];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+        if (array_key_exists('service', $msg)) {
+            $cname = $msg['service']['id'];
+            if (array_key_exists('name', $msg['service'])) {
+                $cname = $msg['service']['name'] . "[$cname]";
+            }
+            $hmsg = "Service $cname deleted";
+            if ($action == Events::ACTION_SERVICE_EDIT) {
+                $cname = $modelService->getName($msg['space']['id'], $msg['service']['id']);
+                $hmsg = "Service $cname edited";
+            }
+            $m = new CoreHistory();
+            $m->add($msg['space']['id'], $msg['_user'] ?? null, $hmsg);
+        }
+    }
+
+    public function spaceQuoteEdit($action, $msg) {
+        $this->logger->debug('[spaceQuoteEdit]', ['space_id' => $msg['space']['id']]);
+        $model = new CoreSpace();
+        $space = $model->getSpace($msg['space']['id']);
+        $modelQuote = new Quote();
+        $nbQuotes = $modelQuote->admCount('qo_quotes', $msg['space']['id']);
+        
+        $stat = ['name' => 'quotes', 'fields' => ['value' => $nbQuotes['total']]];
+        $statHandler = new Statistics();
+        $statHandler->record($space['shortname'], $stat);
+        
+        if (array_key_exists('quote', $msg)) {
+            $cname = $msg['quote']['id'];
+            $hmsg = "Quote $cname deleted";
+            if ($action == Events::ACTION_QUOTE_EDIT) {
+                $quote = $modelQuote->getAllInfo($msg['space']['id'], $msg['quote']['id']);
+                $user = "unknown";
+                if($quote) {
+                    $user = $quote["recipient"];
+                }
+                $hmsg = "Quote $cname [$user] edited";
+                $stat = ['name' => 'quote', 'fields' => ['value' => 1], 'tags' => ['client' => 'unknown'], 'time' => $quote['created_at']];
+                $statHandler->record($space['shortname'], $stat);
+            }
+            $m = new CoreHistory();
+            $m->add($msg['space']['id'], $msg['_user'] ?? null, $hmsg);
+        }
+    }
+
+    public function spaceCustomerEdit($action, $msg) {
         $this->logger->debug('[spaceCustomerEdit]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
@@ -158,7 +243,19 @@ class EventHandler {
         $stat = ['name' => 'customers', 'fields' => ['value' => $nbCustomers]];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
-
+        if (array_key_exists('client', $msg)) {
+            $cname = $msg['client']['id'];
+            if (array_key_exists('name', $msg['client'])) {
+                $cname = $msg['client']['name'] . "[$cname]";
+            }
+            $hmsg = "Client $cname deleted";
+            if ($action == Events::ACTION_CUSTOMER_EDIT) {
+                $cname = $modelClient->getName($msg['space']['id'], $msg['client']['id']);
+                $hmsg = "Client $cname edited";
+            }
+            $m = new CoreHistory();
+            $m->add($msg['space']['id'], $msg['_user'] ?? null, $hmsg);
+        }
     }
 
     public function spaceUserJoin($msg) {
@@ -202,9 +299,9 @@ class EventHandler {
         $timestamp = $entry['start_time'];
         $r = new ResourceInfo();
         $resource = $r-> get($id_space, $entry['resource_id']);
-        $u = new CoreUser();
-        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
-        $user = $u->userAllInfo($id_user);
+        //$u = new CoreUser();
+        //$id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        // $user = $u->userAllInfo($id_user);
         $client = ['name' => 'unknown'];
         if($entry['responsible_id']) {
             $c = new ClClient();
@@ -224,9 +321,9 @@ class EventHandler {
         $timestamp = $entry['start_time'];
         $r = new ResourceInfo();
         $resource = $r-> get($id_space, $entry['resource_id']);
-        $u = new CoreUser();
-        $id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
-        $user = $u->userAllInfo($id_user);
+        //$u = new CoreUser();
+        //$id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
+        //$user = $u->userAllInfo($id_user);
         $client = ['name' => 'unknown'];
         if($entry['responsible_id']) {
             $c = new ClClient();
@@ -244,7 +341,31 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceCustomerEdit(['space' => ['id' => $space['id']]]);
+            $this->spaceCustomerEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+        }
+    }
+
+    public function resourceImport() {
+        $cp = new CoreSpace();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $this->spaceResourceEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+        }
+    }
+
+    public function quoteImport() {
+        $cp = new CoreSpace();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $this->spaceQuoteEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+        }
+    }
+
+    public function serviceImport() {
+        $cp = new CoreSpace();
+        $spaces = $cp->getSpaces('id');
+        foreach ($spaces as $space) {
+            $this->spaceServiceEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
@@ -410,17 +531,29 @@ class EventHandler {
                     break;
                 case Events::ACTION_CUSTOMER_EDIT:
                 case Events::ACTION_CUSTOMER_DELETE:
-                    $this->spaceCustomerEdit($data);
+                    $this->spaceCustomerEdit($action, $data);
                     break;
                 case Events::ACTION_HELPDESK_TICKET:
                     $this->ticketCount($data);
+                    break;
+                case Events::ACTION_RESOURCE_EDIT:
+                case Events::ACTION_RESOURCE_DELETE:
+                    $this->spaceResourceEdit($action, $data);
+                    break;
+                case Events::ACTION_QUOTE_EDIT:
+                case Events::ACTION_QUOTE_DELETE:
+                    $this->spaceQuoteEdit($action, $data);
+                    break;
+                case Events::ACTION_SERVICE_EDIT:
+                case Events::ACTION_SERVICE_DELETE:
+                    $this->spaceServiceEdit($action, $data);
                     break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     break;
             }
         } catch(Throwable $e) {
-            $this->logger->error('[message] error', ['message' => $e->getMessage()]);
+            $this->logger->error('[message] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'stack' => $e->getTraceAsString()]);
         }
     }
 }
@@ -443,6 +576,17 @@ class Events {
 
     public const ACTION_CUSTOMER_EDIT = 400;
     public const ACTION_CUSTOMER_DELETE = 401;
+
+    public const ACTION_RESOURCE_EDIT = 500;
+    public const ACTION_RESOURCE_DELETE = 501;
+
+    public const ACTION_QUOTE_EDIT = 600;
+    public const ACTION_QUOTE_DELETE = 601;
+
+    public const ACTION_SERVICE_EDIT = 700;
+    public const ACTION_SERVICE_DELETE = 701;
+    public const ACTION_SERVICE_PROJECT_EDIT = 710;
+    public const ACTION_SERVICE_PROJECT_DELETE = 711;
 
     private static $connection;
     private static $channel;

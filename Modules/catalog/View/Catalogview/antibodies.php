@@ -1,11 +1,8 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
+<?php startblock('content') ?>
 <?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
 
-
-<head>
-
-    <link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="externals/dataTables/fixedColumns.bootstrap.min.css">
 
@@ -28,14 +25,13 @@
         });
     </script>
 
-</head>
 
 
-<div class="col-md-12" style="height:15px; background-color: #ffffff;">
+<div class="row" style="height:15px; background-color: #ffffff;">
 
 </div>
 
-<div class="col-md-12" style="background-color: #ffffff;">
+<div class="row" style="background-color: #ffffff;">
 
     <table id="example" class="table table-bordered table-striped" cellspacing="0" width="100%">
         <thead>
@@ -116,3 +112,4 @@
         </tbody>
     </table>
 </div>
+<?php endblock(); ?>

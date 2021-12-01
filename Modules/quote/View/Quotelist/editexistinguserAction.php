@@ -6,16 +6,16 @@
 <?php
 if ($id_quote > 0) {
     ?>
-    <div class="col-md-12 pm-form-short">
+    <div class="pm-form-short">
         <?php
     } else {
         ?>
-        <div class="col-md-12 pm-form">
+        <div class="pm-form">
             <?php
         }
         ?>
         <?php
-        if (isset($_SESSION["message"])) {
+        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             ?>
             <div class="alert alert-success">
                 <?php echo $_SESSION["message"] ?>

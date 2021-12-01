@@ -15,7 +15,8 @@ require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
-
+require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
 
 /**
  *
@@ -29,6 +30,37 @@ class CorespaceaccessController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
+    public function sideMenu() {
+        $id_space = $this->args['id_space'];
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("core", $id_space);
+        
+        $dataView = [
+            'id_space' => $id_space,
+            'title' => CoreTranslator::Users($lang),
+            'glyphicon' => $menuInfo['icon'] ?? '',
+            'bgcolor' => $menuInfo['color'] ?? '#000000',
+            'color' => $menuInfo['txtcolor'] ?? '#ffffff',
+            'PendingUsers' => CoreTranslator::PendingUsers($lang),
+            'Active_Users' => CoreTranslator::Active_Users($lang),
+            'Inactive' => CoreTranslator::Inactive($lang),
+            'Add' => CoreTranslator::Add_User($lang),
+
+
+        ];
+        return $this->twig->render("Modules/core/View/Corespaceaccess/navbar.twig", $dataView);
     }
 
     public function impersonateAction($id_space, $id_user) {

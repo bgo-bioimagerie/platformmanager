@@ -60,7 +60,6 @@ class CorespaceController extends CoresecureController {
         if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
-        Configuration::getLogger()->error('????', ['space' => $space, 'user' => $_SESSION['id_user']]);
         if(!$space['status'] && $_SESSION['id_user'] < 0) {
             throw new PfmAuthException("Error 403: anonymous access denied", 403);
         }
@@ -121,6 +120,7 @@ class CorespaceController extends CoresecureController {
                 $menuColor = '#428bca';
             }
             $spaceMenuItems[$i]['color'] = $menuColor;
+            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: "#ffffff";
         }
         return $this->render(array(
             "role" => $role,
@@ -316,7 +316,7 @@ class CorespaceController extends CoresecureController {
         $space = $this->spaceModel->getSpace($id_space);
 
 
-        $spaceColor = "#428bca";
+        $spaceColor = "#ffffff";
         if ($space["color"] != "") {
             $spaceColor = $space["color"];
         }
@@ -324,45 +324,17 @@ class CorespaceController extends CoresecureController {
         $lang = $this->getLanguage();
         $showAdmMenu = false;
         if ($_SESSION['user_status'] > CoreStatus::$USER) {
-            $spaceMenuItems = $this->getSpaceMenus($space["id"], CoreSpace::$ADMIN);
             $showAdmMenu = true;
         } else {
             $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
             if ($role > CoreSpace::$MANAGER) {
                 $showAdmMenu = true;
             }
-            $spaceMenuItems = $this->getSpaceMenus($space["id"], $role);
         }
 
         $html = file_get_contents('Modules/core/View/Corespace/navbar.php');
 
 
-        /*
-        $configModel = new CoreConfig();
-        $mainMenu = "";
-        foreach ($spaceMenuItems as $item) {
-            //$name = $item["name"];
-            $name = $item["url"];
-            $url = $item["url"];
-            //$item["color"] = $item["bgcolor"];
-
-            $colorMenu = 'style="background-color:#428bca; color: #fff;"';
-            if (
-                isset($_SESSION["openedNav"]) &&
-                $_SESSION["openedNav"] == $item["url"] &&
-                isset($item["color"]) &&
-                $item["color"] != ""
-            ) {
-                    $colorMenu = 'style="background-color:' . $item["color"] . '; color: #fff;"';
-            }
-
-            // replace if below
-            $mainMenu .= '<li>';
-            $mainMenu .= '<a ' . $colorMenu . ' href="' . $url . '">' . $name . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon ' . $item["icon"] . '"></span></a>';
-            $mainMenu .= '</li>';
-        }
-        */
-        // $html = str_replace("{{menuitems}}", $mainMenu, $html);
         $html = str_replace("{{space.name}}", $space["name"], $html);
         $html = str_replace("{{space.color}}", $spaceColor, $html);
         $html = str_replace("{{space.id}}", $id_space, $html);

@@ -94,7 +94,7 @@ class Request {
      *
      * @param string $name
      *        	Name of the parameter
-     * @return string Value of the parameter, or en empty string if the parameter is not set
+     * @return string|array Value of the parameter, or en empty string if the parameter is not set
      */
     public function getParameterNoException($name, $clean = true) {
         if ($this->isParameter($name)) {

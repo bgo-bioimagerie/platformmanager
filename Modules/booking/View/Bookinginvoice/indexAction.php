@@ -3,13 +3,17 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-table">
+<div class="pm-table">
     <h3><?php echo BookingTranslator::Invoice_booking($lang) ?> </h3>
-    <div class="col-md-12">
-        <?php echo $formByProjects ?>
-    </div> 
-    <div class="col-md-12">
-        <?php echo $formByPeriod ?>
+    <div class="row">
+        <div class="col-md-10">
+            <?php echo $formByProjects ?>
+        </div> 
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <?php echo $formByPeriod ?>
+        </div>
     </div>
         
 </div>

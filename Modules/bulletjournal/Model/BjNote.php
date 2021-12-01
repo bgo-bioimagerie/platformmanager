@@ -21,7 +21,7 @@ class BjNote extends Model {
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("type", "int(11)", 0);
-        $this->setColumnsInfo("content", "text", 0);
+        $this->setColumnsInfo("content", "text", "");
         $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("is_month_task", "int(1)", "0");
         $this->primaryKey = "id";
@@ -120,7 +120,7 @@ class BjNote extends Model {
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM bj_notes WHERE id=? AND id_space=?";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
 
     public function set($id, $id_space, $name, $type, $content, $date, $is_month_task) {

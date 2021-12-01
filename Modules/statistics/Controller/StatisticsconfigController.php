@@ -26,6 +26,15 @@ class StatisticsconfigController extends CoresecureController {
         }
     }
 
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -40,7 +49,16 @@ class StatisticsconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($lang, $id_space);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "statistics", "statistics", "glyphicon-signal", $this->request->getParameter("statisticsmenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("displayColor")
+            $modelSpace->setSpaceMenu(
+                $id_space,
+                "statistics",
+                "statistics",
+                "glyphicon-signal",
+                $this->request->getParameter("statisticsmenustatus"),
+                $this->request->getParameter("displayMenu"),
+                1,
+                $this->request->getParameter("displayColor"),
+                $this->request->getParameter("displayColorTxt")
             );
 
             $this->redirect("statisticsconfig/" . $id_space);
@@ -71,6 +89,7 @@ class StatisticsconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "statistics");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "statistics");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "statistics");
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "statistics");
 
 
         $form = new Form($this->request, "menusactivationForm");
@@ -81,6 +100,7 @@ class StatisticsconfigController extends CoresecureController {
         $form->addSelect("statisticsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor('displayColor', CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor('displayColorTxt', CoreTranslator::text_color($lang), false, $displayColorTxt);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);

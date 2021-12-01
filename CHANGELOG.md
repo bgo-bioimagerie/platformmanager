@@ -3,6 +3,7 @@
 ## 2.2
 
 * [Services] Remove deprecated functions from servicesController
+* [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
 * [self_registration] fix selfregistration email sending order
 * [Security] Add missing access authorization controls
@@ -17,6 +18,7 @@
 * [helpdesk] let user select multiple tickets to spam them #393
 * [core] limit file uploads name to alphanumeric # 402
 * [core] add welcome page and use it as default entry url
+* [core] manage db reconnection in case of failure
 
 ## 2.1.9
 

@@ -18,13 +18,14 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingpricesController extends CoresecureController {
+class BookingpricesController extends BookingsettingsController {
 
     /**
      * Constructor
@@ -79,7 +80,7 @@ class BookingpricesController extends CoresecureController {
             $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
             $prices[] = $data;
             // add night we
-            $isNight = $modelPNightWe->isNight($id_space, $belongings[0]["id"]);
+            $isNight = $belongings ? $modelPNightWe->isNight($id_space, $belongings[0]["id"]) : null;
             if ($isNight) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
@@ -90,7 +91,7 @@ class BookingpricesController extends CoresecureController {
                 $ress[] = array("id" => $data['id_resource'], "name" => $data['resource']);
                 $prices[] = $data;
             }
-            $isWe = $modelPNightWe->isWe($id_space, $belongings[0]["id"]);
+            $isWe = $belongings ? $modelPNightWe->isWe($id_space, $belongings[0]["id"]) : null;
             if ($isWe) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {

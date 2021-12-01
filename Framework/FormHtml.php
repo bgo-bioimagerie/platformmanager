@@ -106,9 +106,11 @@ class FormHtml {
      * @return string HTML code
      */
     static public function hidden($name, $value, $required) {
-        $html = "<input class=\"form-control\" type=\"hidden\" id=\"" . $name . "\" name=\"" . $name . "\"";
+        $html = "<div class=\"form-group\">";
+        $html .= "<input class=\"form-control\" type=\"hidden\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
+        $html .= "</div>";
         return $html;
     }
 
@@ -534,9 +536,9 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function downloadbutton($formid, $label, $name, $value, $manual = false, $labelWidth = 2, $inputWidth = 9) {
+    static public function downloadbutton($formid, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
-        if ($manual) {
+        //if ($manual) {
             $html = "<div class=\"form-group\">";
             $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . "</label>";
             $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
@@ -544,6 +546,7 @@ class FormHtml {
             $html .= "<input type=\"submit\" id=\"" . $formid . "submit" . "\" class=\"btn btn-default\" value=\"" . $label . "\" />";
             $html .= "</div>";
             $html .= "</div>";
+        /*
         } else {
             
             $html = "<form role=\"form\" id=\"" . $formid . "filetransfert\" class=\"form-horizontal\" action=\"transfersimplefiledownload\" method=\"POST\">";
@@ -555,18 +558,8 @@ class FormHtml {
             $html .= "</div>";
             $html .= "</div>";
             $html .= "</form>";
-            
-            
-            /*
-            $html = "<div class=\"form-group\">";
-            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
-            $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
-            $html .= "<button class=\"btn  btn-default\" id=\"" . $name . "\" type=\"button\" onclick=\"location.href = './" . $name . "'\">" . $label . "</button>";
-            $html .= "</div>";
-            $html .= "</div>";
-             * 
-             */
         }
+        */
 
         return $html;
     }
@@ -645,12 +638,12 @@ class FormHtml {
 
     /**
      * 
-     * @param type $label
-     * @param type $choices
-     * @param type $choicesid
-     * @param type $values
-     * @param type $labelWidth
-     * @param type $inputWidth
+     * @param string $label
+     * @param array $choices
+     * @param array $choicesid
+     * @param array $values
+     * @param int $labelWidth
+     * @param int $inputWidth
      * @return string
      */
     static public function choicesList($label, $choices, $choicesid, $values, $labelWidth, $inputWidth) {
@@ -689,7 +682,8 @@ class FormHtml {
      * @return string
      */
     static public function buttons($formid, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $externalButtons = array(), $buttonsWidth = 2, $buttonsOffset = 9) {
-        $html = "<div class=\"col-xs-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
+        $html = '<div class="form-group">';
+        $html .= "<div class=\"col-xs-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
         if ($validationButtonName != "") {
             $html .= "<input type=\"submit\" id=\"" . $formid . "submit" . "\" class=\"btn btn-primary\" value=\"" . $validationButtonName . "\" />";
         }
@@ -710,7 +704,7 @@ class FormHtml {
                 $html .= "<button type=\"button\" onclick=\"location.href='" . $ext["url"] . "'\" class=\"btn btn-" . $ext["type"] . "\">" . $ext["name"] . "</button>";
             }
         }
-
+        $html .= "</div>";
         $html .= "</div>";
         return $html;
     }

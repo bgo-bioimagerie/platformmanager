@@ -113,33 +113,45 @@ try {
 
 function statsImport() {
     $cp = new CoreSpace();
-    Configuration::getLogger()->debug("[stats] create bucket");
+    Configuration::getLogger()->info("[stats] create bucket");
     $spaces = $cp->getSpaces('id');
     foreach ($spaces as $space) {
         $statHandler = new Statistics();
         $statHandler->createDB($space['shortname']);
     }
-    Configuration::getLogger()->debug("[stats] create bucket, done!");
+    Configuration::getLogger()->info("[stats] create bucket, done!");
 
-    Configuration::getLogger()->debug("[stats] import calentry stats");
+    Configuration::getLogger()->info("[stats] import calentry stats");
     $eventHandler = new EventHandler();
     $eventHandler->calentryImport();
-    Configuration::getLogger()->debug('[stats] import calentry stats, done!');
+    Configuration::getLogger()->info('[stats] import calentry stats, done!');
 
-    Configuration::getLogger()->debug("[stats] import invoice stats");
+    Configuration::getLogger()->info("[stats] import invoice stats");
     $statHandler = new EventHandler();
     $statHandler->invoiceImport();
-    Configuration::getLogger()->debug('[stats] import invoice stats, done!');
+    Configuration::getLogger()->info('[stats] import invoice stats, done!');
 
-    Configuration::getLogger()->debug("[stats] import customer stats");
+    Configuration::getLogger()->info("[stats] import customer stats");
     $eventHandler->customerImport();
-    Configuration::getLogger()->debug("[stats] import customer stats, done!");
+    Configuration::getLogger()->info("[stats] import customer stats, done!");
 
-    Configuration::getLogger()->debug("[stats] import tickets stats");
+    Configuration::getLogger()->info("[stats] import resource stats");
+    $eventHandler->resourceImport();
+    Configuration::getLogger()->info("[stats] import resource stats, done!");
+
+    Configuration::getLogger()->info("[stats] import quote stats");
+    $eventHandler->quoteImport();
+    Configuration::getLogger()->info("[stats] import quote stats, done!");
+
+    Configuration::getLogger()->info("[stats] import service stats");
+    $eventHandler->serviceImport();
+    Configuration::getLogger()->info("[stats] import service stats, done!");
+
+    Configuration::getLogger()->info("[stats] import tickets stats");
     foreach ($spaces as $space) {
         $eventHandler->ticketCount(["space" => ["id" => $space["id"]]]);
     }
-    Configuration::getLogger()->debug("[stats] import tickets stats, done!");
+    Configuration::getLogger()->info("[stats] import tickets stats, done!");
 
 
 }

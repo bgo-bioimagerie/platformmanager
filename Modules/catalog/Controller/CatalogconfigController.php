@@ -31,6 +31,15 @@ class CatalogconfigController extends CoresecureController {
         }
     }
 
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -45,9 +54,9 @@ class CatalogconfigController extends CoresecureController {
         if ($formMenusactivation->check()) {
 
             $modelSpace = new CoreSpace();
-            $modelSpace->setSpaceMenu($id_space, "catalog", "catalog", "glyphicon glyphicon-th-list", $this->request->getParameter("catalogmenustatus"), $this->request->getParameter("displayCatalogMenu"), 0, $this->request->getParameter("colorCatalogMenu")
+            $modelSpace->setSpaceMenu($id_space, "catalog", "catalog", "glyphicon glyphicon-th-list", $this->request->getParameter("catalogmenustatus"), $this->request->getParameter("displayCatalogMenu"), 0, $this->request->getParameter("colorCatalogMenu"), $this->request->getParameter("colorTxtCatalogMenu")
             );
-            $modelSpace->setSpaceMenu($id_space, "catalog", "catalogsettings", "glyphicon glyphicon-th-list", $this->request->getParameter("catalogsettingsmenustatus"), $this->request->getParameter("displaySettingsMenu"), 1, $this->request->getParameter("colorSettingsMenu")
+            $modelSpace->setSpaceMenu($id_space, "catalog", "catalogsettings", "glyphicon glyphicon-th-list", $this->request->getParameter("catalogsettingsmenustatus"), $this->request->getParameter("displaySettingsMenu"), 1, $this->request->getParameter("colorSettingsMenu"),$this->request->getParameter("colorTxtSettingsMenu")
             );
 
             $this->redirect("catalogconfig/" . $id_space);
@@ -105,10 +114,12 @@ class CatalogconfigController extends CoresecureController {
         $statusCatalogMenu = $modelMenu->getSpaceMenusRole($id_space, "catalog");
         $displayCatalogMenu = $modelMenu->getSpaceMenusDisplay($id_space, "catalog");
         $colorCatalogMenu = $modelMenu->getSpaceMenusColor($id_space, "catalog");
+        $colorTxtCatalogMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "catalog");
 
         $statusSettingsMenu = $modelMenu->getSpaceMenusRole($id_space, "catalogsettings");
         $displaySettingsMenu = $modelMenu->getSpaceMenusDisplay($id_space, "catalogsettings");
         $colorSettingsMenu = $modelMenu->getSpaceMenusColor($id_space, "catalogsettings");
+        $colorTxtSettingsMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "catalogsettings");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -122,10 +133,12 @@ class CatalogconfigController extends CoresecureController {
         $form->addSelect("catalogmenustatus", CatalogTranslator::Catalog($lang), $status["names"], $status["ids"], $statusCatalogMenu);
         $form->addNumber("displayCatalogMenu", CoreTranslator::Display_order($lang), false, $displayCatalogMenu);
         $form->addColor("colorCatalogMenu", CoreTranslator::color($lang), false, $colorCatalogMenu);
+        $form->addColor("colorTxtCatalogMenu", CoreTranslator::text_color($lang), false, $colorTxtCatalogMenu);
 
         $form->addSelect("catalogsettingsmenustatus", CatalogTranslator::Catalog_settings($lang), $status["names"], $status["ids"], $statusSettingsMenu);
         $form->addNumber("displaySettingsMenu", CoreTranslator::Display_order($lang), false, $displaySettingsMenu);
         $form->addColor("colorSettingsMenu", CoreTranslator::color($lang), false, $colorSettingsMenu);
+        $form->addColor("colorTxtSettingsMenu", CoreTranslator::text_color($lang), false, $colorTxtSettingsMenu);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);

@@ -7,13 +7,13 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
-
+require_once 'Modules/clients/Controller/ClientsController.php';
 /**
  *
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientsuseraccountsController extends CoresecureController {
+class ClientsuseraccountsController extends ClientsController {
 
     /**
      * Constructor

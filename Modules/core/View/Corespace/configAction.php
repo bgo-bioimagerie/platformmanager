@@ -9,7 +9,3 @@
 <?php
 endblock();
 ?>
-
-<?php startblock('footer') ?>
-</div>
-<?php endblock();

@@ -7,13 +7,14 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for services list page
  */
-class ServiceslistingController extends CoresecureController {
+class ServiceslistingController extends ServicesController {
 
     private $serviceModel;
     private $typeModel;

@@ -10,13 +10,14 @@ require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClAddress.php';
 
 require_once 'Modules/clients/Form/AddressForm.php';
+require_once 'Modules/clients/Controller/ClientsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientslistController extends CoresecureController {
+class ClientslistController extends ClientsController {
 
     /**
      * User model object

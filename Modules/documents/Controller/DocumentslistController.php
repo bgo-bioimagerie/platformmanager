@@ -7,13 +7,14 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/documents/Model/DocumentsTranslator.php';
 require_once 'Modules/documents/Model/Document.php';
 require_once 'Framework/FileUpload.php';
+require_once 'Modules/documents/Controller/DocumentsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class DocumentslistController extends CoresecureController {
+class DocumentslistController extends DocumentsController {
 
     /**
      * Constructor
