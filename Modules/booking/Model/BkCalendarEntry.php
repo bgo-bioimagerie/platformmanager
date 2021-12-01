@@ -786,7 +786,7 @@ class BkCalendarEntry extends Model {
             $q['res'] = $id_resource;
             $sql .= ' AND bk_calendar_entry.resource_id = :res';
         }
-        $sql .= ' ORDER BY bk_calendar_entry.start_time DESC';
+        $sql .= ' ORDER BY bk_calendar_entry.start_time ASC LIMIT 20';
         $req = $this->runRequest($sql, $q);
         if($req->rowCount() > 0) {
             return $req->fetchAll();
