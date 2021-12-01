@@ -24,9 +24,11 @@ class Quote extends Model {
             `id` int NOT NULL AUTO_INCREMENT,
             `id_space` int NOT NULL DEFAULT '0',
             `recipient` varchar(100) DEFAULT NULL,
+            `recipient_email` varchar(100) DEFAULT NULL,
             `address` text,
             `id_belonging` int DEFAULT NULL,
             `id_user` int DEFAULT NULL,
+            `id_client` int DEFAULT NULL,
             `date_open` date DEFAULT NULL,
             `date_last_modified` date DEFAULT NULL,
             PRIMARY KEY (`id`)

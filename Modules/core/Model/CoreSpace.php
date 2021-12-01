@@ -73,6 +73,7 @@ class CoreSpace extends Model {
 		`name` varchar(30) NOT NULL DEFAULT '',
         `status` int(1) NOT NULL DEFAULT 0,
         `color` varchar(7) NOT NULL DEFAULT '',
+        `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
         `description` text NOT NULL,
         `image` varchar(255) NOT NULL DEFAULT '',
         `shortname` varchar(30) NOT NULL DEFAULT '',
