@@ -76,7 +76,7 @@ class QuotelistController extends QuoteController {
         $tableHtml = $table->view($data, array("id" => "ID",
             "recipient" => QuoteTranslator::Recipient($lang),
             "address" => CoreTranslator::Address($lang),
-            "belonging" => CoreTranslator::Belonging($lang),
+            "belonging" => ClientsTranslator::Pricing($lang),
             "date_open" => QuoteTranslator::DateCreated($lang),
             "date_last_modified" => QuoteTranslator::DateLastModified($lang)
         ));
@@ -244,14 +244,14 @@ class QuotelistController extends QuoteController {
         }
         $modelClient = new ClClient();
         $clients = $modelClient->getAll($id_space);
-        $clientIds = [];
-        $clientNames = [];
+        $clientIds = ["0"];
+        $clientNames = ["-- --"];
         forEach($clients as $client) {
             array_push($clientIds, $client['id']);
             array_push($clientNames, $client['name']);
         }
         // set selected client by default
-        $selectedClientId = $clientIds[0];
+        $selectedClientId = $info['id_client'] ?? $clientIds[0];
         $addressToDisplay = "";
         if ($info['address'] && $info['address'] != "") {
             $addressToDisplay = $info['address'];
@@ -272,8 +272,25 @@ class QuotelistController extends QuoteController {
             array_push($pricingIds, $pricing['id']);
             array_push($pricingNames, $pricing['name']);
         }
- 
-        $form->addSelect('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds);
+        
+        if ($id > 0) {
+            // if quote has a client: get this client's pricing
+            if ($info['id_client'] && $info['id_client'] != 0) {
+                // (A client has 0 to 1 pricing)
+                $selectedPricing = $modelClientPricing->getPricingByClient($id_space, $info['id_client'])[0]['id'];
+                // if quote has a pricing: get it
+            } else if ($info['id_belonging'] && $info['id_belonging'] != 0 ) {
+                $modelPricing = new ClPricing();
+                $pricing = $modelPricing->get($id_space, $info['id_belonging']);
+                array_push($pricingIds, $pricing['id']);
+                array_push($pricingNames, $pricing['name']);
+                $selectedPricing = $info['id_belonging'];
+            }
+        }
+            $form->addSelectMandatory('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds, $selectedPricing ?? "");
+
+        
+        
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled', $info['date_open']);
             $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
