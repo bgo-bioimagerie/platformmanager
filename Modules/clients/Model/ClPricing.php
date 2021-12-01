@@ -79,6 +79,14 @@ class ClPricing extends Model {
         return array("names" => $names, "ids" => $ids);
     }
 
+    /**
+     * Get a client's pricing
+     * 
+     * @param int|string $id_space
+     * @param int|string $id_client
+     * 
+     * @return array(string) pricings
+     */
     public function getPricingByClient($id_space, $id_client) {
         $sql =
             "SELECT cl_pricings.* FROM cl_pricings

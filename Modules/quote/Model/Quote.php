@@ -44,6 +44,15 @@ class Quote extends Model {
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
+    /**
+     * Get all infos relative to a quote.
+     * Behaviour depends on how quote has been created (w/wo client_id, belonging_id or user_id)
+     * 
+     * @param int|string $id_space
+     * @param int|string $id id of the quote
+     * 
+     * @return array(string) quote infos
+     */
     public function getAllInfo($id_space, $id) {
         $sql = "SELECT * FROM qo_quotes WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
@@ -53,16 +62,13 @@ class Quote extends Model {
         $modelClient = new ClClient();
 
         if ($data['id_user'] == 0) {
-            // quote edited with "new user quote"
             $data['client'] = $modelClient->get($id_space, $data["id_client"]);
             $data['id_pricing'] = $data['id_belonging'];
         } else {
             $data["recipient"] = $modelUser->getUserFUllName($data["id_user"]);
             if ($data["id_client"] && $data["id_client"] != 0) {
-                // quote was edited with a client => get its client
                 $client = $modelClient->get($id_space, $data["id_client"]);
             } else {
-                // get first client from user's clients (original behaviour)
                 $client = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space)[0];
             }
             if (!$data['address'] || $data['address'] === "") {
