@@ -5,8 +5,9 @@ require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Prelevement.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
-class PrelevementsController extends CoresecureController {
+class PrelevementsController extends AntibodiesController {
 
     /**
      * User model object

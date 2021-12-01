@@ -29,6 +29,12 @@ class SeService extends Model {
         $this->runRequest($sql);
     }
 
+    public function getName($id_space, $id) {
+        $sql = "SELECT name FROM se_services WHERE id=? AND id_space=? AND deleted=0";
+        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $tmp ? $tmp[0] : null;
+    }
+
     public function getIdFromName($name, $id_space){
         $sql = "SELECT id FROM se_services WHERE name=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($name, $id_space));
@@ -80,13 +86,18 @@ class SeService extends Model {
         if($this->isService($id_space, $id)){
             $sql = "UPDATE se_services SET name=?, description=?, display_order=?, type_id=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($name, $description, $display_order, $type_id, $id, $id_space));
-            return $id;
         }
         else{
             $sql = "INSERT INTO se_services (name, id_space, description, display_order, type_id) VALUES (?,?,?,?,?)";
             $this->runRequest($sql, array($name, $id_space, $description, $display_order, $type_id));
-            return $this->getDatabase()->lastInsertId();
+            $id = $this->getDatabase()->lastInsertId();
         }
+        Events::send([
+            "action" => Events::ACTION_SERVICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "service" => ["id" => $id]
+        ]);
+        return $id;
     }
     
     public function isService($id_space, $id){
@@ -165,7 +176,7 @@ class SeService extends Model {
             return $unit->fetch();  // get the first line of the result
         }
         else{
-            throw new Exception("Cannot find the item using the given id = " . $id);
+            throw new PfmException("Cannot find the item using the given id = " . $id, 404);
         }
     }
 
@@ -191,6 +202,11 @@ class SeService extends Model {
 
         $sql = "update se_services set name=?, description=?, display_order=?, type_id=? where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array("" . $name . "", $description, $display_order, $type_id, $id, $id_space));
+        Events::send([
+            "action" => Events::ACTION_SERVICE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "service" => ["id" => $id]
+        ]);
     }
 
     /**
@@ -200,6 +216,11 @@ class SeService extends Model {
     public function delete($id_space, $id) {
         $sql = "UPDATE se_services SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+        Events::send([
+            "action" => Events::ACTION_SERVICE_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "service" => ["id" => $id]
+        ]);
     }
 
 }

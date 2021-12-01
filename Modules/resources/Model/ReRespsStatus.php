@@ -41,7 +41,7 @@ class ReRespsStatus extends Model {
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM re_resps_status WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
 
     public function getForSpace($id_space){

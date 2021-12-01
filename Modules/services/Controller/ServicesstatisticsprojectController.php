@@ -20,13 +20,14 @@ require_once 'Modules/invoices/Model/InVisa.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
- * Controller for the home page
+ * Used by statisticsglobal
  */
-class ServicesstatisticsprojectController extends CoresecureController {
+class ServicesstatisticsprojectController extends ServicesController {
 
     private $serviceModel;
 

@@ -7,7 +7,6 @@ require_once 'Framework/Form.php';
 require_once 'Framework/FileUpload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreInstall.php';
-require_once 'Modules/core/Model/CoreBackupDatabase.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
@@ -49,21 +48,7 @@ class CoreconfigadminController extends CoresecureController {
             return;
         }
 
-        /*
-          // maintenance form
-          $formMenusactivation = $this->menusactivationForm($lang);
-          if ($formMenusactivation->check()) {
-
-          $modelMenu = new CoreMenu();
-          $modelMenu->setDataMenu("users", "coreusers", $this->request->getParameter("usermenustatus"), "glyphicon-user");
-
-          $this->redirect("coreconfigadmin");
-          return;
-          }
-
-         */
-
-        // maintenance form
+        // ldap form
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
 
@@ -140,7 +125,7 @@ class CoreconfigadminController extends CoresecureController {
             $css = str_replace("navbar_text_color", $this->request->getParameter("navbar_text_color"), $css);
             $css = str_replace("navbar_text_highlight", $this->request->getParameter("navbar_text_highlight"), $css);
 
-            file_put_contents("data/core/theme/navbar-fixed-top.css", $css);
+            file_put_contents("externals/core/theme/navbar-fixed-top.css", $css);
 
             $this->redirect("coreconfigadmin");
             return;
@@ -154,15 +139,6 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
-        // backup form
-        $formBackup = $this->backupForm($lang);
-        if ($formBackup->check()) {
-            $modelBackup = new CoreBackupDatabase();
-            $modelBackup->run();
-            $this->redirect("coreconfigadmin");
-            return;
-        }
-
 
         // view
         $forms = array($formMaintenance->getHtml($lang),
@@ -171,9 +147,10 @@ class CoreconfigadminController extends CoresecureController {
             $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang),
             $formDeleteUser->getHtml($lang),
-            $formEmail->getHtml($lang), $formNavbar->getHtml($lang), $formBackup->getHtml($lang));
+            $formEmail->getHtml($lang), $formNavbar->getHtml($lang)
+        );
 
-        return $this->render(array("forms" => $forms, "lang" => $lang));
+        $this->render(array("forms" => $forms, "lang" => $lang));
     }
 
     /**
@@ -206,38 +183,6 @@ class CoreconfigadminController extends CoresecureController {
         $form = new Form($this->request, "installForm");
         $form->addSeparator(CoreTranslator::Install_Repair_database($lang));
         $form->addComment(CoreTranslator::Install_Txt($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    /**
-     *
-     * @param type $lang
-     * @return \Form
-     */
-    protected function menusactivationForm($lang) {
-
-        $modelMenu = new CoreMenu();
-        $statusUserMenu = $modelMenu->getDataMenusUserType("users");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $modelStatus = new CoreStatus();
-        $status = $modelStatus->allStatusInfo();
-
-        $choices = array();
-        $choicesid = array();
-        $choices[] = CoreTranslator::disable($lang);
-        $choicesid[] = 0;
-        for ($i = 0; $i < count($status); $i++) {
-            $choices[] = CoreTranslator::Translate_status($lang, $status[$i]["name"]);
-            $choicesid[] = $status[$i]["id"];
-        }
-
-        $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $choices, $choicesid, $statusUserMenu);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         $form->setButtonsWidth(2, 9);
 

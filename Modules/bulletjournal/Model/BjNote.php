@@ -76,11 +76,11 @@ class BjNote extends Model {
         }
         
         // get notes info
-        return $this->getNoteInfos($id_space, $notes);
+        return $this->getNoteInfos($notes);
         
     }
     
-    public function getNoteInfos($id_space, $notes){
+    public function getNoteInfos($notes){
         for($i = 0 ; $i < count($notes) ; $i++){
             if($notes[$i]["type"] == 2){
                 $sql = "SELECT * FROM bj_tasks WHERE id_note=?";
@@ -135,7 +135,7 @@ class BjNote extends Model {
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM bj_notes WHERE id=? AND id_space=?";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
 
     public function set($id, $id_space, $name, $type, $content, $date, $is_month_task) {

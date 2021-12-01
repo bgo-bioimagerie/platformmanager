@@ -10,13 +10,14 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 require_once 'Modules/resources/Model/ReCategory.php';
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class RevisasController extends CoresecureController {
+class RevisasController extends ResourcesBaseController {
 
     /**
      * Constructor
@@ -144,7 +145,7 @@ class RevisasController extends CoresecureController {
      * Export the visas in an xls file
      */
     public function exportAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get all the resources categories
@@ -199,7 +200,7 @@ class RevisasController extends CoresecureController {
 
     
     public function deleteAction($id_space, $id){
-        
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelVisa = new ReVisa();
         $modelVisa->delete($id_space, $id);
         

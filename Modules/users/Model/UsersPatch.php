@@ -9,11 +9,10 @@ require_once 'Modules/clients/Model/ClClientUser.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 
+/**
+ * for v0 to v1 migration only
+ */
 class UsersPatch extends Model {
-
-    public function __construct() {
-
-    }
 
     public function patch() {
         Configuration::getLogger()->info('[users] patch old users');
@@ -31,7 +30,6 @@ class UsersPatch extends Model {
         }
         catch (Exception $e) {
             Configuration::getLogger()->warning('[users] ec_j_user_responsible not present, skipping existing accounts migration');
-            // echo "ec_j_user_responsible not present, skipping existing accounts migration\n";
         }
 
         Configuration::getLogger()->warning('[users] migrating', ['resp' => $sqlresp_count, 'users' => $client_count]);
@@ -58,8 +56,6 @@ class UsersPatch extends Model {
         foreach ($data as $d){
             $sql0 = "SELECT phone FROM core_users WHERE id=?";
             $oldPhone = $this->runRequest($sql0, array($d["id_core"]))->fetch();
-
-            // echo 'old phone = ' . $oldPhone . "<br/>";
 
             if ($oldPhone && $oldPhone[0] == ""){
                 $sql = "UPDATE core_users SET phone=? WHERE id=?";
@@ -110,7 +106,6 @@ class UsersPatch extends Model {
 
         $spaces = $modelSpaces->getSpaces('id');
 
-        // echo "resps number = " . count($ecusers) . "<br/>";
         Configuration::getLogger()->debug('[users][patch]', ['responsibles' => count($ecusers)]);
         foreach ($ecusers as $ecuser) {
 
@@ -243,16 +238,12 @@ class UsersPatch extends Model {
     protected function changeRespIdsToClientIdsInBookingAndServices($warning = true) {
         Configuration::getLogger()->info('[user][patch] changeRespIdsToClientIdsInBookingAndServices');
         $modelUser = new CoreUser();
-        // $modelResource = new ResourceInfo();
-        // $unknownResp = [];
 
         // booking
         $sql = "SELECT * FROM bk_calendar_entry";
-        //$reservations = $this->runRequest($sql)->fetchAll();
         $reservations = $this->runRequest($sql);
         foreach ($reservations as $res) {
             $resp_name = $modelUser->getUserFUllName($res["responsible_id"]);
-            // $resource = $modelResource->get($res["resource_id"]);
             $sql = "SELECT * FROM re_info WHERE id=?";
             $req = $this->runRequest($sql, array($res["resource_id"]));
             if ($req) {
@@ -263,7 +254,6 @@ class UsersPatch extends Model {
             } else {
                 if ($warning) {
                     Configuration::getLogger()->warning('[user][patch] resource info not found ', ['resource' => $res["resource_id"]]);
-                    // echo "resource info not found for resource_id=" . $res["resource_id"] . "<br/>";
                 }
             }
         }
@@ -293,6 +283,7 @@ class UsersPatch extends Model {
         Configuration::getLogger()->info('[user][patch] changeRespIdsToClientIdsInBookingAndServices done');
     }
 
+    // @deprecated - can't work anyway
     protected function copyEcUsersToUsers() {
         Configuration::getLogger()->info('[user][patch] copy ecusers to users');
         $modelUserInfo = new UsersInfo();
@@ -300,9 +291,9 @@ class UsersPatch extends Model {
         $sql = "SELECT * FROM ec_users";
         $ecusers = $this->runRequest($sql)->fetchAll();
         foreach ($ecusers as $ecuser) {
-
+            $organization = "";
             $unit = $this->getEcUnitName($ecuser["id_unit"]);
-            $modelUserInfo->set($ecuser["id"], $ecuser["phone"], $unit);
+            $modelUserInfo->set($ecuser["id"], $ecuser["phone"], $unit, $organization);
         }
 
         Configuration::getLogger()->info('[user][patch] copy ecusers to users done');

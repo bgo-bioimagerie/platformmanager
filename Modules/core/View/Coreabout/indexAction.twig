@@ -1,0 +1,15 @@
+{% extends "Modules/layout.twig" %}
+
+{% block content %}
+<div class="container">
+    <h3>PFM installation</h3>
+
+    <div>
+        <ul>
+            <li>Code version: {{ data["tag"] }}</li>
+            <li>Expected DB version: {{ data["edb"] }}</li>
+            <li>Current DB version: {{ data["cdb"] }}</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

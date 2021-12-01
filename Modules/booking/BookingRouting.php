@@ -3,7 +3,11 @@
 require_once 'Framework/Routing.php';
 
 class BookingRouting extends Routing{
-   
+
+    public function routes($router) {
+        $router->map('GET', '/user/booking/future/[i:id_space]/[i:id_resource]', 'booking/booking/future', 'booking_list_future');
+    }
+
     
     public function listRoutes(){
         
@@ -83,9 +87,6 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingstatquantities", "statquantities", "bookingstatistics", "statquantities", array("id_space"), array(""));
         $this->addRoute("bookingstatreservationresp", "bookingstatreservationresp", "bookingstatistics", "statreservationresp", array("id_space"), array(""));
     
-        
-        
-        
         // update user resp in booking
         $this->addRoute("updateresaresps", "updateresaresps", "bookinginvoice", "updateresaresponsibles", array(), array());
         

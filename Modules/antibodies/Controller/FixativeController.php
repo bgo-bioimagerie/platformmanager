@@ -5,8 +5,9 @@ require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Fixative.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
-class FixativeController extends CoresecureController {
+class FixativeController extends AntibodiesController {
 
     /**
      * User model object

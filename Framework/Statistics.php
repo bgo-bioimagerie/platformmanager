@@ -179,6 +179,15 @@ class Statistics {
 
             // Create bucket in org
             $bucketsService = $client->createService(BucketsService::class);
+            $buckets = $bucketsService->getBuckets();
+            if ($buckets) {
+            foreach ($buckets['buckets'] as $bucket) {
+                if($bucket['name'] === $space) {
+                    Configuration::getLogger()->info('[stats] bucket already exists, skipping', ['bucket' => $space]);
+                    return;
+                }
+            }
+            }
             $rule = new BucketRetentionRules();
             $rule->setEverySeconds(3600*24*365*10);  // ten years
             $bucketName = $space;

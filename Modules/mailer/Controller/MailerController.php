@@ -15,6 +15,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -31,6 +32,7 @@ class MailerController extends CoresecureController {
         //$this->checkAuthorizationMenu("mailer");
         $_SESSION["openedNav"] = "mailer";
     }
+
 
     public function navbar($id_space) {
         return "";
@@ -72,6 +74,7 @@ class MailerController extends CoresecureController {
     }
 
     public function sendAction($id_space) {
+        $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
         $from = $this->request->getParameter("from");
         $to = $this->request->getParameter("to");
         $subject = $this->request->getParameter("subject");
@@ -98,7 +101,7 @@ class MailerController extends CoresecureController {
             "from" => $from,
             "to" => $to,
         ];
-        $message = $email->sendEmailToSpaceMembers($mailParams, $this->getLanguage());
+        $message = $email->sendEmailToSpaceMembers($mailParams, $this->getLanguage(), mailing: "mailer@$id_space");
 
         $this->render(array(
             'lang' => $this->getLanguage(),

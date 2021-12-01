@@ -339,7 +339,7 @@ class SeProject extends Model {
     public function getName($id_space, $id_project) {
         $sql = "SELECT name FROM se_project WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id_project, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0]: null;
     }
 
     public function getNoInvoicesServices($id_space, $id_project) {
@@ -860,6 +860,26 @@ class SeProject extends Model {
         $sql = "UPDATE se_project SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         // $sql = "DELETE FROM se_project WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+    }
+
+     /**
+     * Get user future bookings
+     */
+    public function getUserProjects($id_space, $id_user): array{
+        $q = array('id_user' => $id_user);
+        $sql = 'SELECT se_project.*, spaces.name as space FROM se_project';
+        $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = se_project.id_space';
+        $sql .= ' WHERE closed_by >= 0 AND in_charge=:id_user';
+        if($id_space && intval($id_space) > 0) {
+            $q['id_space'] = $id_space;
+            $sql .= ' AND se_project.id_space = :id_space';
+        }
+        $sql .= ' ORDER BY se_project.date_open DESC';
+        $req = $this->runRequest($sql, $q);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
     }
 
 }

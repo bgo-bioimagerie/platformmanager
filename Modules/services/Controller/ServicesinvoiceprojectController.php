@@ -380,7 +380,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
     protected function getProjectsResp($id_space, $id_projects) {
 
         if (empty($id_projects)) {
-            throw new Exception("You need to select at least one project");
+            throw new PfmParamException("You need to select at least one project", 403);
         }
 
         $modelProject = new SeProject();
@@ -389,7 +389,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         for ($i = 1; $i < count($id_projects); $i++) {
             $id_respi = $modelProject->getResp($id_space, $id_projects[$i]);
             if ($id_respi != $id_resp) {
-                throw new Exception("Projects must have the same responsible");
+                throw new PfmParamException("Projects must have the same responsible", 403);
             }
         }
         return $id_resp;
@@ -442,7 +442,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
+        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
     }
 
 }

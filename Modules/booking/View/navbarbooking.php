@@ -2,40 +2,37 @@
 require_once 'Modules/core/Model/CoreSpace.php';
 $modelMenu = new CoreSpace();
 
-$sygrrifmenucolortxt = "#ffffff";
-$sygrrifmenucolor = $modelMenu->getSpaceMenusColor($id_space, "booking");
-if ($sygrrifmenucolor == "") {
-    $sygrrifmenucolor = "#428bca";
+$menucolor = $modelMenu->getSpaceMenusColor($id_space, "booking");
+$menucolortxt = $modelMenu->getSpaceMenusTxtColor($id_space, "booking");
+if ($menucolor == "") {
+    $menucolor = "#428bca";
+}
+if ($menucolortxt == "") {
+    $menucolortxt = "#ffffff";
 }
 ?>
-
-<head>
-    <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-
-    <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-    <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 
     <style>
         .bs-docs-header {
             position: relative;
-            color: <?php echo $sygrrifmenucolortxt ?>;
+            color: <?php echo $menucolortxt ?>;
             text-shadow: 0 0px 0 rgba(0, 0, 0, .1);
-            background-color: <?php echo $sygrrifmenucolor ?>;
-            border:0px solid <?php echo $sygrrifmenucolor ?>;
+            background-color: <?php echo $menucolor ?>;
+            border:0px solid <?php echo $menucolor ?>;
         }
 
         #navlink {
-            color: <?php echo $sygrrifmenucolortxt ?>;
+            color: <?php echo $menucolortxt ?>;
             text-shadow: 0 0px 0 rgba(0, 0, 0, .1);
-            border:0px solid <?php echo $sygrrifmenucolor ?>;
+            border:0px solid <?php echo $menucolor ?>;
         }
 
         #well {
             margin-top:10px;
             padding-bottom:25px;
-            color: <?php echo $sygrrifmenucolortxt ?>;
-            background-color: <?php echo $sygrrifmenucolor ?>;
-            border:0px solid <?php echo $sygrrifmenucolor ?>;
+            color: <?php echo $menucolortxt ?>;
+            background-color: <?php echo $menucolor ?>;
+            border:0px solid <?php echo $menucolor ?>;
             -moz-box-shadow: 0px 0px px #000000;
             -webkit-box-shadow: 0px 0px px #000000;
             -o-box-shadow: 0px 0px 0px #000000;
@@ -43,25 +40,20 @@ if ($sygrrifmenucolor == "") {
         }
 
         legend {
-            color: <?php echo $sygrrifmenucolortxt ?>;
+            color: <?php echo $menucolortxt ?>;
         }
 
-        #content{
-            margin-top: -15px;
-            margin-left: -15px;
-            margin-right: -15px;
-        }
+
 
     </style>
 
-</head>
 
 <?php
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 ?>
 
-    <div class="bs-docs-header" id="content">
+    <div class="bs-docs-header" id="">
         
             <form role="form" class="form-horizontal" action="booking/<?php echo $id_space ?>" method="post" id="navform">
 
@@ -138,14 +130,14 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 
                 <div class='col-md-1' id="well">
                     <fieldset>
-                        <legend style="color:<?php echo $sygrrifmenucolor ?>;">.</legend>
+                        <legend style="color:<?php echo $menucolor ?>;">.</legend>
                         <div >
                             <input type="submit" class="btn btn-default" value="ok" />
                         </div>
                     </fieldset>
                 </div>   
             </form>
-        </div>
+    </div>
     
 
 <?php include "Framework/timepicker_script.php" ?>

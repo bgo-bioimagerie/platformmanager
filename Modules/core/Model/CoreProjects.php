@@ -157,10 +157,11 @@ class CoreProjects extends Model {
 	public function getProject($id){
 		$sql = "select * from core_projects where id=?";
 		$project = $this->runRequest($sql, array($id));
-		if ($project->rowCount() == 1)
+		if ($project->rowCount() == 1) {
     		return $project->fetch();  // get the first line of the result
-    	else
-    		throw new Exception("Cannot find the project using the given id"); 
+		} else {
+    		throw new PfmParamException("Cannot find the project using the given id", 404); 
+		}
 	}
 	
 	/**

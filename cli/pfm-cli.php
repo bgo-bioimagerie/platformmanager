@@ -3,11 +3,14 @@ require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
+require_once 'Framework/Events.php';
+require_once 'Framework/Statistics.php';
 require_once 'Framework/Router.php';
 
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+
 
 use Garden\Cli\Cli;
 
@@ -32,6 +35,11 @@ $cli = Cli::create()
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean')
+    ->command('stats')
+    ->opt('import', '(re)import all stats', false, 'boolean')
+    ->command('cache')
+    ->opt('clear', 'Clear caches', false, 'boolean')
+    ->opt('dry', 'Dry run', false, 'boolean')
     ->command('repair')
     ->opt('bug', 'Bug number', 0, 'integer');
 
@@ -77,6 +85,11 @@ try {
             $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
             $logger->info("Expired ".$count. " users");
             break;
+        case 'stats':
+            $logger = Configuration::getLogger();
+            $logger->info("Import stats");
+            statsImport();
+            break;
         case 'version':
             echo "Version: ".version()."\n";
             if ($args->getOpt('db')) {
@@ -86,11 +99,89 @@ try {
                 echo "DB expected version: ".$cdb->getVersion()."\n";
             }
             break;
+        case 'cache':
+            if($args->getOpt('clear')) {
+                cacheClear($args->getOpt('dry'));
+            }
+            break;
         default:
             break;
     }
 } catch(Throwable $e) {
     Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+}
+
+function statsImport() {
+    $cp = new CoreSpace();
+    Configuration::getLogger()->info("[stats] create bucket");
+    $spaces = $cp->getSpaces('id');
+    foreach ($spaces as $space) {
+        $statHandler = new Statistics();
+        $statHandler->createDB($space['shortname']);
+    }
+    Configuration::getLogger()->info("[stats] create bucket, done!");
+
+    Configuration::getLogger()->info("[stats] import calentry stats");
+    $eventHandler = new EventHandler();
+    $eventHandler->calentryImport();
+    Configuration::getLogger()->info('[stats] import calentry stats, done!');
+
+    Configuration::getLogger()->info("[stats] import invoice stats");
+    $statHandler = new EventHandler();
+    $statHandler->invoiceImport();
+    Configuration::getLogger()->info('[stats] import invoice stats, done!');
+
+    Configuration::getLogger()->info("[stats] import customer stats");
+    $eventHandler->customerImport();
+    Configuration::getLogger()->info("[stats] import customer stats, done!");
+
+    Configuration::getLogger()->info("[stats] import resource stats");
+    $eventHandler->resourceImport();
+    Configuration::getLogger()->info("[stats] import resource stats, done!");
+
+    Configuration::getLogger()->info("[stats] import quote stats");
+    $eventHandler->quoteImport();
+    Configuration::getLogger()->info("[stats] import quote stats, done!");
+
+    Configuration::getLogger()->info("[stats] import service stats");
+    $eventHandler->serviceImport();
+    Configuration::getLogger()->info("[stats] import service stats, done!");
+
+    Configuration::getLogger()->info("[stats] import tickets stats");
+    foreach ($spaces as $space) {
+        $eventHandler->ticketCount(["space" => ["id" => $space["id"]]]);
+    }
+    Configuration::getLogger()->info("[stats] import tickets stats, done!");
+
+
+}
+
+function cacheClear($dry) {
+    if(is_dir('/tmp/pfm')) {
+       removeDirectory('/tmp/pfm', $dry);
+       Configuration::getLogger()->info('cache cleared');
+    } else {
+        Configuration::getLogger()->info('nothing to do');
+    }
+}
+
+function removeFile($path, $dry=false) {
+    if($dry) {
+        Configuration::getLogger()->info('[delete]', ['path' => $path]);
+    } else {
+	    unlink($path);
+    }
+}
+function removeDirectory($path, $dry=false) {
+	$files = glob($path . '/*');
+	foreach ($files as $file) {
+		is_dir($file) ? removeDirectory($file, $dry) : removeFile($file, $dry);
+	}
+    if($dry) {
+        Configuration::getLogger()->info('[delete]', ['path' => $path]);
+    } else {
+	    rmdir($path);
+    }
 }
 
 function cliFix($bug=0) {

@@ -204,7 +204,7 @@ class CoreUser extends Model {
         }
 
         if($sql == null) {
-            throw new Exception('something went wrong!');
+            throw new PfmException('something went wrong!');
         }
 
         foreach ($req as $r) {
@@ -358,9 +358,9 @@ class CoreUser extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
-        $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
-        $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+    public function edit($id, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+        $sql = "UPDATE core_users SET name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
+        $this->runRequest($sql, array($name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }
 
     public function isUserId($id) {
@@ -489,7 +489,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new Exception("Cannot find the user using the given parameters");
+            throw new PfmParamException("Cannot find the user using the given parameters", 404);
         }
     }
 

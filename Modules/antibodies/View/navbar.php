@@ -10,8 +10,6 @@ if ($ecmenucolortxt == "") {
     $ecmenucolortxt = "#000";
 }
 ?>
-
-<head>
     <style>
         #menu-button-div a{
             font: 12px Arial;
@@ -42,9 +40,8 @@ if ($ecmenucolortxt == "") {
             color: #616161;
         }
     </style>
-</head>
 
-<div class="col-md-2" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
+<div style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
 
     <div class="col-md-12" style="margin-top: 0px;">
 

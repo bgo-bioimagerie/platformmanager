@@ -3,9 +3,9 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-table"> 
+<div class="row pm-table"> 
 
-    <?php if (isset($_SESSION["message"])) { ?>
+    <?php if (isset($_SESSION["message"]) && $_SESSION["message"]) { ?>
 
         <div class="alert alert-danger">
             <?php echo $_SESSION["message"] ?>

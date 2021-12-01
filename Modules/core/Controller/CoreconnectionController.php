@@ -120,7 +120,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
                         //die("die failed to set cookie with key " . $key . "<br/>");
-                        throw new Exception("failed to set cookie with key " . $key . "<br/>");
+                        throw new PfmException("failed to set cookie with key " . $key);
                     }
                     $modelUser = new CoreUser();
                     $modelUser->setRememberKey($loggedUser['idUser'], $key);

@@ -2,8 +2,51 @@
 
 ## 2.2
 
+* [Services] Remove deprecated functions from servicesController
+* [Exceptions] Add PfmUserException class
+* [Users] Remove login from edit function
+* [self_registration] fix selfregistration email sending order
+* [Security] Add missing access authorization controls
+* [Users] Improve users creation forms controls
+* [resources] set default booking authorizations at resource creation
 * [module:booking_settings] fix display edition
 * [stats] count number of tickets per status
+* [stats] add stat calentry_cancel on booking cancel
+* [mail] allow users to unsubscribe to notifications #382
+* [core][ldap] rename base config parameters for ldap auth
+* [helpdesk] ignore delivery status notifications (do not reply)
+* [helpdesk] let user select multiple tickets to spam them #393
+* [core] limit file uploads name to alphanumeric # 402
+* [core] add welcome page and use it as default entry url
+* [core] manage db reconnection in case of failure
+
+## 2.1.9
+
+* [users] fix users_info sql
+* [helpdesk] check if message is an auto-reply and log
+* [booking][invoice] fix sql
+* [booking][colorcode] fix sql
+* [sql] fix wrong space_id error => id_space (param and sql)
+* [booking][calsup] fix remove unlisted supinfo
+
+## 2.1.8
+
+* [users] change checkunicity routes
+* [coreInstall] add repair371() function
+* [module:users] add *Organization* and *Unit* to users listing arrays
+* [self_registration] add *Organization* and *Unit* inputs
+* [self_registration] add login suggestion
+* [self_registration] add unicity checks to login and email inputs
+* [self_registration] fix email sent to space admins
+
+## 2.1.7
+
+* [module:booking] fix supplementaries deletion
+* [module:invoices] fix set floats for items quantities
+* [module:booking] fix BkCalendarPeriod missing id_space
+* [helpdesk] fix list of tickets and mail origin
+* [configuration] use env var SMTP_FROM instead of MAIL_FROM (deprecated)
+* [module:booking] for mails check user still have a role in space #383
 
 ## 2.1.6
 

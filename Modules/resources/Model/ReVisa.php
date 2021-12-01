@@ -177,7 +177,7 @@ class ReVisa extends Model {
         if ($unit->rowCount() == 1) {
             return $unit->fetch();  // get the first line of the result
         } else {
-            throw new Exception("Cannot find the visa using the given id");
+            throw new PfmParamException("Cannot find the visa using the given id", 404);
         }
     }
 

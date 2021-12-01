@@ -1,0 +1,151 @@
+    <style>
+        #menu-button-div a{
+            font: 12px Arial;
+            text-decoration: none;
+            color: #333333;
+            padding-left: 12px;
+            /* padding: 2px 6px 2px 6px; */
+        }
+
+        #menu-button-div{
+            margin-top: -2px;
+            /* padding: 2px 6px 2px 6px; */
+        }
+
+        #menu-button-div:hover{
+            font: 12px Arial;
+            text-decoration: none;
+            background-color: #e1e1e1;
+            color: #333333;
+            padding: 2px 2px 2px 2px;
+        }
+
+        #separatorp{
+            padding-top: 12px;
+            text-transform: uppercase; 
+            font-weight: bold; 
+            font-size: 11px;
+            color: #616161;
+        }
+    </style>
+
+<div style="padding: 7px; background-color: {{bgcolor}}; color: {{color}};">
+
+    <div  style="margin-top: 0px;">
+
+        <h4 style="color: {{color}}; text-transform: uppercase;">Anticorps</h4>
+
+    </div>
+        
+    <div >
+        <p style="color: {{color}}" id="separatorp">Listing</p>
+
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="anticorps/{{id_space}}">Anticorps</a>
+            <a style="color: {{color}}" href="anticorpsedit/{{id_space}}/0">+</a> 
+        </div>	
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="protocols/{{id_space}}/id">Protocoles</a>
+            <a style="color: {{color}}" href="protocolsedit/{{id_space}}/0">+</a>
+        </div>
+    </div>
+
+    <div >
+        <p style="color: {{color}}" id="separatorp">Référence</p>
+
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="sources/{{id_space}}">Sources</a>
+            <a style="color: {{color}}" href="sourcesedit/{{id_space}}/0">+</a> 
+        </div>	
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="isotypes/{{id_space}}">Isotypes</a>
+            <a style="color: {{color}}" href="isotypesedit/{{id_space}}/0">+</a>
+        </div>
+    </div>
+    
+        <div >
+        <p style="color: {{color}}" id="separatorp">Tissus</p>
+
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="especes/{{id_space}}">Espèces</a>
+            <a style="color: {{color}}" href="especesedit/{{id_space}}/0">+</a> 
+        </div>	
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="organes/{{id_space}}">Organes</a>
+            <a style="color: {{color}}" href="organesedit/{{id_space}}/0">+</a>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="prelevements/{{id_space}}">Prélèvements</a>
+            <a style="color: {{color}}" href="prelevementsedit/{{id_space}}/0">+</a>
+        </div>
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="status/{{id_space}}">Status</a>
+            <a style="color: {{color}}" href="statusedit/{{id_space}}/0">+</a>
+        </div>
+    </div>
+
+    <div >
+        <p style="color: {{color}}" id="separatorp">Détails Proto</p>
+
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="kit/{{id_space}}">KIT</a>
+            <a style="color: {{color}}" href="kitedit/{{id_space}}/0">+</a> 
+        </div>	
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="proto/{{id_space}}">Proto</a>
+            <a style="color: {{color}}" href="protoedit/{{id_space}}/0">+</a> 
+        </div>	
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="fixative/{{id_space}}">Fixative</a>
+            <a style="color: {{color}}" href="fixativeedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="option/{{id_space}}">Option</a>
+            <a style="color: {{color}}" href="optionedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="enzymes/{{id_space}}">Enzyme</a>
+            <a style="color: {{color}}" href="enzymesedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="dem/{{id_space}}">Dém</a>
+            <a style="color: {{color}}" href="demedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="aciinc/{{id_space}}">AcI Inc</a>
+            <a style="color: {{color}}" href="aciincedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="linker/{{id_space}}">Linker</a>
+            <a style="color: {{color}}" href="linkeredit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="inc/{{id_space}}">Linker Inc</a>
+            <a style="color: {{color}}" href="incedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="acii/{{id_space}}">acII</a>
+            <a style="color: {{color}}" href="aciiedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="application/{{id_space}}">Application</a>
+            <a style="color: {{color}}" href="applicationedit/{{id_space}}/0">+</a> 
+        </div>
+        
+        <div  class="btn-block" id="menu-button-div">
+            <a style="color: {{color}}" class="menu-button" href="staining/{{id_space}}">Marquage</a>
+            <a style="color: {{color}}" href="stainingedit/{{id_space}}/0">+</a> 
+        </div>
+    </div>
+    
+</div>		

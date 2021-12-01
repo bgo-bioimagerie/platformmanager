@@ -22,6 +22,7 @@ class ClPricing extends Model {
             `id_space` int NOT NULL DEFAULT '0',
             `name` varchar(255) DEFAULT NULL,
             `color` varchar(7) DEFAULT NULL,
+            `txtcolor` varchar(7) DEFAULT NULL,
             `type` int NOT NULL DEFAULT '0',
             `display_order` int NOT NULL DEFAULT '0',
             PRIMARY KEY (`id`)
@@ -39,7 +40,8 @@ class ClPricing extends Model {
             return [
                 "id" => 0,
                 "name" => "",
-                "color" => "",
+                "color" => "#ffffff",
+                "txtcolor" => "#000000",
                 "type" => 0,
                 "display_order" => 0
             ];
@@ -66,14 +68,14 @@ class ClPricing extends Model {
 
     
     
-    public function set($id, $id_space, $name, $color, $type, $display_order) {
+    public function set($id, $id_space, $name, $color, $type, $display_order, $txtcolor="#000000") {
         if (!$id) {
-            $sql = 'INSERT INTO cl_pricings (id_space, name, color, type, display_order) VALUES (?,?,?,?,?)';
-            $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order));
+            $sql = 'INSERT INTO cl_pricings (id_space, name, color, type, display_order, txtcolor) VALUES (?,?,?,?,?, ?)';
+            $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order, $txtcolor));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE cl_pricings SET name=?, color=?, type=?, display_order=? WHERE id=? AND id_space=? AND deleted=0';
-            $this->runRequest($sql, array($name, $color, $type, $display_order, $id, $id_space));
+            $sql = 'UPDATE cl_pricings SET name=?, color=?, type=?, display_order=?, txtcolor=? WHERE id=? AND id_space=? AND deleted=0';
+            $this->runRequest($sql, array($name, $color, $type, $display_order, $txtcolor, $id, $id_space));
             return $id;
         }
     }

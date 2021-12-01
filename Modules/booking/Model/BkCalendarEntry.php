@@ -115,7 +115,7 @@ class BkCalendarEntry extends Model {
         $resources = $this->runRequest($sql1, array($id_space))->fetchAll();
         
         // get all responsibles
-        $sql2 = "SELECT DISTINCT responsible_id FROM bk_calendar_entry WHERE deleted=0 AND space_id=? AND resource_id IN (SELECT id FROM re_info WHERE id_space=? AND deleted=0) AND start_time>=? AND start_time<=?";
+        $sql2 = "SELECT DISTINCT responsible_id FROM bk_calendar_entry WHERE deleted=0 AND id_space=? AND resource_id IN (SELECT id FROM re_info WHERE id_space=? AND deleted=0) AND start_time>=? AND start_time<=?";
         $resps = $this->runRequest($sql2, array($id_space, $id_space, $dateBeginTime, $dateEndTime))->fetchAll();
         
         
@@ -125,7 +125,7 @@ class BkCalendarEntry extends Model {
         
         foreach($resps as $resp){
             
-            $sqlr = "SELECT name from cl_clients WHERE id=? AND deleted=0 AND space_id=?";
+            $sqlr = "SELECT name from cl_clients WHERE id=? AND deleted=0 AND id_space=?";
             //$sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
 
             $respinfo = $this->runRequest($sqlr, array($resp[0], $id_space))->fetch();
@@ -134,7 +134,7 @@ class BkCalendarEntry extends Model {
             }
             $resourceCount = array();
             foreach( $resources as $resource){
-                $sql3 = "SELECT * FROM bk_calendar_entry WHERE deleted=0 AND space_id=? AND responsible_id=? AND resource_id=? AND start_time>=? AND start_time<=?";
+                $sql3 = "SELECT * FROM bk_calendar_entry WHERE deleted=0 AND id_space=? AND responsible_id=? AND resource_id=? AND start_time>=? AND start_time<=?";
                 $res = $this->runRequest($sql3, array($id_space, $resp[0], $resource["id"], $dateBeginTime, $dateEndTime))->fetchAll();
                 if(!$res) { continue; }
 
@@ -153,12 +153,13 @@ class BkCalendarEntry extends Model {
 
     public function updateNullResponsibles($id_space) {
 
-        $sql = "SELECT * FROM bk_calendar_entry WHERE responsible_id<=1 AND deleted=0 AND space_id=?";
+        $sql = "SELECT * FROM bk_calendar_entry WHERE responsible_id<=1 AND deleted=0 AND id_space=?";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        $modelUserClient = new ClUserClient();
+        $modelUserClient = new ClClientUser();
         
         foreach ($data as $d) {
-            $resps = $modelUserClient->getUserAccounts($id_space, $d["recipient_id"]);
+            //$resps = $modelUserClient->getUserAccounts($id_space, $d["recipient_id"]);
+            $resps = $modelUserClient->getUserClientAccounts($d["recipient_id"], $id_space);
 
             if (!empty($resps)) {
                 $sql = "UPDATE bk_calendar_entry SET responsible_id=? WHERE id=? AND deleted=0 AND id_space=?";
@@ -369,7 +370,7 @@ class BkCalendarEntry extends Model {
      */
     public function isCalEntry($id_space, $id) {
         $sql = "select * from bk_calendar_entry where id=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id));
+        $req = $this->runRequest($sql, array($id, $id_space));
         return ($req->rowCount() == 1);
     }
 
@@ -410,7 +411,7 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get all the entries for a given day
-     * @param unknown $curentDate
+     * @param string $curentDate
      * @return multitype:
      */
     public function getEntriesForDay($id_space, $curentDate) {
@@ -435,7 +436,6 @@ class BkCalendarEntry extends Model {
      * 
      */
     public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id) {
-
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
@@ -447,7 +447,6 @@ class BkCalendarEntry extends Model {
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
-
 
         $modelUser = new CoreUser();
         $modelColor = new BkColorCode();
@@ -469,6 +468,7 @@ class BkCalendarEntry extends Model {
                 $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space, $data[$i]["color_type_id"]);
             }
         }
+
         return $data;
     }
 
@@ -623,6 +623,7 @@ class BkCalendarEntry extends Model {
     public function removeEntry($id_space, $id) {
         $sql = "UPDATE bk_calendar_entry SET deleted=?,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array(1, $id, $id_space));
+        Events::send(["action" => Events::ACTION_CAL_ENTRY_REMOVE, "bk_calendar_entry" => ["id" => intval($id), "id_space" => $id_space]]);
     }
 
     /**
@@ -640,16 +641,16 @@ class BkCalendarEntry extends Model {
      * @return multitype:
      */
     public function selectEntriesByDescription($id_space, $desciption) {
-        $sql = "SELECT * FROM bk_calendar_entry WHERE short_description=? AND space_id=? AND deleted=0 ORDER BY end_time";
+        $sql = "SELECT * FROM bk_calendar_entry WHERE short_description=? AND id_space=? AND deleted=0 ORDER BY end_time";
         $req = $this->runRequest($sql, array($desciption, $id_space));
         return $req->fetchAll();
     }
 
     /**
      * Check if a responsible has entries in a given period
-     * @param unknown $resp_id
-     * @param unknown $startdate
-     * @param unknown $enddate
+     * @param int $resp_id
+     * @param string $startdate
+     * @param string $enddate
      * @return boolean
      */
     public function hasResponsibleEntry($id_space, $resp_id, $startdate, $enddate) {
@@ -731,21 +732,23 @@ class BkCalendarEntry extends Model {
     }
 
     /**
-     * Get the emails address of the users who booked a resource
+     * Get the emails address of the users who booked a resource and still have a role in space
      * @param unknown $resource_id
      * @return multitype:
      */
     public function getEmailsBookerResource($id_space, $resource_id) {
 
         $sql = "SELECT DISTINCT user.email AS email 
-				FROM core_users AS user
-				INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
-				WHERE bk_calendar_entry.resource_id=?
+                FROM core_users AS user
+                INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
+                INNER JOIN core_j_spaces_user AS core_j_spaces_user ON user.id = core_j_spaces_user.id_user
+                WHERE bk_calendar_entry.resource_id=?
+                AND core_j_spaces_user.id_space=?
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
-				AND user.is_active = 1 
-				;";
-        $req = $this->runRequest($sql, array($resource_id, $id_space));
+                AND user.is_active = 1 
+                ;";
+        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space));
         return $req->fetchAll();
     }
 
@@ -757,15 +760,44 @@ class BkCalendarEntry extends Model {
     public function getEmailsBookerArea($id_space, $area_id) {
 
         $sql = "SELECT DISTINCT user.email AS email
-				FROM core_users AS user
-				INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
-				WHERE bk_calendar_entry.resource_id IN (SELECT id FROM re_info WHERE id_area=?) 
-				AND user.is_active = 1  
+                FROM core_users AS user
+                INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
+                INNER JOIN core_j_spaces_user AS core_j_spaces_user ON user.id = core_j_spaces_user.id_user
+                WHERE bk_calendar_entry.resource_id IN (SELECT id FROM re_info WHERE id_area=?)
+                AND core_j_spaces_user.id_space=?
+                AND user.is_active = 1  
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
-				;";
-        $req = $this->runRequest($sql, array($area_id, $id_space));
+                ;";
+        $req = $this->runRequest($sql, array($area_id, $id_space, $id_space));
         return $req->fetchAll();
+    }
+
+
+    /**
+     * Get user future bookings
+     */
+    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): array{
+        $now = time();
+        $q = array('today' => $now, 'id_user' => $id_user);
+        $sql = 'SELECT bk_calendar_entry.*, spaces.name as space, resources.name as resource FROM bk_calendar_entry';
+        $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
+        $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
+        $sql .= ' WHERE start_time >= :today AND recipient_id=:id_user';
+        if($id_space && intval($id_space) > 0) {
+            $q['id_space'] = $id_space;
+            $sql .= ' AND bk_calendar_entry.id_space = :id_space';
+        }
+        if($id_resource && intval($id_resource) > 0) {
+            $q['res'] = $id_resource;
+            $sql .= ' AND bk_calendar_entry.resource_id = :res';
+        }
+        $sql .= ' ORDER BY bk_calendar_entry.start_time ASC LIMIT 20';
+        $req = $this->runRequest($sql, $q);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
     }
 
 }

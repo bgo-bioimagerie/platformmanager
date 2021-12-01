@@ -143,14 +143,14 @@ for ($i = 0; $i < count($notes); $i++) {
 ?>
 
         function showNoteCollectionForm(id_note) {
-            alert("collection not yet implemented ");
+            //alert("collection not yet implemented ");
             $.post(
-                    'bjnotecollections/' + id_note,
+                    'bjnotecollections/<?php echo $id_space ?>/' + id_note,
                     {},
                     function (data) {
 
-                        $("#hider").fadeIn("slow");
-                        $('#collectionspopup_box').fadeIn("slow");
+                        //$("#hider").fadeIn("slow");
+                        //$('#collectionspopup_box').fadeIn("slow");
                     },
                     'json'
                     );
@@ -242,7 +242,7 @@ for ($i = 0; $i < count($notes); $i++) {
 
         function showeditNoteForm(id) {
             $.post(
-                    'bjgetnote/' + id,
+                    'bjgetnote/<?php echo $id_space ?>/' + id,
                     {},
                     function (data) {
                         $('#formnotedate').val(data.date);
@@ -261,7 +261,7 @@ for ($i = 0; $i < count($notes); $i++) {
 
         function showeditTaskForm(id) {
             $.post(
-                    'bjgettask/' + id,
+                    'bjgettask/<?php echo $id_space ?>/' + id,
                     {},
                     function (data) {
                         $('#formtaskdate').val(data.date);
@@ -282,7 +282,7 @@ for ($i = 0; $i < count($notes); $i++) {
 
         function showeditEventForm(id) {
             $.post(
-                    'bjgetevent/' + id,
+                    'bjgetevent/<?php echo $id_space ?>/' + id,
                     {},
                     function (data) {
                         $('#formeventdatestart').val(data.startdate);
@@ -427,7 +427,7 @@ for ($i = 0; $i < count($notes); $i++) {
         function closeTask(id) {
             //alert("close task clicked " + id);
             $.post(
-                    'bjclosetask/' + id,
+                    'bjclosetask/<?php echo $id_space ?>/' + id,
                     {},
                     function (data) {
                         //alert("update task to " + data.status);
@@ -448,7 +448,7 @@ for ($i = 0; $i < count($notes); $i++) {
         function cancelTask(id) {
             //alert("close task clicked " + id);
             $.post(
-                    'bjcanceltask/' + id,
+                    'bjcanceltask/<?php echo $id_space ?>/' + id,
                     {},
                     function (data) {
                         //alert("update task to " + data.status);

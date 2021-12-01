@@ -1,25 +1,5 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<?php startblock('stylesheet') ?>
-
-<link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
-<?php
-$headless = Configuration::get("headless");
-if (!$headless) {
-    ?>
-    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
-    <?php
-}
-?>
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/core.css' />
-
-
-<?php endblock(); ?>
-
-<?php startblock('spacenavbar'); ?>
-
-<?php endblock(); ?>
-
 <!-- body -->     
 <?php startblock('content') ?>
 
@@ -35,7 +15,7 @@ if (!$headless) {
 <?php
     }
 ?>
-</div>
+
 
 <?php
 if ($space['color'] == "") {
@@ -43,15 +23,10 @@ if ($space['color'] == "") {
 }
 ?>
 
-<div class="col-xs-12 text-center" style="color: #fff; background-color: <?php echo $space['color'] ?>; height: 35px;">
-    <h4><?php echo $space['name'] ?></h4>
-</div>
-
-<div>
     <!-- display com popup -->
 
-
-<div class="col-xs-12" style="background-color: #fff; height: 2000px;">
+<div class="row">
+<div  style="background-color: #fff; ">
 
     <div class="container" style="background-color: #fff;">
 
@@ -74,16 +49,24 @@ if ($space['color'] == "") {
                     $configModel = new CoreConfig();
                     foreach ($spaceMenuItems as $item) {
                         ?>
-                        <li style="background-color:<?php echo $item["color"] ?>;">
+                        <li style="background-color:<?php echo $item["color"]; ?>; <?php echo "; color: ".$item["txtcolor"]; ?>">
                             <a href="<?php echo $item["url"] . "/" . $id_space ?>">
                                 <span class="pm-tiles glyphicon <?php echo $item["icon"] ?>" aria-hidden="true"></span>
-                                <span class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
+                                <span style="<?php echo "color: ".$item["txtcolor"]; ?>" class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
                             </a>
                         </li>
                         <?php
                     }
                     ?>
-                    <ul/>
+                    <?php if($role > 1) { ?>
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="<?php echo "coremail/" . $space["id"] ?>">
+                                <span class="pm-tiles glyphicon glyphicon-bell" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class">Notifications</span>
+                            </a>
+                        </li>
+                    <?php } ?>
+                </ul>
             </div>
         </div>
         <?php
@@ -123,13 +106,19 @@ if ($space['color'] == "") {
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::History($lang) ?></span>
                             </a>
                         </li>
+                        <li style="background-color:<?php echo $space['color'] ?>;">
+                            <a href="/grafana">
+                                <span class="pm-tiles glyphicon glyphicon-stats" aria-hidden="true"></span>
+                                <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::GrafanaStats($lang) ?></span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
             <?php
         }
         ?>
-        <?php if($role<CoreSpace::$MANAGER && $role > 0) { ?>
+        <?php if($_SESSION['id_user'] > 0 && $role<CoreSpace::$MANAGER && $role > 0) { ?>
         <div class="page-header">
                 <h2>
                     <?php echo CoreTranslator::RequestJoin(true, $lang)."?" ?>
@@ -147,6 +136,7 @@ if ($space['color'] == "") {
 
 
     </div> <!-- /container -->
+</div>
 </div>
 <?php
 endblock();

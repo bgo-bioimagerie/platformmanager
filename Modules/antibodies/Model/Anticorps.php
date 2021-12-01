@@ -136,7 +136,7 @@ class Anticorps extends Model {
         $sql = "SELECT no_h2p2 from ac_anticorps WHERE id_space=? AND deleted=0 order by no_h2p2 DESC;";
         $user = $this->runRequest($sql, array($id_space));
         $tmp = $user->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0] : null;
     }
 
     public function isAnticorps($id_space ,$no_h2p2) {

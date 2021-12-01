@@ -8,22 +8,21 @@ require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/agendafunction.php';
 ?>
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link href="Modules/booking/Theme/styleagenda.css" rel="stylesheet" type="text/css" />
-</head>
+
+<link href="Modules/booking/Theme/styleagenda.css" rel="stylesheet" type="text/css" />
+
 
 <?php
     if (empty($resourceInfo)) {
 ?>
-    <div class="col-lg-12" style="background-color: #ffffff; padding-top: 12px;">
-    <div class="col-lg-10 col-lg-offset-1">
+<div class="row" style="background-color: #ffffff; padding-top: 12px;">
+    <div class="col-sm-10 col-sm-offset-1">
     <?php
             $message = "";
-                if (isset($_SESSION["message"])){
+                if (isset($_SESSION["message"]) && $_SESSION["message"]){
                 $message = $_SESSION["message"];
             } ?>
-        <?php if ($message != ""): 
+            <?php if ($message != ""): 
             if (strpos($message, "Err") === false){?>
                 <div class="alert alert-success text-center">	
             <?php 
@@ -44,14 +43,18 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
     }
 ?>
 
-<div class="col-xs-12" style="background-color: #ffffff;">
-<?php
-drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo);
-?>
+<div class="row" style="background-color: #ffffff;">
+    <div class="col-xs-12">
+    <?php
+    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo);
+    ?>
+    </div>
 </div>
 
-<div class="col-xs-12" style="background-color: #ffffff;">
-<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+<div class="row">
+    <div class="col-xs-12" style="background-color: #ffffff;">
+    <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+    </div>
 </div>
 
 <?php endblock();

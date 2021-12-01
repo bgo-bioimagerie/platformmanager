@@ -19,6 +19,8 @@ require_once 'Modules/resources/Model/ReEventType.php';
 require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
+require_once 'Modules/booking/Model/BkAccess.php';
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 
 /**
@@ -26,7 +28,7 @@ require_once 'Modules/resources/Model/ReRespsStatus.php';
  * @author sprigent
  * Controller for the home page
  */
-class ResourcesinfoController extends CoresecureController {
+class ResourcesinfoController extends ResourcesBaseController {
 
     /**
      * Constructor
@@ -137,6 +139,12 @@ class ResourcesinfoController extends CoresecureController {
             $form->getParameter("id_area"),
             $id_space,
             $form->getParameter("display_order"));
+
+            // set default authorizations in bk_access
+            $modelBkAccess = new BkAccess();
+            if (!$modelBkAccess->get($id_space, $id)) {
+                $modelBkAccess->set($id_space, $id, 3); // 3 for 'manager'    
+            }
             
             // upload image
             $target_dir = "data/resources/";
@@ -159,7 +167,6 @@ class ResourcesinfoController extends CoresecureController {
     }
 
     public function eventsroAction($id_space, $id) {
-
         $lang = $this->getLanguage();
 
         $table = new TableView();
@@ -236,7 +243,7 @@ class ResourcesinfoController extends CoresecureController {
     }
 
     public function deleteeventAction($id_space, $id_resource, $id) {
-
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelEvent = new ReEvent();
         $modelEvent->delete($id_space, $id);
 
@@ -311,6 +318,26 @@ class ResourcesinfoController extends CoresecureController {
         $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
     }
 
+    public function downloadeventfileAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $modelEventData = new ReEventData();
+        $reData = $modelEventData->get($id_space, $id);
+        $file = $reData['url'];
+        if (file_exists($file)) {
+            
+            $fileNameArray = explode("/", $file);
+            $fileName = $fileNameArray[ count($fileNameArray) -1];
+            
+            header("Content-Type: binary/octet-stream");
+            header("Content-Disposition: attachment; filename=$fileName");
+            header("Content-Length: " . filesize("$file"));
+            $fp = fopen("$file", "r");
+            fpassthru($fp);
+        } else {
+            throw new PfmFileException('file does not exists', 404);
+        }
+    }
+
     protected function createFilesTable($id_space, $id_event, $lang) {
 
         $table = new TableView();
@@ -322,7 +349,9 @@ class ResourcesinfoController extends CoresecureController {
         $modelEventData = new ReEventData();
         $events = $modelEventData->getByEvent($id_space, $id_event);
         for ($i = 0; $i < count($events); $i++) {
+            $eventDataId = $events[$i]['id'];
             $events[$i]["name"] = str_replace("data/resources/events/" . $id_event . "_", "", $events[$i]["url"]);
+            $events[$i]["url"] = "/resources/eventfile/$id_space/$eventDataId";
         }
 
         return $table->view($events, $headers);
@@ -468,6 +497,13 @@ class ResourcesinfoController extends CoresecureController {
 
         $modelResource = new ResourceInfo();
         $modelResource->delete($id_space, $id);
+        
+        // get resource bk_access and delete it
+        $modelBkAccess = new BkAccess();
+        if ($modelBkAccess->get($id_space, $id)) {
+            $modelBkAccess->delete($id_space, $id);
+        }
+        
 
         $this->redirect("resources/" . $id_space);
     }

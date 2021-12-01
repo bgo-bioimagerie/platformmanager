@@ -7,13 +7,14 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
- * Controller for the home page
+ * Controller for services list page
  */
-class ServiceslistingController extends CoresecureController {
+class ServiceslistingController extends ServicesController {
 
     private $serviceModel;
     private $typeModel;
@@ -80,7 +81,7 @@ class ServiceslistingController extends CoresecureController {
 
         $form->addSelect("type_id", CoreTranslator::type($lang), $types["names"], $types["ids"], $value["type_id"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesedit/" . $id_space . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "services/" . $id_space);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "serviceslisting/" . $id_space);
 
         if ($form->check()) {
             $this->serviceModel->setService(
@@ -102,7 +103,7 @@ class ServiceslistingController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $this->serviceModel->delete($id_space, $id);
-        $this->redirect("services/" . $id_space);
+        $this->redirect("serviceslisting/" . $id_space);
     }
 
     public function stockAction($id_space) {

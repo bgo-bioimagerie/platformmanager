@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Framework/TableView.php';
 
 /**
- * Class defining the SyColorCode model
+ * Class defining the ColorCode model
  *
  * @author Sylvain Prigent
  */
@@ -236,9 +236,9 @@ class BkColorCode extends Model {
      */
     public function getColorCodeValue($id_space, $id) {
         $sql = "select color from bk_color_codes where id=? AND deleted=0 AND id_space=?";
-        $SyColorCode = $this->runRequest($sql, array($id, $id_space));
-        if ($SyColorCode->rowCount() == 1) {
-            $tmp = $SyColorCode->fetch();
+        $colorCode = $this->runRequest($sql, array($id, $id_space));
+        if ($colorCode->rowCount() == 1) {
+            $tmp = $colorCode->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
             return "aaaaaa";
@@ -254,9 +254,9 @@ class BkColorCode extends Model {
      */
     public function getColorCodeText($id_space, $id) {
         $sql = "select text from bk_color_codes where id=? AND deleted=0 AND id_space=?";
-        $SyColorCode = $this->runRequest($sql, array($id, $id_space));
-        if ($SyColorCode->rowCount() == 1) {
-            $tmp = $SyColorCode->fetch();
+        $colorCode = $this->runRequest($sql, array($id, $id_space));
+        if ($colorCode->rowCount() == 1) {
+            $tmp = $colorCode->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
             return "000000";
@@ -272,9 +272,9 @@ class BkColorCode extends Model {
      */
     public function getColorCodeName($id_space, $id) {
         $sql = "select name from bk_color_codes where id=? AND deleted=0 AND id_space=?";
-        $SyColorCode = $this->runRequest($sql, array($id, $id_space));
-        if ($SyColorCode->rowCount() == 1) {
-            $tmp = $SyColorCode->fetch();
+        $colorCode = $this->runRequest($sql, array($id, $id_space));
+        if ($colorCode->rowCount() == 1) {
+            $tmp = $colorCode->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
             return "";
@@ -291,12 +291,12 @@ class BkColorCode extends Model {
      */
     public function getColorCodeId($name, $id_space) {
         $sql = "SELECT id FROM bk_color_codes WHERE name=? AND id_space=? AND deleted=0";
-        $SyColorCode = $this->runRequest($sql, array($name, $id_space));
-        if ($SyColorCode->rowCount() == 1) {
-            $tmp = $SyColorCode->fetch();
+        $colorCode = $this->runRequest($sql, array($name, $id_space));
+        if ($colorCode->rowCount() == 1) {
+            $tmp = $colorCode->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
-            throw new Exception("Cannot find the SyColorCode using the given name");
+            throw new PfmException("Cannot find the colorCode using the given name", 404);
         }
     }
 
@@ -305,7 +305,7 @@ class BkColorCode extends Model {
      * @param unknown $id
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE bk_color SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE bk_color_codes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

@@ -123,28 +123,34 @@ class ResourceInfo extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
+    /**
+    * @deprecated
+    */
     public function getIdByName($id_space, $name){
-        $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0";
-        $tmp = $this->runRequest($sql, array($name))->fetch();
-        return $tmp[0];
+        $sql = "SELECT id FROM re_info WHERE name=? AND deleted=0 AND id_space=?";
+        $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
+        return $tmp? $tmp[0]: null;
     }
     
+    /**
+    * @deprecated
+    */
     public function getIdByNameSpace($name, $id_space){
         $sql = "SELECT id FROM re_info WHERE name=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($name, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] :  null;
     }
 
     public function getAreaID($id_space, $id){
         $sql = "SELECT id_area FROM re_info WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] : null;
     }
     
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM re_info WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp ? $tmp[0] : null;
     }
 
     public function set($id, $name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order) {
@@ -153,12 +159,17 @@ class ResourceInfo extends Model {
             $sql = "INSERT INTO re_info (name, brand, type, description, long_description, id_category, id_area, id_space, display_order) "
                     . "VALUES (?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $id_space, $display_order));
-            return $this->getDatabase()->lastInsertId();
+            $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE re_info SET name=?, brand=?, type=?, description=?, long_description=?, id_category=?, id_area=?, display_order=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($name, $brand, $type, $description, $long_description, $id_category, $id_area, $display_order, $id, $id_space));
-            return $id;
         }
+        Events::send([
+            "action" => Events::ACTION_RESOURCE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "resource" => ["id" => $id]
+        ]);
+        return $id;
     }
 
     public function exists($id_space, $id) {
@@ -179,7 +190,7 @@ class ResourceInfo extends Model {
         $sql = "select id from re_info where id_area=? AND id_space=? AND deleted=0 ORDER BY display_order ASC;";
         $req = $this->runRequest($sql, array($areaId, $id_space));
         $tmp = $req->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0] : null;
     }
 
     /**
@@ -218,6 +229,11 @@ class ResourceInfo extends Model {
     public function delete($id_space, $id) {
         $sql = "UPDATE re_info SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+        Events::send([
+            "action" => Events::ACTION_RESOURCE_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "quote" => ["id" => $id]
+        ]);
     }
 
 }

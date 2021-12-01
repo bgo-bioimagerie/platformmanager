@@ -75,7 +75,7 @@ class AcStaining extends Model {
         }
 
         $sql = "SELECT * from ac_stainings where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id));
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {

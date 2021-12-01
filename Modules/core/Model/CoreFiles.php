@@ -65,7 +65,7 @@ class CoreFiles extends Model {
         if(!is_dir($base)) {
             mkdir($base, 0777, true);
         }
-        FileUpload::uploadFile($base, formFileId, $name);
+        FileUpload::uploadFile($base, $formFileId, $name);
     }
 
     /**

@@ -10,7 +10,6 @@ require_once 'Framework/Form.php';
 require_once 'Framework/FileUpload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreInstall.php';
-require_once 'Modules/core/Model/CoreBackupDatabase.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
@@ -82,6 +81,7 @@ class CorespaceadminController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $space["color"]);
+        $form->addColor("txtcolor", CoreTranslator::text_color($lang), false, $space["txtcolor"]);
         $form->addUpload("image", CoreTranslator::Image($lang), $space["image"] ?? null);
         $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
@@ -109,7 +109,7 @@ class CorespaceadminController extends CoresecureController {
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
             # $shortname = str_replace(" ", "", $shortname);
-            $shortname = preg_replace('/[^a-z0-9\-_]/', '', $string);
+            $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
             if($space && $space['shortname']) {
                 // Cannot modify shortname once set
                 $shortname = $space['shortname'];
@@ -124,6 +124,7 @@ class CorespaceadminController extends CoresecureController {
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
+                    $this->request->getParameter("txtcolor"),
                     );
             } else {
                 // Space admin can edit
@@ -134,6 +135,7 @@ class CorespaceadminController extends CoresecureController {
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
+                    $this->request->getParameter("txtcolor"),
                     );
             }
 

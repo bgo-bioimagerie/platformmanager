@@ -86,18 +86,28 @@ class Quote extends Model {
         if (!$id) {
             $sql = 'INSERT INTO qo_quotes (id_space, recipient, address, id_belonging, id_user, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $recipient, $address, $id_belonging, $id_user, $date_open, $date_last_modified));
-            return $this->getDatabase()->lastInsertId();
+            $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE qo_quotes SET recipient=?, address=?, id_belonging=?, id_user=?, date_open=?, date_last_modified=? WHERE id=? AND id_space=?';
             $this->runRequest($sql, array($recipient, $address, $id_belonging, $id_user, $date_open, $date_last_modified, $id, $id_space));
-            return $id;
         }
+        Events::send([
+            "action" => Events::ACTION_QUOTE_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "quote" => ["id" => $id]
+        ]);
+        return $id;
     }
 
     public function delete($id_space, $id) {
         $sql = "UPDATE qo_quotes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         // $sql = "DELETE FROM qo_quotes WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+        Events::send([
+            "action" => Events::ACTION_QUOTE_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "quote" => ["id" => $id]
+        ]);
     }
 
 }

@@ -38,6 +38,7 @@ class BjTask extends Model {
         $this->runRequest($sql);
     }
 
+    /*
     public function migrate($id){
         $modelHist = new BjTaskHistory();
         
@@ -67,6 +68,7 @@ class BjTask extends Model {
         // migrate to next month
         $modelHist->addHist($id, BjTaskStatus::$migrated, $migratetime);
     }
+    */
     
     public function openedForMigration($id_space, $year, $month){
         $firstDay = $year . "-" . $month . "-01";
