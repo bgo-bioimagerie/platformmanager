@@ -100,6 +100,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
     }
 
     public function pdfAction($id_space, $id_invoice, $details = 0) {
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelInvoice = new InInvoice();
@@ -126,7 +127,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
     }
 
     public function editqueryAction($id_space, $id_invoice) {
-
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $discount = $_POST["discount"];

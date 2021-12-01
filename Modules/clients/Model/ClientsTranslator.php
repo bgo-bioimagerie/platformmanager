@@ -259,7 +259,7 @@ class ClientsTranslator {
         if ($lang == "fr") {
             return "L'utilisateur a bien été ajouté au compte client";
         }
-        return "User has been ddded to client";
+        return "User has been added to client";
     }
 
     public static function AddressDelivery($lang) {

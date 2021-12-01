@@ -16,6 +16,8 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ReEvent.php';
 
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 
 /**
@@ -32,6 +34,16 @@ class BookingController extends BookingabstractController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("booking");
     }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
 
     public function navbar($id_space) {
         $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
@@ -63,9 +75,19 @@ class BookingController extends BookingabstractController {
         return $html;
     }
 
+    public function futureAction($id_space, $id_resource) {
+        if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
+            throw new PfmAuthException('need login', 403);
+        }
+        $modelBooking = new BkCalendarEntry();
+        $bookings = $modelBooking->getUserFutureBookings($id_space, $_SESSION["id_user"], $id_resource);
+        $this->render(['data' => ['bookings' => $bookings]]);
+    }
+
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        
 
         $id_area = $this->request->getParameterNoException("id_area");
         $id_resource = $this->request->getParameterNoException("id_resource");
@@ -89,7 +111,7 @@ class BookingController extends BookingabstractController {
      * @see Controller::indexAction()
      */
     public function bookingAction($id_space, $id_area, $id_resource) {
-
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $curentDate = date("Y-m-d", time());
@@ -177,6 +199,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function dayAction($id_space, $action, $message) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingday";
 
         $lang = $this->getLanguage();
@@ -272,6 +295,7 @@ class BookingController extends BookingabstractController {
             $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
             $_SESSION["flashClass"] = "danger";
         }
+        
 
         // view
         $this->render(array(
@@ -292,6 +316,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function dayareaAction($id_space, $action, $message) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingdayarea";
         $lang = $this->getLanguage();
 
@@ -419,6 +444,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function weekAction($id_space, $action, $message) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingweek";
         $lang = $this->getLanguage();
 
@@ -550,6 +576,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function weekareaAction($id_space, $action, $message) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingweekarea";
         $lang = $this->getLanguage();
 
@@ -690,6 +717,7 @@ class BookingController extends BookingabstractController {
     }
 
     public function monthAction($id_space, $action, $message) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingmonth";
         $lang = $this->getLanguage();
 
@@ -816,12 +844,13 @@ class BookingController extends BookingabstractController {
     }
 
     public function editreservationAction($id_space, $param) {
-
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $modelSettings = new CoreConfig();
         $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $id_space);
         
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
             $modelDefault = new BookingdefaultController($this->request);
+            $modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
             $modelDefault->editreservationdefault($id_space, $param);
         } else {
 

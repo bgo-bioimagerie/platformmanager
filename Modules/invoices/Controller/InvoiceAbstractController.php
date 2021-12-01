@@ -4,13 +4,14 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+require_once 'Modules/invoices/Controller/InvoicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-abstract class InvoiceAbstractController extends CoresecureController {
+abstract class InvoiceAbstractController extends InvoicesController {
 
     /**
      * Constructor

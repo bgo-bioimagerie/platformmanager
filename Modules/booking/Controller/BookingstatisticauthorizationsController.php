@@ -23,12 +23,13 @@ require_once 'Modules/core/Model/CoreUserSettings.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 
+require_once 'Modules/statistics/Controller/StatisticsController.php';
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingstatisticauthorizationsController extends CoresecureController {
+class BookingstatisticauthorizationsController extends StatisticsController {
 
     /**
      * Constructor
@@ -49,15 +50,15 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
         $dateArray = explode("-", $date_begin);
         $y = date("Y") - 1;
-        $m = $dateArray[1];
-        $d = $dateArray[2];
+        $m = $dateArray[1] ?? '1';
+        $d = $dateArray[2] ?? '1';
         $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
 
         $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
         $dateArray = explode("-", $date_end);
         $y = date("Y");
-        $m = $dateArray[1];
-        $d = $dateArray[2];
+        $m = $dateArray[1] ?? '12';
+        $d = $dateArray[2] ?? '31';
         $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
 
 
@@ -369,7 +370,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
      * Form to export the list of authorized user per resource category
      */
     public function authorizedusersAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the resource list
         $resourceModel = new ReCategory();
         $resourcesCategories = $resourceModel->getBySpace($id_space);
@@ -385,7 +386,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
      * Query to export the list of authorized user per resource category
      */
     public function authorizedusersqueryAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the selected resource id
         $resource_id = $this->request->getParameter("resource_id");
         $email = $this->request->getParameterNoException("email");

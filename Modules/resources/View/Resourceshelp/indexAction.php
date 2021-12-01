@@ -32,7 +32,7 @@
     graph.addArc(1, 1, "center", 7, "right", new PMArcStyle(2, "#337ab7", true));
     graph.render();
     });</script>
-<div class="col-md-12 pm-table">  
+<div class="pm-table">  
 
     <h3>Resources help</h3>
     <div class="text-center">  

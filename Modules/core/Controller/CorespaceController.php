@@ -23,7 +23,6 @@ require_once 'Modules/core/Model/CoreInstalledModules.php';
 class CorespaceController extends CoresecureController {
 
     private $spaceModel;
-    private $useCustomDaskBoard;
 
     /**
      * Constructor
@@ -31,9 +30,6 @@ class CorespaceController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
 
-        if (!$this->isUserAuthorized(CoreStatus::$USER)) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
-        }
         $this->spaceModel = new CoreSpace ();
     }
 
@@ -52,9 +48,6 @@ class CorespaceController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction() {
-
-        //$lang = $this->getLanguage();
-        //$this->render(array("lang" => $lang, "id_space" => $id_space));
     }
 
     /**
@@ -64,6 +57,12 @@ class CorespaceController extends CoresecureController {
     public function viewAction($id_space) {
 
         $space = $this->spaceModel->getSpace($id_space);
+        if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
+        if(!$space['status'] && $_SESSION['id_user'] < 0) {
+            throw new PfmAuthException("Error 403: anonymous access denied", 403);
+        }
 
         $modelConfig = new CoreConfig();
         $space_home_page = $modelConfig->getParamSpace('space_home_page', $id_space);
@@ -84,72 +83,55 @@ class CorespaceController extends CoresecureController {
             $role = CoreSpace::$ADMIN;
         } else {
             $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
+            if ($role == -1) {
+                $role = CoreSpace::$VISITOR;
+            }
             if ($role > CoreSpace::$MANAGER) {
                 $showAdmMenu = true;
             }
         }
         $spaceMenuItems = $this->spaceModel->getSpaceMenus($space["id"], $role);
 
-        $userCustomDashboard = $modelConfig->getParamSpace("CoreSpaceCustomDashboard", $id_space);
-        if ($userCustomDashboard) {
-            
-            $modelDashboardSection = new CoreDashboardSection();
-            $modelDashboardItem = new CoreDashboardItem();
-            $sections = $modelDashboardSection->getAll($id_space);
-            for($i = 0 ; $i < count($sections) ; $i++){
-                $items = $modelDashboardItem->getForSection($sections[$i]["id"], $role);
-                $sections[$i]["items"] = $items;
-            }
-            return $this->render(array(
-                "role" => $role,
-                "lang" => $lang,
-                "id_space" => $id_space, 
-                "space" => $space, 
-                "sections" => $sections, 
-                "showAdmMenu" => $showAdmMenu), "viewcustomAction");
-      
-            
-        } else {
-            $configModel = new CoreConfig();
-            for ($i = 0; $i < count($spaceMenuItems); $i++) {
-                $item = $spaceMenuItems[$i];
-                $url = $item["url"];
-                $donfigTitle = $configModel->getParamSpace($url . "menuname", $id_space);
+        $configModel = new CoreConfig();
+        for ($i = 0; $i < count($spaceMenuItems); $i++) {
+            $item = $spaceMenuItems[$i];
+            $url = $item["url"];
+            $donfigTitle = $configModel->getParamSpace($url . "menuname", $id_space);
 
-                $name = $donfigTitle;
-                if ($donfigTitle == "") {
-                    try {
-                        $classTranslator = ucfirst($item["module"]) . "Translator";
-                        $TranslatorFile = "Modules/" . $item["module"] . "/Model/" . $classTranslator . ".php";
-                        require_once $TranslatorFile;
-                        $translator = new $classTranslator();
-                        $name = $translator->$url($lang);
-                    } catch (Throwable $e) {
-                        Configuration::getLogger()->error('[import] error', ['file' => $TranslatorFile]);
-                    }
+            $name = $donfigTitle;
+            if ($donfigTitle == "") {
+                try {
+                    $classTranslator = ucfirst($item["module"]) . "Translator";
+                    $TranslatorFile = "Modules/" . $item["module"] . "/Model/" . $classTranslator . ".php";
+                    require_once $TranslatorFile;
+                    $translator = new $classTranslator();
+                    $name = $translator->$url($lang);
+                } catch (Throwable $e) {
+                    Configuration::getLogger()->error('[import] error', ['file' => $TranslatorFile]);
                 }
-
-
-                $spaceMenuItems[$i]['name'] = $name;
-
-                $menuColor = $item["color"];
-
-                if ($menuColor == "") {
-                    $menuColor = '#428bca';
-                }
-                $spaceMenuItems[$i]['color'] = $menuColor;
             }
-            return $this->render(array(
-                "role" => $role,
-                "lang" => $lang,
-                "id_space" => $id_space,
-                "space" => $space,
-                "spaceMenuItems" => $spaceMenuItems,
-                "showAdmMenu" => $showAdmMenu,
-                "showCom" => $showCom,
-                "data" => ["space" => $space]
-            ));
+
+
+            $spaceMenuItems[$i]['name'] = $name;
+
+            $menuColor = $item["color"];
+
+            if ($menuColor == "") {
+                $menuColor = '#428bca';
+            }
+            $spaceMenuItems[$i]['color'] = $menuColor;
+            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: "#ffffff";
         }
+        return $this->render(array(
+            "role" => $role,
+            "lang" => $lang,
+            "id_space" => $id_space,
+            "space" => $space,
+            "spaceMenuItems" => $spaceMenuItems,
+            "showAdmMenu" => $showAdmMenu,
+            "showCom" => $showCom,
+            "data" => ["space" => $space]
+        ));
     }
 
     /**
@@ -196,12 +178,11 @@ class CorespaceController extends CoresecureController {
 
     /**
      * 
-     * @param type $lang
-     * @param type $id_space
-     * @return type
+     * @param string $lang
+     * @param int $id_space
+     * @return string
      */
     protected function configModulesTable($lang, $id_space) {
-
         $modules = Configuration::get("modules");
         //echo "modules = " ;print_r($modules);
         //return;
@@ -244,7 +225,6 @@ class CorespaceController extends CoresecureController {
      * @return type
      */
     protected function configUsersTable($lang, $id_space) {
-
         $data = $this->spaceModel->getUsers($id_space);
         //print_r($data);
         for ($i = 0; $i < count($data); $i++) {
@@ -275,6 +255,7 @@ class CorespaceController extends CoresecureController {
      * @param type $id_user
      */
     public function configdeleteuserAction($id_space, $id_user) {
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
         // $this->spaceModel->deleteUser($id_space, $id_user);
@@ -321,22 +302,13 @@ class CorespaceController extends CoresecureController {
         return $space["name"];
     }
 
-    protected function getSpaceMenus($id_space, $userRole) {
-
-        $modelConfig = new CoreConfig();
-        $useCustomDaskBoard = $modelConfig->getParamSpace("CoreSpaceCustomDashboard", $id_space);
-        $this->useCustomDaskBoard = $useCustomDaskBoard;
-        if ($useCustomDaskBoard) {
-            $modelDashboardItems = new CoreDashboardItem();
-            return $modelDashboardItems->getSpaceMenus($id_space, $userRole);
-        } else {
-            return $this->spaceModel->getSpaceMenus($id_space, $userRole);
-        }
+    protected function getSpaceMenus($id_space, $userRole) { 
+        return $this->spaceModel->getSpaceMenus($id_space, $userRole);
     }
 
     /**
      * 
-     * @param type $id_space
+     * @param int $id_space
      * @return string
      */
     public function navbar($id_space) {
@@ -344,7 +316,7 @@ class CorespaceController extends CoresecureController {
         $space = $this->spaceModel->getSpace($id_space);
 
 
-        $spaceColor = "#428bca";
+        $spaceColor = "#ffffff";
         if ($space["color"] != "") {
             $spaceColor = $space["color"];
         }
@@ -352,63 +324,17 @@ class CorespaceController extends CoresecureController {
         $lang = $this->getLanguage();
         $showAdmMenu = false;
         if ($_SESSION['user_status'] > CoreStatus::$USER) {
-            $spaceMenuItems = $this->getSpaceMenus($space["id"], CoreSpace::$ADMIN);
             $showAdmMenu = true;
         } else {
             $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
             if ($role > CoreSpace::$MANAGER) {
                 $showAdmMenu = true;
             }
-            $spaceMenuItems = $this->getSpaceMenus($space["id"], $role);
         }
 
         $html = file_get_contents('Modules/core/View/Corespace/navbar.php');
 
 
-        $configModel = new CoreConfig();
-        $mainMenu = "";
-        foreach ($spaceMenuItems as $item) {
-
-            //print_r($item);
-
-            if (!$this->useCustomDaskBoard) {
-                $url = $item["url"];
-                $donfigTitle = $configModel->getParamSpace($url . "menuname", $id_space);
-
-                $name = $donfigTitle;
-                if ($donfigTitle == "") {
-                    try {
-                        $classTranslator = ucfirst($item["module"]) . "Translator";
-                        $TranslatorFile = "Modules/" . $item["module"] . "/Model/" . $classTranslator . ".php";
-                        require_once $TranslatorFile;
-                        $translator = new $classTranslator();
-                        $name = $translator->$url($lang);
-                    } catch (Throwable $e) {
-                            Configuration::getLogger()->error('[import] error', ['file' => $TranslatorFile]);
-                    }
-                }
-
-                $url = $item["url"] . '/' . $space["id"];
-            } else {
-                $name = $item["name"];
-                $url = $item["url"];
-                $item["color"] = $item["bgcolor"];
-            }
-
-
-            $colorMenu = 'style="background-color:#428bca; color: #fff;"';
-            if (isset($_SESSION["openedNav"]) && $_SESSION["openedNav"] == $item["url"]) {
-                if (isset($item["color"]) && $item["color"] != "") {
-                    $colorMenu = 'style="background-color:' . $item["color"] . '; color: #fff;"';
-                }
-            }
-
-            // replace if below
-            $mainMenu .= '<li>';
-            $mainMenu .= '<a ' . $colorMenu . ' href="' . $url . '">' . $name . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon ' . $item["icon"] . '"></span></a>';
-            $mainMenu .= '</li>';
-        }
-        $html = str_replace("{{menuitems}}", $mainMenu, $html);
         $html = str_replace("{{space.name}}", $space["name"], $html);
         $html = str_replace("{{space.color}}", $spaceColor, $html);
         $html = str_replace("{{space.id}}", $id_space, $html);
@@ -435,8 +361,8 @@ class CorespaceController extends CoresecureController {
 
     /**
      * 
-     * @param type $id_space
-     * @param type $name_module
+     * @param int $id_space
+     * @param string $name_module
      */
     public function configmoduleAction($id_space, $name_module) {
 

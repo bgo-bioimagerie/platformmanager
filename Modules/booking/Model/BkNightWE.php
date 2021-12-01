@@ -45,7 +45,7 @@ class BkNightWE extends Model {
     /**
      * Get all the prices info
      * @param string $sortEntry
-     * @return multitype:
+     * @return array multitype:
      */
     public function getSpacePrices($id_space, $sortEntry = 'id') {
         $sql = "select * from bk_nightwe WHERE id_space=? AND deleted=0 order by " . $sortEntry . " ASC;";

@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-form">
+<div class="pm-form">
 
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
@@ -83,8 +83,6 @@
                 </div>
 
             </div>
-            <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-            <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 
             <script type="text/javascript">
 
@@ -115,9 +113,7 @@
         </div>
     </div>    
 
-    <?php
-}
-?>
+    <?php } ?>
 <!-- End periodicity -->
 
 <div class="col-xs-12"></div>
@@ -152,20 +148,28 @@ if ($packageChecked > 0) {
 
 <script>
     $(document).ready(function () {
-        var php_var = "<?php echo $isPackageCheched; ?>";
-        if (php_var === 0) {
+        let php_var = "<?php echo $isPackageCheched; ?>";
+        if (php_var === "0") {
             document.getElementById('resa_time_div').style.display = 'none';
         } else {
-            document.getElementById('package_div').style.display = 'none';
+            let p_div = document.getElementById('package_div');
+            if (p_div) { p_div.style.display = 'none'; }
         }
 
-        document.getElementById('use_package').onchange = function () {
-            document.getElementById('package_div').style.display = this.checked ? 'block' : 'none';
-            document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
-
+        let use_package = document.getElementById('use_package');
+        if (use_package) {
+            document.getElementById('use_package').onchange = function () {
+                let php_var = "<?php echo $isPackageCheched; ?>";
+                if (php_var === "1") {
+                    let p_div = document.getElementById('package_div');
+                    if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
+                } else {
+                    document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
+                }
+            }
         }
         ;
-    };
+    });
 
 </script>
 

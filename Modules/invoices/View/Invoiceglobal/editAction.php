@@ -3,9 +3,9 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-table">
+<div class="pm-table">
     
-    <div class="col-md-12">
+    <div class="col-md-10">
         <div id="invoice-message-div" class="alert alert-success">
             
         </div>
@@ -19,9 +19,9 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th><?php echo InvoicesTranslator::Product($lang) ?></th>
-                        <th><?php echo InvoicesTranslator::Quantity($lang) ?></th>
-                        <th><?php echo InvoicesTranslator::UnitPrice($lang) ?></th>
+                        <th scope="col"><?php echo InvoicesTranslator::Product($lang) ?></th>
+                        <th scope="col"><?php echo InvoicesTranslator::Quantity($lang) ?></th>
+                        <th scope="col"><?php echo InvoicesTranslator::UnitPrice($lang) ?></th>
                     </tr>
                 </thead>
                 <tbody id="invoicetablebody">

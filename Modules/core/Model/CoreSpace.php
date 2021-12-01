@@ -68,20 +68,24 @@ class CoreSpace extends Model {
 
         // name = module
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_space` int(1) NOT NULL DEFAULT 1,
-		`module` varchar(60) NOT NULL DEFAULT '',
-                `url` varchar(120) NOT NULL DEFAULT '',
-                `icon` varchar(120) NOT NULL DEFAULT '',
-                `user_role` int(1) NOT NULL DEFAULT 1,
-                `display_order` int(11) NOT NULL DEFAULT 0,
-                PRIMARY KEY (`id`)
+		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(1) NOT NULL DEFAULT 1,
+            `module` varchar(60) NOT NULL DEFAULT '',
+            `url` varchar(120) NOT NULL DEFAULT '',
+            `icon` varchar(120) NOT NULL DEFAULT '',
+            `user_role` int(1) NOT NULL DEFAULT 1,
+            `display_order` int(11) NOT NULL DEFAULT 0,
+            `has_sub_menu` int(1) NOT NULL DEFAULT 1,
+            `color` varchar(7) NOT NULL DEFAULT '',
+            `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
+            PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql3);
 
         $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
         $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
     }
 
     /**
@@ -95,6 +99,7 @@ class CoreSpace extends Model {
             "contact" => "",
             "status" => 0,
             "color" => "",
+            "txtcolor" => "",
             "support" => "",
             "description" => "",
             "admins" => []
@@ -192,13 +197,13 @@ class CoreSpace extends Model {
         return $req->fetchAll();
     }
 
-    public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu = 1, $color = "") {
+    public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu = 1, $color = "", $txtcolor= "") {
         if ($this->isSpaceMenu($id_space, $url)) {
-            $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=? WHERE id_space=? AND url=?";
-            $this->runRequest($sql, array($module, $icon, $user_role, $display_order, $has_sub_menu, $color, $id_space, $url));
+            $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=?, txtcolor=? WHERE id_space=? AND url=?";
+            $this->runRequest($sql, array($module, $icon, $user_role, $display_order, $has_sub_menu, $color, $txtcolor, $id_space, $url));
         } else {
-            $sql = "INSERT INTO core_space_menus (id_space, module, url, icon, user_role, display_order, has_sub_menu, color) VALUES(?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu, $color));
+            $sql = "INSERT INTO core_space_menus (id_space, module, url, icon, user_role, display_order, has_sub_menu, color, txtcolor) VALUES(?,?,?,?,?,?,?,?, ?)";
+            $this->runRequest($sql, array($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu, $color, $txtcolor));
         }
     }
 
@@ -228,6 +233,15 @@ class CoreSpace extends Model {
 
     public function getSpaceMenusColor($id_space, $url) {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
+        $req = $this->runRequest($sql, array($id_space, $url))->fetch();
+        if(!$req) {
+            return null;
+        }
+        return $req[0];
+    }
+
+    public function getSpaceMenusTxtColor($id_space, $url) {
+        $sql = "SELECT txtcolor FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
             return null;
@@ -336,24 +350,12 @@ class CoreSpace extends Model {
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
         $roleArrray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
         $menuRole = $roleArrray[0];
+        $userRole = $this->getUserSpaceRole($id_space, $id_user);
 
-        if ($this->isSpacePublic($id_space)) {
-            if ($menuRole < CoreSpace::$MANAGER) {
-                return 1;
-            } else {
-                $userRole = $this->getUserSpaceRole($id_space, $id_user);
-                if ($userRole >= $menuRole) {
-                    return 1;
-                }
-                return 0;
-            }
-        } else {
-            $userRole = $this->getUserSpaceRole($id_space, $id_user);
-            if ($userRole >= $menuRole) {
-                return 1;
-            }
-            return 0;
+        if ($this->isSpacePublic($id_space) && $userRole == -1) {    
+                $userRole = CoreSpace::$VISITOR;
         }
+        return ($userRole >= $menuRole) ? 1 : 0;
     }
 
     public function isSpacePublic($id_space) {

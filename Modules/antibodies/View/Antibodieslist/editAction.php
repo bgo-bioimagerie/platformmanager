@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-content">
+<div class="pm-content">
     
     <div class="col-md-12 pm-form-short">
         <?php if(isset($_SESSION["message"])){

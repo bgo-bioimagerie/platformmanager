@@ -31,6 +31,15 @@ class InvoicesconfigController extends CoresecureController {
         }
     }
 
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -47,7 +56,16 @@ class InvoicesconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "invoices", "invoices", "glyphicon glyphicon-euro", $this->request->getParameter("invoicesmenustatus"), $this->request->getParameter("invoicesmenudisplay"), 1, $this->request->getParameter("invoicesmenucolor")
+            $modelSpace->setSpaceMenu(
+                $id_space,
+                "invoices",
+                "invoices",
+                "glyphicon glyphicon-euro",
+                $this->request->getParameter("invoicesmenustatus"),
+                $this->request->getParameter("invoicesmenudisplay"),
+                1,
+                $this->request->getParameter("invoicesmenucolor"),
+                $this->request->getParameter("invoicesmenucolorTxt")
             );
 
             $this->redirect("invoicesconfig/" . $id_space);
@@ -81,8 +99,16 @@ class InvoicesconfigController extends CoresecureController {
     }
 
     public function pdftemplateAction($id_space) {
-
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+
+        $currentTemplate = 'data/invoices/' . $id_space . '/template.twig';
+        if (! file_exists($currentTemplate)) {
+            $currentTemplate = 'data/invoices/' . $id_space . '/template.php';
+            if (! file_exists($currentTemplate)) {
+                $currentTemplate = null;
+            }
+        }
 
         $formDownload = new Form($this->request, "formDownloadTemplate");
         $formDownload->setTitle(InvoicesTranslator::currentTemplate($lang));
@@ -143,11 +169,15 @@ class InvoicesconfigController extends CoresecureController {
         $dataTable->setTitle(InvoicesTranslator::Images($lang));
         $dataTable->addDeleteButton("invoicepdftemplatedelete/" . $id_space);
 
-        $files = scandir('data/invoices/' . $id_space);
         $data = array();
-        foreach ($files as $file) {
-            if (strpos($file, ".") > 0 && $file != "template.twig") {
-                $data[] = array('name' => $file, 'id' => str_replace('.', "__pm__", $file));
+
+        if (file_exists('data/invoices/' . $id_space)) {
+            $files = scandir('data/invoices/' . $id_space);
+
+            foreach ($files as $file) {
+                if (strpos($file, ".") > 0 && $file != "template.twig") {
+                    $data[] = array('name' => $file, 'id' => str_replace('.', "__pm__", $file));
+                }
             }
         }
 
@@ -158,14 +188,14 @@ class InvoicesconfigController extends CoresecureController {
         $tableHtml = $dataTable->view($data, $headers);
 
         $this->render(array("id_space" => $id_space,
-            "formDownload" => $formDownload->getHtml($lang),
+            "formDownload" => $currentTemplate ? $formDownload->getHtml($lang): '',
             "formUpload" => $formUpload->getHtml($lang), "tableHtml" => $tableHtml,
             "formUploadImages" => $formUploadImages->getHtml($lang),
             "lang" => $lang));
     }
 
     public function pdftemplatedeleteAction($id_space, $name) {
-
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $namefile = str_replace("__pm__", '.', $name);
         unlink('data/invoices/' . $id_space . '/' . $namefile);
         $this->redirect('invoicepdftemplate/' . $id_space);
@@ -193,6 +223,7 @@ class InvoicesconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "invoices");
         $displayUserMenu = $modelSpace->getSpaceMenusDisplay($id_space, "invoices");
         $invoicesmenucolor = $modelSpace->getSpaceMenusColor($id_space, "invoices");
+        $invoicesmenucolorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "invoices");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -202,6 +233,7 @@ class InvoicesconfigController extends CoresecureController {
         $form->addSelect("invoicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("invoicesmenudisplay", CoreTranslator::Display_order($lang), false, $displayUserMenu);
         $form->addColor("invoicesmenucolor", CoreTranslator::color($lang), false, $invoicesmenucolor);
+        $form->addColor("invoicesmenucolorTxt", CoreTranslator::text_color($lang), false, $invoicesmenucolorTxt);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);

@@ -28,6 +28,7 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  *
@@ -44,6 +45,16 @@ class BookingdefaultController extends BookingabstractController {
         $this->module = "booking";
         //$this->checkAuthorizationMenu("booking");
     }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
 
     /**
      * @deprecated
@@ -125,6 +136,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function editreservationqueryAction($id_space) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         //FIXME: editng an existing reservation does not seem to work
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
@@ -590,7 +602,7 @@ class BookingdefaultController extends BookingabstractController {
             $form->addText("short_description", BookingTranslator::Short_desc($lang), false, $resaInfo["short_description"]);
         }
         if ($BkDescriptionFields == 1 || $BkDescriptionFields == 3) {
-            $form->addTextArea("full_description", BookingTranslator::Short_desc($lang), false, $resaInfo["full_description"]);
+            $form->addTextArea("full_description", BookingTranslator::Full_description($lang), false, $resaInfo["full_description"]);
         }
 
         // supplemetaries informations
@@ -657,7 +669,7 @@ class BookingdefaultController extends BookingabstractController {
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
         // date time
-        $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"]);
+        $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"] ?? 0);
         $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["start_time"]), $lang));
         $form->addHour("hour_start", BookingTranslator::time($lang), false, array(date("H", $resaInfo["start_time"]), date("i", $resaInfo["start_time"])));
 
@@ -766,6 +778,7 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteperiodAction($id_space, $id_period){
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $modelCalEntry = new BkCalendarPeriod();
         $modelCalEntry->deleteAllPeriod($id_space, $id_period);
 
@@ -773,11 +786,22 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function deleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $sendEmail = intval($this->request->getParameter("sendmail"));
         $modelCalEntry = new BkCalendarEntry();
+        $entryInfo = $modelCalEntry->getEntry($id_space, $id);
+        if (!$entryInfo) {
+            throw new PfmDbException("reservation not found", 404);
+        }
+        $id_resource = $entryInfo["resource_id"];
+        $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
+        if (!$canEdit) {
+            throw new PfmException("ERROR: You're not allowed to modify this reservation");
+        }
+
+
         if ($sendEmail == 1) {
-            $entryInfo = $modelCalEntry->getEntry($id_space, $id);
-            $id_resource = $entryInfo["resource_id"];
+            
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
 

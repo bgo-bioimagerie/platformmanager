@@ -12,6 +12,7 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -28,9 +29,18 @@ class BookingauthorisationsController extends CoresecureController {
         $_SESSION["openedNav"] = "ecusers";
     }
 
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
     public function indexAction($id_space, $id) {
 
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get all the resources
@@ -95,7 +105,7 @@ class BookingauthorisationsController extends CoresecureController {
 
     public function historyAction($id_space, $id) {
 
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $idArray = explode("_", $id);
@@ -156,7 +166,7 @@ class BookingauthorisationsController extends CoresecureController {
     }
 
     public function addAction($id_space, $id) {
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $idArray = explode("_", $id);
@@ -214,7 +224,7 @@ class BookingauthorisationsController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelAuth = new BkAuthorization();
@@ -226,6 +236,7 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelResourcesCategories = new ReCategory();
         // $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
+        $id_resource_category = $data["resource_id"];
         $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
         $categoryName = $recat['name'];
 

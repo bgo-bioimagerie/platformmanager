@@ -27,6 +27,17 @@ class DocumentsconfigController extends CoresecureController {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
+    
     
     /**
      * (non-PHPdoc)
@@ -48,7 +59,8 @@ class DocumentsconfigController extends CoresecureController {
                     $this->request->getParameter("documentsmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     0,
-                    $this->request->getParameter("colorMenu")
+                    $this->request->getParameter("colorMenu"),
+                    $this->request->getParameter("colorTxtMenu")
                     );
             
             $this->redirect("documentsconfig/".$id_space);
@@ -67,6 +79,7 @@ class DocumentsconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "documents");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "documents");
         $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "documents");
+        $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "documents");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -76,6 +89,7 @@ class DocumentsconfigController extends CoresecureController {
         $form->addSelect("documentsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
+        $form->addColor("colorTxtMenu", CoreTranslator::color($lang), false, $colorTxtMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "documentsconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

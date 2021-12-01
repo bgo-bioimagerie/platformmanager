@@ -1,4 +1,4 @@
-<div class="col-xs-12">
+<div>
     <h4 id="pm-help-h4">Domaine</h4>
     <p id="pm-help-p">
         <b>Une ressource est classée dans un domaine</b>. Les domaines sont utilisés 

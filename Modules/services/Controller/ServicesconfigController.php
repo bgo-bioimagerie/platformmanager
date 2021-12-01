@@ -28,6 +28,15 @@ class ServicesconfigController extends CoresecureController {
         }
     }
 
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -43,7 +52,16 @@ class ServicesconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, $lang);
         if ($formMenusactivation->check()) {
 
-            $modelSpace->setSpaceMenu($id_space, "services", "services", "glyphicon glyphicon-plus", $this->request->getParameter("servicesmenustatus"), $this->request->getParameter("displayMenu"), 1, $this->request->getParameter("displayColor")
+            $modelSpace->setSpaceMenu(
+                $id_space,
+                "services",
+                "services",
+                "glyphicon glyphicon-plus",
+                $this->request->getParameter("servicesmenustatus"),
+                $this->request->getParameter("displayMenu"),
+                1,
+                $this->request->getParameter("displayColor"),
+                $this->request->getParameter("displayColorTxt")
             );
 
             $this->redirect("servicesconfig/" . $id_space);
@@ -115,6 +133,7 @@ class ServicesconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "services");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "services");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "services");
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "services");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -124,6 +143,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addSelect("servicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor("displayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);
@@ -164,8 +184,13 @@ class ServicesconfigController extends CoresecureController {
 
     public function projectCommandForm($modelCoreConfig, $id_space, $lang) {
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        if($servicesuseproject === "") {
+            $servicesuseproject = 0;
+        }
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
-
+        if($servicesusecommand === "") {
+            $servicesusecommand = 0;
+        }
         $form = new Form($this->request, "periodCommandForm");
         $form->addSeparator(ServicesTranslator::Project($lang) . " & " . ServicesTranslator::Orders($lang));
         $form->addSelect("servicesuseproject", ServicesTranslator::UseProject($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesuseproject);
@@ -179,7 +204,9 @@ class ServicesconfigController extends CoresecureController {
 
     public function stockForm($modelCoreConfig, $id_space, $lang) {
         $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
-
+        if($servicesusestock === "") {
+            $servicesusestock = 0;
+        }
         $form = new Form($this->request, "stockForm");
         $form->addSeparator(ServicesTranslator::Stock($lang));
         $form->addSelect("servicesusestock", ServicesTranslator::UseStock($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusestock);
