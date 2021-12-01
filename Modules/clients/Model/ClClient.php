@@ -33,7 +33,6 @@ class ClClient extends Model {
             $formattedAddress = "";
             $addressAttrToPrint = ['institution', 'building_floor', 'service', 'address', 'zip_code', 'city', 'country'];
             foreach($addressAttrToPrint as $addressAttr) {
-                Configuration::getLogger()->debug("[TEST]", ["address" => $address]);
                 if ($addressAttr && $addressAttr != "") {
                     $formattedAddress .= $address[$addressAttr];
                     $formattedAddress .= ($addressAttr != 'zip_code') ? "\n" : " "; 
