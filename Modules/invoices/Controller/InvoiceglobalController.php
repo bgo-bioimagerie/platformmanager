@@ -123,7 +123,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
         if ($details > 0) {
             $detailsTable = $this->generateDetailsTable($id_space, $id_invoice);
         }
-        $this->genreratePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos);
+        $this->generatePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos);
     }
 
     public function editqueryAction($id_space, $id_invoice) {
