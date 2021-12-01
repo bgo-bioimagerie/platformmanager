@@ -29,12 +29,22 @@ class ClClient extends Model {
     public function getAddressInvoice($id_space ,$id){
         $sql = "SELECT * FROM cl_addresses WHERE id=(SELECT address_invoice FROM cl_clients WHERE id=? AND id_space=? AND deleted=0)";
         $address = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $address["institution"] . "\n" . $address["building_floor"] 
-                . "\n" . $address["service"] 
-                . "\n" . $address["address"]
-                . "\n" . $address["zip_code"] 
-                . " " . $address["city"]
-                . "," . $address["country"] ;
+        if ($address) {
+            $formattedAddress = "";
+            $addressAttrToPrint = ['institution', 'building_floor', 'service', 'address', 'zip_code', 'city', 'country'];
+            foreach($addressAttrToPrint as $addressAttr) {
+                Configuration::getLogger()->debug("[TEST]", ["address" => $address]);
+                if ($addressAttr && $addressAttr != "") {
+                    $formattedAddress .= $address[$addressAttr];
+                    $formattedAddress .= ($addressAttr != 'zip_code') ? "\n" : " "; 
+                }
+            }
+            $result = $formattedAddress;
+        } else {
+            $result = $address;
+        }
+        
+        return $result;
     }
     
     public function setAddressDelivery($id_space, $id, $id_addressdelivery) {

@@ -34,7 +34,7 @@ if ($id_quote > 0) {
             let targets = [
                 {
                     elementId: "id_client",
-                    apiRoute: `clientusersgetuserclients/`
+                    apiRoute: `clientusers/getclients/`
                 }
             ];
             dynamicForms.dynamicFields(sourceId, targets, spaceId);
