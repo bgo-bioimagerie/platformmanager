@@ -43,6 +43,17 @@ class HelpdeskController extends CoresecureController {
         ));
     }
 
+    public function notifsAction($id_space) {
+        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $hm = new Helpdesk();
+        $unread = $hm->unread($id_space);
+        $total = 0;
+        if(!empty($unread)) {
+            $total = $unread[0]['total'];
+        }
+        $this->render(['data' => ['notifs' => $total]]);
+    }
+
     public function setSettingsAction($id_space) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $role = $this->spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
