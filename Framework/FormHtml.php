@@ -682,7 +682,8 @@ class FormHtml {
      * @return string
      */
     static public function buttons($formid, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $externalButtons = array(), $buttonsWidth = 2, $buttonsOffset = 9) {
-        $html = "<div class=\"col-xs-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
+        $html = '<div class="form-group">';
+        $html .= "<div class=\"col-xs-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
         if ($validationButtonName != "") {
             $html .= "<input type=\"submit\" id=\"" . $formid . "submit" . "\" class=\"btn btn-primary\" value=\"" . $validationButtonName . "\" />";
         }
@@ -703,7 +704,7 @@ class FormHtml {
                 $html .= "<button type=\"button\" onclick=\"location.href='" . $ext["url"] . "'\" class=\"btn btn-" . $ext["type"] . "\">" . $ext["name"] . "</button>";
             }
         }
-
+        $html .= "</div>";
         $html .= "</div>";
         return $html;
     }
