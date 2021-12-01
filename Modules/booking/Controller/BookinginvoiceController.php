@@ -800,7 +800,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resp = $clientInfos["contact_name"];
         $useTTC = true;
 
-        $this->genreratePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos);
+        $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos);
     }
 
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
@@ -816,7 +816,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resp = $clientInfos["contact_name"];
         
         $useTTC = true;
-        $this->genreratePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos);
+        $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos);
     }
 
     protected function unparseContent($id_space, $id_item, $lang) {

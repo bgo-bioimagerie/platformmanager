@@ -389,7 +389,7 @@ class QuotelistController extends QuoteController {
         $table = $this->makePDFTable($table, $lang);
 
         // generate pdf
-        $adress = nl2br($info["address"]);
+        $address = nl2br($info["address"]);
         $resp = $info["recipient"];
         $clientInfos["email"] = "";
         if (is_array($info["client"]) && !empty($info["client"])) {
@@ -404,9 +404,40 @@ class QuotelistController extends QuoteController {
         $invoiceInfo["title"] = "";
         $number = "";
         $unit = "";
-        ob_start();
-        include('data/invoices/'.$id_space.'/template.php');
-        $content = ob_get_clean();
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
+            throw new PfmFileException("No template found", 404);
+        }
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && file_exists('data/invoices/'.$id_space.'/template.php')) {
+            // backwark, templates were in PHP and no twig template available use old template
+            ob_start();
+            include('data/invoices/'.$id_space.'/template.php');
+            $content = ob_get_clean();
+        } else {
+            $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../..');
+            $twig = new \Twig\Environment($loader, []);
+            $content = $twig->render('data/invoices/'.$id_space.'/template.twig', [
+                'id_space' => $id_space,
+                'id' => $id,
+                'number' => $number,
+                'date' => $date,
+                'unit' => $unit,
+                'resp' => $resp,
+                'address' => $address,
+                'adress' => $address,  // backward compat
+                'table' => $table,
+                'total' => $total,
+                'useTTC' => $useTTC,
+                'details' => $details,
+                'clientsInfos' => null,
+                'invoiceInfo' => $invoiceInfo,
+                'isquote' => $isquote
+            ]);
+        }
+
+
+
 
         // convert in PDF
         // require_once('externals/html2pdf/vendor/autoload.php');

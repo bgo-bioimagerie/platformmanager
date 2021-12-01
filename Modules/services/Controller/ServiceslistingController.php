@@ -12,7 +12,7 @@ require_once 'Modules/services/Controller/ServicesController.php';
 /**
  * 
  * @author sprigent
- * Controller for the home page
+ * Controller for services list page
  */
 class ServiceslistingController extends ServicesController {
 
