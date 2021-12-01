@@ -7,6 +7,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/StockCabinet.php';
 
 require_once 'Modules/services/Model/ServicesTranslator.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * Manage the units (each user belongs to an unit)
@@ -14,7 +15,7 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
  * @author sprigent
  *
  */
-class StockcabinetController extends CoresecureController {
+class StockcabinetController extends ServicesController {
 
     /**
      * User model object

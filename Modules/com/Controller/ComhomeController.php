@@ -5,13 +5,14 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/com/Model/ComTranslator.php';
 require_once 'Modules/com/Model/ComNews.php';
+require_once 'Modules/com/Controller/ComController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ComhomeController extends CoresecureController {
+class ComhomeController extends ComController {
 
     /**
      * Constructor
@@ -73,9 +74,6 @@ class ComhomeController extends CoresecureController {
 
         $htmls = array();
         foreach ($tweets as $tweet) {
-            //$id = $tweet['id'];
-            
-            //print_r($tweet);
             
             $url = 'https://publish.twitter.com/oembed';
             $requestMethod = "GET";

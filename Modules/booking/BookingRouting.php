@@ -3,7 +3,11 @@
 require_once 'Framework/Routing.php';
 
 class BookingRouting extends Routing{
-   
+
+    public function routes($router) {
+        $router->map('GET', '/user/booking/future/[i:id_space]/[i:id_resource]', 'booking/booking/future', 'booking_list_future');
+    }
+
     
     public function listRoutes(){
         

@@ -12,6 +12,7 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -26,6 +27,15 @@ class BookingauthorisationsController extends CoresecureController {
     public function __construct(Request $request) {
         parent::__construct($request);
         $_SESSION["openedNav"] = "ecusers";
+    }
+
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if ($id_space) {
+            $csc = new CoreSpaceController($this->request);
+            return $csc->navbar($id_space);
+        }
+        return null;
     }
 
     public function indexAction($id_space, $id) {

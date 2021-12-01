@@ -9,6 +9,7 @@ require_once 'Modules/services/Controller/ServicesstatisticsprojectController.ph
 require_once 'Modules/booking/Controller/BookingstatisticsController.php';
 
 require_once 'Modules/booking/Model/BkColorCode.php';
+require_once 'Modules/statistics/Controller/StatisticsController.php';
 
 
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -19,7 +20,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  * @author sprigent
  * Controller for the home page
  */
-class StatisticsglobalController extends CoresecureController {
+class StatisticsglobalController extends StatisticsController {
 
     /**
      * Constructor

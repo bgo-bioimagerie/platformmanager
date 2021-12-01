@@ -76,7 +76,7 @@ class Form {
         $this->labelWidth = 4;
         $this->inputWidth = 6;
         $this->buttonsWidth = 12;
-        $this->buttonsOffset = 0;
+        $this->buttonsOffset = 1;
         $this->title = "";
         $this->validationURL = "";
         $this->cancelURL = "";
@@ -304,14 +304,15 @@ class Form {
 
     /**
      * To download a file from the database
-     * @param type $label
-     * @param type $url
+     * @param string $name
+     * @param string $label
+     * @param string $url
      */
-    public function addDownloadButton($name, $label, $url, $manual) {
+    public function addDownloadButton($name, $label, $url) {
         $this->types[] = "downloadbutton";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->isMandatory[] = $manual;
+        $this->isMandatory[] = false;
         $this->choices[] = array();
         $this->choicesid[] = array();
         $this->validated[] = true;
@@ -716,7 +717,7 @@ class Form {
                 $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "downloadbutton") {
-                $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth);
+                $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "select") {
                 $sub = "";

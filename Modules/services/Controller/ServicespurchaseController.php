@@ -9,13 +9,14 @@ require_once 'Modules/services/Model/SePurchase.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SePurchaseItem.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicespurchaseController extends CoresecureController {
+class ServicespurchaseController extends ServicesController {
 
     private $serviceModel;
 

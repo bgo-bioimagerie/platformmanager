@@ -430,7 +430,6 @@ class BkCalendarEntry extends Model {
      * 
      */
     public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id) {
-
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
@@ -442,7 +441,6 @@ class BkCalendarEntry extends Model {
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
-
 
         $modelUser = new CoreUser();
         $modelColor = new BkColorCode();
@@ -464,6 +462,7 @@ class BkCalendarEntry extends Model {
                 $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space, $data[$i]["color_type_id"]);
             }
         }
+
         return $data;
     }
 
@@ -766,6 +765,33 @@ class BkCalendarEntry extends Model {
                 ;";
         $req = $this->runRequest($sql, array($area_id, $id_space, $id_space));
         return $req->fetchAll();
+    }
+
+
+    /**
+     * Get user future bookings
+     */
+    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): array{
+        $now = time();
+        $q = array('today' => $now, 'id_user' => $id_user);
+        $sql = 'SELECT bk_calendar_entry.*, spaces.name as space, resources.name as resource FROM bk_calendar_entry';
+        $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
+        $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
+        $sql .= ' WHERE start_time >= :today AND recipient_id=:id_user';
+        if($id_space && intval($id_space) > 0) {
+            $q['id_space'] = $id_space;
+            $sql .= ' AND bk_calendar_entry.id_space = :id_space';
+        }
+        if($id_resource && intval($id_resource) > 0) {
+            $q['res'] = $id_resource;
+            $sql .= ' AND bk_calendar_entry.resource_id = :res';
+        }
+        $sql .= ' ORDER BY bk_calendar_entry.start_time ASC LIMIT 20';
+        $req = $this->runRequest($sql, $q);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
     }
 
 }

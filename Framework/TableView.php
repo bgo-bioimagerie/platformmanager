@@ -71,7 +71,7 @@ class TableView {
 
     /**
      * 
-     * @param type $value
+     * @param int $value
      */
     public function setTextMaxLength($value) {
         $this->textMaxLength = $value;
@@ -344,6 +344,10 @@ class TableView {
                             $ccolor = $dat[$this->colorIndexes["all"]];
 	    		        }
                     }
+                    $tcolor = "#000000";
+                    if(isset($this->colorIndexes["all_text"])) {
+                        $tcolor = $dat[$this->colorIndexes["all_text"]];
+                    }
                     
                     $val = $dat[$key];
                     if(is_array($value)){
@@ -374,7 +378,7 @@ class TableView {
                         if (strlen($dat[$key]) && $this->textMaxLength > 0) {
                             $val = substr($dat[$key], 0, $this->textMaxLength);
                         }
-                        $html .= "<td style=\"background-color:" .$ccolor.";\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
+                        $html .= "<td style=\"background-color: $ccolor; color: $tcolor\"> " . htmlspecialchars($val, ENT_QUOTES, 'UTF-8', false) . "</td>";
                     }
                 }
                 $html .= "</tr>";
@@ -410,7 +414,7 @@ class TableView {
     /**
      * 
      * @param type $html
-     * @param type $headerscount
+     * @param int $headerscount
      * @return string
      */
     private function addSearchHeader($html, $headerscount) {

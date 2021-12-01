@@ -1,35 +1,8 @@
 <!doctype html>
 <?php include 'Modules/layout.php' ?>
 
-<!-- header -->
-<?php startblock('title') ?>
-Platform-Manager
-<?php endblock() ?>
-
 
 <?php startblock('stylesheet') ?>
-<?php
-$headless = Configuration::get("headless");
-$pmspaceheadercontent = "";
-$pmspaceheadernavbar = "pm-space-navbar-no-header";
-if (!$headless) {
-    $pmspaceheadercontent = "pm-space-content";
-    $pmspaceheadernavbar = "pm-space-navbar";
-    ?>
-    <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-    <?php
-}
-
-
-?>
-
-<!-- Bootstrap core CSS -->
-<link href="externals/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="Modules/core/Theme/core.css">
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/spacemenu.css' />
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
-
-
 <script src="https://unpkg.com/marked@0.3.6"></script>
 <script src="https://unpkg.com/lodash@4.16.0"></script>
 <style>
@@ -60,40 +33,15 @@ blockquote {
 <?php endblock() ?>
 
 
-<?php
-startblock('navbar');
-if (!$headless) {
-    require_once 'Modules/core/Controller/CorenavbarController.php';
-    $navController = new CorenavbarController(new Request(array(), false));
-    echo $navController->navbar();
-}
-endblock();
-?>
-
-
-<?php startblock('spacenavbar'); ?>
-<?php
-if (!$headless) {
-    require_once 'Modules/core/Controller/CorespaceController.php';
-    $spaceController = new CorespaceController(new Request(array(), false));
-    echo $spaceController->navbar($id_space);
-}
-?>
-
-<div class="col-md-12 col-lg-12 <?php echo $pmspaceheadercontent ?>" >
-<?php endblock(); ?>
-
-
-
 <!-- body -->
 <?php startblock('content') ?>
 
-<div id="helpdeskapp" class="col-md-12" style="background-color: #fff; height:100%">
+<div id="helpdeskapp" style="background-color: #fff; height:100%">
     <div class="row">
         <!-- Message -->
         <div class="col-sm-10 col-sm-offset-1 text-center">
              <?php
-        if (isset($_SESSION["message"])) {
+        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             if (substr($_SESSION["message"], 0, 3) === "Err") {
                 ?>
                 <div class="alert alert-danger">
@@ -117,7 +65,7 @@ if (!$headless) {
         <div v-if="message" class="col-sm-12 text-center">
             <div class="alert alert-warning">{{message}}</div>
         </div>
-        <div class="col-sm-2 text-center">
+        <div class="col-sm-2 text-center" style="background-color: <?php echo $menuInfo["color"] ?> ; color: <?php echo $menuInfo["txtcolor"] ?>">
             <div @click="newTicket()">Create</div>
             <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
             <div v-bind:class="filter==0 ? 'selection':''"  @click="setFilter(0)">New {{unread["s0"]}}</div>

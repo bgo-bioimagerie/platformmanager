@@ -5,8 +5,9 @@ require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Enzyme.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
-class EnzymesController extends CoresecureController {
+class EnzymesController extends AntibodiesController {
 
     /**
      * User model object

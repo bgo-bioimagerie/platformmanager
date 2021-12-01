@@ -2,18 +2,6 @@
 
 <?php startblock('stylesheet') ?>
 
-<link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
-<?php
-$headless = Configuration::get("headless");
-if (!$headless) {
-    ?>
-    <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-    <?php
-}
-?>
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/core.css' />
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
-
 <style>
     .modulebox{
         border: solid 1px #e1e1e1; 
@@ -22,6 +10,7 @@ if (!$headless) {
         width:220px; 
         margin-left: 25px;
         margin-top: 25px;
+        background-color: white;
     }    
 </style>
 
@@ -30,23 +19,24 @@ if (!$headless) {
 <?php startblock('content') ?>
 
 <?php if ($showSubBar){ ?> 
+<div class="row">
 <div class="col-md-12 pm-nav">
     <?php include('Modules/core/View/Coretiles/navbar.php'); ?>
-</div>  
+</div>
+</div>
 <?php } ?>
 
 
-<div class="col-xs-12" style="background-color: #fff">
+<div class="row" style="background-color: #fff">
     <div class="container"<?php if ($showSubBar){echo 'style="margin-top: 50px;"';} ?> >
         <h3><?php echo $title ?></h3>    
     </div>
 </div>
 
-<div class="col-xs-12 pm-tile-container"  >
+<div class="row pm-tile-container"  >
 
     <div class="container">
 
-        
         <div class="bs-glyphicons">
             <ul class="bs-glyphicons-list">
                 <?php
