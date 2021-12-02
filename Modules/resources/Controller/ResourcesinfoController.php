@@ -468,7 +468,7 @@ class ResourcesinfoController extends ResourcesBaseController {
         $form = new Form($this->request, "respsform");
         $formAdd = new FormAdd($this->request, "respaddform");
         $formAdd->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $resps);
-        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus);
+        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus, isMandatory:true);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, "");
