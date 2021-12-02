@@ -16,7 +16,7 @@
 				if(count($toolMenu) > 5) {
 				?>
 					<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo  CoreTranslator::Structures($lang) ?> <span class="caret"></span></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo  CoreTranslator::Menus($lang) ?> <span class="caret"></span></a>
 					<ul class="dropdown-menu" role="menu">
 						<?php 
 						foreach ($toolMenu as $tool) {

@@ -11,7 +11,7 @@
 
         <div class="collapse navbar-collapse" id="coremainmenusnavbar">
             <ul class="nav navbar-nav">
-                <li><a href="coremainmenus"><?php echo CoreTranslator::MainStructures($lang) ?></a></li>
+                <li><a href="coremainmenus"><?php echo CoreTranslator::MainMenus($lang) ?></a></li>
                 <li><a href="coremainsubmenus"><?php echo CoreTranslator::MainSubMenus($lang) ?></a></li>
                 <li><a href="coremainmenuitems"><?php echo CoreTranslator::Items($lang) ?></a></li>
             </ul>                 

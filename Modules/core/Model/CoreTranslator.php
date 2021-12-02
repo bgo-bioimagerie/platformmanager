@@ -1284,7 +1284,7 @@ class CoreTranslator {
         return "Configuration";
     }
 
-    public static function Structures($lang) {
+    public static function Menus($lang) {
         if ($lang == "fr") {
             return "Structures";
         }
@@ -1639,63 +1639,63 @@ class CoreTranslator {
         return "Substructures";
     }
 
-    public static function MainStructures($lang) {
+    public static function MainMenus($lang) {
         if ($lang == "fr") {
             return "Structures";
         }
         return "Structures";
     }
 
-    public static function MainStructure($lang) {
+    public static function MainMenu($lang) {
         if ($lang == "fr") {
             return "Structure";
         }
         return "Structure";
     }
 
-    public static function NewMainStructure($lang) {
+    public static function NewMainMenu($lang) {
         if ($lang == "fr") {
             return "Ajouter structure";
         }
         return "New structure";
     }
 
-    public static function NewMainSubStructure($lang) {
+    public static function NewMainSubMenu($lang) {
         if ($lang == "fr") {
             return "Ajouter sous-structure";
         }
         return "New substructure";
     }
 
-    public static function EditMainStructure($lang) {
+    public static function EditMainMenu($lang) {
         if ($lang == "fr") {
             return "Edition structure";
         }
         return "Edit structure";
     }
 
-    public static function EditMainSubStructure($lang) {
+    public static function EditMainSubMenu($lang) {
         if ($lang == "fr") {
             return "Edition sous-structure";
         }
         return "Edit substructure";
     }
 
-    public static function StructureSaved($lang) {
+    public static function MenuSaved($lang) {
         if ($lang == "fr") {
             return "La structure a bien été sauvegardée";
         }
         return "Structure has been saved";
     }
 
-    public static function SubStructures($lang) {
+    public static function SubMenus($lang) {
         if ($lang == "fr") {
             return "Sous-structures";
         }
         return "Substructures";
     }
 
-    public static function SubStructure($lang) {
+    public static function SubMenu($lang) {
         if ($lang == "fr") {
             return "Sous-structure";
         }
