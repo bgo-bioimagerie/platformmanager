@@ -58,6 +58,9 @@ class CorespaceController extends CoresecureController {
     public function viewAction($id_space) {
 
         $space = $this->spaceModel->getSpace($id_space);
+        if(!$space) {
+            throw new PfmUserException('space not found', 404);
+        }
         if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }

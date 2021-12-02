@@ -33,6 +33,10 @@ services:
       PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER}
       PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
       PFM_HELPDESK_IMAP_TLS:
+      PFM_ADMIN_USER: pfmadmin
+      PFM_ADMIN_EMAIL: admin@pfm.org
+      PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
     working_dir: /var/www/platformmanager
     entrypoint: ["/pfmextra-entrypoint.sh", "helpdesk"]
     volumes:
@@ -69,6 +73,10 @@ services:
       PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
       PFM_HELPDESK_IMAP_TLS:
       PFM_JWT_SECRET: ${PFM_JWT_SECRET}
+      PFM_ADMIN_USER: pfmadmin
+      PFM_ADMIN_EMAIL: admin@pfm.org
+      PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
     depends_on:
         - mysql
         - pfm-rabbitmq
