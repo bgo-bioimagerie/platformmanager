@@ -3,7 +3,7 @@
 require_once 'Framework/Request.php';
 require_once 'Framework/FormAdd.php';
 require_once 'Framework/FormHtml.php';
-
+require_once 'Modules/core/Model/CoreTranslator.php';
 
 abstract class FormBaseElement {
 
@@ -19,8 +19,17 @@ abstract class FormBaseElement {
     protected ?string $autocomplete = null;
     protected ?string $error = null;
     protected array $classes = [];
+    protected ?string $unique = null; // login, email
+    protected ?string $equals = null; // unique identifier for fields to match
+    protected ?array $suggests = null;  // array of element ids for a suggestion (['firstname', 'lastname'] for ex)
 
-    abstract function html(): string;
+    protected array $javascript = [];
+
+    abstract function html(?string $user=null, ?string $id_space=null): string;
+
+    public function Javascript(): array {
+        return $this->javascript;
+    }
 
     public function __construct($name, $value='', $placeholder=null) {
         $this->name = $name;
@@ -56,6 +65,9 @@ abstract class FormBaseElement {
 
     public function setType(string $type) : FormBaseElement {
         $this->type = $type;
+        if($this->type == 'email') {
+            $this->javascript['unique'] = "control.loadEmails();\n";
+        }
         return $this;
     }
 
@@ -69,10 +81,28 @@ abstract class FormBaseElement {
         return $this;
     }
 
+    public function setUnique(string $unique='login') : FormBaseElement {
+        $this->unique = $unique;
+        $this->javascript['unique'] = "control.loadUniques();\n";
+        return $this;
+    }
+
+    public function setEquals(string $equals=null) : FormBaseElement {
+        $this->equals = $equals;
+        $this->javascript['equals'] = "control.loadEquals();\n";
+        return $this;
+    }
+
+    public function setSuggests(array $suggests=null) : FormBaseElement {
+        $this->suggests = $suggests;
+        $this->javascript['suggests'] = "control.loadSuggests();\n";
+        return $this;
+    }
+
     /**
      * Get common options
      */
-    protected function options(): string {
+    protected function options(?string $user=null, ?string $id_space=null): string {
         $options = '';
         if($this->mandatory) {
             $options .= ' required';
@@ -83,35 +113,50 @@ abstract class FormBaseElement {
         if($this->autocomplete) {
             $options .= ' autocomplete="'.$this->autocomplete.'"';
         }
+        if($this->unique) {
+            $options .= ' x-unique="'.$this->unique.'"';
+            if($user) {
+                $options .= 'x-id="'.$user.'"';
+            }
+        }
+        if($this->type == 'email') {
+            $options .= 'x-email';
+        }
+        if($this->equals) {
+            $options .= ' x-equal="'.$this->equals.'"';
+        }
+        if($this->suggests) {
+            $options .= ' x-suggest="'.implode(',', $this->suggests).'"';
+        }
         return trim($options);
     }
 
     /**
      * Generate HTML for form element
      */
-    public function toHtml() : string {
-        $html = '<div class="form-group row">';
+    public function toHtml(?string $user=null, ?string $id_space=null) : string {
+        $html = '  <div class="form-group row">'."\n";
         if ($this->label) {
-            $html .= '  <div class="col-xs-12 col-md-2">';
+            $html .= '    <div class="col-xs-12 col-md-2">'."\n";
             $extra = '';
             if($this->mandatory) { $extra = '*'; }
-            $html .= '    <label class="form-label" for="'.$this->name.'">'.$this->label.$extra.'</label>';
-            $html .= '  </div>';
+            $html .= '      <label class="form-label" for="'.$this->name.'">'.$this->label.$extra.'</label>'."\n";
+            $html .= '    </div>'."\n";
         
-            $html .= '  <div class="col-xs-12 col-md-10">';
+            $html .= '    <div class="col-xs-12 col-md-10">'."\n";
         } else {
-            $html .= '  <div class="col-xs-12">';
+            $html .= '    <div class="col-xs-12">'."\n";
         }
 
-        $html .= $this->html();
+        $html .= $this->html($user, $id_space);
         if ($this->caption) {
-            $html .= '    <small class="form-text text-muted">'.$this->caption.'</small>';
+            $html .= '      <small class="form-text text-muted">'.$this->caption.'</small>'."\n";
         }
         if ($this->error) {
-            $html .= '    <div class="alert alert-error" role="alert">'.$this->error.'</div>';
+            $html .= '      <div class="alert alert-error" role="alert">'.$this->error.'</div>'."\n";
         }
-        $html .= '  </div>';
-        $html .= '</div>';
+        $html .= '    </div>'."\n";
+        $html .= '  </div>'."\n";
         return $html;
     }
 
@@ -134,14 +179,14 @@ class FormInputElement extends FormBaseElement {
         $this->setType('text');
     }
 
-    function html() : string {
-        return '    <input '.$this->options().' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>';
+    function html(?string $user=null, ?string $id_space=null) : string {
+        return '    <input '.$this->options($user, $id_space).' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>'."\n";
     }
 }
 
 class FormTextElement extends FormBaseElement {
-    function html() : string {
-        return '    <textarea '.$this->options().'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>';
+    function html(?string $user=null, ?string $id_space=null) : string {
+        return '    <textarea '.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>'."\n";
     }
 }
 
@@ -159,8 +204,8 @@ class FormHiddenElement extends FormInputElement {
 
 class FormOptionElement extends FormBaseElement {
 
-    function html(): string {
-        return '<option value="'.$this->value.'">'.$this->name.'</option>';
+    function html(?string $user=null, ?string $id_space=null): string {
+        return '<option value="'.$this->value.'">'.$this->name.'</option>'."\n";
     }
 }
 
@@ -187,13 +232,12 @@ class FormSelectElement extends FormBaseElement {
        $this->options[] = $option;
    }
 
-   public function html(): string {
-       $html = '<select class="form-control '.$this->getClasses().'" '.$this->options().' id="'.$this->name.'" name="'.$this->name.'" value="'.$this->value.'">';
-       $html .= "\n";
+   public function html(?string $user=null, ?string $id_space=null): string {
+       $html = '<select class="form-control '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->name.'" name="'.$this->name.'" value="'.$this->value.'">'."\n";
        foreach($this->options as $option) {
            $html .= $option->html()."\n";
        }
-       $html .= '</select>';
+       $html .= '</select>'."\n";
        return $html;
    }
 
@@ -216,6 +260,9 @@ class FormSelectElement extends FormBaseElement {
  */
 class PfmForm {
 
+    static ?string $user = null;
+    static ?int $id_space = null;
+
     // Name of form
     private string $name;
     // URL to post form
@@ -224,6 +271,40 @@ class PfmForm {
     private array $elts = [];
 
     private ?string $cancelUrl = null;
+
+    public function Javascript():string {
+        $html =  "\n<script type=\"module\">\n";
+        $html .= "import {FormControls} from '/externals/pfm/controls/formcontrols_script.js';\n";
+        $html .= 'document.addEventListener("DOMContentLoaded", function(event) {'."\n";
+        $html .= "  let control = new FormControls();\n";
+        $html .= "  control.loadForms();\n";
+
+        $js = [];
+        foreach ($this->elts as $elt) {
+            foreach($elt->Javascript() as $key => $value) {
+                if(isset($js[$key])) {
+                    continue;
+                }
+                $html .= "  // $key\n";
+                $html .= "  $value\n";
+                $js[$key] = $value;
+            }
+        }
+
+        $html .= "});\n";
+        $html .= "</script>\n";
+        return $html;
+    }
+
+    public function setUser(string $user) {
+        self::$user = $user;
+        return $this;
+    }
+
+    public function setSpace(string $space) {
+        self::$id_space = $space;
+        return $this;
+    }
 
     public function __construct($name, $url=null) {
         $this->name = $name;
@@ -241,21 +322,27 @@ class PfmForm {
     /**
      * Generate HTML for form element
      */
-    public function toHtml(): string {
-        $html = '<form class="form" id="'.$this->name.'" method="post" action="'.$this->url.'">';
+    public function toHtml($lang='en'): string {
+        $html = '<form x-form class="form" id="'.$this->name.'" method="post" action="'.$this->url.'">'."\n";
         foreach ($this->elts as $elt) {
-            $html .= '  '.$elt->toHtml();
+            $html .= $elt->toHtml(self::$user, self::$id_space)."\n";
         }
-        $html .= '<div class="row">';
-        $html .= '<div class="col-xs-12 col-md-4"><button type="submit" class="btn btn-primary">Save</button></div>';
+        $html .= '  <div class="row">'."\n";
+        $html .= '    <div class="col-xs-12 col-md-4">'."\n";
+        $html .= '      <button type="submit" class="btn btn-primary">'.CoreTranslator::Save($lang).'</button>'."\n";
+        $html .= '    </div>'."\n";
         if($this->cancelUrl) {
-            $html .= '<div class="col-xs-12 col-md-4"><a href="'.$this->cancelUrl.'"><button type="button" class="btn btn-primary">Cancel</button></a></div>';
+            $html .= '    <div class="col-xs-12 col-md-4">'."\n";
+            $html .= '      <a href="'.$this->cancelUrl.'"><button type="button" class="btn btn-primary">'.CoreTranslator::Cancel($lang).'</button></a>'."\n";
+            $html .= '    </div>'."\n";
 
         }
-        $html .= '</div>';
-        $html .= '</form>';
+        $html .= '  </div>'."\n";
+        $html .= '</form>'."\n";
+
         return $html;
     }
+
 
 }
 
