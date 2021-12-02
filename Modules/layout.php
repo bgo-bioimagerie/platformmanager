@@ -71,7 +71,6 @@ if($isdev) {
         </div>
 
         <div class="row">
-
                 <div id="app" >
                     <?php if (isset($flash) && $flash) { ?>
                         <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
