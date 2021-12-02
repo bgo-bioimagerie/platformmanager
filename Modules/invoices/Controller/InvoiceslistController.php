@@ -142,6 +142,9 @@ class InvoiceslistController extends InvoicesController {
 
         $modelInvoice = new InInvoice();
         $service = $modelInvoice->get($id_space, $id);
+        if(!$service) {
+            throw new PfmUserException('invoice not found', 404);
+        }
 
         //print_r($service);
         
