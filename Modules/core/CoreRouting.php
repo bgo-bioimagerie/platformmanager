@@ -16,6 +16,7 @@ class CoreRouting extends Routing{
         $router->map('GET', '/coretiles/[i:level]/[i:id]/unstar/[i:id_space]', 'core/coretiles/coreunstar', 'core_unstar');
         $router->map('GET|POST', '/coremail/[i:id_space]', 'core/coremail/index', 'core_mail');
         $router->map('GET|POST', '/coreaccountisunique', 'core/coreaccount/isunique', 'core_unique');
+        $router->map('GET', '/core/tiles/[i:id_space]/module/spaceaccess/notifs', 'core/corespaceaccess/notifs', 'corespaceaccess_notifs');
     }
     
     public function listRoutes(){

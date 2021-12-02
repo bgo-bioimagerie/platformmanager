@@ -115,6 +115,13 @@ class CorespaceaccessController extends CoresecureController {
 
     }
 
+    public function notifsAction($id_space) {
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $modelSpacePending = new CorePendingAccount();
+        $count = $modelSpacePending->countPendingForSpace($id_space);
+        $this->render(['data' => ['notifs' => $count['total']]]);
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
