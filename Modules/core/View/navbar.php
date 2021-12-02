@@ -36,7 +36,7 @@
 					}
 				}
 				?>
-				
+				<li><a href="/core/plans">Pricing</a></li>
 				<?php 
 				if ($toolAdmin){
 				?>

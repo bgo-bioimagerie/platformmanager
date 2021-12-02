@@ -99,7 +99,6 @@ class Configuration {
                 }
             }
             self::override();
-            Configuration::getLogger()->error("???",["c" => self::$parameters]);
         }
         return self::$parameters;
     }

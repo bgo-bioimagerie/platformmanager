@@ -19,9 +19,8 @@ class CorePlan {
     /**
      * Known flags
      */
-    const FLAGS = [
-        'grafana' => 'add space managers to grafana'
-    ];
+    // flag to add space managers as grafana org members
+    const FLAGS_GRAFANA = 'grafana';
 
     private ?array $plan = null;
 
@@ -32,7 +31,7 @@ class CorePlan {
      * @var int $plan_expire optional timestamp of plan. If expired, get plan id = 0
      */
     public function __construct(int $plan_id, int $plan_expire=0) {
-        $plans = Configuration::get('plan', []);
+        $plans = Configuration::get('plans', []);
         $now = time();
         $id = intval($plan_id);
         if($plan_expire && $plan_expire > $now) {
@@ -108,7 +107,7 @@ class CoreSpace extends Model {
         `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
         `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
         `plan` int NOT NULL DEFAULT 0,
-        `plan_expire` int NOT NULL DEFAULT 0
+        `plan_expire` int NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
