@@ -519,6 +519,13 @@ class BookingTranslator {
         return "Edit Reservation";
     }
 
+    public static function Add_Reservation($lang = "") {
+        if ($lang == "fr") {
+            return "Ajout Réservation";
+        }
+        return "Add Reservation";
+    }
+
     public static function Resource($lang = "") {
         if ($lang == "fr") {
             return "Ressource";

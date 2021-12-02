@@ -543,11 +543,12 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
+        $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
         $form->addHidden("id", $resaInfo["id"]);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
-        $form->setTitle(BookingTranslator::Edit_Reservation($lang));
+        $form->setTitle($formTitle);
 
         $form->addSelect("id_resource", ResourcesTranslator::resource($lang), $resources["names"], $resources["ids"], $id_resource);
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
