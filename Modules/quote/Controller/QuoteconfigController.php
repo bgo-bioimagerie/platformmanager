@@ -73,7 +73,7 @@ class QuoteconfigController extends CoresecureController {
         
         
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
 
         $roles = $modelSpace->roles($lang);
 

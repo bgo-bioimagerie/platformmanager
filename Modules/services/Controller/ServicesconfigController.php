@@ -127,7 +127,7 @@ class ServicesconfigController extends CoresecureController {
         $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "services");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
 
         $roles = $modelSpace->roles($lang);
 
@@ -213,7 +213,7 @@ class ServicesconfigController extends CoresecureController {
         $bookingmenuname = $modelCoreConfig->getParam("servicesmenuname", $id_space);
 
         $form = new Form($this->request, "servicesmenunameForm");
-        $form->addSeparator(CoreTranslator::MenuName($lang));
+        $form->addSeparator(CoreTranslator::ModuleName($lang));
 
         $form->addText("servicesmenuname", CoreTranslator::Name($lang), false, $bookingmenuname);
 

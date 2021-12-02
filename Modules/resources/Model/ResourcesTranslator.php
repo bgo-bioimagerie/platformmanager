@@ -52,7 +52,7 @@ class ResourcesTranslator {
 				Resources tables in the database if they don't exists ";
     }
 
-    public static function Activate_desactivate_menus($lang = "") {
+    public static function Activate_desactivate_modules($lang = "") {
         if ($lang == "fr") {
             return "Activer/désactiver les menus";
         }

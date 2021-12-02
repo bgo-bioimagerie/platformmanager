@@ -113,7 +113,7 @@ class CatalogconfigController extends CoresecureController {
         $colorTxtSettingsMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "catalogsettings");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
 
         $modelStatus = new CoreSpace();
         $status = $modelStatus->roles($lang);
@@ -142,7 +142,7 @@ class CatalogconfigController extends CoresecureController {
         $catalogmenuname = $modelCoreConfig->getParam("catalogmenuname", $id_space);
 
         $form = new Form($this->request, "catalogmenunameForm");
-        $form->addSeparator(CoreTranslator::MenuName($lang));
+        $form->addSeparator(CoreTranslator::ModuleName($lang));
 
         $form->addText("catalogmenuname", CoreTranslator::Name($lang), false, $catalogmenuname);
 

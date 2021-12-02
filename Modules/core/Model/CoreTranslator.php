@@ -662,7 +662,7 @@ class CoreTranslator {
 				Core tables in the database if they don't exists ";
     }
 
-    public static function Activate_desactivate_menus($lang = "") {
+    public static function Activate_desactivate_modules($lang = "") {
         if ($lang == "fr") {
             return "Activer/désactiver le module";
         }
@@ -1431,7 +1431,7 @@ class CoreTranslator {
         return "This update the rooting cache and the modules database";
     }
 
-    public static function MenuName($lang) {
+    public static function ModuleName($lang) {
         if ($lang == "fr") {
             return "Nom du module";
         }
