@@ -1,0 +1,26 @@
+plans:
+  - name: free
+    color: "blue"
+    id: 0
+    features:
+      - doc
+  - name: bronze
+    color: sienna
+    id: 1
+    features:
+      - truc 
+    flags:
+      - grafana
+  - name: silver
+    color: silver
+    id: 2
+    features:
+      - other
+      - super
+    flags: []
+  - name: gold
+    color: gold
+    id: 3
+    features:
+      - yet to be defined...
+    flags: []

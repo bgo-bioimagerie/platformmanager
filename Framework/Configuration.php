@@ -3,6 +3,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Processor\TagProcessor;
 use Monolog\Formatter\LineFormatter;
+use Symfony\Component\Yaml\Yaml;
 
 require_once 'Framework/Errors.php';
 
@@ -78,7 +79,27 @@ class Configuration {
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
+            $yamlConfig = str_replace('.ini', '.yaml', self::getConfigFile());
+            if(file_exists($yamlConfig)) {
+                $yamlData = Yaml::parseFile($yamlConfig, Yaml::DUMP_OBJECT_AS_MAP);
+                if(isset($yamlData['plans'])) {
+                    $plans = $yamlData['plans'];
+                    if(!isset($yamlData['plans'][0]['flags'])) {
+                        $yamlData['plans'][0]['flags'] = [];
+                    }
+                    for($i=1;$i<count($plans);$i++) {
+                            if(!isset($yamlData['plans'][$i]['flags'])) {
+                            $yamlData['plans'][$i]['flags'] = [];
+                        }
+                        $yamlData['plans'][$i]['flags'] = array_merge($yamlData['plans'][$i]['flags'], $yamlData['plans'][$i-1]['flags']);
+                    }
+                }
+                foreach ($yamlData as $key => $value){
+                    self::$parameters[$key] = $value;
+                }
+            }
             self::override();
+            Configuration::getLogger()->error("???",["c" => self::$parameters]);
         }
         return self::$parameters;
     }
