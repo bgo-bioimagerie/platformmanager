@@ -99,7 +99,7 @@ InInvoiceItem -> InInvoice [label="id_invoice"];
 
 InVisa -> CoreUser [label="id_user"];
 
-Quote -> id_belonging;
+Quote -> ClClient[label="id_belonging"];
 Quote -> id_user;
 QuoteItem -> Quote [label="id_quote"]
 // module defines which object is linked to id_content
