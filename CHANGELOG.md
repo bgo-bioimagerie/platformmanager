@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Menus] Change word "Menu" to "Structure"
 * [Services] Remove deprecated functions from servicesController
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
