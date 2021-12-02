@@ -71,15 +71,16 @@ if($isdev) {
         </div>
 
         <div class="row">
-
                 <div id="app" >
                     <?php if (isset($flash) && $flash) { ?>
-                        <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
-                            <?php echo $flash['msg']; ?>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
+                        <div class="container">
+                            <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
+                                <?php echo $flash['msg']; ?>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                    </div>
                     <?php }?>
                     <div class="col-md-12 col-lg-12">
                         <?php startblock('spacemenu') ?>
