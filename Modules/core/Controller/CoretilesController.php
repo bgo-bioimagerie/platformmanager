@@ -46,9 +46,10 @@ class CoretilesController extends CorecookiesecureController {
             $id = 0;
         }
         if ( $id < 0 ){
-            //$this->showMainSubMenu(0);
             $_SESSION['flash'] = 'Page not found, sorry...';
-            $this->redirect("");
+            //$this->showMainSubMenu(0);
+            $this->redirect('');
+            return;
         }
         if ( $level == 0) {
             $this->showMainSubMenu(0);
