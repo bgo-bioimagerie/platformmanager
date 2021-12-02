@@ -87,7 +87,7 @@ class EstoreconfigController extends CoresecureController {
         $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "estore");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
         $roles = $modelSpace->roles($lang);
 

@@ -94,7 +94,7 @@ class SeekconfigController extends CoresecureController {
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "seek");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
         $roles = $modelSpace->roles($lang);
 

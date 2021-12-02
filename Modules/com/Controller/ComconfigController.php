@@ -100,7 +100,7 @@ class ComconfigController extends CoresecureController {
         $displayTxtColor = $modelSpace->getSpaceMenusTxtColor($id_space, "com");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
         $roles = $modelSpace->roles($lang);
 

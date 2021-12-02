@@ -218,7 +218,7 @@ class InvoicesconfigController extends CoresecureController {
         $invoicesmenucolorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "invoices");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
         $roles = $modelSpace->roles($lang);
 

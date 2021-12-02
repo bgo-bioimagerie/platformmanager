@@ -71,7 +71,7 @@ class DocumentsconfigController extends CoresecureController {
         $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "documents");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
         $roles = $modelSpace->roles($lang);
 

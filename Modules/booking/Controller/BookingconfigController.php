@@ -249,7 +249,7 @@ class BookingconfigController extends CoresecureController {
         $colorTxtSettingsMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "bookingsettings");
 
         $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_modules($lang));
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
 
         $modelStatus = new CoreSpace();
         $status = $modelStatus->roles($lang);
@@ -301,7 +301,7 @@ class BookingconfigController extends CoresecureController {
 	    $bookingmenuname = $modelCoreConfig->getParamSpace("bookingmenuname", $id_space);
         
         $form = new Form($this->request, "bookingmenunameForm");
-        $form->addSeparator(CoreTranslator::ModuleName($lang));
+        $form->addSeparator(CoreTranslator::MenuName($lang));
         
         $form->addText("bookingmenuname", CoreTranslator::Name($lang), false, $bookingmenuname);
         
