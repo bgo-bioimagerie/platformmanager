@@ -9,13 +9,14 @@ require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingschedulingController extends CoresecureController {
+class BookingschedulingController extends BookingsettingsController {
 
     /**
      * Constructor
@@ -95,7 +96,7 @@ class BookingschedulingController extends CoresecureController {
         // if no color code was created, then alert user it is required to do so
         if (!$colors) {
             // display alert
-            $_SESSION["message"] = BookingTranslator::MissingColorCode($lang);
+            $_SESSION["flash"] = BookingTranslator::MissingColorCode($lang);
         }
         
         $cc = array(); $ccid = array();

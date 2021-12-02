@@ -42,7 +42,7 @@ class ClAddress extends Model {
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE cl_addresses SET institution=?, building_floor=?, service=?, address=?, zip_code=?, city=?, country=? WHERE id=? AND id_space=? AND deleted=0';
-            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $id));
+            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $id, $id_space));
             return $id;
         }
     }

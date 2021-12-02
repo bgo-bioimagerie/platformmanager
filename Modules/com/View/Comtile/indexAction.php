@@ -1,5 +1,7 @@
-<div class="col-md-12">
+<div class="row">
+    <div class="col-sm-12">
 
-<?php echo $message ?>    
-    
+    <?php echo $message ?>    
+        
+    </div>
 </div>

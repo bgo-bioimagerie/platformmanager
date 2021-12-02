@@ -5,6 +5,8 @@ require_once 'Request.php';
 require_once 'View.php';
 require_once 'Errors.php';
 
+require_once 'Modules/core/Model/CoreSpace.php';
+
 /**
  * Abstract class defining a controller. 
  * 
@@ -15,12 +17,81 @@ abstract class Controller {
     /** Action to run */
     protected $action;
     protected $module;
+    protected $args;
 
     /** recieved request */
     protected $request;
 
+    protected $twig;
+
+    public function args() {
+        return $this->args;
+    }
+
+    public function setArgs($args) {
+        $this->args = $args;
+    }
+
     public function __construct(Request $request) {
         $this->request = $request;
+        $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/..');
+        if(!is_dir('/tmp/pfm')) {
+            mkdir('/tmp/pfm');
+        }
+        if(getenv('PFM_MODE')=='dev') {
+            $this->twig = new \Twig\Environment($loader, []);
+        } else {
+            $this->twig = new \Twig\Environment($loader, [
+                'cache' => '/tmp/pfm'
+            ]);
+        }
+    }
+
+    /*
+    public function mainMenu() {
+        return null;
+    }
+    */
+
+        /**
+     * 
+     * @param int $id_space
+     * @return string
+     */
+    public function mainMenu() {
+        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
+        if (!$id_space) {
+            return null;
+        }
+        $m = new CoreSpace();
+        $space = $m->getSpace($id_space);
+
+
+        $spaceColor = "#ffffff";
+        if ($space["color"] != "") {
+            $spaceColor = $space["color"];
+        }
+        $spaceTxtColor = "#000000";
+        if ($space['txtcolor'] != "") {
+            $spaceTxtColor = $space["txtcolor"];
+        }
+
+        $dataView = [
+            'id' => $id_space,
+            'name' => $space['name'],
+            'color' => $spaceColor,
+            'txtcolor' => $spaceTxtColor,
+        ];
+
+        return $this->twig->render("Modules/core/View/Corespace/navbar.twig", $dataView);
+    }
+
+    public function sideMenu() {
+        return null;
+    }
+
+    public function spaceMenu() {
+        return null;
     }
 
     /**
@@ -52,6 +123,7 @@ abstract class Controller {
      */
     public function runAction($module, $action, $args = array()) {
         Configuration::getLogger()->debug("[controller][runAction]", ["module" => $module, "action" => $action, "args" => $args]);
+        $this->args = $args;
         $this->module = strtolower($module);
         $actionName = $action . "Action";
         if (method_exists($this, $actionName)) {
@@ -62,6 +134,23 @@ abstract class Controller {
         } else {
             $classController = get_class($this);
             throw new PfmException("Action '$action'Action in not defined in the class '$classController'", 500);
+        }
+    }
+
+    /**
+     * Return json encoded data with expected content-type
+     */
+    protected function api($data = array()) {
+        header('Content-Type: application/json');
+        if($data) {
+            ob_start();
+            try {
+                echo json_encode($data);
+            } catch(Exception $e) {
+                Configuration::getLogger()->error('[api] json error', ['error', $e->getMessage()]);
+            }
+            ob_end_flush();
+            flush();
         }
     }
 
@@ -116,8 +205,26 @@ abstract class Controller {
             $dataView['flash'] = null;
         }
         // Geneate the view
-        // echo "controllerView = " . $controllerView . "<br/>";
-        //echo "parent = " . basename(__DIR__) . "<br/>";
+
+        $dataView["mainMenu"] = $this->mainMenu();
+        $dataView["sideMenu"] = $this->sideMenu();
+        $dataView["spaceMenu"] = $this->spaceMenu();
+        if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
+            // TODO add navbar generation
+            require_once 'Modules/core/Controller/CorenavbarController.php';
+            $navController = new CorenavbarController($this->request);
+            $dataView["navbar"] = $navController->navbar();
+            try {
+                echo $this->twig->render("Modules/core/View/$controllerView/$actionView.twig", $dataView);
+                return;
+            } catch(Throwable $e) {
+                Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
+                $view = new View($actionView, $controllerView, $this->module);
+                $view->generate($dataView);
+                return;
+            }
+        }
+
         $view = new View($actionView, $controllerView, $this->module);
         $view->generate($dataView);
     }

@@ -28,7 +28,7 @@ class ResourcesconfigController extends CoresecureController {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -37,7 +37,6 @@ class ResourcesconfigController extends CoresecureController {
         
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        //$modelCoreConfig = new CoreConfig();
 
         $modelSpace = new CoreSpace();
 
@@ -49,7 +48,8 @@ class ResourcesconfigController extends CoresecureController {
                     $this->request->getParameter("resourcesmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     1,
-                    $this->request->getParameter("displayColor")
+                    $this->request->getParameter("displayColor"),
+                    $this->request->getParameter("displayTxtColor")
                     );
             
             $this->redirect("resourcesconfig/".$id_space);
@@ -69,6 +69,7 @@ class ResourcesconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "resources");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "resources");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "resources");
+        $displayTxtColor = $modelSpace->getSpaceMenusTxtColor($id_space, "resources");
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -78,6 +79,7 @@ class ResourcesconfigController extends CoresecureController {
         $form->addSelect("resourcesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor("displayTxtColor", CoreTranslator::text_color($lang), false, $displayTxtColor);
         
         
         $form->setValidationButton(CoreTranslator::Save($lang), "resourcesconfig/".$id_space);

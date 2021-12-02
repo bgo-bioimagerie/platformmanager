@@ -126,10 +126,11 @@ abstract class CorecookiesecureController extends Controller {
     }
 
     /**
-     * 
+     * @deprecated
      * @param type $menuName
      * @throws Exception
      */
+    /*
     public function checkAuthorizationMenu($menuName) {
         $auth = $this->isUserMenuAuthorized($menuName);
         if ($auth == 0) {
@@ -139,6 +140,7 @@ abstract class CorecookiesecureController extends Controller {
             $this->redirect("coreconnection");
         }
     }
+    */
 
     /**
      * 
@@ -187,15 +189,17 @@ abstract class CorecookiesecureController extends Controller {
     }
 
     /**
-     * 
+     * @deprecated
      * @param type $menuName
      * @return type
      */
+    /*
     public function isUserMenuAuthorized($menuName) {
         $controllerMenu = new CoreMenu();
         $minimumStatus = $controllerMenu->getMenuStatusByName($menuName);
         return $this->isUserAuthorized($minimumStatus);
     }
+    */
 
     /**
      * 

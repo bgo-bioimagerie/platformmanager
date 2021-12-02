@@ -16,7 +16,6 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
-
 /**
  * 
  * @author sprigent
@@ -31,6 +30,8 @@ class BookingabstractController extends CoresecureController {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("booking");
     }
+
+    
 
     /**
      * Get the content of of the booking menu for the calendar pages

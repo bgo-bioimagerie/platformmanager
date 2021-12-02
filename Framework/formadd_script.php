@@ -28,7 +28,7 @@
                     newcell.childNodes[0].value = "";
                     break;
                 case "number":
-                    newcell.childNodes[0].value = "";
+                    newcell.childNodes[0].value = 0;
                     break;  
                 case "hidden":
                     newcell.childNodes[0].value = "";

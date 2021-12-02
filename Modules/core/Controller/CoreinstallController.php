@@ -82,7 +82,7 @@ class CoreinstallController extends Controller {
      */
     private function writedbConfig($sql_host, $login, $password, $db_name) {
         if (!$this->installModel->writedbConfig($sql_host, $login, $password, $db_name)) {
-            throw new Exception(coreTranslator::Cannot_write_config_file($this->getLanguage()));
+            throw new PfmException("Cannot write db config file");
         }
     }
 }

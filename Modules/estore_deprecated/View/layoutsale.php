@@ -14,7 +14,7 @@ Platform-Manager
 $headless = Configuration::get("headless");
 if (!$headless) {
     ?>
-    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
+    <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
     <?php
 }
 ?>
@@ -53,7 +53,7 @@ endblock();
 
 <div class="col-md-12" style="margin-top: 7px; margin-bottom: -14px;">
     <?php
-    if (isset($_SESSION["message"])) {
+   if (isset($_SESSION["message"]) && $_SESSION['message']) {
         ?>
         <div class="alert alert-info">
             <?php echo $_SESSION["message"] ?>

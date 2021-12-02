@@ -1,0 +1,187 @@
+version: "3"
+services:
+  pfm-helpdesk:
+    image: quay.io/genouest/pfm
+    build:
+      context: .
+    depends_on:
+      - mysql
+      - pfm-rabbitmq
+      - influxdb
+    environment:
+      WAIT_HOSTS: pfm-rabbitmq:5672,mysql:3306
+      MYSQL_HOST: mysql 
+      MYSQL_DBNAME: platform_manager
+      MYSQL_USER: platform_manager
+      MYSQL_PASS: ${MYSQL_PASSWORD}
+      SMTP_HOST: ${PFM_SMTP_HOST}
+      SMTP_PORT: 1025
+      SMTP_FROM: ${PFM_SMTP_FROM}
+      DEBUG: 1
+      DEBUG_SQL: 1
+      PFM_MODE: dev
+      PFM_PUBLIC_URL: ${PFM_WEB_URL}
+      PFM_AMQP_HOST: pfm-rabbitmq
+      PFM_AMQP_USER: pfm
+      PFM_AMQP_PASSWORD: pfm
+      PFM_INFLUXDB_URL: http://influxdb:8086
+      PFM_INFLUXDB_TOKEN: ${PFM_INFLUXDB_TOKEN}
+      PFM_INFLUXDB_ORG: pfm
+      PFM_HELPDESK_EMAIL: ${PFM_HELPDESK_EMAIL}
+      PFM_HELPDESK_IMAP_SERVER: ${PFM_HELPDESK_IMAP_SERVER}
+      PFM_HELPDESK_IMAP_PORT: 110
+      PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER}
+      PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
+      PFM_HELPDESK_IMAP_TLS:
+    working_dir: /var/www/platformmanager
+    entrypoint: ["/pfmextra-entrypoint.sh", "helpdesk"]
+    volumes:
+      - ./data:/var/www/platformmanager/data # Mount the application data directory
+
+  pfm-events:
+    image: quay.io/genouest/pfm
+    build:
+      context: .
+    environment:
+      WAIT_HOSTS: pfm-rabbitmq:5672,mysql:3306,influxdb:8086
+      MYSQL_HOST: mysql # Host of the the mysql server
+      MYSQL_DBNAME: platformmanager # name of the database on the mysql server
+      MYSQL_USER: platform_manager # Admin account to connect to mysql
+      MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
+      SMTP_HOST: ${PFM_SMTP_HOST}
+      SMTP_PORT: 1025
+      SMTP_FROM: ${PFM_SMTP_FROM}
+      PFM_PUBLIC_URL: ${PFM_WEB_URL}
+      PFM_AMQP_HOST: pfm-rabbitmq
+      PFM_AMQP_USER: pfm
+      PFM_AMQP_PASSWORD: pfm
+      PFM_INFLUXDB_URL: http://influxdb:8086
+      PFM_INFLUXDB_TOKEN: ${PFM_INFLUXDB_TOKEN}
+      PFM_INFLUXDB_ORG: pfm
+      PFM_REDIS_HOST: redis
+      PFM_GRAFANA_URL: http://grafana:3000
+      PFM_GRAFANA_USER: admin
+      PFM_GRAFANA_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_HELPDESK_EMAIL: ${PFM_HELPDESK_EMAIL}
+      PFM_HELPDESK_IMAP_SERVER: ${PFM_HELPDESK_IMAP_SERVER}
+      PFM_HELPDESK_IMAP_PORT: 110
+      PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER}
+      PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
+      PFM_HELPDESK_IMAP_TLS:
+      PFM_JWT_SECRET: ${PFM_JWT_SECRET}
+    depends_on:
+        - mysql
+        - pfm-rabbitmq
+        - influxdb
+    volumes:
+      - ./data:/var/www/platformmanager/data # Mount the application data directory
+    working_dir: /var/www/platformmanager
+    entrypoint: ["/pfmextra-entrypoint.sh", "events"]
+
+  pfm:
+    image: quay.io/genouest/pfm
+    build:
+      context: .
+    environment:
+      WAIT_HOSTS: pfm-rabbitmq:5672,mysql:3306,influxdb:8086,grafana:3000
+      MYSQL_HOST: mysql # Host of the the mysql server
+      MYSQL_DBNAME: platformmanager # name of the database on the mysql server
+      MYSQL_USER: platform_manager # Admin account to connect to mysql
+      MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
+      SMTP_HOST: ${PFM_SMTP_HOST}
+      SMTP_PORT: 1025
+      SMTP_FROM: ${PFM_SMTP_FROM}
+      PFM_ADMIN_USER: pfmadmin
+      PFM_ADMIN_EMAIL: ${PFM_ADMIN_EMAIL}
+      PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
+      PFM_PUBLIC_URL: ${PFM_WEB_URL}
+      PFM_AMQP_HOST: pfm-rabbitmq
+      PFM_AMQP_USER: pfm
+      PFM_AMQP_PASSWORD: pfm
+      PFM_INFLUXDB_URL: http://influxdb:8086
+      PFM_INFLUXDB_TOKEN: ${PFM_INFLUXDB_TOKEN}
+      PFM_INFLUXDB_ORG: pfm
+      PFM_REDIS_HOST: redis
+      PFM_ALLOW_REGISTRATION: 0
+      PFM_JWT_SECRET: ${PFM_JWT_SECRET}
+      PFM_GRAFANA_URL: http://grafana:3000
+      PFM_GRAFANA_USER: admin
+      PFM_GRAFANA_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_OPENID: ${PFM_OPENID}
+      PFM_HELPDESK_EMAIL: ${PFM_HELPDESK_EMAIL}
+      PFM_HELPDESK_IMAP_SERVER: ${PFM_HELPDESK_IMAP_SERVER}
+      PFM_HELPDESK_IMAP_PORT: 110
+      PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER}
+      PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
+      PFM_HELPDESK_IMAP_TLS:
+    depends_on:
+        - mysql
+        - pfm-rabbitmq
+        - influxdb
+    volumes:
+      - ./data:/var/www/platformmanager/data # Mount the application data directory
+    ports:
+      - "3000:80"
+
+  pfm-rabbitmq:
+    image: rabbitmq:3.8
+    hostname: pfm-rabbitmq
+    environment:
+        - RABBITMQ_DEFAULT_USER=pfm
+        - RABBITMQ_DEFAULT_PASS=pfm
+
+  influxdb:
+    image: influxdb:2.0
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: pfmadmin
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      DOCKER_INFLUXDB_INIT_ORG: pfm
+      DOCKER_INFLUXDB_INIT_BUCKET: pfm
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${PFM_INFLUXDB_TOKEN}
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-cfg:/etc/influxdb2
+
+  mysql:
+    image: mysql:8
+    environment:
+        MYSQL_DATABASE: platform_manager
+        MYSQL_USER: platform_manager
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql:/var/lib/mysql
+    command: --sql-mode=""
+
+  redis:
+    image: redis
+    volumes:
+      - redis:/data
+    command: ["--save", "60", "1", "--loglevel", "warning"]
+
+  grafana:
+    image: grafana/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${PFM_ADMIN_PASSWORD}
+      - GF_SERVER_ROOT_URL=${PFM_WEB_URL}/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - grafanalib:/var/lib/grafana
+      - grafanacfg:/etc/grafana
+
+volumes:
+  mysql:
+    driver: local
+  influxdb-data:
+    driver: local
+  influxdb-cfg:
+    driver: local
+  grafanalib:
+    driver: local
+  grafanacfg:
+    driver: local
+  redis:
+    driver: local

@@ -23,12 +23,13 @@ require_once 'Modules/core/Model/CoreUserSettings.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 
+require_once 'Modules/statistics/Controller/StatisticsController.php';
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingstatisticauthorizationsController extends CoresecureController {
+class BookingstatisticauthorizationsController extends StatisticsController {
 
     /**
      * Constructor
@@ -49,15 +50,15 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
         $dateArray = explode("-", $date_begin);
         $y = date("Y") - 1;
-        $m = $dateArray[1];
-        $d = $dateArray[2];
+        $m = $dateArray[1] ?? '1';
+        $d = $dateArray[2] ?? '1';
         $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
 
         $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
         $dateArray = explode("-", $date_end);
         $y = date("Y");
-        $m = $dateArray[1];
-        $d = $dateArray[2];
+        $m = $dateArray[1] ?? '12';
+        $d = $dateArray[2] ?? '31';
         $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
 
 
@@ -91,7 +92,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         // by instructor
         foreach ($resources as $resource) {
             foreach ($instructors as $instructor) {
-                $authorizations = $modelAuthorizations->getForResourceInstructorPeriod($resource["id"], $instructor["id_instructor"], $period_begin, $period_end);
+                $authorizations = $modelAuthorizations->getForResourceInstructorPeriod($id_space, $resource["id"], $instructor["id_instructor"], $period_begin, $period_end);
                 $countResourcesInstructor[$resource["id"]][$instructor["id_instructor"]] = count($authorizations);
             }
         }
@@ -103,7 +104,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
         $countResourcesUnit = array();
         foreach ($resources as $resource) {
             foreach ($units as $unit) {
-                $authorizations = $modelAuthorizations->getFormResourceUnitPeriod($resource["id"], $unit["id"], $period_begin, $period_end);
+                $authorizations = $modelAuthorizations->getFormResourceUnitPeriod($id_space, $resource["id"], $unit["id"], $period_begin, $period_end);
                 $countResourcesUnit[$resource["id"]][$unit["id"]] = count($authorizations);
             }
         }
@@ -369,7 +370,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
      * Form to export the list of authorized user per resource category
      */
     public function authorizedusersAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the resource list
         $resourceModel = new ReCategory();
         $resourcesCategories = $resourceModel->getBySpace($id_space);
@@ -385,7 +386,7 @@ class BookingstatisticauthorizationsController extends CoresecureController {
      * Query to export the list of authorized user per resource category
      */
     public function authorizedusersqueryAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the selected resource id
         $resource_id = $this->request->getParameter("resource_id");
         $email = $this->request->getParameterNoException("email");

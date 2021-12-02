@@ -29,14 +29,14 @@ class BulletjournalRouting extends Routing{
         
         // API
         $this->addRoute("bjeditnotequery", "bjeditnotequery", "bjnotes", "editnotequery", array("id_space"), array(""), true);
-        $this->addRoute("bjgetnote", "bjgetnote", "bjnotes", "getnote", array("id"), array(""), true);
+        $this->addRoute("bjgetnote", "bjgetnote", "bjnotes", "getnote", array("id_space", "id"), array("", ""), true);
  
         $this->addRoute("bjedittask", "bjedittask", "bjnotes", "edittask", array("id_space"), array(""), true);
-        $this->addRoute("bjgettask", "bjgettask", "bjnotes", "gettask", array("id"), array(""), true);
-        $this->addRoute("bjclosetask", "bjclosetask", "bjnotes", "closetask", array("id"), array(""), true);
-        $this->addRoute("bjcanceltask", "bjcanceltask", "bjnotes", "canceltask", array("id"), array(""), true);
+        $this->addRoute("bjgettask", "bjgettask", "bjnotes", "gettask", array("id_space", "id"), array("", ""), true);
+        $this->addRoute("bjclosetask", "bjclosetask", "bjnotes", "closetask", array("id_space", "id"), array("", ""), true);
+        $this->addRoute("bjcanceltask", "bjcanceltask", "bjnotes", "canceltask", array("id_space", "id"), array("", ""), true);
         
-        $this->addRoute("bjgetevent", "bjgetevent", "bjnotes", "getevent", array("id"), array(""), true);
+        $this->addRoute("bjgetevent", "bjgetevent", "bjnotes", "getevent", array("id_space", "id"), array("", ""), true);
         $this->addRoute("bjeditevent", "bjeditevent", "bjnotes", "editevent", array("id_space"), array(""), true);
         
         $this->addRoute("bjmigratetask", "bjmigratetask", "bjmigrations", "migratetask", array("id_space", "id"), array("", ""), true);

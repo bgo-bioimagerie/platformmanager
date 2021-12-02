@@ -62,7 +62,7 @@ class Document extends Model {
     
     public function isDocument($id_space, $id){
         $sql = "SELECT id FROM dc_documents WHERE id=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id));
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1){
             return true;
         }

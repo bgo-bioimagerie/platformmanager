@@ -10,13 +10,14 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Model/SeVisa.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicesprojectganttController extends CoresecureController {
+class ServicesprojectganttController extends ServicesController {
 
     private $serviceModel;
 
@@ -46,6 +47,13 @@ class ServicesprojectganttController extends CoresecureController {
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
+            $today = new DateTime();
+            if ($projectperiodbegin === "") {
+                $projectperiodbegin = $today->format('Y')."-1-1";
+            }
+            if ($projectperiodend === "") {
+                $projectperiodend = $today->format('Y')."-12-31";
+            }
             
             $projectperiodbeginArray = explode("-", $projectperiodbegin);
             $projectperiodendArray = explode("-", $projectperiodend);

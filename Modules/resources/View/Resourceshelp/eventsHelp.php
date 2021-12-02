@@ -1,4 +1,4 @@
-<div class="col-xs-12">
+<div>
     <h4 id="pm-help-h4">Types évenement</h4>
     <p id="pm-help-p">
         <b>Une liste chronologique d'évènements peut etre associé à une resource.</b>

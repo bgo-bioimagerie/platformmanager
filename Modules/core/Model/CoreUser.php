@@ -181,7 +181,7 @@ class CoreUser extends Model {
         }
 
         if($sql == null) {
-            throw new Exception('something went wrong!');
+            throw new PfmException('something went wrong!');
         }
 
         foreach ($req as $r) {
@@ -335,9 +335,9 @@ class CoreUser extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
-        $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
-        $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+    public function edit($id, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+        $sql = "UPDATE core_users SET name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
+        $this->runRequest($sql, array($name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }
 
     public function isUserId($id) {
@@ -466,7 +466,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new Exception("Cannot find the user using the given parameters");
+            throw new PfmParamException("Cannot find the user using the given parameters", 404);
         }
     }
 
@@ -909,7 +909,7 @@ class CoreUser extends Model {
                     . "core_users.name AS name,core_users.firstname AS firstname "
                     . "FROM core_j_spaces_user "
                     . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
-                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1";
+                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1 ORDER BY core_users.name";
             $users = $this->runRequest($sql, array($id_space))->fetchAll();
             $names = array();
             $ids = array();

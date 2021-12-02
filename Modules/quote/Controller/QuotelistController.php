@@ -23,12 +23,13 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 
+require_once 'Modules/quote/Controller/QuoteController.php';
 /**
  *
  * @author sprigent
  * Controller for the home page
  */
-class QuotelistController extends CoresecureController {
+class QuotelistController extends QuoteController {
 
     /**
      * Constructor
@@ -84,6 +85,7 @@ class QuotelistController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
         $modelQuote = new Quote();
         $info = $modelQuote->get($id_space, $id);
 
@@ -95,6 +97,7 @@ class QuotelistController extends CoresecureController {
     }
 
     public function editexistinguserAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -200,6 +203,7 @@ class QuotelistController extends CoresecureController {
     }
 
     public function editnewuserAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -256,6 +260,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function edititemAction($id_space) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         $id_quote = $this->request->getParameter("id_quote");
         $id = $this->request->getParameter("id");
         $id_contentform = $this->request->getParameter("id_item");
@@ -280,6 +286,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function pdfAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         // get the list of items
         $modelQuote = new Quote();
         $info = $modelQuote->getAllInfo($id_space, $id);
@@ -312,7 +320,7 @@ class QuotelistController extends CoresecureController {
         $table = $this->makePDFTable($table, $lang);
 
         // generate pdf
-        $adress = nl2br($info["address"]);
+        $address = nl2br($info["address"]);
         $resp = $info["recipient"];
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
@@ -322,9 +330,40 @@ class QuotelistController extends CoresecureController {
         $invoiceInfo["title"] = "";
         $number = "";
         $unit = "";
-        ob_start();
-        include('data/invoices/'.$id_space.'/template.php');
-        $content = ob_get_clean();
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
+            throw new PfmFileException("No template found", 404);
+        }
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && file_exists('data/invoices/'.$id_space.'/template.php')) {
+            // backwark, templates were in PHP and no twig template available use old template
+            ob_start();
+            include('data/invoices/'.$id_space.'/template.php');
+            $content = ob_get_clean();
+        } else {
+            $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../..');
+            $twig = new \Twig\Environment($loader, []);
+            $content = $twig->render('data/invoices/'.$id_space.'/template.twig', [
+                'id_space' => $id_space,
+                'id' => $id,
+                'number' => $number,
+                'date' => $date,
+                'unit' => $unit,
+                'resp' => $resp,
+                'address' => $address,
+                'adress' => $address,  // backward compat
+                'table' => $table,
+                'total' => $total,
+                'useTTC' => $useTTC,
+                'details' => $details,
+                'clientsInfos' => null,
+                'invoiceInfo' => $invoiceInfo,
+                'isquote' => $isquote
+            ]);
+        }
+
+
+
 
         // convert in PDF
         // require_once('externals/html2pdf/vendor/autoload.php');
@@ -375,6 +414,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function deleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         $modelQuote = new Quote();
         $modelQuote->delete($id_space, $id);
 
@@ -382,6 +423,8 @@ class QuotelistController extends CoresecureController {
     }
 
     public function itemdelete($id_space, $id_item) {
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
+
         $modelQuote = new QuoteItem();
         $info = $modelQuote->get($id_space, $id_item);
         $modelQuote->delete($id_space, $id_item);

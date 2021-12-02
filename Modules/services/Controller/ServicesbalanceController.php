@@ -5,13 +5,13 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeProject.php';
-
+require_once 'Modules/services/Controller/ServicesController.php';
 /**
- * 
+ * @deprecated
  * @author sprigent
  * Controller for the home page
  */
-class ServicesbalanceController extends CoresecureController {
+class ServicesbalanceController extends ServicesController {
 
     /**
      * Constructor
@@ -100,20 +100,20 @@ class ServicesbalanceController extends CoresecureController {
             ),
             'borders' => array(
                 'outline' => array(
-                    'borderStyle' => PhpOffice\PhpSpreadsheet\Style\Border_Border::BORDER_THIN,
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     'color' => array(
                         'rgb' => '000000'),
                 ),
             ),
             'fill' => array(
-                'type' => PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
             ),
         );
         
@@ -134,14 +134,14 @@ class ServicesbalanceController extends CoresecureController {
                 ),
             ),
             'fill' => array(
-                'type' => PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startcolor' => array(
                     'rgb' => 'ffffff',
                 ),
             ),
             'alignment' => array(
                 'wrap' => false,
-                'horizontal' => PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ),
         );
 		
@@ -160,7 +160,7 @@ class ServicesbalanceController extends CoresecureController {
         
         
         
-        $spreadsheet->getActiveSheet()->setTitle(SpTranslator::OPENED($lang));
+        $spreadsheet->getActiveSheet()->setTitle(ServicesTranslator::OPENED($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('A2', CoreTranslator::Responsible($lang));
         $spreadsheet->getActiveSheet()->getStyle('A2')->applyFromArray($styleBorderedCell);
 
@@ -170,39 +170,39 @@ class ServicesbalanceController extends CoresecureController {
         $spreadsheet->getActiveSheet()->SetCellValue('C2', CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->getStyle('C2')->applyFromArray($styleBorderedCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('D2', SpTranslator::Project_number($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('D2', ServicesTranslator::Project_number($lang));
         $spreadsheet->getActiveSheet()->getStyle('D2')->applyFromArray($styleBorderedCell);
 
 
         $spreadsheet->getActiveSheet()->mergeCells('E1:F1');
-        $spreadsheet->getActiveSheet()->SetCellValue('E1', SpTranslator::New_team($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('E1', ServicesTranslator::New_team($lang));
         $spreadsheet->getActiveSheet()->getStyle('E1')->applyFromArray($styleBorderedCenteredCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('E2', SpTranslator::Academique($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('E2', ServicesTranslator::Academique($lang));
         $spreadsheet->getActiveSheet()->getStyle('E2')->applyFromArray($styleBorderedCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('F2', SpTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('F2', ServicesTranslator::Industry($lang));
         $spreadsheet->getActiveSheet()->getStyle('F2')->applyFromArray($styleBorderedCell);
 
 
         $spreadsheet->getActiveSheet()->mergeCells('G1:H1');
-        $spreadsheet->getActiveSheet()->SetCellValue('G1', SpTranslator::New_project($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('G1', ServicesTranslator::New_project($lang));
         $spreadsheet->getActiveSheet()->getStyle('G1')->applyFromArray($styleBorderedCenteredCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('G2', SpTranslator::Academique($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('G2', ServicesTranslator::Academique($lang));
         $spreadsheet->getActiveSheet()->getStyle('G2')->applyFromArray($styleBorderedCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('H2', SpTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('H2', ServicesTranslator::Industry($lang));
         $spreadsheet->getActiveSheet()->getStyle('H2')->applyFromArray($styleBorderedCell);
 
 
-        $spreadsheet->getActiveSheet()->SetCellValue('I2', SpTranslator::Opened_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('I2', ServicesTranslator::Opened_date($lang));
         $spreadsheet->getActiveSheet()->getStyle('I2')->applyFromArray($styleBorderedCell);
         
-        $spreadsheet->getActiveSheet()->SetCellValue('J2', SpTranslator::Time_limite($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('J2', ServicesTranslator::Time_limite($lang));
         $spreadsheet->getActiveSheet()->getStyle('J2')->applyFromArray($styleBorderedCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('K2', SpTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('K2', ServicesTranslator::Closed_date($lang));
         $spreadsheet->getActiveSheet()->getStyle('K2')->applyFromArray($styleBorderedCell);
 
         $spreadsheet->getActiveSheet()->mergeCells('I1:K1');
@@ -266,15 +266,15 @@ class ServicesbalanceController extends CoresecureController {
 
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
-        $text = SpTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
-                . SpTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
+        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
+                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
                 
         // ////////////////////////////////////////////////////
         //                Services billed details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(SpTranslator::Sevices_billed_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(1);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -282,8 +282,8 @@ class ServicesbalanceController extends CoresecureController {
         $spreadsheet->getActiveSheet()->setCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, SpTranslator::No_Projet($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, SpTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
         
         $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -293,22 +293,22 @@ class ServicesbalanceController extends CoresecureController {
 
         $itemIdx = 5;
         $items = $projectsBilledBalance["items"];
-        $modelItem = new SpItem();
+        $modelItem = new SeService();
         
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($item);
+            $name = $modelItem->getItemName($id_space, $item);
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
             
         }
         $itemIdx++;
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, SpTranslator::TotalPrice($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBilledBalance["projects"];
         //$modelClient = new ClClient();
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -361,39 +361,39 @@ class ServicesbalanceController extends CoresecureController {
         
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
-        $text = SpTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
-                . SpTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
+        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
+                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
         
         // ////////////////////////////////////////////////////
         //                  Stats
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(SpTranslator::StatisticsMaj($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::StatisticsMaj($lang));
         $spreadsheet->setActiveSheetIndex(3);
 
         $curentLine = 1;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, SpTranslator::numberNewIndustryTeam($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewIndustryTeam($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewIndustryTeam"] . " (" . $stats["purcentageNewIndustryTeam"] . "%)");
         $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, SpTranslator::numberIndustryProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberIndustryProjects($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberIndustryProjects"]);
         $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, SpTranslator::loyaltyIndustryProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyIndustryProjects($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyIndustryProjects"] . " (" . $stats["purcentageloyaltyIndustryProjects"] . "%)");
         $curentLine++;
         $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, SpTranslator::numberNewAccademicTeam($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberNewAccademicTeam($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberNewAccademicTeam"] . " (" . $stats["purcentageNewAccademicTeam"] . "%)");
         $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, SpTranslator::numberAccademicProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::numberAccademicProjects($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["numberAccademicProjects"]);
         $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, SpTranslator::loyaltyAccademicProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::loyaltyAccademicProjects($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["loyaltyAccademicProjects"] . " (" . $stats["purcentageloyaltyAccademicProjects"] . "%)");
         $curentLine++;
         $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, SpTranslator::totalNumberOfProjects($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, ServicesTranslator::totalNumberOfProjects($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $stats["totalNumberOfProjects"]);
 
         for($r=1 ; $r <= $curentLine ; $r++){
@@ -407,15 +407,15 @@ class ServicesbalanceController extends CoresecureController {
         
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
-        $text = SpTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
-                . SpTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
+        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
+                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
         
         // ////////////////////////////////////////////////////
         //                Services details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(SpTranslator::Sevices_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
         $spreadsheet->setActiveSheetIndex(4);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -424,8 +424,8 @@ class ServicesbalanceController extends CoresecureController {
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, SpTranslator::No_Projet($lang));
-        //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, SpTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
         
         $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -435,7 +435,7 @@ class ServicesbalanceController extends CoresecureController {
 
         $itemIdx = 4;
         $items = $projectsBalance["items"];
-        $modelItem = new SpItem();
+        $modelItem = new SeService();
         
         foreach ($items as $item) {
             $itemIdx++;
@@ -446,16 +446,16 @@ class ServicesbalanceController extends CoresecureController {
         $itemIdx++;
         
         $lastItemIdx = $itemIdx-1;
-        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+1) . $curentLine, SpTranslator::Opened_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+1) . $curentLine, ServicesTranslator::Opened_date($lang));
         $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+1) . $curentLine)->applyFromArray($styleBorderedCell);
         
-        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+2) . $curentLine, SpTranslator::Time_limite($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+2) . $curentLine, ServicesTranslator::Time_limite($lang));
         $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+2) . $curentLine)->applyFromArray($styleBorderedCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+3) . $curentLine, SpTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+3) . $curentLine, ServicesTranslator::Closed_date($lang));
         $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+3) . $curentLine)->applyFromArray($styleBorderedCell);
         
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, SpTranslator::TotalPrice($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBalance["projects"];
         foreach ($projects as $proj) {
@@ -531,13 +531,13 @@ class ServicesbalanceController extends CoresecureController {
         
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
         $spreadsheet->getActiveSheet()->mergeCells('A1:K1');
-        $text = SpTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
-                . SpTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
+        $text = ServicesTranslator::BalanceSheetFrom($lang) . CoreTranslator::dateFromEn($periodStart, $lang)
+                . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
 
         // write excel file
-        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
 
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu

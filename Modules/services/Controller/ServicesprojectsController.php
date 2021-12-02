@@ -17,13 +17,14 @@ require_once 'Modules/services/Model/StockShelf.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicesprojectsController extends CoresecureController {
+class ServicesprojectsController extends ServicesController {
 
     private $serviceModel;
 
@@ -36,15 +37,24 @@ class ServicesprojectsController extends CoresecureController {
         //$this->checkAuthorizationMenu("services");
     }
 
+    public function userAction($id_space) {
+        if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
+            throw new PfmAuthException('need login', 403);
+        }
+        $m = new SeProject();
+        $projects = $m->getUserProjects($id_space, $_SESSION['id_user']);
+        $this->render(['data' => ['projects' => $projects]]);
+    }
+
     protected function getProjectPeriod($id_space, $year) {
         $modelCoreConfig = new CoreConfig();
         $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
         $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
-        $projectperiodbeginArray = explode("-", $projectperiodbegin);
+        $projectperiodbeginArray = $projectperiodbegin ? explode("-", $projectperiodbegin) : [0,1,1];
         $previousYear = $year - 1;
         $yearBegin = $previousYear . "-" . $projectperiodbeginArray[1] . "-" . $projectperiodbeginArray[2];
-        $projectperiodendArray = explode("-", $projectperiodend);
+        $projectperiodendArray = $projectperiodend ? explode("-", $projectperiodend) : [0,12,31];
         $yearEnd = $year . "-" . $projectperiodendArray[1] . "-" . $projectperiodendArray[2];
 
         return array("yearBegin" => $yearBegin, "yearEnd" => $yearEnd);
@@ -115,8 +125,8 @@ class ServicesprojectsController extends CoresecureController {
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
-            $projectperiodbeginArray = explode("-", $projectperiodbegin);
-            $projectperiodendArray = explode("-", $projectperiodend);
+            $projectperiodbeginArray = $projectperiodbegin ? explode("-", $projectperiodbegin) : [0, 1, 1];
+            $projectperiodendArray = $projectperiodend ? explode("-", $projectperiodend) : [0, 12, 31];
             if ($projectperiodbeginArray[1] <= date("m", time())) {
                 $year = date("Y", time());
             } else {
@@ -152,7 +162,7 @@ class ServicesprojectsController extends CoresecureController {
 
         $table = new TableView();
         $table->setTitle($title, 3);
-        $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color"));
+        $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color", "all_text" => "txtcolor"));
 
         $table->addLineEditButton("servicesprojectsheet/" . $id_space);
         $table->addDeleteButton("servicesprojectdelete/" . $id_space, "id", "id");
@@ -183,6 +193,7 @@ class ServicesprojectsController extends CoresecureController {
                     !($entriesArray[$i]["time_limit"] == null || $entriesArray[$i]["time_limit"] == "" || $entriesArray[$i]["time_limit"] == "0000-00-00")
                 )
             ) {
+
                 $limiteArray = explode('-', $entriesArray[$i]["time_limit"]);
                 $limitD = mktime(0, 0, 0, $limiteArray[1], $limiteArray[2], $limiteArray[0]);
 
@@ -199,10 +210,12 @@ class ServicesprojectsController extends CoresecureController {
 
             // get the pricing color
             $clientAccounts = $modelClient->get($id_space ,$entriesArray[$i]["id_resp"]);
+
             $entriesArray[$i]["resp_name"] = $clientAccounts["name"];
             $pricingInfo = $modelPricing->get($id_space ,$clientAccounts["pricing"]);
             
             $entriesArray[$i]["color"] = $pricingInfo["color"];
+            $entriesArray[$i]["txtcolor"] = $pricingInfo["txtcolor"];
 
             $entriesArray[$i]["time_color"] = "#ffffff";
             if ($entriesArray[$i]["time_limit"] != "") {
@@ -363,10 +376,10 @@ class ServicesprojectsController extends CoresecureController {
 
         if ($id > 0) {
             $value = $modelProject->getEntry($id_space, $id);
-            $items = $modelProject->getProjectServices($id_space, $id);
+            // $items = $modelProject->getProjectServices($id_space, $id);
         } else {
             $value = $modelProject->defaultEntryValues();
-            $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
+            // $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
         }
 
         $modelUser = new CoreUser();

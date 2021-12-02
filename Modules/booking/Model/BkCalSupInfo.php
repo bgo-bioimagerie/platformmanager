@@ -46,11 +46,11 @@ class BkCalSupInfo extends Model {
 
     public function getAll($id_space) {
         $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
-        return $this->runRequest($sql)->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
     public function getForSpace($id_space, $sort) {
-        $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
+        $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=? ORDER BY $sort ASC";
         //$sql = "select * from bk_calsupinfo WHERE deleted=0 AND id_space=? AND id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY ".$sort." ASC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
@@ -68,7 +68,7 @@ class BkCalSupInfo extends Model {
     public function getcalSupInfos($id_space, $id) {
 
         $sql = "SELECT * FROM bk_calsupinfo WHERE id=? AND deleted=0 AND id_space=?;";
-        $data = $this->runRequest($sql, array($id));
+        $data = $this->runRequest($sql, array($id, $id_space));
         if ($data->rowCount() == 1) {
             return $data->fetch();
         } else {
@@ -154,9 +154,8 @@ class BkCalSupInfo extends Model {
 
     /**
      * Set the supplementary of a calendar entry
-     * @param unknown $calsupNames
-     * @param unknown $calsupValues
-     * @param unknown $reservation_id
+     * @param array $calsupNames
+     * @param array $calsupValues
      */
     public function setEntrySupInfoData($id_space, $calsupNames, $calsupValues, $reservation_id) {
 
@@ -196,6 +195,9 @@ class BkCalSupInfo extends Model {
     public function getSupInfoData($id_space, $id) {
         $sql = "SELECT supplementaries FROM bk_calendar_entry WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
+        if(!$req) {
+            return array();
+        }
         $tmp = $req->fetch();
         $sups = explode(";", $tmp[0]);
         $supData = array();
@@ -213,7 +215,10 @@ class BkCalSupInfo extends Model {
     public function removeUnlistedSupInfos($id_space, $packageID) {
 
         $sql = "SELECT id, id_supinfo FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql);
+        $req = $this->runRequest($sql, array($id_space));
+        if (!$req) {
+            return;
+        }
         $databasePackages = $req->fetchAll();
 
         foreach ($databasePackages as $dbPackage) {

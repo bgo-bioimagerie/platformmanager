@@ -12,7 +12,6 @@ require_once 'Modules/booking/View/Booking/bookfunction.php';
 $dayWidth = !empty($resourcesBase) ? 100/count($resourcesBase) : 1;
 ?>
 
-<head>
  
 <style>
 
@@ -65,12 +64,12 @@ a{
 	color: #000;
 }
 
-@media (min-width: 1200px) {
+@media screen and (min-width: 1200px) {
   .seven-cols .col-md-1,
   .seven-cols .col-sm-1,
   .seven-cols .col-lg-1 {
     width: <?php echo $dayWidth?>%;
-    *width: <?php echo $dayWidth?>%;
+
   }
 }
 /* 14% = 100% (full-width row) divided by 7 */
@@ -80,78 +79,79 @@ img{
 }
 
 </style>
-</head>
 
 
 <!-- Add the table title -->
-<div class="col-md-12"  style="background-color: #ffffff; padding-top: 12px;">
-<div class="col-lg-10 col-lg-offset-1">
-<?php
-        $message = "";
-            if (isset($_SESSION["message"])){
-            $message = $_SESSION["message"];
-        } ?>
-	<?php if ($message != ""): 
-		if (strpos($message, "Err") === false){?>
-			<div class="alert alert-success text-center">	
-		<?php 
-		}
-		else{
+<div class="row"  style="background-color: #ffffff; padding-top: 12px;">
+		<?php
+			$message = "";
+			if (isset($_SESSION["message"]) && $_SESSION["message"]){
+				$message = $_SESSION["message"];
+			}
+			if ($message) {
 		?>
-		 	<div class="alert alert-danger text-center">
+		<?php
+			if (strpos($message, "Err") === false){
+		?>
+				<div class="alert alert-success text-center">	
 		<?php 
-		}
+			}
+			else{
+		?>
+				<div class="alert alert-danger text-center">
+		<?php 
+			}
+		?>
+			<p><?php echo  $message ?></p>
+			</div>
+		<?php } ?>
+		<?php unset($_SESSION["message"])?>
+</div>
+
+<div class="row" style="background-color: #ffffff; padding-bottom: 12px;">
+
+	<div class="col-md-6 col-lg-6 text-left">
+		<div class="btn-group" role="group" aria-label="...">
+			<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/daybefore'"> &lt; </button>
+			<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/dayafter'"> > </button>
+			<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/today'"><?php echo  BookingTranslator::Today($lang) ?></button>
+		</div>
+
+		<?php 
+	$d = explode("-", $date);
+	$time = mktime(0,0,0,$d[1],$d[2],$d[0]);
+	$dayStream = date("l", $time);
+	$monthStream = date("F", $time);
+	$dayNumStream = date("d", $time);
+	$yearStream = date("Y", $time);
+	$sufixStream = date("S", $time);
+	$day_position = date("w", $time); // 0 for sunday, 6 for saturday
+	$day_position = ($day_position === "0") ? 7 : intval($day_position);
 	?>
-    	<p><?php echo  $message ?></p>
-    	</div>
-	<?php endif; unset($_SESSION["message"])?>
-
-</div>
-</div>
-
-<div class="col-lg-12" style="background-color: #ffffff; padding-bottom: 12px;">
-
-<div class="col-md-6 text-left">
-    <div class="btn-group" role="group" aria-label="...">
-<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/daybefore'"> &lt; </button>
-<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/dayafter'"> > </button>
-<button type="submit" class="btn btn-default" onclick="location.href='bookingdayarea/<?php echo $id_space ?>/today'"><?php echo  BookingTranslator::Today($lang) ?></button>
-    </div>
-    <?php 
-$d = explode("-", $date);
-$time = mktime(0,0,0,$d[1],$d[2],$d[0]);
-$dayStream = date("l", $time);
-$monthStream = date("F", $time);
-$dayNumStream = date("d", $time);
-$yearStream = date("Y", $time);
-$sufixStream = date("S", $time);
-$day_position = date("w", $time); // 0 for sunday, 6 for saturday
-$day_position = ($day_position === "0") ? 7 : intval($day_position);
-?>
-<b><?php echo  BookingTranslator::DateFromTime($time, $lang) ?></b>
-</div>
+	<strong><?php echo  BookingTranslator::DateFromTime($time, $lang) ?></strong>
+	</div>
 
 
-<div class="col-md-6 text-right">
-    <div class="btn-group" role="group" aria-label="...">
-        
-        <div class="btn btn-default" type="button">
-            <a style="color:#333;" href="bookingday/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day($lang) ?></a>
-        </div>
-        <div class="btn btn-default active" type="button">
-            <a style="color:#333;" href="bookingdayarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day_Area($lang) ?></a>
-        </div>
-        <div class="btn btn-default" type="button">
-            <a style="color:#333;" href="bookingweek/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week($lang) ?></a>
-        </div>
-        <div class="btn btn-default" type="button">
-            <a style="color:#333;" href="bookingweekarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week_Area($lang) ?></a>
-        </div>
-        <div class="btn btn-default" type="button">
-            <a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Month($lang) ?></a>
-        </div>
-        
-     </div>
+	<div class="col-md-6 col-lg-6 text-right">
+		<div class="btn-group" role="group" aria-label="...">
+			
+			<div class="btn btn-default" type="button">
+				<a style="color:#333;" href="bookingday/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day($lang) ?></a>
+			</div>
+			<div class="btn btn-default active" type="button">
+				<a style="color:#333;" href="bookingdayarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day_Area($lang) ?></a>
+			</div>
+			<div class="btn btn-default" type="button">
+				<a style="color:#333;" href="bookingweek/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week($lang) ?></a>
+			</div>
+			<div class="btn btn-default" type="button">
+				<a style="color:#333;" href="bookingweekarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week_Area($lang) ?></a>
+			</div>
+			<div class="btn btn-default" type="button">
+				<a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Month($lang) ?></a>
+			</div>
+			
+		</div>
     </div>
 </div>
 
@@ -162,90 +162,88 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 ?>
 
 <!-- hours column -->
-<div class="col-xs-12">
-<div class="col-xs-1" id="colDiv">
+<div class="row">
+	<div class="col-xs-1" id="colDiv">
+		<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color:<?php echo $agendaStyle["header_background"]?>;">
+		</div>
+		<?php 
+		// Hours
+		for ($h = $day_begin ; $h < $day_end ; $h++){
+			$heightCol = "0px";
+			if ($size_bloc_resa == 900){
+				$heightCol = 4*$agendaStyle["line_height"] . "px";
+			}
+			else if($size_bloc_resa == 1800){
+				$heightCol = 2*$agendaStyle["line_height"] . "px";
+			}
+			else if($size_bloc_resa == 3600){
+				$heightCol = $agendaStyle["line_height"] . "px";
+			}
+			?>
+		
+			<div id="tcell" style="text-align: center; height: <?php echo  $heightCol ?>; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
+			<?php echo $h?>:00
+			</div>
+			<?php 	
+			}
+			?>	
+	</div>	
+		
+	<!-- hours reservation -->	
+	<div class="col-xs-11" id="colDiv">
+		
+		<div class="row seven-cols" id="colDiv">
+		<?php 
+		for($r = 0 ; $r < count($resourcesBase) ; $r++){
+		?>
+		
+			<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="colDiv">
 
-	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color:<?php echo $agendaStyle["header_background"]?>;">
+				<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
+				<p class="text-center"><strong><?php echo  $this->clean($resourcesBase[$r]['name']) ?></strong>
+						<br/><?php echo  $this->clean($resourcesBase[$r]['description']) ?>
+						<?php
+							if($resourcesBase[$r]['last_state'] != ""){
+								?>
+									<br/>
+									<a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+								<?php
+							}
+						?>
+					</p>
+				</div>
 
-	</div>
-	<?php 
-	// Hours
-	for ($h = $day_begin ; $h < $day_end ; $h++){
-		$heightCol = "0px";
-		if ($size_bloc_resa == 900){
-			$heightCol = 4*$agendaStyle["line_height"] . "px";
-		}
-		else if($size_bloc_resa == 1800){
-			$heightCol = 2*$agendaStyle["line_height"] . "px";;
-		}
-		else if($size_bloc_resa == 3600){
-			$heightCol = $agendaStyle["line_height"] . "px";;
+			<?php 
+			$available_days = $scheduling["is_monday"] . "," . $scheduling["is_tuesday"]. "," . $scheduling["is_wednesday"]. "," . $scheduling["is_thursday"]. "," . $scheduling["is_friday"]. "," . $scheduling["is_saturday"]. "," . $scheduling["is_sunday"];
+			$available_days = explode(",", $available_days);
+			
+			$curentDay = date("w", $date_unix);
+
+			$curentDay--;
+			if ($curentDay == -1){
+				$curentDay = 6;
+			}
+
+			$isAvailableDay = false;
+			if ($available_days[$curentDay] == 1){
+				$isAvailableDay = true;
+			}
+			
+			bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries[$r], $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]["id"]);
+			?>
+			
+			</div>
+		<?php 
 		}
 		?>
-	
-		<div id="tcell" style="height: <?php echo  $heightCol ?>; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
-		<?php echo $h?>:00
 		</div>
-	<?php 	
-	}
-	?>	
-</div>	
-	
-<!-- hours reservation -->	
-<div class="col-xs-11" id="colDiv">
-	
-	<div class="row seven-cols" id="colDiv">
-	<?php 
-	for($r = 0 ; $r < count($resourcesBase) ; $r++){
-	?>
-	
-	<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="colDiv">
-
-	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
-	<p class="text-center"><b><?php echo  $this->clean($resourcesBase[$r]['name']) ?>
-            <br/><?php echo  $this->clean($resourcesBase[$r]['description']) ?>
-            <?php
-                if($resourcesBase[$r]['last_state'] != ""){
-                    ?>
-                        <br/>
-                        <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
-                    <?php
-                }
-            ?>
-        </p>
 	</div>
-
-	<?php 
-        $available_days = $scheduling["is_monday"] . "," . $scheduling["is_tuesday"]. "," . $scheduling["is_wednesday"]. "," . $scheduling["is_thursday"]. "," . $scheduling["is_friday"]. "," . $scheduling["is_saturday"]. "," . $scheduling["is_sunday"];
-	//$available_days = $this->clean($scheduling['available_days']);
-	$available_days = explode(",", $available_days);
-	
-	$curentDay = date("w", $date_unix);
-
-	$curentDay--;
-	if ($curentDay == -1){
-		$curentDay = 6;
-	}
-
-	$isAvailableDay = false;
-	if ($available_days[$curentDay] == 1){
-		$isAvailableDay = true;
-	}
-	
-	bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries[$r], $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]["id"]);
-	?>
-	
-	</div>
-	<?php 
-	}
-	?>
-</div>
 </div>
 
-<div class="col-xs-12">
-
-<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
-
+<div class="row">
+	<div class="col-sm-12">
+	<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+	</div>
 </div>
 
 <?php endblock();

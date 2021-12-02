@@ -725,6 +725,13 @@ class BookingTranslator {
         return "Is mandatory";
     }
 
+    public static function Is_invoicing_unit($lang) {
+        if ($lang == "fr") {
+            return "Utiliser comme unité de facturation";
+        }
+        return "Use as invoicing unit";
+    }
+
     public static function Supplementaries_saved($lang) {
         if ($lang == "fr") {
             return "Les suppléments ont été sauvegardés";
@@ -1641,5 +1648,13 @@ class BookingTranslator {
             return "Vous devez d'abord spécifier un visa dans le module Ressources > Visas";
         }
         return "You need first to specify a visa in Resources module>Visas";
+    }
+
+    public static function maxInvoicingUnits($lang) {
+        if ($lang == "fr") {
+            return "Seule une quantité peut être utilisée comme unité de facturation pour une ressource. Merci de passer \"Utiliser comme unité de facturation\" à \"non\" pour les autres quantités concernées.";
+        } else {
+            return "Only one quantity can be used as an invoicing unit for one resource. Please set \"Use as invoicing unit\" to \"no\" for other quantites.";
+        }
     }
 }

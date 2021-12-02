@@ -38,3 +38,14 @@ Most configuration file variables can be superseeded by environment
 variables, usually in format **PFM_VARNAME**, *PFM_ADMIN_USER* for example for *admin_user* file config equivalent.
 
 See *docker* section.
+
+## Welcome page
+
+The default welcome page displays content of the first file found in *data* directory:
+
+* welcome_[en|fr].md
+* welcome_[en|fr].html*
+* welcome.md
+* welcome.html
+
+Files in markdown (.md) are converted to HTML.

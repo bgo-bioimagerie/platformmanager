@@ -11,7 +11,6 @@ if ($ecmenucolortxt == "") {
 }
 ?>
 
-<head>
     <style>
         #menu-button-div a{
             font: 12px Arial;
@@ -42,11 +41,10 @@ if ($ecmenucolortxt == "") {
             color: #616161;
         }
     </style>
-</head>
 
-<div class="col-md-2" style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
+<div  style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
 
-    <div class="col-md-12" style="margin-top: 0px;">
+    <div  style="margin-top: 0px;">
         <h4 style="text-transform: uppercase;"><?php echo ServicesTranslator::services($lang) ?></h4>
     </div>
     
@@ -55,7 +53,7 @@ if ($ecmenucolortxt == "") {
         if($servicesuseproject == 1){
     ?>
     
-    <div class="col-md-12">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Projects($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesprojectsopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_projects($lang) ?></a>      
@@ -63,11 +61,7 @@ if ($ecmenucolortxt == "") {
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesprojectsclosed/<?php echo $id_space ?>"><?php echo ServicesTranslator::Closed_projects($lang) ?></a><br/>
         </div>
-        <!--
-        <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectsall/<?php echo $id_space ?>"><?php echo ServicesTranslator::All_projects($lang) ?></a><br/>
-        </div>
-        -->
+
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesprojectedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_project($lang) ?></a><br/>
         </div>
@@ -81,7 +75,7 @@ if ($ecmenucolortxt == "") {
     ?>
     
     
-    <div class="col-md-12">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Opened_orders($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesordersopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_orders($lang) ?></a>      
@@ -105,7 +99,7 @@ if ($ecmenucolortxt == "") {
     $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
         if($servicesusestock == 1){
     ?>
-    <div class="col-md-12">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
             <a href="servicesstock/<?php echo $id_space ?>"><?php echo ServicesTranslator::Stock($lang) ?></a>      
@@ -123,13 +117,9 @@ if ($ecmenucolortxt == "") {
         }
     ?>
     
-    <div class="col-md-12">
+    <div >
         <p id="separatorp"><?php echo ServicesTranslator::Listing($lang) ?></p>
-        <!--
-        <div  class="btn-block" id="menu-button-div">
-            <a href="servicesedit/<?php echo $id_space ?>/0"><?php echo CoreTranslator::Neww($lang) ?></a>      
-        </div>
-        -->
+
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="serviceslisting/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a>
             <a href="servicesedit/<?php echo $id_space ?>/0">+</a>

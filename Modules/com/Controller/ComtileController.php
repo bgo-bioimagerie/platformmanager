@@ -4,13 +4,14 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/com/Model/ComTranslator.php';
+require_once 'Modules/com/Controller/ComController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ComtileController extends CoresecureController {
+class ComtileController extends ComController {
 
     /**
      * Constructor
@@ -60,7 +61,7 @@ class ComtileController extends CoresecureController {
 
             return ob_get_clean();
         } else {
-            throw new Exception("unable to find the file: '$file' ");
+            throw new PfmFileException("unable to find the file: '$file' ", 404);
         }
     }
 }

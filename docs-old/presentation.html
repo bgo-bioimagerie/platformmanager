@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Bootstrap core CSS -->
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+        <script src="resources/caroussel/ie-emulation-modes-warning.js"></script>
+        <script src="https://www.w3schools.com/lib/w3.js"></script>
+        <link href="resources/caroussel/carousel.css" rel="stylesheet">
+
+        <style>
+
+
+            #keylink{
+                color:#000000;
+            }
+
+            h1{
+                color:#337ab7; /* color:#018181; */
+                font-size: 150%;
+                text-transform:uppercase;
+                border-bottom: 1px solid #337ab7;
+            }
+
+            h2{
+                color:#337ab7;
+                font-size: 115%;
+                border-bottom: 1px solid #337ab7;
+            }
+
+            h3{
+                color:#337ab7;
+                font-size: 100%;
+                border-bottom: 1px solid #337ab7;
+                margin-left: 15px;
+            }
+
+            p,h3{
+                margin-left: 15px;
+            }
+
+            #nav_title{
+                color:#337ab7;
+                font-size: 150%;
+                /*text-transform:uppercase;*/
+                border-bottom: 1px solid #337ab7;
+            }
+
+            #nav_link{
+                color:#313131;
+            }
+
+            p{
+                text-indent: 50px;
+                text-align: justify;
+            }
+        </style>
+
+    </head>
+
+    <body>
+        <div w3-include-html="navbar.html"></div> 
+
+        <div class="col-lg-12" style="background-color: #f1f1f1; border-bottom: 0px solid #e1e1e1;">
+            <div class="col-lg-offset-1">
+                <h4>Introduction</h4>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <br/>
+        </div>
+
+        <!-- MENU -->
+        <div class="col-md-2 col-md-offset-1" style="margin-top:25px; background-color:#f1f1f1;">
+
+            <h5 id="nav_title">
+                Introduction
+            </h5>
+            <ul>
+                <li><a id="nav_link" href="presentation.html#quesquePM"> About </a></li>
+                <li><a id="nav_link" href="presentation.html#fonctionementPM"> How it works?</a></li>
+
+            </ul>
+        </div>
+
+
+        <!-- CONTENT -->
+        <div class="col-md-8" style="margin-top:25px;">
+
+            <!-- content begin -->
+
+            <h2 id="quesquePM"> About </h2>
+
+            <p>
+                Platform-Manager is a research facility management system. 
+            </p>
+            <p>
+                Platform-Manager has been designed to facilitate the management 
+                of research facilities. It integrates tools for managing users 
+                (membership, responsible, convention...), tools for managing and 
+                booking resources (rooms, microscopes ...), service management 
+                and business databases. It allows to automatically generate 
+                quotes & invoices for each resource or services according 
+                to the reservations or the orders.
+            <p>
+                Platform-Manager is built in a modular way allowing the integration 
+                of additional functionalities with the core functionalities. 
+                For example, modules for stock management, antibody management, 
+                file sharing, downloading of data from resources have been developed.
+            <p>
+                Platform-Manager is under GPL license that means <b>free and open sources</b> 
+            </p>
+
+
+
+            <!-- Carousel
+      ================================================== -->
+            <div id="myCarousel" class="carousel slide" data-ride="carousel" style="width: 900px;">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1" class=""></li>
+                    <li data-target="#myCarousel" data-slide-to="2" class=""></li>
+                    <li data-target="#myCarousel" data-slide-to="3" class=""></li>
+                </ol>
+                <div class="carousel-inner" role="listbox">
+                    <div class="item active">
+                        <img class="first-slide" src="./resources/caroussel/sygrrif1.png" alt="First slide">
+                        <div class="container">
+                            <div class="carousel-caption col-xs-4 col-xs-offset-4">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="second-slide" src="./resources/caroussel/sygrrif2.png" alt="Second slide">
+                        <div class="container">
+                            <div class="carousel-caption col-xs-4 col-xs-offset-4">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="third-slide" src="./resources/caroussel/user2.png" alt="Third slide">
+                        <div class="container">
+                            <div class="carousel-caption col-xs-4 col-xs-offset-4">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="third-slide" src="./resources/caroussel/user1.png" alt="Fourth slide">
+                        <div class="container">
+                            <div class="carousel-caption col-xs-4 col-xs-offset-4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="left carousel-control" href="presentation.html#myCarousel" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="presentation.html#myCarousel" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div><!-- /.carousel -->
+
+            <h2 id="fonctionementPM"> How it works? </h2>
+
+            <p>
+                Platform-Manager is built in 2 levels: a global level of 
+                administration and a level consisting of spaces.
+            </p>
+            <ul>
+                <li>
+                    <b>Administration :</b> The administration module allows the 
+                    system administrator to configure and update Platform-Manager. 
+                    This module also contains the configuration of Platform-Manager: 
+                    installation and configuration of spaces, logo, homepage content ... 
+                </li>
+                <li>
+                    <b>Spaces :</b> Platform-Manager consists of independent "spaces". 
+                    Each space is a public or private domain in which modules are enabled. 
+                    Thus, a set of facilities can share a single instance of 
+                    Platform-Manager with each their dedicated space. The tools 
+                    available in the "spaces" come from the modules, some of which 
+                    are interdependent. Refer to the <a href="modules.html"> 
+                        modules documentation </a> 
+                </li>
+            </ul>
+
+            <p>
+                The main page of Platform Manager is a menu that groups the spaces 
+                created by the administrator as well as the administration menu 
+                (see figure below). The "Administration" menu contains all the 
+                tools for the administrator:    
+            </p>
+            <ul>
+                <li>
+                    <b>Core :</b> For the settings of the application (homepage, maintenance mode, manual backup ...)
+                </li>    
+                <li>
+                    <b>Update :</b> For updating Platform-Manager
+                </li>
+                <li>
+                    <b>Menu :</b> To create new menus like the "Plates-formes" menu of the figure below
+                </li>
+                <li>
+                    <b>Spaces :</b> To create new <i>"Spaces"</i>
+                </li>
+                <li>
+                    <b>Dev :</b> Used on a local instance only, in order to help developing new modules 
+                </li>
+            </ul>
+
+            <div class="col-xs-12">
+                <img alt="screenshotfonctionnement" src="resources/presentation/fonctionnement.png">
+                <i>Example of Platform-Manager configuration for three facilities</i>
+            </div>
+
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="./resources/caroussel/jquery.min.js"></script>
+            <script src="./resources/caroussel/bootstrap.min.js"></script>
+            <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+            <script src="./resources/caroussel/holder.min.js"></script>
+            <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+            <script src="./resources/caroussel/ie10-viewport-bug-workaround.js"></script>
+            <script>
+                w3.includeHTML();
+            </script>
+
+    </body>
+</html>

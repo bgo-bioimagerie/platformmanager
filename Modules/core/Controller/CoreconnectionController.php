@@ -4,6 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/Email.php';
+require_once 'Framework/Errors.php';
 
 require_once 'Modules/core/Controller/CorecookiesecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -119,7 +120,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
                         //die("die failed to set cookie with key " . $key . "<br/>");
-                        throw new Exception("failed to set cookie with key " . $key . "<br/>");
+                        throw new PfmException("failed to set cookie with key " . $key);
                     }
                     $modelUser = new CoreUser();
                     $modelUser->setRememberKey($loggedUser['idUser'], $key);
@@ -132,7 +133,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $this->indexAction($connect);
             }
         } else {
-            throw new Exception("Action not allowed : login or passeword undefined");
+            throw new PfmAuthException("Action not allowed : login or password undefined", 401);
         }
     }
 

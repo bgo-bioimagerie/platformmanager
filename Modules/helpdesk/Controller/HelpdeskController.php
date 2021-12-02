@@ -11,17 +11,28 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreFiles.php';
 require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
+
 
 use League\CommonMark\CommonMarkConverter;
 
 class HelpdeskController extends CoresecureController {
-    
+
+
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $spaceModel = new CoreSpace();
         $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "role" => $role, "ticket" => null));
+        $modelSpace = new CoreSpace();
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("helpdesk", $id_space);
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "role" => $role,
+            "ticket" => null,
+            "menuInfo" => $menuInfo
+        ));
     }
 
     public function setSettingsAction($id_space) {
@@ -145,6 +156,10 @@ class HelpdeskController extends CoresecureController {
                 $role = CoreSpace::$MANAGER;
                 $module = "helpdesk";
                 $name = $_FILES[$fid]['name'];
+                $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $name, $matches);
+                if(! $fileNameOK) {
+                    throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+                }
                 $attachId = $c->set(0, $id_space, $name, $role, $module, $_SESSION['id_user']);
                 $file = $c->get($attachId);
                 $attachementFiles[] = $file;
@@ -190,7 +205,7 @@ class HelpdeskController extends CoresecureController {
         }
         $hm->notify($id_space, $id_ticket, "en", $isNew);
 
-        Events::send(["action" => Events::HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+        Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
 
         
         $this->render(['data' => ['message' => ['id' => $id], 'ticket' => ['id' => $ticket['id']]]]);
@@ -270,7 +285,6 @@ class HelpdeskController extends CoresecureController {
         }
         $hm = new Helpdesk();
         $tickets = $hm->unread($id_space);
-        //$this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
         $this->render(['data' => ['unread' => $tickets]]);
     }
 
@@ -308,7 +322,6 @@ class HelpdeskController extends CoresecureController {
 
         $tickets = $hm->list($id_space, $status, $id_user, $offset, $limit);
 
-        //$this->render(["data" => ["test" => 123, "other" => $this->request->params()]]);
         $this->render(['data' => ['tickets' => $tickets, 'offset' => $offset, 'limit' => $limit]]);
     }
 

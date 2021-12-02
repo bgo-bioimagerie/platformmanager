@@ -18,7 +18,7 @@ class ServicesInvoice extends InvoiceModel {
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
         
         // projects
-        $sqlps = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND id_resp=? AND date_close is NULL)";
+        $sqlps = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND id_resp=? AND date_close is NULL";
         $projects = $this->runRequest($sqlps, array($id_space, $id_resp))->fetchAll();
         foreach ($projects as $p){
             
@@ -51,7 +51,7 @@ class ServicesInvoice extends InvoiceModel {
         $orders = $modelOrder->openedForRespPeriod($beginPeriod, $endPeriod, $id_resp, $id_space);
 
         // get all projects
-        $sqlps = "SELECT * FROM se_project WHERE id_space=? AND id_resp=? AND date_close is null)";
+        $sqlps = "SELECT * FROM se_project WHERE id_space=? AND id_resp=? AND date_close is null";
         $projects = $this->runRequest($sqlps, array($id_space, $id_resp))->fetchAll();
 
         $modelPrice = new SePrice();
@@ -75,7 +75,7 @@ class ServicesInvoice extends InvoiceModel {
             foreach ($orders as $order) {
 
                 $sqlo = "SELECT quantity FROM se_order_service WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
-                $quantities = $this->runRequest($sqlo, array($order["id"], $service["id"], $space_id))->fetchAll();
+                $quantities = $this->runRequest($sqlo, array($order["id"], $service["id"], $id_space))->fetchAll();
                 foreach ($quantities as $q) {
                     $quantity += $q["quantity"];
                 }
@@ -85,16 +85,16 @@ class ServicesInvoice extends InvoiceModel {
             foreach ($projects as $project) {
 
                 // get quantity
-                $sqlp = "SELECT quantity FROM se_project_service WHERE space_id=? AND deleted=0 AND id_invoice=0 AND date>=? AND date<=? AND id_service=? AND id_project=?";
-                $quantities = $this->runRequest($sqlp, array($space_id, $beginPeriod, $endPeriod, $service["id"], $project["id"]))->fetchAll();
+                $sqlp = "SELECT quantity FROM se_project_service WHERE id_space=? AND deleted=0 AND id_invoice=0 AND date>=? AND date<=? AND id_service=? AND id_project=?";
+                $quantities = $this->runRequest($sqlp, array($id_space, $beginPeriod, $endPeriod, $service["id"], $project["id"]))->fetchAll();
                 //echo "services for project " . $project["id"] . "<br/>";
                 //print_r($quantities);
                 foreach ($quantities as $q) {
                     $quantity += $q["quantity"];
                 }
                 // update the invoice id
-                $sqlpu = "UPDATE se_project_service SET id_invoice=? WHERE space_id=? AND id_invoice=0 AND date>=? AND date<=? AND id_service=? AND id_project=?";
-                $this->runRequest($sqlpu, array($space_id, $invoice_id, $beginPeriod, $endPeriod, $service["id"], $project["id"]));
+                $sqlpu = "UPDATE se_project_service SET id_invoice=? WHERE id_space=? AND id_invoice=0 AND date>=? AND date<=? AND id_service=? AND id_project=?";
+                $this->runRequest($sqlpu, array($id_space, $invoice_id, $beginPeriod, $endPeriod, $service["id"], $project["id"]));
             }
 
             // add to content
@@ -107,7 +107,7 @@ class ServicesInvoice extends InvoiceModel {
         // close orders
         foreach ($orders as $order) {
             $sqloc = "UPDATE se_order SET id_invoice=?, id_status=0, date_close=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sqloc, array($invoice_id, date("Y-m-d"), $order["id"], $space_id));
+            $this->runRequest($sqloc, array($invoice_id, date("Y-m-d"), $order["id"], $id_space));
         }
 
         return $content;

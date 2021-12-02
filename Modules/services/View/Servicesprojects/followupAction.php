@@ -3,13 +3,15 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-<div class="col-md-12 pm-form">
+<div class="pm-form">
 
     <div class="col-md-12">
     <h3> <?php echo $projectName ?> </h3>
     </div>
     
-    <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
+    <div class="col-md-12">
+        <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
+    </div>
 
     <button class="btn btn-primary" id="addentrybutton"><?php echo ServicesTranslator::NewEntry($lang) ?></button>
     

@@ -13,6 +13,7 @@ require_once 'Modules/invoices/Model/InVisa.php';
 
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/invoices/Controller/InvoicesController.php';
 
 
 /**
@@ -20,7 +21,7 @@ require_once 'Modules/clients/Model/ClClient.php';
  * @author sprigent
  * Controller for the home page
  */
-class InvoiceslistController extends CoresecureController {
+class InvoiceslistController extends InvoicesController {
 
     /**
      * Constructor
@@ -180,7 +181,7 @@ class InvoiceslistController extends CoresecureController {
         $form = new Form($this->request, "infoActionForm");
         $form->setTitle(InvoicesTranslator::InvoiceInfo($lang));
         $form->addText("number", InvoicesTranslator::Number($lang), false, $invoice["number"], false);
-        $form->addText("resp", ClientsTranslator::ClientAccount($lang), false, $modelClient->getName($invoice["id_responsible"]), false);
+        $form->addText("resp", ClientsTranslator::ClientAccount($lang), false, $modelClient->getName($id_space, $invoice["id_responsible"]), false);
         $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, CoreTranslator::dateFromEn($invoice["date_generated"], $lang));
         $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
         

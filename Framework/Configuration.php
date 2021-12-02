@@ -4,6 +4,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Processor\TagProcessor;
 use Monolog\Formatter\LineFormatter;
 
+require_once 'Framework/Errors.php';
+
 /**
  * Class that manage the configuration parameters
  * 
@@ -24,7 +26,6 @@ class Configuration {
             if(Configuration::get('debug', false)) {
                 $level = Logger::DEBUG;
             }
-            //$output = "[%datetime%] %channel%.%level_name%: %message%\n";
             $formatter = new LineFormatter(LineFormatter::SIMPLE_FORMAT, LineFormatter::SIMPLE_DATE);
             $formatter->includeStacktraces(true);
             $streamHandler = new StreamHandler('php://stderr', $level);
@@ -51,7 +52,7 @@ class Configuration {
      * 
      * @param string $name Name of the parameter
      * @param string $defaultValue Value returned by default
-     * @return string Value of the configuration parameter
+     * @return string|int|array Value of the configuration parameter
      */
     public static function get($name, $defaultValue = null) {
         $parameters = self::getParameters();
@@ -74,7 +75,6 @@ class Configuration {
             $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
                 Configuration::getLogger()->warning('No configuration file found, using env vars only');
-                // throw new Exception("Unable to find the configuration file");
             } else {
                 self::$parameters = parse_ini_file($urlFile);
             }
@@ -104,7 +104,7 @@ class Configuration {
             try {
                 self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
             } catch(Exception $e) {
-                throw PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+                throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
             }
         }
 
@@ -166,10 +166,14 @@ class Configuration {
             self::$parameters['debug_influxdb'] = boolval(getenv('DEBUG_INFLUXDB'));
         }
         if(!isset(self::$parameters['smtp_from'])) {
-            self::$parameters['smtp_from'] = 'donotreply@pfm.org';
+            self::$parameters['smtp_from'] = 'pfm+donotreply@pfm.org';
         }
         if(getenv('MAIL_FROM')) {
+            self::getLogger()->debug('MAIL_FROM is deprecated, use SMTP_FROM');
             self::$parameters['smtp_from'] = getenv('MAIL_FROM');
+        }
+        if(getenv('SMTP_FROM')) {
+            self::$parameters['smtp_from'] = getenv('SMTP_FROM');
         }
         if(getenv('PFM_ADMIN_USER')) {
             self::$parameters['admin_user'] = getenv('PFM_ADMIN_USER');
@@ -188,25 +192,6 @@ class Configuration {
         }
         if(getenv('PFM_PUBLIC_URL')) {
             self::$parameters['public_url'] = getenv('PFM_PUBLIC_URL');
-        }
-
-        if(getenv('PFM_LDAP_HOST')) {
-            self::$parameters['ldap_host'] = getenv('PFM_LDAP_HOST');
-        }
-        if(getenv('PFM_LDAP_PORT')) {
-            self::$parameters['ldap_port']= intval(getenv('PFM_LDAP_PORT'));
-        }
-        if(getenv('PFM_LDAP_USER')) {
-            self::$parameters['ldap_admin'] = getenv('PFM_LDAP_USER');
-        }
-        if(getenv('PFM_LDAP_PASSWORD')) {
-            self::$parameters['ldap_password'] = getenv('PFM_LDAP_PASSWORD');
-        }
-        if(getenv('PFM_LDAP_BASEDN')) {
-            self::$parameters['ldap_dn'] = getenv('PFM_LDAP_BASEDN');
-        }
-        if(getenv('PFM_LDAP_BASESEARCH')) {
-            self::$parameters['ldap_search_dn'] = getenv('PFM_LDAP_BASESEARCH');
         }
 
         if(getenv('PFM_AMQP_HOST')) {
@@ -267,6 +252,18 @@ class Configuration {
             }
         }
 
+        if(getenv('PFM_GRAFANA_URL')) {
+            self::$parameters['grafana_url'] = getenv('PFM_GRAFANA_URL');
+        }
+
+        if(getenv('PFM_GRAFANA_USER')) {
+            self::$parameters['grafana_user'] = getenv('PFM_GRAFANA_USER', 'admin');
+        }
+
+        if(getenv('PFM_GRAFANA_PASSWORD')) {
+            self::$parameters['grafana_password'] = getenv('PFM_GRAFANA_PASSWORD');
+        }
+
         if(getenv('PFM_HELPDESK_EMAIL')) {
             self::$parameters['helpdesk_email'] = getenv('PFM_HELPDESK_EMAIL');
         }
@@ -286,7 +283,7 @@ class Configuration {
             self::$parameters['helpdesk_imap_tls'] = getenv('PFM_HELPDESK_IMAP_TLS');
         }
         if(getenv('PFM_ALLOW_REGISTRATION')) {
-            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION'));
+            self::$parameters['allow_registration'] = intval(getenv('PFM_ALLOW_REGISTRATION')) ? true : false;
         }
         if(getenv('PFM_JWT_SECRET')) {
             self::$parameters['jwt_secret'] = getenv('PFM_JWT_SECRET');

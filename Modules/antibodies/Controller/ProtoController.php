@@ -5,9 +5,13 @@ require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Proto.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
 // DEPRECATED?
-class ProtoController extends CoresecureController {
+/**
+ * @deprecated
+ */
+class ProtoController extends AntibodiesController {
 
     /**
      * User model object

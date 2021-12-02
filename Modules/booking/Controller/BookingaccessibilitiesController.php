@@ -6,13 +6,13 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkAccess.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
-
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingaccessibilitiesController extends CoresecureController {
+class BookingaccessibilitiesController extends BookingsettingsController {
 
     /**
      * Constructor

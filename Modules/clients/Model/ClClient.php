@@ -64,6 +64,12 @@ class ClClient extends Model {
         return $data;
     }
 
+    public function count($id_space) {
+        $sql = "SELECT count(*) FROM cl_clients WHERE id_space=? AND deleted=0";
+        $data = $this->runRequest($sql, array($id_space))->fetch();
+        return $data ? $data[0]: 0;
+    }
+
     public function getName($id_space, $id) {
         $sql = "SELECT name FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
@@ -118,18 +124,29 @@ class ClClient extends Model {
         if (!$id) {
             $sql = 'INSERT INTO cl_clients (id_space, name, contact_name, phone, email, pricing, invoice_send_preference) VALUES (?,?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $contact_name, $phone, $email, $pricing, $invoice_send_preference));
-            return $this->getDatabase()->lastInsertId();
+            $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE cl_clients SET name=?, contact_name=?, phone=?, email=?, pricing=?, invoice_send_preference=? WHERE id=? AND id_space=? AND deleted=0';
             $this->runRequest($sql, array($name, $contact_name, $phone, $email, $pricing, $invoice_send_preference, $id, $id_space));
-            return $id;
         }
+        Events::send([
+            "action" => Events::ACTION_CUSTOMER_EDIT,
+            "space" => ["id" => intval($id_space)],
+            "client" => ["id" => $id]
+        ]);
+        return $id;
     }
 
     public function delete($id_space, $id) {
-        $sql = "UPDATE cl_clients SET deleted=1,deleted_at=NOW() WHERE id_space=? AND deleted=0";
+        $sql = "UPDATE cl_clients SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=? AND deleted=0";
         //$sql = "DELETE FROM cl_clients WHERE id=?  AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
+        Events::send([
+            "action" => Events::ACTION_CUSTOMER_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "client" => ["id" => $id]
+        ]);
+        return $id;
     }
 
 }

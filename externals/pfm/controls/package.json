@@ -1,0 +1,17 @@
+{
+  "name": "pfm-controls",
+  "version": "1.0.0",
+  "description": "control library",
+  "main": "controls.js",
+  "scripts": {
+    "build": "node_modules/webpack/bin/webpack.js"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "webpack": "^5.63.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.9.1"
+  }
+}
