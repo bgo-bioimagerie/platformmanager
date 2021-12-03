@@ -46,7 +46,10 @@ class CoretilesController extends CorecookiesecureController {
             $id = 0;
         }
         if ( $id < 0 ){
-            $this->redirect("coretilesdoc");
+            $_SESSION['flash'] = 'Page not found, sorry...';
+            //$this->showMainSubMenu(0);
+            $this->redirect('');
+            return;
         }
         if ( $level == 0) {
             $this->showMainSubMenu(0);
@@ -60,7 +63,6 @@ class CoretilesController extends CorecookiesecureController {
         else{
             $this->redirect("corehome");
         }
-        
     }
     
     public function showMainMenu($id){
@@ -70,7 +72,10 @@ class CoretilesController extends CorecookiesecureController {
             $id = $modelMenu->getFirstIdx();
         }
         // get default sub menu
-        $id_sub = $modelMenu->getFirstSubMenu($id);
+        $id_sub = 0;
+        if($id > 0) {
+            $id_sub = $modelMenu->getFirstSubMenu($id);
+        }
         
         $this->showMainSubMenu($id_sub);
     }

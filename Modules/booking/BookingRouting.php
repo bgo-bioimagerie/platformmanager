@@ -91,7 +91,7 @@ class BookingRouting extends Routing{
         $this->addRoute("updateresaresps", "updateresaresps", "bookinginvoice", "updateresaresponsibles", array(), array());
         
         // pm transfert
-        $this->addRoute("bookinggetreservations", "bookinggetreservations", "Bookingreservations", "getreservations", array("id_resource", "userlogin"), array("", ""), true);
+        // $this->addRoute("bookinggetreservations", "bookinggetreservations", "Bookingreservations", "getreservations", array("id_resource", "userlogin"), array("", ""), true);
         
         
         

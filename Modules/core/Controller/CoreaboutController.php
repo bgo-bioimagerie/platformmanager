@@ -38,4 +38,9 @@ class CoreaboutController extends CorecookiesecureController {
         
     }
 
+    public function plansAction() {
+        $plans = Configuration::get('plans', []);
+        $this->render(['plans' => $plans]); 
+    }
+
 }

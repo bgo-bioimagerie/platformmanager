@@ -204,11 +204,14 @@ abstract class Controller {
         } else {
             $dataView['flash'] = null;
         }
+
+       
         // Geneate the view
 
         $dataView["mainMenu"] = $this->mainMenu();
         $dataView["sideMenu"] = $this->sideMenu();
         $dataView["spaceMenu"] = $this->spaceMenu();
+        $dataView["rootWeb"] = Configuration::get("rootWeb", "/");
         if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
             // TODO add navbar generation
             require_once 'Modules/core/Controller/CorenavbarController.php';
@@ -253,7 +256,9 @@ abstract class Controller {
         } else {
             Configuration::getLogger()->debug('headers already sent', ['file' => $filename, 'line' => $filenum]);
         }
-        header("Location:" . $rootWeb . $path);
+        $newUrl = $rootWeb . $path;
+        $newUrl = str_replace('//', '/', $newUrl);
+        header("Location:" . $newUrl);
     }
 
     protected function redirectNoRemoveHeader($path, $args = array()){
@@ -261,7 +266,10 @@ abstract class Controller {
         foreach ($args as $key => $val) {
             $path .= "?" . $key . "=" . $val;
         }
-        header("Location:" . $rootWeb . $path);
+        $newUrl = $rootWeb . $path;
+        $newUrl = str_replace('//', '/', $newUrl);
+        header("Location:" . $newUrl);
+        // header("Location:" . $rootWeb . $path);
     }
 
 }

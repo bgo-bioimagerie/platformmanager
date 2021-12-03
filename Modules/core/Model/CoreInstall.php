@@ -616,11 +616,16 @@ class CoreDB extends Model {
                 $csu = new CoreSpaceUser();
                 $managers = $csu->managersOrAdmin($space['id']);
                 $g = new Grafana();
-                foreach($managers as $manager) {
-                    $u = new CoreUser();
-                    $user = $u->getInfo($manager['id_user']);
-                    Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
-                    $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                $plan = new CorePlan($space['plan'], $space['plan_expire']);
+                if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                    foreach($managers as $manager) {
+                        $u = new CoreUser();
+                        $user = $u->getInfo($manager['id_user']);
+                        Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
+                        $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                    }
+                } else {
+                    Configuration::getLogger()->debug('[flags][disabled] ', ['space' => $space['name'] , 'flags' => [CorePlan::FLAGS_GRAFANA]]);
                 }
                 $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
             }
