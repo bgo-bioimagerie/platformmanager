@@ -8,6 +8,61 @@ require_once 'Modules/core/Model/CorePendingAccount.php';
 
 require_once 'Framework/Events.php';
 
+
+class CorePlan {
+
+    public static $PLAN_FREE = 0;
+    public static $PLAN_BRONZE = 0;
+    public static $PLAN_SILVER = 0;
+    public static $PLAN_GOLD = 0;
+
+    /**
+     * Known flags
+     */
+    // flag to add space managers as grafana org members
+    const FLAGS_GRAFANA = 'grafana';
+
+    private ?array $plan = null;
+
+    /**
+     * Instance of a plan
+     * 
+     * @var int $plan_id  id of the plan
+     * @var int $plan_expire optional timestamp of plan. If expired, get plan id = 0
+     */
+    public function __construct(int $plan_id, int $plan_expire=0) {
+        $plans = Configuration::get('plans', []);
+        $now = time();
+        $id = intval($plan_id);
+        if($plan_expire && $plan_expire > $now) {
+            $id = 0;
+        }
+        foreach ($plans as $plan) {
+            if ($plan['id'] == $id) {
+                $this->plan = $plan;
+                break;
+            }
+        }
+    }
+
+    public function Flags() {
+        return $this?->plan['flags'];
+    }
+
+    public function hasFlag(string $flag) : bool {
+        if(!$this->plan) {
+            return false;
+        }
+        foreach ($this->plan['flags'] as $pf) {
+            if ($pf === $flag) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
 /**
  * Class defining the Status model
  *
@@ -51,6 +106,8 @@ class CoreSpace extends Model {
         `shortname` varchar(30) NOT NULL DEFAULT '',
         `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
         `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
+        `plan` int NOT NULL DEFAULT 0,
+        `plan_expire` int NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -58,6 +115,8 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
         $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
+        $this->addColumn('core_spaces', 'plan', "int", '0');
+        $this->addColumn('core_spaces', 'plan_expire', "int", '0');
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
@@ -238,7 +297,7 @@ class CoreSpace extends Model {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return null;
+            return "#000000";
         }
         return $req[0];
     }
@@ -247,7 +306,7 @@ class CoreSpace extends Model {
         $sql = "SELECT txtcolor FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return null;
+            return "#ffffff";
         }
         return $req[0];
     }

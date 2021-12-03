@@ -10,7 +10,10 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Users module allows space admins to manage users.
+Within this module, you can:
+ add users authorize users to access your space affect roles to users within your space manage users booking access manage users client accounts  Item definition    A user is linked to an account. Within a space, it can be attributed different roles , like admin, manager, user or visitor.
+A user is defined by its (&quot;*&quot; for mandatory):">
 
 
 
@@ -502,7 +505,11 @@
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -542,7 +549,11 @@
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -583,6 +594,30 @@
             
             
                 <span class="flex">Documents</span>
+            
+            
+
+            
+            </li>
+            
+            
+            
+
+            
+            
+            
+            
+            
+            
+
+            <li>
+            
+            
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/helpdesk/" class="gdoc-nav__entry ">
+                        Helpdesk
+                    </a>
+                </span>
             
             
 
@@ -662,7 +697,11 @@
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -702,7 +741,11 @@
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -722,7 +765,11 @@
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry is-active">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -863,7 +910,148 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Users</h1>
-        
+        <p><strong>Users module</strong> allows space admins to manage <em>users</em>.</p>
+<p><img src="../../../create_user_9.png" alt="users_module"  /></p>
+<p>Within this module, you can:</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#users-management">add <em>users</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#users-management">authorize <em>users</em> to access your <em>space</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#users-management">affect roles to users within your <em>space</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#manage-users-booking-access">manage users <em>booking access</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#link-users-to-a-client">manage users <em>client accounts</em></a></li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="item-definition">
+        Item definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#item-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Item definition" href="#item-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>A <strong>user</strong> is linked to an account. Within a space, it can be attributed different <a class="gdoc-markdown__link" href="./#user-space-roles"><em>roles</em></a> , like <em>admin</em>, <em>manager</em>, <em>user</em> or <em>visitor</em>.</p>
+<p>A <em>user</em> is defined by its (&quot;*&quot; for <em>mandatory</em>):</p>
+<ul>
+<li>
+<p>In Platform-Manager</p>
+<ul>
+<li>Login*</li>
+<li>Name*</li>
+<li>Firstname*</li>
+<li>Email*</li>
+<li>Phone</li>
+</ul>
+</li>
+<li>
+<p>In a space</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#user-space-role">Space role</a></li>
+<li><a class="gdoc-markdown__link" href="./#user-activity-state">Activity state</a></li>
+</ul>
+</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="related-items-definition">
+        Related items definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#related-items-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Related items definition" href="#related-items-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="user-space-role">
+        User space role
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#user-space-role" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor User space role" href="#user-space-role">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Within a <em>space</em>, a <em>user</em> as a <em>role</em>. The role is used to manage access to space modules and space administration.</p>
+<ul>
+<li>Only users with Admin role will have access to the space <strong>Admin section</strong> (<em>i.e.</em> <em>Space</em>, <em>Configuration</em>, <em>Users</em> and <em>History</em> modules).</li>
+<li>Each of the modules within the <strong>Tools section</strong> can be restricted to a certain level of user role in <em>Configuration module</em>.</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="user-activity-state">
+        User activity state
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#user-activity-state" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor User activity state" href="#user-activity-state">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Relatively to a space, a user can be <em>pending</em>, <em>active</em>, or <em>inactive</em>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="pending">
+        Pending
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#pending" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Pending" href="#pending">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p>When a user account is linked to a space, his activity state is first set to <em>pending</em>. It means that they still have been affected no role for this space.</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="active">
+        Active
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#active" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Active" href="#active">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p>A user is <em>active</em> when they have been affected a role for this space. He has access to <em>space modules</em> authorized for his role.</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="inactive">
+        Inactive
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#inactive" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Inactive" href="#inactive">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p>A user is <em>inactive</em> when his role has been set to <em>inactive</em>. The user account is still linked to this space, but the user has no access to <em>space modules</em>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="module-activation-and-configuration">
+        Module activation and configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#module-activation-and-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Module activation and configuration" href="#module-activation-and-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p><em>Users module</em> is activated by default and can&rsquo;t be deactivated. It is only accessible to <em>space admins</em>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="users-management">
+        Users management
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#users-management" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Users management" href="#users-management">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>See <a class="gdoc-markdown__link" href="../../../manager/users">Users management</a></p>
+<p>A <em>User</em> is linked to an account. Within a space, it can be attributed different <em>roles</em> , like <em>admin</em>, <em>manager</em>, <em>user</em> or <em>visitor</em>.
+Creating a <em>user</em> creates an <em>account</em>. A <em>user account</em> can be member of multiple spaces.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="set-a-space-admin">
+        Set a space admin
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#set-a-space-admin" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Set a space admin" href="#set-a-space-admin">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>See <a class="gdoc-markdown__link" href="../../../manager/users/#promote-a-user-to-space-administration">Promote a user to space administration</a></p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="link-users-to-a-client">
+        Link users to a client
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#link-users-to-a-client" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Link users to a client" href="#link-users-to-a-client">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>You can link users to a client by clicking the <em>Client accounts</em> button for a user.</p>
+<p><img src="../../../users_module_4.png" alt="basic configuration"  /></p>
+<p>Then, just choose a client amongst the Clients selector and click <em>Add</em>.</p>
+<p><img src="../../../users_module_5.png" alt="basic configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="manage-users-booking-access">
+        Manage users booking access
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#manage-users-booking-access" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Manage users booking access" href="#manage-users-booking-access">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>By default, users are not authorized to book resources. To make users able to book a resource, you have to manage their booking access.
+Note that, since you need to have activated the <em>Booking module</em> to display the <em>Booking access</em> button aside the users names.</p>
+<p><img src="../../../users_module_1.png" alt="basic configuration"  /></p>
+<p>Click the <em>Booking access</em> button for the user you want to be able to book a resource.</p>
+<p><img src="../../../users_module_2.png" alt="basic configuration"  /></p>
+<p>Then click <em>Add</em> button (<em>i.e.</em> &ldquo;add&rdquo; this the user to the list of users who can book this resource) for the resource you want them to be able to book.</p>
+<p><img src="../../../users_module_3.png" alt="basic configuration"  /></p>
+<p>Fill <em>Activation date</em> and, eventually, <em>Visa</em> if you set your <em>Booking module</em> to require visas.</p>
+
     </article>
 
                 

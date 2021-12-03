@@ -19,6 +19,7 @@
 * [core] limit file uploads name to alphanumeric # 402
 * [core] add welcome page and use it as default entry url
 * [core] manage db reconnection in case of failure
+* [core] on welcome page show different use info
 
 ## 2.1.9
 

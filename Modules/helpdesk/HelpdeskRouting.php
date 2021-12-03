@@ -15,6 +15,7 @@ class HelpdeskRouting extends Routing{
         $router->map('POST', '/helpdesk/[i:id_space]/[i:id_ticket]/assign', 'helpdesk/helpdesk/assign', 'helpdesk_ticket_assign');
         $router->map('GET', '/helpdesk/[i:id_space]/list/[i:status]', 'helpdesk/helpdesk/list', 'helpdesk_list');
         $router->map('GET|POST', '/helpdeskconfig/[i:id_space]', 'helpdesk/helpdeskconfig/index', 'helpdesk_config');
+        $router->map('GET', '/core/tiles/[i:id_space]/module/helpdesk/notifs', 'helpdesk/helpdesk/notifs', 'helpdesk_notifs');
     }
 
     /**

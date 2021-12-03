@@ -321,6 +321,7 @@ class QuotelistController extends QuoteController {
 
         // generate pdf
         $address = nl2br($info["address"]);
+        $adress = $address; // backwark compat
         $resp = $info["recipient"];
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;

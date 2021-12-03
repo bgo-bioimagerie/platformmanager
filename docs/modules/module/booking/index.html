@@ -10,7 +10,11 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Booking module allows users book resources.
+Unlike other modules, Booking module has the particularity to be divided into two modules: Booking and Booking settings. You will need to activate both in order set your resources reservation environment.
+Module descritpion
+Item definition    A reservation is defined by its:
+ Resource User Client account Short description Full description Color code (optional) Additional infos All day, i.e. does this reservation takes all day?">
 
 
 
@@ -502,7 +506,11 @@
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry is-active">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -542,7 +550,11 @@
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -583,6 +595,30 @@
             
             
                 <span class="flex">Documents</span>
+            
+            
+
+            
+            </li>
+            
+            
+            
+
+            
+            
+            
+            
+            
+            
+
+            <li>
+            
+            
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/helpdesk/" class="gdoc-nav__entry ">
+                        Helpdesk
+                    </a>
+                </span>
             
             
 
@@ -662,7 +698,11 @@
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -702,7 +742,11 @@
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -722,7 +766,11 @@
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -863,7 +911,287 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Booking</h1>
-        
+        <p><strong>Booking module</strong> allows <em>users</em> book <em>resources</em>.</p>
+<p><img src="../../../booking_module_1.png" alt="booking_module"  /></p>
+<p>Unlike other modules, Booking module has the particularity to be divided into two modules: <a class="gdoc-markdown__link" href="#booking-module"><strong>Booking</strong></a> and <a class="gdoc-markdown__link" href="#booking-settings-module"><strong>Booking settings</strong></a>.
+You will need to activate both in order set your resources reservation environment.</p>
+<p><strong>Module descritpion</strong></p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="item-definition">
+        Item definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#item-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Item definition" href="#item-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>A reservation is defined by its:</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="../resources/#item-definition">Resource</a></li>
+<li><a class="gdoc-markdown__link" href="../users/#item-definition">User</a></li>
+<li><a class="gdoc-markdown__link" href="../clients/#item-definition">Client account</a></li>
+<li>Short description</li>
+<li>Full description</li>
+<li><a class="gdoc-markdown__link" href="#color-code">Color code</a></li>
+<li>(optional) <a class="gdoc-markdown__link" href="#additional-info">Additional infos</a></li>
+<li>All day, <em>i.e.</em> does this reservation takes all day?</li>
+<li>Beginning (date + time)</li>
+<li>End (date + time)</li>
+<li>(optional) Periodicity</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="related-items-definition">
+        Related items definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#related-items-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Related items definition" href="#related-items-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="color-code">
+        Color code
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#color-code" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Color code" href="#color-code">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="additional-info">
+        Additional info
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#additional-info" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Additional info" href="#additional-info">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><div class="gdoc-page__anchorwrap">
+    <h4 id="supplementaries-info">
+        Supplementaries info
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#supplementaries-info" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Supplementaries info" href="#supplementaries-info">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p>For information on reservation. Can be set as mandatory.</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="packages">
+        Packages
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#packages" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Packages" href="#packages">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><pre><code>**To be documented**
+</code></pre>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="quantities">
+        Quantities
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#quantities" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Quantities" href="#quantities">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p>Allows to specify quantity of specific elements for a reservation. Can be set as mandatory.</p>
+<p>If a quantity is set as <em>invoicing unit</em> for a resource, then its quantity will be taken into account for invoice generation instead of reservation duration.</p>
+<p>Two quantities cannot be set as <em>invoicing units</em> for the same resource.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="module-activation-and-configuration">
+        Module activation and configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#module-activation-and-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Module activation and configuration" href="#module-activation-and-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Within your space, go into <em>Configuration</em> module.</p>
+<p><img src="../../../basic_configuration_1.png" alt="basic configuration"  /></p>
+<p>Then click edit button in <em>booking</em> line.</p>
+<p><em>Booking configuration</em> has several options:</p>
+<ul>
+<li>
+<p><strong>Activate/deactivate menus</strong>: select the minimum role required to access both the <em>Booking</em> and <em>Booking settings</em> modules. <em>Inactive</em> option stands for <em>the module is not active</em>.</p>
+<p><img src="../../../booking_module_config_1.png" alt="booking_configuration"  /></p>
+</li>
+<li>
+<p><strong>Use authorisation visa</strong>: set if users have to have been attributed a visa to be able to book resources</p>
+</li>
+<li>
+<p><strong>Menu name</strong>: change the menu name</p>
+</li>
+<li>
+<p><strong>Use recurrent booking</strong>: allow to make periodic reservations</p>
+</li>
+<li>
+<p><strong>Can user edit started reservation?</strong>: allow user to make changes to an existing reservation</p>
+</li>
+<li>
+<p><strong>Edit booking options</strong>: choose description fields displaying when editing a reservation</p>
+<p><img src="../../../booking_module_config_2.png" alt="booking_configuration"  /></p>
+</li>
+<li>
+<p><strong>Edit reservation plugin</strong>: <strong>A documenter</strong></p>
+</li>
+<li>
+<p><strong>Edit booking mailing</strong>: choose in which cases emails should be sent to users and / or space managers</p>
+</li>
+<li>
+<p><strong>Booking summary options</strong>: choose which informations should display on reservations thumbails in calendar views</p>
+<p><img src="../../../booking_module_config_3.png" alt="booking_configuration"  /></p>
+</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="booking-settings-module">
+        Booking settings module
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#booking-settings-module" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Booking settings module" href="#booking-settings-module">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p><img src="../../../booking_settings_module_0.png" alt="booking_settings"  /></p>
+<p><strong>Booking settings</strong> module&rsquo;s role is to configure all booking-relative parameters, as the scheduling, resources reservation restrictions, and so on.</p>
+<p>The default page displays only the side menu.</p>
+<p>Following, the different items of <em>Booking settings</em>, divided into 3 categories (<em>Calendar View</em>, <em>Additional info</em> and <em>Booking</em>):</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="calendar-view">
+        Calendar View
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#calendar-view" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Calendar View" href="#calendar-view">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p><em>Calendar View</em> parameters define to what users have access.</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="scheduling">
+        Scheduling
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#scheduling" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Scheduling" href="#scheduling">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p><strong>Warning</strong>: in order to edit schedulings, you need to create <a class="gdoc-markdown__link" href="./#color-codes"><em>color codes</em></a> first.</p>
+<p><img src="../../../booking_settings_module_2.png" alt="booking_settings"  /></p>
+<p>Set, for each <a class="gdoc-markdown__link" href="../resources/#area"><em>area</em></a>:</p>
+<ul>
+<li>week days available for booking</li>
+<li>daily time slot available for booking</li>
+<li>booking blocs size (from 1/4 hour to 1 hour)</li>
+<li>default booking scale (minutes, hours or days)</li>
+<li>how do user specifies the booking duration</li>
+<li>default <a class="gdoc-markdown__link" href="#color-codes"><em>color code</em></a></li>
+</ul>
+<p><img src="../../../booking_settings_module_3.png" alt="booking_settings"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="display">
+        Display
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#display" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Display" href="#display">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p><img src="../../../booking_settings_module_4.png" alt="booking_settings"  /></p>
+<p>Set the colors and text options of the calendar view interface.</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="accessibilities">
+        Accessibilities
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#accessibilities" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Accessibilities" href="#accessibilities">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p><strong>Warning</strong> <em>for versions &lt; 2.2</em>
+Default booking authorizations show <em>User</em> by default, but are set to <em>Manager</em></p>
+<p>Need to be saved a first time to be taken into account.</p>
+<p>Same each time you add a new resource, its authorizations are set to <em>Manager</em> even if it shows <em>User</em>.</p>
+<p><img src="../../../booking_settings_module_5.png" alt="booking_settings"  /></p>
+<p>Set booking authorizations (<em>User</em>, <em>Authorized users list</em>, <em>Manager</em>, <em>Admin</em>) by resource for members of your space.</p>
+<p>Options:</p>
+<ul>
+<li><strong>User</strong>: every user is authorized to book this resource</li>
+<li><strong>Authorized users list</strong>: only users with booking access for this resource&rsquo;s category are allowed to make a reservation (+ managers and admins)</li>
+<li><strong>Manager</strong>: only managers and admins are allowed to make a reservation</li>
+<li><strong>Admin</strong>: only admins are allowed to make a reservation</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="restrictions">
+        Restrictions
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#restrictions" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Restrictions" href="#restrictions">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p><img src="../../../booking_settings_module_6.png" alt="booking_settings"  /></p>
+<p>Set max booking per day and cancellation time limit by resource.</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="night--we">
+        Night &amp; WE
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#night--we" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Night &amp; WE" href="#night--we">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p>This item has to deal with <a class="gdoc-markdown__link" href="../clients/#pricing"><em>pricings</em></a>.</p>
+<p><img src="../../../booking_settings_module_7.png" alt="booking_settings"  /></p>
+<p>For each <em>princing</em>, apply different prices for day, night and weekend. Define when to apply this specific prices (day period and week-end period).</p>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="color-codes">
+        Color Codes
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#color-codes" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Color Codes" href="#color-codes">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p><img src="../../../booking_settings_module_8.png" alt="booking_settings"  /></p>
+<p>Manage <a class="gdoc-markdown__link" href="#color-code"><em>color codes</em></a></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="additional-infos">
+        Additional infos
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#additional-infos" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Additional infos" href="#additional-infos">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>See <a class="gdoc-markdown__link" href="#additional-info">Additional info</a>.</p>
+<p>Set additional fields to the reservation form. Resource-relative.</p>
+<p><img src="../../../booking_settings_module_9.png" alt="booking_settings"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="booking">
+        Booking
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#booking" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Booking" href="#booking">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><div class="gdoc-page__anchorwrap">
+    <h4 id="block-resources">
+        Block resources
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#block-resources" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Block resources" href="#block-resources">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div><p><img src="../../../booking_settings_module_10.png" alt="booking_settings"  /></p>
+<p>Block resources so it can&rsquo;t be booked by users on this time period.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="booking-module">
+        Booking module
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#booking-module" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Booking module" href="#booking-module">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="presentation">
+        Presentation
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#presentation" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Presentation" href="#presentation">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p><img src="../../../booking_module_1.png" alt="booking_module"  /></p>
+<p><em>Booking module</em> view relies on 4 sections:</p>
+<ul>
+<li><strong>Main bar</strong> allows to choose an <em>Area</em> or <em>Resource</em> to display (depending on the view chosen in <em>view selection bar</em>) and to set a date.</li>
+</ul>
+<p><img src="../../../booking_module_3.png" alt="booking_module"  /></p>
+<ul>
+<li><strong>View selection bar</strong> allows to navigate from day to day (or month or week) and to set a type of view (<em>Day</em>, <em>Day Area</em>, <em>Week</em>, <em>Week Area</em>, <em>Month</em>).</li>
+</ul>
+<p><img src="../../../booking_module_4.png" alt="booking_module"  /></p>
+<ul>
+<li><strong>Calendar section</strong> displays booked resources depending on the <em>Area</em>, <em>Resource</em>, date and view set in <em>Main bar</em> and <em>View selection bar</em>. Clicking a &ldquo;+&rdquo; symbol gives access to reservation interface. Clicking a reservation thumbnail allows to modify the selected reservation.</li>
+</ul>
+<p><img src="../../../booking_module_5.png" alt="booking_module"  /></p>
+<ul>
+<li><strong>Color code section</strong> records the available <em>color codes</em>.</li>
+</ul>
+<p><img src="../../../booking_module_6.png" alt="booking_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="booking-a-resource">
+        Booking a resource
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/#booking-a-resource" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Booking a resource" href="#booking-a-resource">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>By clicking a &ldquo;+&rdquo; symbol, you can access the reservation interface.</p>
+<p><img src="../../../booking_module_2.png" alt="booking_module"  /></p>
+<p>For elements description, see <a class="gdoc-markdown__link" href="#item-definition">item definition</a> and <a class="gdoc-markdown__link" href="#related-items-definition">related items definition</a></p>
+
     </article>
 
                 
