@@ -366,13 +366,21 @@ class TableView {
                         else if ($value["type"] == "download"){
                             $html .= '<td>';
                             if ( $val != "" ){
+                                $html .= sprintf('<a target="_blank" rel="noreferrer,noopener"  href="%s"><button type="btn btn-default">%s</button></a>', $val, $value["text"]);
+                            }
+                            $html .= '</td>';
+                        }
+                        /*
+                        else if ($value["type"] == "download"){
+                            $html .= '<td>';
+                            if ( $val != "" ){
                                 $html .= "<form role=\"form\" id=\"tabledownload\" class=\"form-horizontal\" action=\"".$value["action"]."\" method=\"POST\">";
                                 $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$val."\">";
                                 $html .= "<input type=\"submit\" class=\"btn btn-default\" value=\"" . $value["text"] . "\" />";
                                 $html .= "</form>";
                             }
                             $html .= '</td>';
-                        }
+                        }*/
                     }
                     else{
                         if (strlen($dat[$key]) && $this->textMaxLength > 0) {

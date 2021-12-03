@@ -18,6 +18,7 @@ class CoreRouting extends Routing{
         $router->map('GET|POST', '/coreaccountisunique', 'core/coreaccount/isunique', 'core_unique');
         $router->map('GET', '/core/tiles/[i:id_space]/module/spaceaccess/notifs', 'core/corespaceaccess/notifs', 'corespaceaccess_notifs');
         $router->map('GET', '/core/plans', 'core/coreabout/plans', 'core_plans');
+        $router->map('GET', '/core/spaceaccess/[i:id_space]/users/[i:id_user]/convention', 'core/corespaceaccess/downloadConvention', 'corespaceaccess_download_user_convention');
     }
     
     public function listRoutes(){
