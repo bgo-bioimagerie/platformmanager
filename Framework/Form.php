@@ -190,17 +190,23 @@ class FormTextElement extends FormBaseElement {
     }
 }
 
-/**
- * Not really useful, a ->setType('hidden') is enough...
- */
-class FormHiddenElement extends FormInputElement {
+class FormCheckboxesElement extends FormBaseElement {
+    private $boxes = [];
 
-    public function __construct($name, $value='', $placeholder=null) {
-        parent::__construct($name, $value, $placeholder);
-        $this->setType('hidden');
+    public function add($box) {
+        if (is_array($box)) {
+            $this->boxes = array_merge($this->boxes, $box);
+        } else {
+        $this->boxes[] = $box;
+        }
+
     }
-
+    function html(?string $user=null, ?string $id_space=null) : string {
+        return '    <textarea '.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>'."\n";
+    }
 }
+
+
 
 class FormOptionElement extends FormBaseElement {
 
@@ -253,6 +259,25 @@ class FormSelectElement extends FormBaseElement {
  * FormPassword  -> type password
  * FormText (textarea)
  * FormComment // just some text
+ * addExternalButton
+ * setTitle
+ * setSubTitle
+ * deletebutton
+ * addseparator && addseparator2
+ * addcomment
+ * adddownloadbutton
+ * addText -> forminput + readonly
+ * addPassword -> forminput + type password
+ * addDate -> forminput + type date
+ * addDateTime -> forminput + type datetime-local
+ * addHour -> forminput + type time with opt min and max  min="09:00" max="18:00"
+ * addColor -> forminput + type color
+ * addEmail -> forminput + type email
+ * addNumber -> forminput + type number with opt min max
+ * addSelect -> formselect
+ * addTextArea -> formText
+ * addChoicesList
+ * setFormAdd
  */
 
 /**
@@ -323,7 +348,8 @@ class PfmForm {
      * Generate HTML for form element
      */
     public function toHtml($lang='en'): string {
-        $html = '<form x-form class="form" id="'.$this->name.'" method="post" action="'.$this->url.'">'."\n";
+        $action= $this->url ? 'action="'.$this->url.'"' : '';
+        $html = '<form x-form class="form" id="'.$this->name.'" method="post" '.$action.'>'."\n";
         foreach ($this->elts as $elt) {
             $html .= $elt->toHtml(self::$user, self::$id_space)."\n";
         }
