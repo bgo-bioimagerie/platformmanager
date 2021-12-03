@@ -34,6 +34,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
 
     public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null) {
         $address = nl2br($address);
+        $adress = $address; // backwark compat
         $date = CoreTranslator::dateFromEn($date, 'fr');
         
         $modelInvoice = new InInvoice();
