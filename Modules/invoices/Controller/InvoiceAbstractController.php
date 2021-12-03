@@ -77,8 +77,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
             $html2pdf->Output($unit . "_" . $resp . " " . $number . '.pdf');
             return;
         } catch (Exception $e) {
-            echo $e;
-            exit;
+            throw new PfmException("Pdf generation error: " . $e. "\n$content", 500);
         }
     }
 

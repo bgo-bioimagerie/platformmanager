@@ -129,17 +129,14 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     }
 
     protected function createByUnitForm($id_space, $lang) {
-        // How do user get there ???
         $form = new Form($this->request, "invoicebyunitform");
         $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
 
         $unitId = $this->request->getParameterNoException("id_unit");
-        $respId = $this->request->getParameterNoException("id_resp");
+        // $respId = $this->request->getParameterNoException("id_resp");
         $dateBegin = $this->request->getParameterNoException("date_begin");
         $dateEnd = $this->request->getParameterNoException("date_end");
 
-        // $modelUnit = new EcUnit();
-        // $units = $modelUnit->getUnitsForList("name");
         $modelClient = new ClClient();
         $clients = $modelClient->getAll($id_space);
         $clientsNames = [];

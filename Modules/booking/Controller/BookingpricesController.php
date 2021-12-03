@@ -39,7 +39,7 @@ class BookingpricesController extends BookingsettingsController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space){
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelPricing = new ClPricing();

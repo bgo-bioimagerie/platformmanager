@@ -748,7 +748,7 @@ class Form {
             $html .= $formHtml->textAreaScript();
         }
 
-        if (in_array(true, $this->checkUnicity)) {
+        if ($this->checkUnicity && in_array(true, $this->checkUnicity)) {
             $html .= $formHtml->checkUnicityScript();
         }
         
