@@ -155,6 +155,14 @@ class QuotelistController extends QuoteController {
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
         
         if ($form->check()) {
+            $modelPricing = new ClPricing();
+            $pricing = $modelPricing->getPricingByClient($id_space,$form->getParameter('id_client'));
+            if (!$pricing || $pricing === null) {
+                $_SESSION['flash'] = QuoteTranslator::pricingNeeded($lang);
+                $_SESSION['flashClass'] = "danger";
+                $this->redirect("quoteuser/" . $id_space . "/" . $id);
+                return;
+            }
             $id = $modelQuote->set(
                 $id,
                 $id_space,
@@ -293,6 +301,13 @@ class QuotelistController extends QuoteController {
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
+            $pricing = $modelPricing->getPricingByClient($id_space,$form->getParameter('id_client'));
+            if (!$pricing || $pricing === null) {
+                $_SESSION['flash'] = QuoteTranslator::pricingNeeded($lang);
+                $_SESSION['flashClass'] = "danger";
+                $this->redirect("quotenew/" . $id_space . "/" . $id);
+                return;
+            }
             $id = $modelQuote->set(
                     $id,
                     $id_space,

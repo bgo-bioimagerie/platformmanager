@@ -191,5 +191,12 @@ class QuoteTranslator {
         }
         return "PDF";
     }
+
+    public static function pricingNeeded($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord attribuer un secteur d'activité à votre client dans le module Clients";
+        }
+        return "First, you must affect a pricing to your client in Clients module";
+    }
     
 }
