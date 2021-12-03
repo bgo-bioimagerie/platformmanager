@@ -38,9 +38,10 @@ In Config, define a conf.ini (see Configuration) with appropriate setup.</descri
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/docker/</guid>
       <description>Using docker    setup    Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
 Update docker-compose.yml file environment sections with your setup.
-Some variables are defined in a .env file for sensitive data.
+Some variables are defined in a .env file for sensitive and custom data.
 Example:
-PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx  Exemple docker-compose.yml use local docker volumes to save database etc. Only local host mounted volume is data directory which contains space upload files, which should be writable by container www-data user and shared among pfm instances.</description>
+PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx ....  See example docker/env.example for your .env file.
+Exemple docker-compose.yml use local docker volumes to save database etc.</description>
     </item>
     
     <item>

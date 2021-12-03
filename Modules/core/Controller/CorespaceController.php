@@ -50,6 +50,7 @@ class CorespaceController extends CoresecureController {
     public function indexAction() {
     }
 
+
     /**
      * 
      * @param type $id_space
@@ -57,6 +58,9 @@ class CorespaceController extends CoresecureController {
     public function viewAction($id_space) {
 
         $space = $this->spaceModel->getSpace($id_space);
+        if(!$space) {
+            throw new PfmUserException('space not found', 404);
+        }
         if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
@@ -149,7 +153,7 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
-     * 
+     * @deprecated
      * @param type $id_space
      */
     public function configusersAction($id_space) {
@@ -263,7 +267,7 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
-     * 
+     * @deprecated
      * @param type $lang
      * @param type $id_space
      * @return \Form
@@ -320,7 +324,12 @@ class CorespaceController extends CoresecureController {
         if ($space["color"] != "") {
             $spaceColor = $space["color"];
         }
+        $spaceTxtColor = "#000000";
+        if ($space['txtcolor'] != "") {
+            $spaceTxtColor = $space["txtcolor"];
+        }
 
+        /*
         $lang = $this->getLanguage();
         $showAdmMenu = false;
         if ($_SESSION['user_status'] > CoreStatus::$USER) {
@@ -331,15 +340,27 @@ class CorespaceController extends CoresecureController {
                 $showAdmMenu = true;
             }
         }
+        */
 
+        /*
         $html = file_get_contents('Modules/core/View/Corespace/navbar.php');
-
-
         $html = str_replace("{{space.name}}", $space["name"], $html);
         $html = str_replace("{{space.color}}", $spaceColor, $html);
+        $html = str_replace("{{space.txtcolor}}", $spaceTxtColor, $html);
         $html = str_replace("{{space.id}}", $id_space, $html);
+        */
 
-        // replace admin
+        $dataView = [
+            'id' => $id_space,
+            'name' => $space['name'],
+            'color' => $spaceColor,
+            'txtcolor' => $spaceTxtColor,
+        ];
+
+        return $this->twig->render("Modules/core/View/Corespace/navbar.twig", $dataView);
+
+        // replace admin , deprecated no adminitems in navbar....
+        /*
         $adminMenu = "";
         if ($showAdmMenu) {
             $colorConfig = 'style="background-color:' . $spaceColor . '; color: #fff;"';
@@ -355,8 +376,9 @@ class CorespaceController extends CoresecureController {
             $adminMenu .= "</li>";
         }
         $html = str_replace("{{adminitems}}", $adminMenu, $html);
-
         return $html;
+        */
+
     }
 
     /**

@@ -22,14 +22,7 @@ class StatisticsController extends CoresecureController {
         //$this->checkAuthorizationMenu("statistics");
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
+
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         return $this->navbar($id_space);
@@ -41,7 +34,7 @@ class StatisticsController extends CoresecureController {
 
         $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div  style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a  style="color: {{color}};" href="/statisticsglobal/'.$id_space.'"> {{title}}'; 
+        $html .= '<a  style="color: {{color}};" href="statisticsglobal/'.$id_space.'"> {{title}}'; 
         $html .= '    <span style="color: {{color}}; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';

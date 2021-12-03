@@ -24,14 +24,6 @@ class InvoicesController extends CoresecureController {
         //$this->checkAuthorizationMenu("invoices");
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
 
     public function sideMenu() {
         $id_space = $this->args['id_space'];
@@ -44,7 +36,7 @@ class InvoicesController extends CoresecureController {
         
         $html  = '<div class="col-xs-12" style="border: none; margin-top: 7px; padding-right: 0px; padding-left: 0px;">';
         $html .= '<div class="col-xs-12" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href="/invoices/'.$id_space.'"> {{title}}'; 
+        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href="invoices/'.$id_space.'"> {{title}}'; 
         $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';

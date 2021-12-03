@@ -32,14 +32,6 @@ class CorespaceaccessController extends CoresecureController {
         parent::__construct($request);
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
 
     public function sideMenu() {
         $id_space = $this->args['id_space'];
@@ -123,6 +115,37 @@ class CorespaceaccessController extends CoresecureController {
 
     }
 
+    public function notifsAction($id_space) {
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $modelSpacePending = new CorePendingAccount();
+        $count = $modelSpacePending->countPendingForSpace($id_space);
+        $this->render(['data' => ['notifs' => $count['total']]]);
+    }
+
+    public function downloadConventionAction($id_space, $id_user) {
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $m = new CoreSpaceUser();
+        $user = $m->getUserSpaceInfo2($id_space, $id_user);
+        if(!$user) {
+            throw new PfmParamException('user not found', 404);
+        }
+        $path = $user['convention_url'];
+        $file = explode('/', $path);
+        if($path == null || !file_exists($path)) {
+            Configuration::getLogger()->warning('file not found', ['file' => $path]);
+            throw new PfmFileException('file does not exists');
+        }
+        $mime = mime_content_type($path);
+        header('Content-Description: File Transfer');
+        header('Content-Type: '.$mime);
+        header('Content-Disposition: attachment; filename="'.$file[count($file)-1].'"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($path));
+        readfile($path);
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -158,6 +181,7 @@ class CorespaceaccessController extends CoresecureController {
         foreach ($users as $user) {
             $user["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
             $user["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
+            $user["convention_url"] = sprintf('/core/spaceaccess/%s/users/%s/convention', $id_space, $user['id']);
             array_push($usersArray, $user);
         }
 
@@ -193,8 +217,8 @@ class CorespaceaccessController extends CoresecureController {
             "date_contract_end" => CoreTranslator::Date_end_contract($lang),
             "convention_url" => array("title" => CoreTranslator::Convention($lang),
                                    "type" => "download",
-                                   "text" => CoreTranslator::Download($lang),
-                                   "action" => "transfersimplefiledownload"),
+                                   "text" => CoreTranslator::Download($lang)
+            ),
             "id" => "ID",
         );
 

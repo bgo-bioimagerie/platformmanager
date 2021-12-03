@@ -33,14 +33,6 @@ class MailerController extends CoresecureController {
         $_SESSION["openedNav"] = "mailer";
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
 
     public function navbar($id_space) {
         return "";

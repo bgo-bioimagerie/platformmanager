@@ -924,7 +924,7 @@ class CoreTranslator {
         if ($lang == "fr") {
             return "Configuration de LDAP";
         }
-        return "LDAP confguration";
+        return "LDAP configuration";
     }
 
     public static function UseLdap($lang) {

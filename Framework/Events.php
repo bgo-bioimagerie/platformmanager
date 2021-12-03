@@ -138,7 +138,12 @@ class EventHandler {
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
         if($role >= CoreSpace::$MANAGER) {
-            $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+            $plan = new CorePlan($space['plan'], $space['plan_expire']);
+            if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+            } else {
+                Configuration::getLogger()->debug('[flags][disabled] ', ['space' => $space['name'] , 'flags' => [CorePlan::FLAGS_GRAFANA]]);
+            }
         } else {
             $g->delUser($space['shortname'], $user['login']);
         }
@@ -226,7 +231,11 @@ class EventHandler {
                     $user = $quote["recipient"];
                 }
                 $hmsg = "Quote $cname [$user] edited";
-                $stat = ['name' => 'quote', 'fields' => ['value' => 1], 'tags' => ['client' => 'unknown'], 'time' => $quote['created_at']];
+                $client = 'unknown';
+                if(array_key_exists('client', $quote) && $quote['client']) {
+                    $client = $quote['client']['name'];
+                }
+                $stat = ['name' => 'quote', 'fields' => ['value' => 1], 'tags' => ['client' => $client], 'time' => $quote['created_at']];
                 $statHandler->record($space['shortname'], $stat);
             }
             $m = new CoreHistory();
@@ -272,7 +281,13 @@ class EventHandler {
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
         if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
-            $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+
+            $plan = new CorePlan($space['plan'], $space['plan_expire']);
+            if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+            } else {
+                Configuration::getLogger()->debug('[flags][disabled] ', ['space' => $space['name'] , 'flags' => [CorePlan::FLAGS_GRAFANA]]);
+            }
         }
     }
 

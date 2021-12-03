@@ -21,7 +21,7 @@ if($isdev) {
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
         <meta name="mode" description="{{$isdev}}">
-        <base href="<?php echo $rootWeb ?>" >
+        <base href="<?php echo  "/" ?>" >
         <title>
             <?php startblock('title') ?>
             Platform-Manager
@@ -49,7 +49,7 @@ if($isdev) {
 
         <link rel="stylesheet" href="Modules/core/Theme/core.css">
         <link rel="stylesheet" href="Modules/core/Theme/space.css">
-        <link rel='stylesheet' href='Modules/core/Theme/spacemenu.css' />
+        <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
     <body style="background-color: #e7ecf0;">
@@ -71,15 +71,16 @@ if($isdev) {
         </div>
 
         <div class="row">
-
                 <div id="app" >
                     <?php if (isset($flash) && $flash) { ?>
-                        <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
-                            <?php echo $flash['msg']; ?>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
+                        <div class="container">
+                            <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
+                                <?php echo $flash['msg']; ?>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                    </div>
                     <?php }?>
                     <div class="col-md-12 col-lg-12">
                         <?php startblock('spacemenu') ?>
@@ -109,7 +110,7 @@ if($isdev) {
         <div class="container">
             <div class="row">
                 <div class="col-sm-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <div class="col-sm-4"><a href="/coreabout">About</a></div>
+                <div class="col-sm-4"><a href="coreabout">About</a></div>
             </div>
         </div>
         </footer>

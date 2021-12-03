@@ -383,6 +383,7 @@ class QuotelistController extends QuoteController {
 
         // generate pdf
         $address = nl2br($info["address"]);
+        $adress = $address; // backwark compat
         $resp = $info["recipient"];
         $clientInfos["email"] = "";
         if (is_array($info["client"]) && !empty($info["client"])) {
