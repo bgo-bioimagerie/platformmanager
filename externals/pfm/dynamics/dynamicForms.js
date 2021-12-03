@@ -13,7 +13,7 @@ export class DynamicForms {
     /**
      * Generates content of one or several html inputs depending on an html select selected option
      * 
-     * @param {HTMLElement} source id of the source select
+     * @param {string} source id of the source select
      * @param {Target} targets ids of the dependant inputs     
      * @param {string} spaceId
      */

@@ -57,7 +57,7 @@ class QuotelistController extends QuoteController {
         for ($i = 0; $i < count($data); $i++) {
             if ($data[$i]["id_user"] > 0) {
                 $data[$i]["recipient"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
-                $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space);
+                $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space) ?: [];
                 if (count($resps) > 0) {
                     $unitID = $modelClient->getInstitution($id_space, $resps[0]['id']);
                     $data[$i]["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]['id']);
@@ -123,7 +123,7 @@ class QuotelistController extends QuoteController {
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
         $form->addHidden('id_space', $id_space);
-        $form->addSelect('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
+        $form->addSelectMandatory('id_user', CoreTranslator::User($lang), $users["names"], $users["ids"], $info['id_user']);
 
         $clientSelect['choices'] = [""];
         $clientSelect['choicesid'] = [""];
@@ -133,17 +133,17 @@ class QuotelistController extends QuoteController {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled');
             $form->addHidden('date_open', $info['date_open']);
             $modelClientUser = new ClClientUser();
-            $userClients = $modelClientUser->getUserClientAccounts($info['id_user'], $id_space);
+            $userClients = $modelClientUser->getUserClientAccounts($info['id_user'], $id_space) ?: [];
             foreach($userClients as $client) {
                 array_push($clientSelect['choices'], $client['name']);
                 array_push($clientSelect['choicesid'], $client['id']);
             }
-            $clientSelect['value'] = ($info['id_client'] != 0) ? $info['id_client'] : $userClients[0]['id'];
+            $clientSelect['value'] = ($info['id_client'] != 0) ? $info['id_client'] : $userClients[0]['id'] ?? "";
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
         }
 
-        $form->addSelect('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
+        $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
         $form->setButtonsWidth(2, 10);
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
         
@@ -157,7 +157,7 @@ class QuotelistController extends QuoteController {
                 "",
                 $form->getParameter('id_user'),
                 $form->getParameter('id_client'),
-                $this->request->getParameter('date_open')
+                $this->request->getParameterNoException('date_open')
             );
             $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $this->redirect("quoteuser/" . $id_space . "/" . $id);
@@ -243,7 +243,7 @@ class QuotelistController extends QuoteController {
             $form->setTitle(QuoteTranslator::Description($lang));
         }
         $modelClient = new ClClient();
-        $clients = $modelClient->getAll($id_space);
+        $clients = $modelClient->getAll($id_space) ?: [];
         $clientIds = ["0"];
         $clientNames = ["-- --"];
         forEach($clients as $client) {
@@ -262,7 +262,7 @@ class QuotelistController extends QuoteController {
         $form->addText("recipient", QuoteTranslator::Recipient($lang), true, $info['recipient']);
         $form->addEmail("recipient_email", QuoteTranslator::Recipient($lang) . " " . CoreTranslator::Email($lang), false, $info['recipient_email']);
         $form->addTextArea("address", ClientsTranslator::Client($lang) . " " . QuoteTranslator::Address($lang), true, $addressToDisplay);
-        $form->addSelect('id_client', ClientsTranslator::Client($lang), $clientNames, $clientIds, $selectedClientId);
+        $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientNames, $clientIds, $selectedClientId);
 
         $modelClientPricing = new ClPricing();
         $pricings = $modelClientPricing->getPricingByClient($id_space, $selectedClientId);
@@ -277,7 +277,7 @@ class QuotelistController extends QuoteController {
             // if quote has a client: get this client's pricing
             if ($info['id_client'] && $info['id_client'] != 0) {
                 // (A client has 0 to 1 pricing)
-                $selectedPricing = $modelClientPricing->getPricingByClient($id_space, $info['id_client'])[0]['id'];
+                $selectedPricing = $modelClientPricing->getPricingByClient($id_space, $info['id_client'])[0]['id'] ?: "";
                 // if quote has a pricing: get it
             } else if ($info['id_belonging'] && $info['id_belonging'] != 0 ) {
                 $modelPricing = new ClPricing();
@@ -287,7 +287,7 @@ class QuotelistController extends QuoteController {
                 $selectedPricing = $info['id_belonging'];
             }
         }
-            $form->addSelectMandatory('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds, $selectedPricing ?? "");
+            $form->addSelectMandatory('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds, $selectedPricing);
 
         
         
