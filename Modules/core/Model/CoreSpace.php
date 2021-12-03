@@ -99,7 +99,7 @@ class CoreSpace extends Model {
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(30) NOT NULL DEFAULT '',
         `status` int(1) NOT NULL DEFAULT 0,
-        `color` varchar(7) NOT NULL DEFAULT '',
+        `color` varchar(7) NOT NULL DEFAULT '#000000',
         `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
         `description` text NOT NULL,
         `image` varchar(255) NOT NULL DEFAULT '',
@@ -111,7 +111,7 @@ class CoreSpace extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
-        $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
+        $this->addColumn('core_spaces', 'color', 'varchar(7)', "#000000");
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
         $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
@@ -137,7 +137,7 @@ class CoreSpace extends Model {
             `user_role` int(1) NOT NULL DEFAULT 1,
             `display_order` int(11) NOT NULL DEFAULT 0,
             `has_sub_menu` int(1) NOT NULL DEFAULT 1,
-            `color` varchar(7) NOT NULL DEFAULT '',
+            `color` varchar(7) NOT NULL DEFAULT '#000000',
             `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
             PRIMARY KEY (`id`)
 		);";
@@ -145,7 +145,7 @@ class CoreSpace extends Model {
 
         $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
-        $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+        $this->addColumn('core_space_menus', 'color', "varchar(7)", "#000000");
         $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
     }
 

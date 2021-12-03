@@ -595,6 +595,11 @@ class CoreDB extends Model {
         $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
         Configuration::getLogger()->debug('[core] add txtcolor, done');
 
+        Configuration::getLogger()->debug('[core] add space plan');
+        $this->addColumn('core_spaces', 'plan', "int", '0');
+        $this->addColumn('core_spaces', 'plan_expire', "int", '0');
+        Configuration::getLogger()->debug('[core] add space plan, done');
+
         if(Statistics::enabled()) {
             $eventHandler = new EventHandler();
             $g = new Grafana();
