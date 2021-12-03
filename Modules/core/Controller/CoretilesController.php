@@ -72,7 +72,10 @@ class CoretilesController extends CorecookiesecureController {
             $id = $modelMenu->getFirstIdx();
         }
         // get default sub menu
-        $id_sub = $modelMenu->getFirstSubMenu($id);
+        $id_sub = 0;
+        if($id > 0) {
+            $id_sub = $modelMenu->getFirstSubMenu($id);
+        }
         
         $this->showMainSubMenu($id_sub);
     }

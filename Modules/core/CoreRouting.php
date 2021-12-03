@@ -83,8 +83,8 @@ class CoreRouting extends Routing{
         
         // spaces admin
         $this->addRoute("spaceadmin", "spaceadmin", "corespaceadmin", "index");
-        $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id"), array(""));
-        $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id"), array(""));
+        $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id_space"), array(""));
+        $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id_space"), array(""));
         
         // main menu
         $this->addRoute("coremainmenus", "coremainmenus", "coremainmenu", "index");
