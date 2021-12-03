@@ -51,20 +51,27 @@ class QuotelistController extends QuoteController {
         $model = new Quote();
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
-        $pricings = new ClPricing();
         $modelUSerClients = new ClClientUser();
         $data = $model->getAll($id_space);
         for ($i = 0; $i < count($data); $i++) {
+            if ($data[$i]["id_client"] > 0) {
+                $data[$i]["address"] = $modelClient->getAddressInvoice($id_space, $data[$i]['id_client']);
+                $data[$i]["client_name"] = $modelClient->getName($id_space, $data[$i]['id_client']);
+            } else {
+                $data[$i]["client_name"] = "";
+            }
+
             if ($data[$i]["id_user"] > 0) {
                 $data[$i]["recipient"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
-                $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space) ?: [];
-                if (count($resps) > 0) {
-                    $unitID = $modelClient->getInstitution($id_space, $resps[0]['id']);
-                    $data[$i]["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]['id']);
-                    $data[$i]["id_belonging"] = $modelClient->getPricingID($id_space, $resps[0]['id']);
+                if ($data[$i]["client_name"] === "") {
+                    $resps = $modelUSerClients->getUserClientAccounts($data[$i]["id_user"], $id_space) ?: [];
+                    if (!empty($resps)) {
+                        $data[$i]["address"] = $modelClient->getAddressInvoice($id_space, $resps[0]['id']);
+                        $data[$i]["client_name"] = $resps[0]['name'];
+                    }
                 }
             }
-            $data[$i]["belonging"] = $pricings->getName($id_space, $data[$i]["id_belonging"]);
+            
             $data[$i]["date_open"] = CoreTranslator::dateFromEn($data[$i]["date_open"], $lang);
             $data[$i]["date_last_modified"] = CoreTranslator::dateFromEn($data[$i]["date_last_modified"], $lang);
         }
@@ -76,7 +83,7 @@ class QuotelistController extends QuoteController {
         $tableHtml = $table->view($data, array("id" => "ID",
             "recipient" => QuoteTranslator::Recipient($lang),
             "address" => CoreTranslator::Address($lang),
-            "belonging" => ClientsTranslator::Pricing($lang),
+            "client_name" => ClientsTranslator::Client($lang),
             "date_open" => QuoteTranslator::DateCreated($lang),
             "date_last_modified" => QuoteTranslator::DateLastModified($lang)
         ));
