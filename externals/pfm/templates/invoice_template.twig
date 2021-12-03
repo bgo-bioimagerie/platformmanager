@@ -12,7 +12,7 @@ Variables:
     total: invoice total
     useTTC: boolean
     details: invoice details html generated table
-    clientsInfos: optional customer info
+    clientsInfos: optional customer info (clientsInfo.name for example)
     invoiceInfo: invoice object
     isquote: boolean (if defined) to specify this is a quote and not an invoice
 
@@ -29,7 +29,7 @@ Variables:
     <table cellspacing="0" style="width: 100%; text-align: center; font-size: 14px">
         <tr>
             <td style="width: 25%;">
-                <img style="width: 100%;" src="data/invoices/{{id_space}}/MONLOGO.png" alt="Logo"><br>
+                <!--<img style="width: 100%;" src="data/invoices/{{id_space}}/MONLOGO.png" alt="Logo"><br>-->
             </td>
             <td style="width: 75%; color: #444444;">
                 AVIS DES SOMMES A PAYER
@@ -52,7 +52,7 @@ Variables:
                 <tr>   
                     <td style="width:50%;">
                         Personne à contacter :	<br/>
-                        <b>Someone	<br/>
+                        <b>Someone</b><br/>
 						Couriel : mon email<br/>	
                         Tél : mon tel<br/>
 
@@ -60,13 +60,13 @@ Variables:
                 </tr>
             </table>
         </div>
-        <div style="width: 50%; margin-left:400px; margin-top: -150px;">
+        <div style="width: 50%; margin-left:400px">
             <table cellspacing="0" style="  text-align: left; font-size: 11pt; border-radius:7px; background-color:yellow; padding: 7px 7px 7px 7px;">
                 <tr>
                     <td style="width:100%; ">
                         {{ resp }} <br>
                         {{ unit }} <br><br>
-                        {{ address }} <br>
+                        {{ address | raw }} <br>
                     </td>
                 </tr>
             </table>
