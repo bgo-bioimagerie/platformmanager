@@ -71,12 +71,14 @@ class Quote extends Model {
             } else {
                 $client = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space)[0];
             }
-            if (!$data['address'] || $data['address'] === "") {
-                $data["address"] = $modelClient->getAddressInvoice($id_space, $client["id"]);
-            }
-            $data["id_belonging"] = $client["id"];
+            // not used
+            $data["id_belonging"] = $client["pricing"];
+
             $data["id_pricing"] = $client["pricing"];
             $data["client"] = $client;
+        }
+        if (!$data['address'] || $data['address'] === "") {
+            $data["address"] = $modelClient->getAddressInvoice($id_space, $client["id"]) ?? "";
         }
         return $data;
     }

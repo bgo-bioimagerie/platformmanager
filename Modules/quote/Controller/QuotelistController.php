@@ -282,12 +282,11 @@ class QuotelistController extends QuoteController {
             } else if ($info['id_belonging'] && $info['id_belonging'] != 0 ) {
                 $modelPricing = new ClPricing();
                 $pricing = $modelPricing->get($id_space, $info['id_belonging']);
-                array_push($pricingIds, $pricing['id']);
                 array_push($pricingNames, $pricing['name']);
                 $selectedPricing = $info['id_belonging'];
             }
         }
-            $form->addSelectMandatory('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds, $selectedPricing);
+            $form->addSelectMandatory('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds, $selectedPricing ?? "");
 
         
         
