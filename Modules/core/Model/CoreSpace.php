@@ -297,7 +297,7 @@ class CoreSpace extends Model {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return null;
+            return "#000000";
         }
         return $req[0];
     }
@@ -306,7 +306,7 @@ class CoreSpace extends Model {
         $sql = "SELECT txtcolor FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return null;
+            return "#ffffff";
         }
         return $req[0];
     }
