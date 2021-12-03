@@ -8,6 +8,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 abstract class FormBaseElement {
 
     protected ?string $label = null;
+    protected string $id = '';
     protected string $name = '';
     protected string|int $value;
     protected ?string $placeholder = null;
@@ -31,8 +32,9 @@ abstract class FormBaseElement {
         return $this->javascript;
     }
 
-    public function __construct($name, $value='', $placeholder=null) {
-        $this->name = $name;
+    public function __construct(string $name, string|int $value='', bool $multiple=false, string $placeholder=null) {
+        $this->id = $name;
+        $this->name = $multiple ? $name."[]" : $name;
         $this->value = $value;
         $this->placeholder = $placeholder;
     }
@@ -140,7 +142,7 @@ abstract class FormBaseElement {
             $html .= '    <div class="col-xs-12 col-md-2">'."\n";
             $extra = '';
             if($this->mandatory) { $extra = '*'; }
-            $html .= '      <label class="form-label" for="'.$this->name.'">'.$this->label.$extra.'</label>'."\n";
+            $html .= '      <label class="form-label" for="'.$this->id.'">'.$this->label.$extra.'</label>'."\n";
             $html .= '    </div>'."\n";
         
             $html .= '    <div class="col-xs-12 col-md-10">'."\n";
@@ -174,25 +176,53 @@ abstract class FormBaseElement {
  */
 class FormInputElement extends FormBaseElement {
 
-    public function __construct($name, $value='', $placeholder=null) {
-        parent::__construct($name, $value, $placeholder);
+    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
+        parent::__construct($name, $value, $multiple, $placeholder);
         $this->setType('text');
     }
 
     function html(?string $user=null, ?string $id_space=null) : string {
-        return '    <input '.$this->options($user, $id_space).' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>'."\n";
+        return '    <input '.$this->options($user, $id_space).' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>'."\n";
     }
 }
 
 class FormTextElement extends FormBaseElement {
     function html(?string $user=null, ?string $id_space=null) : string {
-        return '    <textarea '.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>'."\n";
+        return '    <textarea '.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>'."\n";
     }
+}
+
+class FormCheckboxElement extends FormBaseElement {
+
+    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
+        parent::__construct($name, $value, $multiple, $placeholder);
+        $this->setType('checkbox');
+    }
+
+    function html(?string $user=null, ?string $id_space=null) : string {
+        $checked = "";
+        if($this->value == 1 || $this->value === true) {
+            $checked = "checked";
+        }
+        return '  <input type="'.$this->type.'"'.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" '.$checked.' >'."\n";
+
+    }
+
 }
 
 class FormCheckboxesElement extends FormBaseElement {
     private $boxes = [];
 
+    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
+        parent::__construct($name, $value, $multiple, $placeholder);
+        $this->setType('checkbox');
+    }
+
+    /**
+     * Add a checkbox
+     * 
+     * @var []FormCheckboxElement $box
+     */
     public function add($box) {
         if (is_array($box)) {
             $this->boxes = array_merge($this->boxes, $box);
@@ -202,10 +232,52 @@ class FormCheckboxesElement extends FormBaseElement {
 
     }
     function html(?string $user=null, ?string $id_space=null) : string {
-        return '    <textarea '.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->name.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>'."\n";
+        $html = '    <div class="checkbox">'."\n";
+        foreach ($this->boxes as $box) {
+            $html .= '      <label>'."\n";
+            $html .= '     '.$box->html($user, $id_space)."\n";
+            $html .= $box->label."\n";
+            $html .= '</label>'."\n";
+        }
+        return $html;
     }
 }
 
+class FormSeparator extends FormBaseElement {
+
+    private int $level = 3;
+
+    public function __construct($name, $value='', $level=3) {
+        parent::__construct($name, $value);
+        $this->level = $level;
+    }
+
+    function html(?string $user=null, ?string $id_space=null): string {
+        if(!$this->name) {
+            return '<hr/>'."\n";
+        }
+        $html = '<div class="row">'."\n";
+        $html .= '  <div class="col-xs-12">'."\n";
+        $html .= "    <h".$this->level.">".$this->name."</h".$this->level.">"."\n";
+        $html .= "  </div>\n";
+        $html .= '</div>'."\n";
+        return $html;
+    }
+
+}
+
+class FormComment extends FormBaseElement {
+
+    function html(?string $user=null, ?string $id_space=null): string {
+        $html = '<div class="row">'."\n";
+        $html .= '  <div class="col-xs-12">'."\n";
+        $html .= "    <!-- ".$this->value." -->\n";
+        $html .= "    <p>".$this->name."</p>"."\n";
+        $html .= "  </div>\n";
+        $html .= '</div>'."\n";
+        return $html;
+    }
+}
 
 
 class FormOptionElement extends FormBaseElement {
@@ -213,6 +285,33 @@ class FormOptionElement extends FormBaseElement {
     function html(?string $user=null, ?string $id_space=null): string {
         return '<option value="'.$this->value.'">'.$this->name.'</option>'."\n";
     }
+}
+
+class FormUploadElement extends FormInputElement {
+
+    public function __construct($name, $value='') {
+        parent::__construct($name, $value);
+        $this->type = 'file';
+    }
+
+}
+
+class FormEmailElement extends FormInputElement {
+
+    public function __construct($name, $value='') {
+        parent::__construct($name, $value);
+        $this->type = 'email';
+    }
+
+}
+
+class FormColorElement extends FormInputElement {
+
+    public function __construct($name, $value='#000000') {
+        parent::__construct($name, $value);
+        $this->type = 'color';
+    }
+
 }
 
 class FormSelectElement extends FormBaseElement {
@@ -296,6 +395,8 @@ class PfmForm {
     private array $elts = [];
 
     private ?string $cancelUrl = null;
+    private ?string $deleteUrl = null;
+    private array $buttons = [];
 
     public function Javascript():string {
         $html =  "\n<script type=\"module\">\n";
@@ -344,12 +445,23 @@ class PfmForm {
         $this->cancelUrl = $url;
     }
 
+    public function addDelete(string $url, string $id=null) {
+        $this->deleteUrl = $url;
+        if($id) {
+            $this->deleteUrl .= "/$id";
+        }
+    }
+
+    public function addButton(string $name, $url, $class='', $newWindow=false){
+        $this->buttons[] = ['name' => $name, 'url' => $url, 'new' => $newWindow, 'class' => $class?$class:'primary'];
+    }
+
     /**
      * Generate HTML for form element
      */
     public function toHtml($lang='en'): string {
         $action= $this->url ? 'action="'.$this->url.'"' : '';
-        $html = '<form x-form class="form" id="'.$this->name.'" method="post" '.$action.'>'."\n";
+        $html = '<form x-form class="form" id="'.$this->name.'" method="post" enctype="multipart/form-data" '.$action.'>'."\n";
         foreach ($this->elts as $elt) {
             $html .= $elt->toHtml(self::$user, self::$id_space)."\n";
         }
@@ -362,6 +474,18 @@ class PfmForm {
             $html .= '      <a href="'.$this->cancelUrl.'"><button type="button" class="btn btn-primary">'.CoreTranslator::Cancel($lang).'</button></a>'."\n";
             $html .= '    </div>'."\n";
 
+        }
+        if($this->deleteUrl) {
+            $html .= '    <div class="col-xs-12 col-md-4">'."\n";
+            $html .= '      <a href="'.$this->deleteUrl.'"><button type="button" class="btn btn-primary">'.CoreTranslator::Delete($lang).'</button></a>'."\n";
+            $html .= '    </div>'."\n";
+        }
+        foreach ($this->buttons as $button) {
+            if($button['new']) {
+                $html .= '    <div class="col-xs-12 col-md-4">'."\n";
+                $html .= '      <a target="_blank" rel="noreferrer,noopener" href="'.$button['url'].'"><button type="button" class="btn btn-'.$button['class'].'">'.$button['name'].'</button></a>'."\n";
+                $html .= '    </div>'."\n";
+            }
         }
         $html .= '  </div>'."\n";
         $html .= '</form>'."\n";
