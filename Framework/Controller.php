@@ -211,6 +211,7 @@ abstract class Controller {
         $dataView["mainMenu"] = $this->mainMenu();
         $dataView["sideMenu"] = $this->sideMenu();
         $dataView["spaceMenu"] = $this->spaceMenu();
+        $dataView["rootWeb"] = Configuration::get("rootWeb", "/");
         if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
             // TODO add navbar generation
             require_once 'Modules/core/Controller/CorenavbarController.php';

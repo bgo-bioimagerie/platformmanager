@@ -22,7 +22,11 @@
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/</guid>
-      <description></description>
+      <description>Booking module allows users book resources.
+Unlike other modules, Booking module has the particularity to be divided into two modules: Booking and Booking settings. You will need to activate both in order set your resources reservation environment.
+Module descritpion
+Item definition    A reservation is defined by its:
+ Resource User Client account Short description Full description Color code (optional) Additional infos All day, i.e. does this reservation takes all day?</description>
     </item>
     
     <item>
@@ -40,7 +44,10 @@
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/</guid>
-      <description></description>
+      <description>Clients module allows you to create invoicable entities.
+Within this module, you can:
+ manage clients manage pricings link users to a client  Item definition    A client is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the client. A user can&amp;rsquo;t be invoiced directly.
+A client is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
     </item>
     
     <item>
@@ -59,6 +66,18 @@
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/documents/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title>Helpdesk</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/helpdesk/</link>
+      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/helpdesk/</guid>
+      <description>Helpdesk for spaces    A lightweight helpdesk system to manage tickets from users to a space.
+If pfm is configured with an imap account, let&amp;rsquo;s say support@pfm.org, then space members can send emails to support+spaceshortname@pfm.org to create a ticket.
+Managers can see and reply to all tickets, and ease the follow-ups of users issues, with the full conversation.
+Space email address is show in helpdesk configuration panel when activated.</description>
     </item>
     
     <item>
@@ -94,7 +113,10 @@
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/</guid>
-      <description></description>
+      <description>Resources module allows you to create resources that users can book.
+Within this module, you can:
+ manage resources manage areas manage categories manage responsibles and visas manage resources states and events  Item definition    A resource is a bookable item. It is defined by its (&amp;quot;*&amp;quot; for mandatory):
+ name* category* area* brand type display order description full description image  Related items definition    Category    A category contain multiple resources.</description>
     </item>
     
     <item>
@@ -112,7 +134,9 @@
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/</guid>
-      <description></description>
+      <description>Statistics dashboard    In space page, there is a link to the statistics dashboard, for managers only.
+Managers can log in dashboard with their identifier and their API Key (in user informations panel /usersmyaccount).
+The statistics dashboard is based on Grafana and several dashboards are set by default. Additional dashboards can be created by managers. It is advised not to modify provided dashboards as they may be overwritten on future updates.</description>
     </item>
     
     <item>
@@ -121,7 +145,10 @@
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/</guid>
-      <description></description>
+      <description>Users module allows space admins to manage users.
+Within this module, you can:
+ add users authorize users to access your space affect roles to users within your space manage users booking access manage users client accounts  Item definition    A user is linked to an account. Within a space, it can be attributed different roles , like admin, manager, user or visitor.
+A user is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
     </item>
     
   </channel>

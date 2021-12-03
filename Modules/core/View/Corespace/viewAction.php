@@ -109,7 +109,7 @@ if ($space['color'] == "") {
                             </a>
                         </li>
                         <li style="background-color:<?php echo $space['color'] ?>;">
-                            <a href="/grafana">
+                            <a href="grafana">
                                 <span class="pm-tiles glyphicon glyphicon-stats" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::GrafanaStats($lang) ?></span>
                             </a>

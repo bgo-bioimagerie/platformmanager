@@ -21,7 +21,7 @@ if($isdev) {
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
         <meta name="mode" description="{{$isdev}}">
-        <base href="<?php echo $rootWeb ?>" >
+        <base href="<?php echo  "/" ?>" >
         <title>
             <?php startblock('title') ?>
             Platform-Manager
@@ -29,26 +29,26 @@ if($isdev) {
         </title>
         <?php
         if($isdev) {
-            echo '<script src="/externals/vuejs/vue.js"></script>';
+            echo '<script src="externals/vuejs/vue.js"></script>';
             echo $debugbarRenderer->renderHead();
         } else {
-            echo '<script src="/externals/vuejs/vue.min.js"></script>';
+            echo '<script src="externals/vuejs/vue.min.js"></script>';
         }
         ?>
-        <link rel="stylesheet" href="/externals/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
         
-        <link href="/externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-        <link href="/externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-        <script src="/externals/jquery-1.11.1.js"></script>
-        <script src="/externals/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="/externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="/externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
+        <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
+        <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+        <script src="externals/jquery-1.11.1.js"></script>
+        <script src="externals/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+        <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
 
-        <link rel="stylesheet" href="/Modules/core/Theme/core.css">
-        <link rel="stylesheet" href="/Modules/core/Theme/space.css">
+        <link rel="stylesheet" href="Modules/core/Theme/core.css">
+        <link rel="stylesheet" href="Modules/core/Theme/space.css">
         <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
@@ -110,7 +110,7 @@ if($isdev) {
         <div class="container">
             <div class="row">
                 <div class="col-sm-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <div class="col-sm-4"><a href="/coreabout">About</a></div>
+                <div class="col-sm-4"><a href="coreabout">About</a></div>
             </div>
         </div>
         </footer>

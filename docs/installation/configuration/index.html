@@ -505,7 +505,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -545,7 +549,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -586,6 +594,30 @@ Mandatory sections are:
             
             
                 <span class="flex">Documents</span>
+            
+            
+
+            
+            </li>
+            
+            
+            
+
+            
+            
+            
+            
+            
+            
+
+            <li>
+            
+            
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/helpdesk/" class="gdoc-nav__entry ">
+                        Helpdesk
+                    </a>
+                </span>
             
             
 
@@ -665,7 +697,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -705,7 +741,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -725,7 +765,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -912,6 +956,21 @@ in this case, though local users can still be used in parallel.</p>
 </div><p>Most configuration file variables can be superseeded by environment
 variables, usually in format <strong>PFM_VARNAME</strong>, <em>PFM_ADMIN_USER</em> for example for <em>admin_user</em> file config equivalent.</p>
 <p>See <em>docker</em> section.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="welcome-page">
+        Welcome page
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/configuration/#welcome-page" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Welcome page" href="#welcome-page">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>The default welcome page displays content of the first file found in <em>data</em> directory:</p>
+<ul>
+<li>welcome_[en|fr].md</li>
+<li>welcome_[en|fr].html*</li>
+<li>welcome.md</li>
+<li>welcome.html</li>
+</ul>
+<p>Files in markdown (.md) are converted to HTML.</p>
 
     </article>
 

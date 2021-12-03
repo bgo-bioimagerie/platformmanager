@@ -10,7 +10,9 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Statistics dashboard    In space page, there is a link to the statistics dashboard, for managers only.
+Managers can log in dashboard with their identifier and their API Key (in user informations panel /usersmyaccount).
+The statistics dashboard is based on Grafana and several dashboards are set by default. Additional dashboards can be created by managers. It is advised not to modify provided dashboards as they may be overwritten on future updates.">
 
 
 
@@ -502,7 +504,11 @@
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -542,7 +548,11 @@
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -583,6 +593,30 @@
             
             
                 <span class="flex">Documents</span>
+            
+            
+
+            
+            </li>
+            
+            
+            
+
+            
+            
+            
+            
+            
+            
+
+            <li>
+            
+            
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/helpdesk/" class="gdoc-nav__entry ">
+                        Helpdesk
+                    </a>
+                </span>
             
             
 
@@ -662,7 +696,11 @@
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -702,7 +740,11 @@
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry is-active">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -722,7 +764,11 @@
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -863,7 +909,26 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Statistics</h1>
-        
+        <div class="gdoc-page__anchorwrap">
+    <h2 id="statistics-dashboard">
+        Statistics dashboard
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/#statistics-dashboard" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Statistics dashboard" href="#statistics-dashboard">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>In space page, there is a link to the statistics dashboard, for managers only.</p>
+<p>Managers can log in dashboard with their identifier and their API Key
+(in user informations panel /usersmyaccount).</p>
+<p>The <em>statistics dashboard</em> is based on <a class="gdoc-markdown__link" href="https://grafana.com/docs/">Grafana</a>
+and several dashboards are set by default. Additional dashboards can be created
+by managers.
+It is advised not to modify provided dashboards as they may be overwritten on future
+updates.</p>
+<p>Each dashboard can be queried with time ranges, based on pfm recorded statistics.</p>
+<p>Statistics are recorded in a space dedicated InfluxDB database, and queries follow
+the <a class="gdoc-markdown__link" href="https://docs.influxdata.com/influxdb/cloud/query-data/flux/">Flux</a> language.</p>
+<p>Each space uses a bucket named with the space <em>shortname</em>.</p>
+
     </article>
 
                 

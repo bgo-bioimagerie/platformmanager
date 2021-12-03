@@ -12,9 +12,10 @@
 
     <meta name="description" content="Using docker    setup    Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
 Update docker-compose.yml file environment sections with your setup.
-Some variables are defined in a .env file for sensitive data.
+Some variables are defined in a .env file for sensitive and custom data.
 Example:
-PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx  Exemple docker-compose.yml use local docker volumes to save database etc. Only local host mounted volume is data directory which contains space upload files, which should be writable by container www-data user and shared among pfm instances.">
+PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx ....  See example docker/env.example for your .env file.
+Exemple docker-compose.yml use local docker volumes to save database etc.">
 
 
 
@@ -506,7 +507,11 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -546,7 +551,11 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -587,6 +596,30 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
             
             
                 <span class="flex">Documents</span>
+            
+            
+
+            
+            </li>
+            
+            
+            
+
+            
+            
+            
+            
+            
+            
+
+            <li>
+            
+            
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/helpdesk/" class="gdoc-nav__entry ">
+                        Helpdesk
+                    </a>
+                </span>
             
             
 
@@ -666,7 +699,11 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -706,7 +743,11 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -726,7 +767,11 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -882,9 +927,9 @@ PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secret
         </a>
     </h3>
 </div><p>Docker images are available at quay.io/bgo_bioimagerie,
-see <a class="gdoc-markdown__link" href="https://github.com/bgo-bioimagerie/docker-platformmanager/blob/master/docker-compose.yml">docker-compose.yml</a> as compose example.</p>
+see <a class="gdoc-markdown__link" href="docker/docker-compose.yml">docker-compose.yml</a> as compose example.</p>
 <p>Update docker-compose.yml file environment sections with your setup.</p>
-<p>Some variables are defined in a <em>.env</em> file for sensitive data.</p>
+<p>Some variables are defined in a <em>.env</em> file for sensitive and custom data.</p>
 <p>Example:</p>
 <pre><code>PFM_WEB_URL=http://localhost:4000
 PFM_ADMIN=pfmadmin
@@ -896,7 +941,9 @@ PFM_ADMIN_APIKEY=123456
 PFM_INFLUXDB_TOKEN=123456
 MYSQL_ROOT_PASSWORD=xxxx
 MYSQL_PASSWORD=xxxx
+....
 </code></pre>
+<p>See example docker/env.example for your .env file.</p>
 <p>Exemple docker-compose.yml use local docker volumes to save database etc.
 Only local host mounted volume is <em>data</em> directory which contains space upload files,
 which should be writable by container <em>www-data</em> user and shared among pfm
@@ -923,7 +970,7 @@ instances.</p>
 </li>
 <li>SMTP_HOST: mailhog  # smtp host name</li>
 <li>SMTP_PORT: 25  # smtp port</li>
-<li>MAIL_FROM: <a href="mailto:support@genouest.org">support@genouest.org</a>  # mail <em>from</em> address</li>
+<li>SMTP_FROM: <a href="mailto:support@genouest.org">support@genouest.org</a>  # mail <em>from</em> address</li>
 <li>PFM_MODE: prod  # optional [dev|<em>prod</em>|test], dev mode adds a console in browser with sql info</li>
 <li>PFM_ADMIN_USER: pfmadmin  # superadmin user name (automatically created)</li>
 <li>PFM_ADMIN_EMAIL: <a href="mailto:admin@pfm.org">admin@pfm.org</a>  # superadmin email</li>
@@ -954,7 +1001,7 @@ instances.</p>
 </ul>
 </li>
 <li>PFM_ALLOW_REGISTRATION: 0  # (dis)allow user self registration</li>
-<li>PFM_JWT_SECRET: XXXX  # JWT tokens secret</li>
+<li>PFM_JWT_SECRET: ${PFM_JWT_SECRET}  # JWT tokens secret</li>
 <li>PFM_MODULES:   # comma separated list of modules to load (in addition to those defined in conf.ini)</li>
 <li>PFM_REDIS_HOST: redis # optional, redis host name, needed for prometheus stats</li>
 <li>PFM_GRAFANA_URL: http://grafana:3000  # optional, grafana url
@@ -964,26 +1011,25 @@ instances.</p>
 </ul>
 </li>
 <li>PFM_SENTRY_DSN: # optional, catch errors and send to an external Sentry server</li>
-</ul>
-<p>And .env file should define (according to variables used):</p>
+<li>PFM_HELPDESK_EMAIL: # optional, base email used for helpdesk module  <a href="mailto:support@pfm.org">support@pfm.org</a> for example, users will write to <a href="mailto:support+space1@pfm.org">support+space1@pfm.org</a>
 <ul>
-<li>PFM_WEB_URL=http://localhost:4000</li>
-<li>PFM_ADMIN=pfmadmin</li>
-<li>PFM_ADMIN_PASSWORD=admin4genouest  # min 8 characters</li>
-<li><a href="mailto:PFM_ADMIN_EMAIL=admin@pfm.org">PFM_ADMIN_EMAIL=admin@pfm.org</a></li>
-<li>PFM_ADMIN_APIKEY=123456</li>
-<li>PFM_INFLUXDB_TOKEN=123456</li>
-<li>PFM_OPENID=  # comma separated list of supported providers</li>
-<li>If PFM_OPENID is defined:
-<ul>
-<li>PFM_OPENID_GOOGLE_URL=https://oauth2.googleapis.com/token</li>
-<li>PFM_OPENID_GOOGLE_LOGIN=https://accounts.google.com/o/oauth2/v2/auth</li>
-<li>PFM_OPENID_GOOGLE_CLIENT_ID=XXX</li>
-<li>PFM_OPENID_GOOGLE_CLIENT_SECRET=XXX</li>
+<li>PFM_HELPDESK_IMAP_SERVER: ${PFM_HELPDESK_IMAP_SERVER}  # hostname of imap provider</li>
+<li>PFM_HELPDESK_IMAP_PORT: 110 # optional port of imap</li>
+<li>PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER} # mail account name</li>
+<li>PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password</li>
+<li>PFM_HELPDESK_IMAP_TLS:  ['' (default), &lsquo;/ssl&rsquo;]  # empty string or /ssl if using tls</li>
 </ul>
 </li>
-<li>MYSQL_ROOT_PASSWORD=XXX</li>
-<li>MYSQL_PASSWORD=XXX</li>
+<li>PFM_LDAP_HOST: # optional LDAP configuration overiding ldap.ini, leave empty if non
+<ul>
+<li>PFM_LDAP_PORT: 389  # ldap port to use, default 389 or 636 if tls enabled</li>
+<li>PFM_LDAP_USER: &quot;&quot;  # ldap user id if not anonymous search/bind</li>
+<li>PFM_LDAP_PASSWORD: &quot;&quot;  # ldap user password</li>
+<li>PFM_LDAP_DN: &quot;&quot;  # base dn for ldap (dc=pfm,dc=org for example)</li>
+<li>PFM_LDAP_SEARCH_DN: &quot;&quot;  # base dn for user search and binding (ou=people,dc=pfm,dc=org for example)</li>
+<li>PFM_LDAP_TLS: [0|1]  # use TLS</li>
+</ul>
+</li>
 </ul>
 
     </article>
