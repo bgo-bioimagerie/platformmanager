@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [forms] prevent errors on form submissions
 * [Services] Remove deprecated functions from servicesController
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
