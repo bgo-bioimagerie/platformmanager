@@ -212,6 +212,7 @@ class ClientslistController extends ClientsController {
      * Returns client's address
      */
     public function getAddressAction($id_space, $id_client) {
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClient = new ClClient();
         $this->render(['data' => ['elements' => $modelClient->getAddressInvoice($id_space, $id_client)]]);
     }
