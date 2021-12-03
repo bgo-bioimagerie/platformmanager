@@ -38,7 +38,7 @@ if ($id_quote > 0) {
             let sourceId = "id_client";
             let targets = [
                 {
-                    elementId: "id_pricing",
+                    elementId: "pricing",
                     apiRoute: `clientspricings/getpricing/`
                 },
                 {

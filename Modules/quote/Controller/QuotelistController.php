@@ -271,32 +271,19 @@ class QuotelistController extends QuoteController {
         $form->addTextArea("address", ClientsTranslator::Client($lang) . " " . QuoteTranslator::Address($lang), true, $addressToDisplay);
         $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientNames, $clientIds, $selectedClientId);
 
-        $modelClientPricing = new ClPricing();
-        $pricings = $modelClientPricing->getPricingByClient($id_space, $selectedClientId);
-        $pricingIds = [];
-        $pricingNames = [];
-        forEach($pricings as $pricing) {
-            array_push($pricingIds, $pricing['id']);
-            array_push($pricingNames, $pricing['name']);
-        }
-        
+        $modelPricing = new ClPricing();
         if ($id > 0) {
             // if quote has a client: get this client's pricing
             if ($info['id_client'] && $info['id_client'] != 0) {
                 // (A client has 0 to 1 pricing)
-                $selectedPricing = $modelClientPricing->getPricingByClient($id_space, $info['id_client'])[0]['id'] ?: "";
-                // if quote has a pricing: get it
+                $pricingName = $modelPricing->getPricingByClient($id_space, $info['id_client'])[0]['name'];
+                // else if quote has a pricing: get it
             } else if ($info['id_belonging'] && $info['id_belonging'] != 0 ) {
-                $modelPricing = new ClPricing();
-                $pricing = $modelPricing->get($id_space, $info['id_belonging']);
-                array_push($pricingNames, $pricing['name']);
-                $selectedPricing = $info['id_belonging'];
+                $pricingName = $modelPricing->getName($id_space, $info['id_belonging']);
             }
         }
-            $form->addSelectMandatory('id_pricing', ClientsTranslator::Pricing($lang), $pricingNames, $pricingIds, $selectedPricing ?? "");
+        $form->addText('pricing', ClientsTranslator::Pricing($lang), false, $pricingName ?? "", true, true);
 
-        
-        
         if ($id > 0) {
             $form->addText('date_open', QuoteTranslator::DateCreated($lang), false, CoreTranslator::dateFromEn($info['date_open'], $lang), 'disabled', $info['date_open']);
             $form->addHidden('date_open', CoreTranslator::dateFromEn($info['date_open'], $lang));
@@ -312,7 +299,7 @@ class QuotelistController extends QuoteController {
                     $form->getParameter('recipient'),
                     $form->getParameter('recipient_email'),
                     $form->getParameter('address'),
-                    $form->getParameter('id_pricing'),
+                    0,
                     0,
                     $form->getParameter('id_client'),
                     $form->getParameter('date_open')

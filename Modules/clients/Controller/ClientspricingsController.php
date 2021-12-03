@@ -162,7 +162,8 @@ class ClientspricingsController extends ClientsController {
     public function getClientPricingAction($id_space, $id_client) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientPricing = new ClPricing();
-        $this->render(['data' => ['elements' => $modelClientPricing->getPricingByClient($id_space, $id_client)]]);
+        $pricingName = $modelClientPricing->getPricingByClient($id_space, $id_client)[0]['name'];
+        $this->render(['data' => ['elements' => $pricingName]]);
     }
 
 }

@@ -39,17 +39,14 @@ export class DynamicForms {
                     then(data => {
                         switch (targetElement.nodeName) {
                             case "SELECT":
-                                // get elements to insert as options
                                 let elements = Array.isArray(data.elements) ? data.elements : [data.elements];
-                                // clone target
                                 let cloneElement = targetElement.cloneNode(false);
                                 elements.forEach((element) => {
                                     cloneElement.appendChild(new Option(element.name, element.id));
                                 });
-                                // replacing target element by its clone
                                 targetElement.replaceWith(cloneElement);
                                 break;
-                            case "#Text":
+                            case "INPUT":
                                 targetElement.value = data.elements;
                                 break;
                             case "TEXTAREA":
