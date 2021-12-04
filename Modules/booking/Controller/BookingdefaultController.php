@@ -547,7 +547,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $form = new Form($this->request, "editReservationDefault");
         $form->addHidden("id", $resaInfo["id"]);
-        $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
+        $form->setValidationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle(BookingTranslator::Edit_Reservation($lang));
 
         $form->addSelect("id_resource", ResourcesTranslator::resource($lang), $resources["names"], $resources["ids"], $id_resource);

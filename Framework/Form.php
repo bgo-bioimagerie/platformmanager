@@ -24,12 +24,38 @@ abstract class FormBaseElement {
     protected ?string $equals = null; // unique identifier for fields to match
     protected ?array $suggests = null;  // array of element ids for a suggestion (['firstname', 'lastname'] for ex)
 
+    protected mixed $min = null;
+    protected mixed $max = null;
+    protected ?string $step = null;
+
+
     protected array $javascript = [];
+
+    
 
     /**
      * Generate html for element
      */
     abstract function html(?string $user=null, ?string $id_space=null): string;
+
+
+    /**
+     * @var mixed $min int or float min value
+     * @var mixed $max int or float max value
+     * @var string $step optional step value, defaults to any for float, 1 for integers
+     */
+    public function setRange(mixed $min=null, mixed $max=null, ?string $step=null):FormBaseElement {
+        if($min !== null) {
+            $this->min = $min;
+        }
+        if($max !== null) {
+            $this->max = $max;
+        }
+        if($step !== null) {
+            $this->step = $step;
+        }
+        return $this;
+    }
 
     /**
      * Get element name
@@ -211,6 +237,19 @@ abstract class FormBaseElement {
         if($this->suggests) {
             $options .= ' x-suggest="'.implode(',', $this->suggests).'"';
         }
+
+        if($this->min !== null) {
+            $options .= sprintf(' min="%s" ', $this->min);
+
+        }
+        if($this->max !== null) {
+            $options .= sprintf(' max="%s" ', $this->max);
+
+        }
+        if($this->step !== null) {
+            $options .= sprintf(' step="%s" ', $this->step);
+        }
+
         return trim($options);
     }
 
@@ -327,8 +366,8 @@ class FormCheckboxElement extends FormBaseElement {
 class FormCheckboxesElement extends FormBaseElement {
     private $boxes = [];
 
-    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
-        parent::__construct($name, $value, $multiple, $placeholder);
+    public function __construct($name, $multiple=false, $placeholder=null) {
+        parent::__construct($name, '', $multiple, $placeholder);
         $this->setType('checkbox');
     }
 
@@ -449,13 +488,10 @@ class FormIntegerElement extends FormFloatlement {
 
 class FormFloatlement extends FormInputElement {
 
-    protected string $step = "any";
-    protected mixed $min = null;
-    protected mixed $max = null;
-
     public function __construct(string $name, float $value=0) {
         parent::__construct($name, $value);
         $this->type = 'number';
+        $this->step = 'any';
     }
 
     public function setValue(mixed $value)
@@ -509,33 +545,14 @@ class FormFloatlement extends FormInputElement {
      * @var string $step optional step value, defaults to any for float, 1 for integers
      */
     public function setRange(mixed $min=null, mixed $max=null, ?string $step=null):FormBaseElement {
-        if($min !== null) {
-            $this->min = $min;
-            if($this->value < $min) {
-                $this->value = $min;
-            }
+        parent::setRange($min, $max, $step);
+        if($min !== null && $this->value < $min) {
+            $this->value = $min;
         }
-        if($max !== null) {
-            $this->max = $max;
-        }
-        if($step !== null) {
-            $this->step = $step;
+        if($max !== null && $this->value > $max) {
+            $this->value = $max;
         }
         return $this;
-    }
-
-    function html(?string $user=null, ?string $id_space=null) : string {
-        $minCondition = '';
-        $maxCondition = '';
-        if($this->min !== null) {
-            $minCondition = sprintf('min="%s"', $this->min);
-
-        }
-        if($this->max !== null) {
-            $maxCondition = sprintf('max="%s"', $this->max);
-
-        }
-        return '    <input '.$minCondition.' '.$maxCondition.' step="'.$this->step.'" '.$this->options($user, $id_space).' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>'."\n";
     }
 
 }
@@ -554,6 +571,33 @@ class FormPasswordElement extends FormInputElement {
     public function __construct($name, $value='') {
         parent::__construct($name, $value);
         $this->type = 'password';
+    }
+
+}
+
+class FormDateElement extends FormDateTimeElement {
+
+    public function __construct($name, $value='') {
+        parent::__construct($name, $value);
+        $this->type = 'date';
+    }
+
+}
+
+class FormDateTimeElement extends FormInputElement {
+
+    public function __construct($name, $value='') {
+        parent::__construct($name, $value);
+        $this->type = 'datetime-local';
+    }
+
+}
+
+class FormHourElement extends FormDateTimeElement {
+
+    public function __construct($name, $value='') {
+        parent::__construct($name, $value);
+        $this->type = 'time';
     }
 
 }
@@ -601,18 +645,15 @@ class FormSelectElement extends FormBaseElement {
      * 
      * @var FormOptionElement[] $options
      */
-    public function setOptions($options) {
-        $this->options = $options;
+    public function add($options) {
+        if (is_array($options)) {
+            $this->options = array_merge($this->options, $options);
+        } else {
+        $this->options[] = $options;
+        }
+        return $this;
     }
 
-    /*
-    * Add option
-    * 
-    * @var FormOptionElement $option
-    */
-   public function setOption($option) {
-       $this->options[] = $option;
-   }
 
    public function html(?string $user=null, ?string $id_space=null): string {
        $html = '<select class="form-control '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->name.'" name="'.$this->name.'" value="'.$this->value.'">'."\n";
@@ -1019,7 +1060,7 @@ class Form {
      * 
      * @param string $url URL of the validation button
      */
-    public function setValisationUrl($url) {
+    public function setValidationUrl($url) {
         $this->validationURL = $url;
         $this->pfmform->setUrl($url);
     }
@@ -1228,14 +1269,14 @@ class Form {
         if($readonly || !$enabled) {  $f->setReadOnly(); }
         if($checkUnicity) {  $f->setUnique($name); }
         if($isMandatory) {$f->setMandatory(); }
-        $this->pfmform->add($f);
+        $this->pfmform->add($f->setLabel($label));
     }
 
     /**
      * Password field
-     * @param type $name Form variable name
-     * @param type $label Field label
-     * @param type $isMandatory is mandatory field
+     * @param string $name Form variable name
+     * @param string $label Field label
+     * @param bool $isMandatory is mandatory field
      */
     public function addPassword($name, $label, $isMandatory = true) {
         $this->types[] = "password";
@@ -1251,14 +1292,18 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormPasswordElement($name);
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f->setLabel($label));
     }
 
     /**
      * Add date field
-     * @param type $name Form variable name
-     * @param type $label Field label
-     * @param type $isMandatory is mandatory field
-     * @param type $value default value
+     * @param string $name Form variable name
+     * @param string $label Field label
+     * @param bool $isMandatory is mandatory field
+     * @param string $value default value
      */
     public function addDate($name, $label, $isMandatory = false, $value = "") {
         $this->isDate = true;
@@ -1275,6 +1320,10 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormDateElement($name, $value);
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f->setLabel($label));
     }
 
     public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
@@ -1292,6 +1341,9 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $f = new FormDateTimeElement($name, $value);
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f->setLabel($label));
     }
 
     public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
@@ -1309,6 +1361,13 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $hour = $value;
+        if(is_array($value)) {
+            $hour = implode(':', $value);
+        }
+        $f = new FormHourElement($name, $hour);
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f->setLabel($label));
     }
 
     /**
@@ -1332,6 +1391,10 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormColorElement($name, $value);
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f->setLabel($label));
     }
 
     /**
@@ -1355,6 +1418,10 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = $checkUnicity;
+
+        $f = new FormEmailElement($name, $value);
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f->setLabel($label));
     }
 
     /**
@@ -1378,14 +1445,18 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormIntegerElement($name, $value);
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f->setLabel($label));
     }
 
     /**
      * Add select input to the form
      * @param string $name Input name
      * @param string $label Input label
-     * @param unknown $choices List of options names
-     * @param unknown $choicesid List of options ids
+     * @param array $choices List of options names
+     * @param array $choicesid List of options ids
      * @param string $value Input default value
      */
     public function addSelect($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
@@ -1402,14 +1473,22 @@ class Form {
         $this->submitOnChange[] = $submitOnChange;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormSelectElement($name, $value);
+        $options = [];
+        for($i=0;$i<count($choices);$i++){
+            $options[] = new FormOptionElement($choices[$i], $choicesid[$i]);
+        }
+        $f->add($options)->setLabel($label);
+        $this->pfmform->add($f);
     }
     
         /**
      * Add select input to the form
      * @param string $name Input name
      * @param string $label Input label
-     * @param unknown $choices List of options names
-     * @param unknown $choicesid List of options ids
+     * @param array $choices List of options names
+     * @param array $choicesid List of options ids
      * @param string $value Input default value
      */
     public function addSelectMandatory($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
@@ -1426,6 +1505,14 @@ class Form {
         $this->submitOnChange[] = $submitOnChange;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormSelectElement($name, $value);
+        $options = [];
+        for($i=0;$i<count($choices);$i++){
+            $options[] = new FormOptionElement($choices[$i], $choicesid[$i]);
+        }
+        $f->add($options);
+        $this->pfmform->add($f->setMandatory()->setLabel($label));
     }
     
 
@@ -1451,14 +1538,18 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormTextElement($name, $value);
+        if($isMandatory) {$f->setMandatory()->setLabel($label); }
+        $this->pfmform->add($f);
     }
 
     /**
      * Add a combo list 
-     * @param type $label Field label
-     * @param type $listNames List of choices name
-     * @param type $listIds List of choices ids
-     * @param type $values Default value
+     * @param string $label Field label
+     * @param array $listNames List of choices name
+     * @param array $listIds List of choices ids
+     * @param array $values Default value
      */
     public function addChoicesList($label, $listNames, $listIds, $values) {
         $this->types[] = "choicesList";
@@ -1473,6 +1564,15 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormCheckboxesElement($label);
+        $options = [];
+        for($i=0;$i<count($listNames);$i++){
+            $option = new FormCheckboxElement($listNames[$i], $values[$i]);
+            $options[] = $option->setLabel($listIds[$i]);
+        }
+        $f->add($options);
+        $this->pfmform->add($f);
     }
 
     /**
