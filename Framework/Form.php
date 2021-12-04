@@ -28,6 +28,31 @@ abstract class FormBaseElement {
 
     abstract function html(?string $user=null, ?string $id_space=null): string;
 
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function getError(): ?string {
+        return $this->error;
+    }
+
+    public function Validate(?Request $request): bool {
+        if($request === null) {
+            return false;
+        }
+        $this->setError(null);
+        $p = $request->getParameterNoException($this->name);
+        if($this->mandatory && ($p === null || $p === "")) {
+                $this->setError('missing/empty parameter');
+                return false;
+        }
+        return true;
+    }
+
+    protected function getValue(?Request $request): mixed {
+        return $request !==null ? $request->getParameterNoException($this->name) : null;
+    }
+
     public function Javascript(): array {
         return $this->javascript;
     }
@@ -54,7 +79,7 @@ abstract class FormBaseElement {
         return $this;
     }
 
-    public function setError(string $error) : FormBaseElement {
+    public function setError(?string $error) : FormBaseElement {
         $this->error = $error;
         return $this;
     }
@@ -78,7 +103,7 @@ abstract class FormBaseElement {
         return $this;
     }
 
-    public function setReadOnly(bool $readOnly=false) : FormBaseElement {
+    public function setReadOnly(bool $readOnly=true) : FormBaseElement {
         $this->readOnly = $readOnly;
         return $this;
     }
@@ -192,6 +217,21 @@ class FormTextElement extends FormBaseElement {
     }
 }
 
+
+class FormRadioElement extends FormCheckboxElement {
+    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
+        parent::__construct($name, $value, $multiple, $placeholder);
+        $this->setType('radio');
+    }
+}
+
+class FormRadiosElement extends FormCheckboxesElement {
+    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
+        parent::__construct($name, $value, $multiple, $placeholder);
+        $this->setType('radio');
+    }
+}
+
 class FormCheckboxElement extends FormBaseElement {
 
     public function __construct($name, $value='', $multiple=false, $placeholder=null) {
@@ -204,7 +244,7 @@ class FormCheckboxElement extends FormBaseElement {
         if($this->value == 1 || $this->value === true) {
             $checked = "checked";
         }
-        return '  <input type="'.$this->type.'"'.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" '.$checked.' >'."\n";
+        return '  <input type="'.$this->type.'"'.$this->options($user, $id_space).' class="form-check-input '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" '.$checked.' >'."\n";
 
     }
 
@@ -223,27 +263,36 @@ class FormCheckboxesElement extends FormBaseElement {
      * 
      * @var []FormCheckboxElement $box
      */
-    public function add($box) {
+    public function add($box) : FormCheckboxesElement{
         if (is_array($box)) {
             $this->boxes = array_merge($this->boxes, $box);
         } else {
         $this->boxes[] = $box;
         }
-
+        return $this;
     }
+
     function html(?string $user=null, ?string $id_space=null) : string {
         $html = '    <div class="checkbox">'."\n";
         foreach ($this->boxes as $box) {
-            $html .= '      <label>'."\n";
-            $html .= '     '.$box->html($user, $id_space)."\n";
-            $html .= $box->label."\n";
-            $html .= '</label>'."\n";
+            $html .= '      <div class="row">'."\n";
+            $html .= '        <div class="col-xs-12">'."\n";
+            $html .= '          <div class="form-check">'."\n";
+            $html .= '          '.$box->html($user, $id_space);
+            $html .= '            <label class="form-check-label" for="'.$box->id.'">'.$box->name.'</label>'."\n";
+            $html .= '          </div>'."\n";
+            $html .= '        </div>'."\n";
+            $html .= "      </div>\n";
         }
+        $html .= '    </div>'."\n";
+
+
+
         return $html;
     }
 }
 
-class FormSeparator extends FormBaseElement {
+class FormSeparatorElement extends FormBaseElement {
 
     private int $level = 3;
 
@@ -296,6 +345,130 @@ class FormUploadElement extends FormInputElement {
 
 }
 
+class FormIntegerElement extends FormFloatlement {
+
+    public function __construct(string $name, int $value=0) {
+        parent::__construct($name, $value);
+        $this->type = 'number';
+        $this->step = '1';
+    }
+
+    protected function getValue(?Request $request): mixed {
+        if($request !== null) {
+            $val = $request->getParameterNoException($this->name);
+            return intval($val);
+        }
+        return null;
+    }
+
+}
+
+class FormFloatlement extends FormInputElement {
+
+    protected string $step = "any";
+    protected mixed $min = null;
+    protected mixed $max = null;
+
+    public function __construct(string $name, float $value=0) {
+        parent::__construct($name, $value);
+        $this->type = 'number';
+    }
+
+    protected function getValue(?Request $request): mixed {
+        if($request !== null) {
+            $val = $request->getParameterNoException($this->name);
+            return floatval($val);
+        }
+        return null;
+    }
+
+    protected function baseValidation($request): bool {
+        return parent::Validate($request);   
+    }
+
+    protected function isInRange(mixed $value): bool {
+        if($this->min !== null && $value < $this->min) {
+            return false;
+        }
+        if($this->max !== null && $value > $this->max) {
+            return false;
+        }
+        return true;
+    }
+
+    public function Validate(?Request $request): bool {
+        if(! $this->baseValidation($request)) {
+            return false;
+        }
+        
+        try {
+            $val = $this->getValue($request);
+            if(!$this->isInRange($val)) {
+                $this->setError(sprintf('value not in range [%s,%s]', $this->min, $this->max));
+                return false;
+            }
+        } catch(Exception $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @var mixed $min int or float min value
+     * @var mixed $max int or float max value
+     * @var string $step optional step value, defaults to any for float, 1 for integers
+     */
+    public function setRange(mixed $min=null, mixed $max=null, ?string $step=null):FormBaseElement {
+        if($min !== null) {
+            $this->min = $min;
+            if($this->value < $min) {
+                $this->value = $min;
+            }
+        }
+        if($max !== null) {
+            $this->max = $max;
+        }
+        if($step !== null) {
+            $this->step = $step;
+        }
+        return $this;
+    }
+
+    function html(?string $user=null, ?string $id_space=null) : string {
+        $minCondition = '';
+        $maxCondition = '';
+        if($this->min !== null) {
+            $minCondition = sprintf('min="%s"', $this->min);
+
+        }
+        if($this->max !== null) {
+            $maxCondition = sprintf('max="%s"', $this->max);
+
+        }
+        return '    <input '.$minCondition.' '.$maxCondition.' step="'.$this->step.'" '.$this->options($user, $id_space).' type="'.$this->type.'" class="form-control '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'" value="'.$this->value.'"/>'."\n";
+    }
+
+}
+
+class FormHiddenElement extends FormInputElement {
+
+    public function __construct($name, $value='') {
+        parent::__construct($name, $value);
+        $this->type = 'hidden';
+    }
+
+}
+
+class FormPasswordElement extends FormInputElement {
+
+    public function __construct($name, $value='') {
+        parent::__construct($name, $value);
+        $this->type = 'password';
+    }
+
+}
+
 class FormEmailElement extends FormInputElement {
 
     public function __construct($name, $value='') {
@@ -312,6 +485,21 @@ class FormColorElement extends FormInputElement {
         $this->type = 'color';
     }
 
+}
+
+class FormDownloadElement extends FormBaseElement {
+
+    private string $dclass = 'primary';
+
+    public function __construct($name, $value, $dclass='primary') {
+        parent::__construct($name, $value);
+        $this->dclass = $dclass;
+    }
+
+
+    public function html(?string $user=null, ?string $id_space=null): string {
+        return '      <a target="_blank" rel="noreferrer,noopener" href="'.$this->value.'"><button type="button" class="btn btn-'.$this->dclass.'">'.$this->name.'</button></a>'."\n";
+    }
 }
 
 class FormSelectElement extends FormBaseElement {
@@ -384,8 +572,12 @@ class FormSelectElement extends FormBaseElement {
  */
 class PfmForm {
 
+    private ?Request $request = null;
     static ?string $user = null;
     static ?int $id_space = null;
+
+    public ?string $title = null;
+    public ?string $subtitle = null;
 
     // Name of form
     private string $name;
@@ -397,6 +589,10 @@ class PfmForm {
     private ?string $cancelUrl = null;
     private ?string $deleteUrl = null;
     private array $buttons = [];
+
+    public function setRequest(Request $request) {
+        $this->request = $request;
+    }
 
     public function Javascript():string {
         $html =  "\n<script type=\"module\">\n";
@@ -427,22 +623,32 @@ class PfmForm {
         return $this;
     }
 
+    public function setTitle(string $title, string $subtitle='') {
+        $this->title = $title;
+        $this->subtitle = $subtitle;
+        return $this;
+    }
+
     public function setSpace(string $space) {
         self::$id_space = $space;
         return $this;
     }
 
-    public function __construct($name, $url=null) {
+
+    public function __construct(string $name, string $url=null, Request $request=null) {
         $this->name = $name;
         $this->url = $url;
+        $this->request = $request;
     }
 
     public function add(FormBaseElement $elt) {
         $this->elts[] = $elt;
+        return $this;
     }
 
     public function addCancel(string $url) {
         $this->cancelUrl = $url;
+        return $this;
     }
 
     public function addDelete(string $url, string $id=null) {
@@ -450,18 +656,79 @@ class PfmForm {
         if($id) {
             $this->deleteUrl .= "/$id";
         }
+        return $this;
     }
 
-    public function addButton(string $name, $url, $class='', $newWindow=false){
+    public function setUrl(string $url) {
+        $this->url = $url;
+        return $this;
+    }
+
+    public function addButton(string $name, $url, $class='danger', $newWindow=false){
         $this->buttons[] = ['name' => $name, 'url' => $url, 'new' => $newWindow, 'class' => $class?$class:'primary'];
+    }
+
+    public function isSubmitted(): bool {
+        if(!$this->request) {
+            return false;
+        }
+        return $this->request->getParameterNoException('form_id') == $this->name ? true : false;
+    }
+
+    /**
+     * Check form input are valid and set optional input object public properties from values
+     */
+    public function Validate(?object $object=null): bool {
+        if(!$this->isSubmitted()) {
+            return false;
+        }
+        $isValid = true;
+        // $objClass = $object !== null ? get_class($object) : null;
+        foreach ($this->elts as $elt) {
+            if(!$elt->Validate($this->request)) {
+                $isValid = false;
+                break;
+            }
+            if ($object !== null && property_exists($object, $elt->getName())){
+                $val = $elt->getValue();
+                if($val !== null) {
+                    $object->{$elt->name} = $val;
+                }
+            }
+        }
+        return $isValid;
+    }
+
+    public function Errors(): array {
+        $errors = [];
+        foreach ($this->elts as $elt) {
+            $err = $elt->getError();
+            if($err) {
+                $errors[] = ['name' => $elt->getName(), 'error' => $err];
+            }
+        }
+        return $errors;
     }
 
     /**
      * Generate HTML for form element
      */
     public function toHtml($lang='en'): string {
+        $html = '';
+        if($this->title) {
+            $html .= '<div class="row>'."\n";
+            $html .= '  <div class="col-xs-12">'."\n";
+            $html .= '<h3>'.$this->title.'</h3>';
+            if($this->subtitle) {
+                $html.= '<p><small>'.$this->subtitle.'</small></p>'."\n";
+            }
+            $html .= '</div>'."\n";
+            $html .= '</div>'."\n";
+            
+        }
         $action= $this->url ? 'action="'.$this->url.'"' : '';
-        $html = '<form x-form class="form" id="'.$this->name.'" method="post" enctype="multipart/form-data" '.$action.'>'."\n";
+        $html .= '<form x-form class="form" id="'.$this->name.'" method="post" enctype="multipart/form-data" '.$action.'>'."\n";
+        $html .= (new FormHiddenElement('form_id', $this->name))->toHtml()."\n";
         foreach ($this->elts as $elt) {
             $html .= $elt->toHtml(self::$user, self::$id_space)."\n";
         }
@@ -503,6 +770,9 @@ class PfmForm {
  * @author Sylvain Prigent
  */
 class Form {
+
+    // var @FormBaseElements[]
+    private PfmForm $pfmform;
 
     /** request */
     private $request;
@@ -561,7 +831,7 @@ class Form {
     /**
      * Constructor
      * @param Request $request Request that contains the post data
-     * @param unknown $id Form ID
+     * @param string $id Form ID
      */
     public function __construct(Request $request, $id, $useAjax = false) {
         $this->request = $request;
@@ -588,6 +858,8 @@ class Form {
 
         $this->useUpload = false;
         $this->isDate = false;
+
+        $this->pfmform = new PfmForm($id);
     }
 
     /**
@@ -612,12 +884,15 @@ class Form {
 
     /**
      * Add a button in the form validation button bar
-     * @param type $name Button text
-     * @param type $url Action URL
-     * @param type $type Bootstrap button type
+     * @param string $name Button text
+     * @param string $url Action URL
+     * @param string $type Bootstrap button type
+     * @param bool $newtab , on click open a new window
      */
     public function addExternalButton($name, $url, $type = "danger", $newtab = false) {
         $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type, "newtab" => $newtab);
+        $this->pfmform->addButton($name, $url, $type, $newtab);
+        
     }
 
     /**
@@ -627,6 +902,7 @@ class Form {
     public function setTitle($title, $level = 3) {
         $this->title = $title;
         $this->titlelevel = $level;
+        $this->pfmform->title = $title;
     }
 
     /**
@@ -635,6 +911,7 @@ class Form {
      */
     public function setSubTitle($subtitle) {
         $this->subtitle = $subtitle;
+        $this->pfmform->subtitle =  $subtitle;
     }
 
     /**
@@ -645,14 +922,16 @@ class Form {
     public function setValidationButton($name, $url) {
         $this->validationButtonName = $name;
         $this->validationURL = $url;
+        $this->pfmform->setUrl($url);
     }
 
     /**
      * 
-     * @param type $url URL of the validation button
+     * @param string $url URL of the validation button
      */
     public function setValisationUrl($url) {
         $this->validationURL = $url;
+        $this->pfmform->setUrl($url);
     }
 
     /**
@@ -663,6 +942,7 @@ class Form {
     public function setCancelButton($name, $url) {
         $this->cancelButtonName = $name;
         $this->cancelURL = $url;
+        $this->pfmform->addCancel($url);
     }
 
     /**
@@ -675,6 +955,7 @@ class Form {
         $this->deleteButtonName = $name;
         $this->deleteURL = $url;
         $this->deleteID = $dataID;
+        $this->pfmform->addDelete($url, $dataID);
     }
 
     /**
@@ -708,6 +989,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->pfmform->add(new FormSeparatorElement($name));
     }
 
     /**
@@ -728,11 +1010,12 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->pfmform->add(new FormSeparatorElement($name));
     }
 
     /**
      * Add a comment field
-     * @param type $text Text
+     * @param string $text Text
      */
     public function addComment($text) {
         $this->types[] = "comment";
@@ -748,6 +1031,7 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $this->pfmform->add(new FormComment($text));
     }
 
     /**
@@ -770,12 +1054,14 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $f = new FormInputElement($name, $value);
+        $this->pfmform->add($f->setType("hidden"));
     }
 
     /**
      * Add an upload button to upload file
-     * @param type $name 
-     * @param type $label
+     * @param string $name 
+     * @param string $label
      */
     public function addUpload($name, $label, $value = "") {
        
@@ -793,6 +1079,9 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+
+        $f = new FormUploadElement($name, $value);
+        $this->pfmform->add($f->setLabel($label));
     }
 
     /**
@@ -815,6 +1104,9 @@ class Form {
         $this->setValue($url);
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
+        $f = new FormDownloadElement($name, $url);
+        $this->pfmform->add($f->setLabel($label));
+
     }
 
     /**
@@ -842,6 +1134,11 @@ class Form {
         if ($suggestLogin) {
             $this->suggestLogin = true;
         }
+        $f = new FormInputElement($name, $value);
+        if($readonly || !$enabled) {  $f->setReadOnly(); }
+        if($checkUnicity) {  $f->setUnique($name); }
+        if($isMandatory) {$f->setMandatory(); }
+        $this->pfmform->add($f);
     }
 
     /**
