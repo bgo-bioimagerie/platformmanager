@@ -26,16 +26,28 @@ abstract class FormBaseElement {
 
     protected array $javascript = [];
 
+    /**
+     * Generate html for element
+     */
     abstract function html(?string $user=null, ?string $id_space=null): string;
 
+    /**
+     * Get element name
+     */
     public function getName(): string {
         return $this->name;
     }
 
+    /**
+     * Get element error
+     */
     public function getError(): ?string {
         return $this->error;
     }
 
+    /**
+     * Validate element against request parameters and element constraints
+     */
     public function Validate(?Request $request): bool {
         if($request === null) {
             return false;
@@ -49,10 +61,23 @@ abstract class FormBaseElement {
         return true;
     }
 
-    protected function getValue(?Request $request): mixed {
+    /**
+     * Get element value from request parameters
+     */
+    public function getValue(?Request $request): mixed {
         return $request !==null ? $request->getParameterNoException($this->name) : null;
     }
 
+    /**
+     * Set element value
+     */
+    public function setValue(mixed $value) {
+        $this->value = $value;
+    }
+
+    /**
+     * Get javascript to insert in html for element
+     */
     public function Javascript(): array {
         return $this->javascript;
     }
@@ -64,6 +89,9 @@ abstract class FormBaseElement {
         $this->placeholder = $placeholder;
     }
 
+    /**
+     * Set element label
+     */
     public function setLabel(string $label) : FormBaseElement {
         $this->label = $label;
         return $this;
@@ -79,17 +107,26 @@ abstract class FormBaseElement {
         return $this;
     }
 
+    /**
+     * Set or unset element error
+     */
     public function setError(?string $error) : FormBaseElement {
         $this->error = $error;
         return $this;
     }
 
 
+    /**
+     * Set element caption
+     */
     public function setCaption(string $caption) : FormBaseElement {
         $this->caption = $caption;
         return $this;
     }
 
+    /**
+     * Set element type
+     */
     public function setType(string $type) : FormBaseElement {
         $this->type = $type;
         if($this->type == 'email') {
@@ -98,28 +135,47 @@ abstract class FormBaseElement {
         return $this;
     }
 
+    /**
+     * Set/unset element as mandatory
+     */
     public function setMandatory(bool $mandatory=true) : FormBaseElement {
         $this->mandatory = $mandatory;
         return $this;
     }
 
+    /**
+     * Set/unset element as readonly
+     */
     public function setReadOnly(bool $readOnly=true) : FormBaseElement {
         $this->readOnly = $readOnly;
         return $this;
     }
 
+    /**
+     * Check that element is unique using controls library
+     * 
+     * @var string $unique type of control (login, email)
+     */
     public function setUnique(string $unique='login') : FormBaseElement {
         $this->unique = $unique;
         $this->javascript['unique'] = "control.loadUniques();\n";
         return $this;
     }
 
+    /**
+     * Check that elements are equal using controls library
+     * @var string equals  tag to use among elements to be equal
+     */
     public function setEquals(string $equals=null) : FormBaseElement {
         $this->equals = $equals;
         $this->javascript['equals'] = "control.loadEquals();\n";
         return $this;
     }
 
+    /**
+     * Autofill element using controls library suggestion
+     * @var array suggest list of element (2 only) ids to use ['firstname', 'lastname'] for example
+     */
     public function setSuggests(array $suggests=null) : FormBaseElement {
         $this->suggests = $suggests;
         $this->javascript['suggests'] = "control.loadSuggests();\n";
@@ -187,9 +243,22 @@ abstract class FormBaseElement {
         return $html;
     }
 
+    /**
+     * get string with element CSS classes
+     */
     public function getClasses() : string {
         return implode(" ", $this->classes);
     }
+
+    /**
+     * Set element CSS classes
+     * @var array $classes list of string css classes to use
+     */
+    public function setClasses(array $classes) {
+        $this->classes = $classes;
+    }
+
+
 
 }
 
@@ -234,14 +303,19 @@ class FormRadiosElement extends FormCheckboxesElement {
 
 class FormCheckboxElement extends FormBaseElement {
 
-    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
-        parent::__construct($name, $value, $multiple, $placeholder);
+    public function __construct($name, $value=0, $multiple=false, $placeholder=null) {
+        parent::__construct($name, intval($value), $multiple, $placeholder);
         $this->setType('checkbox');
+    }
+
+    public function setValue(mixed $value)
+    {
+        $this->value = intval($value);
     }
 
     function html(?string $user=null, ?string $id_space=null) : string {
         $checked = "";
-        if($this->value == 1 || $this->value === true) {
+        if($this->value === "1" || $this->value == 1 || $this->value === true) {
             $checked = "checked";
         }
         return '  <input type="'.$this->type.'"'.$this->options($user, $id_space).' class="form-check-input '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" '.$checked.' >'."\n";
@@ -338,9 +412,14 @@ class FormOptionElement extends FormBaseElement {
 
 class FormUploadElement extends FormInputElement {
 
-    public function __construct($name, $value='') {
-        parent::__construct($name, $value);
+    public function __construct($name) {
+        parent::__construct($name, null);
         $this->type = 'file';
+    }
+
+    public function setValue(mixed $value) {
+        // can't set a value for a file
+        $this->value = null;
     }
 
 }
@@ -353,12 +432,17 @@ class FormIntegerElement extends FormFloatlement {
         $this->step = '1';
     }
 
-    protected function getValue(?Request $request): mixed {
+    public function getValue(?Request $request): mixed {
         if($request !== null) {
             $val = $request->getParameterNoException($this->name);
             return intval($val);
         }
         return null;
+    }
+
+    public function setValue(mixed $value)
+    {
+        $this->value = intval($value);
     }
 
 }
@@ -374,7 +458,12 @@ class FormFloatlement extends FormInputElement {
         $this->type = 'number';
     }
 
-    protected function getValue(?Request $request): mixed {
+    public function setValue(mixed $value)
+    {
+        $this->value = floatval($value);
+    }
+
+    public function getValue(?Request $request): mixed {
         if($request !== null) {
             $val = $request->getParameterNoException($this->name);
             return floatval($val);
@@ -689,6 +778,7 @@ class PfmForm {
                 $isValid = false;
                 break;
             }
+            $elt->setValue($elt->getValue($this->request));
             if ($object !== null && property_exists($object, $elt->getName())){
                 $val = $elt->getValue();
                 if($val !== null) {
