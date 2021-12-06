@@ -2,13 +2,10 @@
 
 ## 2.2
 
-<<<<<<< HEAD
 * [forms] prevent errors on form submissions
-=======
 * [Documentation] Add quote documentation
 * [module:quote] improve new user quote interface
 * [module:quote] expose client infos to invoice templates
->>>>>>> pfm2
 * [Services] Remove deprecated functions from servicesController
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
