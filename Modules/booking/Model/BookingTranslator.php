@@ -519,6 +519,13 @@ class BookingTranslator {
         return "Edit Reservation";
     }
 
+    public static function Add_Reservation($lang = "") {
+        if ($lang == "fr") {
+            return "Ajout Réservation";
+        }
+        return "Add Reservation";
+    }
+
     public static function Resource($lang = "") {
         if ($lang == "fr") {
             return "Ressource";
@@ -1643,11 +1650,25 @@ class BookingTranslator {
         return "Error: No resource and/or area has been created";
     }
 
+    public static function VisaNeeded($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord spécifier un visa dans le module Ressources > Visas";
+        }
+        return "You need first to specify a visa in Resources module>Visas";
+    }
+
     public static function maxInvoicingUnits($lang) {
         if ($lang == "fr") {
             return "Seule une quantité peut être utilisée comme unité de facturation pour une ressource. Merci de passer \"Utiliser comme unité de facturation\" à \"non\" pour les autres quantités concernées.";
         } else {
             return "Only one quantity can be used as an invoicing unit for one resource. Please set \"Use as invoicing unit\" to \"no\" for other quantites.";
         }
+    }
+
+    public static function ColorNeeded($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord créer au moins un code couleur dans le module  Calendrier config > Codes couleur";
+        }
+        return "You need first to create at leat one color code in Bokking settings module > Color codes";
     }
 }

@@ -181,6 +181,9 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelVisa = new ReVisa();
         $visa_select = $modelVisa->getForListByCategory($id_space, $id_resource_category);
+        if (empty($visa_select['ids'])) {
+            $_SESSION['flash'] = BookingTranslator::VisaNeeded($lang);
+        }
 
 
         $form = new Form($this->request, "authorisationAddForm");
@@ -189,7 +192,7 @@ class BookingauthorisationsController extends CoresecureController {
         $form->addText("resource", BookingTranslator::Resource(), false, $categoryName, "disabled");
 
 
-        $form->addSelect("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
+        $form->addSelectMandatory("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
         $form->addDate("date", BookingTranslator::DateActivation($lang), true);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsadd/" . $id_space . "/" . $id);

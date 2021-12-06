@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [forms] prevent errors on form submissions
 * [Documentation] Add quote documentation
 * [module:quote] improve new user quote interface
 * [module:quote] expose client infos to invoice templates
