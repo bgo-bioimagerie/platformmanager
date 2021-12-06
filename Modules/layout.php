@@ -21,7 +21,7 @@ if($isdev) {
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
         <meta name="mode" description="{{$isdev}}">
-        <base href="<?php echo  "/" ?>" >
+        <base href="<?php echo  $rootWeb ?>" >
         <title>
             <?php startblock('title') ?>
             Platform-Manager
