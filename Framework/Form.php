@@ -1,4 +1,19 @@
 <?php
+/**
+* Examples
+* 
+* require_once 'Framework/Form.php';
+* $form = new PfmForm('hello', '/coretiles');
+* $input1 = new FormInputElement('name','test');
+* $form->add($input1->setLabel('Nom'));
+* $select1 = new FormSelectElement('choice1', '2');
+* $opt1 = new FormOptionElement('opt1', '1');
+* $opt2 = new FormOptionElement('opt2', '2');
+* $select1->add([$opt1, $opt2]);
+* $form->add($select1->setLabel('Choices')->setEditable());
+* echo $form->toHtml();
+* echo $form->Javascript();
+ */
 
 require_once 'Framework/Request.php';
 require_once 'Framework/FormAdd.php';
@@ -28,6 +43,7 @@ abstract class FormBaseElement {
 
     protected ?int $role = null; //minimal required user role for validation
 
+    protected bool $editable = false;
 
     protected array $javascript = [];
 
@@ -37,6 +53,16 @@ abstract class FormBaseElement {
      * Generate html for element
      */
     abstract function html(?string $user=null, ?string $id_space=null): string;
+
+    /**
+     * USer can add/remove multiple elements
+     */
+    public function setEditable(bool $editable=true) {
+        $this->name = $this->name."[]";
+        $this->editable = $editable;
+        $this->javascript['edit'] = "control.loadEditables();\n";
+        return $this;
+    }
 
     /**
      * Minimum validation role
@@ -251,6 +277,9 @@ abstract class FormBaseElement {
         }
         if($this->suggests) {
             $options .= ' x-suggest="'.implode(',', $this->suggests).'"';
+        }
+        if($this->editable) {
+            $options .= ' x-edit';
         }
 
         return trim($options);
@@ -799,9 +828,14 @@ class FormSelectElement extends FormBaseElement {
 
 
    public function html(?string $user=null, ?string $id_space=null): string {
-       $html = '<select class="form-control '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->name.'" name="'.$this->name.'" value="'.$this->value.'">'."\n";
+       $html = '<select class="form-control '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->id.'" name="'.$this->name.'" value="'.$this->value.'">'."\n";
        foreach($this->options as $option) {
-           $html .= $option->html()."\n";
+           $ohtml =  $option->html();
+           if($option->value == $this->value) {
+               $ohtml = str_replace("<option", "<option selected", $ohtml);
+           }
+           $html .= $ohtml."\n";
+
        }
        $html .= '</select>'."\n";
        return $html;
