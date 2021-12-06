@@ -642,11 +642,6 @@ class CoreDB extends Model {
                 $eventHandler->customerImport();
                 Configuration::getLogger()->debug('[stats] import clients, done!');
             }
-
-            Configuration::getLogger()->debug("[core_adminmenu] change menu to structure");
-            $sql = "UPDATE core_adminmenu SET name='Structures' WHERE name='Menus'";
-            $this->runRequest($sql);
-            Configuration::getLogger()->debug("[core_adminmenu] change menu to structure done!");
         }
 
         Configuration::getLogger()->debug('[qo_quotes] add column id_client');
