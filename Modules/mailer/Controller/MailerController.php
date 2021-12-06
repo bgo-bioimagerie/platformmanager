@@ -24,16 +24,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class MailerController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("mailer");
-
-    }
-
-
     public function navbar($id_space) {
         return "";
     }

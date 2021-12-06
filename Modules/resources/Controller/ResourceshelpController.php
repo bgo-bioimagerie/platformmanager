@@ -12,15 +12,6 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 class ResourceshelpController extends CoresecureController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("resources");
-
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

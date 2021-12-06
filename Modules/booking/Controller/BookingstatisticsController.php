@@ -35,14 +35,6 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
  */
 class BookingstatisticsController extends StatisticsController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("booking");
-
-    }
     
     public function statquantitiesAction($id_space){
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);

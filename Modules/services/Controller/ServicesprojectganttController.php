@@ -19,17 +19,6 @@ require_once 'Modules/services/Controller/ServicesController.php';
  */
 class ServicesprojectganttController extends ServicesController {
 
-    private $serviceModel;
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-
-        //$this->checkAuthorizationMenu("services");
-    }
-
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()

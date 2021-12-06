@@ -14,15 +14,6 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
 class StatisticslistController extends StatisticsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("statistics");
-
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

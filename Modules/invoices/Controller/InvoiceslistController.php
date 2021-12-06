@@ -22,15 +22,6 @@ require_once 'Modules/invoices/Controller/InvoicesController.php';
  * Controller for the home page
  */
 class InvoiceslistController extends InvoicesController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("invoices");
-
-    }
     
     protected function getInvoicePeriod($id_space, $year) {
         $modelCoreConfig = new CoreConfig();

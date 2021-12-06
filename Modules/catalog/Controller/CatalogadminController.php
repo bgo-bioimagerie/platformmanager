@@ -13,15 +13,7 @@ require_once 'Modules/catalog/Controller/CatalogController.php';
  * Controller for the home page
  */
 class CatalogadminController extends CatalogController {
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("catalog");
 
-    }
-    
     public function indexAction($id_space){
         $this->redirect("catalogcategories/".$id_space);
     }

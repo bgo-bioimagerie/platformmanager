@@ -15,15 +15,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class BookingsettingsController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("bookingsettings");
-
-    }
-
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();

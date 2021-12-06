@@ -21,14 +21,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class BookingauthorisationsController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-
-    }
-
     public function indexAction($id_space, $id) {
 
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);

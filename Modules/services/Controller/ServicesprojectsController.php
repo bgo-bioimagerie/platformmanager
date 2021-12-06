@@ -26,17 +26,6 @@ require_once 'Modules/services/Controller/ServicesController.php';
  */
 class ServicesprojectsController extends ServicesController {
 
-    private $serviceModel;
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-
-        //$this->checkAuthorizationMenu("services");
-    }
-
     public function userAction($id_space) {
         if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
             throw new PfmAuthException('need login', 403);

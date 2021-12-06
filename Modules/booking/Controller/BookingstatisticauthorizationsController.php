@@ -31,20 +31,11 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
  */
 class BookingstatisticauthorizationsController extends StatisticsController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request, ?array $space=null) {
-        parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("booking");
-
-    }
-
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelConfig = new CoreConfig();
+        //$modelConfig = new CoreConfig();
         $modelCoreConfig = new CoreConfig();
 
         $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
