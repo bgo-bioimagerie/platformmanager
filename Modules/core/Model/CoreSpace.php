@@ -80,12 +80,26 @@ class CoreSpace extends Model {
         $this->tableName = 'core_spaces';
     }
 
-    public static function roles($lang) {
+    /**
+     * List module roles
+     * 
+     * @var int $minRole minimal role + inactive, if 0/unset return all roles
+     */
+    public static function roles($lang, $minRole=0) {
 
         $names = array(CoreTranslator::Inactive($lang), CoreTranslator::Visitor($lang), CoreTranslator::User($lang),
             CoreTranslator::Manager($lang), CoreTranslator::Admin($lang));
         $ids = array(0, 1, 2, 3, 4);
-        return array("names" => $names, "ids" => $ids);
+
+        $roles = ['names' => $names, 'ids' => $ids];
+        if($minRole > 0) {
+            $roles = ['names' => [CoreTranslator::Inactive($lang)], 'ids' => [0]];
+            for($i=$minRole;$i<count($ids);$i++) {
+                $roles['ids'][] = $ids[$i];
+                $roles['names'][] = $names[$i];
+            }
+        }
+        return $roles;
     }
 
     /**
