@@ -155,9 +155,7 @@ class InvoiceslistController extends InvoicesController {
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName(new Request(array(), false));
         $object->setRequest($this->request);
-        $object->runAction($service["module"], "edit", array($id_space, $id));
-
-        return;
+        $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
     }
 
     public function createPurcentageDiscountForm($discountValue) {

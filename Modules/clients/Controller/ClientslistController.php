@@ -207,6 +207,16 @@ class ClientslistController extends ClientsController {
             'formHtml' => $formd->getHtml($lang),
         ));
     }
+
+    /**
+     * Returns client's address
+     */
+    public function getAddressAction($id_space, $id_client) {
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        $modelClient = new ClClient();
+        $address = $modelClient->getAddressInvoice($id_space, $id_client) ?: "";
+        $this->render(['data' => ['elements' => $address]]);
+    }
             
     /**
      * Remove a provider

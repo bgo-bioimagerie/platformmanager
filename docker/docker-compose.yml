@@ -17,8 +17,8 @@ services:
       SMTP_HOST: ${PFM_SMTP_HOST}
       SMTP_PORT: 1025
       SMTP_FROM: ${PFM_SMTP_FROM}
-      DEBUG: 1
-      DEBUG_SQL: 1
+      DEBUG: 0
+      DEBUG_SQL: 0
       PFM_MODE: dev
       PFM_PUBLIC_URL: ${PFM_WEB_URL}
       PFM_AMQP_HOST: pfm-rabbitmq
@@ -104,6 +104,7 @@ services:
       PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
       PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
       PFM_PUBLIC_URL: ${PFM_WEB_URL}
+      PFM_ROOTWEB: "/"
       PFM_AMQP_HOST: pfm-rabbitmq
       PFM_AMQP_USER: pfm
       PFM_AMQP_PASSWORD: pfm

@@ -260,7 +260,6 @@ class Form {
     /**
      * Add hidden input to the form
      * @param string $name Input name
-     * @param string $label Input label 
      * @param string $value Input default value
      */
     public function addHidden($name, $value = "") {
@@ -748,7 +747,7 @@ class Form {
             $html .= $formHtml->textAreaScript();
         }
 
-        if (in_array(true, $this->checkUnicity)) {
+        if ($this->checkUnicity && in_array(true, $this->checkUnicity)) {
             $html .= $formHtml->checkUnicityScript();
         }
         
