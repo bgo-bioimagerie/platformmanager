@@ -2,6 +2,7 @@
 
 ## 2.2
 
+* [Menus] Change word "Menu" to "Structure"
 * [forms] prevent errors on form submissions
 * [Documentation] Add quote documentation
 * [module:quote] improve new user quote interface
