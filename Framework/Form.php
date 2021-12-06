@@ -4,6 +4,7 @@ require_once 'Framework/Request.php';
 require_once 'Framework/FormAdd.php';
 require_once 'Framework/FormHtml.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 abstract class FormBaseElement {
 
@@ -25,6 +26,8 @@ abstract class FormBaseElement {
     protected ?string $equals = null; // unique identifier for fields to match
     protected ?array $suggests = null;  // array of element ids for a suggestion (['firstname', 'lastname'] for ex)
 
+    protected ?int $role = null; //minimal required user role for validation
+
 
     protected array $javascript = [];
 
@@ -34,6 +37,21 @@ abstract class FormBaseElement {
      * Generate html for element
      */
     abstract function html(?string $user=null, ?string $id_space=null): string;
+
+    /**
+     * Minimum validation role
+    */
+
+    public function Requires(int $role) {
+        $this->role = $role;
+    }
+
+    /**
+     * Get required role for element
+     */
+    public function Required(): ?int {
+        return $this->role;
+    }
 
     /**
      * Get element name
@@ -838,7 +856,7 @@ class PfmForm {
     private string $name;
     // URL to post form
     private string $url;
-    // @var FormBaseElement[]
+    // @var FormBaseElement[] $elts;
     private array $elts = [];
 
     private ?string $cancelUrl = null;
@@ -934,7 +952,7 @@ class PfmForm {
     /**
      * Check form input are valid and set optional input object public properties from values
      */
-    public function Validate(?object $object=null): bool {
+    public function Validate(?object $object=null, int $role=1): bool {
         if(!$this->isSubmitted()) {
             return false;
         }
@@ -943,6 +961,10 @@ class PfmForm {
             if(!$elt->Validate($this->request)) {
                 $isValid = false;
                 break;
+            }
+            if($elt->Required() !== null && $elt->Required() > $role) {
+                // Just ignore the field, cannot be set by user
+                continue;
             }
             $val = $elt->getFormValue($this->request);
             try {

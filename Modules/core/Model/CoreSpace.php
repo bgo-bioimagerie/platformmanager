@@ -70,11 +70,11 @@ class CorePlan {
  */
 class CoreSpace extends Model {
 
-    public static $INACTIF = 0;
-    public static $VISITOR = 1;
-    public static $USER = 2;
-    public static $MANAGER = 3;
-    public static $ADMIN = 4;
+    public static int $INACTIF = 0;
+    public static int $VISITOR = 1;
+    public static int $USER = 2;
+    public static int $MANAGER = 3;
+    public static int $ADMIN = 4;
 
     public function __construct() {
         $this->tableName = 'core_spaces';
