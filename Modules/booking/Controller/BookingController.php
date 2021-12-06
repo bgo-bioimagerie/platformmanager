@@ -27,15 +27,6 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
  */
 class BookingController extends BookingabstractController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("booking");
-    }
-
-
     public function navbar($id_space) {
         $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
 

@@ -16,13 +16,6 @@ require_once 'Modules/clients/Controller/ClientsController.php';
 class ClientsuseraccountsController extends ClientsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::index()
      *

@@ -19,8 +19,8 @@ require_once 'Modules/core/Model/CoreStatus.php';
  */
 abstract class CoresecureController extends CorecookiesecureController {
 
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->checkRememberMeCookie();
     }
 

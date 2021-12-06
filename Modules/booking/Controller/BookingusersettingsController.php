@@ -17,13 +17,6 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 class BookingusersettingsController extends CoresecureController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::index()
      */

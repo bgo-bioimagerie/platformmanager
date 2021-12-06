@@ -29,11 +29,11 @@ class AntibodieslistController extends AntibodiesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->antibody = new Anticorps();
         $this->noSideMenu = true;
-        $_SESSION["openedNav"] = "antibodies";
+
         //$this->checkAuthorizationMenu("antibodies");
         
     }

@@ -24,16 +24,6 @@ require_once 'Modules/core/Model/CoreUser.php';
 class BookingabstractController extends CoresecureController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("booking");
-    }
-
-    
-
-    /**
      * Get the content of of the booking menu for the calendar pages
      * @param number $curentAreaId ID of the curent area
      * @param number $curentResourceId ID of the current resource

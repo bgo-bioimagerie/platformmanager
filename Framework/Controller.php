@@ -24,6 +24,8 @@ abstract class Controller {
 
     protected $twig;
 
+    protected ?array $currentSpace = null;
+
     public function args() {
         return $this->args;
     }
@@ -32,7 +34,7 @@ abstract class Controller {
         $this->args = $args;
     }
 
-    public function __construct(Request $request) {
+    public function __construct(Request $request, ?array $space=null) {
         $this->request = $request;
         $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/..');
         if(!is_dir('/tmp/pfm')) {
@@ -45,13 +47,9 @@ abstract class Controller {
                 'cache' => '/tmp/pfm'
             ]);
         }
-    }
 
-    /*
-    public function mainMenu() {
-        return null;
+        $this->currentSpace = $space;
     }
-    */
 
         /**
      * 
@@ -63,8 +61,13 @@ abstract class Controller {
         if (!$id_space) {
             return null;
         }
-        $m = new CoreSpace();
-        $space = $m->getSpace($id_space);
+        
+        //$m = new CoreSpace();
+        //$space = $m->getSpace($id_space);
+        $space = $this->currentSpace;
+        if($space === null) {
+            return '';
+        }
 
 
         $spaceColor = "#ffffff";

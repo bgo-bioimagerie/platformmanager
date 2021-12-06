@@ -25,11 +25,11 @@ class StockcabinetController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         
         $this->model = new StockCabinet ();
-        $_SESSION["openedNav"] = "services";
+
     }
 
     /**

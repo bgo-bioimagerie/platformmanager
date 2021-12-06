@@ -15,10 +15,10 @@ class DemController extends AntibodiesController {
      */
     private $demModel;
 
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->demModel = new Dem();
-        $_SESSION["openedNav"] = "antibodies";
+
     }
 
     // affiche la liste des Prelevements

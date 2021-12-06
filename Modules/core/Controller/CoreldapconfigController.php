@@ -6,7 +6,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 
 /**
- * 
+ * @deprecated
  * @author sprigent
  * 
  * Config the LDAP access
@@ -16,8 +16,8 @@ class CoreldapconfigController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->checkAuthorization(CoreStatus::$ADMIN);
     }
     

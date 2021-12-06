@@ -19,15 +19,6 @@ require_once 'Modules/core/Model/CoreTranslator.php';
  */
 class CoreusersController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        // $this->checkAuthorization(CoreStatus::$ADMIN);
-        //$this->checkAuthorizationMenu("users");
-    }
-
     public function mainMenu() {
         if ($_SERVER['REQUEST_URI'] != "coremyaccount") {
             return null;

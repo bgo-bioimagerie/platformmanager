@@ -25,13 +25,6 @@ use Firebase\JWT\JWT;
  */
 class CoreaccountController extends Controller {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
-
     public function confirmAction() {
         $lang = $this->getLanguage();
         $token = $this->request->getParameter("token");

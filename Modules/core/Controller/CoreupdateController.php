@@ -14,13 +14,6 @@ require_once 'Modules/core/Model/CoreStatus.php';
  */
 class CoreupdateController extends Controller {
 
-    /*
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorization(CoreStatus::$ADMIN);
-    }
-    */
-
     /**
      * (non-PHPdoc)
      * @see Controller::index()

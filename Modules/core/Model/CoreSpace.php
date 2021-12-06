@@ -429,9 +429,13 @@ class CoreSpace extends Model {
         return $req[0];
     }
 
-    public function getSpace($id) {
+    public function getSpace($id): ?array {
         $sql = "SELECT * FROM core_spaces WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+        $req = $this->runRequest($sql, array($id));
+        if ($req->rowCount() == 1) {
+            return $req->fetch();
+        }
+        return null;
     }
 
     public function getSpaces($sort) {

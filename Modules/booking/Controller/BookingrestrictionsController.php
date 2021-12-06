@@ -23,10 +23,10 @@ class BookingrestrictionsController extends BookingsettingsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("bookingsettings");
-        $_SESSION["openedNav"] = "bookingsettings";
+
     }
 
     /**

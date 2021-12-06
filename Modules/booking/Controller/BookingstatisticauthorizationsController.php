@@ -34,10 +34,10 @@ class BookingstatisticauthorizationsController extends StatisticsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("booking");
-        $_SESSION["openedNav"] = "statistics";
+
     }
 
     public function indexAction($id_space) {

@@ -22,14 +22,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  */
 class StatisticsglobalController extends StatisticsController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("statistics");
-    }
-
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);

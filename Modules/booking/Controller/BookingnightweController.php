@@ -21,9 +21,9 @@ class BookingnightweController extends BookingsettingsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "bookingsettings";
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
+
     }
 
     public function indexAction($id_space){

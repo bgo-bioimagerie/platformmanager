@@ -17,14 +17,6 @@ require_once 'Modules/documents/Controller/DocumentsController.php';
 class DocumentslistController extends DocumentsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("documents");
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

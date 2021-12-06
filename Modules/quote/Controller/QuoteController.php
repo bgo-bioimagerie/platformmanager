@@ -13,15 +13,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class QuoteController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("quote");
-    }
-
-
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();

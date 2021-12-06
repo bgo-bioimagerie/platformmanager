@@ -27,8 +27,8 @@ class CorespaceController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
 
         $this->spaceModel = new CoreSpace ();
     }
@@ -144,7 +144,7 @@ class CorespaceController extends CoresecureController {
      */
     public function configAction($id_space) {
 
-        $_SESSION["openedNav"] = "config";
+
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $space = $this->spaceModel->getSpace($id_space);
@@ -158,7 +158,7 @@ class CorespaceController extends CoresecureController {
      */
     public function configusersAction($id_space) {
 
-        $_SESSION["openedNav"] = "configusers";
+
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -273,7 +273,7 @@ class CorespaceController extends CoresecureController {
      * @return \Form
      */
     protected function configUsersForm($lang, $id_space) {
-        $_SESSION["openedNav"] = "configusers";
+
         $modeluser = new CoreUser();
         $users = $modeluser->getActiveUsers("name");
         $usersNames = array();
