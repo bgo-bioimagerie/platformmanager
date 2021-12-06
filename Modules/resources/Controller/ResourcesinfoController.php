@@ -433,6 +433,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
     public function respsAction($id_space, $id_resource) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
 
         $modelResps = new ReResps();
         $respsData = $modelResps->getResps($id_space, $id_resource);
@@ -460,13 +461,14 @@ class ResourcesinfoController extends ResourcesBaseController {
             $choicesS[] = $status["name"];
             $choicesidS[] = $status["id"];
         }
+        if (empty($choicesidS)) {
+            $_SESSION['flash'] = ResourcesTranslator::StatusNeeded($lang);
+        }
 
-
-        $lang = $this->getLanguage();
         $form = new Form($this->request, "respsform");
         $formAdd = new FormAdd($this->request, "respaddform");
         $formAdd->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $resps);
-        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus);
+        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus, isMandatory:true);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, "");
