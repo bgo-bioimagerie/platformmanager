@@ -2,6 +2,9 @@
 
 ## 2.2
 
+* [Documentation] Add quote documentation
+* [module:quote] improve new user quote interface
+* [module:quote] expose client infos to invoice templates
 * [Services] Remove deprecated functions from servicesController
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function

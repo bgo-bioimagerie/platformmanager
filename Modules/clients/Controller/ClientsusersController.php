@@ -100,4 +100,10 @@ class ClientsusersController extends ClientsController {
         $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
     }
 
+    public function getUserClientsAction($id_space, $id_user) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $modelClientUser = new ClClientUser();
+        $this->render(['data' => ['elements' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
+    }
+
 }

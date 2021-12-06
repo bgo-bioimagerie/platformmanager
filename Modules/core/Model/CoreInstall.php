@@ -643,6 +643,16 @@ class CoreDB extends Model {
                 Configuration::getLogger()->debug('[stats] import clients, done!');
             }
         }
+
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN id_client INT(11)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client, done!');
+
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN recipient_email VARCHAR(100)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
     }
 
 
