@@ -122,11 +122,11 @@ class QuoteTranslator {
         return "Remove";
     }
 
-    public static function Presta($lang) {
+    public static function ItemLabel($lang) {
         if ($lang == "fr") {
-            return "Prestation";
+            return "Prestation / ressource";
         }
-        return "Service";
+        return "Service / resource";
     }
 
     public static function EditQuote($lang) {

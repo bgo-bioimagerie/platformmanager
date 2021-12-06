@@ -198,7 +198,7 @@ class QuotelistController extends QuoteController {
         $modelItem = new QuoteItem();
         $itemslist = $modelItem->getList($id_space);
 
-        $form->addSelect('id_item', QuoteTranslator::Presta($lang), $itemslist["names"], $itemslist["ids"]);
+        $form->addSelectMandatory('id_item', QuoteTranslator::ItemLabel($lang), $itemslist["names"], $itemslist["ids"]);
         $form->addText("quantity", QuoteTranslator::Quantity($lang), true);
         $form->addTextArea("comment", QuoteTranslator::Comment($lang));
 
