@@ -16,6 +16,9 @@ class CoreRouting extends Routing{
         $router->map('GET', '/coretiles/[i:level]/[i:id]/unstar/[i:id_space]', 'core/coretiles/coreunstar', 'core_unstar');
         $router->map('GET|POST', '/coremail/[i:id_space]', 'core/coremail/index', 'core_mail');
         $router->map('GET|POST', '/coreaccountisunique', 'core/coreaccount/isunique', 'core_unique');
+        $router->map('GET', '/core/tiles/[i:id_space]/module/spaceaccess/notifs', 'core/corespaceaccess/notifs', 'corespaceaccess_notifs');
+        $router->map('GET', '/core/plans', 'core/coreabout/plans', 'core_plans');
+        $router->map('GET', '/core/spaceaccess/[i:id_space]/users/[i:id_user]/convention', 'core/corespaceaccess/downloadConvention', 'corespaceaccess_download_user_convention');
     }
     
     public function listRoutes(){
@@ -81,8 +84,8 @@ class CoreRouting extends Routing{
         
         // spaces admin
         $this->addRoute("spaceadmin", "spaceadmin", "corespaceadmin", "index");
-        $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id"), array(""));
-        $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id"), array(""));
+        $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id_space"), array(""));
+        $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id_space"), array(""));
         
         // main menu
         $this->addRoute("coremainmenus", "coremainmenus", "coremainmenu", "index");

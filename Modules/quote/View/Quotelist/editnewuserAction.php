@@ -25,7 +25,29 @@ if ($id_quote > 0) {
         }
         ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
+        <div>
+            <a class="btn btn-default" href="clclientedit/<?php echo $id_space ?>">
+                <?php echo ClientsTranslator::NewClient($lang) ?>
+            </a>
+        </div>
         <?php echo $formHtml ?>
+        <script type="module">
+            import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+            let dynamicForms = new DynamicForms();
+            let spaceId = <?php echo $id_space?>;
+            let sourceId = "id_client";
+            let targets = [
+                {
+                    elementId: "pricing",
+                    apiRoute: `clientspricings/getpricing/`
+                },
+                {
+                    elementId: "address",
+                    apiRoute: `clientslist/getaddress/`
+                }
+            ];
+            dynamicForms.dynamicFields(sourceId, targets, spaceId);
+        </script>
     </div>
 
     <?php

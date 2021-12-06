@@ -149,7 +149,7 @@ if ($packageChecked > 0) {
 <script>
     $(document).ready(function () {
         let php_var = "<?php echo $isPackageCheched; ?>";
-        if (php_var === "0") {
+        if (php_var === "1") {
             document.getElementById('resa_time_div').style.display = 'none';
         } else {
             let p_div = document.getElementById('package_div');

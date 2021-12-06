@@ -32,7 +32,7 @@
         <div class="panel panel-default">
             <div class="panel-heading"><?php echo CoreTranslator::Language($lang) ?></div>
             <div class="panel-body">
-                <a href="/coreuserslanguageedit">
+                <a href="coreuserslanguageedit">
                     <button
                         type="button"
                         class="btn btn-primary"

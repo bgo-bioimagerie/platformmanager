@@ -11,7 +11,7 @@ require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 
-
+use Symfony\Component\Yaml\Yaml;
 use Garden\Cli\Cli;
 
 function version()
@@ -26,6 +26,10 @@ $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
     ->opt('from', 'Force install from release', false, 'integer')
+    ->command('space')
+    ->description('show space info')
+    ->opt('flags', 'Show space plan flags', false, 'boolean')
+    ->opt('id', 'space identifier', 0, 'integer')
     ->command('routes')
     ->description('manage routes')
     ->opt('reload:r', 'Reload routes from code', false, 'boolean')
@@ -47,6 +51,9 @@ $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'space':
+            cliSpaceShow($args->getOpt('id', 0), $args->getOpt('flags', false));
+            break;
         case 'repair':
             cliFix($args->getOpt('bug', 0));
             break;
@@ -109,6 +116,23 @@ try {
     }
 } catch(Throwable $e) {
     Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+}
+
+function cliSpaceShow(int $id, bool $flags) {
+    $cp = new CoreSpace();
+    Configuration::getLogger()->debug("[space] get space");
+    $space = $cp->getSpace($id);
+    $plan = new CorePlan($space['plan'], $space['plan_expire']);
+    foreach ($space as $key => $value) {
+        if (is_int($key)) {
+            unset($space[$key]);
+        }
+    }
+    echo Yaml::dump(['space' => $space], 2, 4, Yaml::DUMP_OBJECT_AS_MAP);
+    if($flags) {
+        $f = $plan->Flags();
+        echo Yaml::dump(['flags' => $f], 2, 4, Yaml::DUMP_OBJECT_AS_MAP);
+    }
 }
 
 function statsImport() {

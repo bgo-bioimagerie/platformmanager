@@ -122,11 +122,11 @@ class QuoteTranslator {
         return "Remove";
     }
 
-    public static function Presta($lang) {
+    public static function ItemLabel($lang) {
         if ($lang == "fr") {
-            return "Prestations";
+            return "Prestation / ressource";
         }
-        return "Quantities";
+        return "Service / resource";
     }
 
     public static function EditQuote($lang) {
@@ -190,6 +190,13 @@ class QuoteTranslator {
             return "PDF";
         }
         return "PDF";
+    }
+
+    public static function pricingNeeded($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord attribuer un secteur d'activité à votre client dans le module Clients";
+        }
+        return "First, you must affect a pricing to your client in Clients module";
     }
     
 }

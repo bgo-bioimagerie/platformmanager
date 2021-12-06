@@ -595,6 +595,11 @@ class CoreDB extends Model {
         $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
         Configuration::getLogger()->debug('[core] add txtcolor, done');
 
+        Configuration::getLogger()->debug('[core] add space plan');
+        $this->addColumn('core_spaces', 'plan', "int", '0');
+        $this->addColumn('core_spaces', 'plan_expire', "int", '0');
+        Configuration::getLogger()->debug('[core] add space plan, done');
+
         if(Statistics::enabled()) {
             $eventHandler = new EventHandler();
             $g = new Grafana();
@@ -616,11 +621,16 @@ class CoreDB extends Model {
                 $csu = new CoreSpaceUser();
                 $managers = $csu->managersOrAdmin($space['id']);
                 $g = new Grafana();
-                foreach($managers as $manager) {
-                    $u = new CoreUser();
-                    $user = $u->getInfo($manager['id_user']);
-                    Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
-                    $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                $plan = new CorePlan($space['plan'], $space['plan_expire']);
+                if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                    foreach($managers as $manager) {
+                        $u = new CoreUser();
+                        $user = $u->getInfo($manager['id_user']);
+                        Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
+                        $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                    }
+                } else {
+                    Configuration::getLogger()->debug('[flags][disabled] ', ['space' => $space['name'] , 'flags' => [CorePlan::FLAGS_GRAFANA]]);
                 }
                 $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
             }
@@ -638,6 +648,16 @@ class CoreDB extends Model {
             $this->runRequest($sql);
             Configuration::getLogger()->debug("[core_adminmenu] change menu to structure done!");
         }
+
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN id_client INT(11)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client, done!');
+
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN recipient_email VARCHAR(100)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
     }
 
 

@@ -388,7 +388,14 @@ class Router {
             if($errCode == 0) {
                 $errCode = 500;
             }
+
+            
+            if($exception instanceof PfmAuthException && $errCode == 401) {
+                header("Location:" . '/coreconnection?redirect_url='.$_SERVER['REQUEST_URI']);
+                return;
+            }
         }
+
         http_response_code($errCode);
 
         if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {

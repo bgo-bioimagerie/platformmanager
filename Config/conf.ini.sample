@@ -22,7 +22,6 @@ headless = false
 
 [Modules]
 modules[] = "core"
-modules[] = "transfer"
 modules[] = "clients"
 modules[] = "users"
 modules[] = "resources"

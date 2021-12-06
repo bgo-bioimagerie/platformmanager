@@ -10,7 +10,10 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Clients module allows you to create invoicable entities.
+Within this module, you can:
+ manage clients manage pricings link users to a client  Item definition    A client is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the client. A user can&rsquo;t be invoiced directly.
+A client is defined by its (&quot;*&quot; for mandatory):">
 
 
 
@@ -502,7 +505,11 @@
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -542,7 +549,11 @@
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry is-active">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -583,6 +594,30 @@
             
             
                 <span class="flex">Documents</span>
+            
+            
+
+            
+            </li>
+            
+            
+            
+
+            
+            
+            
+            
+            
+            
+
+            <li>
+            
+            
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/helpdesk/" class="gdoc-nav__entry ">
+                        Helpdesk
+                    </a>
+                </span>
             
             
 
@@ -662,7 +697,11 @@
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -702,7 +741,11 @@
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -722,7 +765,11 @@
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -863,7 +910,107 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Clients</h1>
-        
+        <p><strong>Clients module</strong> allows you to create invoicable entities.</p>
+<p><img src="../../../clients_module_8.png" alt="clients_module"  /></p>
+<p>Within this module, you can:</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#add-a-client">manage <em>clients</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#add-a-pricing">manage <em>pricings</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#link-users-to-a-client">link <em>users</em> to a <em>client</em></a></li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="item-definition">
+        Item definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#item-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Item definition" href="#item-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>A <strong>client</strong> is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the <em>client</em>. A user can&rsquo;t be invoiced directly.</p>
+<p>A <em>client</em> is defined by its (&quot;*&quot; for <em>mandatory</em>):</p>
+<ul>
+<li>Identifier*</li>
+<li>Contact name</li>
+<li>Phone</li>
+<li>Email*</li>
+<li><a class="gdoc-markdown__link" href="./#pricing">Pricing*</a></li>
+<li>Invoice send preference</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="related-items-definition">
+        Related items definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#related-items-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Related items definition" href="#related-items-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="pricing">
+        Pricing
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#pricing" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Pricing" href="#pricing">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><ul>
+<li>a <strong>pricing</strong> is used to define a specific group of prices for resources and services tarification. In <em>Invoices module</em>, you can define prices for each resource and each service relativly to each pricing.</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="module-activation-and-configuration">
+        Module activation and configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#module-activation-and-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Module activation and configuration" href="#module-activation-and-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Within your space, go into <em>Configuration</em> module.</p>
+<p><img src="../../../basic_configuration_1.png" alt="basic configuration"  /></p>
+<p>Then click edit button in <em>clients</em> line.</p>
+<p>You can now select the minimum role required to access the module. <em>Inactive</em> option stands for <em>the module is not active</em>.</p>
+<p><img src="../../../clients_module_0.png" alt="clients_configuration"  /></p>
+<p>Don&rsquo;t forget to save your choice.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="create-a-client">
+        Create a client
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#create-a-client" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Create a client" href="#create-a-client">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Let&rsquo;s go into the <em>Clients module</em>.
+Don&rsquo;t rush it, we must have created at least one <em>pricing</em> before being able to create our first <em>client</em>.</p>
+<p><img src="../../../clients_module_1.png" alt="basic configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="add-a-pricing">
+        Add a pricing
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#add-a-pricing" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Add a pricing" href="#add-a-pricing">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>To add a pricing, just click on <em>Pricings</em> in the left side menu. Then click <em>New pricing</em> button.</p>
+<p><img src="../../../clients_module_2.png" alt="basic configuration"  /></p>
+<p>Then you can edit your <em>pricing</em>.</p>
+<p><img src="../../../clients_module_3.png" alt="basic configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="add-a-client">
+        Add a client
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#add-a-client" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Add a client" href="#add-a-client">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Now you can add your first client.
+To do that, just click on <em>Clients</em> in the left side menu. Then click <em>New client</em> button.</p>
+<p><img src="../../../clients_module_4.png" alt="basic configuration"  /></p>
+<p>Then you can edit your <em>client</em>.</p>
+<p><img src="../../../clients_module_5.png" alt="basic configuration"  /></p>
+<p>Once validated, you&rsquo;ll also have to fill Address invoice and Address delivery forms.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="link-users-to-a-client">
+        Link users to a client
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/#link-users-to-a-client" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Link users to a client" href="#link-users-to-a-client">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>You can link users to a client by clicking the <em>Users</em> button for your client.</p>
+<p><img src="../../../clients_module_6.png" alt="basic configuration"  /></p>
+<p>Then, just choose a user amongst the User selector.</p>
+<p><img src="../../../clients_module_7.png" alt="basic configuration"  /></p>
+
     </article>
 
                 

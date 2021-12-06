@@ -223,6 +223,7 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         if (!$foundResp) {
+            $_SESSION['flash'] = 'No client defined';
             $resaInfo = array(
                 "id" => $id,
                 "start_time" => $start_time,
@@ -684,7 +685,6 @@ class BookingdefaultController extends BookingabstractController {
         $formEndDate = new Form($this->request, "formEndDate");
         $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["end_time"]), $lang));
         $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
-
         $packageChecked = $resaInfo["package_id"];
 
         $userCanEdit = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $resaInfo["id"], $resaInfo["recipient_id"], $resaInfo["start_time"]);
