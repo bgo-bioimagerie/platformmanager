@@ -104,7 +104,7 @@ services:
       PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
       PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
       PFM_PUBLIC_URL: ${PFM_WEB_URL}
-      PFM_ROOTWEB: ${PFM_WEB_URL}
+      PFM_ROOTWEB: "/"
       PFM_AMQP_HOST: pfm-rabbitmq
       PFM_AMQP_USER: pfm
       PFM_AMQP_PASSWORD: pfm

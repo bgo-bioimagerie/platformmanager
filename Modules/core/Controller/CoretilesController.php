@@ -7,6 +7,8 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorenavbarController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreStar.php';
@@ -146,6 +148,12 @@ class CoretilesController extends CorecookiesecureController {
             $resourceModel = new ResourceInfo();
             $resources = $resourceModel->getAll(); // name, description, long_description
             
+            $modelMainMenus = new CoreMainMenu();
+            $mainMenus = $modelMainMenus->getAll();
+            usort($mainMenus, function($item1, $item2){
+                return $item1['name'] <=> $item2['name'];
+            });
+
             return $this->render(array(
                 'lang' => $lang,
                 'content' => $content,
@@ -154,6 +162,7 @@ class CoretilesController extends CorecookiesecureController {
                 'catalog' => $catalog,
                 'resources' => $resources,
                 'mainSubMenus' => [],
+                'mainMenus' => $mainMenus,
                 'iconType' => $modelCoreConfig->getParam("space_icon_type"),
                 'showSubBar' => false
                 ), "welcomeAction");
