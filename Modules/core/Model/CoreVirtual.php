@@ -47,6 +47,42 @@ class CoreVirtual extends Model {
         return $newid;
     }
 
+    /**
+     * Set name/value in redis, value will be json_encoded
+     */
+    public function set(int $id_space, string $name, mixed $value, $expire=0) {
+        $redis = new Redis();
+        $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+        try {
+        $val = json_encode($value);
+        } catch(Exception $e) {
+            $redis->close();
+            throw $e;
+        }
+        $redis->set("pfm:$id_space:$name", $val, $expire);
+        $redis->close();   
+    }
+
+    /**
+     * Get name key from redis, value is json_decoded
+     */
+    public function get($id_space, $name): mixed {
+        $redis = new Redis();
+        $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+        $value = $redis->get("pfm:$id_space:$name");
+        $redis->close();
+        $val = null;
+        if($value) {
+            try {
+            $val = json_decode($value, true);
+            } catch(Exception $e) {
+                Configuration::getLogger()->error('[core][virtual] json error', ['error' => $e->getMessage()]);
+                $val = null;
+            }
+        }
+        return $val;
+    }
+
 }
 
 
