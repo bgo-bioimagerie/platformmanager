@@ -166,20 +166,17 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
     // @bug calls EcUnit
     // TODO: debug that
-    private function generateRespBill($dateBegin, $dateEnd, $id_unit, $id_resp, $id_space) {
+    private function generateRespBill($dateBegin, $dateEnd, $id_client, $id_resp, $id_space) {
 
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
-        // $modelUnit = new EcUnit();
         $modelClient = new ClClient();
         // select all the opened order
         $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
 
         if (count($orders) == 0) {
             throw new PfmException("there are no orders open for this responsible");
-            //echo "there are no orders open for this responsible";
-            //return;
         }
 
         $lang = $this->getLanguage();
@@ -188,13 +185,13 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $number = $modelInvoice->getNextNumber();
         $module = "services";
         $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, $id_resp);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         $modelInvoice->setTitle($id_space, $id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
 
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForResp($id_space, $id_resp);
-        $belonging = $modelUnit->getBelonging($id_unit, $id_space);
+        $belonging = $modelClient->get($id_space, $id_client);
         $content = $this->parseServicesToContent($id_space, $services, $belonging);
         $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
 
