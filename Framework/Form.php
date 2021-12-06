@@ -14,6 +14,7 @@ abstract class FormBaseElement {
     protected ?string $placeholder = null;
     protected bool $mandatory = false;
     protected bool $readOnly = false;
+    protected bool $nullable = false;
     // type of input see https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input
     protected string $type="text";
     protected ?string $caption = null;
@@ -24,10 +25,6 @@ abstract class FormBaseElement {
     protected ?string $equals = null; // unique identifier for fields to match
     protected ?array $suggests = null;  // array of element ids for a suggestion (['firstname', 'lastname'] for ex)
 
-    protected mixed $min = null;
-    protected mixed $max = null;
-    protected ?string $step = null;
-
 
     protected array $javascript = [];
 
@@ -37,25 +34,6 @@ abstract class FormBaseElement {
      * Generate html for element
      */
     abstract function html(?string $user=null, ?string $id_space=null): string;
-
-
-    /**
-     * @var mixed $min int or float min value
-     * @var mixed $max int or float max value
-     * @var string $step optional step value, defaults to any for float, 1 for integers
-     */
-    public function setRange(mixed $min=null, mixed $max=null, ?string $step=null):FormBaseElement {
-        if($min !== null) {
-            $this->min = $min;
-        }
-        if($max !== null) {
-            $this->max = $max;
-        }
-        if($step !== null) {
-            $this->step = $step;
-        }
-        return $this;
-    }
 
     /**
      * Get element name
@@ -84,13 +62,17 @@ abstract class FormBaseElement {
                 $this->setError('missing/empty parameter');
                 return false;
         }
+        if(!$this->nullable && $p === null) {
+            $this->setError("parameter cannot be null");
+            return false;
+        }
         return true;
     }
 
     /**
      * Get element value from request parameters
      */
-    public function getValue(?Request $request): mixed {
+    public function getFormValue(?Request $request): mixed {
         return $request !==null ? $request->getParameterNoException($this->name) : null;
     }
 
@@ -99,6 +81,13 @@ abstract class FormBaseElement {
      */
     public function setValue(mixed $value) {
         $this->value = $value;
+    }
+
+    /**
+     * Get element value
+     */
+    public function getValue(): mixed {
+        return $this->value;
     }
 
     /**
@@ -120,6 +109,14 @@ abstract class FormBaseElement {
      */
     public function setLabel(string $label) : FormBaseElement {
         $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * Allow null values
+     */
+    public function setNullable(bool $allow=true): FormBaseElement {
+        $this->nullable = $allow;
         return $this;
     }
 
@@ -238,18 +235,6 @@ abstract class FormBaseElement {
             $options .= ' x-suggest="'.implode(',', $this->suggests).'"';
         }
 
-        if($this->min !== null) {
-            $options .= sprintf(' min="%s" ', $this->min);
-
-        }
-        if($this->max !== null) {
-            $options .= sprintf(' max="%s" ', $this->max);
-
-        }
-        if($this->step !== null) {
-            $options .= sprintf(' step="%s" ', $this->step);
-        }
-
         return trim($options);
     }
 
@@ -307,7 +292,7 @@ abstract class FormBaseElement {
  * $e = new FormInputElement("myinput", "hello");
  * $e->label("gimme ur name")->setMandatory()
  */
-class FormInputElement extends FormBaseElement {
+abstract class FormBaseInputElement extends FormBaseElement {
 
     public function __construct($name, $value='', $multiple=false, $placeholder=null) {
         parent::__construct($name, $value, $multiple, $placeholder);
@@ -319,7 +304,88 @@ class FormInputElement extends FormBaseElement {
     }
 }
 
-class FormTextElement extends FormBaseElement {
+class FormInputElement extends FormBaseInputElement {
+
+    protected ?int $min = null;
+    protected ?int $max = null;
+
+    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
+        parent::__construct($name, $value, $multiple, $placeholder);
+        $this->setType('text');
+    }
+
+    /**
+     * Sets min/max length of input
+     * @var mixed $min int or float min value
+     * @var mixed $max int or float max value
+     */
+    public function setRange(mixed $min=null, mixed $max=null):FormBaseElement {
+        if($min !== null && $this->value < $min) {
+            $this->value = $min;
+        }
+        if($max !== null && $this->value > $max) {
+            $this->value = $max;
+        }
+        return $this;
+    }
+
+    /**
+     * Get common options
+     */
+    protected function options(?string $user=null, ?string $id_space=null): string {
+        $options = parent::options($user, $id_space);
+
+        if($this->min !== null) {
+            $options .= sprintf(' minlength="%s" ', $this->min);
+
+        }
+        if($this->max !== null) {
+            $options .= sprintf(' maxlength="%s" ', $this->max);
+
+        }
+
+        return trim($options);
+    }
+
+
+    protected function isInRange(mixed $value): bool {
+        if($this->min !== null && $value!== null && strlen($value) < $this->min) {
+            return false;
+        }
+        if($this->max !== null && $value !== null && strlen($value) > $this->max) {
+            return false;
+        }
+        return true;
+    }
+
+    public function Validate(?Request $request): bool {
+        if(! parent::Validate($request)) {
+            return false;
+        }
+        
+        try {
+            $val = $this->getFormValue($request);
+            if(!$this->isInRange($val)) {
+                $this->setError(sprintf('value not in range [%s,%s]', $this->min, $this->max));
+                return false;
+            }
+        } catch(Exception $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
+
+}
+
+class FormTextElement extends FormInputElement {
+
+    public function __construct($name, $value='', $multiple=false, $placeholder=null) {
+        parent::__construct($name, $value, $multiple, $placeholder);
+        $this->setType('textarea');
+    }
+
     function html(?string $user=null, ?string $id_space=null) : string {
         return '    <textarea '.$this->options($user, $id_space).'" class="form-control '.$this->getClasses().'" id="'.$this->id.'" name="'.$this->name.'" placeholder="'.$this->placeholder.'">'.$this->value.'</textarea>'."\n";
     }
@@ -449,7 +515,7 @@ class FormOptionElement extends FormBaseElement {
     }
 }
 
-class FormUploadElement extends FormInputElement {
+class FormUploadElement extends FormBaseInputElement {
 
     public function __construct($name) {
         parent::__construct($name, null);
@@ -471,7 +537,7 @@ class FormIntegerElement extends FormFloatlement {
         $this->step = '1';
     }
 
-    public function getValue(?Request $request): mixed {
+    public function getFormValue(?Request $request): mixed {
         if($request !== null) {
             $val = $request->getParameterNoException($this->name);
             return intval($val);
@@ -486,7 +552,11 @@ class FormIntegerElement extends FormFloatlement {
 
 }
 
-class FormFloatlement extends FormInputElement {
+class FormFloatlement extends FormBaseInputElement {
+
+    protected mixed $min = null;
+    protected mixed $max = null;
+    protected ?string $step = null;
 
     public function __construct(string $name, float $value=0) {
         parent::__construct($name, $value);
@@ -494,21 +564,38 @@ class FormFloatlement extends FormInputElement {
         $this->step = 'any';
     }
 
+    /**
+     * Get common options
+     */
+    protected function options(?string $user=null, ?string $id_space=null): string {
+        $options = parent::options($user, $id_space);
+
+        if($this->min !== null) {
+            $options .= sprintf(' min="%s" ', $this->min);
+
+        }
+        if($this->max !== null) {
+            $options .= sprintf(' max="%s" ', $this->max);
+
+        }
+        if($this->step !== null) {
+            $options .= sprintf(' step="%s" ', $this->step);
+        }
+
+        return trim($options);
+    }
+
     public function setValue(mixed $value)
     {
         $this->value = floatval($value);
     }
 
-    public function getValue(?Request $request): mixed {
+    public function getFormValue(?Request $request): mixed {
         if($request !== null) {
             $val = $request->getParameterNoException($this->name);
             return floatval($val);
         }
         return null;
-    }
-
-    protected function baseValidation($request): bool {
-        return parent::Validate($request);   
     }
 
     protected function isInRange(mixed $value): bool {
@@ -522,12 +609,12 @@ class FormFloatlement extends FormInputElement {
     }
 
     public function Validate(?Request $request): bool {
-        if(! $this->baseValidation($request)) {
+        if(! parent::Validate($request)) {
             return false;
         }
         
         try {
-            $val = $this->getValue($request);
+            $val = $this->getFormValue($request);
             if(!$this->isInRange($val)) {
                 $this->setError(sprintf('value not in range [%s,%s]', $this->min, $this->max));
                 return false;
@@ -545,19 +632,21 @@ class FormFloatlement extends FormInputElement {
      * @var string $step optional step value, defaults to any for float, 1 for integers
      */
     public function setRange(mixed $min=null, mixed $max=null, ?string $step=null):FormBaseElement {
-        parent::setRange($min, $max, $step);
         if($min !== null && $this->value < $min) {
             $this->value = $min;
         }
         if($max !== null && $this->value > $max) {
             $this->value = $max;
         }
+        if($step !== null) {
+            $this->step = $step;
+        }
         return $this;
     }
 
 }
 
-class FormHiddenElement extends FormInputElement {
+class FormHiddenElement extends FormBaseInputElement {
 
     public function __construct($name, $value='') {
         parent::__construct($name, $value);
@@ -575,7 +664,9 @@ class FormPasswordElement extends FormInputElement {
 
 }
 
+
 class FormDateElement extends FormDateTimeElement {
+
 
     public function __construct($name, $value='') {
         parent::__construct($name, $value);
@@ -584,11 +675,45 @@ class FormDateElement extends FormDateTimeElement {
 
 }
 
-class FormDateTimeElement extends FormInputElement {
+class FormDateTimeElement extends FormBaseInputElement {
+
+    protected mixed $min = null;
+    protected mixed $max = null;
 
     public function __construct($name, $value='') {
         parent::__construct($name, $value);
         $this->type = 'datetime-local';
+    }
+
+    /**
+     * @var mixed $min int or float min value
+     * @var mixed $max int or float max value
+     */
+    public function setRange(mixed $min=null, mixed $max=null):FormBaseElement {
+        if($min !== null) {
+            $this->min = $min;
+        }
+        if($max !== null) {
+            $this->max = $max;
+        }
+        return $this;
+    }
+
+    /**
+     * Get common options
+     */
+    protected function options(?string $user=null, ?string $id_space=null): string {
+        $options = parent::options($user, $id_space);
+
+        if($this->min !== null) {
+            $options .= sprintf(' min="%s" ', $this->min);
+
+        }
+        if($this->max !== null) {
+            $options .= sprintf(' max="%s" ', $this->max);
+
+        }
+        return trim($options);
     }
 
 }
@@ -611,7 +736,7 @@ class FormEmailElement extends FormInputElement {
 
 }
 
-class FormColorElement extends FormInputElement {
+class FormColorElement extends FormBaseInputElement {
 
     public function __construct($name, $value='#000000') {
         parent::__construct($name, $value);
@@ -796,6 +921,7 @@ class PfmForm {
 
     public function addButton(string $name, $url, $class='danger', $newWindow=false){
         $this->buttons[] = ['name' => $name, 'url' => $url, 'new' => $newWindow, 'class' => $class?$class:'primary'];
+        return $this;
     }
 
     public function isSubmitted(): bool {
@@ -813,18 +939,19 @@ class PfmForm {
             return false;
         }
         $isValid = true;
-        // $objClass = $object !== null ? get_class($object) : null;
         foreach ($this->elts as $elt) {
             if(!$elt->Validate($this->request)) {
                 $isValid = false;
                 break;
             }
-            $elt->setValue($elt->getValue($this->request));
-            if ($object !== null && property_exists($object, $elt->getName())){
-                $val = $elt->getValue();
-                if($val !== null) {
-                    $object->{$elt->name} = $val;
+            $val = $elt->getFormValue($this->request);
+            try {
+                $elt->setValue($val);
+                if ($object !== null && property_exists($object, $elt->getName())){
+                        $object->{$elt->name} = $val;
                 }
+            } catch(Exception $e) {
+                $elt->setError($e->getMessage());
             }
         }
         return $isValid;
