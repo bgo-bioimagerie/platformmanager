@@ -499,18 +499,21 @@ class FormCheckboxesElement extends FormBaseElement {
     }
 
     function html(?string $user=null, ?string $id_space=null) : string {
-        $html = '    <div class="checkbox">'."\n";
+        //$html = '    <div class="">'."\n";
+        $html = '';
         foreach ($this->boxes as $box) {
-            $html .= '      <div class="row">'."\n";
-            $html .= '        <div class="col-xs-12">'."\n";
+            $html .= '      <div class="row ">'."\n";
+
+            $html .= '        <div class="col-md-12">'."\n";
             $html .= '          <div class="form-check">'."\n";
             $html .= '          '.$box->html($user, $id_space);
-            $html .= '            <label class="form-check-label" for="'.$box->id.'">'.$box->name.'</label>'."\n";
+            $html .= '            <label class="form-check-label" for="'.$box->id.'">'.$box->label.'</label>'."\n";
             $html .= '          </div>'."\n";
             $html .= '        </div>'."\n";
             $html .= "      </div>\n";
         }
-        $html .= '    </div>'."\n";
+        $html .= "\n";
+        //$html .= '    </div>'."\n";
 
 
 
@@ -889,7 +892,7 @@ class PfmForm {
     // Name of form
     private string $name;
     // URL to post form
-    private string $url;
+    private ?string $url;
     // @var FormBaseElement[] $elts;
     private array $elts = [];
 
@@ -1030,7 +1033,7 @@ class PfmForm {
     public function toHtml($lang='en'): string {
         $html = '';
         if($this->title) {
-            $html .= '<div class="row>'."\n";
+            $html .= '<div class="row">'."\n";
             $html .= '  <div class="col-xs-12">'."\n";
             $html .= '<h3>'.$this->title.'</h3>';
             if($this->subtitle) {
@@ -1751,10 +1754,10 @@ class Form {
         $f = new FormCheckboxesElement($label);
         $options = [];
         for($i=0;$i<count($listNames);$i++){
-            $option = new FormCheckboxElement($listNames[$i], $values[$i]);
-            $options[] = $option->setLabel($listIds[$i]);
+            $option = new FormCheckboxElement($listIds[$i], $values[$i]);
+            $options[] = $option->setLabel($listNames[$i]);
         }
-        $f->add($options);
+        $f->add($options)->setLabel($label);
         $this->pfmform->add($f);
     }
 
@@ -1805,6 +1808,7 @@ class Form {
      */
     public function getHtml($lang = "en", $headers = true) {
 
+        return $this->pfmform->toHtml($lang);
 
         $html = "";
 
