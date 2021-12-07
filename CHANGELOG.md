@@ -6,6 +6,7 @@
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [core][email] fix from header when helpdesk not activated
 * [core][ldap] get all config from ini files or env variables
 * [Menus] Change word "Menu" to "Structure"
 * [forms] prevent errors on form submissions
