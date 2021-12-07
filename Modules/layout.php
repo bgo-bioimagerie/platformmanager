@@ -80,7 +80,7 @@ if($isdev) {
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                    </div>
+                        </div>
                     <?php }?>
                     <div class="col-md-12 col-lg-12">
                         <?php startblock('spacemenu') ?>
