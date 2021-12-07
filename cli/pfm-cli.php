@@ -62,7 +62,13 @@ try {
             } else {
                 ksort($params);
                 foreach($params as $key => $value) {
+                    if(is_array($value)) {
+                        foreach($value as $v){
+                            echo $key.'[] = '.$v."\n";
+                        }
+                    } else {
                     echo "$key = $value\n";
+                    }
                 }
             }
             break;

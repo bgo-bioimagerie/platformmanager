@@ -120,8 +120,14 @@ class Configuration {
         if(getenv('MYSQL_PASS')) {
             self::$parameters['pwd']= getenv('MYSQL_PASS');
         }
+        if(getenv('MYSQL_DSN')) {
+            self::$parameters['dsn'] = getenv('MYSQL_DSN');
+        }
         if(!isset(self::$parameters['dsn'])) {
             try {
+                if(!isset(self::$parameters['mysql_host']) || !isset(self::$parameters['mysql_dbname'])) {
+                    throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+                }
                 self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
             } catch(Exception $e) {
                 throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
