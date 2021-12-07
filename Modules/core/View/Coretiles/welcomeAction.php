@@ -21,8 +21,20 @@
 
 <div class="container" id="welcome">
     <div class="row">
-        <div class="col-md-8">
 
+        <div class="col-md-2">
+                <div class="col-xs-12"><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
+                <?php 
+            foreach ($mainMenus as $menu) {
+                echo '<div style="margin: 10px" >';
+                echo sprintf('<a href="coretiles/1/%s"><button class="btn btn-primary btn-block">%s</button></a></li>', $menu['id'], $menu['name']);
+                echo '</div>';
+            }
+            ?>
+        </div>
+
+
+        <div class="col-md-6">
             <div class="row" style="margin: 10px;">
                 <div class="col-xs-6">
                     <input id="search" type="form-control" v-model="search" placeholder="search"/>

@@ -7,6 +7,7 @@ require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 
 class CoreUser extends Model {
 
@@ -623,7 +624,7 @@ class CoreUser extends Model {
      * Unactivate users who did not login for a number of year given in $numberYear
      * @deprecated
      * 
-     * @param number $numberYear Number of years
+     * @param int $numberYear Number of years
      */
     private function updateUserActiveLastLogin($numberYear) {
 
@@ -837,7 +838,7 @@ class CoreUser extends Model {
         else {
             //echo "into LDap <br/>";
             $modelCoreConfig = new CoreConfig();
-            if ($modelCoreConfig->getParam("useLdap") == true) {
+            if (CoreLdapConfiguration::get('ldap_use', 0)) {
 
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
@@ -845,7 +846,7 @@ class CoreUser extends Model {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = $modelCoreConfig->getParam("ldapDefaultStatus");
+                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
 
                     $userInfo = $this->user->getUserByLogin($login);

@@ -30,9 +30,15 @@ class CorePlan {
      * @var int $plan_id  id of the plan
      * @var int $plan_expire optional timestamp of plan. If expired, get plan id = 0
      */
-    public function __construct(int $plan_id, int $plan_expire=0) {
+    public function __construct(?int $plan_id, ?int $plan_expire=0) {
         $plans = Configuration::get('plans', []);
         $now = time();
+        if($plan_id === null) {
+            $plan_id = 0;
+        }
+        if($plan_expire === null) {
+            $plan_expire = 0;
+        }
         $id = intval($plan_id);
         if($plan_expire && $plan_expire > $now) {
             $id = 0;
@@ -80,12 +86,26 @@ class CoreSpace extends Model {
         $this->tableName = 'core_spaces';
     }
 
-    public static function roles($lang) {
+    /**
+     * List module roles
+     * 
+     * @var int $minRole minimal role + inactive, if 0/unset return all roles
+     */
+    public static function roles($lang, $minRole=0) {
 
         $names = array(CoreTranslator::Inactive($lang), CoreTranslator::Visitor($lang), CoreTranslator::User($lang),
             CoreTranslator::Manager($lang), CoreTranslator::Admin($lang));
         $ids = array(0, 1, 2, 3, 4);
-        return array("names" => $names, "ids" => $ids);
+
+        $roles = ['names' => $names, 'ids' => $ids];
+        if($minRole > 0) {
+            $roles = ['names' => [CoreTranslator::Inactive($lang)], 'ids' => [0]];
+            for($i=$minRole;$i<count($ids);$i++) {
+                $roles['ids'][] = $ids[$i];
+                $roles['names'][] = $names[$i];
+            }
+        }
+        return $roles;
     }
 
     /**
@@ -99,7 +119,7 @@ class CoreSpace extends Model {
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`name` varchar(30) NOT NULL DEFAULT '',
         `status` int(1) NOT NULL DEFAULT 0,
-        `color` varchar(7) NOT NULL DEFAULT '',
+        `color` varchar(7) NOT NULL DEFAULT '#000000',
         `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
         `description` text NOT NULL,
         `image` varchar(255) NOT NULL DEFAULT '',
@@ -111,7 +131,7 @@ class CoreSpace extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
-        $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
+        $this->addColumn('core_spaces', 'color', 'varchar(7)', "#000000");
         $this->addColumn('core_spaces', 'description', 'text', '');
         $this->addColumn('core_spaces', 'image', "varchar(255)", '');
         $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
@@ -137,7 +157,7 @@ class CoreSpace extends Model {
             `user_role` int(1) NOT NULL DEFAULT 1,
             `display_order` int(11) NOT NULL DEFAULT 0,
             `has_sub_menu` int(1) NOT NULL DEFAULT 1,
-            `color` varchar(7) NOT NULL DEFAULT '',
+            `color` varchar(7) NOT NULL DEFAULT '#000000',
             `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
             PRIMARY KEY (`id`)
 		);";
@@ -145,7 +165,7 @@ class CoreSpace extends Model {
 
         $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
         $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
-        $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+        $this->addColumn('core_space_menus', 'color', "varchar(7)", "#000000");
         $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
     }
 

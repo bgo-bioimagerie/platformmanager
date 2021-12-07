@@ -595,6 +595,11 @@ class CoreDB extends Model {
         $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
         Configuration::getLogger()->debug('[core] add txtcolor, done');
 
+        Configuration::getLogger()->debug('[core] add space plan');
+        $this->addColumn('core_spaces', 'plan', "int", '0');
+        $this->addColumn('core_spaces', 'plan_expire', "int", '0');
+        Configuration::getLogger()->debug('[core] add space plan, done');
+
         if(Statistics::enabled()) {
             $eventHandler = new EventHandler();
             $g = new Grafana();
@@ -638,6 +643,16 @@ class CoreDB extends Model {
                 Configuration::getLogger()->debug('[stats] import clients, done!');
             }
         }
+
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN id_client INT(11)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client, done!');
+
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN recipient_email VARCHAR(100)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
     }
 
 

@@ -231,7 +231,11 @@ class EventHandler {
                     $user = $quote["recipient"];
                 }
                 $hmsg = "Quote $cname [$user] edited";
-                $stat = ['name' => 'quote', 'fields' => ['value' => 1], 'tags' => ['client' => 'unknown'], 'time' => $quote['created_at']];
+                $client = 'unknown';
+                if(array_key_exists('client', $quote) && $quote['client']) {
+                    $client = $quote['client']['name'];
+                }
+                $stat = ['name' => 'quote', 'fields' => ['value' => 1], 'tags' => ['client' => $client], 'time' => $quote['created_at']];
                 $statHandler->record($space['shortname'], $stat);
             }
             $m = new CoreHistory();

@@ -21,7 +21,7 @@ if($isdev) {
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
         <meta name="mode" description="{{$isdev}}">
-        <base href="<?php echo  "/" ?>" >
+        <base href="<?php echo  $rootWeb ?>" >
         <title>
             <?php startblock('title') ?>
             Platform-Manager
@@ -80,7 +80,7 @@ if($isdev) {
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                    </div>
+                        </div>
                     <?php }?>
                     <div class="col-md-12 col-lg-12">
                         <?php startblock('spacemenu') ?>

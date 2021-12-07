@@ -195,7 +195,9 @@ class ClientslistController extends ClientsController {
             $id_adress = $formAddressDelivery->save();
             
             $this->clientModel->setAddressDelivery($id_space, $id, $id_adress);
-            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION['flashClass'] = 'success';
+            // $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
             $this->redirect("clclients/" . $id_space);
             return;
         }
@@ -206,6 +208,16 @@ class ClientslistController extends ClientsController {
             'lang' => $lang,
             'formHtml' => $formd->getHtml($lang),
         ));
+    }
+
+    /**
+     * Returns client's address
+     */
+    public function getAddressAction($id_space, $id_client) {
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        $modelClient = new ClClient();
+        $address = $modelClient->getAddressInvoice($id_space, $id_client) ?: "";
+        $this->render(['data' => ['elements' => $address]]);
     }
             
     /**

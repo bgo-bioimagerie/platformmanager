@@ -544,11 +544,12 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
+        $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
         $form->addHidden("id", $resaInfo["id"]);
         $form->setValidationUrl("bookingeditreservationquery/" . $id_space);
-        $form->setTitle(BookingTranslator::Edit_Reservation($lang));
+        $form->setTitle($formTitle);
 
         $form->addSelect("id_resource", ResourcesTranslator::resource($lang), $resources["names"], $resources["ids"], $id_resource);
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
@@ -628,7 +629,10 @@ class BookingdefaultController extends BookingabstractController {
         $modelUserSpace = new CoreSpace();
         $userSPaceRole = $modelUserSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
         $colors = $modelColors->getColorCodesForListUser($id_space, $userSPaceRole, "display_order");
-        $form->addSelect("color_type_id", BookingTranslator::color_code($lang), $colors["names"], $colors["ids"], $resaInfo["color_type_id"]);
+        if (!$colors || (is_array($colors) && empty($colors))) {
+            $_SESSION['flash'] = BookingTranslator::colorNeeded($lang);
+        }
+        $form->addSelectMandatory("color_type_id", BookingTranslator::color_code($lang), $colors["names"], $colors["ids"], $resaInfo["color_type_id"]);
 
         // quantities
         $modelQuantities = new BkCalQuantities();
