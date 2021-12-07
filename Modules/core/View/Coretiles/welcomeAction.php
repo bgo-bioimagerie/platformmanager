@@ -22,7 +22,7 @@
 <div class="container" id="welcome">
     <div class="row">
 
-        <div class="col-xs-2">
+        <div class="col-md-2">
                 <div class="col-xs-12"><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
                 <?php 
             foreach ($mainMenus as $menu) {
