@@ -269,6 +269,13 @@ class ClientsTranslator {
         return "User has been added to client";
     }
 
+    public static function UserHasBeenDeletedFromClient($lang) {
+        if ($lang == "fr") {
+            return "L'utilisateur a bien été supprimé du compte client";
+        }
+        return "User has been removed from client";
+    }
+
     public static function AddressDelivery($lang) {
         if ($lang == "fr") {
             return "Adresse de livraison";
