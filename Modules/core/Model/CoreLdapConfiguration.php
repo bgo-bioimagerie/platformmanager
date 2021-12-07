@@ -43,7 +43,7 @@ class CoreLdapConfiguration
 
         	$urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
-                Configuration::getLogger()->debug('[ldap] no config file found');
+                Configuration::getLogger()->debug('[ldap] no config file found, use env var or conf.ini');
                 self::$parameters = [
                 ];
                 //throw new PfmFileException("Unable to find the configuration file", 404);
@@ -86,7 +86,49 @@ class CoreLdapConfiguration
             self::$parameters['ldap_tls'] = Configuration::get('ldap_tls');
         }
 
+        if(!isset(self::$parameters['ldap_default_status']) && Configuration::get('ldap_default_status', null)) {
+            self::$parameters['ldap_default_status'] = Configuration::get('ldap_default_status');
+        }
+        if(!isset(self::$parameters['ldap_search_attr']) && Configuration::get('ldap_search_attr', null)) {
+            self::$parameters['ldap_search_attr'] = Configuration::get('ldap_search_attr');
+        }
+        if(!isset(self::$parameters['ldap_name_attr']) && Configuration::get('ldap_name_attr', null)) {
+            self::$parameters['ldap_name_attr'] = Configuration::get('ldap_name_attr');
+        }
+        if(!isset(self::$parameters['ldap_firstname_attr']) && Configuration::get('ldap_firstname_attr', null)) {
+            self::$parameters['ldap_firstname_attr'] = Configuration::get('ldap_firstname_attr');
+        }
+        if(!isset(self::$parameters['ldap_mail_attr']) && Configuration::get('ldap_mail_attr', null)) {
+            self::$parameters['ldap_mail_attr'] = Configuration::get('ldap_mail_attr');
+        }
+
+
         // Backward compatibility
+        if (isset(self::$parameters['useLdap'])) {
+            Configuration::getLogger()->debug('[deprecated] using useLdap instead of ldap_use');
+            self::$parameters['ldap_use'] = intval(self::$parameters['useLdap']);
+        }
+        if (isset(self::$parameters['ldapDefaultStatus'])) {
+            Configuration::getLogger()->debug('[deprecated] using ldapDefaultStatus instead of ldap_default_status');
+            self::$parameters['ldap_default_status'] = intval(self::$parameters['ldapDefaultStatus']);
+        }
+        if (isset(self::$parameters['ldapSearchAtt'])) {
+            Configuration::getLogger()->debug('[deprecated] using ldapSearchAtt instead of ldap_search_attr');
+            self::$parameters['ldap_search_attr'] = self::$parameters['ldapSearchAtt'];
+        }
+        if (isset(self::$parameters['ldapNameAtt'])) {
+            Configuration::getLogger()->debug('[deprecated] using ldapNameAtt instead of ldap_name_attr');
+            self::$parameters['ldap_name_attr'] = self::$parameters['ldapNameAtt'];
+        }
+        if (isset(self::$parameters['ldapFirstnameAtt'])) {
+            Configuration::getLogger()->debug('[deprecated] using ldapFirstnameAtt instead of ldap_firstname_attr');
+            self::$parameters['ldap_firstname_attr'] = self::$parameters['ldapFirstnameAtt'];
+        }
+        if (isset(self::$parameters['ldapMailAtt'])) {
+            Configuration::getLogger()->debug('[deprecated] using ldapMailAtt instead of ldap_mail_attr');
+            self::$parameters['ldap_mail_attr'] = self::$parameters['ldapMailAtt'];
+        }
+
         if (isset(self::$parameters['ldapAdress'])) {
             Configuration::getLogger()->debug('[deprecated] using ldapAdress instead of ldap_host');
             self::$parameters['ldap_host'] = self::$parameters['ldapAdress'];
@@ -112,7 +154,8 @@ class CoreLdapConfiguration
             self::$parameters['ldap_tls'] = (
                 self::$parameters['ldapUseTls'] == "TRUE" ||
                 self::$parameters['ldapUseTls'] == "1" ||
-                self::$parameters['ldapUseTls'] == 1
+                self::$parameters['ldapUseTls'] == 1 ||
+                self::$parameters['ldapUseTls'] == "yes"
                 ) ? true :  false;
         }
 
@@ -139,6 +182,28 @@ class CoreLdapConfiguration
             self::$parameters['ldap_tls'] = getenv('PFM_LDAP_TLS') == "1" ? true : false;
         }
 
+        if(getenv('PFM_LDAP_DN')) {
+            self::$parameters['ldap_dn'] = getenv('PFM_LDAP_DN');
+        }
+
+        if(getenv('PFM_LDAP_DEFAULT_STATUS')) {
+            self::$parameters['ldap_default_status'] = intval(getenv('PFM_LDAP_DEFAULT_STATUS'));
+        }
+        if(getenv('PFM_LDAP_SEARCH_ATTR')) {
+            self::$parameters['ldap_search_attr'] = getenv('PFM_LDAP_SEARCH_ATTR');
+        }
+        if(getenv('PFM_LDAP_NAME_ATTR')) {
+            self::$parameters['ldap_name_attr'] = getenv('PFM_LDAP_NAME_ATTR');
+        }
+        if(getenv('PFM_LDAP_FIRSTNAME_ATTR')) {
+            self::$parameters['ldap_firstname_attr'] = getenv('PFM_LDAP_FIRSTNAME_ATTR');
+        }
+        if(getenv('PFM_LDAP_MAIL_ATTR')) {
+            self::$parameters['ldap_mail_attr'] = getenv('PFM_LDAP_MAIL_ATTR');
+        }
+        if(getenv('PFM_LDAP_USE')) {
+            self::$parameters['ldap_use'] = intval(getenv('PFM_LDAP_USE'));
+        }
 
         if(!isset(self::$parameters['ldap_port']) || self::$parameters['ldap_port'] == "") {
             if (isset(self::$parameters['ldap_tls']) && self::$parameters['ldap_tls']) {
@@ -146,6 +211,10 @@ class CoreLdapConfiguration
             } else {
                 self::$parameters['ldap_port'] = 389;
             }
+        }
+
+        if(!isset(self::$parameters['ldap_use']) && isset(self::$parameters['ldap_host']) && self::$parameters['ldap_host']) {
+            self::$parameters['ldap_use'] = 1;
         }
 
     }
