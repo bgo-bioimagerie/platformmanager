@@ -30,9 +30,15 @@ class CorePlan {
      * @var int $plan_id  id of the plan
      * @var int $plan_expire optional timestamp of plan. If expired, get plan id = 0
      */
-    public function __construct(int $plan_id, int $plan_expire=0) {
+    public function __construct(?int $plan_id, ?int $plan_expire=0) {
         $plans = Configuration::get('plans', []);
         $now = time();
+        if($plan_id === null) {
+            $plan_id = 0;
+        }
+        if($plan_expire === null) {
+            $plan_expire = 0;
+        }
         $id = intval($plan_id);
         if($plan_expire && $plan_expire > $now) {
             $id = 0;

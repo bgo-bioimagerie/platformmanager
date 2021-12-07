@@ -71,7 +71,7 @@ class Configuration {
      * @return array Table containing the configuration parameters
      * @throws Exception If the configuration file cannot be located
      */
-    private static function getParameters() {
+    public static function getParameters() {
         if (self::$parameters == null) {
             $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {

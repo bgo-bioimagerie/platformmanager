@@ -33,6 +33,7 @@ $cli = Cli::create()
     ->command('routes')
     ->description('manage routes')
     ->opt('reload:r', 'Reload routes from code', false, 'boolean')
+    ->opt('yaml:y', 'Yaml output', false, 'boolean')
     ->command('expire')
     ->description('Expire in spaces old users (according to global config)')
     ->opt('del:d', 'Remove user from space, else just set as inactive', false, 'boolean')
@@ -44,6 +45,8 @@ $cli = Cli::create()
     ->command('cache')
     ->opt('clear', 'Clear caches', false, 'boolean')
     ->opt('dry', 'Dry run', false, 'boolean')
+    ->command('config')
+    ->opt('yaml:y', 'Yaml output', false, 'boolean')
     ->command('repair')
     ->opt('bug', 'Bug number', 0, 'integer');
 
@@ -51,6 +54,18 @@ $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'config':
+            $params =  Configuration::getParameters();
+            Configuration::getLogger()->error("?", ["d"=>$args->getOpt('yaml', false)]);
+            if($args->getOpt('yaml', false)) {
+                echo Yaml::dump(['config' => $params], 10);
+            } else {
+                ksort($params);
+                foreach($params as $key => $value) {
+                    echo "$key = $value\n";
+                }
+            }
+            break;
         case 'space':
             cliSpaceShow($args->getOpt('id', 0), $args->getOpt('flags', false));
             break;
@@ -69,17 +84,32 @@ try {
                 $r = new Router();
                 $rl = $r->listRoutes();
                 echo "Routes:\n";
+                $routes = [];
                 foreach ($rl as $rll) {
-                    echo "* $rll[0] - $rll[1]\n";
+                    $routes[] = ['methods' => $rll[0], 'url' => $rll[1], 'action' => $rll[2]];
+                    //echo "* $rll[0] - $rll[1] - $rll[2]\n";
                 }
                 $fc = new FCache();
                 $rl = $fc->listAll();
                 foreach ($rl as $rll) {
-                    $url = "* GET|POST - $rll[0] /$rll[0]";
-                    for($i=1;$i<count($rll);$i++) {
-                        $url .= "/[i:".$rll[$i]."]";
+                    $route = ['methods' => 'GET|POST', 'action' => $rll[1]];
+                    // $url = "* GET|POST - $rll[0] /$rll[0]";
+                    $u = '/'.$rll[0];
+                    for($i=2;$i<count($rll);$i++) {
+                        // $url .= "/[i:".$rll[$i]."]";
+                        $u .= "/[i:".$rll[$i]."]";
                     }
-                    echo "$url\n";
+                    $route['url'] = $u;
+                    // $url .= " - ".$rll[1];
+                    $routes[] = $route;
+                }
+                if($args->getOpt('yaml')) {
+                    $out = ['routes' => $routes];
+                    echo Yaml::dump($out, 3)."\n";
+                } else {
+                    foreach ($routes as $route) {
+                        echo "* ".$route['methods'].' - '.$route['url']. ' - '.$route['action']."\n";
+                    }
                 }
             }
             break;
@@ -122,6 +152,7 @@ function cliSpaceShow(int $id, bool $flags) {
     $cp = new CoreSpace();
     Configuration::getLogger()->debug("[space] get space");
     $space = $cp->getSpace($id);
+
     $plan = new CorePlan($space['plan'], $space['plan_expire']);
     foreach ($space as $key => $value) {
         if (is_int($key)) {
