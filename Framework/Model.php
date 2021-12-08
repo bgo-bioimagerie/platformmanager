@@ -128,9 +128,9 @@ abstract class Model {
 
     /**
      * 
-     * @param type $dsn
-     * @param type $login
-     * @param type $pwd
+     * @param string $dsn
+     * @param string $login
+     * @param string $pwd
      */
     public function setDatabase($dsn, $login, $pwd) {
 
@@ -144,10 +144,10 @@ abstract class Model {
 
     /**
      * 
-     * @param type $tableName
-     * @param type $columnName
-     * @param type $columnType
-     * @param type $defaultValue
+     * @param string $tableName
+     * @param string $columnName
+     * @param string $columnType
+     * @param mixed $defaultValue
      */
     public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
 
@@ -180,7 +180,7 @@ abstract class Model {
 
     /**
      * 
-     * @param type $table
+     * @param string $table
      * @return boolean
      */
     public function isTable($table) {
@@ -262,9 +262,9 @@ abstract class Model {
 
     /**
      * 
-     * @param type $name
-     * @param type $type
-     * @param type $value
+     * @param string $name
+     * @param string $type
+     * @param mixed $value
      */
     public function setColumnsInfo($name, $type, $value) {
         $this->columnsNames[] = $name;
@@ -375,8 +375,8 @@ abstract class Model {
         $sql = "SELECT * from $tableName WHERE $key=?";
         $params = array($value);
         if ($id_space) {
-            $sql = " AND id_space=?";
-            $params .= [$value, $id_space];
+            $sql .= " AND id_space=?";
+            $params[] = $id_space;
 
         }
         return $this->runRequest($sql,$params)->fetch();

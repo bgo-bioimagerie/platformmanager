@@ -429,7 +429,9 @@ class EventHandler {
         }
 
         $m = new BkCalendarEntry();
-        $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
+        // entry has been removed need to query without deleted filter
+        $entry = $m->admGetBy('bk_calendar_entry', 'id', $msg['bk_calendar_entry']['id'], $id_space);
+        // $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
         if(!$entry) {
             Configuration::getLogger()->debug('[calentryEdit] id not found', ['id' => $msg['bk_calendar_entry']['id'], 'id_space' => $id_space]);
             return;
