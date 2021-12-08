@@ -141,10 +141,10 @@ abstract class FormBaseElement {
         return $this->javascript;
     }
 
-    public function __construct(string $name, string|int $value='', bool $multiple=false, string $placeholder=null) {
+    public function __construct(string $name, mixed $value='', bool $multiple=false, string $placeholder=null) {
         $this->id = $name;
         $this->name = $multiple ? $name."[]" : $name;
-        $this->value = $value;
+        $this->value = $value === null ?  '' : $value;
         $this->placeholder = $placeholder;
     }
 
@@ -355,10 +355,23 @@ class FormInputElement extends FormBaseInputElement {
 
     protected ?int $min = null;
     protected ?int $max = null;
+    protected mixed $datalist = null;
 
     public function __construct($name, $value='', $multiple=false, $placeholder=null) {
         parent::__construct($name, $value, $multiple, $placeholder);
         $this->setType('text');
+    }
+
+    function html(?string $user=null, ?string $id_space=null) : string {
+        $html = parent::html($user, $id_space);
+        if($this->datalist !== null && !empty($this->datalist['options'])) {
+            $html .= '<datalist id="'.$this->datalist['name'].'">'."\n";
+            foreach ($this->datalist['options'] as $option) {
+               $html .= sprintf('<option value="%s"/>', $option)."\n";
+            }
+            $html .= '</datalist>'."\n";
+        }
+        return $html;
     }
 
     /**
@@ -390,10 +403,12 @@ class FormInputElement extends FormBaseInputElement {
             $options .= sprintf(' maxlength="%s" ', $this->max);
 
         }
+        if($this->datalist !== null && !empty($this->datalist)) {
+            $options .= sprintf(' list="%s"', $this->datalist['name']);
+        }
 
         return trim($options);
     }
-
 
     protected function isInRange(mixed $value): bool {
         if($this->min !== null && $value!== null && strlen($value) < $this->min) {
@@ -421,6 +436,16 @@ class FormInputElement extends FormBaseInputElement {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Propose a list, user can type ahead values and it gets completed
+     * @var $name list name
+     * @var $options array of string options
+     */
+    public function TypeAhead(string $name, array $options) {
+        $this->datalist = ['name' => $name, 'options' => $options];
+        return $this;
     }
 
 
@@ -900,6 +925,8 @@ class PfmForm {
     private ?string $deleteUrl = null;
     private array $buttons = [];
 
+    private static mixed $js = [];
+
     public function setRequest(Request $request) {
         $this->request = $request;
     }
@@ -909,23 +936,27 @@ class PfmForm {
         $html .= "import {FormControls} from '/externals/pfm/controls/formcontrols_script.js';\n";
         $html .= 'document.addEventListener("DOMContentLoaded", function(event) {'."\n";
         $html .= "  let control = new FormControls();\n";
-        $html .= "  control.loadForms();\n";
+        if(!isset(self::$js['_forms'])) {
+            $html .= "  control.loadForms();\n";
+            self::$js['_forms'] = 'control.loadForms();';
+        }
 
-        $js = [];
+        $jstoLoad = false;
         foreach ($this->elts as $elt) {
             foreach($elt->Javascript() as $key => $value) {
-                if(isset($js[$key])) {
+                if(isset(self::$js[$key])) {
                     continue;
                 }
+                $jstoLoad = true;
                 $html .= "  // $key\n";
                 $html .= "  $value\n";
-                $js[$key] = $value;
+                self::$js[$key] = $value;
             }
         }
 
         $html .= "});\n";
         $html .= "</script>\n";
-        return $html;
+        return $jstoLoad ?$html : '';
     }
 
     public function setUser(string $user) {
@@ -1451,9 +1482,10 @@ class Form {
             $this->suggestLogin = true;
         }
         $f = new FormInputElement($name, $value);
-        if($readonly || !$enabled) {  $f->setReadOnly(); }
+        if($readonly) {  $f->setReadOnly(); }
         if($checkUnicity) {  $f->setUnique($name); }
         if($isMandatory) {$f->setMandatory(); }
+        if($suggestLogin) { $f->setSuggests(['firstname', 'name']); }
         $this->pfmform->add($f->setLabel($label));
     }
 
@@ -1807,7 +1839,9 @@ class Form {
      */
     public function getHtml($lang = "en", $headers = true) {
 
-        return $this->pfmform->toHtml($lang);
+        $html = $this->pfmform->toHtml($lang);
+        $html .= $this->pfmform->Javascript();
+        return $html;
 
         $html = "";
 

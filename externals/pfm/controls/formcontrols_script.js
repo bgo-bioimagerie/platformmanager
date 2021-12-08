@@ -91,7 +91,7 @@ export class FormControls {
                 headers: headers,
                 method: 'POST',
                 body: JSON.stringify({
-                    kind: kind,
+                    type: kind,
                     value: value,
                     user: userId
                 })
