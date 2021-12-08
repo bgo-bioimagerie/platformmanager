@@ -21,6 +21,9 @@ require_once 'Framework/FormHtml.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
+/**
+ * Base class for form components
+ */
 abstract class FormBaseElement {
 
     protected ?string $label = null;
@@ -47,7 +50,12 @@ abstract class FormBaseElement {
 
     protected array $javascript = [];
 
-    
+    public function __construct(string $name, mixed $value='', bool $multiple=false, string $placeholder=null) {
+        $this->id = $name;
+        $this->name = $multiple ? $name."[]" : $name;
+        $this->value = $value === null ?  '' : $value;
+        $this->placeholder = $placeholder;
+    }
 
     /**
      * Generate html for element
@@ -67,7 +75,6 @@ abstract class FormBaseElement {
     /**
      * Minimum validation role
     */
-
     public function Requires(int $role) {
         $this->role = $role;
     }
@@ -139,13 +146,6 @@ abstract class FormBaseElement {
      */
     public function Javascript(): array {
         return $this->javascript;
-    }
-
-    public function __construct(string $name, mixed $value='', bool $multiple=false, string $placeholder=null) {
-        $this->id = $name;
-        $this->name = $multiple ? $name."[]" : $name;
-        $this->value = $value === null ?  '' : $value;
-        $this->placeholder = $placeholder;
     }
 
     /**
