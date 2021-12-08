@@ -590,6 +590,12 @@ class CoreDB extends Model {
     }
 
     public function upgrade_v3_v4() {
+
+        Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name');
+        $sql = 'ALTER TABLE bk_calsupinfo RENAME COLUMN `       mandatory` TO `mandatory`';
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name, done!');
+
         Configuration::getLogger()->debug('[core] add txtcolor');
         $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
         $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");

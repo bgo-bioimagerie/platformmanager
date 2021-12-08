@@ -17,11 +17,11 @@ class BkCalSupInfo extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `bk_calsupinfo` (
-		        `id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_supinfo` int(11) NOT NULL,
-                `id_resource` int(11) NOT NULL,
-                `name` varchar(30) NOT NULL DEFAULT '',
-		`       mandatory` int(1) NOT NULL,			
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_supinfo` int(11) NOT NULL,
+            `id_resource` int(11) NOT NULL,
+            `name` varchar(30) NOT NULL DEFAULT '',
+            `mandatory` int(1) NOT NULL,
 		PRIMARY KEY (`id`)
 		);";
 
