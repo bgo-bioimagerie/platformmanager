@@ -216,6 +216,29 @@ export class FormControls {
         }
     }
 
+    loadTypeAhead() {
+        let typeAheads = document.querySelectorAll('[x-typeahead]');
+        if(typeAheads) {
+            for(let i=0;i<typeAheads.length;i++) {
+                let typeAhead = typeAheads[i];
+                let ctx = this;
+                typeAhead.onchange = function(evt) {
+                    let ta = document.querySelector("#"+evt.target.getAttribute('list')+ " option[value='" + evt.target.value +"']");
+                    if(ta === null || ta === undefined) {
+                        document.getElementById(evt.target.getAttribute('x-typeahead')).value = '';
+                        if (evt.target.getAttribute('x-typelistonly') !== undefined) {
+                            ctx.setErrors([evt.target], `ta-${evt.target.id}`, "Value not in list");
+                        }
+                        return;
+                    }
+                    ctx.clearErrors(`ta-${evt.target.id}`);
+                    let value = ta.getAttribute('x-value')
+                    document.getElementById(evt.target.getAttribute('x-typeahead')).value = value;
+                }
+            }
+        }
+    }
+
     loadEditables() {
         let editables = document.querySelectorAll('[x-edit]');
         if(editables) {
@@ -282,6 +305,7 @@ export class FormControls {
         this.loadForms()
         this.loadSuggests()
         this.loadEditables()
+        this.loadTypeAhead()
     }
 }
 

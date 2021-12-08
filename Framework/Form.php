@@ -351,11 +351,94 @@ abstract class FormBaseInputElement extends FormBaseElement {
     }
 }
 
+/**
+ * Type-ahead input element, allow user to put text
+ * and display as dropdown the available options
+ */
+class FormTypeAheadElement extends FormInputElement {
+    protected mixed $datalist = null;
+    protected ?string $hiddenName = null;
+    private bool $freetext = false;
+
+    /**
+     * Create a type ahead element
+     * 
+     * @var $name name of element
+     * @var $value default value
+     * @var $freetext allow user to specify a value not in options, default false
+     * @var $placeholder placeholder text
+     */
+    public function __construct(string $name, mixed $value='', bool $freetext=false, string $placeholder=null) {
+        parent::__construct($name, $value, false, $placeholder);
+        $this->setType('text');
+        $this->freetext = $freetext;
+    }
+
+    /**
+     * Propose a list, user can type ahead values and it gets completed
+     * @var $name list name
+     * @var $options array of options [[name => text1, value => val1], [name => text2, value => val2]]
+     */
+    public function TypeAhead(string $name, array $options) {
+        $this->datalist = ['name' => $name, 'options' => $options];
+        $this->javascript['typeahead'] = "control.loadTypeAhead();\n";
+
+        return $this;
+    }
+
+    function html(?string $user=null, ?string $id_space=null) : string {
+        $this->hiddenName = $this->name;
+        $this->name = "ta-" . $this->datalist['name'];
+        $this->id = $this->name;
+        $html = parent::html($user, $id_space);
+        $hiddenElement = new FormHiddenElement($this->hiddenName, $this->value);
+        $html .= $hiddenElement->html($user, $id_space);
+        $html .= '<datalist id="'.$this->datalist['name'].'">'."\n";
+        foreach ($this->datalist['options'] as $option) {
+            $html .= sprintf('<option x-value=%s value="%s"/>', $option['value'], $option['name'])."\n";
+        }
+        $html .= '</datalist>'."\n";
+        
+        return $html;
+    }
+
+    protected function options(?string $user=null, ?string $id_space=null): string {
+        $options = parent::options($user, $id_space);
+        $options .= sprintf(' x-typeahead="%s" ', $this->hiddenName);
+        if(!$this->freetext) {
+            $options .= ' x-typelistonly';
+        }
+        return $options;
+    }
+
+    public function Validate(?Request $request): bool {
+        if(! parent::Validate($request)) {
+            return false;
+        }
+        if($this->freetext) {
+            return true;
+        }
+        
+        try {
+            $val = $this->getFormValue($request);
+            foreach($this->datalist as $dl) {
+                if ($dl['value'] == $val) {
+                    return true;
+                }
+            } 
+        } catch(Exception $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+        return false;
+    }
+
+}
+
 class FormInputElement extends FormBaseInputElement {
 
     protected ?int $min = null;
     protected ?int $max = null;
-    protected mixed $datalist = null;
 
     public function __construct($name, $value='', $multiple=false, $placeholder=null) {
         parent::__construct($name, $value, $multiple, $placeholder);
@@ -363,15 +446,7 @@ class FormInputElement extends FormBaseInputElement {
     }
 
     function html(?string $user=null, ?string $id_space=null) : string {
-        $html = parent::html($user, $id_space);
-        if($this->datalist !== null && !empty($this->datalist['options'])) {
-            $html .= '<datalist id="'.$this->datalist['name'].'">'."\n";
-            foreach ($this->datalist['options'] as $option) {
-               $html .= sprintf('<option value="%s"/>', $option)."\n";
-            }
-            $html .= '</datalist>'."\n";
-        }
-        return $html;
+        return parent::html($user, $id_space);
     }
 
     /**
@@ -437,17 +512,6 @@ class FormInputElement extends FormBaseInputElement {
         }
         return true;
     }
-
-    /**
-     * Propose a list, user can type ahead values and it gets completed
-     * @var $name list name
-     * @var $options array of string options
-     */
-    public function TypeAhead(string $name, array $options) {
-        $this->datalist = ['name' => $name, 'options' => $options];
-        return $this;
-    }
-
 
 }
 
@@ -1481,11 +1545,13 @@ class Form {
         if ($suggestLogin) {
             $this->suggestLogin = true;
         }
+    
         $f = new FormInputElement($name, $value);
         if($readonly) {  $f->setReadOnly(); }
         if($checkUnicity) {  $f->setUnique($name); }
         if($isMandatory) {$f->setMandatory(); }
         if($suggestLogin) { $f->setSuggests(['firstname', 'name']); }
+        
         $this->pfmform->add($f->setLabel($label));
     }
 
