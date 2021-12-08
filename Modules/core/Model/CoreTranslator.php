@@ -131,9 +131,9 @@ class CoreTranslator {
     public static function AccountPendingCreationEmail($lang, $jwt, $url) {
         $confirmUrl = $url."/corecreateaccountconfirm?token=".$jwt;
         if($lang == "fr") {
-            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl;
+            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl."\nLe lient expirera dans 2 jours.";
         }
-        return "Please confirm your registration at the following link.\n".$confirmUrl;
+        return "Please confirm your registration at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Link will expire in 2 days.";
     }
 
     public static function WaitingAccountMessage($lang) {
