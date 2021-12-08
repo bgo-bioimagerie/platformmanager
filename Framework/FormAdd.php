@@ -213,7 +213,7 @@ class FormAdd {
                 for ($j = 0; $j < count($this->types); $j++) {
                     $html .= "<td>";
                     if ($this->types[$j] == "select") {
-                        $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], $this->values[$j][$i], $this->isMandatory[$j] ?? false, false, true);
+                        $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], $this->values[$j][$i], $this->isMandatory[$j] ?? false, true);
                     } else if ($this->types[$j] == "text") {
                         $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "textdate") {
