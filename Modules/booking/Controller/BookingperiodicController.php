@@ -478,8 +478,7 @@ class BookingdefaultController extends BookingabstractController {
                 "id_space" => $id_space,
                 "subject" => $subject,
                 "to" => $toAddress,
-                "content" => $content,
-                "id_user" => $_SESSION['id_user']
+                "content" => $content
             ];
             $email = new Email();
             $email->sendEmailToSpaceMembers($params, $this->getLanguage(), mailing: "booking@$id_space");
