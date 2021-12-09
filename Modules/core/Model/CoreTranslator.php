@@ -131,9 +131,9 @@ class CoreTranslator {
     public static function AccountPendingCreationEmail($lang, $jwt, $url) {
         $confirmUrl = $url."/corecreateaccountconfirm?token=".$jwt;
         if($lang == "fr") {
-            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl;
+            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl."\nLe lient expirera dans 2 jours.";
         }
-        return "Please confirm your registration at the following link.\n".$confirmUrl;
+        return "Please confirm your registration at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Link will expire in 2 days.";
     }
 
     public static function WaitingAccountMessage($lang) {
@@ -664,9 +664,9 @@ class CoreTranslator {
 
     public static function Activate_desactivate_menus($lang = "") {
         if ($lang == "fr") {
-            return "Activer/désactiver les menus";
+            return "Activer/désactiver le module";
         }
-        return "Activate/deactivate menus";
+        return "Activate/deactivate module";
     }
 
     public static function disable($lang = "") {
@@ -1034,9 +1034,9 @@ class CoreTranslator {
 
     public static function menu_color($lang) {
         if ($lang == "fr") {
-            return "Couleur du menu";
+            return "Couleur du module";
         }
-        return "Menu color";
+        return "Module color";
     }
 
     public static function color($lang) {
@@ -1286,9 +1286,9 @@ class CoreTranslator {
 
     public static function Menus($lang) {
         if ($lang == "fr") {
-            return "Menus";
+            return "Structures";
         }
-        return "Menus";
+        return "Structures";
     }
 
     public static function Menus_saved($lang) {
@@ -1433,9 +1433,9 @@ class CoreTranslator {
 
     public static function MenuName($lang) {
         if ($lang == "fr") {
-            return "Nom du menu";
+            return "Nom du module";
         }
-        return "Menu name";
+        return "Module name";
     }
 
     public static function ExportAll($lang) {
@@ -1634,72 +1634,72 @@ class CoreTranslator {
 
     public static function MainSubMenus($lang) {
         if ($lang == "fr") {
-            return "Sous menus";
+            return "Sous-structures";
         }
-        return "Sub menus";
+        return "Substructures";
     }
 
     public static function MainMenus($lang) {
         if ($lang == "fr") {
-            return "Menus";
+            return "Structures";
         }
-        return "Menus";
+        return "Structures";
     }
 
     public static function MainMenu($lang) {
         if ($lang == "fr") {
-            return "Menu";
+            return "Structure";
         }
-        return "Menu";
+        return "Structure";
     }
 
     public static function NewMainMenu($lang) {
         if ($lang == "fr") {
-            return "Ajouter menu";
+            return "Ajouter structure";
         }
-        return "New menu";
+        return "New structure";
     }
 
     public static function NewMainSubMenu($lang) {
         if ($lang == "fr") {
-            return "Ajouter sous menu";
+            return "Ajouter sous-structure";
         }
-        return "New sub menu";
+        return "New substructure";
     }
 
     public static function EditMainMenu($lang) {
         if ($lang == "fr") {
-            return "Edition menu";
+            return "Edition structure";
         }
-        return "Edit menu";
+        return "Edit structure";
     }
 
     public static function EditMainSubMenu($lang) {
         if ($lang == "fr") {
-            return "Edition sous menu";
+            return "Edition sous-structure";
         }
-        return "Edit sub menu";
+        return "Edit substructure";
     }
 
     public static function MenuSaved($lang) {
         if ($lang == "fr") {
-            return "Le menu a bien été sauvegardé";
+            return "La structure a bien été sauvegardée";
         }
-        return "The menu has been saved";
+        return "Structure has been saved";
     }
 
     public static function SubMenus($lang) {
         if ($lang == "fr") {
-            return "Sous menus";
+            return "Sous-structures";
         }
-        return "Sub menus";
+        return "Substructures";
     }
 
     public static function SubMenu($lang) {
         if ($lang == "fr") {
-            return "Sous menu";
+            return "Sous-structure";
         }
-        return "Sub menu";
+        return "Substructure";
     }
 
     public static function ItemsFor($lang) {

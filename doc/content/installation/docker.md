@@ -93,3 +93,9 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_LDAP_DN: ""  # base dn for ldap (dc=pfm,dc=org for example)
   * PFM_LDAP_SEARCH_DN: ""  # base dn for user search and binding (ou=people,dc=pfm,dc=org for example)
   * PFM_LDAP_TLS: [0|1]  # use TLS
+  * PFM_LDAP_DEFAULT_STATUS: [1|2] visitor or user
+  * PFM_LDAP_SEARCH_ATTR: "uid" ldap search attributes (pipe separated, ex: "uid|mail")
+  * PFM_LDAP_NAME_ATTR: "sn" ldap name attribute
+  * PFM_LDAP_FIRSTNAME_ATTR: "givenname" ldap firstname attribute
+  * PFM_LDAP_MAIL_ATTR: "mail" ldap email attribute
+  * PFM_USE: [0|1] use ldap  , if ldap_host is set, pfm_use is set to 1 by default unless explicitely set

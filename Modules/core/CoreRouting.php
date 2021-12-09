@@ -25,7 +25,7 @@ class CoreRouting extends Routing{
         
         // config
         $this->addRoute("coreconfigadmin", "coreconfigadmin", "coreconfigadmin", "index");
-        $this->addRoute("coreldapconfig", "coreldapconfig", "coreldapconfig", "index");
+        //$this->addRoute("coreldapconfig", "coreldapconfig", "coreldapconfig", "index");
         
         // connection
         $this->addRoute("coreconnection", "coreconnection", "coreconnection", "index");

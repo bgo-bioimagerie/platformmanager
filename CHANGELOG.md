@@ -2,6 +2,15 @@
 
 ## 2.2
 
+**Warning**: [admin] Ldap configuration modification from ini or env variables
+only, not configurable via UI anymore and existing values not taken into account.
+See ldap.ini.example if needed or doc for env variables.
+
+* [core][formAdd] fix last row deletion
+* [booking] fix bk_calsupinfo mandatory column name which caused errors on supplementaries info
+* [core][email] fix from header when helpdesk not activated
+* [core][ldap] get all config from ini files or env variables
+* [Menus] Change word "Menu" to "Structure"
 * [forms] prevent errors on form submissions
 * [Documentation] Add quote documentation
 * [module:quote] improve new user quote interface

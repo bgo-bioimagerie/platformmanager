@@ -28,7 +28,9 @@ Optional sections:
 
 ## LDAP configuration
 
-If users are to be authenticated via LDAP, an Config/ldap.ini is required
+If users are to be authenticated via LDAP, ldap settings must be set in Config/conf.ini or
+env variables.
+Confgiguration via a Config/ldap.ini is file is still supported for backward compatibility
 (see ldap.ini.sample). A single LDAP system is used for all spaces access
 in this case, though local users can still be used in parallel.
 

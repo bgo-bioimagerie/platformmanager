@@ -132,11 +132,11 @@ class Email extends Model {
     public function sendEmailToSpaceMembers($params, $lang = "", $mailing=null) {
         $modelSpace = new CoreSpace();
         $spaceId = $params["id_space"];
-        //$from = Configuration::get('smtp_from');
         $space = $modelSpace->getSpace($spaceId);
         $spaceName = $space['name'];
         // $spaceName = $modelSpace->getSpaceName($spaceId);
         // If helpdesk is activated
+        $from = Configuration::get('smtp_from');
         if($modelSpace->getSpaceMenusRole($spaceId, "helpdesk")) {
             $from = $this->getFromEmail($space['shortname']);
         }

@@ -49,12 +49,15 @@ class CoreconfigadminController extends CoresecureController {
         }
 
         // ldap form
+        /*
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
 
             $this->redirect("coreldapconfig");
             return;
         }
+        */
+        
 
 
 
@@ -144,7 +147,8 @@ class CoreconfigadminController extends CoresecureController {
         $forms = array($formMaintenance->getHtml($lang),
             $formSpaceIconsForm->getHtml($lang),
             $formDesactivateUser->getHtml($lang),
-            $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
+            //$formLdap->getHtml($lang),
+            $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang),
             $formDeleteUser->getHtml($lang),
             $formEmail->getHtml($lang), $formNavbar->getHtml($lang)
