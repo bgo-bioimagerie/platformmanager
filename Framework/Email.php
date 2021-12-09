@@ -193,24 +193,24 @@ class Email extends Model {
             $fromName = "Platform-Manager";
             switch($origin) {
                 case "new_join_request":
-                    $spaceName = $params["space_name"] ?? '';
-                    $userLogin = $_SESSION['login'];
-                    $userEmail = $params['user_email'];
+                    $userLogin = $_SESSION['login'];       
                     $idSpace = $params["id_space"];
                     break;
                 case "self_registration":
                     $idSpace = $params['supData']['id_space'];
-                    $spaceName = $modelSpace->getSpaceName($idSpace);
                     $userLogin = $params['login'];
-                    $userEmail = $params['email'];
                     $organization = $params['supData']['organization'];
                     $unit = $params['supData']['unit'];
                     break;
                 default:
                     break;
             }
+            $spaceName = $modelSpace->getSpaceName($idSpace) ?? "";
+            $userEmail = $params['email'] ?? "";
+            $userFullName = $params['fullName'] ?? "";
+
             $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
-            $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $lang, $organization ?? '', $unit ?? '');
+            $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $userFullName, $lang, $organization ?? '', $unit ?? '');
             $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($idSpace));
             $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {
