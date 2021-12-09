@@ -75,41 +75,14 @@
                 <?php echo BookingTranslator::DateEndPeriodicity($lang) ?> 
             </label>
             <div class="col-xs-6">
-                <div class='col-xs-12 input-group date form_date_fr'>
-                    <input type='text' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo CoreTranslator::dateFromEn($periodInfo['enddate'], $lang) ?>"/>          
+                <div class='col-xs-12 input-group date'>
+                    <input type='date' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo CoreTranslator::dateFromEn($periodInfo['enddate'], $lang) ?>"/>          
                     <span class="input-group-addon">          
                         <span class="glyphicon glyphicon-calendar"></span>          
                     </span>
                 </div>
 
             </div>
-
-            <script type="text/javascript">
-
-                $('.form_date_fr').datetimepicker({
-                    language: 'fr',
-                    weekStart: 1,
-                    todayBtn: 1,
-                    autoclose: 1,
-                    todayHighlight: 1,
-                    startView: 2,
-                    minView: 2,
-                    forceParse: 0,
-                    format: 'dd/mm/yyyy'
-                });
-                $('.form_date_en').datetimepicker({
-                    language: 'us',
-                    weekStart: 1,
-                    todayBtn: 1,
-                    autoclose: 1,
-                    todayHighlight: 1,
-                    startView: 2,
-                    minView: 2,
-                    forceParse: 0,
-                    format: 'yyyy-mm-dd'
-                });
-            </script>
-
         </div>
     </div>    
 
