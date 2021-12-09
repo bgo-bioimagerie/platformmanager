@@ -63,7 +63,7 @@ abstract class FormBaseElement {
     abstract function html(?string $user=null, ?string $id_space=null): string;
 
     /**
-     * USer can add/remove multiple elements
+     * User can add/remove multiple elements
      */
     public function setEditable(bool $editable=true) {
         $this->name = $this->name."[]";
@@ -234,6 +234,9 @@ abstract class FormBaseElement {
      * @var string equals  tag to use among elements to be equal
      */
     public function setEquals(string $equals=null) : FormBaseElement {
+        if(!$equals) {
+            return $this;
+        }
         $this->equals = $equals;
         $this->javascript['equals'] = "control.loadEquals();\n";
         return $this;
@@ -243,7 +246,10 @@ abstract class FormBaseElement {
      * Autofill element using controls library suggestion
      * @var array suggest list of element (2 only) ids to use ['firstname', 'lastname'] for example
      */
-    public function setSuggests(array $suggests=null) : FormBaseElement {
+    public function setSuggests(array $suggests) : FormBaseElement {
+        if(empty($suggests)) {
+            return $this;
+        }
         $this->suggests = $suggests;
         $this->javascript['suggests'] = "control.loadSuggests();\n";
         return $this;
@@ -281,6 +287,7 @@ abstract class FormBaseElement {
         if($this->editable) {
             $options .= ' x-edit';
         }
+        $option .= ' x-form-elt';
 
         return trim($options);
     }
@@ -318,6 +325,9 @@ abstract class FormBaseElement {
      * get string with element CSS classes
      */
     public function getClasses() : string {
+        if(!$this->classes) {
+            return "";
+        }
         return implode(" ", $this->classes);
     }
 
@@ -328,8 +338,6 @@ abstract class FormBaseElement {
     public function setClasses(array $classes) {
         $this->classes = $classes;
     }
-
-
 
 }
 
@@ -590,6 +598,9 @@ class FormCheckboxesElement extends FormBaseElement {
     function html(?string $user=null, ?string $id_space=null) : string {
         //$html = '    <div class="">'."\n";
         $html = '';
+        if(empty($this->boxes)) {
+            return '';
+        }
         foreach ($this->boxes as $box) {
             $html .= '      <div class="row ">'."\n";
 
@@ -922,6 +933,7 @@ class FormSelectElement extends FormBaseElement {
    public function html(?string $user=null, ?string $id_space=null): string {
        $html = '<select class="form-control '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->id.'" name="'.$this->name.'" value="'.$this->value.'">'."\n";
        foreach($this->options as $option) {
+
            $ohtml =  $option->html();
            if($option->value == $this->value) {
                $ohtml = str_replace("<option", "<option selected", $ohtml);
@@ -967,6 +979,50 @@ class FormSelectElement extends FormBaseElement {
  */
 
 /**
+ * Sub form where user can add/remove group of elements
+ * */
+class PfmEditableFormElement extends FormBaseElement {
+
+    // Array of FormBaseElement[]
+    protected array $formElts = [];
+
+    /**
+     * Add some elements
+     * @var FormBaseElement[] $elts list of elements to add
+     */
+    public function add(array $elts) {
+            $formElts[] = $elt;
+            $this->javascript['edit'] = "control.loadEditables();\n";
+
+            return $this;
+    }
+
+    public function html(?string $user=null, ?string $id_space=null): string {
+        if(empty($formElts)) {
+            return '';
+        }
+        $html = '<table x-edit x-edit-form class="form-edit '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->id.'" name="'.$this->name.'" >'."\n";
+        $html .= '<thead><tr>';
+        foreach($this->formElts[0] as $elt) {
+            $html .= '<th scope="col">'.$elt->label.'</th>';
+        }
+        $html .= '</tr></thead>'."\n";
+        $html .= "<tbody>\n";
+        foreach($this->formElts as $elt) {
+            $html .= "<tr>\n";
+            foreach ($elt as $formElt) {
+                $html .= '<td>'.$formElt->html().'</td>'."\n";
+            }
+            $html .= "</tr>\n";
+        }
+        $html .= "</tbody>\n";
+        $html .= "</table>\n";
+        return $html;
+    }
+
+}
+
+/**
  * Generate an HTML form
  */
 class PfmForm {
@@ -996,6 +1052,9 @@ class PfmForm {
     }
 
     public function Javascript():string {
+        if(empty($this->elts)) {
+            return '';
+        }
         $html =  "\n<script type=\"module\">\n";
         $html .= "import {FormControls} from '/externals/pfm/controls/formcontrols_script.js';\n";
         $html .= 'document.addEventListener("DOMContentLoaded", function(event) {'."\n";
@@ -1127,6 +1186,9 @@ class PfmForm {
      */
     public function toHtml($lang='en'): string {
         $html = '';
+        if(empty($this->elts)) {
+            return '';
+        }
         if($this->title) {
             $html .= '<div class="row">'."\n";
             $html .= '  <div class="col-xs-12">'."\n";

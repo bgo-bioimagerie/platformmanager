@@ -246,6 +246,31 @@ export class FormControls {
                 let editable = editables[i];
                 let clone = editable.cloneNode(true);
                 clone.setAttribute('id', clone.id + this.editableCounter);
+                let formElts = [clone];
+                if(clone.getAttribute('x-edit-form') !== undefined) {
+                    formElts = clone.querySelectorAll(`[x-form-elt='${tag}']`);
+                }
+                console.debug('reset attributes', formElts);
+                formElts?.forEach(element => {
+                    switch (element.type) {
+                        case "number":
+                            element.value = 0;
+                            let min = element.getAttribute('min');
+                            if(min !== undefined) {
+                                element.value = min;
+                            }
+                            break;       
+                        case "checkbox":
+                            element.checked = false;
+                            break;
+                        case "select-one":
+                            element.selectedIndex = 0;
+                            break;
+                        default:
+                            element.value = "";
+                    }
+                });
+
                 this.editableCounter += 1;
                 this.editables[editable.id] = clone
                 //editables[i].parentElement.classList.remove('col-md-10')
