@@ -101,16 +101,19 @@ class DocumentslistController extends DocumentsController {
         $model = new Document();
         $file = $model->getUrl($id_space,$id);
         
-        header("Cache-Control: public");
-        header("Content-Description: File Transfer");
-        header('Content-Disposition: attachment; filename="'.basename($file).'"' );
-        header("Content-Type: application/zip");
-        header("Content-Transfer-Encoding: binary");
-
-        // read the file from disk
-        readfile($file);
-        //    return;
-        //$this->redirect($path);
+        if ($file && $file != "") {
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header('Content-Disposition: attachment; filename="'.basename($file).'"' );
+            header("Content-Type: application/zip");
+            header("Content-Transfer-Encoding: binary");
+            // read the file from disk
+            readfile($file);
+        } else {
+            $_SESSION['flash'] = DocumentsTranslator::Missing_Document($this->getLanguage());
+            $_SESSION['flashClass'] = "warning";
+            $this->redirect("documents/" . $id_space);
+        }
     }
 
     public function deleteAction($id_space, $id) {
