@@ -131,7 +131,7 @@ class CoreTranslator {
     public static function AccountPendingCreationEmail($lang, $jwt, $url) {
         $confirmUrl = $url."/corecreateaccountconfirm?token=".$jwt;
         if($lang == "fr") {
-            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl."\nLe lient expirera dans 2 jours.";
+            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl."\nLe lien expirera dans 2 jours.";
         }
         return "Please confirm your registration at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Link will expire in 2 days.";
     }
@@ -1877,9 +1877,11 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $spaceName, $userEmail, $lang, $organization = null, $team = null) {
+    public static function JoinRequestEmail($login, $spaceName, $userEmail, $userFullName, $lang, $organization = null, $team = null) {
         if ($lang == "fr") {
-            $message = "Bonjour, <br><br>" . $login . " (" . $userEmail . ") demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            $message = "Bonjour, <br><br>" . $userFullName . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            $message .= ("<br>Login : " . $login);
+            $message .= ("<br>Email : " . $userEmail);
             if ($organization) {
                 $message .= ("<br>Organisation : " . $organization);
             }
@@ -1888,7 +1890,9 @@ class CoreTranslator {
             }
             return $message;
         }
-        $message = "Hi, <br><br>" . $login . " (" . $userEmail . ") requests to join your space " . $spaceName. " on Platform-Manager";
+        $message = "Hi, <br><br>" . $userFullName . " requests to join your space " . $spaceName. " on Platform-Manager";
+        $message .= ("<br>Login: " . $login);
+        $message .= ("<br>Email: " . $userEmail);
         if ($organization) {
             $message .= ("<br>Organization: " . $organization);
         }

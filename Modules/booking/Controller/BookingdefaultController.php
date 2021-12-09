@@ -507,11 +507,13 @@ class BookingdefaultController extends BookingabstractController {
             // get resource name
             $modelResource = new ResourceInfo();
             $resourceName = $modelResource->getName($id_space, $id_resource);
+            $modelUser = new CoreUser();
+            $userName = $modelUser->getUserFUllName($_SESSION['id_user']);
 
             $modelResoucesResp = new ReResps();
             $toAdress = $modelResoucesResp->getResourcesManagersEmails($id_space, $id_resource);
             $subject = $resourceName . " has been booked";
-            $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
+            $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time) . " by " . $userName;
             if( !$BkUseRecurentBooking || $periodic_option == 1 ){
                 $content .= " with periodicity";
             }
@@ -793,22 +795,10 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canEdit) {
             throw new PfmException("ERROR: You're not allowed to modify this reservation");
         }
-
-
         if ($sendEmail == 1) {
-            
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
-
             $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource);
-
-            $modelConfig = new CoreConfig();
-            $sendMailResponsibles = intval($modelConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
-            if ($sendMailResponsibles > 0) {
-                $modelResp = new ReResps();
-                $resourceManagersEmails = $modelResp->getResourcesManagersEmails($id_space, $id_resource);
-                $toAddress = array_merge($toAddress, $resourceManagersEmails);
-            }
             $subject = $resourceName . " has been freed";
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
 
@@ -821,10 +811,20 @@ class BookingdefaultController extends BookingabstractController {
             ];
             $email = new Email();
             $email->sendEmailToSpaceMembers($params, $this->getLanguage(), mailing: "booking@$id_space");
+
+            //Add user's name in resource managers email
+            $modelConfig = new CoreConfig();
+            $sendMailResponsibles = intval($modelConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
+            if ($sendMailResponsibles > 0) {
+                $modelResp = new ReResps();
+                $modelUser = new CoreUser();
+                $params['to'] = $modelResp->getResourcesManagersEmails($id_space, $id_resource);
+                $userName = $modelUser->getUserFUllName($_SESSION['id_user']);
+                $params['content'] .= " by " . $userName;
+                $email->sendEmailToSpaceMembers($params, $this->getLanguage(), mailing: "booking@$id_space");
+            }
         }
-
         $modelCalEntry->removeEntry($id_space, $id);
-
         $this->redirect("booking/" . $id_space);
     }
 
