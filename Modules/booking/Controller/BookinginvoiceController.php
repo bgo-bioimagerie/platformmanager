@@ -678,11 +678,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         return $resaDayNightWe;
     }
 
-    // @bug refers to EcUnit
     protected function invoiceProjects($id_space, $id_projects, $id_unit, $id_resp) {
-
         // add invoice
-        //echo "add invoice <br/>";
         $modelInvoiceItem = new InInvoiceItem();
         $modelInvoice = new InInvoice();
         $module = "services";
@@ -692,9 +689,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
 
         // parse content
-        //echo "parse content <br/>";
-        $modelUnit = new EcUnit();
-        $id_belonging = $modelUnit->getBelonging($id_unit);
+        $modelClient = new ClClient();
+        $id_pricing = $modelClient->getPricingID($id_space ,$id_resp);
         $total_ht = 0;
         $modelProject = new SeProject();
         $addedServices = array();
@@ -703,14 +699,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelPrice = new SePrice();
         foreach ($id_projects as $id_proj) {
             $services = $modelProject->getNoInvoicesServices($id_space, $id_proj);
-            //print_r($services);
             for ($i = 0; $i < count($services); $i++) {
                 $quantity = 0;
                 $modelProject->setServiceInvoice($id_space, $services[$i]["id"], $id_invoice);
                 if (!in_array($services[$i]["id_service"], $addedServices)) {
                     $addedServices[] = $services[$i]["id_service"];
                     $quantity = floatval($services[$i]["quantity"]);
-                    $price = floatval($modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_belonging));
+                    $price = floatval($modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_pricing));
                     $addedServicesCount[] = $quantity;
                     $addedServicesPrice[] = $price;
                     $total_ht += floatval($quantity) * floatval($price);
@@ -727,14 +722,14 @@ class BookinginvoiceController extends InvoiceAbstractController {
         for ($i = 0; $i < count($addedServices); $i++) {
             $content .= $addedServices[$i] . "=" . $addedServicesCount[$i] . "=" . $addedServicesPrice[$i] . ";";
         }
-        // get details
-        //echo "get details <br/>";
+        
+        // get details 
         $details = "";
         foreach ($id_projects as $id_proj) {
             $name = $modelProject->getName($id_space, $id_proj);
             $details .= $name[0] . "=" . "servicesprojectedit/" . $id_space . "/" . $id_proj . ";";
         }
-        //echo "set item <br/>";
+        
         // set invoice itmems
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
