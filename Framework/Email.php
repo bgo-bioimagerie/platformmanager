@@ -144,16 +144,15 @@ class Email extends Model {
         $fromName = "Platform-Manager";
         $subject = CoreTranslator::MailSubjectPrefix($spaceName, $lang) . " " . $subject;
         $mailerSetCopyToFrom = $this->getMailerSetCopyToFrom($spaceId);
-
         // get the emails
         switch ($params["to"]) {
             case "all":
-                $toAddress =
-                    $this->formatAddresses($modelSpace->getEmailsSpaceActiveUsers($spaceId));
+                $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceActiveUsers($spaceId));
                 break;
             case "managers":
-                $toAddress =
-                    $this->formatAddresses($modelSpace->getEmailsSpaceManagers($spaceId));
+                $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($spaceId));
+                $modelUser = new CoreUser();
+                $params['content'] = "From " . $modelUser->getUserFUllName($params['id_user']) . " :</br>" . $params['content'];
                 break;
             default:
                 try {
@@ -165,6 +164,7 @@ class Email extends Model {
                 break;
                 
         }
+
         return $this->sendEmail(
             $from,
             $fromName,

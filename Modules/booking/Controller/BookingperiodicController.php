@@ -450,7 +450,6 @@ class BookingdefaultController extends BookingabstractController {
 
     public function deleteAction($id_space, $id){
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {
@@ -479,14 +478,25 @@ class BookingdefaultController extends BookingabstractController {
                 "id_space" => $id_space,
                 "subject" => $subject,
                 "to" => $toAddress,
-                "content" => $content
+                "content" => $content,
+                "id_user" => $_SESSION['id_user']
             ];
             $email = new Email();
             $email->sendEmailToSpaceMembers($params, $this->getLanguage(), mailing: "booking@$id_space");
+
+            //Add user's name in resource managers email
+            $modelConfig = new CoreConfig();
+            $sendMailResponsibles = intval($modelConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
+            if ($sendMailResponsibles > 0) {
+                $modelResp = new ReResps();
+                $modelUser = new CoreUser();
+                $params['to'] = $modelResp->getResourcesManagersEmails($id_space, $id_resource);
+                $userName = $modelUser->getUserFUllName($_SESSION['id_user']);
+                $params['content'] .= " by " . $userName;
+                $email->sendEmailToSpaceMembers($params, $this->getLanguage(), mailing: "booking@$id_space");
+            }
         }
-        
         $modelCalEntry->removeEntry($id_space, $id);
-        
         $this->redirect("booking/".$id_space);
     }
 }
