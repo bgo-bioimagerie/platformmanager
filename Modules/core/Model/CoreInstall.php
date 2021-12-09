@@ -592,8 +592,12 @@ class CoreDB extends Model {
     public function upgrade_v3_v4() {
 
         Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name');
-        $sql = 'ALTER TABLE bk_calsupinfo RENAME COLUMN `       mandatory` TO `mandatory`';
-        $this->runRequest($sql);
+        try {
+            $sql = 'ALTER TABLE bk_calsupinfo RENAME COLUMN `       mandatory` TO `mandatory`';
+            $this->runRequest($sql);
+        } catch (Exception $e) {
+            Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name: already ni good state, good!');
+        }
         Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name, done!');
 
         Configuration::getLogger()->debug('[core] add txtcolor');
