@@ -91,6 +91,11 @@ class MailerController extends CoresecureController {
                 $modelCalEntry = new BkCalendarEntry();
                 $to = $modelCalEntry->getEmailsBookerResource($id_space, $toEx[1]);
             }
+        } else {
+            if ($to === "managers") {
+                $modelUser = new CoreUser();
+                $content = "From " . $modelUser->getUserFUllName($_SESSION["id_user"]) . " :</br>" . $content;
+            }
         }
 
         $email = new Email();

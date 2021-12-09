@@ -151,8 +151,6 @@ class Email extends Model {
                 break;
             case "managers":
                 $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($spaceId));
-                $modelUser = new CoreUser();
-                $params['content'] = "From " . $modelUser->getUserFUllName($params['id_user']) . " :</br>" . $params['content'];
                 break;
             default:
                 try {
