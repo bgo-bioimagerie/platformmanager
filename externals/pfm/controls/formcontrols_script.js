@@ -244,11 +244,17 @@ export class FormControls {
         if(editables) {
             for(let i=0;i<editables.length;i++) {
                 let editable = editables[i];
-                let clone = editable.cloneNode(true);
+                let editForm = editable.querySelector('[x-edit-form]');
+                let clone = null;
+                if(editForm !== undefined) {
+                    clone = editForm.cloneNode(true);
+                } else {
+                    clone = editable.cloneNode(true);
+                }
                 clone.setAttribute('id', clone.id + this.editableCounter);
                 let formElts = [clone];
                 if(clone.getAttribute('x-edit-form') !== undefined) {
-                    formElts = clone.querySelectorAll(`[x-form-elt='${tag}']`);
+                    formElts = clone.querySelectorAll(`[x-form-elt]`);
                 }
                 console.debug('reset attributes', formElts);
                 formElts?.forEach(element => {
@@ -273,8 +279,6 @@ export class FormControls {
 
                 this.editableCounter += 1;
                 this.editables[editable.id] = clone
-                //editables[i].parentElement.classList.remove('col-md-10')
-                //editables[i].parentElement.classList.add('col-md-8');
                 let addButton = document.createElement("button");
                 addButton.innerHTML="Add";
                 addButton.classList.add('btn', 'btn-info')
@@ -283,9 +287,20 @@ export class FormControls {
                 addButton.setAttribute('x-edit-id', editable.id)
                 addButton.onclick = (evt) => {
                     let newElt = this.editables[evt.target.getAttribute('x-edit-id')].cloneNode(true)
-                    let newId = newElt.id + this.editableCounter
+                    
 
+                    let cloneElts = [newElt];
+                    if(newElt.getAttribute('x-edit-form') !== undefined) {
+                        cloneElts = newElt.querySelectorAll(`[x-form-elt]`);
+                    }
+                    let newId = newElt.id + this.editableCounter;
                     newElt.setAttribute('id', newId);
+
+                    cloneElts.forEach(elt => {
+                        let newEltId = elt.id + this.editableCounter;
+                        elt.setAttribute('id', newEltId);
+
+                    });
                     this.editableCounter++;
                     
                     let newDelButton = document.createElement("span");
@@ -293,7 +308,7 @@ export class FormControls {
                     newDelButton.setAttribute('type', 'button')
                     newDelButton.setAttribute('x-edit-id', newId)
                     newDelButton.onclick = (delevt) => {
-                        console.log('del', delevt.target)
+                        console.log('del', delevt.target.id)
                         let elt = document.getElementById(delevt.target.getAttribute('x-edit-id'))
                         elt.remove();
                         delevt.target.remove();
@@ -304,12 +319,31 @@ export class FormControls {
                     evt.target.insertAdjacentElement('beforebegin', newElt);
 
                 }
+
+                let rows = editable.querySelectorAll('[x-edit-row]');
+                if(rows) {
+                    rows.forEach(r => {
+                        let rowDelButton = document.createElement("span");
+                        rowDelButton.classList.add('glyphicon', 'glyphicon-trash')
+                        rowDelButton.setAttribute('type', 'button')
+                        rowDelButton.setAttribute('x-edit-id', r.id)
+                        rowDelButton.onclick = (evt) => {
+                            console.log('del', evt.target)
+                            let elt = document.getElementById(evt.target.getAttribute('x-edit-id'))
+                            elt.remove();
+                            evt.target.remove();
+                            
+                        }
+                        r.insertAdjacentElement('beforebegin', rowDelButton)
+                    })
+                }
+
                 let delButton = document.createElement("span");
                 delButton.classList.add('glyphicon', 'glyphicon-trash')
                 delButton.setAttribute('type', 'button')
                 delButton.setAttribute('x-edit-id', editable.id)
                 delButton.onclick = (evt) => {
-                    console.log('del', evt.target)
+                    // console.debug('del', evt.target)
                     let elt = document.getElementById(evt.target.getAttribute('x-edit-id'))
                     elt.remove();
                     evt.target.remove();

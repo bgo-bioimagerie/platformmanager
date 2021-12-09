@@ -287,7 +287,7 @@ abstract class FormBaseElement {
         if($this->editable) {
             $options .= ' x-edit';
         }
-        $option .= ' x-form-elt';
+        $options .= ' x-form-elt';
 
         return trim($options);
     }
@@ -416,6 +416,9 @@ class FormTypeAheadElement extends FormInputElement {
         if(!$this->freetext) {
             $options .= ' x-typelistonly';
         }
+        if($this->datalist !== null && !empty($this->datalist)) {
+            $options .= sprintf(' list="%s"', $this->datalist['name']);
+        }
         return $options;
     }
 
@@ -485,9 +488,6 @@ class FormInputElement extends FormBaseInputElement {
         if($this->max !== null) {
             $options .= sprintf(' maxlength="%s" ', $this->max);
 
-        }
-        if($this->datalist !== null && !empty($this->datalist)) {
-            $options .= sprintf(' list="%s"', $this->datalist['name']);
         }
 
         return trim($options);
@@ -991,25 +991,36 @@ class PfmEditableFormElement extends FormBaseElement {
      * @var FormBaseElement[] $elts list of elements to add
      */
     public function add(array $elts) {
-            $formElts[] = $elt;
+            foreach ($elts as $elt) {
+                $elt->name = $elt->name . '[]';
+            }
+            $this->formElts[] = $elts;
             $this->javascript['edit'] = "control.loadEditables();\n";
 
             return $this;
     }
 
     public function html(?string $user=null, ?string $id_space=null): string {
-        if(empty($formElts)) {
+        if(empty($this->formElts)) {
             return '';
         }
-        $html = '<table x-edit x-edit-form class="form-edit '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->id.'" name="'.$this->name.'" >'."\n";
+        $html = '<table x-edit class="form-edit '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->id.'" name="'.$this->name.'" >'."\n";
         $html .= '<thead><tr>';
         foreach($this->formElts[0] as $elt) {
             $html .= '<th scope="col">'.$elt->label.'</th>';
         }
         $html .= '</tr></thead>'."\n";
         $html .= "<tbody>\n";
+        $first = true;
+        $count = 0;
         foreach($this->formElts as $elt) {
-            $html .= "<tr>\n";
+            if($first) {
+                $html .= "<tr id=\"".$this->id.'_'.$count."\" x-edit-form>\n";
+                $first = false;
+            } else {
+                $html .= "<tr id=\"".$this->id.'_'.$count."\" x-edit-row>\n";
+            }
+            $count++;
             foreach ($elt as $formElt) {
                 $html .= '<td>'.$formElt->html().'</td>'."\n";
             }
@@ -1202,7 +1213,7 @@ class PfmForm {
         }
         $action= $this->url ? 'action="'.$this->url.'"' : '';
         $html .= '<form x-form class="form" id="'.$this->name.'" method="post" enctype="multipart/form-data" '.$action.'>'."\n";
-        $html .= (new FormHiddenElement('form_id', $this->name))->toHtml()."\n";
+        $html .= (new FormHiddenElement('formid', $this->name))->toHtml()."\n";
         foreach ($this->elts as $elt) {
             $html .= $elt->toHtml(self::$user, self::$id_space)."\n";
         }
@@ -1921,6 +1932,13 @@ class Form {
     }
 
     /**
+     * TEST
+     */
+    public function addEditable(PfmEditableFormElement $form) {
+       $this->pfmform->add($form);
+    }
+
+    /**
      * Add a form add in the form
      * @param FormAdd $formAdd FotmAdd to add
      * @param type $label Label of the formAdd
@@ -1966,10 +1984,6 @@ class Form {
      * @return string
      */
     public function getHtml($lang = "en", $headers = true) {
-
-        $html = $this->pfmform->toHtml($lang);
-        $html .= $this->pfmform->Javascript();
-        return $html;
 
         $html = "";
 
