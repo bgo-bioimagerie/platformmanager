@@ -95,13 +95,11 @@ class DocumentslistController extends DocumentsController {
     }
 
     public function openAction($id_space, $id) {
-
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
 
         $model = new Document();
         $file = $model->getUrl($id_space,$id);
-        
-        if ($file && $file != "") {
+        if (file_exists($file)) {
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
             header('Content-Disposition: attachment; filename="'.basename($file).'"' );
