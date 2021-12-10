@@ -103,7 +103,7 @@ class DocumentslistController extends DocumentsController {
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
             header('Content-Disposition: attachment; filename="'.basename($file).'"' );
-            header("Content-Type: application/zip");
+            header("Content-Type: binary/octet-stream");
             header("Content-Transfer-Encoding: binary");
             // read the file from disk
             readfile($file);
