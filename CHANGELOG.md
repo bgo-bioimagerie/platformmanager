@@ -7,6 +7,7 @@ only, not configurable via UI anymore and existing values not taken into account
 See ldap.ini.example if needed or doc for env variables.
 
 * [documents] fix documents duplication on edition
+* [core] Remove references to ecUnit, ecBelonging and ecUser
 * [booking][email] Add userName in emails sent to resources managers
 * [core][email] Add userName in emails sent to admins
 * [core][formAdd] fix last row deletion
