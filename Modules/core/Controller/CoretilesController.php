@@ -324,11 +324,13 @@ class CoretilesController extends CorecookiesecureController {
 
                 $modelUser = new CoreUser();
                 $userEmail = $modelUser->getEmail($id_user);
+                $userFullName = $modelUser->getUserFUllName($id_user);
 
                 $mailParams = [
                     "id_space" => $id_space,
                     "space_name" => $spaceName,
-                    "user_email" => $userEmail
+                    "email" => $userEmail,
+                    "fullName" => $userFullName
                 ];
                 $email = new Email();
                 $email->notifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());
