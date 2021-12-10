@@ -163,8 +163,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     **/
     private function generateRespBill($dateBegin, $dateEnd, $id_client, $id_resp, $id_space) {
 
-        Configuration::getLogger()->debug("[TEST]", ["in generateRespBill"]);
-
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
@@ -193,8 +191,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
 
         $total_ht = $this->calculateTotal($id_space, $services, $belonging);
-
-        Configuration::getLogger()->debug("[TEST]", ["calculate total" => $total_ht]);
 
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
