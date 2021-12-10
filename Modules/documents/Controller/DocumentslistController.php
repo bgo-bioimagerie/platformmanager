@@ -63,7 +63,6 @@ class DocumentslistController extends DocumentsController {
     public function editAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
         $model = new Document();
         $data = $model->get($id_space, $id);
 
@@ -71,20 +70,19 @@ class DocumentslistController extends DocumentsController {
         $form->setTitle(DocumentsTranslator::Edit_Document($lang));
         $form->addText("title", DocumentsTranslator::Title($lang), true, $data["title"]);
         $form->addUpload("file_url", DocumentsTranslator::File($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "documentsedit/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "documentsedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "documents/" . $id_space);
 
         if ($form->check()) {
             $title = $this->request->getParameter("title");
             $id_user = $_SESSION["id_user"];
             $idNew = $model->set($id, $id_space, $title, $id_user);
-
+            $idDoc = ($id > 0) ? $idNew : $id;
             $target_dir = "data/documents/";
             if ($_FILES["file_url"]["name"] != "") {
                 $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "file_url", $idNew . "_" . $ext);
-
-                $model->setUrl($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
+                $model->setUrl($id_space, $idDoc, $target_dir . $idNew . "_" . $ext);
             }
 
             $this->redirect("documents/" . $id_space);
