@@ -71,11 +71,14 @@ class CoreaccountController extends Controller {
         );
         $modelPeningAccounts = new CorePendingAccount();
         $modelPeningAccounts->add($id_user, $data["id_space"]);
+        $userFullName = $modelCoreUser->getUserFUllName($id_user);
 
         $email = new Email();
         $mailParams = [
             "email" => $data["email"],
             "login" => $data["login"],
+            "fullName" => $userFullName,
+            "name" => $data["name"],
             "pwd" => $pwd,
             "supData" => $data
         ];
