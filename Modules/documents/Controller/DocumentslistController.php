@@ -77,12 +77,11 @@ class DocumentslistController extends DocumentsController {
             $title = $this->request->getParameter("title");
             $id_user = $_SESSION["id_user"];
             $idNew = $model->set($id, $id_space, $title, $id_user);
-            $idDoc = ($id > 0) ? $idNew : $id;
             $target_dir = "data/documents/";
             if ($_FILES["file_url"]["name"] != "") {
                 $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "file_url", $idNew . "_" . $ext);
-                $model->setUrl($id_space, $idDoc, $target_dir . $idNew . "_" . $ext);
+                $model->setUrl($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
             }
 
             $this->redirect("documents/" . $id_space);
