@@ -373,8 +373,12 @@ class Grafana {
 
     /**
      * Create user if needed and add to org
+     * 
+     * @var mixed space space object
+     * @var string name  user login
+     * @var string apikey used for password
      */
-    public function addUser($space, $name, $apikey) {
+    public function addUser($space, string $name, string $apikey) {
         if(!$this->configured()) {
             return false;
         }

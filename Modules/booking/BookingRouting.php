@@ -67,7 +67,9 @@ class BookingRouting extends Routing{
         
         
         $this->addRoute("bookingprices", "bookingprices", "bookingprices", "index", array("id_space"), array(""));
-        $this->addRoute("bookingpricesowner", "bookingpricesowner", "bookingprices", "owner", array("id_space"), array(""));
+        
+        // @deprecated
+        //$this->addRoute("bookingpricesowner", "bookingpricesowner", "bookingprices", "owner", array("id_space"), array(""));
         $this->addRoute("bookinginvoice", "bookinginvoice", "bookinginvoice", "index", array("id_space"), array(""));
         $this->addRoute("bookinginvoiceedit", "bookinginvoiceedit", "bookinginvoice", "edit", array("id_space", "id_invoice", "pdf"), array("", "", ""));
         $this->addRoute("bookinginvoicedetail", "bookinginvoicedetail", "bookinginvoice", "details", array("id_space", "id_invoice"), array("", ""));
@@ -91,7 +93,7 @@ class BookingRouting extends Routing{
         $this->addRoute("updateresaresps", "updateresaresps", "bookinginvoice", "updateresaresponsibles", array(), array());
         
         // pm transfert
-        $this->addRoute("bookinggetreservations", "bookinggetreservations", "Bookingreservations", "getreservations", array("id_resource", "userlogin"), array("", ""), true);
+        // $this->addRoute("bookinggetreservations", "bookinggetreservations", "Bookingreservations", "getreservations", array("id_resource", "userlogin"), array("", ""), true);
         
         
         

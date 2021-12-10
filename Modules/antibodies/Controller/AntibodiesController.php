@@ -36,15 +36,6 @@ class AntibodiesController extends CoresecureController {
         $this->antibody = new Anticorps();
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
-
     public function dropdownMenu($id_space) {
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();

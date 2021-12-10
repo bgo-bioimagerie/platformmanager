@@ -158,4 +158,12 @@ class ClientspricingsController extends ClientsController {
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clpricings/" . $id_space);
     }
+
+    public function getClientPricingAction($id_space, $id_client) {
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        $modelClientPricing = new ClPricing();
+        $pricingName = $modelClientPricing->getPricingByClient($id_space, $id_client)[0]['name'];
+        $this->render(['data' => ['elements' => $pricingName]]);
+    }
+
 }

@@ -62,7 +62,8 @@ class ClientsusersController extends ClientsController {
 
             $modelClientUser->set($id_space, $id_client, $form->getParameter("id_user"));
 
-            $_SESSION["message"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
             return;
         }
@@ -92,12 +93,19 @@ class ClientsusersController extends ClientsController {
     public function deleteAction($id_space, $id_client, $id_user) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
-
+        $lang = $this->getLanguage();
         //echo 'delete client user ' . $id . "<br/>";
         $modelClientUser = new ClClientUser();
         $modelClientUser->deleteClientUser($id_space, $id_client, $id_user);
-
+        $_SESSION["flash"] = ClientsTranslator::UserHasBeenDeletedFromClient($lang);
+        $_SESSION["flashClass"] = 'success';
         $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
+    }
+
+    public function getUserClientsAction($id_space, $id_user) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $modelClientUser = new ClClientUser();
+        $this->render(['data' => ['elements' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
     }
 
 }

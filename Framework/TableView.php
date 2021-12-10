@@ -217,7 +217,7 @@ class TableView {
             $html .= "<head>";
             $html .= "<meta charset=\"UTF-8\" />";
             $html .= "<base href=\"" . $rootWeb . "\">";
-            $html .= "<link rel=\"stylesheet\" href=\"externals/bootstrap/css/bootstrap.min.css\">";
+            $html .= "<link rel=\"stylesheet\" href=\"/externals/bootstrap/css/bootstrap.min.css\">";
             $html .= "</head>";
         }
         else{
@@ -366,13 +366,21 @@ class TableView {
                         else if ($value["type"] == "download"){
                             $html .= '<td>';
                             if ( $val != "" ){
+                                $html .= sprintf('<a target="_blank" rel="noreferrer,noopener"  href="%s"><button type="btn btn-default">%s</button></a>', $val, $value["text"]);
+                            }
+                            $html .= '</td>';
+                        }
+                        /*
+                        else if ($value["type"] == "download"){
+                            $html .= '<td>';
+                            if ( $val != "" ){
                                 $html .= "<form role=\"form\" id=\"tabledownload\" class=\"form-horizontal\" action=\"".$value["action"]."\" method=\"POST\">";
                                 $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$val."\">";
                                 $html .= "<input type=\"submit\" class=\"btn btn-default\" value=\"" . $value["text"] . "\" />";
                                 $html .= "</form>";
                             }
                             $html .= '</td>';
-                        }
+                        }*/
                     }
                     else{
                         if (strlen($dat[$key]) && $this->textMaxLength > 0) {
@@ -426,13 +434,13 @@ class TableView {
 
         $html .= "<head>";
 
-        $html .= "<link rel=\"stylesheet\" href=\"externals/dataTables/dataTables.bootstrap.css\">";
-        $html .= "<link rel=\"stylesheet\" href=\"externals/dataTables/dataTables.fixedHeader.css\">";
+        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.bootstrap.css\">";
+        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.fixedHeader.css\">";
 
-        $html .= "<script src=\"externals/jquery-1.11.1.js\"></script>";
-        $html .= "<script src=\"externals/dataTables/jquery.dataTables.min.js\"></script>";
-        $html .= "<script src=\"externals/dataTables/dataTables.fixedHeader.min.js\"></script>";
-        $html .= "<script src=\"externals/dataTables/dataTables.bootstrap.js\"></script>";
+        $html .= "<script src=\"/externals/jquery-1.11.1.js\"></script>";
+        $html .= "<script src=\"/externals/dataTables/jquery.dataTables.min.js\"></script>";
+        $html .= "<script src=\"/externals/dataTables/dataTables.fixedHeader.min.js\"></script>";
+        $html .= "<script src=\"/externals/dataTables/dataTables.bootstrap.js\"></script>";
         
         $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css\">";
         $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/fixedcolumns/3.2.2/css/fixedColumns.bootstrap.min.css\">";

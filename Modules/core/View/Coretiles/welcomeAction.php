@@ -21,8 +21,20 @@
 
 <div class="container" id="welcome">
     <div class="row">
-        <div class="col-md-8">
 
+        <div class="col-md-2">
+                <div class="col-xs-12"><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
+                <?php 
+            foreach ($mainMenus as $menu) {
+                echo '<div style="margin: 10px" >';
+                echo sprintf('<a href="coretiles/1/%s"><button class="btn btn-primary btn-block">%s</button></a></li>', $menu['id'], $menu['name']);
+                echo '</div>';
+            }
+            ?>
+        </div>
+
+
+        <div class="col-md-6">
             <div class="row" style="margin: 10px;">
                 <div class="col-xs-6">
                     <input id="search" type="form-control" v-model="search" placeholder="search"/>
@@ -88,31 +100,31 @@
         </div>
         <div class="col-md-4" id="user_home">
             <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user']) { ?>
-                <div v-if="bookings" id="future_bookings">
+                <div v-if="bookings && bookings.length > 0" id="future_bookings">
                     <div class="panel panel-default">
-                    <div class="panel-heading">Bookings</div>
-                    <div class="panel-body">
-                        <div class="row" v-for="b in bookings">
-                            <div class="col-xs-12">
-                                {{b.date}}: {{b.resource}} [{{b.space}}] <a :href="`/bookingeditreservation/${b.id_space}/r_${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                        <div class="panel-heading">Bookings</div>
+                        <div class="panel-body">
+                            <div class="row" v-for="b in bookings">
+                                <div class="col-xs-12">
+                                    {{b.date}}: {{b.resource}} [{{b.space}}] <a :href="`/bookingeditreservation/${b.id_space}/r_${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
 
-                <div v-if="project" id="projects">
+                <div v-if="projects && projects.length > 0" id="projects">
                     <div class="panel panel-default">
-                    <div class="panel-heading">Service projects</div>
-                    <div class="panel-body">
-                        <div class="row" v-for="b in projects">
-                            <div class="col-xs-12">
-                                {{b.date}}: {{b.name}} [{{b.space}}] <a :href="`/servicesprojectsheet/${b.id_space}/${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                        <div class="panel-heading">Service projects</div>
+                        <div class="panel-body">
+                            <div class="row" v-for="b in projects">
+                                <div class="col-xs-12">
+                                    {{b.date}}: {{b.name}} [{{b.space}}] <a :href="`/servicesprojectsheet/${b.id_space}/${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                                </div>
                             </div>
                         </div>
+                    </div>
                 </div>
-            </div>
-            </div>
             <?php } ?>
         </div>
     </div>

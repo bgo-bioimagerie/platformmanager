@@ -35,7 +35,12 @@ class CoreaccountController extends Controller {
     public function confirmAction() {
         $lang = $this->getLanguage();
         $token = $this->request->getParameter("token");
-        $decoded = JWT::decode($token, Configuration::get('jwt_secret'), array('HS256'));
+        try {
+            $decoded = JWT::decode($token, Configuration::get('jwt_secret'), array('HS256'));
+        } catch(Throwable $e) {
+            Configuration::getLogger()->debug('[core][account][confirm] jwt decode failed', ['error' => $e->getMessage()]);
+            return new PfmAuthException($e->getMessage(), 403);
+        }
         $decoded_array = (array) $decoded;
         $data = (array) $decoded_array['data'];
         Configuration::getLogger()->debug('[account] registration confirmation', ['user' => $data]);
@@ -66,11 +71,14 @@ class CoreaccountController extends Controller {
         );
         $modelPeningAccounts = new CorePendingAccount();
         $modelPeningAccounts->add($id_user, $data["id_space"]);
+        $userFullName = $modelCoreUser->getUserFUllName($id_user);
 
         $email = new Email();
         $mailParams = [
             "email" => $data["email"],
             "login" => $data["login"],
+            "fullName" => $userFullName,
+            "name" => $data["name"],
             "pwd" => $pwd,
             "supData" => $data
         ];

@@ -29,6 +29,9 @@ class CoreusersController extends CoresecureController {
     }
 
     public function mainMenu() {
+        if (!str_contains($_SERVER['REQUEST_URI'], "coremyaccount")) {
+            return null;
+        }
         $lang = $this->getLanguage();
         $dataView = [
             'bgcolor' => '#ffffff',

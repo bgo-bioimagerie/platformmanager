@@ -26,16 +26,6 @@ class BookingauthorisationsController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $_SESSION["openedNav"] = "ecusers";
-    }
-
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
     }
 
     public function indexAction($id_space, $id) {
@@ -190,6 +180,9 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelVisa = new ReVisa();
         $visa_select = $modelVisa->getForListByCategory($id_space, $id_resource_category);
+        if (empty($visa_select['ids'])) {
+            $_SESSION['flash'] = BookingTranslator::VisaNeeded($lang);
+        }
 
 
         $form = new Form($this->request, "authorisationAddForm");
@@ -198,7 +191,7 @@ class BookingauthorisationsController extends CoresecureController {
         $form->addText("resource", BookingTranslator::Resource(), false, $categoryName, "disabled");
 
 
-        $form->addSelect("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
+        $form->addSelectMandatory("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
         $form->addDate("date", BookingTranslator::DateActivation($lang), true);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsadd/" . $id_space . "/" . $id);

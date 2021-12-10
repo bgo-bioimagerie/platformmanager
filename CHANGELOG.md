@@ -2,6 +2,24 @@
 
 ## 2.2
 
+**Warning**: [admin] Ldap configuration modification from ini or env variables
+only, not configurable via UI anymore and existing values not taken into account.
+See ldap.ini.example if needed or doc for env variables.
+
+* [Documents] Avoid missing files opening
+* [documents] fix documents duplication on edition
+* [core] Remove references to ecUnit, ecBelonging and ecUser
+* [booking][email] Add userName in emails sent to resources managers
+* [core][email] Add userName in emails sent to admins
+* [core][formAdd] fix last row deletion
+* [booking] fix bk_calsupinfo mandatory column name which caused errors on supplementaries info
+* [core][email] fix from header when helpdesk not activated
+* [core][ldap] get all config from ini files or env variables
+* [Menus] Change word "Menu" to "Structure"
+* [forms] prevent errors on form submissions
+* [Documentation] Add quote documentation
+* [module:quote] improve new user quote interface
+* [module:quote] expose client infos to invoice templates
 * [Services] Remove deprecated functions from servicesController
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
@@ -19,6 +37,7 @@
 * [core] limit file uploads name to alphanumeric # 402
 * [core] add welcome page and use it as default entry url
 * [core] manage db reconnection in case of failure
+* [core] on welcome page show different use info
 
 ## 2.1.9
 

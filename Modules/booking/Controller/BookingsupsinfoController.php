@@ -83,19 +83,21 @@ class BookingsupsinfoController extends BookingsettingsController {
                 }
             }
             for ($p = 0; $p < count($supID); $p++) {
-                if (!$supID[$p]) {
-                    // If package id not set, use from known packages
-                    if(isset($packs[$supName[$p]])) {
-                        $supID[$p] = $packs[$supName[$p]];
-                    } else {
-                        // Or create a new package
-                       $cvm = new CoreVirtual();
-                       $vid = $cvm->new('supinfo');
-                       $supID[$p] = $vid;
-                       $packs[$supName[$p]] = $vid;
-                   }
+                if ($supName[$p] != "") {
+                    if (!$supID[$p]) {
+                        // If package id not set, use from known packages
+                        if(isset($packs[$supName[$p]])) {
+                            $supID[$p] = $packs[$supName[$p]];
+                        } else {
+                            // Or create a new package
+                        $cvm = new CoreVirtual();
+                        $vid = $cvm->new('supinfo');
+                        $supID[$p] = $vid;
+                        $packs[$supName[$p]] = $vid;
+                        }
+                    }
+                    $modelSups->setCalSupInfo($id_space, $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
                 }
-                $modelSups->setCalSupInfo($id_space, $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
             }
 
             /* bug possible conflict on getting id
@@ -133,7 +135,6 @@ class BookingsupsinfoController extends BookingsettingsController {
                 }
             }
             */
-
             $modelSups->removeUnlistedSupInfos($id_space, $supID);
             $_SESSION["message"] = BookingTranslator::Supplementaries_saved($lang);
             $this->redirect("bookingsupsinfo/".$id_space);

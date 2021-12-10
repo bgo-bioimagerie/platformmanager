@@ -33,14 +33,6 @@ class MailerController extends CoresecureController {
         $_SESSION["openedNav"] = "mailer";
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
 
     public function navbar($id_space) {
         return "";
@@ -98,6 +90,11 @@ class MailerController extends CoresecureController {
                 // get all the adresses of users who book in this resource
                 $modelCalEntry = new BkCalendarEntry();
                 $to = $modelCalEntry->getEmailsBookerResource($id_space, $toEx[1]);
+            }
+        } else {
+            if ($to === "managers") {
+                $modelUser = new CoreUser();
+                $content = "From " . $modelUser->getUserFUllName($_SESSION["id_user"]) . " :</br>" . $content;
             }
         }
 

@@ -21,14 +21,6 @@ class QuoteController extends CoresecureController {
         //$this->checkAuthorizationMenu("quote");
     }
 
-    public function mainMenu() {
-        $id_space = isset($this->args['id_space']) ? $this->args['id_space'] : null;
-        if ($id_space) {
-            $csc = new CoreSpaceController($this->request);
-            return $csc->navbar($id_space);
-        }
-        return null;
-    }
 
     public function sideMenu() {
         $id_space = $this->args['id_space'];
@@ -44,8 +36,7 @@ class QuoteController extends CoresecureController {
             'color' => $menuInfo['txtcolor'] ?? '',
             'Quotes' => QuoteTranslator::Quotes($lang),
             'CreateExistingUserQuote' => QuoteTranslator::CreateExistingUserQuote($lang),
-            'CreateNewUserQuote}}' => QuoteTranslator::CreateNewUserQuote($lang)
-
+            'CreateNewUserQuote' => QuoteTranslator::CreateNewUserQuote($lang)
         ];
         return $this->twig->render("Modules/quote/View/Quote/navbar.twig", $dataView);
     }

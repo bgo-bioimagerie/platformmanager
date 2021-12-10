@@ -48,6 +48,7 @@ class BookingquantitiesController extends BookingsettingsController {
         $supsIdsRes = array();
         $supsNames = array();
         $supsMandatories = array();
+        $supIsInvoicingUnit = array();
         foreach($sups as $sup){
             $supsIds[] = $sup["id_quantity"];
             $supsIdsRes[] = $sup["id_resource"];
@@ -105,6 +106,9 @@ class BookingquantitiesController extends BookingsettingsController {
                 }
             }
             for ($sup = 0; $sup < count($supID); $sup++) {
+                if($supName[$sup] == "") {
+                    continue;
+                }
                 if (!$supID[$sup]) {
                     // If package id not set, use from known packages
                     if(isset($supacks[$supName[$sup]])) {
