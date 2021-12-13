@@ -111,6 +111,14 @@ class CoreaccountController extends Controller {
         $modelSpaces = new CoreSpace();
         $spaces = $modelSpaces->getForList();
 
+        // add structures names to spaces displayed names
+        for($i=0; $i<count($spaces['ids']); $i++) {
+            $mainMenu = $modelSpaces->getSpaceMainMenu($spaces['ids'][$i]);
+            if ($mainMenu) {
+                $spaces['names'][$i] .= (" - " . $mainMenu['name']);
+            }
+        }
+
         $form = new Form($this->request, "createaccountform");
         $form->setTitle(CoreTranslator::CreateAccount($lang));
         $form->addText("name", CoreTranslator::Name($lang), true);
