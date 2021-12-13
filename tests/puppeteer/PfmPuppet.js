@@ -89,13 +89,15 @@ const fs = require('fs');
      */
     async createNewSpace(spaceConfig) {
         console.log("creating menu, space, submenu and item");
-        await this.createMenu();
-        await this.createSpace(spaceConfig);
-        await this.checkSpaceCreation(spaceConfig);
+        await this.createMenu(spaceConfig);
+        await this.createSubMenu(spaceConfig);
+        // await this.createSpace(spaceConfig);
+        // await this.checkSpaceCreation(spaceConfig);
     }
 
-    async createMenu(menuName = "puppetMenu") {
+    async createMenu(spaceConfig) {
         console.log("creating menu");
+        let menuName = spaceConfig.name + "Menu";
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
         [this.page] = await this.browser.pages();
         await this.page.goto(this.host + '/coremainmenus');
@@ -111,6 +113,45 @@ const fs = require('fs');
             await this.page.evaluate(() => document.getElementById('editmainmenuformsubmit').click());
         } catch (err) {
             console.error("menu creation failed", err.message);
+        }
+    }
+
+    async createSubMenu(spaceConfig) {
+        console.log("creating subMenu");
+        let subMenuName = spaceConfig.name + "subMenu";
+        this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
+        [this.page] = await this.browser.pages();
+        await this.page.goto(this.host + '/coremainsubmenus');
+
+        try {
+            console.log("accessing to submenu creation page");
+            await this.page.evaluate(() => document.getElementById('addsubmenu').click());
+        
+            console.log("filling submenu form");
+            // set name
+            await this.page.waitForSelector('#name');
+            await this.page.evaluate(val => document.getElementById('name').value = val, subMenuName);
+            
+            // set parent menu
+            await this.page.waitForSelector('#id_main_menu');
+            await this.page.evaluate(spaceConfig => {
+                let mainMenuSelector = document.getElementById('id_main_menu');
+                let options = mainMenuSelector.options;
+                let selectedValue = 0;
+                Object.entries(options).forEach(option => {
+                    if(option.innerText === (spaceConfig.name + "menu")) {
+                        selectedValue = option.value;
+                    }
+                });
+                mainMenuSelector.val = selectedValue;
+                console.log("options:", options);
+            }, spaceConfig);
+            
+            /* await this.page.evaluate(val => document.getElementById('id_main_menu').value = val, subMenuName);
+            await this.page.waitForSelector('#editmainsubmenuformsubmit');
+            await this.page.evaluate(() => document.getElementById('editmainsubmenuformsubmit').click()); */
+        } catch (err) {
+            console.error("submenu creation failed", err.message);
         }
     }
 
