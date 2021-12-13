@@ -6,6 +6,7 @@
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [self_registration] add structures names to listed spaces
 * [clients] fix company infos
 * [documents] Avoid missing files opening
 * [documents] fix documents duplication on edition

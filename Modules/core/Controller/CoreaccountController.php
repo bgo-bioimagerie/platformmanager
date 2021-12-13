@@ -6,6 +6,9 @@ require_once 'Framework/Configuration.php';
 
 require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreMainSubMenu.php';
+require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 
@@ -98,6 +101,47 @@ class CoreaccountController extends Controller {
     }
 
     /**
+     * Adds structures (i.e. menus) names to spaces displayed names
+     * @param Array $spacesList {"id" => string, "name" => string}
+     * @return Array
+     */
+    protected function addMenuNamesToSpaceNames($spacesList) {
+        $modelMenus = new CoreMainMenu();
+        $modelSubMenus = new CoreMainSubMenu();
+        $modelMenuItems = new CoreMainMenuItem();
+
+        $menus = $modelMenus->getAll();
+        $subMenus = $modelSubMenus->getAll();
+        $items = $modelMenuItems->getAll();
+        
+        for($i=0; $i<count($spacesList['ids']); $i++) {
+            $idSpace = $spacesList['ids'][$i];
+            for($j=0; $j<count($items); $j++) {
+                // get id subMenu
+                if ($items[$j]['id_space'] && $items[$j]['id_space'] == $idSpace) {
+                    $idSubMenu =  $items[$j]['id_sub_menu'];
+                    for($k=0; $k<count($subMenus); $k++) {
+                        // get id menu
+                        if ($subMenus[$k]['id'] && $subMenus[$k]['id'] == $idSubMenu) {
+                            $idMenu =  $subMenus[$k]['id_main_menu'];
+                            // add menu name
+                            for($l=0; $l<count($menus); $l++) {
+                                if ($menus[$l]['id'] && $menus[$l]['id'] == $idMenu) {
+                                    $spacesList['names'][$i] .= (" - " . $menus[$l]['name']);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        return $spacesList;
+    }
+
+    /**
      * (non-PHPdoc)
      * @see Controller::index()
      */
@@ -107,17 +151,9 @@ class CoreaccountController extends Controller {
         }
 
         $lang = $this->getLanguage();
-
         $modelSpaces = new CoreSpace();
         $spaces = $modelSpaces->getForList();
-
-        // add structures names to spaces displayed names
-        for($i=0; $i<count($spaces['ids']); $i++) {
-            $mainMenu = $modelSpaces->getSpaceMainMenu($spaces['ids'][$i]);
-            if ($mainMenu) {
-                $spaces['names'][$i] .= (" - " . $mainMenu['name']);
-            }
-        }
+        $spaces = $this->addMenuNamesToSpaceNames($spaces);
 
         $form = new Form($this->request, "createaccountform");
         $form->setTitle(CoreTranslator::CreateAccount($lang));

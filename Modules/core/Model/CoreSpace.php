@@ -626,18 +626,6 @@ class CoreSpace extends Model {
             }
         }
     }
-    /**
-     * Returns menu to which belongs a specified space
-     * @param int $id_space
-     * @return menu
-     */
-    public function getSpaceMainMenu($id_space) {
-        $sql =
-        "SELECT * FROM core_main_menus WHERE id=
-            (SELECT id_main_menu FROM core_main_sub_menus WHERE id=
-                (SELECT id_sub_menu FROM core_main_menu_items WHERE id_space=? AND deleted=0))";
-        return $this->runRequest($sql, array($id_space))->fetch();
-    }
 
     /**
      * @deprecated , duplicate function, should use delete in CoreSpaceUser
