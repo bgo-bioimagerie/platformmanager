@@ -6,7 +6,9 @@
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
-* [Documents] Avoid missing files opening
+* [self_registration] add structures names to listed spaces
+* [clients] fix company infos
+* [documents] Avoid missing files opening
 * [documents] fix documents duplication on edition
 * [core] Remove references to ecUnit, ecBelonging and ecUser
 * [booking][email] Add userName in emails sent to resources managers

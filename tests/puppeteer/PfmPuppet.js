@@ -93,9 +93,17 @@ const fs = require('fs');
         await this.createSubMenu(spaceConfig);
         // await this.createSpace(spaceConfig);
         // await this.checkSpaceCreation(spaceConfig);
+
     }
 
-    async createMenu(spaceConfig) {
+    /**
+     * Creates a new menu 
+     * 
+     * @param {SpaceConfig} spaceConfig
+     * @param {boolean} duplicates authorize duplication
+     * 
+     */
+    async createMenu(spaceConfig, duplicates = false) {
         console.log("creating menu");
         let menuName = spaceConfig.name + "Menu";
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
@@ -103,20 +111,44 @@ const fs = require('fs');
         await this.page.goto(this.host + '/coremainmenus');
 
         try {
-            console.log("accessing to menu creation page");
-            await this.page.evaluate(() => document.getElementById('addmenu').click());
-        
-            console.log("filling menu form");
-            await this.page.waitForSelector('#name');
-            await this.page.evaluate(val => document.getElementById('name').value = val, menuName);
-            await this.page.waitForSelector('#editmainmenuformsubmit');
-            await this.page.evaluate(() => document.getElementById('editmainmenuformsubmit').click());
+            // check if menu exists
+
+            let menuExists = await this.checkExistenceInTable(spaceConfig.name + "Menu");
+            
+            if (!menuExists) {
+                console.log("accessing to menu creation page");
+                await this.page.evaluate(() => document.getElementById('addmenu').click());
+
+                console.log("filling menu form");
+                await this.page.waitForSelector('#name');
+                await this.page.evaluate(val => document.getElementById('name').value = val, menuName);
+                await this.page.waitForSelector('#editmainmenuformsubmit');
+                await this.page.evaluate(() => document.getElementById('editmainmenuformsubmit').click());
+            } else {
+                console.log("menu " + (spaceConfig.name + "Menu") + " already exists");
+            }
         } catch (err) {
             console.error("menu creation failed", err.message);
         }
     }
 
-    async createSubMenu(spaceConfig) {
+    async checkExistenceInTable(name) {
+        return this.page.evaluate((needle) => {
+            let tableCells = document.getElementsByTagName('td');
+            let menuFound = [...tableCells].find(cell => {
+                return cell.innerText === needle;
+            });
+            return menuFound ? true : false;
+        }, name);
+    }
+
+    /**
+     * Creates a new subMenu 
+     * 
+     * @param {SpaceConfig} spaceConfig
+     * 
+     */
+    async createSubMenu(spaceConfig, duplicates = false) {
         console.log("creating subMenu");
         let subMenuName = spaceConfig.name + "subMenu";
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
@@ -134,22 +166,14 @@ const fs = require('fs');
             
             // set parent menu
             await this.page.waitForSelector('#id_main_menu');
-            await this.page.evaluate(spaceConfig => {
+            await this.page.evaluate(config => {
                 let mainMenuSelector = document.getElementById('id_main_menu');
-                let options = mainMenuSelector.options;
-                let selectedValue = 0;
-                Object.entries(options).forEach(option => {
-                    if(option.innerText === (spaceConfig.name + "menu")) {
-                        selectedValue = option.value;
-                    }
-                });
-                mainMenuSelector.val = selectedValue;
-                console.log("options:", options);
+                let options = [...mainMenuSelector.options].map(function(el) {
+                    return {id: el.value, text: el.text};
+               });
+                mainMenuSelector.value = options.find(option => option.text == (config.name + "Menu")).id ;
             }, spaceConfig);
-            
-            /* await this.page.evaluate(val => document.getElementById('id_main_menu').value = val, subMenuName);
-            await this.page.waitForSelector('#editmainsubmenuformsubmit');
-            await this.page.evaluate(() => document.getElementById('editmainsubmenuformsubmit').click()); */
+            await this.page.evaluate(() => document.getElementById('editmainsubmenuformsubmit').click());
         } catch (err) {
             console.error("submenu creation failed", err.message);
         }
@@ -161,7 +185,7 @@ const fs = require('fs');
      * @param {SpaceConfig} spaceConfig
      * 
      */
-    async createSpace(spaceConfig) {
+    async createSpace(spaceConfig, duplicates = false) {
         console.log("creating space");
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
         [this.page] = await this.browser.pages();
@@ -184,9 +208,9 @@ const fs = require('fs');
                 
                let element = document.getElementById('admins');
                let options = [...element.options].map(function(el) {
-                    return {id: el.value, name: el.text};
+                    return {id: el.value, text: el.text};
                });
-               element.value = options.find(option => option.name == config.adminFullName).id;
+               element.value = options.find(option => option.text == config.adminFullName).id;
             }, spaceConfig);
 
             // Click save button
