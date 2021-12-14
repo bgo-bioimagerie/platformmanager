@@ -91,9 +91,51 @@ const fs = require('fs');
         console.log("creating menu, space, submenu and item");
         await this.createMenu(spaceConfig);
         await this.createSubMenu(spaceConfig);
-        // await this.createSpace(spaceConfig);
-        // await this.checkSpaceCreation(spaceConfig);
+        await this.createSpace(spaceConfig);
+        await this.checkSpaceCreation(spaceConfig);
+        await this.setSpaceBasicConfiguration(spaceConfig);
+    }
 
+    /**
+     * Sets space basic configuration
+     * 
+     * @param {SpaceConfig} spaceConfig
+     * 
+     */
+     async setSpaceBasicConfiguration(spaceConfig) {
+        console.log("setting space basic configuration");
+        try {
+            // go find our new space id
+            let spaceId = await this.getTestSpaceId(spaceConfig.name);
+            // navigate to space home page
+            await this.page.goto(this.host + '/corespace/' + spaceId);
+            await this.page.waitForSelector('#app');
+            console.log("Got into space home page");
+
+            await this.createModule("resources", 4, spaceId);
+        } catch(err) {
+            console.error("basic space configuration failed", err.message);
+        }
+    }
+
+    /**
+     * Creates a space module
+     * 
+     * @param {string} moduleName
+     * @param {int} authLevel
+     * @param {int} spaceId
+     * 
+     */
+     async createModule(moduleName, authLevel, spaceId) {
+        console.log("creating module " +  moduleName);
+        //activateModule
+        await this.page.goto(this.host + '/spaceConfigModule/' + spaceId + '/' + moduleName);
+        await this.page.waitForSelector('#app');
+        await this.page.evaluate( data => {
+            let roleMenu = document.getElementById(data.name + 'menustatus');
+            roleMenu.value = data.auth;
+        }, {name: moduleName, auth: authLevel});
+        await this.page.evaluate(() => document.getElementById('menusactivationFormsubmit').click());
     }
 
     /**
@@ -111,11 +153,13 @@ const fs = require('fs');
         await this.page.goto(this.host + '/coremainmenus');
 
         try {
-            // check if menu exists
-
-            let menuExists = await this.checkExistenceInTable(spaceConfig.name + "Menu");
+            let createMenu = true;
+            if (!duplicates) {
+                let menuExists = await this.checkExistenceInTable(spaceConfig.name + "Menu");
+                createMenu = !menuExists;
+            }
             
-            if (!menuExists) {
+            if (createMenu) {
                 console.log("accessing to menu creation page");
                 await this.page.evaluate(() => document.getElementById('addmenu').click());
 
@@ -127,19 +171,10 @@ const fs = require('fs');
             } else {
                 console.log("menu " + (spaceConfig.name + "Menu") + " already exists");
             }
+            // TODO: add properties verification script
         } catch (err) {
             console.error("menu creation failed", err.message);
         }
-    }
-
-    async checkExistenceInTable(name) {
-        return this.page.evaluate((needle) => {
-            let tableCells = document.getElementsByTagName('td');
-            let menuFound = [...tableCells].find(cell => {
-                return cell.innerText === needle;
-            });
-            return menuFound ? true : false;
-        }, name);
     }
 
     /**
@@ -156,24 +191,30 @@ const fs = require('fs');
         await this.page.goto(this.host + '/coremainsubmenus');
 
         try {
-            console.log("accessing to submenu creation page");
-            await this.page.evaluate(() => document.getElementById('addsubmenu').click());
-        
-            console.log("filling submenu form");
-            // set name
-            await this.page.waitForSelector('#name');
-            await this.page.evaluate(val => document.getElementById('name').value = val, subMenuName);
+            let subMenuExists = await this.checkExistenceInTable(spaceConfig.name + "subMenu");
+            if (!subMenuExists) {
+                console.log("accessing to submenu creation page");
+                await this.page.evaluate(() => document.getElementById('addsubmenu').click());
             
-            // set parent menu
-            await this.page.waitForSelector('#id_main_menu');
-            await this.page.evaluate(config => {
-                let mainMenuSelector = document.getElementById('id_main_menu');
-                let options = [...mainMenuSelector.options].map(function(el) {
-                    return {id: el.value, text: el.text};
-               });
-                mainMenuSelector.value = options.find(option => option.text == (config.name + "Menu")).id ;
-            }, spaceConfig);
-            await this.page.evaluate(() => document.getElementById('editmainsubmenuformsubmit').click());
+                console.log("filling submenu form");
+                // set name
+                await this.page.waitForSelector('#name');
+                await this.page.evaluate(val => document.getElementById('name').value = val, subMenuName);
+                
+                // set parent menu
+                await this.page.waitForSelector('#id_main_menu');
+                await this.page.evaluate(config => {
+                    let mainMenuSelector = document.getElementById('id_main_menu');
+                    let options = [...mainMenuSelector.options].map(function(el) {
+                        return {id: el.value, text: el.text};
+                });
+                    mainMenuSelector.value = options.find(option => option.text == (config.name + "Menu")).id ;
+                }, spaceConfig);
+                await this.page.evaluate(() => document.getElementById('editmainsubmenuformsubmit').click());
+            } else {
+                console.log("subMenu " + (spaceConfig.name + "subMenu") + " already exists");
+            }
+            // TODO: add properties verification script
         } catch (err) {
             console.error("submenu creation failed", err.message);
         }
@@ -192,35 +233,40 @@ const fs = require('fs');
         await this.page.goto(this.host + '/spaceadmin');
 
         try {
-            console.log("accessing to space creation page");
-            await this.page.evaluate(() => document.getElementById('addspace').click());
+            let spaceExists = await this.checkExistenceInTable(spaceConfig.name);
+            if (!spaceExists) {
+                console.log("accessing to space creation page");
+                await this.page.evaluate(() => document.getElementById('addspace').click());
 
-            console.log("filling space form");
-            
-            // Fill form fields
-            await this.page.waitForSelector('#admins');
-            await this.page.evaluate(config => {
-                Object.entries(config).forEach((entry) => {
-                    if (entry[0] != "adminFullName") {
-                        document.getElementById(entry[0]).value = entry[1];
-                    }
-                });
+                console.log("filling space form");
                 
-               let element = document.getElementById('admins');
-               let options = [...element.options].map(function(el) {
-                    return {id: el.value, text: el.text};
-               });
-               element.value = options.find(option => option.text == config.adminFullName).id;
-            }, spaceConfig);
+                // Fill form fields
+                await this.page.waitForSelector('#admins');
+                await this.page.evaluate(config => {
+                    Object.entries(config).forEach((entry) => {
+                        if (entry[0] != "adminFullName") {
+                            document.getElementById(entry[0]).value = entry[1];
+                        }
+                    });
+                    
+                let element = document.getElementById('admins');
+                let options = [...element.options].map(function(el) {
+                        return {id: el.value, text: el.text};
+                });
+                element.value = options.find(option => option.text == config.adminFullName).id;
+                }, spaceConfig);
 
-            // Click save button
-            await this.page.waitForSelector('#corespaceadmineditsubmit');
-            await this.page.evaluate(val => document.getElementById('corespaceadmineditsubmit').click());
+                // Click save button
+                await this.page.waitForSelector('#corespaceadmineditsubmit');
+                await this.page.evaluate(val => document.getElementById('corespaceadmineditsubmit').click());
 
-            // if "space already exist" page, log then continue
-            let spaceCheck = await this.isErrorPage();
-            if (spaceCheck.error) {
-                throw Error(spaceCheck.text);
+                // if "space already exist" page, log then continue
+                let spaceCheck = await this.isErrorPage();
+                if (spaceCheck.error) {
+                    throw Error(spaceCheck.text);
+                }
+            } else {
+                console.log("space " + (spaceConfig.name) + " already exists");
             }
         } catch (err) {
             console.error("space creation failed:", err.message);
@@ -236,25 +282,7 @@ const fs = require('fs');
     async checkSpaceCreation(spaceConfig) {
         // check if space exists and has the right attributes
         try {
-            // go find our new space id
-            await this.page.goto(this.host + '/spaceadmin');
-            await this.page.waitForSelector('#app');
-            let spaceId = await this.page.evaluate((config) => {
-                let tableCells = document.getElementsByTagName('td');
-                let newSpaceNameCell = [...tableCells].find(cell => {
-                    return cell.innerText === config.name;
-                });
-                if (newSpaceNameCell) {
-                    let newSpaceLine = newSpaceNameCell.parentElement;
-                    return [...newSpaceLine.children].find(child => {
-                        return child.innerText.includes("corespace");
-                    }).innerText.split('corespace/').pop();
-                } else {
-                    throw Error("our new space hasn't been found");
-                }
-            }, spaceConfig);
-
-            // navigate to its space edition page then compare its values with our config values
+            let spaceId = await this.getTestSpaceId(spaceConfig.name);
             await this.page.goto(this.host + '/spaceadminedit/' + spaceId);
             await this.page.waitForSelector('#app');
 
@@ -264,8 +292,9 @@ const fs = require('fs');
                 status: spaceConfig.status,
                 support: spaceConfig.support
             };
+
             let selectors = {admins: spaceConfig.adminFullName};
-            let isSpaceOk = this.compareWithFormValues(inputFields, selectors);
+            let isSpaceOk = await this.compareWithFormValues(inputFields, selectors);
             if (!isSpaceOk) {
                 throw Error("space data do not match");
             }
@@ -287,30 +316,84 @@ const fs = require('fs');
      * @returns {Promise<Boolean>} dataMatch
      */
     async compareWithFormValues(inputFields = {}, selectors = {}) {
-        let dataToCompare = {inputFields: inputFields, selectors: selectors}
-
+        let result;
+        let dataToCompare = {inputFields: inputFields, selectors: selectors};
         await this.page.waitForSelector('#app');
-        return this.page.evaluate(data => {
-            let dataMatch = true;
-            
-            Object.entries(data.inputFields).forEach((entry) => {
-                // Test input fields
-                if (document.getElementById(entry[0]).value != entry[1]) {
-                    dataMatch = false;
-                }
-            });
-            
-            Object.entries(data.selectors).forEach((entry) => {
-                // Test selectors
-                let selector = document.getElementById(entry[0]);
-                let selectedText = selector.options[selector.selectedIndex].text;
-                if (selectedText != entry[1]) {
-                    dataMatch = false;
-                }
-            });
+        try {
+            result = await this.page.evaluate(data => {
+                let dataMatch = true;
+                
+                Object.entries(data.inputFields).forEach((entry) => {
+                    // Test input fields
+                    if (document.getElementById(entry[0]).value != entry[1]) {
+                        dataMatch = false;
+                    }
+                });
+                
+                Object.entries(data.selectors).forEach((entry) => {
+                    // Test selectors
+                    let selector = document.getElementById(entry[0]);
+                    let selectedText = selector.options[selector.selectedIndex].text;
+                    if (selectedText != entry[1]) {
+                        dataMatch = false;
+                    }
+                });
 
-            return dataMatch;
-        }, dataToCompare);
+                return dataMatch;
+            }, dataToCompare);
+        } catch(err) {
+            console.log("object comparison failed:", err);
+        }
+        return result;
+    }
+
+    /**
+     * Checks if a menu, subMenu or space already exists in its listing page
+     * 
+     * @param {string} name of element to find
+     * 
+     * @returns {async boolean}
+     * 
+     */
+    async checkExistenceInTable(name) {
+        return this.page.evaluate((needle) => {
+            let tableCells = document.getElementsByTagName('td');
+            let menuFound = [...tableCells].find(cell => {
+                return cell.innerText === needle;
+            });
+            return menuFound ? true : false;
+        }, name);
+    }
+
+    /**
+     * Gets spaceId from spaceName
+     * 
+     * @param {string} spaceName 
+     * @returns {asyncstring}
+     */
+    async getTestSpaceId(spaceName) {
+        let spaceId;
+        await this.page.goto(this.host + '/spaceadmin');
+        await this.page.waitForSelector('#app');
+        try {
+            spaceId = await this.page.evaluate((name) => {
+                let tableCells = document.getElementsByTagName('td');
+                let spaceNameCell = [...tableCells].find(cell => {
+                    return cell.innerText === name;
+                });
+                if (spaceNameCell) {
+                    let spaceLine = spaceNameCell.parentElement;
+                    return [...spaceLine.children].find(child => {
+                        return child.innerText.includes("corespace");
+                    }).innerText.split('corespace/').pop();
+                } else {
+                    throw Error("test space hasn't been found");
+                }
+            }, spaceName);
+        } catch(err) {
+            console.log("fetching spaceId failed:" + err);
+        }
+        return spaceId;
     }
 
     /**
@@ -319,7 +402,7 @@ const fs = require('fs');
      * - removes parameters
      * 
      * @param {string} url
-     * @returns {string} page name
+     * @returns {string}
      */
     pageNameFromUrl(url) {
         let pageName = "";
@@ -335,7 +418,7 @@ const fs = require('fs');
      * @property {boolean} error - does an error text display?
      * @property {string} text - text displayed
      *  
-     * @returns {CustomError} error
+     * @returns {async CustomError} error
      */
     async isErrorPage() {
         await this.page.waitForSelector('#app');
