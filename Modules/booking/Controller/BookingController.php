@@ -279,7 +279,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($menuData["resources"])) {
@@ -409,7 +409,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
@@ -544,7 +544,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // view
         $this->render(array(
@@ -678,7 +678,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
