@@ -88,7 +88,8 @@ const fs = require('fs');
      */
     async createNewSpace(spaceConfig) {
         console.log("creating menu, space, submenu and item");
-        await this.createMenu(spaceConfig);
+        // await this.createMenu(spaceConfig);
+        await this.createMenuElement("menu", spaceConfig);
         await this.createSubMenu(spaceConfig);
         await this.createSpace(spaceConfig);
         await this.checkSpaceCreation(spaceConfig);
@@ -146,6 +147,77 @@ const fs = require('fs');
             await this.page.evaluate(() => document.getElementById('menusactivationFormsubmit').click());
         } catch(err) {
             console.error("[MODULES]", moduleName + " configuration failed", err.message);
+        }
+    }
+
+    /**
+     * Creates a new menu element  
+     * 
+     * @param {string} elementType ("menu", "subMenu", "item" or "space")
+     * @param {SpaceConfig} spaceConfig
+     * @param {boolean} duplicates authorize duplication
+     * 
+     */
+    async createMenuElement(elementType, spaceConfig, duplicates = false) {
+        console.log("[MENU ELEMENTS]", "creating " + elementType);
+        let pageName, validationBtn;
+        let parentElementName = null;
+        const elementName = spaceConfig.name + this.capitalize(elementType);
+        switch (elementType) {
+            case "menu":
+                pageName = "coremainmenus";
+                validationBtn = 'editmainmenuformsubmit';
+                break;
+            case "subMenu":
+                pageName = "coremainsubmenus";
+                parentElementName = "id_main_menu";
+                break;
+            case "space":
+                pageName = "spaceadmin";
+                break;
+            case "item":
+                break;
+            default:
+                break;
+        }
+
+        this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
+        [this.page] = await this.browser.pages();
+        await this.page.goto(this.host + '/' + pageName);
+
+        try {
+            let createElement = true;
+            if (!duplicates) {
+                let elementExists = await this.checkExistenceInTable(elementName);
+                createElement = !elementExists;
+            }
+            
+            if (createElement) {
+                await this.page.evaluate(() => document.getElementById('add' + elementType).click());
+                await this.page.waitForSelector('#name');
+                await this.page.evaluate(val => document.getElementById('name').value = val, elementName);
+                
+                if (parentElementName) {
+                    // set parent menu
+                    await this.page.waitForSelector('#' + parentElementName);
+                    await this.page.evaluate(config => {
+                        let mainMenuSelector = document.getElementById(parentElementName);
+                        let options = [...mainMenuSelector.options].map(function(el) {
+                            return {id: el.value, text: el.text};
+                    });
+                        mainMenuSelector.value = options.find(option => option.text == (config.name + "Menu")).id ;
+                    }, spaceConfig);
+
+                    
+                } else {
+                    console.log("[MENUS]", elementType + " " + elementName + " already exists");
+                }
+                await this.page.waitForSelector('#' + validationBtn);
+                await this.page.evaluate(() => document.getElementById(validationBtn).click());
+            }
+            // TODO: add properties verification script
+        } catch (err) {
+            console.error("[MENU ELEMENTS]", "menu creation failed", err.message);
         }
     }
 
@@ -431,6 +503,10 @@ const fs = require('fs');
             }
             return {error: error, text: errorText};
         });
+    }
+
+    capitalize(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
     }
 
     /**
