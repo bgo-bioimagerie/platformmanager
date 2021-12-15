@@ -23,15 +23,15 @@ const fs = require('fs');
             this.login = this.envVars.PFM_ADMIN ?? "";
             this.password = this.envVars.PFM_ADMIN_PASSWORD ?? "";
             this.host = this.envVars.PFM_WEB_URL ?? "http://localhost:3000";
-            console.log('envVars ok');
+            console.log("[CONF]", 'envVars ok');
         }).catch(error => {
-            console.error(error);
+            console.error("[CONF]", error);
         });
         this.browser = await puppeteer.launch({headless: false});
         this.browserEndpoint = await this.browser.wsEndpoint();
-        console.log('browser ok');
+        console.log("[CONF]", 'browser ok');
         [this.page] = await this.browser.pages();
-        console.log('page created');
+        console.log("[CONF]", 'page created');
     }
 
     /**
@@ -65,10 +65,9 @@ const fs = require('fs');
      * Tests connection to PFM
      */
     async connection() {
-        console.log("connecting to PFM");
+        console.log("[CONNECTION]", "connecting to PFM");
         await this.page.goto(this.host + "/coreconnection");
         try {
-            console.log("typing login and password");
             let credentials = {login: this.login, password: this.password};
             await this.page.waitForSelector('#app');
             this.page.evaluate(cred => {
@@ -77,7 +76,7 @@ const fs = require('fs');
             }, credentials);
             await this.page.evaluate(() => document.getElementById('connectionBtn').click());
         } catch (err) {
-            console.error("connection failed: ", err.message);
+            console.error("[CONNECTION]", "connection failed: ", err.message);
         }
     }
 
@@ -103,18 +102,22 @@ const fs = require('fs');
      * 
      */
      async setSpaceBasicConfiguration(spaceConfig) {
-        console.log("setting space basic configuration");
+        console.log("[SPACE CONFIG]", "setting up space basic configuration");
         try {
-            // go find our new space id
             let spaceId = await this.getTestSpaceId(spaceConfig.name);
-            // navigate to space home page
             await this.page.goto(this.host + '/corespace/' + spaceId);
             await this.page.waitForSelector('#app');
-            console.log("Got into space home page");
-
-            await this.createModule("resources", 4, spaceId);
+            let modulesConfig = [
+                {"name": "resources", "auth": 3},
+                {"name": "clients", "auth": 3},
+                {"name": "booking", "auth": 2},
+            ]
+            for await (const module of modulesConfig) {
+                await this.createModule(module.name, module.auth, spaceId);
+                console.log("[MODULES]", module.name + " configuration succeeded!");
+            }
         } catch(err) {
-            console.error("basic space configuration failed", err.message);
+            console.error("[SPACE]","basic space configuration failed", err.message);
         }
     }
 
@@ -127,15 +130,23 @@ const fs = require('fs');
      * 
      */
      async createModule(moduleName, authLevel, spaceId) {
-        console.log("creating module " +  moduleName);
+        console.log("[MODULES]", "creating module " +  moduleName);
         //activateModule
-        await this.page.goto(this.host + '/spaceConfigModule/' + spaceId + '/' + moduleName);
-        await this.page.waitForSelector('#app');
-        await this.page.evaluate( data => {
-            let roleMenu = document.getElementById(data.name + 'menustatus');
-            roleMenu.value = data.auth;
-        }, {name: moduleName, auth: authLevel});
-        await this.page.evaluate(() => document.getElementById('menusactivationFormsubmit').click());
+        try {
+            await this.page.goto(this.host + '/' + moduleName + 'config/' + spaceId);
+            await this.page.waitForSelector('#' + data.name + 'menustatus');
+            await this.page.evaluate( data => {
+                let roleMenu = document.getElementById(data.name + 'menustatus');
+                let settingsRoleMenu = document.getElementById(data.name + 'settingsmenustatus') ?? null;
+                roleMenu.value = data.auth;            
+                if (settingsRoleMenu) {
+                    settingsRoleMenu.value = (data.auth < 4) ? (data.auth + 1) : 4;
+                }
+            }, {name: moduleName, auth: authLevel});
+            await this.page.evaluate(() => document.getElementById('menusactivationFormsubmit').click());
+        } catch(err) {
+            console.error("[MODULES]", moduleName + " configuration failed", err.message);
+        }
     }
 
     /**
@@ -146,7 +157,7 @@ const fs = require('fs');
      * 
      */
     async createMenu(spaceConfig, duplicates = false) {
-        console.log("creating menu");
+        console.log("[MENUS]", "creating menu");
         let menuName = spaceConfig.name + "Menu";
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
         [this.page] = await this.browser.pages();
@@ -160,20 +171,17 @@ const fs = require('fs');
             }
             
             if (createMenu) {
-                console.log("accessing to menu creation page");
                 await this.page.evaluate(() => document.getElementById('addmenu').click());
-
-                console.log("filling menu form");
                 await this.page.waitForSelector('#name');
                 await this.page.evaluate(val => document.getElementById('name').value = val, menuName);
                 await this.page.waitForSelector('#editmainmenuformsubmit');
                 await this.page.evaluate(() => document.getElementById('editmainmenuformsubmit').click());
             } else {
-                console.log("menu " + (spaceConfig.name + "Menu") + " already exists");
+                console.log("[MENUS]", "menu " + (spaceConfig.name + "Menu") + " already exists");
             }
             // TODO: add properties verification script
         } catch (err) {
-            console.error("menu creation failed", err.message);
+            console.error("[MENUS]", "menu creation failed", err.message);
         }
     }
 
@@ -184,7 +192,7 @@ const fs = require('fs');
      * 
      */
     async createSubMenu(spaceConfig, duplicates = false) {
-        console.log("creating subMenu");
+        console.log("[MENUS]", "creating subMenu");
         let subMenuName = spaceConfig.name + "subMenu";
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
         [this.page] = await this.browser.pages();
@@ -193,11 +201,7 @@ const fs = require('fs');
         try {
             let subMenuExists = await this.checkExistenceInTable(spaceConfig.name + "subMenu");
             if (!subMenuExists) {
-                console.log("accessing to submenu creation page");
                 await this.page.evaluate(() => document.getElementById('addsubmenu').click());
-            
-                console.log("filling submenu form");
-                // set name
                 await this.page.waitForSelector('#name');
                 await this.page.evaluate(val => document.getElementById('name').value = val, subMenuName);
                 
@@ -212,11 +216,11 @@ const fs = require('fs');
                 }, spaceConfig);
                 await this.page.evaluate(() => document.getElementById('editmainsubmenuformsubmit').click());
             } else {
-                console.log("subMenu " + (spaceConfig.name + "subMenu") + " already exists");
+                console.log("[MENUS]", "subMenu " + (spaceConfig.name + "subMenu") + " already exists");
             }
             // TODO: add properties verification script
         } catch (err) {
-            console.error("submenu creation failed", err.message);
+            console.error("[MENUS]", "submenu creation failed", err.message);
         }
     }
 
@@ -227,7 +231,7 @@ const fs = require('fs');
      * 
      */
     async createSpace(spaceConfig, duplicates = false) {
-        console.log("creating space");
+        console.log("[SPACES]", "creating space");
         this.browser = await puppeteer.connect({ browserWSEndpoint: this.browserEndpoint });
         [this.page] = await this.browser.pages();
         await this.page.goto(this.host + '/spaceadmin');
@@ -235,12 +239,7 @@ const fs = require('fs');
         try {
             let spaceExists = await this.checkExistenceInTable(spaceConfig.name);
             if (!spaceExists) {
-                console.log("accessing to space creation page");
                 await this.page.evaluate(() => document.getElementById('addspace').click());
-
-                console.log("filling space form");
-                
-                // Fill form fields
                 await this.page.waitForSelector('#admins');
                 await this.page.evaluate(config => {
                     Object.entries(config).forEach((entry) => {
@@ -266,10 +265,10 @@ const fs = require('fs');
                     throw Error(spaceCheck.text);
                 }
             } else {
-                console.log("space " + (spaceConfig.name) + " already exists");
+                console.log("[SPACES]", "space " + (spaceConfig.name) + " already exists");
             }
         } catch (err) {
-            console.error("space creation failed:", err.message);
+            console.error("[SPACES]", "space creation failed:", err.message);
         }
     }
 
@@ -298,9 +297,9 @@ const fs = require('fs');
             if (!isSpaceOk) {
                 throw Error("space data do not match");
             }
-            console.log("space creation ok");
+            console.log("[SPACES]", "space creation ok");
         } catch(err) {
-            console.error("space check failed", err.message);
+            console.error("[SPACES]", "space check failed", err.message);
         }
     }
 
