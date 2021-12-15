@@ -6,6 +6,7 @@
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [booking] Remove submit on change from user select in reservation page
 * [booking] fix bk_scheduling fetching from booking view
 * [self_registration] add structures names to listed spaces
 * [clients] fix company infos
