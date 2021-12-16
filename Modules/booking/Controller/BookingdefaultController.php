@@ -128,7 +128,20 @@ class BookingdefaultController extends BookingabstractController {
 
     public function editreservationqueryAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-        //FIXME: editng an existing reservation does not seem to work
+        $lang = $this->getLanguage();
+        $modelResource = new ResourceInfo();
+        $id_resourcecategory = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
+        $modelAuth = new BkAuthorization();
+        $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $id_resourcecategory, $_SESSION["id_user"]);
+        $modelSpace = new CoreSpace();
+        $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
+        if (!$isUserAuthorizedToBook && $role < CoreSpace::$MANAGER) {
+            $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
+            $_SESSION['flashClass'] = "warning";
+            $this->redirect("booking/".$id_space);
+            return;
+        }
+
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
         $id = $this->request->getParameter("id");
@@ -141,12 +154,9 @@ class BookingdefaultController extends BookingabstractController {
         $full_description = $this->request->getParameterNoException("full_description");
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
 
-        $lang = $this->getLanguage();
         $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
         $dateResaStartArray = explode("-", $dateResaStart);
 
-
-        $modelResource = new ResourceInfo();
         $ri = $modelResource->get($id_space ,$id_resource);
         if(!$ri){
             Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
@@ -553,10 +563,13 @@ class BookingdefaultController extends BookingabstractController {
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
 
-        $form->addSelect("id_resource", ResourcesTranslator::resource($lang), $resources["names"], $resources["ids"], $id_resource);
+        $resourceName = $modelResource->get($id_space, $id_resource)['name'];
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
+            $form->addSelect("id_resource", ResourcesTranslator::resource($lang), $resources["names"], $resources["ids"], $id_resource);
             $form->addSelect("recipient_id", CoreTranslator::User($lang), $users["names"], $users["ids"], $resaInfo["recipient_id"]);
         } else {
+            $form->addText('resource_name', ResourcesTranslator::resource($lang), true, $resourceName, 'disabled');
+            $form->addHidden("id_resource", $id_resource);
             $form->addHidden("recipient_id", $resaInfo["recipient_id"]);
         }
         // responsible
