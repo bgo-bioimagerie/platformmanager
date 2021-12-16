@@ -14,7 +14,7 @@ require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/services/Model/SeStats.php';
 require_once 'Modules/services/Model/SeOrigin.php';
-
+require_once 'Modules/services/Model/SeVisa.php';
 require_once 'Modules/invoices/Model/InVisa.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
