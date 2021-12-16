@@ -141,7 +141,7 @@ SeProject -> CoreUser [label="id_resp"];
 SeProject ->CoreUser [label="id_user"];
 SeProject -> SeOrigin [label="id_origin"];
 SeProject -> CoreUser [label="closed_by"];
-SeProject -> CoreUser [label="in_charge"];
+SeProject -> SeVisa [label="in_charge"];
 
 SePurchase;
 SePurchaseItem -> SePurcharse [label="id_purchase"];
