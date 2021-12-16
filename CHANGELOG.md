@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3
+
+* [booking] clicking on blank days in month view gives access to day area view
+
 ## 2.2
 
 **Warning**: [admin] Ldap configuration modification from ini or env variables

@@ -106,8 +106,11 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                             }
                         }
                         if (!$found) {
+                                $tile_date = date("Y-m-d", mktime(0, 0, 0, $mois, $i, $annee));
                             ?>
-                    <div style="height:45px;"> </div>
+                            <a href="bookingdayarea/<?php echo $id_space .'/'.$tile_date?>">
+                                <div style="height:45px;"></div>
+                            </a>
                     <?php
                 }
 
@@ -125,6 +128,6 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
             ?></tr>
         </table>
     </div>
-            <?php
-        }
+<?php
+}
         
