@@ -3,6 +3,8 @@
 ## 2.1.11
 
 * [pfm-events] handle helpdesk events (but do nothing)
+* [statistics] fix service/projects statistics, invalid responsible and
+* [statistics] add count of projects per client and responsible (in charge) #455
 * [core] manage db reconnection in case of failure
 
 ## 2.1.10
