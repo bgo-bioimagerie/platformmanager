@@ -307,7 +307,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         $curentLine = 2;
 
         $modelVisa = new SeVisa();
-        $pstats = ['in_charge' => [], 'client' => []];
+        $pstats = ['in_charge' => [], 'client' => [], 'institution' => []];
         
 
         foreach ($openedProjects as $proj) {
@@ -321,6 +321,9 @@ class ServicesstatisticsprojectController extends ServicesController {
             $pstats['in_charge'][$visaName] += 1;
             if(!array_key_exists($unitName, $pstats['client'])) { $pstats['client'][$unitName] = 0; }
             $pstats['client'][$unitName] += 1;
+            $institutionName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
+            if(!array_key_exists($institutionName, $pstats['institution'])) { $pstats['institution'][$institutionName] = 0; }
+            $pstats['institution'][$institutionName] += 1;
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $visaName);
             
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -630,6 +633,22 @@ class ServicesstatisticsprojectController extends ServicesController {
             }
         }
         for ($col = 'G'; $col !== 'I'; $col++) {
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $curentLine = 3;
+        $spreadsheet->getActiveSheet()->setCellValue('J2', 'Projects per institution');
+        foreach($pstats['institution'] as $key=>$value) {
+                $spreadsheet->getActiveSheet()->setCellValue('J'.$curentLine, $key);
+                $spreadsheet->getActiveSheet()->setCellValue('K'.$curentLine, $value);
+                $curentLine += 1;
+	     }
+        for ($r = 1; $r <= $curentLine; $r++) { 
+            for ($c = 'J'; $c !== 'L'; $c++) {
+                $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+            }
+        }
+        for ($col = 'J'; $col !== 'L'; $col++) {
             $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
         
