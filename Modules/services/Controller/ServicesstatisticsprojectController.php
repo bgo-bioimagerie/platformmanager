@@ -612,11 +612,11 @@ class ServicesstatisticsprojectController extends ServicesController {
         	$curentLine += 1;
         }
         for ($r = 1; $r <= $curentLine; $r++) {
-            for ($c = 'D'; $c !== 'H'; $c++) {
+            for ($c = 'D'; $c !== 'F'; $c++) {
                 $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
             }
         }
-        for ($col = 'D'; $col !== 'H'; $col++) {
+        for ($col = 'D'; $col !== 'F'; $col++) {
             $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
 
