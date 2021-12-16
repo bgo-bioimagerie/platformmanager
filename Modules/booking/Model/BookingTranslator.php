@@ -1636,6 +1636,13 @@ class BookingTranslator {
         return "Booking access";
     }
 
+    public static function resourceBookingUnauthorized($lang) {
+        if ($lang == "fr") {
+            return "vous n'êtes pas autorisé à créer/modifier de réservations pour cette ressource";
+        }
+        return "You have no authorization to create nor edit reservations for this resource";
+    }
+
     public static function MissingColorCode($lang) {
         if ($lang == "fr") {
             return "Vous devez créer au moins un code couleur afin de pouvoir éditer les horaires";
