@@ -311,7 +311,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         
 
         foreach ($openedProjects as $proj) {
-            // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
+            // responsable, client, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
 
             $unitName = $modelClient->getName($id_space ,$proj["id_resp"]);
@@ -421,7 +421,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         $curentLine = 2;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
 
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Client($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Institution($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Total_HT($lang));
@@ -677,7 +677,7 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->setCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Client($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Institution($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
@@ -772,7 +772,7 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Client($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Institution($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
         //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
