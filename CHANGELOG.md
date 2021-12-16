@@ -6,6 +6,8 @@
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [statistics] fix service/projects statistics, invalid responsible and
+ add count of projects per client and responsible (in charge) #455
 * [booking] Fix reservation form unexpected submissions
 * [booking] fix bk_scheduling fetching from booking view
 * [self_registration] add structures names to listed spaces
