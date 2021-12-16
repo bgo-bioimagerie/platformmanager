@@ -677,7 +677,7 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->setCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Client($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
@@ -772,7 +772,7 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Client($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
         //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
@@ -813,7 +813,9 @@ class ServicesstatisticsprojectController extends ServicesController {
             $curentLine++;
             
             $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]);
+            $visaName = $modelUser->getUserFUllName($visa["id_user"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $visaName);
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
