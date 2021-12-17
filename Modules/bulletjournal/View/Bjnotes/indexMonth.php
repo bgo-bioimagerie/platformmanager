@@ -1,4 +1,4 @@
-<div class="col-xs-12" style="border-bottom: 1px solid #666;">
+<div class="col-xs-12 col-md-10" style="border-bottom: 1px solid #666;">
     <div class="col-xs-10">
         <p style="text-transform: uppercase; font-weight: bold; color: #666;">
             <b>

@@ -81,7 +81,7 @@ class BulletjournalconfigController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
 
         $form->addSelect("bulletjournalmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("$displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu ?? 0);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bulletjournalconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

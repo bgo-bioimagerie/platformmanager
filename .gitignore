@@ -1,0 +1,5 @@
+data
+vendor
+.env
+Config/conf.ini
+Config/conf.yaml

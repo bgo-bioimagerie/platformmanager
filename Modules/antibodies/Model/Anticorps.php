@@ -132,7 +132,7 @@ class Anticorps extends Model {
         $sql = "SELECT no_h2p2 from ac_anticorps WHERE id_space=? AND deleted=0 order by no_h2p2 DESC;";
         $user = $this->runRequest($sql, array($id_space));
         $tmp = $user->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0] : null;
     }
 
     public function isAnticorps($id_space ,$no_h2p2) {
@@ -164,10 +164,14 @@ class Anticorps extends Model {
      * @return string
      */
     public function addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage) {
-        $cvm = new CoreVirtual();
+        //$cvm = new CoreVirtual();
         $new_no_h2p2 = $no_h2p2;
         if(!$no_h2p2) {
-            $new_no_h2p2 = $cvm->new('anticorps');
+            $redis = new Redis();
+            $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+            $new_no_h2p2 = $redis->incr("pfm:$id_space:antibodies");
+            $redis->close();
+            //$new_no_h2p2 = $cvm->new('anticorps');
         }
 
         $sql = "insert into ac_anticorps(id_space, nom, no_h2p2, fournisseur, id_source, reference, 

@@ -46,7 +46,8 @@ class MailerconfigController extends CoresecureController {
                    $this->request->getParameter("usermenustatus"),
                    $this->request->getParameter("displayMenu"),
                    0,
-                   $this->request->getParameter("displayColor")
+                   $this->request->getParameter("displayColor"),
+                   $this->request->getParameter("displayColorTxt")
                    );
             
             $this->redirect("mailerconfig/".$id_space);
@@ -75,6 +76,7 @@ class MailerconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "mailer");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "mailer");
         $displayColor = $modelSpace->getSpaceMenusColor($id_space, "mailer");
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "mailer");
         
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -84,6 +86,7 @@ class MailerconfigController extends CoresecureController {
         $form->addSelect("usermenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor("displayColorTxt", CoreTranslator::color($lang), false, $displayColorTxt);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

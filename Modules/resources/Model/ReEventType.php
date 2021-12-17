@@ -30,9 +30,9 @@ class ReEventType extends Model {
     }
 
     public function getName($id_space, $id) {
-        $sql = "SELECT name FROM re_event_type WHERE id=? id_space=? AND deleted=0";
+        $sql = "SELECT name FROM re_event_type WHERE id=? AND id_space=? AND deleted=0";
         $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $tmp[0];
+        return $tmp? $tmp[0] : null;
     }
     
     public function getForSpace($id_space){

@@ -257,9 +257,9 @@ class InvoicesTranslator {
 
     public static function uploadTemplate($lang) {
         if ($lang == "fr") {
-            return "Téléverser modèle";
+            return "Téléverser modèle (format Twig)";
         }
-        return "Upload template";
+        return "Upload template (Twig format)";
     }
 
     public static function Upload($lang) {
@@ -358,6 +358,13 @@ class InvoicesTranslator {
             return "Télécharger";
         }
         return "Download";
+    }
+
+    public static function DownloadTemplate($lang) {
+        if ($lang == "fr") {
+            return "Télécharger template";
+        }
+        return "Download template";
     }
 
     public static function TheTemplateHasBeenUploaded($lang) {

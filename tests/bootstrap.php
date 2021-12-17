@@ -6,6 +6,11 @@ session_start();
 $logger = Configuration::getLogger();
 $logger->info("Installing database from ". Configuration::getConfigFile());
 
+// drop all content if exists
+$cdb = new CoreDB();
+$cdb->dropAll();
+
+
 // Create db release table if not exists
 $cdb = new CoreDB();
 $cdb->createTable();

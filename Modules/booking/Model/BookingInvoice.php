@@ -47,6 +47,7 @@ class BookingInvoice extends InvoiceModel {
         //echo "pass 1<br/>";
         $packagesPrices = $this->getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
 
+
         // get all the reservations for each resources
         $total_ht = 0;
         $modelCal = new BkCalendarEntry();
@@ -73,6 +74,10 @@ class BookingInvoice extends InvoiceModel {
                 if ($reservation["package_id"] > 0) {
                     $userPackages[$reservation["package_id"]] ++;
                 } else {
+                    if(!$timePrices || !array_key_exists($res['id'], $timePrices)) {
+                        Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
+                        throw new PfmParamException("No time pricing defined!", 500);
+                    }
                     $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
                     $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
@@ -154,11 +159,11 @@ class BookingInvoice extends InvoiceModel {
     public function details($id_space, $invoice_id, $lang){
 
         // all users in the invoice
-        $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE invoice_id=? AND AND deleted=0 AND id_space=?";
+        $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE invoice_id=? AND deleted=0 AND id_space=?";
         $users = $this->runRequest($sql, array($invoice_id, $id_space))->fetchAll();
 
         // all resources in the invoice
-        $sqlr = "SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE invoice_id=? AND AND deleted=0 AND id_space=?";
+        $sqlr = "SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE invoice_id=? AND deleted=0 AND id_space=?";
         $resources = $this->runRequest($sqlr, array($invoice_id, $id_space))->fetchAll();
 
 
@@ -298,6 +303,10 @@ class BookingInvoice extends InvoiceModel {
         $nb_hours_we = 0;
 
         // extract some variables
+        if(!$timePrices) {
+            Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
+            throw new PfmParamException("No time pricing defined!", 500);
+        }
         $we_array = $timePrices["we_array"];
         $night_start = $timePrices['night_start'];
         $night_end = $timePrices['night_end'];

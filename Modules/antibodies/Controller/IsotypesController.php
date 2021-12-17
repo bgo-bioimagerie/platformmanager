@@ -5,8 +5,9 @@ require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Isotype.php';
+require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
-class IsotypesController extends CoresecureController {
+class IsotypesController extends AntibodiesController {
 
     /**
      * User model object

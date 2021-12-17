@@ -28,7 +28,9 @@ Optional sections:
 
 ## LDAP configuration
 
-If users are to be authenticated via LDAP, an Config/ldap.ini is required
+If users are to be authenticated via LDAP, ldap settings must be set in Config/conf.ini or
+env variables.
+Confgiguration via a Config/ldap.ini is file is still supported for backward compatibility
 (see ldap.ini.sample). A single LDAP system is used for all spaces access
 in this case, though local users can still be used in parallel.
 
@@ -38,3 +40,14 @@ Most configuration file variables can be superseeded by environment
 variables, usually in format **PFM_VARNAME**, *PFM_ADMIN_USER* for example for *admin_user* file config equivalent.
 
 See *docker* section.
+
+## Welcome page
+
+The default welcome page displays content of the first file found in *data* directory:
+
+* welcome_[en|fr].md
+* welcome_[en|fr].html*
+* welcome.md
+* welcome.html
+
+Files in markdown (.md) are converted to HTML.

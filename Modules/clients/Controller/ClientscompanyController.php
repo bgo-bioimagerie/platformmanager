@@ -6,13 +6,14 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClCompany.php';
+require_once 'Modules/clients/Controller/ClientsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientscompanyController extends CoresecureController {
+class ClientscompanyController extends ClientsController {
 
     /**
      * User model object
@@ -35,20 +36,13 @@ class ClientscompanyController extends CoresecureController {
      * Page showing a table containing all the providers in the database
      */
     public function indexAction($id_space) {
-
-        // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
-        // lang
+
         $lang = $this->getLanguage();
-
         $data = $this->companyModel->getForSpace($id_space);
-
-        // form
-        // build the form
-
         $formKeys = ["name", "address", "zipcode", "city", "county", "country", "tel", "fax", "email", "approval_number"];
         foreach ($formKeys as $key) {
-            $data[$key] = array_key_exists($key, $data) ?: "";
+            $data[$key] = array_key_exists($key, $data) ? $data[$key]: "";
         }
 
         $form = new Form($this->request, "pricing/edit");

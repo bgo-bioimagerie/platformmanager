@@ -6,12 +6,14 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeVisa.php';
+require_once 'Modules/services/Controller/ServicesController.php';
+
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class ServicesvisaController extends CoresecureController {
+class ServicesvisaController extends ServicesController {
 
     private $visaModel;
     

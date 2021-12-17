@@ -16,21 +16,20 @@ require_once 'Modules/services/Model/SePrice.php';
 //require_once 'Modules/services/Model/SeStats.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
-// require_once 'Modules/ecosystem/Model/EcUnit.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 
 // require_once 'externals/PHPExcel/Classes/PHPExcel.php';
+require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
- * 
+ * @deprecated
  * @author sprigent
  * Controller for the home page
  */
 
- // @deprecated?
-class ServicesstatisticsorderController extends CoresecureController {
+class ServicesstatisticsorderController extends ServicesController {
 
     private $serviceModel;
 

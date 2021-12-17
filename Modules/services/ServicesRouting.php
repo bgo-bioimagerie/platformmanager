@@ -4,6 +4,10 @@ require_once 'Framework/Routing.php';
 
 class ServicesRouting extends Routing {
 
+    public function routes($router) {
+        $router->map('GET', '/user/services/projects/[i:id_space]', 'services/servicesprojects/user', 'services_user_projects');
+    }
+
     public function listRoutes() {
 
         // config
@@ -70,7 +74,7 @@ class ServicesRouting extends Routing {
 
 
 
-        $this->addRoute("servicesgetprojectentry", "servicesgetprojectentry", "servicesproject", "getprojectentry", array("id"), array(""), true);
+        $this->addRoute("servicesgetprojectentry", "servicesgetprojectentry", "servicesproject", "getprojectentry", array("id_space", "id"), array("", ""), true);
         $this->addRoute("servicesgetprices", "servicesgetprices", "servicesprices", "getprices", array("id_space", "id_service"), array("", ""), true);
 
 

@@ -10,6 +10,7 @@ class ClPricing extends Model {
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", "");
         $this->setColumnsInfo("color", "varchar(7)", "");
+        $this->setColumnsInfo("txtcolor", "varchar(7)", "");
         $this->setColumnsInfo("type", "int(1)", 0);
         $this->setColumnsInfo("display_order", "int(11)", 0);
         
@@ -26,7 +27,8 @@ class ClPricing extends Model {
             return [
                 "id" => 0,
                 "name" => "",
-                "color" => "",
+                "color" => "#ffffff",
+                "txtcolor" => "#000000",
                 "type" => 0,
                 "display_order" => 0
             ];
@@ -53,14 +55,14 @@ class ClPricing extends Model {
 
     
     
-    public function set($id, $id_space, $name, $color, $type, $display_order) {
+    public function set($id, $id_space, $name, $color, $type, $display_order, $txtcolor="#000000") {
         if (!$id) {
-            $sql = 'INSERT INTO cl_pricings (id_space, name, color, type, display_order) VALUES (?,?,?,?,?)';
-            $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order));
+            $sql = 'INSERT INTO cl_pricings (id_space, name, color, type, display_order, txtcolor) VALUES (?,?,?,?,?, ?)';
+            $this->runRequest($sql, array($id_space, $name, $color, $type, $display_order, $txtcolor));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE cl_pricings SET name=?, color=?, type=?, display_order=? WHERE id=? AND id_space=? AND deleted=0';
-            $this->runRequest($sql, array($name, $color, $type, $display_order, $id, $id_space));
+            $sql = 'UPDATE cl_pricings SET name=?, color=?, type=?, display_order=?, txtcolor=? WHERE id=? AND id_space=? AND deleted=0';
+            $this->runRequest($sql, array($name, $color, $type, $display_order, $txtcolor, $id, $id_space));
             return $id;
         }
     }
@@ -75,6 +77,25 @@ class ClPricing extends Model {
             $ids[] = $d["id"];
         }
         return array("names" => $names, "ids" => $ids);
+    }
+
+    /**
+     * Get a client's pricing
+     * 
+     * @param int|string $id_space
+     * @param int|string $id_client
+     * 
+     * @return array(string) pricings
+     */
+    public function getPricingByClient($id_space, $id_client) {
+        $sql =
+            "SELECT cl_pricings.* FROM cl_pricings
+            INNER JOIN cl_clients
+            ON cl_clients.pricing = cl_pricings.id
+            WHERE cl_clients.id_space = ?
+            AND cl_clients.id = ?
+            AND cl_pricings.deleted = 0";
+            return $this->runRequest($sql, array($id_space, $id_client))->fetchAll();
     }
 
     public function delete($id_space, $id) {

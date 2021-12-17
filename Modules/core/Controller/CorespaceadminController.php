@@ -10,7 +10,6 @@ require_once 'Framework/Form.php';
 require_once 'Framework/FileUpload.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreInstall.php';
-require_once 'Modules/core/Model/CoreBackupDatabase.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
@@ -63,17 +62,17 @@ class CorespaceadminController extends CoresecureController {
         return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml, "data" => ["spaces" => $data]));
     }
     
-    public function editAction($id){
+    public function editAction($id_space){
         // Check user is superadmin or space admin
-        $this->checkSpaceAdmin($id, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
         $modelSpace = new CoreSpace();
-        $space = $modelSpace->getSpace($id);
+        $space = $modelSpace->getSpace($id_space);
         if(!$space) {
             $space = CoreSpace::new();
         }
 
-        $spaceAdmins = $modelSpace->spaceAdmins($id);
+        $spaceAdmins = $modelSpace->spaceAdmins($id_space);
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "corespaceadminedit");
@@ -82,6 +81,7 @@ class CorespaceadminController extends CoresecureController {
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $space["color"]);
+        $form->addColor("txtcolor", CoreTranslator::text_color($lang), false, $space["txtcolor"]);
         $form->addUpload("image", CoreTranslator::Image($lang), $space["image"] ?? null);
         $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
@@ -102,13 +102,14 @@ class CorespaceadminController extends CoresecureController {
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id_space);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
 
         if ($form->check()){ 
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
-            $shortname = str_replace(" ", "", $shortname);
+            # $shortname = str_replace(" ", "", $shortname);
+            $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
             if($space && $space['shortname']) {
                 // Cannot modify shortname once set
                 $shortname = $space['shortname'];
@@ -117,22 +118,24 @@ class CorespaceadminController extends CoresecureController {
             if($isSuperAdmin) {
                 // Only super admin can create
                 Configuration::getLogger()->debug('[admin][space] create space', ["space" => $id, "name" => $this->request->getParameter("name")]);
-                $id = $modelSpace->setSpace($id, $this->request->getParameter("name"), 
+                $id = $modelSpace->setSpace($id_space, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
+                    $this->request->getParameter("txtcolor"),
                     );
             } else {
                 // Space admin can edit
                 Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);
-                $modelSpace->editSpace($id, $this->request->getParameter("name"), 
+                $modelSpace->editSpace($id_space, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
+                    $this->request->getParameter("txtcolor"),
                     );
             }
 
@@ -161,12 +164,12 @@ class CorespaceadminController extends CoresecureController {
         
     }
     
-    public function deleteAction($id){
+    public function deleteAction($id_space){
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $model = new CoreSpace();
-        $model->delete($id);
+        $model->delete($id_space);
         $this->redirect("spaceadmin");
         
     }

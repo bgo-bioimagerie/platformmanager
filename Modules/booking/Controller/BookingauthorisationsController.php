@@ -12,6 +12,7 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -25,12 +26,11 @@ class BookingauthorisationsController extends CoresecureController {
      */
     public function __construct(Request $request) {
         parent::__construct($request);
-        $_SESSION["openedNav"] = "ecusers";
     }
 
     public function indexAction($id_space, $id) {
 
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get all the resources
@@ -95,17 +95,17 @@ class BookingauthorisationsController extends CoresecureController {
 
     public function historyAction($id_space, $id) {
 
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $idArray = explode("_", $id);
         $id_resource_category = intval($idArray[0]);
         if (!is_int($id_resource_category)) {
-            throw new Exception("id resource category is not an int");
+            throw new PfmException("id resource category is not an int");
         }
         $id_user = intval($idArray[1]);
         if (!is_int($id_user)) {
-            throw new Exception("id user is not an int");
+            throw new PfmException("id user is not an int");
         }
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
@@ -156,17 +156,17 @@ class BookingauthorisationsController extends CoresecureController {
     }
 
     public function addAction($id_space, $id) {
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $idArray = explode("_", $id);
         $id_resource_category = intval($idArray[0]);
         if (!is_int($id_resource_category)) {
-            throw new Exception("id resource category is not an int");
+            throw new PfmParamException("id resource category is not an int");
         }
         $id_user = intval($idArray[1]);
         if (!is_int($id_user)) {
-            throw new Exception("id user is not an int");
+            throw new PfmParamException("id user is not an int");
         }
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
@@ -180,6 +180,9 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelVisa = new ReVisa();
         $visa_select = $modelVisa->getForListByCategory($id_space, $id_resource_category);
+        if (empty($visa_select['ids'])) {
+            $_SESSION['flash'] = BookingTranslator::VisaNeeded($lang);
+        }
 
 
         $form = new Form($this->request, "authorisationAddForm");
@@ -188,7 +191,7 @@ class BookingauthorisationsController extends CoresecureController {
         $form->addText("resource", BookingTranslator::Resource(), false, $categoryName, "disabled");
 
 
-        $form->addSelect("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
+        $form->addSelectMandatory("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
         $form->addDate("date", BookingTranslator::DateActivation($lang), true);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsadd/" . $id_space . "/" . $id);
@@ -214,7 +217,7 @@ class BookingauthorisationsController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
-        $this->checkAuthorizationMenuSpace("ecusers", $id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelAuth = new BkAuthorization();
@@ -226,6 +229,7 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelResourcesCategories = new ReCategory();
         // $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
+        $id_resource_category = $data["resource_id"];
         $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
         $categoryName = $recat['name'];
 

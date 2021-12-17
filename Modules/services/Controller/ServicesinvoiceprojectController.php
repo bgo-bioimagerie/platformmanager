@@ -117,17 +117,14 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             $unit_price = $this->request->getParameter("unit_price");
             $comment = $this->request->getParameter("comment");
             $content = "";
+            $id_services = is_array($id_services) ? $id_services : [];
             for ($i = 0; $i < count($id_services); $i++) {
                 $content .= $id_services[$i] . "=" . $quantity[$i] . "=" . $unit_price[$i] . "=" . $comment[$i] . ";";
-                $total_ht += $quantity[$i] * $unit_price[$i];
+                $total_ht += floatval($quantity[$i]) * floatval($unit_price[$i]);
             }
             // apply discount
             $discount = $form->getParameter("discount");
-            
-            //echo "total before = $total_ht <br/>";
             $total_ht = (1-floatval($discount)/100)*$total_ht;
-            //echo "total after = $total_ht <br/>";
-            
             
             $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
             $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
@@ -201,7 +198,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 $itemServices[] = $data[0];
                 $itemQuantities[] = $data[1];
                 $itemPrices[] = $data[2];
-                $total += $data[1] * $data[2];
+                $total += floatval($data[1]) * floatval($data[2]);
                 if (count($data) == 4) {
                     $itemComments[] = $data[3];
                 } else {
@@ -260,8 +257,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $form = new Form($this->request, "ByPeriodForm");
         $form->addSeparator(ServicesTranslator::By_period($lang));
 
-        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), false, $this->request->getParameterNoException("period_begin"));
-        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), false, $this->request->getParameterNoException("period_end"));
+        $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
+        $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
         $respId = $this->request->getParameterNoException("id_resp");
 
         $modelClient = new ClClient();
@@ -345,7 +342,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             for ($i = 0; $i < count($servicesMerged); $i++) {
                 $addedServices[] = $servicesMerged[$i]["id_service"];
                 $quantity = floatval($servicesMerged[$i]["quantity"]);
-                $price = $modelPrice->getPrice($id_space, $servicesMerged[$i]["id_service"], $id_belonging);
+                $price = floatval($modelPrice->getPrice($id_space, $servicesMerged[$i]["id_service"], $id_belonging));
                 $addedServicesCount[] = $quantity;
                 $addedServicesPrice[] = $price;
                 $addedServicesComment[] = $servicesMerged[$i]["comment"];
@@ -382,8 +379,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
     protected function getProjectsResp($id_space, $id_projects) {
 
-        if (empty($id_projects) == 0) {
-            throw new Exception("You need to select at least one project");
+        if (empty($id_projects)) {
+            throw new PfmParamException("You need to select at least one project", 403);
         }
 
         $modelProject = new SeProject();
@@ -392,14 +389,13 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         for ($i = 1; $i < count($id_projects); $i++) {
             $id_respi = $modelProject->getResp($id_space, $id_projects[$i]);
             if ($id_respi != $id_resp) {
-                throw new Exception("Projects must have the same responsible");
+                throw new PfmParamException("Projects must have the same responsible", 403);
             }
         }
         return $id_resp;
     }
 
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
-
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
                         <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
@@ -410,31 +406,23 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 </table>
         ";
 
-
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
         $content = $this->unparseContent($id_space, $id_item);
-        //print_r($invoice);
         $total = 0;
         foreach ($content as $d) {
-            
-            $quantity = $d[1];
-            $unitPrice = $d[2];
-            if($quantity == 1){
-                $quantity = "";
-                $unitPrice = "";
-            }
-            else{
-                $quantity = number_format($d[1], 2, ',', ' ');
-                $unitPrice = number_format($d[2], 2, ',', ' ') . "&euro;";
-            }
+            $rawQuantity = floatval($d[1]);
+            $rawUnitPrice = floatval($d[2]);
+            $name = $d[0];
+            $formattedQuantity = number_format($rawQuantity, 2, ',', ' ');
+            $formattedUnitPrice = number_format($rawUnitPrice, 2, ',', ' ') . "&euro;";
             
             $table .= "<tr>";
-            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . $quantity . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $unitPrice . " </td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[1] * $d[2], 2, ',', ' ') . " &euro;</td>";
+            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $name . "</td>";
+            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . $formattedQuantity . "</td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $formattedUnitPrice . " </td>";
+            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($rawQuantity * $rawUnitPrice, 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
-            $total += $d[1] * $d[2];
+            $total += $rawQuantity * $rawUnitPrice;
         }
         
         $discount = floatval($invoice["discount"]);
@@ -452,8 +440,9 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelClient = new ClClient();
         $unit = "";
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
-        $resp = $modelClient->getContactName($id_space ,$invoice["id_responsible"]);
-        $this->genreratePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
+        $resp = $clientInfos["contact_name"];
+        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
     }
 
 }

@@ -26,6 +26,25 @@ class Router {
         $this->router = new AltoRouter();
     }
 
+    public function listRoutes() {
+        $modulesNames = Configuration::get("modules");
+        $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
+        foreach ($modulesNames as $moduleName) {
+            // get the routing class
+            $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
+            if (file_exists($routingClassUrl)) {
+                require_once ($routingClassUrl);
+                $className = ucfirst($moduleName) . "Routing";
+                $routingClass = new $className ();
+                if(method_exists($routingClass, "routes")){
+                    Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
+                    $routingClass->routes($this->router);
+                }
+            }
+        }
+        return $this->router->getRoutes();
+    }
+
     private function call($target, $args, $request) {
         if(isset($args['id_space'])){
             $_SESSION['id_space'] = $args['id_space'];
@@ -46,6 +65,7 @@ class Router {
             $controller = $this->createControllerImp('core', 'coretiles', false, $request);
             $action = 'index';
         }
+
         $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
         $controller->runAction($module, $action, $args);
         return $module."_".$controller_name."_".$action;
@@ -119,34 +139,38 @@ class Router {
                 $params = array_merge($_GET, $_POST);
             }
             $request = new Request($params);
-            if (!$this->install($request)) {
-                $reqRoute = $this->route($request);
-                if ($reqRoute) {
-                    $reqEnd = microtime(true);
-                    $this->prometheus($reqStart, $reqEnd, $reqRoute);
-                    return;
-                }
-
-                $urlInfo = $this->getUrlData($request);
-                if(!$urlInfo['pathInfo']) {
-                    $this->logger->warning('no route found, redirect to homepage', [
-                        'url' => $request->getParameter('path'),
-                    ]);
-                    $this->call('core/coretiles/index', [], $request);
-                    return;
-                }
-                $controller = $this->createController($urlInfo, $request);
-                $action = $urlInfo["pathInfo"]["action"];
-                $reqRoute = $urlInfo["pathInfo"]["module"]."_".$urlInfo["pathInfo"]["controller"]."_".$action;
-                $args = $this->getArgs($urlInfo);
-                if(isset($args['id_space'])){
-                    $_SESSION['id_space'] = $args['id_space'];
-                }
-
-                $this->logger->debug('[router][old] call', ["controller" => $controller, "action" => $action, "args" => $args]);
-                $this->runAction($controller, $urlInfo, $action, $args);
+            
+            $reqRoute = $this->route($request);
+            if ($reqRoute) {
                 $reqEnd = microtime(true);
+                $this->prometheus($reqStart, $reqEnd, $reqRoute);
+                return;
             }
+
+            $urlInfo = $this->getUrlData($request);
+            if(!$urlInfo['pathInfo']) {
+                if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
+                    http_response_code(404);
+                    return;
+                }
+
+                $this->logger->warning('no route found, redirect to homepage', [
+                    'url' => $request->getParameter('path'),
+                ]);
+                $this->call('core/coretiles/index', [], $request);
+                return;
+            }
+            $controller = $this->createController($urlInfo, $request);
+            $action = $urlInfo["pathInfo"]["action"];
+            $reqRoute = $urlInfo["pathInfo"]["module"]."_".$urlInfo["pathInfo"]["controller"]."_".$action;
+            $args = $this->getArgs($urlInfo);
+            if(isset($args['id_space'])){
+                $_SESSION['id_space'] = $args['id_space'];
+            }
+
+            $this->logger->debug('[router][old] call', ["controller" => $controller, "action" => $action, "args" => $args]);
+            $this->runAction($controller, $urlInfo, $action, $args);
+            $reqEnd = microtime(true);
         } catch (Throwable $e) {
             Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
             $reqEnd = microtime(true);
@@ -206,11 +230,13 @@ class Router {
 
     /**
      * Install request 
-     * @param type $request
+     * @param Request $request
      * @return boolean
      * @throws Exception
      */
     private function install($request) {
+        throw new PfmDbException("Install not supported anymore");
+        /*
         $path = "";
         if ($request->isParameterNotEmpty('path')) {
             $path = $request->getParameter('path');
@@ -233,6 +259,7 @@ class Router {
             return true;
         }
         return false;
+        */
     }
 
     /**
@@ -345,13 +372,13 @@ class Router {
      *        	Thrown exception
      */
     private function manageError(Throwable $exception, $type = '') {
-        $sendToSentry = true;
-
-        if ($exception instanceof PfmAuthException) {
-            $sendToSentry = false;
+        $sendReport = true;
+        
+        if ($exception instanceOf PfmException && !$exception->sendReports) {
+            $sendReport = false;
         }
 
-        if($sendToSentry && Configuration::get('sentry_dsn', '')) {
+        if($sendReport && Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($exception);
         }
 
@@ -361,7 +388,14 @@ class Router {
             if($errCode == 0) {
                 $errCode = 500;
             }
+
+            
+            if($exception instanceof PfmAuthException && $errCode == 401) {
+                header("Location:" . '/coreconnection?redirect_url='.$_SERVER['REQUEST_URI']);
+                return;
+            }
         }
+
         http_response_code($errCode);
 
         if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
@@ -375,6 +409,8 @@ class Router {
         $view = new View('error');
         $view->setFile('Modules/error.php');
         $view->generate(array(
+            'mainMenu' => null,
+            'sideMenu' => null,
             'type' => $type,
             'message' => $exception->getMessage()
         ));

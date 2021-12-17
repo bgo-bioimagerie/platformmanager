@@ -7,6 +7,7 @@ require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 
 class CoreUser extends Model {
 
@@ -181,7 +182,7 @@ class CoreUser extends Model {
         }
 
         if($sql == null) {
-            throw new Exception('something went wrong!');
+            throw new PfmException('something went wrong!');
         }
 
         foreach ($req as $r) {
@@ -335,9 +336,9 @@ class CoreUser extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function edit($id, $login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
-        $sql = "UPDATE core_users SET login=?, name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
-        $this->runRequest($sql, array($login, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
+    public function edit($id, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+        $sql = "UPDATE core_users SET name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
+        $this->runRequest($sql, array($name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }
 
     public function isUserId($id) {
@@ -466,7 +467,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new Exception("Cannot find the user using the given parameters");
+            throw new PfmParamException("Cannot find the user using the given parameters", 404);
         }
     }
 
@@ -623,7 +624,7 @@ class CoreUser extends Model {
      * Unactivate users who did not login for a number of year given in $numberYear
      * @deprecated
      * 
-     * @param number $numberYear Number of years
+     * @param int $numberYear Number of years
      */
     private function updateUserActiveLastLogin($numberYear) {
 
@@ -837,7 +838,7 @@ class CoreUser extends Model {
         else {
             //echo "into LDap <br/>";
             $modelCoreConfig = new CoreConfig();
-            if ($modelCoreConfig->getParam("useLdap") == true) {
+            if (CoreLdapConfiguration::get('ldap_use', 0)) {
 
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
@@ -845,7 +846,7 @@ class CoreUser extends Model {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = $modelCoreConfig->getParam("ldapDefaultStatus");
+                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
 
                     $userInfo = $this->user->getUserByLogin($login);
@@ -909,7 +910,7 @@ class CoreUser extends Model {
                     . "core_users.name AS name,core_users.firstname AS firstname "
                     . "FROM core_j_spaces_user "
                     . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
-                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1";
+                    . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1 ORDER BY core_users.name";
             $users = $this->runRequest($sql, array($id_space))->fetchAll();
             $names = array();
             $ids = array();

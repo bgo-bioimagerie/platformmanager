@@ -7,13 +7,14 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingsupsinfoController extends CoresecureController {
+class BookingsupsinfoController extends BookingsettingsController {
 
     /**
      * Constructor
@@ -82,19 +83,21 @@ class BookingsupsinfoController extends CoresecureController {
                 }
             }
             for ($p = 0; $p < count($supID); $p++) {
-                if (!$supID[$p]) {
-                    // If package id not set, use from known packages
-                    if(isset($packs[$supName[$p]])) {
-                        $supID[$p] = $packs[$supName[$p]];
-                    } else {
-                        // Or create a new package
-                       $cvm = new CoreVirtual();
-                       $vid = $cvm->new('supinfo');
-                       $supID[$p] = $vid;
-                       $packs[$supName[$p]] = $vid;
-                   }
+                if ($supName[$p] != "") {
+                    if (!$supID[$p]) {
+                        // If package id not set, use from known packages
+                        if(isset($packs[$supName[$p]])) {
+                            $supID[$p] = $packs[$supName[$p]];
+                        } else {
+                            // Or create a new package
+                        $cvm = new CoreVirtual();
+                        $vid = $cvm->new('supinfo');
+                        $supID[$p] = $vid;
+                        $packs[$supName[$p]] = $vid;
+                        }
+                    }
+                    $modelSups->setCalSupInfo($id_space, $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
                 }
-                $modelSups->setCalSupInfo($id_space, $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
             }
 
             /* bug possible conflict on getting id
@@ -132,7 +135,6 @@ class BookingsupsinfoController extends CoresecureController {
                 }
             }
             */
-
             $modelSups->removeUnlistedSupInfos($id_space, $supID);
             $_SESSION["message"] = BookingTranslator::Supplementaries_saved($lang);
             $this->redirect("bookingsupsinfo/".$id_space);

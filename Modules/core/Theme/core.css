@@ -1,7 +1,26 @@
-body,html{
+body{
     height: 100%;
     background-color: #e7ecf0;
+    padding-top: 60px;
 }
+
+footer {
+    width: 100%;
+    text-align: center;
+}
+
+#app {
+    min-height: 300px;
+}
+
+#sideMenu {
+    padding-left: 5px;
+}
+
+#mainMenu {
+    
+}
+
 
 .select {
     -moz-appearance: none;

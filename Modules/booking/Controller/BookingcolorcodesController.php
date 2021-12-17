@@ -6,13 +6,14 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 
 require_once 'Modules/booking/Model/BkColorCode.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingcolorcodesController extends CoresecureController {
+class BookingcolorcodesController extends BookingsettingsController {
 
     /**
      * Constructor

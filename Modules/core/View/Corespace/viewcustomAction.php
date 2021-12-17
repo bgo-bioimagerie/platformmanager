@@ -1,38 +1,10 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<?php startblock('stylesheet') ?>
-
-<link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
-<?php
-$headless = Configuration::get("headless");
-if (!$headless) {
-    ?>
-    <link href="data/core/theme/navbar-fixed-top.css" rel="stylesheet">
-    <?php
-}
-?>
-<link rel='stylesheet' type='text/css' href='Modules/core/Theme/core.css' />
-
-
-<?php endblock(); ?>
-
-<?php startblock('spacenavbar'); ?>
-
-<?php endblock(); ?>
 
 <!-- body -->     
 <?php startblock('content') ?>
 
-<?php
-if ($space['color'] == "") {
-    $space['color'] = "#428bca";
-}
-?>
-
-<div class="col-xs-12 text-center" style="color: #fff; background-color: <?php echo $space['color'] ?>; height: 35px;">
-    <h4><?php echo $space['name'] ?></h4>
-</div>   
-<div class="col-xs-12" style="background-color: #fff; height: 2000px;">
+<div class="row" style="background-color: #fff; height: 2000px;">
 
     <div class="container" style="background-color: #fff;">
 
@@ -64,7 +36,7 @@ if ($space['color'] == "") {
                         <?php
                     }
                     ?>
-                    <ul/>
+                    </ul>
             </div>
         </div>
         <?php

@@ -9,11 +9,11 @@ weight: 3
 ### setup
 
 Docker images are available at quay.io/bgo_bioimagerie,
-see [docker-compose.yml](https://github.com/bgo-bioimagerie/docker-platformmanager/blob/master/docker-compose.yml) as compose example.
+see [docker-compose.yml](docker/docker-compose.yml) as compose example.
 
 Update docker-compose.yml file environment sections with your setup.
 
-Some variables are defined in a *.env* file for sensitive data.
+Some variables are defined in a *.env* file for sensitive and custom data.
 
 Example:
 
@@ -27,6 +27,9 @@ Example:
     PFM_INFLUXDB_TOKEN=123456
     MYSQL_ROOT_PASSWORD=xxxx
     MYSQL_PASSWORD=xxxx
+    ....
+
+See example docker/env.example for your .env file.
 
 Exemple docker-compose.yml use local docker volumes to save database etc.
 Only local host mounted volume is *data* directory which contains space upload files,
@@ -48,7 +51,7 @@ Following env variables can be used to override Config/conf.ini:
   * MYSQL_PASS: platform_manager # Password to connect to mysql
 * SMTP_HOST: mailhog  # smtp host name
 * SMTP_PORT: 25  # smtp port
-* MAIL_FROM: support@genouest.org  # mail *from* address
+* SMTP_FROM: support@genouest.org  # mail *from* address
 * PFM_MODE: prod  # optional [dev|*prod*|test], dev mode adds a console in browser with sql info
 * PFM_ADMIN_USER: pfmadmin  # superadmin user name (automatically created)
 * PFM_ADMIN_EMAIL: admin@pfm.org  # superadmin email
@@ -106,3 +109,16 @@ And .env file should define (according to variables used):
 * PFM_HELPDESK_IMAP_USER=yyyy
 * PFM_HELPDESK_IMAP_PASSWORD=xxxxx
 
+* PFM_LDAP_HOST: # optional LDAP configuration overiding ldap.ini, leave empty if non
+  * PFM_LDAP_PORT: 389  # ldap port to use, default 389 or 636 if tls enabled
+  * PFM_LDAP_USER: ""  # ldap user id if not anonymous search/bind
+  * PFM_LDAP_PASSWORD: ""  # ldap user password
+  * PFM_LDAP_DN: ""  # base dn for ldap (dc=pfm,dc=org for example)
+  * PFM_LDAP_SEARCH_DN: ""  # base dn for user search and binding (ou=people,dc=pfm,dc=org for example)
+  * PFM_LDAP_TLS: [0|1]  # use TLS
+  * PFM_LDAP_DEFAULT_STATUS: [1|2] visitor or user
+  * PFM_LDAP_SEARCH_ATTR: "uid" ldap search attributes (pipe separated, ex: "uid|mail")
+  * PFM_LDAP_NAME_ATTR: "sn" ldap name attribute
+  * PFM_LDAP_FIRSTNAME_ATTR: "givenname" ldap firstname attribute
+  * PFM_LDAP_MAIL_ATTR: "mail" ldap email attribute
+  * PFM_USE: [0|1] use ldap  , if ldap_host is set, pfm_use is set to 1 by default unless explicitely set

@@ -3,7 +3,7 @@
 <!-- body -->     
 <?php startblock('content') ?>
 
-    <div class="col-md-12 pm-form">
+    <div class="pm-form">
         <div class="col-md-8 col-md-offset-2">
             <form role="form" class="form-horizontal" action="bookingnightweeditq/<?php echo $id_space ?>"
                   method="post">
@@ -59,7 +59,7 @@
                     <br></br>
                     <div class="col-xs-10 col-xs-offset-2">
                         <label  class="control-label col-xs-3"><?php echo BookingTranslator::Night_beginning($lang) ?></label>
-                        <div class="col-xs-2">
+                        <div class="col-xs-3">
                             <select class="form-control col-xs-2" name="night_start">
 <?php $snight = $this->clean($pricing['night_start']) ?>
                                 <OPTION value="18" <?php if ($snight == 18) {
@@ -80,7 +80,7 @@
                             </select>
                         </div>
                         <label  class="control-label col-xs-3"><?php echo BookingTranslator::Night_end($lang) ?></label>
-                        <div class="col-xs-2">
+                        <div class="col-xs-3">
                             <select class="form-control" name="night_end">
 <?php $enight = $this->clean($pricing['night_end']) ?>
                                 <OPTION value="6" <?php if ($enight == 6) {

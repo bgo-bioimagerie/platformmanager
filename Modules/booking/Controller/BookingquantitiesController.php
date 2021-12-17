@@ -7,13 +7,14 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkCalQuantities.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingquantitiesController extends CoresecureController {
+class BookingquantitiesController extends BookingsettingsController {
 
     /**
      * Constructor
@@ -47,6 +48,7 @@ class BookingquantitiesController extends CoresecureController {
         $supsIdsRes = array();
         $supsNames = array();
         $supsMandatories = array();
+        $supIsInvoicingUnit = array();
         foreach($sups as $sup){
             $supsIds[] = $sup["id_quantity"];
             $supsIdsRes[] = $sup["id_resource"];
@@ -90,6 +92,7 @@ class BookingquantitiesController extends CoresecureController {
                         $_SESSION["flash"] = BookingTranslator::maxInvoicingUnits($lang);
                         $_SESSION["flashClass"] = "danger";
                         $this->redirect("bookingquantities/".$id_space);
+                        return;
                     } else {
                         array_push($invoicingUnitsResources, $resource);
                     }
@@ -103,6 +106,9 @@ class BookingquantitiesController extends CoresecureController {
                 }
             }
             for ($sup = 0; $sup < count($supID); $sup++) {
+                if($supName[$sup] == "") {
+                    continue;
+                }
                 if (!$supID[$sup]) {
                     // If package id not set, use from known packages
                     if(isset($supacks[$supName[$sup]])) {

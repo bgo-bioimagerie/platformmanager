@@ -101,5 +101,10 @@ class DocumentsTranslator {
         return "Edit document";
     }
     
-    
+    public static function Missing_Document($lang){
+        if ($lang == "fr") {
+            return "Fichier introuvable";
+        }
+        return "Missing file";
+    }
  }

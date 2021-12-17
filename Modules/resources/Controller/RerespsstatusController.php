@@ -8,6 +8,7 @@ require_once 'Modules/core/Model/CoreStatus.php';
 
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
+require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 
 /**
@@ -15,7 +16,7 @@ require_once 'Modules/resources/Model/ReRespsStatus.php';
  * @author sprigent
  * Controller for the home page
  */
-class RerespsstatusController extends CoresecureController {
+class RerespsstatusController extends ResourcesBaseController {
 
     /**
      * Constructor

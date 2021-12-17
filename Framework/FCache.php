@@ -238,4 +238,24 @@ class FCache extends Model {
         return $urlInfo;
     }
 
+    public function listAll() {
+        $sql = "SELECT * FROM cache_urls";
+        $urlInfo = $this->runRequest($sql)->fetchAll();
+        if (!$urlInfo) {
+            return array();
+        }
+        $urls = [];
+        foreach ($urlInfo as $url) {
+            $sqlg = "SELECT * FROM cache_urls_gets WHERE url_id=?";
+            $params = $this->runRequest($sqlg, array($url["id"]))->fetchAll();
+            $urlParams = [$url['url'], sprintf('%s/%s/%s', $url['module'], $url['controller'], $url['action'])];
+            foreach ($params as $param) {
+               $urlParams[] = $param['name'];
+            }
+            $urls[] = $urlParams;
+        }
+
+        return $urls;    
+    }
+
 }

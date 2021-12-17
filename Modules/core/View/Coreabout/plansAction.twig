@@ -1,0 +1,39 @@
+{% extends "Modules/layout.twig" %}
+{% block stylesheet %}
+<style>
+.pricing {
+    font-size: 2.5em
+    margin-bottom: 0.75em
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    <h3>Plans</h3>
+
+    <div class="row">
+    {% for plan in plans %}
+      {% if plan["features"] %}
+        <div class="col-xs-12 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: {{plan["color"]}}" class="p{{plan["name"]}}">{{ plan["name"] }}</div>
+                <div class="panel-body">
+                    <h1 class="pricing">{{ plan["price"] }} <small class="text-muted"> / mo</small></h1>
+                    <ul>
+                    {% for feature in plan["features"] %}
+                    <li><small>{{feature}}</small></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

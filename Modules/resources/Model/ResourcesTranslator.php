@@ -387,5 +387,12 @@ class ResourcesTranslator {
         }
         return "Your resource \"" . $resource_name . "\" has no category. You should add one.";
     }
+
+    public static function StatusNeeded($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord créer un status dans le module Ressources > Status responsables";
+        }
+        return "You need first to create a status in Resources module > Instructors status";
+    }
     
 }

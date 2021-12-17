@@ -27,6 +27,7 @@ class QuoteconfigController extends CoresecureController {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
+
     
     /**
      * (non-PHPdoc)
@@ -47,7 +48,8 @@ class QuoteconfigController extends CoresecureController {
                     $this->request->getParameter("quotemenustatus"),
                     $this->request->getParameter("quotemenusdisplay"),
                     1,
-                    $this->request->getParameter("quotemenuscolor")
+                    $this->request->getParameter("quotemenuscolor"),
+                    $this->request->getParameter("quotemenuscolorTxt")
                     );
             
             $this->redirect("quoteconfig/".$id_space);
@@ -66,6 +68,7 @@ class QuoteconfigController extends CoresecureController {
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "quote");
         $quotemenusdisplay = $modelSpace->getSpaceMenusDisplay($id_space, "quote");
         $quotemenuscolor = $modelSpace->getSpaceMenusColor($id_space, "quote");
+        $quotemenuscolorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "quote");
         
         
         
@@ -77,6 +80,7 @@ class QuoteconfigController extends CoresecureController {
         $form->addSelect("quotemenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
         $form->addNumber("quotemenusdisplay", CoreTranslator::Display_order($lang), false, $quotemenusdisplay);
         $form->addColor("quotemenuscolor", CoreTranslator::color($lang), false, $quotemenuscolor);
+        $form->addColor("quotemenuscolorTxt", CoreTranslator::text_color($lang), false, $quotemenuscolorTxt);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

@@ -7,13 +7,14 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingpackagesController extends CoresecureController {
+class BookingpackagesController extends BookingsettingsController {
 
     /**
      * Constructor
@@ -109,6 +110,9 @@ class BookingpackagesController extends CoresecureController {
                 }
             }
             for ($p = 0; $p < count($packageID); $p++) {
+                if($packageName[$p] == "") {
+                    continue;
+                }
                 if (!$packageID[$p]) {
                     // If package id not set, use from known packages
                     if(isset($packs[$packageName[$p]])) {

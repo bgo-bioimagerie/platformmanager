@@ -7,6 +7,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
 require_once 'Modules/invoices/Model/InInvoice.php';
+require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * 
@@ -23,13 +24,19 @@ class InvoicesController extends CoresecureController {
         //$this->checkAuthorizationMenu("invoices");
     }
 
+
+    public function sideMenu() {
+        $id_space = $this->args['id_space'];
+        return $this->navbar($id_space);
+    }
+
     public function navbar($id_space) {
 
         $lang = $this->getLanguage();
         
         $html  = '<div class="col-xs-12" style="border: none; margin-top: 7px; padding-right: 0px; padding-left: 0px;">';
         $html .= '<div class="col-xs-12" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href=""> {{title}}'; 
+        $html .= '<a  style="background-color:{{bgcolor}}; color: #fff;" href="invoices/'.$id_space.'"> {{title}}'; 
         $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';

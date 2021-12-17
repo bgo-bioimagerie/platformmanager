@@ -13,6 +13,7 @@ require_once 'Modules/invoices/Model/InVisa.php';
 
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/invoices/Controller/InvoicesController.php';
 
 
 /**
@@ -20,7 +21,7 @@ require_once 'Modules/clients/Model/ClClient.php';
  * @author sprigent
  * Controller for the home page
  */
-class InvoiceslistController extends CoresecureController {
+class InvoiceslistController extends InvoicesController {
 
     /**
      * Constructor
@@ -141,6 +142,9 @@ class InvoiceslistController extends CoresecureController {
 
         $modelInvoice = new InInvoice();
         $service = $modelInvoice->get($id_space, $id);
+        if(!$service) {
+            throw new PfmUserException('invoice not found', 404);
+        }
 
         //print_r($service);
         
@@ -151,9 +155,7 @@ class InvoiceslistController extends CoresecureController {
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName(new Request(array(), false));
         $object->setRequest($this->request);
-        $object->runAction($service["module"], "edit", array($id_space, $id));
-
-        return;
+        $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
     }
 
     public function createPurcentageDiscountForm($discountValue) {

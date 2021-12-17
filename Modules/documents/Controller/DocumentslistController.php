@@ -7,13 +7,14 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/documents/Model/DocumentsTranslator.php';
 require_once 'Modules/documents/Model/Document.php';
 require_once 'Framework/FileUpload.php';
+require_once 'Modules/documents/Controller/DocumentsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class DocumentslistController extends CoresecureController {
+class DocumentslistController extends DocumentsController {
 
     /**
      * Constructor
@@ -62,7 +63,6 @@ class DocumentslistController extends CoresecureController {
     public function editAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
         $model = new Document();
         $data = $model->get($id_space, $id);
 
@@ -70,19 +70,17 @@ class DocumentslistController extends CoresecureController {
         $form->setTitle(DocumentsTranslator::Edit_Document($lang));
         $form->addText("title", DocumentsTranslator::Title($lang), true, $data["title"]);
         $form->addUpload("file_url", DocumentsTranslator::File($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "documentsedit/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "documentsedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "documents/" . $id_space);
 
         if ($form->check()) {
             $title = $this->request->getParameter("title");
             $id_user = $_SESSION["id_user"];
             $idNew = $model->set($id, $id_space, $title, $id_user);
-
             $target_dir = "data/documents/";
             if ($_FILES["file_url"]["name"] != "") {
                 $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "file_url", $idNew . "_" . $ext);
-
                 $model->setUrl($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
             }
 
@@ -94,22 +92,23 @@ class DocumentslistController extends CoresecureController {
     }
 
     public function openAction($id_space, $id) {
-
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
 
         $model = new Document();
         $file = $model->getUrl($id_space,$id);
-        
-        header("Cache-Control: public");
-        header("Content-Description: File Transfer");
-        header('Content-Disposition: attachment; filename="'.basename($file).'"' );
-        header("Content-Type: application/zip");
-        header("Content-Transfer-Encoding: binary");
-
-        // read the file from disk
-        readfile($file);
-        //    return;
-        //$this->redirect($path);
+        if (file_exists($file)) {
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header('Content-Disposition: attachment; filename="'.basename($file).'"' );
+            header("Content-Type: binary/octet-stream");
+            header("Content-Transfer-Encoding: binary");
+            // read the file from disk
+            readfile($file);
+        } else {
+            $_SESSION['flash'] = DocumentsTranslator::Missing_Document($this->getLanguage());
+            $_SESSION['flashClass'] = "warning";
+            $this->redirect("documents/" . $id_space);
+        }
     }
 
     public function deleteAction($id_space, $id) {

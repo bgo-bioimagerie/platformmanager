@@ -25,7 +25,7 @@ class HelpdeskconfigController extends CoresecureController {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
@@ -45,11 +45,9 @@ class HelpdeskconfigController extends CoresecureController {
                     $this->request->getParameter("helpdeskmenustatus"),
                     $this->request->getParameter("displayMenu"),
                     1,
-                    $this->request->getParameter("colorMenu")
-                    );
-            
-            //$modelAccess = new CoreSpaceAccessOptions();
-            //$modelAccess->set($id_space, "clientsuseraccounts", "clients", "clientsuseraccounts");
+                    $this->request->getParameter("colorMenu"),
+                    $this->request->getParameter("colorTxtMenu")
+            );
                 
             $this->redirect("helpdeskconfig/".$id_space);
             return;
@@ -88,6 +86,7 @@ class HelpdeskconfigController extends CoresecureController {
         $statusHelpdeskMenu = $modelSpace->getSpaceMenusRole($id_space, "helpdesk");
         $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "helpdesk");
         $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "helpdesk");
+        $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "helpdesk");
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
@@ -97,6 +96,7 @@ class HelpdeskconfigController extends CoresecureController {
         $form->addSelect("helpdeskmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusHelpdeskMenu);
         $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
         $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
+        $form->addColor("colorTxtMenu", CoreTranslator::text_color($lang), false, $colorTxtMenu);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "helpdeskconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

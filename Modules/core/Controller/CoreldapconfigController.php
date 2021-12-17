@@ -29,28 +29,26 @@ class CoreldapconfigController extends CoresecureController {
      */
     public function indexAction() {
 
-
         // LDAP configuration
 
-        $modelSettings = new CoreConfig();
-        $ldapConfig["useLdap"] = $modelSettings->getParam("useLdap");
-        $ldapConfig["ldapDefaultStatus"] = $modelSettings->getParam("ldapDefaultStatus");
-        $ldapConfig["ldapSearchAtt"] = $modelSettings->getParam("ldapSearchAtt");
-        $ldapConfig["ldapNameAtt"] = $modelSettings->getParam("ldapNameAtt");
-        $ldapConfig["ldapFirstnameAtt"] = $modelSettings->getParam("ldapFirstnameAtt");
-        $ldapConfig["ldapMailAtt"] = $modelSettings->getParam("ldapMailAtt");
+        //$modelSettings = new CoreConfig();
+        $ldapConfig["useLdap"] = CoreLdapConfiguration::get('ldap_use', 0);
+        $ldapConfig["ldapDefaultStatus"] = CoreLdapConfiguration::get('ldap_default_status', 1);
+        $ldapConfig["ldapSearchAtt"] = CoreLdapConfiguration::get('ldap_search_attr', 'uid');
+        $ldapConfig["ldapNameAtt"] = CoreLdapConfiguration::get('ldap_name_attr', 'sn');
+        $ldapConfig["ldapFirstnameAtt"] = CoreLdapConfiguration::get('ldap_firstname_attr', 'givenname');
+        $ldapConfig["ldapMailAtt"] = CoreLdapConfiguration::get('ldap_mail_attr', 'mail');
 
         // LDAP connection
-        $ldapConnect["ldapAdress"] = CoreLdapConfiguration::get("ldapAdress", "");
-        $ldapConnect["ldapPort"] = CoreLdapConfiguration::get("ldapPort", "");
-        $ldapConnect["ldapId"] = CoreLdapConfiguration::get("ldapId", "");
-        $ldapConnect["ldapPwd"] = CoreLdapConfiguration::get("ldapPwd", "");
-        $ldapConnect["ldapBaseDN"] = CoreLdapConfiguration::get("ldapBaseDN", "");
-        $ldapConnect["ldapUseTls"] = CoreLdapConfiguration::get("ldapUseTls", "");
+        $ldapConnect["ldap_host"] = CoreLdapConfiguration::get("ldap_host", "");
+        $ldapConnect["ldap_port"] = CoreLdapConfiguration::get("ldap_port", 389);
+        $ldapConnect["ldap_user"] = CoreLdapConfiguration::get("ldap_user", "");
+        $ldapConnect["ldap_password"] = CoreLdapConfiguration::get("ldap_password", "");
+        $ldapConnect["ldap_dn"] = CoreLdapConfiguration::get("ldap_search_dn", "");
+        $ldapConnect["ldap_tls"] = CoreLdapConfiguration::get("ldap_tls", false);
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "coreldapconfig");
-        //$form->setTitle(CoreTranslator::LdapConfig($lang));
         
         $form->addSeparator(CoreTranslator::LdapConfig($lang));
         $form->addSelect("useLdap", CoreTranslator::UseLdap($lang), 
@@ -63,13 +61,13 @@ class CoreldapconfigController extends CoresecureController {
         $form->addText("ldapMailAtt", CoreTranslator::ldapMail($lang), false, $ldapConfig["ldapMailAtt"]);
         
         $form->addSeparator(CoreTranslator::LdapAccess($lang));
-        $form->addText("ldapAdress", CoreTranslator::ldapAdress($lang), false, $ldapConnect["ldapAdress"]);
-        $form->addText("ldapPort", CoreTranslator::ldapPort($lang), false, $ldapConnect["ldapPort"]);
-        $form->addText("ldapId", CoreTranslator::ldapId($lang), false, $ldapConnect["ldapId"]);
-        $form->addPassword("ldapPwd", CoreTranslator::ldapPwd($lang), false);
-        $form->addText("ldapBaseDN", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldapBaseDN"]);
-        $form->addSelect("ldapUseTls", CoreTranslator::UseTLS($lang), 
-                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array("TRUE","FALSE"), $ldapConnect["ldapUseTls"]);
+        $form->addText("ldap_host", CoreTranslator::ldapAdress($lang), false, $ldapConnect["ldap_host"], false, true);
+        $form->addText("ldap_port", CoreTranslator::ldapPort($lang), false, $ldapConnect["ldap_port"], false, true);
+        $form->addText("ldap_user", CoreTranslator::ldapId($lang), false, $ldapConnect["ldap_user"], false, true);
+        //$form->addPassword("ldap_password", CoreTranslator::ldapPwd($lang), false);
+        $form->addText("ldap_dn", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldap_dn"], false, true);
+        // $form->addSelect("ldap_tls", CoreTranslator::UseTLS($lang), 
+        //         array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array("TRUE","FALSE"), $ldapConnect["ldap_tls"]);
         
         
         $form->setButtonsWidth(2, 9);
@@ -81,7 +79,7 @@ class CoreldapconfigController extends CoresecureController {
             return;
         }
         
-        return $this->render( array("formHtml" => $form->getHtml($lang)));
+        $this->render( array("formHtml" => $form->getHtml($lang)));
         
     }
 
@@ -98,13 +96,14 @@ class CoreldapconfigController extends CoresecureController {
         $ldapConfig["ldapFirstnameAtt"] = $this->request->getParameter("ldapFirstnameAtt");
         $ldapConfig["ldapMailAtt"] = $this->request->getParameter("ldapMailAtt");
         
-        
-        $ldapConnect["ldapAdress"] = $this->request->getParameter("ldapAdress", "");
-        $ldapConnect["ldapPort"] = $this->request->getParameter("ldapPort", "");
-        $ldapConnect["ldapId"] = $this->request->getParameter("ldapId", "");
-        $ldapConnect["ldapPwd"] = $this->request->getParameter("ldapPwd", "");
-        $ldapConnect["ldapBaseDN"] = $this->request->getParameter("ldapBaseDN", "");
-        $ldapConnect["ldapUseTls"] = $this->request->getParameter("ldapUseTls");
+        /*
+        $ldapConnect["ldap_host"] = $this->request->getParameter("ldap_host", "");
+        $ldapConnect["ldap_port"] = intval($this->request->getParameter("ldap_port", 389));
+        $ldapConnect["ldap_user"] = $this->request->getParameter("ldap_user", "");
+        $ldapConnect["ldap_password"] = $this->request->getParameter("ldap_password", "");
+        $ldapConnect["ldap_dn"] = $this->request->getParameter("ldap_dn", "");
+        $ldapConnect["ldap_tls"] = $this->request->getParameter("ldap_tls");
+        */
         
 
         // update the database
@@ -117,15 +116,20 @@ class CoreldapconfigController extends CoresecureController {
         $modelSettings->setParam("ldapMailAtt", $ldapConfig["ldapMailAtt"]);
         
         // update the config file
-
+        /*
+        $useTls = 0;
+        if($ldapConnect["ldap_tls"] == "TRUE") {
+            $useTls = 1;
+        }
         $fileContent = "; Configuration for ldap" . "\n"
-                . "ldapAdress = \"" . $ldapConnect["ldapAdress"] . "\"" . "\n"
-                . "ldapPort = \"" . $ldapConnect["ldapPort"] . "\"" . "\n"
-                . "ldapId = \"" . $ldapConnect["ldapId"] . "\"" . "\n"
-                . "ldapPwd = \"" . $ldapConnect["ldapPwd"] . "\"" . "\n"
-                . "ldapBaseDN = \"" . $ldapConnect["ldapBaseDN"] . "\"" . "\n"
-                . "ldapUseTls = \"" . $ldapConnect["ldapUseTls"] . "\"" . "\n";
+                . "ldap_host = \"" . $ldapConnect["ldap_host"] . "\"" . "\n"
+                . "ldap_port = \"" . intval($ldapConnect["ldap_port"]) . "\"" . "\n"
+                . "ldap_user = \"" . $ldapConnect["ldap_user"] . "\"" . "\n"
+                . "ldap_password = \"" . $ldapConnect["ldap_password"] . "\"" . "\n"
+                . "ldap_search_dn = \"" . $ldapConnect["ldap_dn"] . "\"" . "\n"
+                . "ldap_tns = " . $useTls . "\n";
         file_put_contents("Config/ldap.ini", $fileContent);
+        */
 
         $this->redirect("coreconfig");
     }

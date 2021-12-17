@@ -48,23 +48,24 @@
     a.mybutton:hover { background: #337ab7; color: #ffffff; border: 1px solid #337ab7;}
 
 </style>
-<div class="col-md-12" style="background-color:#ffffff;">
-    <div class="page-header">
-        <h1> <?php echo CatalogTranslator::Catalog($lang) ?></h1>
+<div class="row" style="background-color:#ffffff;">
+    <div class="col-xs-12" style="text-align: center;">
+        <h2> <?php echo CatalogTranslator::Catalog($lang) ?></h2>
     </div>
     <br/>
-    <div class="col-md-12" style="text-align:center; background-color:#ffffff;">
-        <?php
-        foreach ($categories as $cat) {
-            $buttonStyle = "mybutton";
-            if ($cat["id"] == $activeCategory) {
-                $buttonStyle = "mybuttonactive";
-            }
-            ?>
-            <a class="<?php echo $buttonStyle ?>" href="catalog/<?php echo $id_space . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
-            <?php
+    <?php foreach($categories as $cat) {
+        $selectedStyle = "";
+        if ($cat["id"] == $activeCategory) {
+            $selectedStyle = "background-color: #337ab7; color: #ffffff";
         }
-        ?>
-
-    </div>
+    ?>
+        <div class="col-xs-4 col-md-2">
+            <div class="panel panel-default" style="text-align: center; <?php echo $selectedStyle; ?>">
+                <div class="panel-heading"></div>
+                <div class="panel-body">
+                    <a style="text-align: center; <?php echo $selectedStyle; ?>" href="catalog/<?php echo $id_space . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </div>

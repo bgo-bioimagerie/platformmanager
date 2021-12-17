@@ -7,13 +7,14 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/booking/Model/BkBookingTableCSS.php';
 require_once 'Modules/resources/Model/ReArea.php';
+require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class BookingdisplayController extends CoresecureController {
+class BookingdisplayController extends BookingsettingsController {
 
     /**
      * Constructor
@@ -48,7 +49,7 @@ class BookingdisplayController extends CoresecureController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCSS = new BkBookingTableCSS();
@@ -72,7 +73,7 @@ class BookingdisplayController extends CoresecureController {
         $form->setColumnsWidth(3, 9);
         $form->setButtonsWidth(3, 9);
         if ($form->check()) {
-            $modelCSS->setAreaCss($id, $this->request->getParameter("header_background"), $this->request->getParameter("header_color"), $this->request->getParameter("header_font_size"), $this->request->getParameter("resa_font_size"), $this->request->getParameter("header_height"), $this->request->getParameter("line_height"));
+            $modelCSS->setAreaCss($id_space, $id, $this->request->getParameter("header_background"), $this->request->getParameter("header_color"), $this->request->getParameter("header_font_size"), $this->request->getParameter("resa_font_size"), $this->request->getParameter("header_height"), $this->request->getParameter("line_height"));
             $this->redirect("bookingdisplayedit/".$id_space. "/" . $id);
         }
         $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang)));

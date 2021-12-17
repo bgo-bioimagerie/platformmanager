@@ -2,7 +2,7 @@
 
 <!-- body -->     
 <?php startblock('content') ?>
-<div class="col-md-12 pm-table">
+<div class="pm-table">
 <div class="page-header">
     <h3><?php echo ClientsTranslator::Clients($lang) ?></h3>
 </div>    

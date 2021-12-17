@@ -6,16 +6,16 @@
 <?php
 if ($id_quote > 0) {
     ?>
-    <div class="col-md-12 pm-form-short">
+    <div class="pm-form-short">
         <?php
     } else {
         ?>
-        <div class="col-md-12 pm-form">
+        <div class="pm-form">
             <?php
         }
         ?>
         <?php
-        if (isset($_SESSION["message"])) {
+        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             ?>
             <div class="alert alert-success">
                 <?php echo $_SESSION["message"] ?>
@@ -26,6 +26,19 @@ if ($id_quote > 0) {
         ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
         <?php echo $formHtml ?>
+        <script type="module">
+            import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+            let dynamicForms = new DynamicForms();
+            let spaceId = <?php echo $id_space?>;
+            let sourceId = "id_user";
+            let targets = [
+                {
+                    elementId: "id_client",
+                    apiRoute: `clientusers/getclients/`
+                }
+            ];
+            dynamicForms.dynamicFields(sourceId, targets, spaceId);
+        </script>
     </div>
 
     <?php

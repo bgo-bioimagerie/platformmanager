@@ -30,7 +30,7 @@ Apache should also have specific pfm configuration:
 
 * Rabbitmq server for additional services (pfm-events, etc.)
 * Influxdb server for statistics (optional)
-* Redis for prometheus statistics support (optional)
+* Redis for prometheus statistics support (optional for prometheus, mandatory for module antibodies)
 
 ## Install with docker
 

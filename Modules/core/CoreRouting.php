@@ -10,13 +10,24 @@ class CoreRouting extends Routing{
         $router->map('GET', '/corespaceaccess/[i:id_space]/unimpersonate', 'core/corespaceaccess/unimpersonate', 'user_unimpersonate');
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
         $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
+        $router->map('GET', '/corespaces', 'core/corespace/spaces', 'core_space_list');
+        $router->map('GET', '/core/about', 'core/coreabout/index', 'core_about');
+        $router->map('GET', '/coretiles/[i:level]/[i:id]/star/[i:id_space]', 'core/coretiles/corestar', 'core_star');
+        $router->map('GET', '/coretiles/[i:level]/[i:id]/unstar/[i:id_space]', 'core/coretiles/coreunstar', 'core_unstar');
+        $router->map('GET|POST', '/coremail/[i:id_space]', 'core/coremail/index', 'core_mail');
+        $router->map('GET|POST', '/coreaccountisunique', 'core/coreaccount/isunique', 'core_unique');
+        $router->map('GET', '/core/tiles/[i:id_space]/module/spaceaccess/notifs', 'core/corespaceaccess/notifs', 'corespaceaccess_notifs');
+        $router->map('GET', '/core/plans', 'core/coreabout/plans', 'core_plans');
+        $router->map('GET', '/core/spaceaccess/[i:id_space]/users/[i:id_user]/convention', 'core/corespaceaccess/downloadConvention', 'corespaceaccess_download_user_convention');
+        $router->map('GET', '/core/privacy', 'core/coreabout/privacy', 'core_privacy');
+
     }
     
     public function listRoutes(){
         
         // config
         $this->addRoute("coreconfigadmin", "coreconfigadmin", "coreconfigadmin", "index");
-        $this->addRoute("coreldapconfig", "coreldapconfig", "coreldapconfig", "index");
+        //$this->addRoute("coreldapconfig", "coreldapconfig", "coreldapconfig", "index");
         
         // connection
         $this->addRoute("coreconnection", "coreconnection", "coreconnection", "index");
@@ -26,7 +37,7 @@ class CoreRouting extends Routing{
         
         // create account
         $this->addRoute("corecreateaccount", "corecreateaccount", "coreaccount", "index");
-        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");         
+        $this->addRoute("coreaccountcreated", "coreaccountcreated", "coreaccount", "created");
          
         // home
         $this->addRoute("corehome", "corehome", "corehome", "index");
@@ -34,20 +45,18 @@ class CoreRouting extends Routing{
         // tiles
         $this->addRoute("coretiles", "coretiles", "coretiles", "index", array("level", "id"), array("", ""));
         $this->addRoute("coretilesdoc", "coretilesdoc", "coretiles", "doc");
-        // multi-tenant feature: route for adding a user to space pending users
         $this->addRoute("coretilesselfjoinspace", "coretilesselfjoinspace", "coretiles", "selfjoinspace", array("id_space"), array(""));
         
         
         // Update
-        $this->addRoute("update", "update", "coreupdate", "update");
-        $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
+        // $this->addRoute("update", "update", "coreupdate", "update");
+        // $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
         
         // Users
         $this->addRoute("coreusers", "coreusers", "coreusers", "index");
         $this->addRoute("coreusersedit", "coreusersedit", "coreusers", "edit", array("id"), array(""));
         $this->addRoute("coreusersdelete", "coreusersdelete", "coreusers", "delete", array("id"), array(""));
         $this->addRoute("coreuserslanguageedit", "coreuserslanguageedit", "coreusers", "languageedit");
-        $this->addRoute("coreusersisunique", "coreusersisunique", "coreusers", "isunique", array("type", "value", "id_user"), array("", "", ""));
 
         // settings
         $this->addRoute("coremyaccount", "coremyaccount", "coreusers", "myaccount");
@@ -77,8 +86,8 @@ class CoreRouting extends Routing{
         
         // spaces admin
         $this->addRoute("spaceadmin", "spaceadmin", "corespaceadmin", "index");
-        $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id"), array(""));
-        $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id"), array(""));
+        $this->addRoute("spaceadminedit", "spaceadminedit", "corespaceadmin", "edit", array("id_space"), array(""));
+        $this->addRoute("spaceadmindelete", "spaceadmindelete", "corespaceadmin", "delete", array("id_space"), array(""));
         
         // main menu
         $this->addRoute("coremainmenus", "coremainmenus", "coremainmenu", "index");

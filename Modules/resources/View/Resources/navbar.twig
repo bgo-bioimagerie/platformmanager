@@ -1,0 +1,51 @@
+<div style="background-color:{{bgcolor}}; {%if color %} color: {{color}}; {%endif%} padding: 10px">
+    <div class="" style="height: 50px; padding-top: 15px; border-bottom: 1px solid #fff;">
+        <a  style="{%if color %} color: {{color}}; {%endif%}" href="/resources/{{id_space}}"> {{title}} 
+            <span style="{%if color %} color: {{color}}; {%endif%} font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>
+        </a>
+    </div>
+
+    <div class="pm-inline-div">
+        <a style="{%if color %} color: {{color}}; {%endif%}" class="menu-button" href="resources/{{id_space}}">{{Resources}}</a>
+        <a style="{%if color %} color: {{color}}; {%endif%}" class="menu-button" href="resourcesedit/{{id_space}}/0">+</a>
+    </div>
+    
+    <div>
+        <br/>
+        {{Sorting}}
+    </div>
+    <div class="pm-inline-div">
+        <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="reareas/{{id_space}}">{{Areas}}</a>
+        <a style="{%if color %} color: {{color}}; {%endif%}" href="reareasedit/{{id_space}}/0">+</a> 
+    </div>
+    <div class="pm-inline-div">
+        <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="recategories/{{id_space}}">{{Categories}}</a>
+        <a style="{%if color %} color: {{color}}; {%endif%}" href="recategoriesedit/{{id_space}}/0">+</a>
+    </div>
+    <div class="pm-inline-div">
+
+        <br/>
+        {{Responsible}}
+    </div>
+    <div class=" pm-inline-div">
+        <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="rerespsstatus/{{id_space}}">{{Resps_Status}}</a>
+        <a style="{%if color %} color: {{color}}; {%endif%}" href="rerespsstatusedit/{{id_space}}/0">+</a>
+    </div>
+    <div class="pm-inline-div">
+        <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="resourcesvisa/{{id_space}}">{{Visas}}</a>
+        <a style="{%if color %} color: {{color}}; {%endif%}" href="resourceseditvisa/{{id_space}}/0">+</a>
+    </div>
+    <div class="pm-inline-div">
+        <br/>
+        {{Suivi}}
+    </div>
+    <div class="pm-inline-div">
+        <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="restates/{{id_space}}">{{States}}</a>
+        <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="restatesedit/{{id_space}}/0">+</a>
+    </div>
+    <div class="pm-inline-div">
+        <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="reeventtypes/{{id_space}}">{{Event_Types}}</a>
+        <a style="{%if color %} color: {{color}}; {%endif%}" href="reeventtypesedit/{{id_space}}/0">+</a> 
+    </div>
+
+</div>

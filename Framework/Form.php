@@ -33,6 +33,7 @@ class Form {
 
     private $readonly;
     private $checkUnicity;
+    private $suggestLogin;
 
     private $choices;
     private $choicesid;
@@ -75,7 +76,7 @@ class Form {
         $this->labelWidth = 4;
         $this->inputWidth = 6;
         $this->buttonsWidth = 12;
-        $this->buttonsOffset = 0;
+        $this->buttonsOffset = 1;
         $this->title = "";
         $this->validationURL = "";
         $this->cancelURL = "";
@@ -84,6 +85,7 @@ class Form {
         $this->isFormAdd = false;
         $this->externalButtons = array();
         $this->useAjax = $useAjax;
+        $this->suggestLogin = false;
 
         $this->parseRequest = false;
         $formID = $request->getParameterNoException("formid");
@@ -187,7 +189,7 @@ class Form {
      * @param string $name Value name
      * @param string $value Default value
      */
-    protected function setValue($name, $value) {
+    protected function setValue($value) {
         //if ($this->parseRequest) {
         //    $this->values[] = $this->request->getParameterNoException($name);
         //} else {
@@ -203,7 +205,7 @@ class Form {
         $this->types[] = "separator";
         $this->names[] = $name;
         $this->labels[] = "";
-        $this->setValue($name, "");
+        $this->setValue("");
         $this->isMandatory[] = false;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -223,7 +225,7 @@ class Form {
         $this->types[] = "separator2";
         $this->names[] = $name;
         $this->labels[] = "";
-        $this->setValue($name, "");
+        $this->setValue("");
         $this->isMandatory[] = false;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -243,7 +245,7 @@ class Form {
         $this->types[] = "comment";
         $this->names[] = $text;
         $this->labels[] = "";
-        $this->setValue($text, "");
+        $this->setValue("");
         $this->isMandatory[] = false;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -258,14 +260,13 @@ class Form {
     /**
      * Add hidden input to the form
      * @param string $name Input name
-     * @param string $label Input label 
      * @param string $value Input default value
      */
     public function addHidden($name, $value = "") {
         $this->types[] = "hidden";
         $this->names[] = $name;
         $this->labels[] = "";
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = false;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -293,7 +294,7 @@ class Form {
         $this->validated[] = true;
         $this->useUpload = true;
         $this->enabled[] = "";
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
@@ -302,21 +303,22 @@ class Form {
 
     /**
      * To download a file from the database
-     * @param type $label
-     * @param type $url
+     * @param string $name
+     * @param string $label
+     * @param string $url
      */
-    public function addDownloadButton($name, $label, $url, $manual) {
+    public function addDownloadButton($name, $label, $url) {
         $this->types[] = "downloadbutton";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->isMandatory[] = $manual;
+        $this->isMandatory[] = false;
         $this->choices[] = array();
         $this->choicesid[] = array();
         $this->validated[] = true;
         $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
-        $this->setValue($name, $url);
+        $this->setValue($url);
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
     }
@@ -329,11 +331,11 @@ class Form {
      * @param string $value Input default value
      */
     // #105: add readonly
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false) {
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false, $suggestLogin = false) {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -343,6 +345,9 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = $readonly;
         $this->checkUnicity[] = $checkUnicity;
+        if ($suggestLogin) {
+            $this->suggestLogin = true;
+        }
     }
 
     /**
@@ -355,7 +360,7 @@ class Form {
         $this->types[] = "password";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, "");
+        $this->setValue("");
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -379,7 +384,7 @@ class Form {
         $this->types[] = "date";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -396,7 +401,7 @@ class Form {
         $this->types[] = "datetime";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -413,7 +418,7 @@ class Form {
         $this->types[] = "hour";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -436,7 +441,7 @@ class Form {
         $this->types[] = "color";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -459,7 +464,7 @@ class Form {
         $this->types[] = "email";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -482,7 +487,7 @@ class Form {
         $this->types[] = "number";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -506,7 +511,7 @@ class Form {
         $this->types[] = "select";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = false;
         $this->choices[] = $choices;
         $this->choicesid[] = $choicesid;
@@ -519,7 +524,7 @@ class Form {
     }
     
         /**
-     * Add select input to the form
+     * Add mandatory select input to the form
      * @param string $name Input name
      * @param string $label Input label
      * @param unknown $choices List of options names
@@ -530,7 +535,7 @@ class Form {
         $this->types[] = "select";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = true;
         $this->choices[] = $choices;
         $this->choicesid[] = $choicesid;
@@ -554,7 +559,7 @@ class Form {
         $this->types[] = "textarea";
         $this->names[] = $name;
         $this->labels[] = $label;
-        $this->setValue($name, $value);
+        $this->setValue($value);
         $this->isMandatory[] = $isMandatory;
         $this->choices[] = array();
         $this->choicesid[] = array();
@@ -665,7 +670,7 @@ class Form {
                 $required = "required";
             }
             $validated = "";
-            if ($this->validated[$i] == false) {
+            if ($this->validated[$i] === false) {
                 $validated = "alert alert-danger";
             }
             if ($this->types[$i] == "separator") {
@@ -681,7 +686,7 @@ class Form {
                 $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
             }
             if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicity = $checkUnicityElem);
+                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicityElem);
             }
             if ($this->types[$i] == "password") {
                 $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -699,7 +704,7 @@ class Form {
                 $html .= $formHtml->color($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "email") {
-                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicity = $checkUnicityElem);
+                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicityElem);
             }
             if ($this->types[$i] == "number") {
                 $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
@@ -711,7 +716,7 @@ class Form {
                 $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "downloadbutton") {
-                $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth);
+                $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "select") {
                 $sub = "";
@@ -735,18 +740,22 @@ class Form {
             $html .= $formHtml->formFooter();
         }
 
-        if ($this->isDate == true) {
+        if ($this->isDate === true) {
             $html .= $formHtml->timePickerScript();
         }
-        if ($this->isTextArea == true) {
+        if ($this->isTextArea === true) {
             $html .= $formHtml->textAreaScript();
         }
 
-        if ($this->checkUnicity == true) {
+        if ($this->checkUnicity && in_array(true, $this->checkUnicity)) {
             $html .= $formHtml->checkUnicityScript();
         }
+        
+        if ($this->suggestLogin) {
+            $html .= $formHtml->suggestLoginScript();
+        }
 
-        if ($this->isFormAdd == true) {
+        if ($this->isFormAdd === true) {
             $html .= $this->formAdd->getJavascript();
         }
         if ($this->useAjax) {

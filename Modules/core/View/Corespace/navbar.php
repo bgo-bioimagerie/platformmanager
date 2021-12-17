@@ -1,13 +1,8 @@
-<nav class="navbar navbar-default navbar-fixed-top" style="margin-top: 50px; background-color: #ffffff; z-index: 12;">
+
+<nav class="navbar navbar-default" style="background-color: {{space.color}}; z-index: 12;">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a href="corespace/{{space.id}}"><h3 style="color: #444; text-align: center; font-size: 16px;">{{space.name}}</h3></a>
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#spacenavbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+            <a style="color: {{space.txtcolor}}" class="text-center" href="corespace/{{space.id}}"><h3 style="text-align: center; font-size: 16px;">{{space.name}}</h3></a>
         </div>
         
     </div>

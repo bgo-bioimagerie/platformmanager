@@ -3,6 +3,7 @@
 [Installation]
 rootWeb = /
 public_url = 'http://localhost:4000'
+jwt_secret =
 
 [Admin]
 admin_user =
@@ -21,7 +22,6 @@ headless = false
 
 [Modules]
 modules[] = "core"
-modules[] = "transfer"
 modules[] = "clients"
 modules[] = "users"
 modules[] = "resources"

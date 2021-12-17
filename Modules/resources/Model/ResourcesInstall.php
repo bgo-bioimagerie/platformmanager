@@ -58,6 +58,7 @@ class ResourcesInstall extends Model {
         
         if (!file_exists('data/resources/')) {
             mkdir('data/resources/', 0777, true);
+            mkdir('data/resources/events', 0777, true);
         }
     }
 }

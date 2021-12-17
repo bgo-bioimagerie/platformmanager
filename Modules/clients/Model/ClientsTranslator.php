@@ -103,6 +103,13 @@ class ClientsTranslator {
 
     public static function Edit_Client($lang) {
         if ($lang == "fr") {
+            return "Edition Client";
+        }
+        return "Edit Client";
+    }
+
+    public static function Client($lang = "") {
+        if ($lang == "fr") {
             return "Client";
         }
         return "Client";
@@ -259,7 +266,14 @@ class ClientsTranslator {
         if ($lang == "fr") {
             return "L'utilisateur a bien été ajouté au compte client";
         }
-        return "User has been ddded to client";
+        return "User has been added to client";
+    }
+
+    public static function UserHasBeenDeletedFromClient($lang) {
+        if ($lang == "fr") {
+            return "L'utilisateur a bien été supprimé du compte client";
+        }
+        return "User has been removed from client";
     }
 
     public static function AddressDelivery($lang) {

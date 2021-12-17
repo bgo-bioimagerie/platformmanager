@@ -24,6 +24,12 @@ abstract class Model {
     private $columnsDefaultValue;
     protected $primaryKey;
 
+    static $reconnectErrors = [
+        1317 // interrupted
+        ,2002 // refused
+        ,2006 // gone away
+    ];
+
     /**
      * Check if table already contains a value for column
      * 
@@ -63,19 +69,40 @@ abstract class Model {
                 $result = self::getDatabase()->query($sql);   // direct query
             } else {
                 $result = self::getDatabase()->prepare($sql); // prepared request
-                //print_r($params);
-                //echo "class = " . get_class($this) . "<br/>";
                 $result->execute($params);
             }
 
         } catch (Exception $e) {
             $msg = $e->getMessage();
-            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
+            Configuration::getLogger()->debug('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
             if(Configuration::get('sentry_dsn', '')) {
                 \Sentry\captureException($e);
             }
+            if(isset($e->errorInfo) && in_array($e->errorInfo[1], self::$reconnectErrors)){
+                // conn error, try to disconnect/reconnect and re-execute
+                try{
+                    self::resetDatabase();
+                    if ($params == null) {
+                        $result = self::getDatabase()->query($sql);   // direct query
+                    } else {
+                        $result = self::getDatabase()->prepare($sql); // prepared request
+                        $result->execute($params);
+                    }
+                }catch(Exception $e2){
+                    Configuration::getLogger()->error('[sql] connection reset failed', ['error' => $e2]);
+                    Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
+                    if(Configuration::get('sentry_dsn', '')) {
+                        \Sentry\captureException($e);
+                    }
+                }
+            }
+
         }
         return $result;
+    }
+
+    static function resetDatabase() {
+        self::$bdd = null;
     }
 
     /**
@@ -101,9 +128,9 @@ abstract class Model {
 
     /**
      * 
-     * @param type $dsn
-     * @param type $login
-     * @param type $pwd
+     * @param string $dsn
+     * @param string $login
+     * @param string $pwd
      */
     public function setDatabase($dsn, $login, $pwd) {
 
@@ -117,10 +144,10 @@ abstract class Model {
 
     /**
      * 
-     * @param type $tableName
-     * @param type $columnName
-     * @param type $columnType
-     * @param type $defaultValue
+     * @param string $tableName
+     * @param string $columnName
+     * @param string $columnType
+     * @param mixed $defaultValue
      */
     public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
 
@@ -153,7 +180,7 @@ abstract class Model {
 
     /**
      * 
-     * @param type $table
+     * @param string $table
      * @return boolean
      */
     public function isTable($table) {
@@ -235,9 +262,9 @@ abstract class Model {
 
     /**
      * 
-     * @param type $name
-     * @param type $type
-     * @param type $value
+     * @param string $name
+     * @param string $type
+     * @param mixed $value
      */
     public function setColumnsInfo($name, $type, $value) {
         $this->columnsNames[] = $name;
@@ -344,14 +371,37 @@ abstract class Model {
         $this->runRequest($sql);
     }
 
-    public function admGetBy($tableName, $key, $value) {
+    public function admGetBy($tableName, $key, $value, $id_space=0) {
         $sql = "SELECT * from $tableName WHERE $key=?";
-        return $this->runRequest($sql, array($value))->fetch();
+        $params = array($value);
+        if ($id_space) {
+            $sql .= " AND id_space=?";
+            $params[] = $id_space;
+
+        }
+        return $this->runRequest($sql,$params)->fetch();
     }
 
-    public function admGetAll($tableName) {
+    public function admGetAll($tableName, $id_space=0) {
         $sql = "SELECT * from $tableName";
-        return $this->runRequest($sql)->fetchAll();
+        $params = array();
+        if ($id_space) {
+            $sql .= " WHERE id_space=?";
+            $params = [$id_space];
+
+        }
+        return $this->runRequest($sql, $params)->fetchAll();
+    }
+
+    public function admCount($tableName, $id_space= 0) {
+        $sql = "SELECT count(*) as total from $tableName where deleted=0";
+        $params = array();
+        if ($id_space) {
+            $sql .= " AND id_space=?";
+            $params = [$id_space];
+
+        }
+        return $this->runRequest($sql, $params)->fetch();
     }
 
 }
