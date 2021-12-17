@@ -98,9 +98,10 @@ Create a user as a space admin    If you want to directly link a user to a speci
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/docker/</guid>
       <description>Using docker    setup    Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
 Update docker-compose.yml file environment sections with your setup.
-Some variables are defined in a .env file for sensitive data.
+Some variables are defined in a .env file for sensitive and custom data.
 Example:
-PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx  Exemple docker-compose.yml use local docker volumes to save database etc. Only local host mounted volume is data directory which contains space upload files, which should be writable by container www-data user and shared among pfm instances.</description>
+PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx ....  See example docker/env.example for your .env file.
+Exemple docker-compose.yml use local docker volumes to save database etc.</description>
     </item>
     
     <item>
@@ -142,7 +143,11 @@ Mandatory sections are:
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/</guid>
-      <description></description>
+      <description>Booking module allows users book resources.
+Unlike other modules, Booking module has the particularity to be divided into two modules: Booking and Booking settings. You will need to activate both in order set your resources reservation environment.
+Module descritpion
+Item definition    A reservation is defined by its:
+ Resource User Client account Short description Full description Color code (optional) Additional infos All day, i.e. does this reservation takes all day?</description>
     </item>
     
     <item>
@@ -160,7 +165,10 @@ Mandatory sections are:
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/</guid>
-      <description></description>
+      <description>Clients module allows you to create invoicable entities.
+Within this module, you can:
+ manage clients manage pricings link users to a client  Item definition    A client is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the client. A user can&amp;rsquo;t be invoiced directly.
+A client is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
     </item>
     
     <item>
@@ -217,7 +225,10 @@ Space email address is show in helpdesk configuration panel when activated.</des
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/</guid>
-      <description></description>
+      <description>Quote module allows you to create quotes.
+Within this module, you can:
+ Create quotes Edit quotes  Item definition    A quote is defined by its (&amp;quot;*&amp;quot; for mandatory):
+ Recipient or User* Recipient Email Client Address Client* A list of items  Related items definition    Recipient or User    The recipient or user is the person whose name will appear in the quote header.</description>
     </item>
     
     <item>
@@ -226,7 +237,10 @@ Space email address is show in helpdesk configuration panel when activated.</des
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/</guid>
-      <description></description>
+      <description>Resources module allows you to create resources that users can book.
+Within this module, you can:
+ manage resources manage areas manage categories manage responsibles and visas manage resources states and events  Item definition    A resource is a bookable item. It is defined by its (&amp;quot;*&amp;quot; for mandatory):
+ name* category* area* brand type display order description full description image  Related items definition    Category    A category contain multiple resources.</description>
     </item>
     
     <item>
@@ -244,7 +258,9 @@ Space email address is show in helpdesk configuration panel when activated.</des
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/</guid>
-      <description></description>
+      <description>Statistics dashboard    In space page, there is a link to the statistics dashboard, for managers only.
+Managers can log in dashboard with their identifier and their API Key (in user informations panel /usersmyaccount).
+The statistics dashboard is based on Grafana and several dashboards are set by default. Additional dashboards can be created by managers. It is advised not to modify provided dashboards as they may be overwritten on future updates.</description>
     </item>
     
     <item>
@@ -253,7 +269,10 @@ Space email address is show in helpdesk configuration panel when activated.</des
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/</guid>
-      <description></description>
+      <description>Users module allows space admins to manage users.
+Within this module, you can:
+ add users authorize users to access your space affect roles to users within your space manage users booking access manage users client accounts  Item definition    A user is linked to an account. Within a space, it can be attributed different roles , like admin, manager, user or visitor.
+A user is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
     </item>
     
   </channel>

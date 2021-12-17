@@ -10,7 +10,10 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Quote module allows you to create quotes.
+Within this module, you can:
+ Create quotes Edit quotes  Item definition    A quote is defined by its (&quot;*&quot; for mandatory):
+ Recipient or User* Recipient Email Client Address Client* A list of items  Related items definition    Recipient or User    The recipient or user is the person whose name will appear in the quote header.">
 
 
 
@@ -502,7 +505,11 @@
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -542,7 +549,11 @@
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -666,7 +677,11 @@
             <li>
             
             
-                <span class="flex">Quote</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/quote/" class="gdoc-nav__entry is-active">
+                        Quote
+                    </a>
+                </span>
             
             
 
@@ -686,7 +701,11 @@
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -726,7 +745,11 @@
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -746,7 +769,11 @@
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -887,7 +914,146 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Quote</h1>
-        
+        <p><strong>Quote module</strong> allows you to create quotes.</p>
+<p><img src="../../../quote_module_1.png" alt="clients_module"  /></p>
+<p>Within this module, you can:</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#create-a-quote">Create <em>quotes</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#edit-quote">Edit <em>quotes</em></a></li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="item-definition">
+        Item definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#item-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Item definition" href="#item-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>A <em>quote</em> is defined by its (&quot;*&quot; for <em>mandatory</em>):</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#recipient">Recipient or User*</a></li>
+<li>Recipient Email</li>
+<li>Client Address</li>
+<li><a class="gdoc-markdown__link" href="./#client">Client*</a></li>
+<li>A list of <em>items</em></li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="related-items-definition">
+        Related items definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#related-items-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Related items definition" href="#related-items-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="recipient-or-user">
+        Recipient or User
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#recipient-or-user" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Recipient or User" href="#recipient-or-user">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>The <strong>recipient</strong> or <a class="gdoc-markdown__link" href="../users"><strong>user</strong></a> is the person whose name will appear in the quote header.</p>
+<p><em>Recipient</em> is set in case of a <a class="gdoc-markdown__link" href="./#create-a-new-user-quote"><em>new user quote creation</em></a>.</p>
+<p><em>User</em> is set in case of a <a class="gdoc-markdown__link" href="./#create-a-new-quote"><em>new quote creation</em></a>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="client">
+        Client
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#client" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Client" href="#client">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>The <strong>client</strong> is the structure whose name and address will appear in the quote header right under the recipent&rsquo;s or user&rsquo;s name.
+see <a class="gdoc-markdown__link" href="../clients">Clients</a></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="item">
+        Item
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#item" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Item" href="#item">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p><strong>Items</strong> are the invoicable elements to which quote relates. They can be <a class="gdoc-markdown__link" href="../services">services</a> or bookable <a class="gdoc-markdown__link" href="../resources">resources</a>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="module-activation-and-configuration">
+        Module activation and configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#module-activation-and-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Module activation and configuration" href="#module-activation-and-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Within your space, go into <em>Configuration</em> module.</p>
+<p><img src="../../../basic_configuration_1.png" alt="basic configuration"  /></p>
+<p>Then click edit button in <em>quote</em> line.</p>
+<p>You can now select the minimum role required to access the module. <em>Inactive</em> option stands for <em>the module is not active</em>.</p>
+<p><img src="../../../quote_module_0.png" alt="quote_configuration"  /></p>
+<p>Don&rsquo;t forget to save your choice.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="create-a-quote">
+        Create a quote
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#create-a-quote" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Create a quote" href="#create-a-quote">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Let&rsquo;s go into the <em>Quote module</em>.</p>
+<p>Don&rsquo;t rush it, we must have created at least one <a class="gdoc-markdown__link" href="../clients/#add-a-client"><em>client</em></a> before being able to create our first <em>quote</em>.</p>
+<p>Any <em>client</em> to who you want to address a quote must also have been attributed a <a class="gdoc-markdown__link" href="../clients/#add-a-pricing"><em>pricing</em></a>.</p>
+<p>In newest versions of Platform-Manager, a client is necesseraly linked to a pricing.</p>
+<p>There are two ways to create quotes: <a class="gdoc-markdown__link" href="./#create-a-new-quote"><em>Create a new quote</em></a> or <a class="gdoc-markdown__link" href="./#create-a-new-user-quote"><em>Create a new user quote</em></a></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="create-a-new-quote">
+        Create a new quote
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#create-a-new-quote" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Create a new quote" href="#create-a-new-quote">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>If you want to address your quote to an existing user.</p>
+<p>Just click on <em>Create new quote</em> in the left side menu.</p>
+<p><img src="../../../quote_module_2.png" alt="quote_configuration"  /></p>
+<p>Then you can set a <em>user</em> for this quote then choose a <em>client</em> amongst those linked to the selected <em>user</em>.</p>
+<p>Click <em>save</em>. You will be redirected to the <a class="gdoc-markdown__link" href="./#edit-quote">Edit quote screen</a>, where you can add items to your quote.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="create-a-new-user-quote">
+        Create a new user quote
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#create-a-new-user-quote" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Create a new user quote" href="#create-a-new-user-quote">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>If the person you want to address your quote to has no user account and you don&rsquo;t want to create one.</p>
+<p>There is still need for an existing client.</p>
+<p>Just click on <em>Create new user quote</em> in the left side menu.</p>
+<p><img src="../../../quote_module_6.png" alt="quote_configuration"  /></p>
+<p>Then you can set a <a class="gdoc-markdown__link" href="./#recipient-or-user"><em>recipient</em></a> for this quote, its email, and select a <em>client</em> amongst all client accounts referenced in your platform space.</p>
+<p>Pricing is set automatically, accordingly to the selected client&rsquo;s.</p>
+<p>Click <em>save</em>. You will be redirected to the <a class="gdoc-markdown__link" href="./#edit-quote">Edit quote screen</a>, where you can add items to your quote.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="edit-quote">
+        Edit quote
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#edit-quote" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Edit quote" href="#edit-quote">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>You can here add <a class="gdoc-markdown__link" href="./#add-an-item"><em>items</em></a> to your quote, change user and/or client.</p>
+<p>If this quote was created in the <a class="gdoc-markdown__link" href="./#create-a-new-user-quote"><em>Create new user quote</em></a> form, you can change its <a class="gdoc-markdown__link" href="./#recipient-or-user"><em>recipient</em></a> and <em>recipient email</em> instead of its <em>user</em>.</p>
+<p><img src="../../../quote_module_7.png" alt="quote_configuration"  /></p>
+<p>Pricing is set automatically, accordingly to the selected client&rsquo;s.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="add-an-item">
+        Add an item
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#add-an-item" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Add an item" href="#add-an-item">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Click on the <em>New item button</em>. A popup window displays.</p>
+<p><img src="../../../quote_module_4.png" alt="quote_configuration"  /></p>
+<p>Then select a service or a bookable resource in <em>Service / resource</em> list, add a quantity and, eventually a comment.</p>
+<p>this will add an item line to your quote.</p>
+<p><img src="../../../quote_module_5.png" alt="quote_configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="generate-a-pdf-file">
+        Generate a PDF file
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/#generate-a-pdf-file" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Generate a PDF file" href="#generate-a-pdf-file">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Once your quote is set up, you can generate a pdf file from it by clicking the <em>PDF</em> button.</p>
+<p>This file will be generated accordingly to the template you set in your <a class="gdoc-markdown__link" href="../invoices"><em>invoices</em></a> module configuration.</p>
+
     </article>
 
                 

@@ -10,7 +10,10 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Resources module allows you to create resources that users can book.
+Within this module, you can:
+ manage resources manage areas manage categories manage responsibles and visas manage resources states and events  Item definition    A resource is a bookable item. It is defined by its (&quot;*&quot; for mandatory):
+ name* category* area* brand type display order description full description image  Related items definition    Category    A category contain multiple resources.">
 
 
 
@@ -502,7 +505,11 @@
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -542,7 +549,11 @@
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -666,7 +677,11 @@
             <li>
             
             
-                <span class="flex">Quote</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/quote/" class="gdoc-nav__entry ">
+                        Quote
+                    </a>
+                </span>
             
             
 
@@ -686,7 +701,11 @@
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry is-active">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -726,7 +745,11 @@
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -746,7 +769,11 @@
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -887,7 +914,130 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Resources</h1>
-        
+        <p><strong>Resources module</strong> allows you to create resources that users can book.</p>
+<p><img src="../../../resources_module_6.png" alt="resources_module"  /></p>
+<p>Within this module, you can:</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#add-a-resource">manage <em>resources</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#add-an-area">manage <em>areas</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#add-a-category">manage <em>categories</em></a></li>
+<li>manage responsibles and <a class="gdoc-markdown__link" href="./#add-a-visa">visas</a></li>
+<li>manage resources states and events</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="item-definition">
+        Item definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#item-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Item definition" href="#item-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>A <strong>resource</strong> is a bookable item.
+It is defined by its (&quot;*&quot; for <em>mandatory</em>):</p>
+<ul>
+<li>name*</li>
+<li><a class="gdoc-markdown__link" href="./#category">category*</a></li>
+<li><a class="gdoc-markdown__link" href="./#area">area*</a></li>
+<li>brand</li>
+<li>type</li>
+<li>display order</li>
+<li>description</li>
+<li>full description</li>
+<li>image</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="related-items-definition">
+        Related items definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#related-items-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Related items definition" href="#related-items-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="category">
+        Category
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#category" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Category" href="#category">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>A <strong>category</strong> contain multiple resources. For example, if you have 3 scanners (<em>scanner1</em>, <em>scanner2</em>, <em>scanner3</em>), they can be grouped under the category <em>Scanners</em>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="area">
+        Area
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#area" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Area" href="#area">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>An <strong>area</strong> is a specific zone, or place. If your resources are shared between 2 labs (<em>lab1</em>, <em>lab2</em>), then your areas are <em>lab1</em> and <em>lab2</em>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="module-activation-and-configuration">
+        Module activation and configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#module-activation-and-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Module activation and configuration" href="#module-activation-and-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Within your space, go into <em>Configuration</em> module.</p>
+<p><img src="../../../basic_configuration_1.png" alt="basic configuration"  /></p>
+<p>Then click edit button in <em>resources</em> line.</p>
+<p>You can now select the minimum role required to access the module. &ldquo;Inactive&rdquo; option stands for &ldquo;the module is not active&rdquo;.</p>
+<p><img src="../../../resources_module_0.png" alt="resources_configuration"  /></p>
+<p>Don&rsquo;t forget to save your choice.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="create-some-resources">
+        Create some resources
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#create-some-resources" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Create some resources" href="#create-some-resources">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Go into <em>Resources module</em>.</p>
+<p><img src="../../../resources_module_1.png" alt="basic configuration"  /></p>
+<p>Before adding a resource, <strong>you must</strong> add at least one area and one category.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="add-a-category">
+        Add a category
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#add-a-category" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Add a category" href="#add-a-category">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>You can add a category by clicking the &lsquo;+&rsquo; icon next to <em>Categories</em> in the left side menu.</p>
+<p><img src="../../../resources_module_2.png" alt="basic configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="add-an-area">
+        Add an area
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#add-an-area" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Add an area" href="#add-an-area">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>You can add an area by clicking the &lsquo;+&rsquo; icon next to <em>Areas</em> in the left side menu.</p>
+<p><img src="../../../resources_module_3.png" alt="basic configuration"  /></p>
+<p>An area can be <em>restricted</em>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="add-a-resource">
+        Add a resource
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#add-a-resource" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Add a resource" href="#add-a-resource">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>You can add a resource by clicking the &lsquo;+&rsquo; icon next to <em>Resources</em> in the left side menu.</p>
+<p><img src="../../../resources_module_4.png" alt="basic configuration"  /></p>
+<p>The resource you created can now be accessed in booking module. A few more steps, and it will be available for booking !</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="add-a-visa">
+        Add a visa
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#add-a-visa" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Add a visa" href="#add-a-visa">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>In order to manage specific authorisations in resources booking, you can add <em>visas</em> to <em>resources categories</em></p>
+<p>You can add a visa by clicking the &lsquo;+&rsquo; icon next to <em>Visas</em> in the left side menu.</p>
+<p><img src="../../../resources_module_5.png" alt="basic configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="manage-resources-accessibilities">
+        Manage resources Accessibilities
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/#manage-resources-accessibilities" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Manage resources Accessibilities" href="#manage-resources-accessibilities">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>See <a class="gdoc-markdown__link" href="../booking#accessibilities">booking settings accessibilities</a></p>
+
     </article>
 
                 

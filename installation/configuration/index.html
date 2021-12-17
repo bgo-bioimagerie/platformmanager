@@ -505,7 +505,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Booking</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/booking/" class="gdoc-nav__entry ">
+                        Booking
+                    </a>
+                </span>
             
             
 
@@ -545,7 +549,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Clients</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/clients/" class="gdoc-nav__entry ">
+                        Clients
+                    </a>
+                </span>
             
             
 
@@ -669,7 +677,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Quote</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/quote/" class="gdoc-nav__entry ">
+                        Quote
+                    </a>
+                </span>
             
             
 
@@ -689,7 +701,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Resources</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/resources/" class="gdoc-nav__entry ">
+                        Resources
+                    </a>
+                </span>
             
             
 
@@ -729,7 +745,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Statistics</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/statistics/" class="gdoc-nav__entry ">
+                        Statistics
+                    </a>
+                </span>
             
             
 
@@ -749,7 +769,11 @@ Mandatory sections are:
             <li>
             
             
-                <span class="flex">Users</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/users/" class="gdoc-nav__entry ">
+                        Users
+                    </a>
+                </span>
             
             
 
@@ -923,7 +947,9 @@ to dialog with pfm-events process</li>
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
-</div><p>If users are to be authenticated via LDAP, an Config/ldap.ini is required
+</div><p>If users are to be authenticated via LDAP, ldap settings must be set in Config/conf.ini or
+env variables.
+Confgiguration via a Config/ldap.ini is file is still supported for backward compatibility
 (see ldap.ini.sample). A single LDAP system is used for all spaces access
 in this case, though local users can still be used in parallel.</p>
 <div class="gdoc-page__anchorwrap">
@@ -936,6 +962,21 @@ in this case, though local users can still be used in parallel.</p>
 </div><p>Most configuration file variables can be superseeded by environment
 variables, usually in format <strong>PFM_VARNAME</strong>, <em>PFM_ADMIN_USER</em> for example for <em>admin_user</em> file config equivalent.</p>
 <p>See <em>docker</em> section.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="welcome-page">
+        Welcome page
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/configuration/#welcome-page" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Welcome page" href="#welcome-page">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>The default welcome page displays content of the first file found in <em>data</em> directory:</p>
+<ul>
+<li>welcome_[en|fr].md</li>
+<li>welcome_[en|fr].html*</li>
+<li>welcome.md</li>
+<li>welcome.html</li>
+</ul>
+<p>Files in markdown (.md) are converted to HTML.</p>
 
     </article>
 
