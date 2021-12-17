@@ -218,7 +218,6 @@ class SeProject extends Model {
 
         // extract years
         if (count($data) > 0) {
-
             $firstYear = null;
             $lastYear = null;
             foreach($data as $date) {
@@ -264,7 +263,7 @@ class SeProject extends Model {
             */
 
             $years = array();
-            for ($i = $firstYear; $i <= $lastYear; $i++) {
+            for ($i = $firstYear; $i <= $lastYear+1; $i++) {
                 $years[] = $i;
             }
 
@@ -275,9 +274,7 @@ class SeProject extends Model {
 
     public function closedProjectsYears($id_space) {
         $sql = "SELECT date_close FROM se_project WHERE deleted=0 AND date_close is not null AND id_space=? ORDER BY date_open ASC";
-        //echo "sql = " . $sql . "</br>";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        //print_r($data);
         return $this->extractYears($data);
     }
 
