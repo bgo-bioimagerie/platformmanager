@@ -1,6 +1,6 @@
 # Changes
 
-## 2.2
+## 2.2.0
 
 **Warning**: [admin] Ldap configuration modification from ini or env variables
 only, not configurable via UI anymore and existing values not taken into account.
@@ -143,7 +143,7 @@ See ldap.ini.example if needed or doc for env variables.
 * #244 Allow impersonation
 * #142 fix resource with no category handling
 * #272 allow to display news in popup on space home page
-* #275 Fix color codes error in booking schedulings 
+* #275 Fix color codes error in booking schedulings
 * #292 [ServicesinvoiceorderController] calls to deprecated function createByUnitForm()
 * #298 Add invoice by quantities
 * #281 Add front-end controls in user forms. Improves ergonomy
