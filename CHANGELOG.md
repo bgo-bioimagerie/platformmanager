@@ -1,7 +1,10 @@
 # Changes
 
 ## 2.2.1
+
 * [booking] fix another booking authorizations bug
+* [helpdesk] sort tickets and fix refresh
+* [core] check id_user to see if user is logged
 
 ## 2.2.0
 
