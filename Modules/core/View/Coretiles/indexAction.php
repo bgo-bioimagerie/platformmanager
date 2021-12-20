@@ -98,7 +98,7 @@
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                                         if(!$isMemberOfSpace) {
                             ?>
-                                        <div style="bottom: 20px; right: 10px">
+                                        <div>
                                             <a href="<?php echo "coretilesselfjoinspace/". $item["id"] ?>">
                                                 <button type="button" class="btn btn-md btn-success">
                                                     <?php echo CoreTranslator::RequestJoin($isMemberOfSpace, $lang) ?>
@@ -109,7 +109,7 @@
                                         }
                                     } else {
                                     ?>
-                                        <div style="bottom: 20px; right: 10px">
+                                        <div>
                                             <button type="button" class="btn btn-md btn-info" disabled>
                                                 <?php echo CoreTranslator::JoinRequested($lang) ?>
                                             </button>

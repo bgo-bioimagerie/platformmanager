@@ -1,14 +1,12 @@
 # Changes
 
-## 2.2.1
-
-* [CoreTiles] fix display
 ## 2.2.0
 
 **Warning**: [admin] Ldap configuration modification from ini or env variables
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [CoreTiles] fix display
 * [statistics] fix service/projects statistics, invalid responsible and
  add count of projects per client and responsible (in charge) #455
 * [booking] avoid any resource selection in resources input
