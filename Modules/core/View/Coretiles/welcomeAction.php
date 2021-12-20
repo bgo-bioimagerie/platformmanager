@@ -74,7 +74,7 @@
                     <p></p>
                     <p style="color:#018181; ">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
-                        <?php if(isset($_SESSION["login"]) && $_SESSION["id_user"] >= 0) { ?>
+                        <?php if(isset($_SESSION["login"]) && $_SESSION["id_user"] > 0) { ?>
                                 <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="glyphicon glyphicon-star"></span></a>
                         <?php } ?>
                         <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
@@ -99,7 +99,7 @@
             <?php } ?>
         </div>
         <div class="col-md-4" id="user_home">
-            <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] >= 0) { ?>
+            <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { ?>
                 <div v-if="bookings && bookings.length > 0" id="future_bookings">
                     <div class="panel panel-default">
                         <div class="panel-heading">Bookings</div>
@@ -138,7 +138,7 @@ var app = new Vue({
     el: '#welcome',
     data () {
         return {
-            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] >= 0) { echo "true"; } else { echo "false";} ?>,
+            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
             spaces: <?php echo json_encode($spaceMap); ?> ,
             catalog: <?php echo json_encode($resources); ?>,
             resources: <?php echo json_encode($catalog); ?>,

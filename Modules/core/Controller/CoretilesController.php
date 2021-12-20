@@ -103,7 +103,7 @@ class CoretilesController extends CorecookiesecureController {
             $spaces = [];
             $logged = false;
             if(isset($_SESSION["id_user"])) {
-                if($_SESSION["id_user"] >= 0) {
+                if($_SESSION["id_user"] > 0) {
                     $logged = true;
                 }
                 $starSpaces = $starModel->stars($_SESSION["id_user"]);
@@ -188,7 +188,7 @@ class CoretilesController extends CorecookiesecureController {
 
         $starModel = new CoreStar();
         $starList = [];
-        if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] >= 0) {
+        if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
             $starList = $starModel->stars($_SESSION["id_user"]);
         }
         $stars = [];
