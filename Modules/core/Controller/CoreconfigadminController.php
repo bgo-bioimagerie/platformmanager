@@ -125,6 +125,7 @@ class CoreconfigadminController extends CoresecureController {
             return;
         }
         // who can delete user
+        /*
         $formDeleteUser = $this->whoCanDeleteUserForm($modelCoreConfig, $lang);
 
         if ($formDeleteUser->check()) {
@@ -133,6 +134,7 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
+        */
 
         // view
         $forms = array($formMaintenance->getHtml($lang),
@@ -141,7 +143,7 @@ class CoreconfigadminController extends CoresecureController {
             //$formLdap->getHtml($lang),
             $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang),
-            $formDeleteUser->getHtml($lang),
+            //$formDeleteUser->getHtml($lang),
             $formEmail->getHtml($lang), $formNavbar->getHtml($lang)
         );
 
@@ -155,7 +157,7 @@ class CoreconfigadminController extends CoresecureController {
      * @return \Form
      */
     protected function maintenanceForm($modelCoreConfig, $lang) {
-        $is_maintenance = $modelCoreConfig->getParam("is_maintenance");
+        $is_maintenance = $modelCoreConfig->getParam("is_maintenance", 0);
         $maintenance_message = $modelCoreConfig->getParam("maintenance_message");
 
         $formMaintenance = new Form($this->request, "maintenanceForm");
@@ -202,7 +204,7 @@ class CoreconfigadminController extends CoresecureController {
     /**
      *
      * @param type $modelCoreConfig
-     * @param type $lang
+     * @param string $lang
      * @return \Form
      */
     protected function homePageForm($modelCoreConfig, $lang) {
@@ -219,7 +221,7 @@ class CoreconfigadminController extends CoresecureController {
     /**
      *
      * @param type $modelCoreConfig
-     * @param type $lang
+     * @param string $lang
      * @return \Form
      */
     protected function connectionPageForm($modelCoreConfig, $lang) {
@@ -237,7 +239,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     protected function spaceIconForm($modelCoreConfig, $lang) {
-        $value = $modelCoreConfig->getParam("space_icon_type");
+        $value = $modelCoreConfig->getParam("space_icon_type", 2);
         $choices = array();
         $choicesid = array();
         $choicesid[] = 1;
@@ -257,12 +259,12 @@ class CoreconfigadminController extends CoresecureController {
     /**
      *
      * @param type $modelCoreConfig
-     * @param type $lang
+     * @param string $lang
      * @return \Form
      */
     protected function desactivateUserForm($modelCoreConfig, $lang) {
 
-        $value = $modelCoreConfig->getParam("user_desactivate");
+        $value = $modelCoreConfig->getParam("user_desactivate", 1);
 
         $choices = array();
         $choicesid = array();
@@ -307,7 +309,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     *
+     * @deprecated
      * @param type $lang
      * @return \Form
      */
@@ -322,7 +324,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     *
+     * @deprecated
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
@@ -345,8 +347,12 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
 
+    /**
+     * @deprecated
+     */
+
     protected function whoCanDeleteUserForm($modelCoreConfig, $lang) {
-        $who_can_delete_user = $modelCoreConfig->getParam("who_can_delete_user");
+        $who_can_delete_user = $modelCoreConfig->getParam("who_can_delete_user", 2);
 
         $form = new Form($this->request, "whoCanDeleteUserForm");
         $form->addSeparator(CoreTranslator::Who_can_delete_users($lang));

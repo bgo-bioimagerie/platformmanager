@@ -31,18 +31,20 @@ abstract class CorecookiesecureController extends Controller {
         $_SESSION["user_status"] = $sessuser['status_id'];
         */
         
-        $this->request->getSession()->setAttribut("id_user", $sessuser['idUser']);
-        $this->request->getSession()->setAttribut("login", $sessuser['login']);
-        $this->request->getSession()->setAttribut("email", $sessuser['email']);
-        $this->request->getSession()->setAttribut("company", Configuration::get("name"));
-        $this->request->getSession()->setAttribut("user_status", $sessuser['status_id']);
-        
+        if($this->request->getSession() != null) {
+            $this->request->getSession()->setAttribut("id_user", $sessuser['idUser']);
+            $this->request->getSession()->setAttribut("login", $sessuser['login']);
+            $this->request->getSession()->setAttribut("email", $sessuser['email']);
+            $this->request->getSession()->setAttribut("company", Configuration::get("name"));
+            $this->request->getSession()->setAttribut("user_status", $sessuser['status_id']);
 
-        // add the user settings to the session
-        $modelUserSettings = new CoreUserSettings();
-        $settings = $modelUserSettings->getUserSettings($sessuser['idUser']);
-        //$_SESSION["user_settings"] = $settings;
-        $this->request->getSession()->setAttribut("user_settings", $settings);
+            // add the user settings to the session
+            $modelUserSettings = new CoreUserSettings();
+            $settings = $modelUserSettings->getUserSettings($sessuser['idUser']);
+            //$_SESSION["user_settings"] = $settings;
+            $this->request->getSession()->setAttribut("user_settings", $settings);
+        }
+        
 
         // update the user last connection
         $modelUser->updateLastConnection($sessuser['idUser']);

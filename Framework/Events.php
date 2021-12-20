@@ -235,6 +235,7 @@ class EventHandler {
                 if(array_key_exists('client', $quote) && $quote['client']) {
                     $client = $quote['client']['name'];
                 }
+                $client = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client);
                 $stat = ['name' => 'quote', 'fields' => ['value' => 1], 'tags' => ['client' => $client], 'time' => $quote['created_at']];
                 $statHandler->record($space['shortname'], $stat);
             }
@@ -326,6 +327,8 @@ class EventHandler {
             }
         }
         $value = time() - $timestamp;
+        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
+        $resource['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $resource['name']);
         $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
@@ -347,6 +350,8 @@ class EventHandler {
                 $client = $is_client;
             }
         }
+        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
+        $resource['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $resource['name']);
         $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
@@ -473,6 +478,7 @@ class EventHandler {
                 $client = $is_client;
             }
         }
+        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
         $total = floatval($invoice['total_ht']) - floatval($invoice['discount']);
         $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
         $stat = ['name' => 'invoice', 'fields' => ['value' => $total], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
@@ -497,6 +503,7 @@ class EventHandler {
             }
         }
         $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
+        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
         $stat = ['name' => 'invoice', 'fields' => ['value' => 0], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
@@ -540,6 +547,7 @@ class EventHandler {
                     break;
                 case Events::ACTION_CAL_ENTRY_REMOVE:
                     $this->calentryRemove($data);
+                    break;
                 case Events::ACTION_INVOICE_EDIT:
                     $this->invoiceEdit($data);
                     break;

@@ -847,7 +847,7 @@ class SeProject extends Model {
         $q = array('id_user' => $id_user);
         $sql = 'SELECT se_project.*, spaces.name as space FROM se_project';
         $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = se_project.id_space';
-        $sql .= ' WHERE closed_by >= 0 AND in_charge=:id_user';
+        $sql .= ' WHERE se_project.closed_by = 0 AND se_project.deleted = 0 AND se_project.in_charge IN (SELECT id FROM se_visa WHERE id_user=:id_user)';
         if($id_space && intval($id_space) > 0) {
             $q['id_space'] = $id_space;
             $sql .= ' AND se_project.id_space = :id_space';

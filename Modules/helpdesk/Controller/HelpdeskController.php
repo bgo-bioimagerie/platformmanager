@@ -253,13 +253,10 @@ class HelpdeskController extends CoresecureController {
         $messages = $hm->getMessages($id_ticket);
         $filter = false;
         $sm = new CoreSpace();
-        $um = new CoreUser();
 
-        if($um->getStatus($_SESSION['id_user']) != CoreUser::$ADMIN) {
-            $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
-            if(!$role || $role < CoreSpace::$MANAGER) {
-                $filter = true;
-            }
+        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if(!$role || $role < CoreSpace::$MANAGER) {
+            $filter = true;
         }
         $filteredMessages = [];
         if($filter) {
