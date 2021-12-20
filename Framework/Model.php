@@ -424,7 +424,7 @@ abstract class Model {
         $password = crypt($spaceName, Configuration::get('jwt_secret'));
         $sql = "CREATE USER IF NOT EXISTS '$spaceName'@'%' IDENTIFIED BY '$password'";
         $pdo->query($sql);
-        $sql = "GRANT SELECT ON $spaceName.* TO $spaceName@'%'";
+        $sql = "GRANT SELECT ON $spaceName.* TO '$spaceName'@'%'";
         $pdo->query($sql);
 
         $sql = "show tables";
