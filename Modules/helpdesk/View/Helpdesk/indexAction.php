@@ -199,6 +199,7 @@ blockquote {
             <table aria-describedby="list of tickets" class="table  table-sm">
                 <thead class="thead-dark">
                     <tr>
+                    <th scope="col"></th>
                     <th scope="col">#{{current_filter}}</th>
                     <th scope="col">Date</th>
                     <th scope="col">Subject</th>
