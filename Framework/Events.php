@@ -547,6 +547,7 @@ class EventHandler {
                     break;
                 case Events::ACTION_CAL_ENTRY_REMOVE:
                     $this->calentryRemove($data);
+                    break;
                 case Events::ACTION_INVOICE_EDIT:
                     $this->invoiceEdit($data);
                     break;
