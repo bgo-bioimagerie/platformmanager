@@ -79,7 +79,7 @@ abstract class CoresecureController extends CorecookiesecureController {
      */
     public function runAction($module, $action, $args = array()) {
         $modelConfig = new CoreConfig();
-        if ($modelConfig->getParam("is_maintenance") && ($this->request->getSession()->getAttribut("user_status") < 4)) {
+        if ($modelConfig->getParam("is_maintenance") && ($this->request->getSession()->getAttribut("user_status") < CoreStatus::$ADMIN)) {
                 throw new PfmException($modelConfig->getParam("maintenance_message"), 503);
         }
 
