@@ -105,6 +105,7 @@ class CorespaceadminController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id_space);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
 
+        $id = $id_space;
         if ($form->check()){ 
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
