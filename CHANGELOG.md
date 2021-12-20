@@ -6,6 +6,7 @@
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [coreTiles] fix join button display
 * [booking] fix booking authorizations bug
 * [booking] fix booking display if no bk_scheduling set
 * [CoreTiles] fix display
