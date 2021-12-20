@@ -6,6 +6,7 @@
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [booking] fix booking display if no bk_scheduling set
 * [CoreTiles] fix display
 * [statistics] fix service/projects statistics, invalid responsible and
  add count of projects per client and responsible (in charge) #455
