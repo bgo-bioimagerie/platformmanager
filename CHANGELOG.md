@@ -5,6 +5,7 @@
 * [booking] fix another booking authorizations bug
 * [helpdesk] sort tickets and fix refresh
 * [core] check id_user to see if user is logged
+* [core] on register after email validation validate the account #472
 
 ## 2.2.0
 
