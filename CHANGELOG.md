@@ -1,5 +1,10 @@
 # Changes
 
+## 2.1.1
+
+* [coreconfig] fix maintenance mode authorizations
+* [coreconfig] remove carousel
+
 ## 2.2.0
 
 **Warning**: [admin] Ldap configuration modification from ini or env variables
