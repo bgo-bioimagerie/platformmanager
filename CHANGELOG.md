@@ -1,5 +1,8 @@
 # Changes
 
+## 2.2.1
+* [booking] fix another booking authorizations bug
+
 ## 2.2.0
 
 **Warning**: [admin] Ldap configuration modification from ini or env variables
