@@ -175,15 +175,18 @@ var app = new Vue({
         };
         this.modules.forEach(mod => {
             let modName = mod.replace(' ', '').toLowerCase();
-                fetch(`/core/tiles/${this.id_space}/module/${modName}/notifs`, cfg).
-                    then((response) => response.json(), (error) => {}).
-                    then(data => {
-                        let n = {...this.notifs}
-                        n[modName] = data.notifs
-                        this.notifs = n
-                    }).catch((error) => {
-                        console.debug('failed to get notifications', modName, error);
-                    })
+            if(!modName) {
+                return;
+            }
+            fetch(`/core/tiles/${this.id_space}/module/${modName}/notifs`, cfg).
+            then((response) => response.json(), (error) => {}).
+            then(data => {
+                let n = {...this.notifs}
+                n[modName] = data.notifs
+                this.notifs = n
+            }).catch((error) => {
+                console.debug('failed to get notifications', modName, error);
+            })
 
         });
         
