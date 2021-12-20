@@ -72,8 +72,12 @@ class CoreaccountController extends Controller {
             $data['unit'] ?? '',
             $data['organization'] ?? ''
         );
-        $modelPeningAccounts = new CorePendingAccount();
-        $modelPeningAccounts->add($id_user, $data["id_space"]);
+        if(array_key_exists('id_space', $data) && $data['id_space']) {
+            $modelPeningAccounts = new CorePendingAccount();
+            $modelPeningAccounts->add($id_user, $data["id_space"]);
+        } else {
+            $modelCoreUser->validateAccount($id_user);
+        }
         $userFullName = $modelCoreUser->getUserFUllName($id_user);
 
         $email = new Email();
