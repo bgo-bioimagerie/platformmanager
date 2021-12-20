@@ -14,6 +14,8 @@ export class FormControls {
 
     constructor() {
         this.checks = {}
+        this.editables = {}
+        this.editableCounter = 0;
     }
 
     suggest(eltId, firstnameEltId, lastnameEltId) {
@@ -89,7 +91,7 @@ export class FormControls {
                 headers: headers,
                 method: 'POST',
                 body: JSON.stringify({
-                    kind: kind,
+                    type: kind,
                     value: value,
                     user: userId
                 })
@@ -214,12 +216,155 @@ export class FormControls {
         }
     }
 
+    loadTypeAhead() {
+        let typeAheads = document.querySelectorAll('[x-typeahead]');
+        if(typeAheads) {
+            for(let i=0;i<typeAheads.length;i++) {
+                let typeAhead = typeAheads[i];
+                let ctx = this;
+                typeAhead.onchange = function(evt) {
+                    let ta = document.querySelector("#"+evt.target.getAttribute('list')+ " option[value='" + evt.target.value +"']");
+                    if(ta === null || ta === undefined) {
+                        document.getElementById(evt.target.getAttribute('x-typeahead')).value = '';
+                        if (evt.target.getAttribute('x-typelistonly') !== undefined) {
+                            ctx.setErrors([evt.target], `ta-${evt.target.id}`, "Value not in list");
+                        }
+                        return;
+                    }
+                    ctx.clearErrors(`ta-${evt.target.id}`);
+                    let value = ta.getAttribute('x-value')
+                    document.getElementById(evt.target.getAttribute('x-typeahead')).value = value;
+                }
+            }
+        }
+    }
+
+    loadEditables() {
+        let editables = document.querySelectorAll('[x-edit]');
+        if(editables) {
+            for(let i=0;i<editables.length;i++) {
+                let editable = editables[i];
+                let editForm = editable.querySelector('[x-edit-form]');
+                let clone = null;
+                if(editForm !== undefined) {
+                    clone = editForm.cloneNode(true);
+                } else {
+                    clone = editable.cloneNode(true);
+                }
+                clone.setAttribute('id', clone.id + this.editableCounter);
+                let formElts = [clone];
+                if(clone.getAttribute('x-edit-form') !== undefined) {
+                    formElts = clone.querySelectorAll(`[x-form-elt]`);
+                }
+                console.debug('reset attributes', formElts);
+                formElts?.forEach(element => {
+                    switch (element.type) {
+                        case "number":
+                            element.value = 0;
+                            let min = element.getAttribute('min');
+                            if(min !== undefined) {
+                                element.value = min;
+                            }
+                            break;       
+                        case "checkbox":
+                            element.checked = false;
+                            break;
+                        case "select-one":
+                            element.selectedIndex = 0;
+                            break;
+                        default:
+                            element.value = "";
+                    }
+                });
+
+                this.editableCounter += 1;
+                this.editables[editable.id] = clone
+                let addButton = document.createElement("button");
+                addButton.innerHTML="Add";
+                addButton.classList.add('btn', 'btn-info')
+                addButton.setAttribute('id', editable.getAttribute('id') + '_add');
+                addButton.setAttribute('type', 'button')
+                addButton.setAttribute('x-edit-id', editable.id)
+                addButton.onclick = (evt) => {
+                    let newElt = this.editables[evt.target.getAttribute('x-edit-id')].cloneNode(true)
+                    
+
+                    let cloneElts = [newElt];
+                    if(newElt.getAttribute('x-edit-form') !== undefined) {
+                        cloneElts = newElt.querySelectorAll(`[x-form-elt]`);
+                    }
+                    let newId = newElt.id + this.editableCounter;
+                    newElt.setAttribute('id', newId);
+
+                    cloneElts.forEach(elt => {
+                        let newEltId = elt.id + this.editableCounter;
+                        elt.setAttribute('id', newEltId);
+
+                    });
+                    this.editableCounter++;
+                    
+                    let newDelButton = document.createElement("span");
+                    newDelButton.classList.add('glyphicon', 'glyphicon-trash')
+                    newDelButton.setAttribute('type', 'button')
+                    newDelButton.setAttribute('x-edit-id', newId)
+                    newDelButton.onclick = (delevt) => {
+                        console.log('del', delevt.target.id)
+                        let elt = document.getElementById(delevt.target.getAttribute('x-edit-id'))
+                        elt.remove();
+                        delevt.target.remove();
+                        
+                    }
+
+                    evt.target.insertAdjacentElement('beforebegin', newDelButton);
+                    evt.target.insertAdjacentElement('beforebegin', newElt);
+
+                }
+
+                let rows = editable.querySelectorAll('[x-edit-row]');
+                if(rows) {
+                    rows.forEach(r => {
+                        let rowDelButton = document.createElement("span");
+                        rowDelButton.classList.add('glyphicon', 'glyphicon-trash')
+                        rowDelButton.setAttribute('type', 'button')
+                        rowDelButton.setAttribute('x-edit-id', r.id)
+                        rowDelButton.onclick = (evt) => {
+                            console.log('del', evt.target)
+                            let elt = document.getElementById(evt.target.getAttribute('x-edit-id'))
+                            elt.remove();
+                            evt.target.remove();
+                            
+                        }
+                        r.insertAdjacentElement('beforebegin', rowDelButton)
+                    })
+                }
+
+                let delButton = document.createElement("span");
+                delButton.classList.add('glyphicon', 'glyphicon-trash')
+                delButton.setAttribute('type', 'button')
+                delButton.setAttribute('x-edit-id', editable.id)
+                delButton.onclick = (evt) => {
+                    // console.debug('del', evt.target)
+                    let elt = document.getElementById(evt.target.getAttribute('x-edit-id'))
+                    elt.remove();
+                    evt.target.remove();
+                    
+                }
+                //editables[i]
+                editable.insertAdjacentElement('beforebegin', delButton)
+                editable.insertAdjacentElement('afterend', addButton)
+                //editables[i].parentElement.after(addButton);
+            }
+        }   
+    }
+
     load() {
         this.loadUniques()
         this.loadEquals()
         this.loadEmails()
         this.loadForms()
         this.loadSuggests()
+        this.loadEditables()
+        this.loadTypeAhead()
     }
 }
 
