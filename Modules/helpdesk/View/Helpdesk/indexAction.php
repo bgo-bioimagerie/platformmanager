@@ -290,6 +290,7 @@ var app = new Vue({
                     }
                 }
             })
+            this.fetchTickets();
         },
         selectTicket(id) {
             if (id === null) {
