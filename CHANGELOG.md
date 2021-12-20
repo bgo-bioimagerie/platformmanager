@@ -1,5 +1,8 @@
 # Changes
 
+## 2.2.1
+
+* [CoreTiles] fix display
 ## 2.2.0
 
 **Warning**: [admin] Ldap configuration modification from ini or env variables
