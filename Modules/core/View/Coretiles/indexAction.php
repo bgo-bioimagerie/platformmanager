@@ -6,7 +6,7 @@
     .modulebox{
         border: solid 1px #e1e1e1; 
         border-bottom: solid 3px #e1e1e1; 
-        height:325px; 
+        min-height:325px; 
         width:220px; 
         margin-left: 25px;
         margin-top: 25px;
@@ -98,7 +98,7 @@
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                                         if(!$isMemberOfSpace) {
                             ?>
-                                        <div style="position: absolute; bottom: 20px; right: 10px">
+                                        <div>
                                             <a href="<?php echo "coretilesselfjoinspace/". $item["id"] ?>">
                                                 <button type="button" class="btn btn-md btn-success">
                                                     <?php echo CoreTranslator::RequestJoin($isMemberOfSpace, $lang) ?>
@@ -109,7 +109,7 @@
                                         }
                                     } else {
                                     ?>
-                                        <div style="position: absolute; bottom: 20px; right: 10px">
+                                        <div>
                                             <button type="button" class="btn btn-md btn-info" disabled>
                                                 <?php echo CoreTranslator::JoinRequested($lang) ?>
                                             </button>

@@ -6,7 +6,7 @@
     .modulebox{
         border: solid 1px #e1e1e1; 
         border-bottom: solid 3px #e1e1e1; 
-        height:325px; 
+        min-height:325px; 
         width:220px; 
         margin-left: 25px;
         margin-top: 25px;
@@ -55,12 +55,12 @@
                         support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
                         </small>
                     </div>
-                    <div v-if="space.join" style="position: absolute; bottom: 20px; right: 10px">
+                    <div v-if="space.join" style="bottom: 20px; right: 10px">
                         <a :href="`coretilesselfjoinspace/${space.id}`">
                             <button type="button" class="btn btn-md btn-success">{{space.join}}</button>
                         </a>
                     </div>
-                    <div v-if="space.join_requested" style="position: absolute; bottom: 20px; right: 10px">
+                    <div v-if="space.join_requested" style="bottom: 20px; right: 10px">
                         <button type="button" class="btn btn-md btn-info" disabled>{{space.join_requested}}</button>
                     </div>
                 </div>
