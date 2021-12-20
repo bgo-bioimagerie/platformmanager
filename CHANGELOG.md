@@ -1,11 +1,19 @@
 # Changes
 
+## 2.2.1
+
+* [booking] fix another booking authorizations bug
+* [helpdesk] sort tickets and fix refresh
+* [core] check id_user to see if user is logged
+* [core] on register after email validation validate the account #472
+
 ## 2.2.0
 
 **Warning**: [admin] Ldap configuration modification from ini or env variables
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 
+* [coreTiles] fix join button display
 * [booking] fix booking authorizations bug
 * [booking] fix booking display if no bk_scheduling set
 * [CoreTiles] fix display

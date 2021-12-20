@@ -369,7 +369,7 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceResourceEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+            $this->spaceResourceEdit(Events::ACTION_RESOURCE_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
@@ -377,7 +377,7 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceQuoteEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+            $this->spaceQuoteEdit(Events::ACTION_QUOTE_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
@@ -385,7 +385,7 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceServiceEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+            $this->spaceServiceEdit(Events::ACTION_SERVICE_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
