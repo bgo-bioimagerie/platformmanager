@@ -93,7 +93,7 @@
 
                             <!-- JOIN BUTTON -->
                             <?php
-                                if (!in_array($item["id"], $spacesUserIsAdminOf) && (isset($_SESSION["login"]) && $_SESSION["id_user"] > 0)) {
+                                if (!in_array($item["id"], $spacesUserIsAdminOf) && (isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0)) {
                                     if (!in_array($item["id"], $userPendingSpaces)) {
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                                         if(!$isMemberOfSpace) {
@@ -107,7 +107,7 @@
                                         </div>
                                     <?php
                                         }
-                                    } else if (!isset($_SESSION["login"]) || $_SESSION["id_user"] <= 0) {
+                                    } else if (!isset($_SESSION["id_user"]) || $_SESSION["id_user"] <= 0) {
                                     ?>
                                         <div>
                                             <button type="button" class="btn btn-md btn-info" disabled>

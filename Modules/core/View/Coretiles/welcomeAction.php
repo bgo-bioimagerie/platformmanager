@@ -74,7 +74,7 @@
                     <p></p>
                     <p style="color:#018181; ">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
-                        <?php if(isset($_SESSION["login"]) && $_SESSION["id_user"] > 0) { ?>
+                        <?php if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
                                 <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="glyphicon glyphicon-star"></span></a>
                         <?php } ?>
                         <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
