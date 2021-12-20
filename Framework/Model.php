@@ -408,9 +408,12 @@ abstract class Model {
      * @param $space space object
      */
     public function createDbAndViews($space){
-        $dsn = Configuration::get("dsn");
-        $login = Configuration::get("admin_login", "root");
-        $pwd = Configuration::get("admin_pwd", "platform_manager");
+        $dsn = Configuration::get("dsn", null);
+        if(!$dsn) {
+            $dsn = Configuration::get("dsn", 'mysql:host='.Configuration::get('mysql_host', 'mysql').';dbname='.Configuration::get('mysql_dbname', 'platform_manager').';charset=utf8');
+        }
+        $login = Configuration::get("mysql_admin_login", "root");
+        $pwd = Configuration::get("mysql_admin_pwd", "platform_manager");
         $pdo = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
         $pdo->exec("SET CHARACTER SET utf8");
 
@@ -419,7 +422,7 @@ abstract class Model {
         $sql = "CREATE DATABASE IF NOT EXISTS $spaceName";
         $pdo->query($sql);
         $password = crypt($spaceName, Configuration::get('jwt_secret'));
-        $sql = "CREATE USER IF NOT EXISTS '$spaceName'@'%' IDENTIFIED BY $password";
+        $sql = "CREATE USER IF NOT EXISTS '$spaceName'@'%' IDENTIFIED BY '$password'";
         $pdo->query($sql);
         $sql = "GRANT SELECT ON $spaceName.* TO $spaceName@'%'";
         $pdo->query($sql);
@@ -429,7 +432,7 @@ abstract class Model {
         foreach ($tables as $tb) {
             $table = $tb[0];
             try {
-            $sql = "CREATE VIEW IF NOT EXISTS $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
+            $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
             $pdo->query($sql);
             } catch(Exception $e) {
                 Configuration::getLogger()->warning("[db] could not create view", ["error" => $e->getMessage()]);

@@ -99,6 +99,7 @@ class EventHandler {
         $u = new CoreUser();
         $user = $u->getUserByLogin(Configuration::get('admin_user'));
         $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+        $model->createDbAndViews($space);
     }
 
     public function spaceDelete($msg) {

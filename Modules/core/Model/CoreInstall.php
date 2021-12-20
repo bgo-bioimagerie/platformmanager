@@ -37,7 +37,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/core/Model/CoreMail.php';
 
 
-define("DB_VERSION", 4);
+define("DB_VERSION", 5);
 /**
  * Class defining the database version installed
  */
@@ -665,7 +665,16 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
     }
 
+    public function upgrade_v4_v5() {
 
+        Configuration::getLogger()->debug('[db] create dbs and views');
+        $s = new CoreSpace();
+        $spaces = $s->getSpaces('id');
+        foreach($spaces as $space) {
+            $s->createDbAndViews($space);
+        }
+        Configuration::getLogger()->debug('[db] create dbs and views, done!');
+    }
 
     /**
      * Get current database version
