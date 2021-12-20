@@ -278,7 +278,7 @@ class Helpdesk extends Model {
 
     // Delete all tickets in spam status for more than 1 day
     public function trashSpam() {
-        $sql = "SELECT * FROM hp_ticket WHERE status=? AND updated_at > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)";
+        $sql = "SELECT * FROM hp_tickets WHERE status=? AND updated_at > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)";
         $spams = $this->runRequest($sql, array(self::$STATUS_SPAM))->fetchAll();
         foreach($spams as $spam) {
             $this->trash($spam['id']);
