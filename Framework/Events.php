@@ -310,14 +310,14 @@ class EventHandler {
         }
     }
 
+    /**
+     * @deprecated
+     */
     private function _calEntryRemoveStat($space, $entry){
         $id_space = $space['id'];
         $timestamp = $entry['start_time'];
         $r = new ResourceInfo();
         $resource = $r-> get($id_space, $entry['resource_id']);
-        //$u = new CoreUser();
-        //$id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
-        // $user = $u->userAllInfo($id_user);
         $client = ['name' => 'unknown'];
         if($entry['responsible_id']) {
             $c = new ClClient();
@@ -334,14 +334,14 @@ class EventHandler {
         $statHandler->record($space['shortname'], $stat);
     } 
 
+    /**
+     * @deprecated
+     */
     private function _calEntryStat($space, $entry, $value){
         $id_space = $space['id'];
         $timestamp = $entry['start_time'];
         $r = new ResourceInfo();
         $resource = $r-> get($id_space, $entry['resource_id']);
-        //$u = new CoreUser();
-        //$id_user = $entry['recipient_id'] ?? $entry['booked_by_id'];
-        //$user = $u->userAllInfo($id_user);
         $client = ['name' => 'unknown'];
         if($entry['responsible_id']) {
             $c = new ClClient();
@@ -369,7 +369,7 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceResourceEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+            $this->spaceResourceEdit(Events::ACTION_RESOURCE_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
@@ -377,7 +377,7 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceQuoteEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+            $this->spaceQuoteEdit(Events::ACTION_QUOTE_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
@@ -385,7 +385,7 @@ class EventHandler {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            $this->spaceServiceEdit(Events::ACTION_CUSTOMER_EDIT, ['space' => ['id' => $space['id']]]);
+            $this->spaceServiceEdit(Events::ACTION_SERVICE_EDIT, ['space' => ['id' => $space['id']]]);
         }
     }
 
@@ -399,51 +399,11 @@ class EventHandler {
     }
 
     public function calentryEdit($msg) {
-        $this->logger->debug('[calentryEdit]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
-        $id_space = $msg['bk_calendar_entry']['id_space'];
-
-        $model = new CoreSpace();
-        $space = $model->getSpace($id_space);
-        if(!$space) {
-            return;
-        }
-        
-        if($msg['bk_calendar_entry_old']) {
-            $old = $msg['bk_calendar_entry_old'];
-            $this->_calEntryStat($space, $old, 0);
-        }
-
-        $m = new BkCalendarEntry();
-        $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
-        if(!$entry) {
-            Configuration::getLogger()->debug('[calentryEdit] id not found', ['id' => $msg['bk_calendar_entry']['id'], 'id_space' => $id_space]);
-            return;
-        }
-
-        $this->_calEntryStat($space, $entry, 1);
+        $this->logger->debug('[calentryEdit][nothing to do]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
     }
 
     public function calentryRemove($msg) {
-        $this->logger->debug('[calentryRemove]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
-        $id_space = $msg['bk_calendar_entry']['id_space'];
-
-        $model = new CoreSpace();
-        $space = $model->getSpace($id_space);
-        if(!$space) {
-            return;
-        }
-
-        $m = new BkCalendarEntry();
-        // entry has been removed need to query without deleted filter
-        $entry = $m->admGetBy('bk_calendar_entry', 'id', $msg['bk_calendar_entry']['id'], $id_space);
-        // $entry = $m->getEntry($id_space, $msg['bk_calendar_entry']['id']);
-        if(!$entry) {
-            Configuration::getLogger()->debug('[calentryEdit] id not found', ['id' => $msg['bk_calendar_entry']['id'], 'id_space' => $id_space]);
-            return;
-        }
-        $this->_calEntryStat($space, $entry, 0);
-        $this->_calEntryRemoveStat($space, $entry);
-
+        $this->logger->debug('[calentryRemove][nothing to do]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
     }
 
     public function invoiceImport() {
@@ -461,52 +421,11 @@ class EventHandler {
 
 
     public function invoiceEdit($msg) {
-        $this->logger->debug('[invoiceEdit]', ['id_invoice' => $msg['invoice']['id']]);
-        $im = new InInvoice();
-        $invoice = $im->admGetBy('in_invoice', 'id', $msg['invoice']['id']);
-        $id_space = $invoice['id_space'];
-        $model = new CoreSpace();
-        $space = $model->getSpace($id_space);
-        if(!$space) {
-            return;
-        }
-        $client = ['name' => 'unknown'];
-        if($invoice['id_responsible']) {
-            $c = new ClClient();
-            $is_client = $c->get($id_space, $invoice['id_responsible']);
-            if($is_client) {
-                $client = $is_client;
-            }
-        }
-        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
-        $total = floatval($invoice['total_ht']) - floatval($invoice['discount']);
-        $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
-        $stat = ['name' => 'invoice', 'fields' => ['value' => $total], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
-        $this->logger->debug('[invoiceEdit]', ['stat' => $stat]);
-        $statHandler = new Statistics();
-        $statHandler->record($space['shortname'], $stat);
+        $this->logger->debug('[invoiceEdit][nothing to do]', ['id_invoice' => $msg['invoice']['id']]);
     }
 
     public function invoiceDelete($msg) {
-        $this->logger->debug('[invoiceDelete]', ['id_invoice' => $msg['invoice']['id']]);
-        $im = new InInvoice();
-        $invoice = $im->admGetBy('in_invoice', 'id', $msg['invoice']['id']);
-        $id_space = $invoice['id_space'];
-        $model = new CoreSpace();
-        $space = $model->getSpace($id_space);
-        $client = ['name' => 'unknown'];
-        if($invoice['responsible_id']) {
-            $c = new ClClient();
-            $is_client = $c->get($id_space, $invoice['responsible_id']);
-            if($is_client) {
-                $client = $is_client;
-            }
-        }
-        $timestamp = isset($msg['invoice']['created_at']) ? $msg['invoice']['created_at'] : $invoice['created_at'];
-        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
-        $stat = ['name' => 'invoice', 'fields' => ['value' => 0], 'tags' =>['module' => $invoice['module'], 'client' => $client['name']], 'time' => $timestamp];
-        $statHandler = new Statistics();
-        $statHandler->record($space['shortname'], $stat);
+        $this->logger->debug('[invoiceDelete][nothing to do', ['id_invoice' => $msg['invoice']['id']]);
     }
 
     /**
