@@ -130,9 +130,9 @@ class BookingdefaultController extends BookingabstractController {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelResource = new ResourceInfo();
-        $id_resourcecategory = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
+        $resourcecategory = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
         $modelAuth = new BkAuthorization();
-        $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $id_resourcecategory, $_SESSION["id_user"]);
+        $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $resourcecategory['id'], $_SESSION["id_user"]);
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
         if (!$isUserAuthorizedToBook && $role < CoreSpace::$MANAGER) {
