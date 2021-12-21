@@ -142,7 +142,12 @@ class BookingdefaultController extends BookingabstractController {
             $curentDate = $_SESSION['bk_curentDate'];
         }
         $temp = explode("-", $curentDate);
-        $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
+        try {
+            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
+        } catch(Exception $e) {
+            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $curentDate]);
+            $curentDateUnix = time();
+        }
 
         $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
 
