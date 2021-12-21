@@ -37,7 +37,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/core/Model/CoreMail.php';
 
 
-define("DB_VERSION", 5);
+define("DB_VERSION", 4);
 /**
  * Class defining the database version installed
  */
@@ -663,17 +663,18 @@ class CoreDB extends Model {
         $sql = "ALTER TABLE qo_quotes ADD COLUMN recipient_email VARCHAR(100)";
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
-    }
 
-    public function upgrade_v4_v5() {
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug('[db] update grafana dashboards and sql views');
+            $s = new CoreSpace();
+            $spaces = $s->getSpaces('id');
+            $statHandler = new EventHandler();
+            foreach($spaces as $space) {
+                $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
 
-        Configuration::getLogger()->debug('[db] create dbs and views');
-        $s = new CoreSpace();
-        $spaces = $s->getSpaces('id');
-        foreach($spaces as $space) {
-            $s->createDbAndViews($space);
+            }
+            Configuration::getLogger()->debug('[db] update grafana dashboards and sql views, done!');
         }
-        Configuration::getLogger()->debug('[db] create dbs and views, done!');
     }
 
     /**
