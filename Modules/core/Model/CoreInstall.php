@@ -675,6 +675,12 @@ class CoreDB extends Model {
             }
             Configuration::getLogger()->debug('[db] update grafana dashboards and sql views, done!');
         }
+
+        Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00');
+        $sql = "UPDATE core_j_spaces_user SET date_contract_end=null WHERE date_contract_end='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00, done!');
+
     }
 
     /**

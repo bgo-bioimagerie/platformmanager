@@ -8,6 +8,7 @@ require_once 'Modules/core/Model/CoreLdap.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreLdapConfiguration.php';
+require_once 'Modules/users/Model/UsersInfo.php';
 
 class CoreUser extends Model {
 
@@ -127,8 +128,7 @@ class CoreUser extends Model {
         }
     }
 
-    public function disableUsers($desactivateSetting, $remove=false) {
-
+    public function disableUsers($desactivateSetting, $remove=false, $dry=false) {
         $date = date('Y-m-d', time());
         $nbUsers = 0;
 
@@ -164,20 +164,17 @@ class CoreUser extends Model {
 
         $sql = null;
         $req = [];
-        // $nodate = '0000-00-00';
         if($expireDelay!=null && $expireContract) {
-            $sql = "SELECT * FROM core_users WHERE".
-                " (date_last_login is not null AND date_last_login<? ) "
-                . "OR (date_end_contract is not null AND date_end_contract < ?)";
+            $sql = "SELECT core_users.id,core_users.login,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE  (core_users.date_last_login is not null AND core_users.date_last_login<? ) OR (core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?)";
             $req = $this->runRequest($sql, array($expireDelay, $date))->fetchAll();
 
         } else if($expireDelay!=null && !$expireContract) {
-            $sql = "SELECT * FROM core_users WHERE ".
-                "(date_last_login is not null AND date_last_login<? ) ";
+            $sql = "SELECT core_users.id,core_users.login,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_users.date_last_login is not null AND core_users.date_last_login<?";
+
             $req = $this->runRequest($sql, array($expireDelay))->fetchAll();
         } else if($expireDelay==null && $expireContract) {
-            $sql = "SELECT * FROM core_users WHERE ".
-                "(date_end_contract is not null AND date_end_contract < ?)";
+            $sql = "SELECT core_users.id,core_users.login,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?";
+
             $req = $this->runRequest($sql, array($date))->fetchAll();
         }
 
@@ -185,28 +182,38 @@ class CoreUser extends Model {
             throw new PfmException('something went wrong!');
         }
 
+        if($dry) {
+            Configuration::getLogger()->info("[user][disable] dry mode");
+        }
         foreach ($req as $r) {
-            $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=?";
-            if($remove) {
-                $sql = "DELETE FROM core_j_spaces_user WHERE id_user=?";
-                Events::send([
-                    "action" => Events::ACTION_SPACE_USER_UNJOIN,
-                    "space" => ["id" => 0],
-                    "user" => ["id" => intval($r['id'])],
-                ]); 
-            } else {
-                Events::send([
-                    "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
-                    "space" => ["id" => 0],
-                    "user" => ["id" => intval($r['id'])],
-                    "role" => 0
-                ]); 
+            if($dry) {
+                Configuration::getLogger()->info('Expire', ['user' => $r]);
+                $nbUsers += 1;
+                continue;
             }
-            $this->runRequest($sql, array($r['id']));
 
-            if($expireContract) {
-                $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
-                $this->runRequest($sql, array(date("Y-m-s"), $r['id']));
+                $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
+                if($remove) {
+                    $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+                    Events::send([
+                        "action" => Events::ACTION_SPACE_USER_UNJOIN,
+                        "space" => ["id" => $r['space']],
+                        "user" => ["id" => intval($r['id'])],
+                    ]); 
+                } else {
+                    Events::send([
+                        "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                        "space" => ["id" =>  $r['space']],
+                        "user" => ["id" => intval($r['id'])],
+                        "role" => 0
+                    ]); 
+                }
+                $this->runRequest($sql, array($r['id'], $r['space']));
+            
+
+            if($expireContract || $remove) {
+                $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=? AND id_space=?";
+                $this->runRequest($sql, array(date("Y-m-s"), $r['id'], $r['space']));
             }
 
             $nbUsers += 1;
@@ -821,9 +828,16 @@ class CoreUser extends Model {
         }
     }
 
+    /**
+     * No, never real delete as many things can point to a user, just anon....
+     */
     public function delete($id) {
-        $sql = "DELETE FROM core_users WHERE id=?";
-        $this->runRequest($sql, array($id));
+        $uid = uniqid('pfm');
+        Configuration::getLogger()->info('[user][delete]', ['id' => $id, 'uid' => $uid]);
+        $uinfo = new UsersInfo();
+        $uinfo->delete($id);
+        $sql = 'UPDATE core_users SET login=?,pwd=NULL,is_active=0,deleted=1,deleted_at=NOW(),remember_key=NULL,name=NULL,firstname=NULL, email=NULL, phone=NULL WHERE id=?';
+        $this->runRequest($sql, array($uid,$id));
     }
 
     public function login($login, $pwd) {

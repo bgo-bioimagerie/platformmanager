@@ -9,6 +9,7 @@
 * [core] on register after email validation validate the account #472
 * [statistics] require env var MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD} in pfm/pfm-events containers
 * [core] use module url and not name for notifications #476
+* [cli][core] update way to expire users, and on delete just anon user
 
 ## 2.2.0
 
