@@ -137,8 +137,10 @@ class BookingdefaultController extends BookingabstractController {
         $modelBkAccess = new BkAccess();
         $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
 
-        $curentDate = $_SESSION['bk_curentDate'];
-        $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
+        $curentDate = date("Y-m-d", time());
+        if (isset($_SESSION['bk_curentDate'])) {
+            $curentDate = $_SESSION['bk_curentDate'];
+        }
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
 
