@@ -618,7 +618,7 @@ class CoreDB extends Model {
             $cp = new CoreSpace();
             $spaces = $cp->getSpaces('id');
             foreach ($spaces as $space) {
-                $g->createOrg($space['shortname']);
+                $g->createOrg($space);
             }
             Configuration::getLogger()->debug('[grafana] create orgs, done!');
 
@@ -663,9 +663,19 @@ class CoreDB extends Model {
         $sql = "ALTER TABLE qo_quotes ADD COLUMN recipient_email VARCHAR(100)";
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
+
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug('[db] update grafana dashboards and sql views');
+            $s = new CoreSpace();
+            $spaces = $s->getSpaces('id');
+            $statHandler = new EventHandler();
+            foreach($spaces as $space) {
+                $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
+
+            }
+            Configuration::getLogger()->debug('[db] update grafana dashboards and sql views, done!');
+        }
     }
-
-
 
     /**
      * Get current database version
@@ -883,7 +893,7 @@ class CoreInstall extends Model {
             $eventHandler->spaceCount(null);
             // create org
             $g = new Grafana();
-            $g->createOrg($pfmOrg);
+            $g->createOrg(['shortname' => $pfmOrg]);
             $u = new CoreUser();
             $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
             $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);

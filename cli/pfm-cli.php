@@ -176,9 +176,9 @@ function statsImport() {
     $cp = new CoreSpace();
     Configuration::getLogger()->info("[stats] create bucket");
     $spaces = $cp->getSpaces('id');
+    $eventHandler = new EventHandler();
     foreach ($spaces as $space) {
-        $statHandler = new Statistics();
-        $statHandler->createDB($space['shortname']);
+        $eventHandler->spaceCreate(['space' => ['id' => $space['id']]]);
     }
     Configuration::getLogger()->info("[stats] create bucket, done!");
 
