@@ -1,5 +1,9 @@
 # Changes
 
+## 2.2.2
+
+* [booking] fix authorizations when related to user's roles
+
 ## 2.2.1
 
 * [booking] fix another booking authorizations bug

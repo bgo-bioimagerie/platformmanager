@@ -129,13 +129,43 @@ class BookingdefaultController extends BookingabstractController {
     public function editreservationqueryAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        $modelResource = new ResourceInfo();
-        $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
-        $modelAuth = new BkAuthorization();
-        $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $resource['id_category'], $_SESSION["id_user"]);
+        $canValidateBooking = false;
+
         $modelSpace = new CoreSpace();
-        $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
-        if (!$isUserAuthorizedToBook && $role < CoreSpace::$MANAGER) {
+        $userRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
+        // TODO: Should be redondant with canUserEditReservation... But canUserEditReservation don't do all we need here. Some stuffs will need to be refactored
+        if ($userRole >= CoreSpace::$ADMIN) {
+            $canValidateBooking = true;
+        } else {
+            $modelResource = new ResourceInfo();
+            $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
+            $modelBkAccess = new BkAccess();
+            $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
+            if ($bkAccess == 2) {
+                // Access limited to auhorized users
+                $modelAuth = new BkAuthorization();
+                $canValidateBooking = $modelAuth->hasAuthorization($id_space, $resource['id_category'], $_SESSION["id_user"]);
+            } else {
+                // Access limited to a specific role (1: user, 3: manager, 4: admin)
+                switch ($bkAccess) {
+                    case "1":
+                        $minRoleAccess = CoreSpace::$USER;
+                        break;
+                    case "3":
+                        $minRoleAccess = CoreSpace::$MANAGER;
+                        break;
+                    case "4":
+                        $minRoleAccess = CoreSpace::$ADMIN;
+                        break;
+                    default:
+                        $minRoleAccess = CoreSpace::$ADMIN;
+                        break;
+                }
+                $canValidateBooking = $userRole >= $minRoleAccess;
+            }
+        }
+       
+        if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
             $this->redirect("booking/".$id_space);
