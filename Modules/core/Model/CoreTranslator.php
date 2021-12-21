@@ -1997,11 +1997,32 @@ class CoreTranslator {
         return "Action not allowed: undefined login or password";
     }
 
+    public static function AccountInactive($lang = "") {
+        if ($lang == "fr") {
+            return "Votre compte n'est pas actif.";
+        }
+        return "Your account is not active";
+    }
+
+    public static function InvalidPassword($lang = "") {
+        if ($lang == "fr") {
+            return "Votre mot de passe est erroné.";
+        }
+        return "Wrong password";
+    }
+
     public static function InvalidLogin($lang = "") {
         if ($lang == "fr") {
-            return "Login incorrect";
+            return "Ce login n'existe pas.";
         }
-        return "Invalid login";
+        return "This login doesn't exist.";
+    }
+
+    public static function ConnectionError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant la connexion.";
+        }
+        return "An error occured during connection.";
     }
     
 }

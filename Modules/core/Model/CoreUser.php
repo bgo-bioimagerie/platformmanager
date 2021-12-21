@@ -432,7 +432,11 @@ class CoreUser extends Model {
      *        	the login
      * @param string $pwd
      *        	the password
-     * @return boolean True if the user is in the database
+     * @return string
+     *      "allowed" if login and password match a database entry where is_active == 1
+     *      "inactive" login and password match a database entry where is_active == 0
+     *      "invalid_login" if login doesn't exist
+     *      "invalid_password" if login exists and password does not match
      */
     public function connect($login, $pwd) {
         $sql = "select id, is_active, validated from core_users where login=? and pwd=?";
@@ -445,10 +449,10 @@ class CoreUser extends Model {
             if ($req ["is_active"] == 1 && $req ["validated"] == 1) {
                 return "allowed";
             } else {
-                return "Your account is not active";
+                return "inactive";
             }
         } else {
-            return "Login or password not correct";
+            return $this->isUser($login) ? "invalid_password" : "invalid_login";
         }
     }
 
