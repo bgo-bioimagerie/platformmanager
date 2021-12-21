@@ -1,12 +1,8 @@
 # Changes
 
-## 2.2.2
-
-* [booking] fix authorizations when related to user's roles
-
 ## 2.2.1
 
-* [booking] fix another booking authorizations bug
+* [booking] fix authorizations when related to user's roles
 * [helpdesk] sort tickets and fix refresh
 * [helpdesk] ignore auto replies
 * [core] check id_user to see if user is logged
