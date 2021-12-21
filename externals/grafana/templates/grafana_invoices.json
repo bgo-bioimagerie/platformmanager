@@ -345,14 +345,14 @@
           ]
         }
       ],
-      "title": "Invoices per client keuros",
+      "title": "Invoices for $client (keuros)",
       "type": "barchart"
     }
   ],
   "refresh": "",
   "schemaVersion": 34,
   "style": "dark",
-  "tags": [],
+  "tags": ["pfm"],
   "templating": {
     "list": [
       {
