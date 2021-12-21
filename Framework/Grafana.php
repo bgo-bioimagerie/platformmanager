@@ -64,7 +64,8 @@ class Grafana {
         return $json["id"];
     }
 
-    public function dashboardsImport($space) {
+    public function dashboardsImport($spaceObject) {
+        $space = $spaceObject['shortname'];
         $orgID = $this->getOrg($space);
         if(! $orgID) {
             Configuration::getLogger()->debug("[grafana][dashboard][import] org does not exists", ["org" => $space]);
@@ -94,9 +95,13 @@ class Grafana {
             if (! str_ends_with($tmpl, ".json")) {
                 continue;
             }
+            Configuration::getLogger()->debug('[grafana] import dashboard', ['template' => $tmpl]);
             $template_name = str_replace(".json", "", $tmpl);
             $template = file_get_contents("externals/grafana/templates/$tmpl");
             $template = str_replace("space1", $space, $template);
+            $template = str_replace("mysql_0", "mysql_".$spaceObject['id'], $template);
+            $template = str_replace("influxdb_0", "influxdb_".$spaceObject['id'], $template);
+            $template = str_replace("dash_0", str_replace('.json', '', $tmpl), $template);
 
             $dashboard = json_decode($template, true);
             $dashboard["id"] = null;
@@ -132,12 +137,13 @@ class Grafana {
     }
 
     /**
-     * @param string $space shortname of the space
+     * @param mixed $space space object
      */
-    public function createOrg($space) {
+    public function createOrg($spaceObject) {
         if(!$this->configured()) {
             return false;
         }
+        $space = $spaceObject['shortname'];
         Configuration::getLogger()->debug("[grafana] create org", ["org" => $space]);
         $orgID = $this->getOrg($space);
         if($orgID) {
@@ -197,12 +203,13 @@ class Grafana {
         $token = $bucketObj['token'];
         $bucket = $bucketObj['bucket'];
         
-        # create data source
+        # create influx data source
         $req = [
             "jsonData" => ["defaultBucket" => $bucket, "organization" => $org, "version" => "Flux", "httpMode" => "POST"],
             "secureJsonData" => [
                 "token" => $token
             ],
+            'uid' => 'influxdb_'.$spaceObject['id'],
             'access' => "proxy",
             'basicAuth' => true,
             'basicAuthPassword' => "",
@@ -219,7 +226,7 @@ class Grafana {
             'version' => 1,
             'withCredentials' => false
         ];
-        Configuration::getLogger()->debug('[grafana] Create data source', ['source' => $req]);
+        Configuration::getLogger()->debug('[grafana] Create influxdb data source', ['source' => $req]);
 
         $response = $client->request('POST',
             '/api/datasources',
@@ -236,12 +243,52 @@ class Grafana {
         $status = $response->getStatusCode();
         if ($status != 200) {
             Configuration::getLogger()->error('[grafana][error] failed to create datasource', ["org" => $space, "err" => $response->getBody()]);
-            return false;
         }
 
-        $status = $this->dashboardsImport($space);
 
-        return $status;
+        # create mysql data source   db/user = "pfm".$spaceID;
+        $mysqlID = 'pfm'.$spaceObject['id'];
+        $req = [
+            "orgId" => $orgID,
+            'uid' => 'mysql_'.$spaceObject['id'],
+            "name" => "MySQL",
+            "type" => "mysql",
+            "typeLogoUrl" => "",
+            "access" => "proxy",
+            "url" => sprintf("%s:%s", Configuration::get('mysql_host', 'mysql'),Configuration::get('mysql_port', 3306)),
+            "password" => "",
+            "user" => $mysqlID,
+            "database" => $mysqlID,
+            "basicAuth" => false,
+            "basicAuthUser" => "",
+            "basicAuthPassword" => "",
+            "withCredentials" => false,
+            "isDefault" => false,
+            "secureJsonData" => ["password" => crypt($mysqlID, Configuration::get('jwt_secret'))],
+            "version" => 1,
+            "readOnly" => false,
+        ];
+        Configuration::getLogger()->debug('[grafana] Create mysql data source', ['source' => $req]);
+
+        $response = $client->request('POST',
+            '/api/datasources',
+            [
+                'headers' => [
+                    'Accept' => Constants::APPLICATION_JSON
+                ],
+                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                'json' => $req,
+                'http_errors' => false
+            ]
+        );
+
+        $status = $response->getStatusCode();
+        if ($status != 200) {
+            Configuration::getLogger()->error('[grafana][error] failed to create datasource', ["org" => $space, "err" => $response->getBody()]);
+        }
+
+       return $this->dashboardsImport($spaceObject);
+
     }
 
 

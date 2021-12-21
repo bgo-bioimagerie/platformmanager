@@ -618,7 +618,7 @@ class CoreDB extends Model {
             $cp = new CoreSpace();
             $spaces = $cp->getSpaces('id');
             foreach ($spaces as $space) {
-                $g->createOrg($space['shortname']);
+                $g->createOrg($space);
             }
             Configuration::getLogger()->debug('[grafana] create orgs, done!');
 
@@ -892,7 +892,7 @@ class CoreInstall extends Model {
             $eventHandler->spaceCount(null);
             // create org
             $g = new Grafana();
-            $g->createOrg($pfmOrg);
+            $g->createOrg(['shortname' => $pfmOrg]);
             $u = new CoreUser();
             $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
             $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);

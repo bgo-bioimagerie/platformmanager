@@ -92,14 +92,15 @@ class EventHandler {
         $statHandler = new Statistics();
         $statHandler->createDB($space['shortname']);
         $this->spaceCount();
+        // create mysql db and views for space
+        $model->createDbAndViews($space);
         // create org
         $g = new Grafana();
-        $g->createOrg($space['shortname']);
+        $g->createOrg($space);
         // add pfm super admin
         $u = new CoreUser();
         $user = $u->getUserByLogin(Configuration::get('admin_user'));
         $g->addUser($space['shortname'], $user['login'], $user['apikey']);
-        $model->createDbAndViews($space);
     }
 
     public function spaceDelete($msg) {
@@ -216,11 +217,6 @@ class EventHandler {
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $modelQuote = new Quote();
-        $nbQuotes = $modelQuote->admCount('qo_quotes', $msg['space']['id']);
-        
-        $stat = ['name' => 'quotes', 'fields' => ['value' => $nbQuotes['total']]];
-        $statHandler = new Statistics();
-        $statHandler->record($space['shortname'], $stat);
         
         if (array_key_exists('quote', $msg)) {
             $cname = $msg['quote']['id'];
@@ -232,15 +228,6 @@ class EventHandler {
                     $user = $quote["recipient"];
                 }
                 $hmsg = "Quote $cname [$user] edited";
-                /*
-                $client = 'unknown';
-                if(array_key_exists('client', $quote) && $quote['client']) {
-                    $client = $quote['client']['name'];
-                }
-                $client = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client);
-                $stat = ['name' => 'quote', 'fields' => ['value' => 1], 'tags' => ['client' => $client], 'time' => $quote['created_at']];
-                $statHandler->record($space['shortname'], $stat);
-                */
             }
             $m = new CoreHistory();
             $m->add($msg['space']['id'], $msg['_user'] ?? null, $hmsg);
@@ -311,53 +298,6 @@ class EventHandler {
         if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
             $g->delUser($space['shortname'], $user['login']);
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    private function _calEntryRemoveStat($space, $entry){
-        $id_space = $space['id'];
-        $timestamp = $entry['start_time'];
-        $r = new ResourceInfo();
-        $resource = $r-> get($id_space, $entry['resource_id']);
-        $client = ['name' => 'unknown'];
-        if($entry['responsible_id']) {
-            $c = new ClClient();
-            $is_client = $c->get($id_space, $entry['responsible_id']);
-            if($is_client) {
-                $client = $is_client;
-            }
-        }
-        $value = time() - $timestamp;
-        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
-        $resource['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $resource['name']);
-        $stat = ['name' => 'calentry_cancel', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
-        $statHandler = new Statistics();
-        $statHandler->record($space['shortname'], $stat);
-    } 
-
-    /**
-     * @deprecated
-     */
-    private function _calEntryStat($space, $entry, $value){
-        $id_space = $space['id'];
-        $timestamp = $entry['start_time'];
-        $r = new ResourceInfo();
-        $resource = $r-> get($id_space, $entry['resource_id']);
-        $client = ['name' => 'unknown'];
-        if($entry['responsible_id']) {
-            $c = new ClClient();
-            $is_client = $c->get($id_space, $entry['responsible_id']);
-            if($is_client) {
-                $client = $is_client;
-            }
-        }
-        $client['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $client['name']);
-        $resource['name'] = preg_replace('/[^A-Za-z0-9\-_]/', '_', $resource['name']);
-        $stat = ['name' => 'calentry', 'fields' => ['value' => $value], 'tags' =>['resource' => $resource['name'], 'client' => $client['name']], 'time' => $timestamp];
-        $statHandler = new Statistics();
-        $statHandler->record($space['shortname'], $stat);
     }
 
     public function customerImport() {
