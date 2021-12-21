@@ -129,13 +129,24 @@ class BookingdefaultController extends BookingabstractController {
     public function editreservationqueryAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+
+        $modelUser = new CoreUser();
+        $userStatus = $modelUser->getStatus($_SESSION["id_user"]);
         $modelResource = new ResourceInfo();
         $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
-        $modelAuth = new BkAuthorization();
-        $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $resource['id_category'], $_SESSION["id_user"]);
-        $modelSpace = new CoreSpace();
-        $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
-        if (!$isUserAuthorizedToBook && $role < CoreSpace::$MANAGER) {
+        $modelBkAccess = new BkAccess();
+        $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
+
+        $curentDate = date("Y-m-d", time());
+        if (isset($_SESSION['bk_curentDate'])) {
+            $curentDate = $_SESSION['bk_curentDate'];
+        }
+        $temp = explode("-", $curentDate);
+        $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
+
+        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
+
+        if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
             $this->redirect("booking/".$id_space);
