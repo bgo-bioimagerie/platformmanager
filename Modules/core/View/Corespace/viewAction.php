@@ -53,7 +53,7 @@ if ($space['color'] == "") {
                             <a href="<?php echo $item["url"] . "/" . $id_space ?>">
                                 <span class="pm-tiles glyphicon <?php echo $item["icon"] ?>" aria-hidden="true"></span>
                                 <span style="<?php echo "color: ".$item["txtcolor"]; ?>" class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
-                                <span v-if="notifs?.<?php echo strtolower(str_replace(' ', '', $item['name'])); ?>" class="label label-info">{{notifs?.<?php echo strtolower(str_replace(' ', '', $item['name'])); ?>}}</span>
+                                <span v-if="notifs?.<?php echo strtolower($item['url']); ?>" class="label label-info">{{notifs?.<?php echo strtolower($item['url']); ?>}}</span>
                             </a>
                         </li>
                         <?php
@@ -144,7 +144,7 @@ if ($space['color'] == "") {
 <?php
 $spaceModules = ['spaceaccess'];
 foreach($spaceMenuItems as $item) {
-    $spaceModules[] = $item['name'];
+    $spaceModules[] = $item['url'];
 }
 
 ?>
