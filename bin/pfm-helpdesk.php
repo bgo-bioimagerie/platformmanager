@@ -223,12 +223,18 @@ while(true) {
                 $headerText = imap_fetchHeader($mbox, $mail->uid, FT_UID);
                 $header = imap_rfc822_parse_headers($headerText);
                 $headersDetailed = parse_rfc822_all_headers($headerText);
-
+                
                 $mailContent = _get_body_attach($mbox, $mail->uid);
                 imap_delete($mbox, $mail->uid);
 
                 $from=$header->from;
                 $to = $header->to;
+
+                if(isReply($mail, $headersDetailed) || ignore($from[0])) {
+                    Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip response', ['from' => $from[0]]);
+                    continue;
+                }
+
                 $id_space = 0;
                 $toSpace = null;
                 $otherDests = [];

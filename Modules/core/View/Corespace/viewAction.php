@@ -157,7 +157,7 @@ var app = new Vue({
     data () {
         return {
             id_space: <?php echo $id_space ?>,
-            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user']) { echo "true"; } else { echo "false";} ?>,
+            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
             modules: <?php echo json_encode($spaceModules ); ?> ,
             notifs: {}
         }
@@ -175,15 +175,18 @@ var app = new Vue({
         };
         this.modules.forEach(mod => {
             let modName = mod.replace(' ', '').toLowerCase();
-                fetch(`/core/tiles/${this.id_space}/module/${modName}/notifs`, cfg).
-                    then((response) => response.json(), (error) => {}).
-                    then(data => {
-                        let n = {...this.notifs}
-                        n[modName] = data.notifs
-                        this.notifs = n
-                    }).catch((error) => {
-                        console.debug('failed to get notifications', modName, error);
-                    })
+            if(!modName) {
+                return;
+            }
+            fetch(`/core/tiles/${this.id_space}/module/${modName}/notifs`, cfg).
+            then((response) => response.json(), (error) => {}).
+            then(data => {
+                let n = {...this.notifs}
+                n[modName] = data.notifs
+                this.notifs = n
+            }).catch((error) => {
+                console.debug('failed to get notifications', modName, error);
+            })
 
         });
         
