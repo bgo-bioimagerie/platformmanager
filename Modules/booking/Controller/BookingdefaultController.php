@@ -129,42 +129,21 @@ class BookingdefaultController extends BookingabstractController {
     public function editreservationqueryAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        $canValidateBooking = false;
 
-        $modelSpace = new CoreSpace();
-        $userRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
-        // TODO: Should be redondant with canUserEditReservation... But canUserEditReservation don't do all we need here. Some stuffs will need to be refactored
-        if ($userRole >= CoreSpace::$ADMIN) {
-            $canValidateBooking = true;
-        } else {
-            $modelResource = new ResourceInfo();
-            $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
-            $modelBkAccess = new BkAccess();
-            $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
-            if ($bkAccess == 2) {
-                // Access limited to auhorized users
-                $modelAuth = new BkAuthorization();
-                $canValidateBooking = $modelAuth->hasAuthorization($id_space, $resource['id_category'], $_SESSION["id_user"]);
-            } else {
-                // Access limited to a specific role (1: user, 3: manager, 4: admin)
-                switch ($bkAccess) {
-                    case "1":
-                        $minRoleAccess = CoreSpace::$USER;
-                        break;
-                    case "3":
-                        $minRoleAccess = CoreSpace::$MANAGER;
-                        break;
-                    case "4":
-                        $minRoleAccess = CoreSpace::$ADMIN;
-                        break;
-                    default:
-                        $minRoleAccess = CoreSpace::$ADMIN;
-                        break;
-                }
-                $canValidateBooking = $userRole >= $minRoleAccess;
-            }
-        }
-       
+        $modelUser = new CoreUser();
+        $userStatus = $modelUser->getStatus($_SESSION["id_user"]);
+        $modelResource = new ResourceInfo();
+        $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
+        $modelBkAccess = new BkAccess();
+        $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
+
+        $curentDate = $_SESSION['bk_curentDate'];
+        $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
+        $temp = explode("-", $curentDate);
+        $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
+
+        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
+
         if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
