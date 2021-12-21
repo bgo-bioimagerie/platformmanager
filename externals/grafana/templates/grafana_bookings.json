@@ -19,14 +19,18 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1635861454383,
+  "iteration": 1639997246698,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
-      "datasource": null,
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -79,87 +83,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 22,
+        "w": 20,
         "x": 0,
         "y": 0
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"calentry\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> group(columns: [\"resource\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> yield(name: \"mean\")",
-          "refId": "A"
-        }
-      ],
-      "title": "Bookings",
-      "type": "timeseries"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 16,
-        "x": 0,
-        "y": 8
       },
       "id": 4,
       "options": {
@@ -174,15 +100,46 @@
       },
       "targets": [
         {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"calentry\")\n  |> filter(fn: (r) => r[\"resource\"] == \"${resources}\")\n  |> drop(columns: [\"client\",\"user\"])\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> yield(name: \"mean\")",
-          "refId": "A"
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  MIN(bk_calendar_entry.start_time) as time_sec,\n  count(bk_calendar_entry.id) as value,\n  re_info.name as metric\nFROM bk_calendar_entry\nINNER JOIN re_info ON re_info.id = bk_calendar_entry.resource_id\nWHERE bk_calendar_entry.deleted=0 AND $__unixEpochFilter(bk_calendar_entry.start_time)\nGROUP BY $__unixEpochGroup(bk_calendar_entry.start_time, $__interval), bk_calendar_entry.resource_id\nORDER BY time_sec ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bk_calendar_entry",
+          "timeColumn": "last_update",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Bookings for resource",
+      "title": "Resource bookings",
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -207,9 +164,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 6,
-        "x": 16,
-        "y": 8
+        "w": 4,
+        "x": 20,
+        "y": 0
       },
       "id": 6,
       "options": {
@@ -224,96 +181,180 @@
           "fields": "",
           "values": false
         },
-        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "8.3.3",
       "targets": [
         {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"calentry\")\n  |> filter(fn: (r) => r[\"resource\"] == \"${resources}\")\n  |> drop(columns: [\"client\",\"user\"])\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> sum(column: \"_value\")\n  |> yield(name: \"total\")",
-          "refId": "A"
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(bk_calendar_entry.id) as value\nFROM bk_calendar_entry\nINNER JOIN re_info ON re_info.id = bk_calendar_entry.resource_id\nWHERE bk_calendar_entry.deleted=0 AND $__unixEpochFilter(bk_calendar_entry.start_time) AND re_info.name='$resources'\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bk_calendar_entry",
+          "timeColumn": "last_update",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Total for ${resources}",
+      "title": "Bookings [$resources]",
       "type": "stat"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 0,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "mappings": []
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 22,
+        "h": 9,
+        "w": 24,
         "x": 0,
-        "y": 16
+        "y": 8
       },
-      "id": 7,
+      "id": 2,
       "options": {
         "legend": {
+          "calcs": [],
           "displayMode": "list",
           "placement": "bottom"
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
         },
         "tooltip": {
           "mode": "single"
         }
       },
-      "pluginVersion": "8.1.1",
       "targets": [
         {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"calentry\")\n  |> filter(fn: (r) => r[\"client\"] == \"${customer}\")\n  |> drop(columns: [\"client\",\"user\"])\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> yield(name: \"total\")",
-          "refId": "A"
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  MIN(bk_calendar_entry.start_time) as time_sec,\n  count(bk_calendar_entry.id) as value,\n  cl_clients.name as metric\nFROM bk_calendar_entry\nINNER JOIN cl_clients ON cl_clients.id = bk_calendar_entry.responsible_id\nWHERE bk_calendar_entry.deleted=0 AND  $__unixEpochFilter(bk_calendar_entry.start_time)\nGROUP BY $__unixEpochGroup(bk_calendar_entry.start_time, $__interval), bk_calendar_entry.responsible_id\nORDER BY time_sec ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bk_calendar_entry",
+          "timeColumn": "start_time",
+          "timeColumnType": "int",
+          "where": [
+            {
+              "name": "$__unixEpochFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Bookings for customer",
-      "type": "piechart"
+      "title": "Customer bookings [$client]",
+      "transformations": [],
+      "type": "timeseries"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 30,
+  "refresh": "",
+  "schemaVersion": 34,
   "style": "dark",
   "tags": ["pfm"],
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": "Vibratome",
-          "value": "Vibratome"
+          "text": "",
+          "value": ""
         },
-        "datasource": null,
-        "definition": "import \"influxdata/influxdb/schema\"\nschema.measurementTagValues(\nbucket: \"space1\",\ntag: \"resource\",\nmeasurement: \"calentry\")",
-        "description": null,
-        "error": null,
+        "datasource": {
+          "type": "mysql",
+          "uid": "mysql_0"
+        },
+        "definition": "select name from re_info where deleted=0",
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "resources",
         "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.measurementTagValues(\nbucket: \"space1\",\ntag: \"resource\",\nmeasurement: \"calentry\")",
+        "query": "select name from re_info where deleted=0",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -321,23 +362,22 @@
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": "Paillard Luc",
-          "value": "Paillard Luc"
+          "text": "",
+          "value": ""
         },
-        "datasource": null,
-        "definition": "import \"influxdata/influxdb/schema\"\nschema.measurementTagValues(\nbucket: \"space1\",\ntag: \"client\",\nmeasurement: \"calentry\")",
-        "description": null,
-        "error": null,
+        "datasource": {
+          "type": "mysql",
+          "uid": "mysql_0"
+        },
+        "definition": "select name from cl_clients where deleted=0",
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
-        "name": "customer",
+        "name": "client",
         "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.measurementTagValues(\nbucket: \"space1\",\ntag: \"client\",\nmeasurement: \"calentry\")",
+        "query": "select name from cl_clients where deleted=0",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -347,12 +387,13 @@
     ]
   },
   "time": {
-    "from": "now-90d",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Bookings",
-  "uid": "rwmkG-K7k",
-  "version": 9
+  "uid": "dash_0",
+  "version": 1,
+  "weekStart": ""
 }

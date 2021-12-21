@@ -49,6 +49,7 @@ Following env variables can be used to override Config/conf.ini:
   * MYSQL_DBNAME: platform_manager # name of the database on the mysql server
   * MYSQL_USER: platform_manager # Admin account to connect to mysql
   * MYSQL_PASS: platform_manager # Password to connect to mysql
+  * MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}  # used for statistics
 * SMTP_HOST: mailhog  # smtp host name
 * SMTP_PORT: 25  # smtp port
 * SMTP_FROM: support@genouest.org  # mail *from* address
