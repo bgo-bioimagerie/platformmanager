@@ -64,6 +64,67 @@ class Grafana {
         return $json["id"];
     }
 
+    /**
+     * Delete all pfm_xx dashboards for selected space
+     */
+    public function dashboardsDelete($spaceObject) {
+        $space = $spaceObject['shortname'];
+        $orgID = $this->getOrg($space);
+        if(! $orgID) {
+            Configuration::getLogger()->debug("[grafana][dashboard][import] org does not exists", ["org" => $space]);
+            return false;
+        }
+        # switch to org
+        $client = new Client([
+            'base_uri' => Configuration::get('grafana_url'),
+            'timeout'  => 2.0,
+        ]);
+
+       
+        $client->request('POST',
+            '/api/user/using/'.$orgID,
+            [
+                'headers' => [
+                    'Accept' => Constants::APPLICATION_JSON
+                ],
+                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                'http_errors' => false
+            ]
+        );
+
+        $response = $client->request('GET',
+            '/api/search',
+            [
+                'headers' => [
+                    'Accept' => Constants::APPLICATION_JSON
+                ],
+                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                'http_errors' => false
+            ]
+        );
+        $dashboards = json_decode($response->getBody(), true);
+        Configuration::getLogger()->debug('Dashboards', ['d' => $dashboards]);
+        foreach($dashboards as $d) {
+            if (!str_starts_with($d['uid'], 'pfm')) {
+                // delete only pfm_xx dashboards (managed by us)
+                continue;
+            }
+            $client->request('DELETE',
+            '/api/dashboards/uid/'.$d['uid'],
+            [
+                'headers' => [
+                    'Accept' => Constants::APPLICATION_JSON
+                ],
+                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                'http_errors' => false
+            ]
+        );
+        }
+    }
+
+    /**
+     * Load templates from externals/grafana/templates in grafana space
+     */
     public function dashboardsImport($spaceObject) {
         $space = $spaceObject['shortname'];
         $orgID = $this->getOrg($space);
