@@ -2,6 +2,7 @@
 
 ## 2.2.1
 
+* [login] clarify messages toward users
 * [booking] fix another booking authorizations bug
 * [helpdesk] sort tickets and fix refresh
 * [helpdesk] ignore auto replies

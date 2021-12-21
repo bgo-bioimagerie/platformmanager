@@ -98,6 +98,7 @@ class CoreconnectionController extends CorecookiesecureController {
      * @throws Exception
      */
     public function loginAction() {
+        $lang = $this->getLanguage();
         $modelConfig = new CoreConfig();
         $admin_email = $modelConfig->getParam("admin_email");
 
@@ -111,25 +112,21 @@ class CoreconnectionController extends CorecookiesecureController {
             }
 
             if ($login == "--") {
-                $this->render(array('msgError' => 'Login not correct', "admin_email" => $admin_email), "index");
+                // FIXME: what are we supposed to do here ? Doesn't work
+                $this->render(array('msgError' => CoreTranslator::InvalidLogin($lang), "admin_email" => $admin_email), "index");
                 return;
             }
 
             $connect = $this->connect($login, $pwd);
-            //print_r($connect);
 
             if ($connect == "allowed") {
-
                 $loggedUser = $this->initSession($login);
 
                 // generate the remember me cookie
                 if ($this->request->isparameter("remember")) {
-                    //throw new Exception("Set cookie <br/>");
                     $key = sha1($this->generateRandomKey());
-                    //echo "set cookie with id = " . $key . "<br/>";
                     $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
-                        //die("die failed to set cookie with key " . $key . "<br/>");
                         throw new PfmException("failed to set cookie with key " . $key);
                     }
                     $modelUser = new CoreUser();
@@ -145,11 +142,12 @@ class CoreconnectionController extends CorecookiesecureController {
                 $redirectPath = $this->getRedirectPath();
                 $this->redirectNoRemoveHeader($redirectPath);
             } else {
+                $_SESSION['flash'] = CoreTranslator::InvalidCredentials($lang);
+                $_SESSION['flashClass'] = "danger";
                 $this->redirect('/coreconnection?redirect_url='.$redirection);
-                //$this->indexAction($connect);
             }
         } else {
-            throw new PfmAuthException("Action not allowed : login or password undefined", 401);
+            throw new PfmAuthException(CoreTranslator::UndefinedCredentials($lang), 401);
         }
     }
 

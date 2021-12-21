@@ -1496,11 +1496,9 @@ class CoreTranslator {
     
     public static function CreatedAccountMessage($lang){
         if ($lang == "fr") {
-            return "Votre compte a bien été créé et un email avec vos identifiants vous a été envoyé. Votre compte sera actif lorsqu'un-e responsable"
-            . " de l'accès que vous avez demandé l'activera";
+            return "Votre compte a bien été créé et un email avec vos identifiants vous a été envoyé.";
         }
-        return "Your account has been created and you will receive an email with your credentials. You will be able to connect to your account when a manager of"
-        . " the acces you asked for will validate your account";
+        return "Your account has been created and you will receive an email with your credentials.";
     }
 
     public static function ExtAccountMessage($lang) {
@@ -1983,6 +1981,27 @@ class CoreTranslator {
             return "Français";
         }
         return "French";
+    }
+
+    public static function InvalidCredentials($lang = "") {
+        if ($lang == "fr") {
+            return "Login ou mot de passe incorrect";
+        }
+        return "Wrong login or password";
+    }
+
+    public static function UndefinedCredentials($lang = "") {
+        if ($lang == "fr") {
+            return "Action non autorisée : login ou mot de passe non défini";
+        }
+        return "Action not allowed: undefined login or password";
+    }
+
+    public static function InvalidLogin($lang = "") {
+        if ($lang == "fr") {
+            return "Login incorrect";
+        }
+        return "Invalid login";
     }
     
 }
