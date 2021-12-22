@@ -68,6 +68,7 @@ RUN git clone https://github.com/bgo-bioimagerie/platformmanager.git /tmp/platfo
   && cp -r /tmp/platformmanager_git/* /var/www/platformmanager \
   && cp /tmp/platformmanager_git/.htaccess /var/www/platformmanager \
   && cp -r /tmp/platformmanager_git/.git /var/www/platformmanager \
+  && cp -r /tmp/platformmanager_git/.gitignore /var/www/platformmanager \
   && rm -rf /tmp/platformmanager_git \
   && cd /var/www/ \
   && mkdir platformmanager/tmp \
@@ -80,7 +81,7 @@ RUN git clone https://github.com/bgo-bioimagerie/platformmanager.git /tmp/platfo
   && cp platformmanager/Config/conf.yaml.sample /var/www/platformmanager/Config/conf.yaml
 
 RUN if [ ! -e /var/www/platformmanager/data ]; then mkdir -p /var/www/platformmanager/data && chown -R www-data: /var/www/platformmanager/data; fi
-RUN cd /var/www/platformmanager && composer install --ignore-platform-reqs
+RUN cd /var/www/platformmanager && composer install
 
 ENV MYSQL_HOST="mysql" \
     MYSQL_DBNAME="platformmanager" \

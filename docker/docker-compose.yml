@@ -52,6 +52,7 @@ services:
       MYSQL_DBNAME: platformmanager # name of the database on the mysql server
       MYSQL_USER: platform_manager # Admin account to connect to mysql
       MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
+      MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}
       SMTP_HOST: ${PFM_SMTP_HOST}
       SMTP_PORT: 1025
       SMTP_FROM: ${PFM_SMTP_FROM}
@@ -96,6 +97,7 @@ services:
       MYSQL_DBNAME: platformmanager # name of the database on the mysql server
       MYSQL_USER: platform_manager # Admin account to connect to mysql
       MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
+      MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}
       SMTP_HOST: ${PFM_SMTP_HOST}
       SMTP_PORT: 1025
       SMTP_FROM: ${PFM_SMTP_FROM}

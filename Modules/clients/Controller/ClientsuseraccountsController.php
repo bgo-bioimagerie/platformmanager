@@ -54,7 +54,8 @@ class ClientsuseraccountsController extends ClientsController {
 
             $modelClientUser->set($id_space, $form->getParameter("id_client"), $id_user);
 
-            $_SESSION["message"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flashClass"] = "success";
             $this->redirect("clientsuseraccounts/" . $id_space . "/" . $id_user);
             return;
         }

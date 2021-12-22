@@ -37,6 +37,7 @@ $cli = Cli::create()
     ->command('expire')
     ->description('Expire in spaces old users (according to global config)')
     ->opt('del:d', 'Remove user from space, else just set as inactive', false, 'boolean')
+    ->opt('dry', 'Just check, no real action', false, 'boolean')
     ->command('version')
     ->description('Show version')
     ->opt('db:d', 'Show installed and expected db version', false, 'boolean')
@@ -125,7 +126,7 @@ try {
             $modelUser = new CoreUser();
             $modelSettings = new CoreConfig();
             $desactivateSetting = $modelSettings->getParam("user_desactivate", 6);
-            $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'));
+            $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'), $args->getOpt('dry'));
             $logger->info("Expired ".$count. " users");
             break;
         case 'stats':
@@ -176,9 +177,9 @@ function statsImport() {
     $cp = new CoreSpace();
     Configuration::getLogger()->info("[stats] create bucket");
     $spaces = $cp->getSpaces('id');
+    $eventHandler = new EventHandler();
     foreach ($spaces as $space) {
-        $statHandler = new Statistics();
-        $statHandler->createDB($space['shortname']);
+        $eventHandler->spaceCreate(['space' => ['id' => $space['id']]]);
     }
     Configuration::getLogger()->info("[stats] create bucket, done!");
 

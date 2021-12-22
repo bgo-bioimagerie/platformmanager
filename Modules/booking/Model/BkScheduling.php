@@ -38,7 +38,7 @@ class BkScheduling extends Model {
     public function getDefault() {
         return array("id" => 0, "is_monday" => 1, "is_tuesday" => 1,
             "is_wednesday" => 1, "is_thursday" => 1, "is_friday" => 1,
-            "is_saturday" => 1, "is_sunday" => 1, "day_begin" => 8,
+            "is_saturday" => 0, "is_sunday" => 0, "day_begin" => 8,
             "day_end" => 18, "size_bloc_resa" => 3600, "booking_time_scale" => 1,
             "resa_time_setting" => 1, "default_color_id" => 1, "id_rearea" => 0);
     }
@@ -110,7 +110,11 @@ class BkScheduling extends Model {
     public function getByReArea($id_space, $id_rearea) {
         $sql = "SELECT * FROM bk_schedulings WHERE id_rearea=? AND deleted=0 AND id_space=?";
         $user = $this->runRequest($sql, array($id_rearea, $id_space));
-        return $user->fetch();
+        $scheduling = $user->fetch();
+        if (!$scheduling) {
+            $scheduling = $this->getDefault();
+        }
+        return $scheduling;
     }
 
     /**

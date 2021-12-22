@@ -235,10 +235,10 @@ class Helpdesk extends Model {
     public function list($id_space, $status=0, $id_user=0, $offset=0, $limit=50) {
         $sql = "SELECT * FROM hp_tickets WHERE `status`=? AND id_space=?";
         if($id_user) {
-            $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id LIMIT ".intval($limit)." OFFSET ".intval($offset);
+            $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id DESC LIMIT ".intval($limit)." OFFSET ".intval($offset);
             return $this->runRequest($sql, array($status, $id_space, $id_user, $id_user))->fetchAll();
         }
-        $sql .= " ORDER BY id LIMIT ".intval($limit)." OFFSET ".intval($offset);
+        $sql .= " ORDER BY id DESC LIMIT ".intval($limit)." OFFSET ".intval($offset);
         return $this->runRequest($sql, array($status, $id_space))->fetchAll();
     }
 
@@ -278,7 +278,7 @@ class Helpdesk extends Model {
 
     // Delete all tickets in spam status for more than 1 day
     public function trashSpam() {
-        $sql = "SELECT * FROM hp_ticket WHERE status=? AND updated_at > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)";
+        $sql = "SELECT * FROM hp_tickets WHERE status=? AND updated_at > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)";
         $spams = $this->runRequest($sql, array(self::$STATUS_SPAM))->fetchAll();
         foreach($spams as $spam) {
             $this->trash($spam['id']);
