@@ -158,7 +158,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $msg = CoreTranslator::InvalidLogin($lang);
                 break;
             default:
-                $msg = $connection_error;
+                $msg = ($connection_error != "") ? $connection_error : CoreTranslator::ConnectionError($lang);
                 break;
         }
         $_SESSION['flash'] = $msg;
