@@ -21,18 +21,21 @@ class CoreTest extends TestCase
 {
     private static $allSpaces = [];
     private static $allUsers = [];
+    private static $allManagers = [];
 
     private function asAdmin($id_space=0) {
         return $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
     }
 
     private function asUser($name, $id_space) {
-        for($i=0;$i<count(self::$allUsers);$i++) {
-            if(self::$allUsers[$i]['name'] == $name) {
-                $_SESSION['id_user'] = self::$allUsers[$i]['id'];
+        $m = new CoreUser();
+        $users = $m->getAll();
+        foreach($users as $user){
+            if($user['login'] == $name) {
+                $_SESSION['id_user'] = $user['id'];
                 $_SESSION['id_space'] = $id_space;
                 $_SESSION["user_settings"] = ["language" => "en"];                
-                return self::$allUsers[$i];
+                return $user;
             }
         }
         return null;
@@ -63,7 +66,8 @@ class CoreTest extends TestCase
             "name" => $spaceName,
             "contact" => "admin",
             "status" => 1,
-            "color" => "#154186",
+            "color" => "#000000",
+            "txtcolor" => "#ffffff",
             "support" => "",
             "description" => "",
             "admins" => []
@@ -132,36 +136,38 @@ class CoreTest extends TestCase
 
     public function testCreateUser() {
         $space = self::$allSpaces[0];
-        $userName = uniqid();
-        $this->asAdmin();
-        $req = new Request([
-            "path" => "corespaceaccessuseradd/".$space['id'],
-            "formid" => "createuseraccountform",
-            "name" => $userName,
-            "firstname" => $userName,
-            "login" =>  $userName,
-            "email" => "",
-            "phone" => ""
-        ], true);
-        $c = new CorespaceaccessController($req);
-        $c->useraddAction($space['id']);
-        $userId = 0;
-        $m = new CoreUser();
-        $users = $m->getAll();
-        $userId = 0;
-        foreach($users as $user){
-            if ($user['name'] == $userName) {
-                $userId = $user['id'];
+        for($i=0;$i<2;$i++){
+            $userName = uniqid();
+            $this->asAdmin();
+            $req = new Request([
+                "path" => "corespaceaccessuseradd/".$space['id'],
+                "formid" => "createuseraccountform",
+                "name" => $userName,
+                "firstname" => $userName,
+                "login" =>  $userName,
+                "email" => $userName."@pfm.org",
+                "phone" => ""
+            ], true);
+            $c = new CorespaceaccessController($req);
+            $c->useraddAction($space['id']);
+            $userId = 0;
+            $m = new CoreUser();
+            $users = $m->getAll();
+            $userId = 0;
+            foreach($users as $user){
+                if ($user['login'] == $userName) {
+                    $userId = $user['id'];
+                }
             }
-        }
-        $this->assertTrue($userId > 0);
-        self::$allUsers[] = ["name" => $userName, "id" => intval($userId)];
+            $this->assertTrue($userId > 0);
+            self::$allUsers[] = ["login" => $userName, "id" => intval($userId)];
 
-        $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($space['id'], $userId);
-        $this->assertEquals(-1, $role);
-        $pm = new CorePendingAccount();
-        $this->assertTrue($pm->isActuallyPending($space['id'], $userId));
+            $sm = new CoreSpace();
+            $role = $sm->getUserSpaceRole($space['id'], $userId);
+            $this->assertEquals(-1, $role);
+            $pm = new CorePendingAccount();
+            $this->assertTrue($pm->isActuallyPending($space['id'], $userId));
+        }
     }
 
     public function testActivatePendingUserAsUser() {
@@ -187,5 +193,33 @@ class CoreTest extends TestCase
         $pm = new CorePendingAccount();
         $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
     }
+
+    public function testActivatePendingUserAsManager() {
+        $this->asAdmin();
+
+        $space = self::$allSpaces[0];
+        $user = self::$allUsers[2];
+        $pm = new CorePendingAccount();
+        $pendings = $pm->getBySpaceIdAndUserId($space['id'], $user['id']);
+
+        $req = new Request([
+            "path" => "corespacependinguseredit/".$space['id']."/".$pendings['id'],
+            "formid" => "pendingusereditactionform",
+            "role" => CoreSpace::$MANAGER
+        ], true);
+
+
+        $c = new CorespaceaccessController($req);
+        $c->pendingusereditAction($space['id'], $pendings['id']);
+        $sm = new CoreSpace();
+        $role = $sm->getUserSpaceRole($space['id'], $user['id']);
+        $this->assertEquals(CoreSpace::$MANAGER, $role);
+        $pm = new CorePendingAccount();
+        $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
+        $allManagers[] = ['login' => $user['login'], 'id' => $user['id'], 'space'=> $space['id']];
+    }
+
+
+
 }
 
