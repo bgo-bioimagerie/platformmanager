@@ -46,10 +46,6 @@ class CoreconnectionController extends CorecookiesecureController {
         $logo = $modelConfig->getParam("logo");
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
-        $urlCarousel1 = $modelConfig->getParam("connection_carousel1");
-        $urlCarousel2 = $modelConfig->getParam("connection_carousel2");
-        $urlCarousel3 = $modelConfig->getParam("connection_carousel3");
-        $viewCarousel = $modelConfig->getParam("home_view_carousel");
 
         if(isset($_SESSION['message'])) {
             $message =  $_SESSION['message'];
@@ -84,13 +80,9 @@ class CoreconnectionController extends CorecookiesecureController {
         return $this->render(array("msgError" => $message, "admin_email" => $admin_email, "logo" => $logo,
             "home_title" => $home_title, "home_message" => $home_message,
             "redirection" => $redirection,
-            "urlCarousel1" => $urlCarousel1,
-            "urlCarousel2" => $urlCarousel2,
-            "urlCarousel3" => $urlCarousel3,
             "language" => $language,
             "metadesc" => 'platform manager login page',
-            "providers" => $providers,
-            "viewCarousel" => $viewCarousel), "indexAction");
+            "providers" => $providers), "indexAction");
     }
 
     /**

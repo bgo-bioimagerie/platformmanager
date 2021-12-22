@@ -28,7 +28,7 @@
             <p></p>
         </div>
 
-        <!-- Carousel and Login -->
+        <!-- Login -->
         <div class="col-sm-12">
 
 

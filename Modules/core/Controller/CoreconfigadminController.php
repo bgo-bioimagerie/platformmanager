@@ -74,15 +74,6 @@ class CoreconfigadminController extends CoresecureController {
         if ($formConnectionPage->check()) {
             $modelCoreConfig->setParam("home_title", $this->request->getParameter("home_title"));
             $modelCoreConfig->setParam("home_message", $this->request->getParameter("home_message"));
-            $modelCoreConfig->setParam("home_view_carousel", $this->request->getParameter("home_view_carousel"));
-
-            for ($i = 1; $i < 4; $i++) {
-                $target_dir = "data/core/";
-                if ($_FILES["image_url" . $i]["name"] != "") {
-                    FileUpload::uploadFile($target_dir, "image_url" . $i);
-                    $modelCoreConfig->setParam("connection_carousel" . strval($i), $target_dir . $_FILES["image_url" . $i]["name"]);
-                }
-            }
             $this->redirect("coreconfigadmin");
             return;
         }
@@ -237,18 +228,11 @@ class CoreconfigadminController extends CoresecureController {
 
         $home_title = $modelCoreConfig->getParam("home_title");
         $home_message = $modelCoreConfig->getParam("home_message");
-        $home_view_carousel = $modelCoreConfig->getParam("home_view_carousel");
 
         $form = new Form($this->request, "connectionPageForm");
         $form->addSeparator(CoreTranslator::ConnectionPageData($lang));
         $form->addText("home_title", CoreTranslator::title($lang), false, $home_title);
         $form->addText("home_message", CoreTranslator::Description($lang), false, $home_message);
-        $form->addSelect("home_view_carousel", CoreTranslator::ViewCarousel($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $home_view_carousel);
-
-        for ($i = 1; $i < 4; $i++) {
-            $form->addSeparator2(CoreTranslator::Carousel($lang) . " " . strval($i));
-            $form->addUpload("image_url" . strval($i), CoreTranslator::Image_Url($lang));
-        }
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
