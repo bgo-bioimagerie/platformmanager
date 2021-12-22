@@ -8,6 +8,7 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Controller/CorespaceadminController.php';
 require_once 'Modules/core/Controller/CorespaceaccessController.php';
 require_once 'Modules/core/Controller/CoremainmenuController.php';
+require_once 'Modules/resources/Controller/ResourcesconfigController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreInstall.php';
@@ -24,7 +25,9 @@ class CoreTest extends TestCase
     private static $allManagers = [];
 
     private function asAdmin($id_space=0) {
-        return $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
+        $u = $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
+        $_SESSION['user_status'] = CoreStatus::$ADMIN;
+        return $u;
     }
 
     private function asUser($name, $id_space) {
@@ -32,6 +35,7 @@ class CoreTest extends TestCase
         $users = $m->getAll();
         foreach($users as $user){
             if($user['login'] == $name) {
+                $_SESSION['user_status'] = CoreStatus::$USER;
                 $_SESSION['id_user'] = $user['id'];
                 $_SESSION['id_space'] = $id_space;
                 $_SESSION["user_settings"] = ["language" => "en"];                
@@ -136,7 +140,7 @@ class CoreTest extends TestCase
 
     public function testCreateUser() {
         $space = self::$allSpaces[0];
-        for($i=0;$i<2;$i++){
+        for($i=0;$i<3;$i++){
             $userName = uniqid();
             $this->asAdmin();
             $req = new Request([
@@ -194,7 +198,7 @@ class CoreTest extends TestCase
         $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
     }
 
-    public function testActivatePendingUserAsManager() {
+    public function testActivatePendingUserAsSpaceManager() {
         $this->asAdmin();
 
         $space = self::$allSpaces[0];
@@ -216,7 +220,57 @@ class CoreTest extends TestCase
         $this->assertEquals(CoreSpace::$MANAGER, $role);
         $pm = new CorePendingAccount();
         $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
-        $allManagers[] = ['login' => $user['login'], 'id' => $user['id'], 'space'=> $space['id']];
+        self::$allManagers[] = ['login' => $user['login'], 'id' => $user['id'], 'space'=> $space['id']];
+    }
+
+    public function testActivatePendingUserAsSpaceAdmin() {
+        $this->asAdmin();
+
+        $space = self::$allSpaces[0];
+        $user = self::$allUsers[3];
+        $pm = new CorePendingAccount();
+        $pendings = $pm->getBySpaceIdAndUserId($space['id'], $user['id']);
+
+        $req = new Request([
+            "path" => "corespacependinguseredit/".$space['id']."/".$pendings['id'],
+            "formid" => "pendingusereditactionform",
+            "role" => CoreSpace::$ADMIN
+        ], true);
+
+
+        $c = new CorespaceaccessController($req);
+        $c->pendingusereditAction($space['id'], $pendings['id']);
+        $sm = new CoreSpace();
+        $role = $sm->getUserSpaceRole($space['id'], $user['id']);
+        $this->assertEquals(CoreSpace::$ADMIN, $role);
+        $pm = new CorePendingAccount();
+        $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
+        self::$allManagers[] = ['login' => $user['login'], 'id' => $user['id'], 'space'=> $space['id']];
+    }
+    
+    public function testActivateModules() {
+        $user = self::$allManagers[1];
+        $this->asUser($user['login'], $user['space']);
+        // activate resources module
+        $req = new Request([
+            "path" => "resourcesconfig/".$user['space'],
+            "formid" => "menusactivationForm",
+            "resourcesmenustatus" => 3,
+            "displayMenu" => '',
+            "displayColor" =>  "#000000",
+            "displayTxtColor" => "#ffffff"
+        ], true);
+        $c = new ResourcesconfigController($req);
+        $c->indexAction($user['space']);
+        $c = new CorespaceController(new Request(["path" => "corespace/".$user["space"]], false));
+        $spaceView = $c->viewAction($user["space"]);
+        $resourcesEnabled = false;
+        foreach($spaceView['spaceMenuItems'] as $menu) {
+            if($menu['url'] == 'resources') {
+                $resourcesEnabled = true;
+            }
+        }
+        $this->assertTrue($resourcesEnabled);
     }
 
 
