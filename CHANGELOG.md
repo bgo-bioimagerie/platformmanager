@@ -4,6 +4,10 @@
 
 * [booking] clicking on blank days in month view gives access to day area view
 
+## 2.2.2
+
+* [coreconfig] fix maintenance mode authorizations
+* [coreconfig] remove carousel
 ## 2.2.1
 
 * [booking] fix authorizations when related to user's roles
