@@ -6,6 +6,7 @@
 * [coreconfig] remove carousel
 ## 2.2.1
 
+* [login] clarify messages toward users
 * [booking] fix authorizations when related to user's roles
 * [helpdesk] sort tickets and fix refresh
 * [helpdesk] ignore auto replies
