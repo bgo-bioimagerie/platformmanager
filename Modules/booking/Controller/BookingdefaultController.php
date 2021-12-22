@@ -129,13 +129,29 @@ class BookingdefaultController extends BookingabstractController {
     public function editreservationqueryAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+
+        $modelUser = new CoreUser();
+        $userStatus = $modelUser->getStatus($_SESSION["id_user"]);
         $modelResource = new ResourceInfo();
-        $resourcecategory = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
-        $modelAuth = new BkAuthorization();
-        $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $resourcecategory['id'], $_SESSION["id_user"]);
-        $modelSpace = new CoreSpace();
-        $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
-        if (!$isUserAuthorizedToBook && $role < CoreSpace::$MANAGER) {
+        $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
+        $modelBkAccess = new BkAccess();
+        $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
+
+        $curentDate = date("Y-m-d", time());
+        if (isset($_SESSION['bk_curentDate'])) {
+            $curentDate = $_SESSION['bk_curentDate'];
+        }
+        $temp = explode("-", $curentDate);
+        try {
+            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
+        } catch(Exception $e) {
+            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $curentDate]);
+            $curentDateUnix = time();
+        }
+
+        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
+
+        if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
             $this->redirect("booking/".$id_space);
