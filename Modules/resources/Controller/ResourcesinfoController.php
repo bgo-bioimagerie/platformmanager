@@ -64,6 +64,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getBySpaceWithoutCategory($id_space);
+        $data = $resources;
 
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
@@ -77,7 +78,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $tableHtml = $table->view($resources, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array("data" => ["resources" => $data], "id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
     public function editAction($id_space, $id) {
@@ -148,7 +149,7 @@ class ResourcesinfoController extends ResourcesBaseController {
             
             // upload image
             $target_dir = "data/resources/";
-            if ($_FILES["image"]["name"] != "") {
+            if (array_key_exists("image", $_FILES) && $_FILES["image"]["name"] != "") {
                 $ext = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
 
                 $url = $id . "." . $ext;
@@ -157,8 +158,7 @@ class ResourcesinfoController extends ResourcesBaseController {
                 $modelResource->setImage($id_space, $id, $target_dir . $url);
             }
             
-            $this->redirect("resources/" . $id_space);
-            return;
+            return $this->redirect("resources/" . $id_space, [], ['resource' => ['id' => $id]]);
         }
 
         $headerInfo["curentTab"] = "info";
