@@ -69,6 +69,7 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
+        /*
         $formAuth = $this->bookingAuthorisationUseVisa($id_space, $lang);
         if($formAuth->check()){
             $modelConfig = new CoreConfig();
@@ -77,6 +78,7 @@ class BookingconfigController extends CoresecureController {
             $this->redirect("bookingconfig/".$id_space);
             return;
         }
+        */
         
         $formMenuName = $this->menuNameForm($id_space, $lang);
         if($formMenuName->check()){
@@ -106,6 +108,7 @@ class BookingconfigController extends CoresecureController {
             return;
         }
         
+        /*
         $formBookingCanUserEditStartedResa = $this->bookingCanUserEditStartedResa($id_space, $lang);
         if ($formBookingCanUserEditStartedResa->check()){
             $modelConfig = new CoreConfig();
@@ -114,6 +117,7 @@ class BookingconfigController extends CoresecureController {
             $this->redirect("bookingconfig/".$id_space);
             return;
         }
+        */
         
         
         $formBookingOption = $this->bookingOptionForm($id_space, $lang);
@@ -148,10 +152,10 @@ class BookingconfigController extends CoresecureController {
 
         // view
         $forms = array($formMenusactivation->getHtml($lang), 
-            $formAuth->getHtml($lang),
+            //$formAuth->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formbookingUseRecurentBooking->getHtml($lang),
-            $formBookingCanUserEditStartedResa->getHtml($lang),
+            //$formBookingCanUserEditStartedResa->getHtml($lang),
             //$bookingRestrictionForm->getHtml($lang),
             $formBookingOption->getHtml($lang), 
             $formeditReservation->getHtml($lang), 
@@ -159,6 +163,9 @@ class BookingconfigController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
     }
  
+    /**
+     * @deprecated  unused
+     */
     protected function bookingAuthorisationUseVisa($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
         $BkAuthorisationUseVisa = $modelCoreConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
@@ -173,6 +180,9 @@ class BookingconfigController extends CoresecureController {
         return $form;
     }
     
+    /**
+     * @deprecated  unused
+     */
     protected function bookingCanUserEditStartedResa($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
         $BkCanUserEditStartedResa = $modelCoreConfig->getParamSpace("BkCanUserEditStartedResa", $id_space);
