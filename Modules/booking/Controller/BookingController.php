@@ -210,16 +210,20 @@ class BookingController extends BookingabstractController {
             $curentDate = $_SESSION['bk_curentDate'];
         }
 
+        if(!$curentDate) {
+            $curentDate = date('Y-m-d');
+        }
+
         // change input if action
         if ($action == "daybefore") {
             $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
+            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
             $curentTime = $curentTime - 86400;
             $curentDate = date("Y-m-d", $curentTime);
         }
         if ($action == "dayafter") {
             $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
+            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
             $curentTime = $curentTime + 86400;
             $curentDate = date("Y-m-d", $curentTime);
         }

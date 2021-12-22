@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1639997246698,
+  "iteration": 1640076586064,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -83,7 +83,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 20,
+        "w": 18,
         "x": 0,
         "y": 0
       },
@@ -163,9 +163,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 4,
-        "x": 20,
+        "h": 4,
+        "w": 6,
+        "x": 18,
         "y": 0
       },
       "id": 6,
@@ -229,6 +229,92 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 4
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT count(bk_calendar_entry.id) as value\nFROM bk_calendar_entry\nINNER JOIN cl_clients ON cl_clients.id = bk_calendar_entry.responsible_id\nWHERE bk_calendar_entry.deleted=0 AND $__unixEpochFilter(bk_calendar_entry.start_time) AND cl_clients.name='$client'",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bk_calendar_entry",
+          "timeColumn": "deleted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Bookings [$client]",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "palette-classic"
           },
           "custom": {
@@ -278,7 +364,7 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 24,
+        "w": 18,
         "x": 0,
         "y": 8
       },
@@ -327,22 +413,111 @@
           ]
         }
       ],
-      "title": "Customer bookings [$client]",
+      "title": "Customer bookings",
       "transformations": [],
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 8
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  count(*)\nFROM bk_calendar_entry\nWHERE\n  $__timeFilter(created_at) AND deleted=1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bk_calendar_entry",
+          "timeColumn": "deleted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Cancelled bookings",
+      "type": "stat"
     }
   ],
   "refresh": "",
   "schemaVersion": 34,
   "style": "dark",
-  "tags": ["pfm"],
+  "tags": [
+    "pfm"
+  ],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": " NIS",
+          "value": " NIS"
         },
         "datasource": {
           "type": "mysql",
@@ -364,8 +539,8 @@
       {
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": "AGLEYPERNOT",
+          "value": "AGLEYPERNOT"
         },
         "datasource": {
           "type": "mysql",
@@ -390,10 +565,10 @@
     "from": "now-30d",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": [],
   "timezone": "",
   "title": "Bookings",
   "uid": "dash_0",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }

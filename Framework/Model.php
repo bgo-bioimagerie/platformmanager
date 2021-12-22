@@ -438,6 +438,15 @@ abstract class Model {
                 Configuration::getLogger()->warning("[db] could not create view", ["error" => $e->getMessage()]);
             }
         }
+        try {
+            $sql = "CREATE or REPLACE VIEW $spaceName.users AS ";
+            $sql .= "SELECT core_users.login, core_users.id from core_users ";
+            $sql .= "INNER JOIN core_j_spaces_user on core_j_spaces_user.id_user=core_users.id ";
+            $sql .= "WHERE core_j_spaces_user.status > 0 and core_j_spaces_user.id_space=$spaceID";
+            $pdo->query($sql);
+        } catch(Exception $e) {
+            Configuration::getLogger()->warning("[db] could not create user view", ["error" => $e->getMessage()]);
+        }
     }
 
 }

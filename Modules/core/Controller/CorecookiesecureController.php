@@ -51,18 +51,7 @@ abstract class CorecookiesecureController extends Controller {
 
         // update user active base if the user is manager or admin
         $this->runModuleConnectionActions();
-        
-        // if user admin a space, update the user list
-        /* Managed via pfm-cli now!
-        $modelSpace = new CoreSpace();
-        if( $sessuser['status_id'] > 1 || $modelSpace->doesManageSpace($sessuser['idUser']) ){
-            
-            $moselSettings = new CoreConfig();
-            $desactivateSetting = $moselSettings->getParam("user_desactivate");
-            $modelUser->disableUsers($desactivateSetting);  
-        }
-        */
-        
+
         
         return $sessuser;
     }
