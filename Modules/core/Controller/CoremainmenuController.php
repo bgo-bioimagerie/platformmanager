@@ -208,13 +208,21 @@ class CoremainmenuController extends CoresecureController {
 
         $modelItem = new CoreMainMenuItem();
         $item = $modelItem->get($id);
-        if(!$item) {
-            $item = [
-                "name" => "", "display_order" => "0", "id_sub_menu" => "0", "id_space" => "0"];
-        }
 
         $modelSpace = new CoreSpace();
         $spaceList = $modelSpace->getForList();
+
+        if(!$item) {
+            $item = [
+                "name" => "",
+                "display_order" => "0",
+                "id_sub_menu" => "0",
+                "id_space" => "0"
+            ];
+            if($spaceList && count($spaceList['ids']) > 1) {
+                $item['id_space'] = $spaceList['ids'][1];
+            }
+        }
 
         $modelSubMenu = new CoreMainSubMenu();
         $subMenuList = $modelSubMenu->getForList();
@@ -229,7 +237,9 @@ class CoremainmenuController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "coremainmenuitemedit/".$id);
 
         if ($form->check()) {
-
+            if(!$form->getParameter("id_space")) {
+                throw new PfmParamException("Invalid space parameter");
+            }
             $itemid = $modelItem->set(
                     $id,
                     $form->getParameter("name"),

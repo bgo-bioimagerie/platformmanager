@@ -16,8 +16,10 @@ for($c = 0 ; $c < count($available_days) ; $c++){
 		$dayWidth++;
 	}
 }
+if ($dayWidth != 0) {
+	$dayWidth = 100/$dayWidth;
+}
 
-$dayWidth = 100/$dayWidth;
 ?>
 
 <style>
