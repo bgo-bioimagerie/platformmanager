@@ -50,7 +50,7 @@ class ReareasController extends ResourcesBaseController {
             
         $tableHtml = $table->view($data, $headers);
         
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "htmlTable" => $tableHtml));
+        return $this->render(array("data" => ["reareas" => $data], "lang" => $lang, "id_space" => $id_space, "htmlTable" => $tableHtml));
     }
     
       /**

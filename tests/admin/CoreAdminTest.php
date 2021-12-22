@@ -1,4 +1,6 @@
 <?php
+
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Confidence;
 use PHPUnit\Framework\TestCase;
 require './vendor/autoload.php';
 require_once 'Modules/core/Controller/CoreconnectionController.php';
@@ -9,6 +11,11 @@ require_once 'Modules/core/Controller/CorespaceadminController.php';
 require_once 'Modules/core/Controller/CorespaceaccessController.php';
 require_once 'Modules/core/Controller/CoremainmenuController.php';
 require_once 'Modules/resources/Controller/ResourcesconfigController.php';
+require_once 'Modules/resources/Controller/ReareasController.php';
+require_once 'Modules/resources/Controller/RecategoriesController.php';
+require_once 'Modules/resources/Controller/RevisasController.php';
+require_once 'Modules/resources/Controller/ResourcesinfoController.php';
+require_once 'Modules/resources/Controller/ResourcesController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreInstall.php';
@@ -49,16 +56,20 @@ class CoreTest extends TestCase
     {
         $req = new Request(["path" => ""], true);
         $c = new CoreconnectionController($req);
-        $res = $c->indexAction();
-        $this->assertTrue(isset($res['metadesc']));
-
+        $c->indexAction();
         $m = new CoreUser();
         $users = $m->getAll();
+        $this->assertTrue($users && !empty($users));
         foreach($users as $user){
             self::$allUsers[] = ["name" => $user['login'], "id" => intval($user['id'])];
         }
 
 
+    }
+
+    protected function setUp(): void {
+        $_SERVER['HTTP_HOST'] = 'localhost';
+        $_SERVER['REQUEST_URI'] = '';
     }
 
     public function testCreateSpace() {
@@ -248,7 +259,7 @@ class CoreTest extends TestCase
         self::$allManagers[] = ['login' => $user['login'], 'id' => $user['id'], 'space'=> $space['id']];
     }
     
-    public function testActivateModules() {
+    public function testConfigureModuleResources() {
         $user = self::$allManagers[1];
         $this->asUser($user['login'], $user['space']);
         // activate resources module
@@ -271,6 +282,71 @@ class CoreTest extends TestCase
             }
         }
         $this->assertTrue($resourcesEnabled);
+        // Create area
+        $req = new Request([
+            "path" => "reareasedit/".$user['space']."/0",
+            "formid" => "reareasedit/".$user['space'],
+            "id" => 0,
+            "name" => "rearea1",
+            "is_restricted" => 0
+        ], false);
+        $c = new ReareasController($req);
+        $c->editAction($user['space'], 0);
+        $data = $c->indexAction($user['space']);
+        $reareas = $data['reareas'];
+        $this->assertFalse(empty($reareas));
+        // Create category
+        $req = new Request([
+            "path" => "recategoriesedit/".$user['space']."/0",
+            "formid" => "recategoriesedit/".$user['space'],
+            "id" => 0,
+            "name" => "cat1",
+        ], false);
+        $c = new RecategoriesController($req);
+        $c->editAction($user['space'], 0);
+        $data = $c->indexAction($user['space']);
+        $categories = $data['recategories'];
+        $this->assertFalse(empty($categories));
+
+        // Create visa
+        $req = new Request([
+            "path" => "resourceseditvisa/".$user['space']."/0",
+            "formid" => "formeditVisa",
+            "id" => 0,
+            "id_resource_category" => $categories[0]['id'],
+            "id_instructor" => $user['id'],
+            "is_active" => 1,
+            "instructor_status" => 1
+        ], false);
+        $c = new RevisasController($req);
+        $visa = $c->editAction($user['space'], 0);
+        $this->assertTrue($visa['revisa']['id'] > 0);
+        $data = $c->indexAction($user['space']);
+        $visas = $data['revisas'];
+        $this->assertFalse(empty($visas));    
+        // Create 2 resource
+        for($i=0;$i<2;$i++) {
+            $req = new Request([
+                "path" => "resourcesedit/".$user['space']."/0",
+                "formid" => "resourcesedit",
+                "id" => 0,
+                "name" => "res".$i,
+                "brand" => "",
+                "type" => "",
+                "description" => "testing",
+                "long_description" => "long testing",
+                "id_category" => $categories[0]['id'],
+                "id_area" => $reareas[0]['id'],
+                "display_order" => 0
+            ], false);
+            $c = new ResourcesinfoController($req);
+            $resource = $c->editAction($user['space'], 0);
+            $this->assertTrue($resource['resource']['id'] > 0);
+        }
+        $data = $c->indexAction($user['space']);
+        $resources = $data['resources'];
+        $this->assertFalse(empty($resources));
+        $this->assertEquals(2, count($resources));
     }
 
 

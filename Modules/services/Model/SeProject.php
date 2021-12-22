@@ -183,7 +183,6 @@ class SeProject extends Model {
      * 
      */
     protected function extractYears($data, $periodEnd = null) {
-        Configuration::getLogger()->debug("[TEST]", ["data" => $data]);
         if (!empty($data)) {
             $secureDate = date('Y-m-d');
             $firstDate = date_parse($data[0][0] ?? $secureDate);
