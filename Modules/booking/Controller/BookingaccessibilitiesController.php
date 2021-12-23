@@ -46,8 +46,10 @@ class BookingaccessibilitiesController extends BookingsettingsController {
 
         $modelResources = new ResourceInfo();
         $resources = $modelResources->getForSpace($id_space);
+        $bkaccess = [];
         foreach ($resources as $resource) {
             $accessId = $model->getAccessId($id_space, $resource["id"]);
+            $bkaccess[] = ['resource' => $resource['id'], 'bkaccess' => $accessId];
             $form->addSelect("r_" . $resource["id"], $resource["name"], $choices, $choicesid, $accessId);
         }
 
@@ -55,16 +57,18 @@ class BookingaccessibilitiesController extends BookingsettingsController {
         $form->setButtonsWidth(2, 9);
 
         if ($form->check()) {
+            $bkaccess = [];
             foreach ($resources as $resource) {
-                $id_access = $this->request->getParameter("r_" . $resource["id"]);
+                $id_access = $this->request->getParameterNoException("r_" . $resource["id"]);
                 $model->set($id_space ,$resource["id"], $id_access);
+                $bkaccess[] = ['resource' => $resource['id'], 'bkaccess' => $accessId];
             }
-            $this->redirect("bookingaccessibilities/".$id_space);
+            return $this->redirect("bookingaccessibilities/".$id_space, [], ["bkaccess" => $bkaccess]);
         }
 
         // view
         $formHtml = $form->getHtml($lang);
-        $this->render(array("id_space" => $id_space, "formHtml" => $formHtml, "lang" => $lang));
+        return $this->render(array("data" => ["bkaccess" => $bkaccess],"id_space" => $id_space, "formHtml" => $formHtml, "lang" => $lang));
     }
 
 }

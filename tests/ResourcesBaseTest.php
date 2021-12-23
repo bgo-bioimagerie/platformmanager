@@ -86,8 +86,8 @@ class ResourcesBaseTest extends BaseTest {
         $data = $c->indexAction($space['id']);
         $visas = $data['revisas'];
         $this->assertFalse(empty($visas));    
-        // Create 2 resource
-        for($i=0;$i<2;$i++) {
+        // Create 3 resource
+        for($i=0;$i<3;$i++) {
             $req = new Request([
                 "path" => "resourcesedit/".$space['id']."/0",
                 "formid" => "resourcesedit",
@@ -108,7 +108,7 @@ class ResourcesBaseTest extends BaseTest {
         $data = $c->indexAction($space['id']);
         $resources = $data['resources'];
         $this->assertFalse(empty($resources));
-        $this->assertEquals(2, count($resources));
+        $this->assertEquals(3, count($resources));
     }
 
 

@@ -16,11 +16,11 @@ $doInstall = getenv("INSTALL");
 if($doInstall !== false && $doInstall === "0") {
     $m = new CoreUser();
     $m->installDefault();
-    /*
+
     $modelCache = new FCache();
     $modelCache->freeTableURL();
     $modelCache->load();
-    */
+
     return;
     // Just add admin user
 }

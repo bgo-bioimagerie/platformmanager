@@ -37,6 +37,7 @@ class BookingcolorcodesController extends BookingsettingsController {
         // get the user list
         $colorModel = new BkColorCode();
         $colorTable = $colorModel->getForSpace($id_space);
+        $bkcodes = $colorTable;
         for($i = 0 ; $i < count($colorTable) ; $i++){
             $colorTable[$i]["who_can_use"] = CoreTranslator::Translate_status_from_id($lang, $colorTable[$i]["who_can_use"]);
         }
@@ -57,7 +58,7 @@ class BookingcolorcodesController extends BookingsettingsController {
 
         $tableHtml = $table->view($colorTable, $tableContent);
 
-        $this->render(array("id_space" => $id_space, "tableHtml" => $tableHtml, "lang" => $lang));
+        return $this->render(array("data" => ["bkcodes" => $bkcodes], "id_space" => $id_space, "tableHtml" => $tableHtml, "lang" => $lang));
     }
     
     public function editAction($id_space, $id){
@@ -89,7 +90,7 @@ class BookingcolorcodesController extends BookingsettingsController {
             
             $newID = $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
             $model->setColorWhoCanUse($id_space, $newID, $form->getParameter("who_can_use"));
-            $this->redirect("bookingcolorcodes/".$id_space);
+            return $this->redirect("bookingcolorcodes/".$id_space, [], ['bkcode' => ['id' => $newID]]);
         }
         $formHtml = $form->getHtml($lang);
         
