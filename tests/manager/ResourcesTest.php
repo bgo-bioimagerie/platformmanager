@@ -6,22 +6,12 @@ require_once 'Modules/core/Controller/CoreconnectionController.php';
 require_once 'Framework/Request.php';
 require_once 'Framework/Configuration.php';
 
-require_once 'Modules/core/Controller/CorespaceadminController.php';
-require_once 'Modules/core/Controller/CorespaceaccessController.php';
-require_once 'Modules/core/Controller/CoremainmenuController.php';
 require_once 'Modules/resources/Controller/ResourcesconfigController.php';
 require_once 'Modules/resources/Controller/ReareasController.php';
 require_once 'Modules/resources/Controller/RecategoriesController.php';
 require_once 'Modules/resources/Controller/RevisasController.php';
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Controller/ResourcesController.php';
-
-require_once 'Modules/core/Model/CoreUser.php';
-require_once 'Modules/core/Model/CoreInstall.php';
-require_once 'Modules/core/Model/CoreMainMenu.php';
-require_once 'Modules/core/Model/CoreMainSubMenu.php';
-require_once 'Modules/core/Model/CoreMainMenuItem.php';
-require_once 'Modules/core/Model/CorePendingAccount.php';
 
 require_once 'tests/BaseTest.php';
 

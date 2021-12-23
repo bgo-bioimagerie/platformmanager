@@ -60,10 +60,11 @@ class ClientslistController extends ClientsController {
         ));
 
         // render the View
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
-            'tableHtml' => $tableHtml
+            'tableHtml' => $tableHtml,
+            'data' => ['clients' => $providersArray]
         ));
     }
 
@@ -120,8 +121,7 @@ class ClientslistController extends ClientsController {
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
 
             // after the provider is saved we redirect to the providers list page
-            $this->redirect("clclienteditinvoice/" . $id_space . "/" . $idNew);
-            return;
+            return $this->redirect("clclienteditinvoice/" . $id_space . "/" . $idNew, [], ['client' => ['id' => $idNew]]);
         }
 
         // render the view
