@@ -513,7 +513,7 @@ class CoreSpace extends Model {
     }
 
     public function addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor) {
-        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support, txtcolor) VALUES (?,?,?,?,?,?, ?)";
+        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support, txtcolor, description) VALUES (?,?,?,?,?,?, ?,'')";
         $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $txtcolor));
         $id = $this->getDatabase()->lastInsertId();
         Events::send(["action" => Events::ACTION_SPACE_CREATE, "space" => ["id" => intval($id)]]);
