@@ -73,7 +73,7 @@ class CoreconnectionController extends CorecookiesecureController {
         $_SESSION["redirect"] = "coretiles";
 
         if(isset($_GET['redirect_url'])) {
-            $redirection = $_GET['redirect_url'];
+            $redirection = urldecode($_GET['redirect_url']);
         }
 
 
