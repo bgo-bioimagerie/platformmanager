@@ -130,8 +130,7 @@ class SeProject extends Model {
     public function allPeriodProjects($id_space, $periodStart, $periodEnd) {
         $sql = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND ("
                 . " ( date_open<=? AND date_close>=? AND date_close<=? ) "
-                . " OR ( date
-                _open>=? AND date_open<=? AND date_close>=? AND date_close<=? ) "
+                . " OR ( date_open>=? AND date_open<=? AND date_close>=? AND date_close<=? ) "
                 . " OR ( date_open>=? AND date_open<=? AND date_close>=? ) "
                 . " OR ( date_open<=? AND date_close>=?) "
                 . " OR date_close is null "
