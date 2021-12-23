@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3
+
+* [projects] fix closed projects listing change of year
+
 ## 2.2.2
 
 * [coreconfig] fix maintenance mode authorizations

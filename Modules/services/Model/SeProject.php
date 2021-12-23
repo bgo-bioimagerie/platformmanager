@@ -168,41 +168,42 @@ class SeProject extends Model {
         $this->runRequest($sql, array($id, $id_space));
     }
 
-    protected function extractYears($data) {
+    /**
+     * Gets a list of years from list of project dates
+     * Can specify a breakpoint $periodEnd in order to
+     *  - append one year from result
+     *      if greatest date day and month > $periodEnd day and month
+     * - remove first year from result
+     *      if smaller date day and month < $periodEnd day and month
+     * @param array $data list of dates 
+     * @param string $periodEnd
+     * 
+     * @return array list of years
+     * 
+     */
+    protected function extractYears($data, $periodEnd = null) {
+        if (!empty($data)) {
+            $secureDate = date('Y-m-d');
+            $firstDate = date_parse($data[0][0] ?? $secureDate);
+            $lastDate = date_parse(end($data)[0] ?? $secureDate);
+            $firstYear = $firstDate['year']; 
+            $lastYear = $lastDate['year'];
 
-        if (count($data) > 0) {
-            $firstYear = null;
-            $lastYear = null;
-            foreach($data as $date) {
-                if($date != null) {
-                    $lastDate = $date[0];
-                    $lastDateInfo = explode("-", $lastDate);
-                    $lastYear = $lastDateInfo[0];
-                    if($firstYear == null) {
-                        $firstDate = $date[0];
-                        $firstDateInfo = explode("-", $firstDate);
-                        $firstYear = $firstDateInfo[0];      
-                    }
+            if ($periodEnd) {
+                $parsed_periodEnd = date_parse($periodEnd);
+                $firstDate_WoYear = mktime(0, 0, 0, $firstDate['month'], $firstDate['day']);
+                $lastDate_WoYear = mktime(0, 0, 0, $lastDate['month'], $lastDate['day']);
+                $periodEnd_WoYear = mktime(0, 0, 0, $parsed_periodEnd['month'], $parsed_periodEnd['day']);
+
+                if ($lastDate_WoYear > $periodEnd_WoYear) {
+                    $lastYear += 1;
                 }
-
+                
+                // increment first year if first project closed after periodEnd and and first year is not the current one
+                if (($firstDate_WoYear > $periodEnd_WoYear) && ($firstYear != date('Y'))) {
+                    $firstYear += 1;
+                }
             }
-            /*
-            $firstDate = $data[0][0];
-            $firstDateInfo = explode("-", $firstDate);
-            $firstYear = $firstDateInfo[0];
-            $i = 0;
-            while ($firstYear == "0000") {
-                $i++;
-                $firstDate = $data[$i][0];
-                $firstDateInfo = explode("-", $firstDate);
-                $firstYear = $firstDateInfo[0];
-            }
-
-            $lastDate = $data[count($data) - 1][0];
-            $lastDateInfo = explode("-", $lastDate);
-            $lastYear = $lastDateInfo[0];
-            */
-
             $years = array();
             for ($i = $firstYear; $i <= $lastYear; $i++) {
                 $years[] = $i;
@@ -212,79 +213,21 @@ class SeProject extends Model {
         return array();
     }
 
-    public function closedProjectsPeriods($id_space, $periodBegin, $periodEnd) {
+    public function closedProjectsPeriods($id_space, $periodEnd) {
         $sql = "SELECT date_close FROM se_project WHERE date_close is not null AND id_space=? AND deleted=0 ORDER BY date_close ASC";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-
-        // extract years
-        if (count($data) > 0) {
-
-            $firstYear = null;
-            $lastYear = null;
-            foreach($data as $date) {
-                if($date != null) {
-                    $lastDate = $date[0];
-                    $lastDateInfo = explode("-", $lastDate);
-                    $lastYear = $lastDateInfo[0];
-                    if($firstYear == null) {
-                        $firstDate = $date[0];
-                        $firstDateInfo = explode("-", $firstDate);
-                        $firstYear = $firstDateInfo[0];      
-                    }
-                }
-
-            }
-
-            /*
-            $firstDate = $data[0][0];
-            $firstDateInfo = explode("-", $firstDate);
-            $firstYear = $firstDateInfo[0];
-            $i = 0;
-            while ($firstYear == "0000") {
-                $i++;
-                $firstDate = $data[$i][0];
-                $firstDateInfo = explode("-", $firstDate);
-                $firstYear = $firstDateInfo[0];
-            }
-
-            $periodBeginInfo = explode('-', $periodBegin);
-            if ($firstDateInfo[1] . "-" . $firstDateInfo[2] >= $periodBeginInfo[1] . "-" . $periodBeginInfo[2]) {
-                $firstYear = $firstYear - 1;
-            }
-
-            // last year
-            $lastDate = $data[count($data) - 1][0];
-            $lastDateInfo = explode("-", $lastDate);
-            $periodEndInfo = explode('-', $periodEnd);
-            if ($lastDateInfo[1] . "-" . $lastDateInfo[2] >= $periodEndInfo[1] . "-" . $periodEndInfo[2]) {
-                $lastYear = $lastDateInfo[0] + 1;
-            } else {
-                $lastYear = $lastDateInfo[0];
-            }
-            */
-
-            $years = array();
-            for ($i = $firstYear; $i <= $lastYear; $i++) {
-                $years[] = $i;
-            }
-
-            return $years;
-        }
-        return array();
+        return $this->extractYears($data, $periodEnd);
     }
 
     public function closedProjectsYears($id_space) {
         $sql = "SELECT date_close FROM se_project WHERE deleted=0 AND date_close is not null AND id_space=? ORDER BY date_open ASC";
-        //echo "sql = " . $sql . "</br>";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-        //print_r($data);
         return $this->extractYears($data);
     }
 
     public function allProjectsYears($id_space) {
         $sql = "SELECT date_open from se_project WHERE deleted=0 AND id_space=? ORDER BY date_open ASC";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
-
         return $this->extractYears($data);
     }
 
