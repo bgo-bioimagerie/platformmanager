@@ -13,6 +13,7 @@ const fs = require('fs');
     browserEndPoint = null;
     page = null;
     envVars = Object();
+    elementTypes = ["menu", "submenu", "item", "space"];
     
     /**
      * Initializes test environnement, launch browser and connect to pfm
@@ -27,7 +28,15 @@ const fs = require('fs');
         }).catch(error => {
             console.error("[CONF]", error);
         });
-        this.browser = await puppeteer.launch({headless: false});
+        let viewport = {};
+        viewport.width = 1920;
+        viewport.height = 1080;
+        this.browser = await puppeteer.launch({
+            headless: false,
+            slowMo: 250,
+            ignoreHTTPSErrors: true,
+            args: [`--window-size=1920,1080`]
+        });
         this.browserEndpoint = await this.browser.wsEndpoint();
         console.log("[CONF]", 'browser ok');
         [this.page] = await this.browser.pages();
@@ -90,10 +99,12 @@ const fs = require('fs');
         console.log("creating menu, space, submenu and item");
         // await this.createMenu(spaceConfig);
         await this.createMenuElement("menu", spaceConfig);
-        await this.createSubMenu(spaceConfig);
-        await this.createSpace(spaceConfig);
+        await this.createMenuElement("submenu", spaceConfig);
+        await this.createMenuElement("item", spaceConfig);
+        // await this.createSubMenu(spaceConfig);
+        /* await this.createSpace(spaceConfig);
         await this.checkSpaceCreation(spaceConfig);
-        await this.setSpaceBasicConfiguration(spaceConfig);
+        await this.setSpaceBasicConfiguration(spaceConfig); */
     }
 
     /**
@@ -161,23 +172,33 @@ const fs = require('fs');
     async createMenuElement(elementType, spaceConfig, duplicates = false) {
         console.log("[MENU ELEMENTS]", "creating " + elementType);
         let pageName, validationBtn;
-        let parentElementName = null;
+        let parentElement = {id: null, name: null};
+        let childElement = {id: null, name: null};
         const elementName = spaceConfig.name + this.capitalize(elementType);
         switch (elementType) {
             case "menu":
                 pageName = "coremainmenus";
                 validationBtn = 'editmainmenuformsubmit';
                 break;
-            case "subMenu":
+            case "submenu":
                 pageName = "coremainsubmenus";
-                parentElementName = "id_main_menu";
+                parentElement.id = "id_main_menu";
+                parentElement.name = "Menu";
+                validationBtn = 'editmainsubmenuformsubmit';
                 break;
             case "space":
                 pageName = "spaceadmin";
                 break;
             case "item":
+                pageName = "coremainmenuitems";
+                parentElement.id = "id_sub_menu";
+                parentElement.name = "Submenu";
+                validationBtn = "editmenuitemformsubmit";
+                childElement.id = "id_space";
+                childElement.name = "";
                 break;
             default:
+                console.error(elementType + "is not a menu structure");
                 break;
         }
 
@@ -193,30 +214,64 @@ const fs = require('fs');
             }
             
             if (createElement) {
-                await this.page.evaluate(() => document.getElementById('add' + elementType).click());
+                await this.page.evaluate((type) => {
+                    document.getElementById('add' + type).click();
+                }, elementType);
                 await this.page.waitForSelector('#name');
                 await this.page.evaluate(val => document.getElementById('name').value = val, elementName);
                 
-                if (parentElementName) {
+                if (parentElement.id) {
                     // set parent menu
-                    await this.page.waitForSelector('#' + parentElementName);
-                    await this.page.evaluate(config => {
-                        let mainMenuSelector = document.getElementById(parentElementName);
-                        let options = [...mainMenuSelector.options].map(function(el) {
+                    console.log("in set parent menu");
+                    await this.page.waitForSelector('#' + parentElement.id);
+                    await this.page.evaluate(data => {
+                        console.log("in evaluate with data:",data);
+                        let parentSelector = document.getElementById(data.element.parent.id);
+                        let options = [...parentSelector.options].map(function(el) {
                             return {id: el.value, text: el.text};
                     });
-                        mainMenuSelector.value = options.find(option => option.text == (config.name + "Menu")).id ;
-                    }, spaceConfig);
-
-                    
-                } else {
-                    console.log("[MENUS]", elementType + " " + elementName + " already exists");
+                    console.log("options:", options);
+                        console.log("looking for:", data.config.name + data.element.parent.name);
+                        parentSelector.value = options.find(option => option.text == (data.config.name + data.element.parent.name)).id ;
+                    }, {config: spaceConfig,
+                        element: {
+                            name: elementName,
+                            parent: parentElement,
+                        }
+                    });
                 }
+
+                if (childElement.id) {
+                    // TODO: refactor with parent selection
+                    await this.page.waitForSelector('#' + childElement.id);
+                    await this.page.evaluate(data => {
+                        console.log("in evaluate with data:",data);
+                        let childSelector = document.getElementById(data.element.child.id);
+                        let options = [...childSelector.options].map(function(el) {
+                            return {id: el.value, text: el.text};
+                    });
+                    console.log("options:", options);
+                        console.log("looking for:", data.config.name + data.element.child.name);
+                        childSelector.value = options.find(option => option.text == (data.config.name + data.element.child.name)).id ;
+                    }, {config: spaceConfig,
+                        element: {
+                            name: elementName,
+                            child: childElement,
+                        }
+                    });
+                }
+
                 await this.page.waitForSelector('#' + validationBtn);
-                await this.page.evaluate(() => document.getElementById(validationBtn).click());
+                await this.page.evaluate( btn => {
+                    document.getElementById(btn).click()
+                }, validationBtn);
+                console.log("[MENU ELEMENTS]", elementType + " creation succeeded!");
+            } else {
+                console.log("[MENU ELEMENTS]", elementType + " " + elementName + " already exists");
             }
             // TODO: add properties verification script
         } catch (err) {
+            console.log(err);
             console.error("[MENU ELEMENTS]", "menu creation failed", err.message);
         }
     }
