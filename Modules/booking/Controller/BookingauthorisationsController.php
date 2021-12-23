@@ -112,7 +112,7 @@ class BookingauthorisationsController extends CoresecureController {
 
         $modelCategory = new ReCategory();
 
-        $recat = $modelCategory->get($id_space, $id_resource_category);
+        //$recat = $modelCategory->get($id_space, $id_resource_category);
 
         $table = new TableView();
         $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName);

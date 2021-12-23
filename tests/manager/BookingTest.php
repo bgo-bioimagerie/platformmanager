@@ -67,17 +67,42 @@ class BookingTest extends BookingBaseTest {
         $data = $c->indexAction($space['id']);
         $clients = $data['clients'];
 
+        $admin = $this->user($ctx['spaces'][$spaces[0]]['admins'][0]);
         $manager = $this->user($ctx['spaces'][$spaces[0]]['managers'][0]);
         $user = $this->user($ctx['spaces'][$spaces[0]]['users'][0]);
 
+         /**
+          * bookingaccessibilities:
+          * res0 = 1;  // user can book resource
+          * res1 = 2;  // authorized user can book resource
+          * res3 = 3;  // managers can book resource
+          */
 
-        //$user = $this->user($spaces['users'][0]);
-        // manage book all resources
+        // manager book all resources for user
         $this->asUser($manager['login'], $space['id']);
         foreach($resources as $resource) {
             $this->book($space, $user, $clients[0], $resource, 9);
         }
 
+        // user book all resources
+        // only res0 is allowed
+        $this->asUser($user['login'], $space['id']);
+        foreach($resources as $resource) {
+            try {
+                $this->book($space, $user, $clients[0], $resource, 10);
+            } catch(PHPUnit\Framework\ExpectationFailedException) {
+                if($resource['name'] == 'res0') {
+                    $this->fail($user['login'].' should be able to book res0');
+                }
+            }
+        }
+        // now should give bkauth to user on resource res1
+        $this->asUser($admin['login'], $space['id']);
+        $this->addAuthorization($space, $user, $resources[1]);
+
+        // now user should be able to book res1
+        $this->asUser($user['login'], $space['id']);
+        $this->book($space, $user, $clients[0], $resources[1], 10);
     }
 
 }

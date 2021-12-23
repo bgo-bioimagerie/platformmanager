@@ -9,8 +9,10 @@ require_once 'Modules/booking/Controller/BookingconfigController.php';
 require_once 'Modules/booking/Controller/BookingcolorcodesController.php';
 require_once 'Modules/booking/Controller/BookingaccessibilitiesController.php';
 require_once 'Modules/booking/Controller/BookingdefaultController.php';
+require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
+require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'tests/BaseTest.php';
 
@@ -109,7 +111,7 @@ class BookingBaseTest extends BaseTest {
         ];
         $form["r_" . $resources[0]['id']] = 1;  // user can book resource 1
         $form["r_" . $resources[1]['id']] = 2;  // authorized user can book resource 2
-        $form["r_" . $resources[2]['id']] = 3;  // managers can book resource 2
+        $form["r_" . $resources[2]['id']] = 3;  // managers can book resource 3
         $expects = [
             $resources[0]['id'] => 1,
             $resources[1]['id'] => 2,
@@ -135,7 +137,7 @@ class BookingBaseTest extends BaseTest {
      */
     protected function book($space, $user, $client, $resource, $time=9):mixed {
 
-        Configuration::getLogger()->debug('book', ['for' => $user, 'space' => $space]);
+        Configuration::getLogger()->debug('book', ['for' => $user, 'space' => $space, 'resource' => $resource]);
         
         $date = new DateTime();
         $date->modify('next monday');
@@ -164,6 +166,27 @@ class BookingBaseTest extends BaseTest {
         $bkcalentry = $data['bkcalentry'];
         $this->assertTrue($bkcalentry['id'] > 0);
         return $bkcalentry;
+    }
+
+    protected function addAuthorization($space, $user, $resource) {
+        // bookingauthorisationsadd/*id_space*/*id_cat*_*id_user*
+        Configuration::getLogger()->debug('add bk auth', ['for' => $user, 'space' => $space, 'resource' => $resource]);
+        // need to get resource category
+        $id_resource_category = $resource['id_category'];
+        // Get a visa
+        $modelVisa = new ReVisa();
+        $visas = $modelVisa->getForListByCategory($space['id'], $id_resource_category);
+
+        $req = new Request([
+            "path" => "bookingauthorizationsadd/".$space['id']."/".$id_resource_category."_".$user['id'],
+            "formid" => "authorisationAddForm",
+            "user" => $user['id'],
+            "resource" => $id_resource_category,
+            "visa_id" => $visas['ids'][0],
+            "date" => date('Y-m-d')
+        ], false);
+        $c = new BookingauthorisationsController($req);
+        $c->addAction($space['id'], $id_resource_category."_".$user['id']);
     }
 
 
