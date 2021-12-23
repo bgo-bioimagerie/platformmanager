@@ -204,22 +204,26 @@ class BookingController extends BookingabstractController {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
         }
 
-        if ($curentAreaId == "") {
+        if ($curentAreaId == "" && isset($_SESSION['bk_id_area'])) {
             $curentResource = $_SESSION['bk_id_resource'];
             $curentAreaId = $_SESSION['bk_id_area'];
             $curentDate = $_SESSION['bk_curentDate'];
         }
 
+        if(!$curentDate) {
+            $curentDate = date('Y-m-d');
+        }
+
         // change input if action
         if ($action == "daybefore") {
             $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
+            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
             $curentTime = $curentTime - 86400;
             $curentDate = date("Y-m-d", $curentTime);
         }
         if ($action == "dayafter") {
             $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
+            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
             $curentTime = $curentTime + 86400;
             $curentDate = date("Y-m-d", $curentTime);
         }
@@ -344,6 +348,9 @@ class BookingController extends BookingabstractController {
         }
         if ($action == "today") {
             $curentDate = date("Y-m-d", time());
+        } else if (DateTime::createFromFormat('Y-m-d', $action) !== false) {
+            // getting selected date from month view
+            $curentDate = $action;
         }
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);

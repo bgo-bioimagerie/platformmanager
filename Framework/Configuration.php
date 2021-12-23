@@ -108,6 +108,13 @@ class Configuration {
      */
     private static function override() {
 
+        if(getenv('MYSQL_ADMIN_LOGIN')) {
+            self::$parameters['mysql_admin_login']= getenv('MYSQL_ADMIN_LOGIN');
+        }
+        if(getenv('MYSQL_ADMIN_PWD')) {
+            self::$parameters['mysql_admin_pwd']= getenv('MYSQL_ADMIN_PWD');
+        }
+
         if(getenv('MYSQL_HOST')) {
             self::$parameters['mysql_host']= getenv('MYSQL_HOST');
         }

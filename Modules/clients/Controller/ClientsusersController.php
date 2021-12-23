@@ -78,13 +78,13 @@ class ClientsusersController extends ClientsController {
         );
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang),
-            "tableHtml" => $tableHtml
-                )
-        );
+            "tableHtml" => $tableHtml,
+            "data" => ["clientsusers" => $data]
+        ));
     }
 
     /**

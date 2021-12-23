@@ -131,11 +131,11 @@ class Statistics {
             $point = self::getPoint($stat);
             $writeApi = $this->getWriteApi($space);
             if($writeApi == null) {
-                return;
+                return true;
             }
             $writeApi->write($point);
         } catch(Throwable $e) {
-            Configuration::getLogger()->error('[stats] stat error', ['message' => $e->getMessage()]);
+            Configuration::getLogger()->error('[stats] stat error', ['message' => $e->getMessage(), 'stat' => $stat]);
             $this->closeClient($space);
             return false;
         }

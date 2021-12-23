@@ -174,7 +174,8 @@ class QuotelistController extends QuoteController {
                 $form->getParameter('id_client'),
                 $this->request->getParameterNoException('date_open')
             );
-            $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
+            $_SESSION["flash"] = QuoteTranslator::QuoteHasBeenSaved($lang);
+            $_SESSION["flashClass"] = "success";
             $this->redirect("quoteuser/" . $id_space . "/" . $id);
             return;
         }

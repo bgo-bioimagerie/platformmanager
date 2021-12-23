@@ -7,6 +7,19 @@
 
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
+    <script type="module">
+        import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+        let dynamicForms = new DynamicForms();
+        let spaceId = <?php echo $id_space?>;
+        let sourceId = "recipient_id";
+        let targets = [
+            {
+                elementId: "responsible_id",
+                apiRoute: `clientusers/getclients/`
+            }
+        ];
+        dynamicForms.dynamicFields(sourceId, targets, spaceId);
+    </script>
 
     <?php
     $checked = "";
