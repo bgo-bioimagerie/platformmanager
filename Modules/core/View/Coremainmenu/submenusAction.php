@@ -20,7 +20,7 @@
             $_SESSION["message"] = "";
             ?>
 
-            <a class="btn btn-default" href="coremainsubmenuedit/0"><?php echo CoreTranslator::NewMainSubMenu($lang) ?></a>
+            <a id="addsubmenu" class="btn btn-default" href="coremainsubmenuedit/0"><?php echo CoreTranslator::NewMainSubMenu($lang) ?></a>
             <?php echo $tableHtml ?>
         </div>
     </div>

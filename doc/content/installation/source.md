@@ -12,12 +12,9 @@ Stable code is in *master* branch.
 
 Releases can also be download from [https://github.com/bgo-bioimagerie/platformmanager/releases](https://github.com/bgo-bioimagerie/platformmanager/releases).
 
-Code contains some .htaccess to limit access to specific directories.
-If not using Apache as frontend, you need to restrict access
-yourself based on .htaccess files definition.
+Code contains some .htaccess to limit access to specific directories. If not using
+Apache as frontend, you need to restrict access yourself based on .htaccess files
+definition.
 
 In Config, define a *conf.ini* (see [Configuration](./configuration/)) with
 appropriate setup.
-
-See [docker](./docker/) for available env variables to
-override defaults.

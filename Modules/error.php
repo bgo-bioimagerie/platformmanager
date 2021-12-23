@@ -8,11 +8,11 @@ Error - Platform-Manager
 <!-- body -->     
 <?php startblock('content') ?>
 <div class="container">
-    <div class="jumbotron" style="margin-top: 50px;">
-        <h1> 
+    <div id="error" class="jumbotron" style="margin-top: 50px;">
+        <h1 id="errorheader"> 
         Error: <?php echo $this->clean($type) ?>
         </h1>
-        <p>
+        <p id="errorcontent">
         <?php echo $this->clean($message) ?>
         </p>
     </div>

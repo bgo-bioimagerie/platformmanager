@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "nodemon": "^2.0.13",
+    "puppeteer": "^10.4.0"
+  }
+}
