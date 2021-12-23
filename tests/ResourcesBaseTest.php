@@ -24,7 +24,7 @@ class ResourcesBaseTest extends BaseTest {
             "path" => "resourcesconfig/".$space['id'],
             "formid" => "menusactivationForm",
             "resourcesmenustatus" => 3,
-            "displayMenu" => '',
+            "displayMenu" => 0,
             "displayColor" =>  "#000000",
             "displayTxtColor" => "#ffffff"
         ], true);

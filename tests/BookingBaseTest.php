@@ -20,11 +20,11 @@ class BookingBaseTest extends BaseTest {
             "path" => "bookingconfig/".$space['id'],
             "formid" => "menusactivationForm",
             "bookingmenustatus" => 2,
-            "displayBookingMenu" => '',
+            "displayBookingMenu" => 0,
             "colorBookingMenu" =>  "#000000",
             "colorTxtBookingMenu" => "#ffffff",
             "bookingsettingsmenustatus" => 3,
-            "displaySettingsMenu" => '',
+            "displaySettingsMenu" => 0,
             "colorSettingsMenu" =>  "#000000",
             "colorTxtSettingsMenu" => "#ffffff"
 

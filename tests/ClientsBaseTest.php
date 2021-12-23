@@ -22,7 +22,7 @@ class ClientsBaseTest extends BaseTest {
             "path" => "clientsconfig/".$space['id'],
             "formid" => "menusactivationForm",
             "clientsmenustatus" => 3,
-            "displayMenu" => '',
+            "displayMenu" => 0,
             "colorMenu" =>  "#000000",
             "colorTxtMenu" => "#ffffff"
         ], false);
