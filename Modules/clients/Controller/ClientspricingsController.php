@@ -44,6 +44,7 @@ class ClientspricingsController extends ClientsController {
 
         // Query to the database
         $belongingsArray = $this->pricingModel->getAll($id_space);
+        $pricings = $belongingsArray;
         for ($i = 0; $i < count($belongingsArray); $i++) {
             if ($belongingsArray[$i]["type"] == 1) {
                 $belongingsArray[$i]["type"] = CoreTranslator::Academic($lang);
@@ -66,10 +67,11 @@ class ClientspricingsController extends ClientsController {
         ));
 
         // render the View
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
-            'tableHtml' => $tableHtml
+            'tableHtml' => $tableHtml,
+            'data' => ['pricings' => $pricings]
         ));
     }
 
@@ -132,7 +134,7 @@ class ClientspricingsController extends ClientsController {
             
             $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
             // after the provider is saved we redirect to the providers list page
-            $this->redirect("clpricingedit/" . $id_space . "/" . $newId);
+            return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

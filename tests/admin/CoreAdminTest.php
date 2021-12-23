@@ -9,12 +9,6 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Controller/CorespaceadminController.php';
 require_once 'Modules/core/Controller/CorespaceaccessController.php';
 require_once 'Modules/core/Controller/CoremainmenuController.php';
-require_once 'Modules/resources/Controller/ResourcesconfigController.php';
-require_once 'Modules/resources/Controller/ReareasController.php';
-require_once 'Modules/resources/Controller/RecategoriesController.php';
-require_once 'Modules/resources/Controller/RevisasController.php';
-require_once 'Modules/resources/Controller/ResourcesinfoController.php';
-require_once 'Modules/resources/Controller/ResourcesController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreInstall.php';
@@ -67,7 +61,7 @@ class CoreTest extends BaseTest {
     public function testCreateMenus() {
         $this->asAdmin();
 
-        $menuName = uniqid();
+        $menuName = 'menu1';
         $req = new Request([
             "path" => "coremainmenuedit/0",
             "formid" => "editmainmenuform",
@@ -80,7 +74,7 @@ class CoreTest extends BaseTest {
         $menuModel = new CoreMainMenu();
         $menus = $menuModel->getAll();
 
-        $subMenuName = uniqid();
+        $subMenuName = 'submenu1';
         $req = new Request([
             "path" => "coresubmenuedit/0",
             "formid" => "editmainsubmenuform",
@@ -96,7 +90,6 @@ class CoreTest extends BaseTest {
 
         $spaces = $this->spaces();
         foreach ($spaces as $space) {
-            //$itemMenuName = uniqid();
             $itemMenuName = $space['name'];
             $req = new Request([
                 "path" => "coremainmenuitemedit/0",
