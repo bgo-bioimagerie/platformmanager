@@ -49,7 +49,7 @@ class RecategoriesController extends ResourcesBaseController {
         
         $categories = $this->categoryModel->getBySpace($id_space);
         $tableHtml = $table->view($categories, $headers);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array("data" => ["recategories" => $categories], "id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
     
       /**

@@ -3,6 +3,7 @@
 ## 2.3
 
 * [booking] clicking on blank days in month view gives access to day area view
+* [projects] fix closed projects listing change of year
 
 ## 2.2.2
 

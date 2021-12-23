@@ -478,7 +478,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new PfmParamException("Cannot find the user using the given parameters", 404);
+            throw new PfmParamException("Cannot find the user using the given parameters: ".$login, 404);
         }
     }
 
