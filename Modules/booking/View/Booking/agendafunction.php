@@ -66,10 +66,11 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 }
                 for ($i = 1; $i < ($l_day + 1); $i++) {
                     $y = date("N", mktime(0, 0, 0, $mois, $i, $annee));
-                    //$da = $annee . "-" . $mois . "-" . $i;
+                    $tile_date = date("Y-m-d", mktime(0, 0, 0, $mois, $i, $annee));
                     echo "<td>";
                     ?>
                 <div style="text-align:right; font-size:12px; color:#999999;"> <?php echo $i ?> </div>
+                <a class="glyphicon glyphicon-plus" href="bookingdayarea/<?php echo $id_space .'/'.$tile_date?>"></a>
                     <?php
                     $found = false;
                     $modelBookingSetting = new BkBookingSettings();
@@ -107,7 +108,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                         }
                         if (!$found) {
                             ?>
-                    <div style="height:45px;"> </div>
+                        <div style="height:45px;"> </div>
                     <?php
                 }
 
@@ -125,6 +126,6 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
             ?></tr>
         </table>
     </div>
-            <?php
-        }
+<?php
+}
         

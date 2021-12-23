@@ -348,6 +348,9 @@ class BookingController extends BookingabstractController {
         }
         if ($action == "today") {
             $curentDate = date("Y-m-d", time());
+        } else if (DateTime::createFromFormat('Y-m-d', $action) !== false) {
+            // getting selected date from month view
+            $curentDate = $action;
         }
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
