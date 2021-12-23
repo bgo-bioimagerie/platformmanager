@@ -154,13 +154,13 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
-            $this->redirect("booking/".$id_space);
-            return;
+            return $this->redirect("booking/".$id_space);
         }
 
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
         $id = $this->request->getParameter("id");
+        $id_entry = $id;
         $id_resource = $this->request->getParameter("id_resource");
         $booked_by_id = $_SESSION["id_user"];
         $recipient_id = $this->request->getParameter("recipient_id");
@@ -266,8 +266,7 @@ class BookingdefaultController extends BookingabstractController {
                 "package_id" => $package_id,
                 "responsible_id" => 0
             );
-            $this->editReservation($id_space, $resaInfo);
-            return;
+            return $this->editReservation($id_space, $resaInfo);
         }
 
         $canEdit = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $id, $recipient_id, $start_time);
@@ -319,8 +318,8 @@ class BookingdefaultController extends BookingabstractController {
             }
 
             if ($valid) {
-                $id_new = $modelCalEntry->setEntry($id_space ,$id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
-                $modelCalEntry->setAllDayLong($id_space, $id_new, $all_day_long);
+                $id_entry = $modelCalEntry->setEntry($id_space ,$id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
+                $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
                 $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
             }
         } else {
@@ -553,7 +552,10 @@ class BookingdefaultController extends BookingabstractController {
             $email = new Email();
             $email->sendEmailToSpaceMembers($params, $lang);
         }
-        $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
+
+        $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
+        return $this->redirect("booking/".$id_space."/".$bk_id_area."/".$id_resource, [], ['bkcalentry' => ['id' => $id_entry]]);
+        //return $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"], [], ['bkcalentry' => ['id' => $id_entry]]);
     }
 
     private function editreservation($id_space, $resaInfo, $param = "") {
@@ -689,11 +691,17 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         // booking nav bar
+        $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
+        $curentDate = date("Y-m-d", $resaInfo["start_time"]);
+        $_SESSION['bk_curentDate'] = $curentDate;
+        $menuData = $this->calendarMenuData($id_space, $bk_id_area, $id_resource, $curentDate);
+        /*
         $curentResource = $_SESSION['bk_id_resource'];
         $curentAreaId = $_SESSION['bk_id_area'];
         $curentDate = date("Y-m-d", $resaInfo["start_time"]);
         $_SESSION['bk_curentDate'] = $curentDate;
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        */
 
         // date time
         $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"] ?? 0);

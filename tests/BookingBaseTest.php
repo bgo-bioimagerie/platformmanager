@@ -8,6 +8,7 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/booking/Controller/BookingconfigController.php';
 require_once 'Modules/booking/Controller/BookingcolorcodesController.php';
 require_once 'Modules/booking/Controller/BookingaccessibilitiesController.php';
+require_once 'Modules/booking/Controller/BookingdefaultController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 
@@ -127,6 +128,42 @@ class BookingBaseTest extends BaseTest {
         foreach($data['bkaccess'] as $bkaccess) {
             $this->assertEquals($expects[$bkaccess['resource']], $bkaccess['bkaccess']);
         }
+    }
+
+    /**
+     * Book resource on next monday between $time and $time+1 for user
+     */
+    protected function book($space, $user, $client, $resource, $time=9):mixed {
+
+        Configuration::getLogger()->debug('book', ['for' => $user, 'space' => $space]);
+        
+        $date = new DateTime();
+        $date->modify('next monday');
+        $bookDate = $date->format('Y-m-d');
+
+        $req = new Request([
+            "path" => "bookingeditreservationquery/".$space['id'],
+            "formid" => "editReservationDefault",
+            "id" => 0,
+            "id_resource" => $resource['id'],
+            "recipient_id" => $user['id'],
+            "responsible_id" => $client['id'],
+            "color_type_id" => 0,
+            "all_day_long" => 0,
+            "resa_start" => $bookDate,
+            "hour_startH" => $time,
+            "hour_startm" => 0,
+            "resa_end" => $bookDate,
+            "hour_endH" => $time+1,
+            "hour_endm" => 0 
+        ], false);
+        $c = new BookingdefaultController($req);
+        $data = $c->editreservationqueryAction($space['id']);
+        $this->assertTrue($data !== null);
+        $this->assertTrue(array_key_exists('bkcalentry', $data));
+        $bkcalentry = $data['bkcalentry'];
+        $this->assertTrue($bkcalentry['id'] > 0);
+        return $bkcalentry;
     }
 
 
