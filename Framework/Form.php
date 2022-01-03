@@ -741,7 +741,7 @@ class Form {
         }
 
         if ($this->isDate === true) {
-            $html .= $formHtml->timePickerScript();
+            // $html .= $formHtml->timePickerScript();
         }
         if ($this->isTextArea === true) {
             $html .= $formHtml->textAreaScript();
