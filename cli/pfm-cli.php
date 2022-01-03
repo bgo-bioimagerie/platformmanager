@@ -305,8 +305,9 @@ function cliInstall($from=-1) {
                 $logger->info('update database for module ' .$modules[$i]  . "done");
             }
         }
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
             $logger->error("Error", ["error" => $e->getMessage()]);
+            return;
     }
 
     // update db release and launch upgrade

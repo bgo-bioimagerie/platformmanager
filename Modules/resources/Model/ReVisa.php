@@ -14,6 +14,10 @@ function cmpvisas($a, $b) {
  */
 class ReVisa extends Model {
 
+    public function __construct() {
+        $this->tableName = 're_visas';
+    }
+
     /**
      * Create the table
      * 
@@ -26,12 +30,12 @@ class ReVisa extends Model {
 		`id_resource_category` int(11) NOT NULL,
 		`id_instructor` int(11) NOT NULL,
 		`instructor_status` int(11) NOT NULL,
-        `is_active` int(0) NOT NULL DEFAULT 1,
+        `is_active` int NOT NULL DEFAULT '1',
 		PRIMARY KEY (`id`)
 		);";
 
         $pdo = $this->runRequest($sql);
-        $this->addColumn('re_visas', 'is_active', 'int(0)', 1);
+        //$this->addColumn('re_visas', 'is_active', 'int(0)', 1);
         return $pdo;
     }
 

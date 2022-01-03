@@ -12,6 +12,10 @@ class CoreConfig extends Model {
 
     private static $params = null;
 
+    public function __construct() {
+        $this->tableName = "core_config";
+    }
+
     /**
      * Create the table
      *
@@ -27,6 +31,7 @@ class CoreConfig extends Model {
 
         $this->runRequest($sql);
 
+        /*
         $sqlCol = "SHOW COLUMNS FROM `core_config` WHERE Field='id';";
         $reqCol = $this->runRequest($sqlCol);
 
@@ -38,6 +43,7 @@ class CoreConfig extends Model {
         }
 
         $this->addColumn('core_config', 'id_space', 'int(11)', 0);
+        */
     }
 
     /**

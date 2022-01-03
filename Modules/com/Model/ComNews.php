@@ -17,15 +17,29 @@ class ComNews extends Model {
     public function __construct() {
 
         $this->tableName = "com_news";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_space", "int(11)", 0);
-        $this->setColumnsInfo("title", "varchar(250)", "");
-        $this->setColumnsInfo("content", "TEXT", "");
-        $this->setColumnsInfo("media", "TEXT", "");
-        $this->setColumnsInfo("date", "date", "");
-        $this->setColumnsInfo("expires", "date", "");
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", 0);
+        //$this->setColumnsInfo("title", "varchar(250)", "");
+        //$this->setColumnsInfo("content", "TEXT", "");
+        //$this->setColumnsInfo("media", "TEXT", "");
+        //$this->setColumnsInfo("date", "date", "");
+        //$this->setColumnsInfo("expires", "date", "");
         $this->primaryKey = "id";
     }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `com_news` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT '0',
+            `title` varchar(250) DEFAULT NULL,
+            `content` text,
+            `media` text,
+            `date` date DEFAULT NULL,
+            `expires` date DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
+    } 
 
     public function getForSpace($id_space, $limit = -1) {
         if ($limit <= 0) {

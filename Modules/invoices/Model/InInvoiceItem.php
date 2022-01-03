@@ -17,14 +17,28 @@ class InInvoiceItem extends Model {
     public function __construct() {
 
         $this->tableName = "in_invoice_item";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_invoice", "int(11)", 0);
-        $this->setColumnsInfo("module", "varchar(200)", 0);
-        $this->setColumnsInfo("controller", "varchar(200)", 0);
-        $this->setColumnsInfo("content", "text", "");
-        $this->setColumnsInfo("details", "text", "");
-        $this->setColumnsInfo("total_ht", "varchar(50)", "0");
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_invoice", "int(11)", 0);
+        //$this->setColumnsInfo("module", "varchar(200)", 0);
+        //$this->setColumnsInfo("controller", "varchar(200)", 0);
+        //$this->setColumnsInfo("content", "text", "");
+        //$this->setColumnsInfo("details", "text", "");
+        //$this->setColumnsInfo("total_ht", "varchar(50)", "0");
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `in_invoice_item` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_invoice` int NOT NULL DEFAULT '0',
+            `module` varchar(200) NOT NULL DEFAULT '0',
+            `controller` varchar(200) NOT NULL DEFAULT '0',
+            `content` text,
+            `details` text,
+            `total_ht` varchar(50) NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
     }
 
     public function getInvoiceItems($id_space, $id_invoice) {

@@ -12,10 +12,23 @@ class SePurchaseItem extends Model {
         public function __construct() {
 
         $this->tableName = "se_purchase_item";
-        $this->setColumnsInfo("id_purchase", "int(11)", 0);
-        $this->setColumnsInfo("id_service", "int(11)", 0);
-        $this->setColumnsInfo("quantity", "varchar(100)", "0");
-        $this->setColumnsInfo("comment", "varchar(255)", "");
+        //$this->setColumnsInfo("id_purchase", "int(11)", 0);
+        //$this->setColumnsInfo("id_service", "int(11)", 0);
+        //$this->setColumnsInfo("quantity", "varchar(100)", "0");
+        //$this->setColumnsInfo("comment", "varchar(255)", "");
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `se_purchase_item` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_purchase` int NOT NULL DEFAULT '0',
+            `id_service` int NOT NULL DEFAULT '0',
+            `quantity` varchar(100) NOT NULL DEFAULT '0',
+            `comment` varchar(255) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
     }
 
     public function getForPurchase($id_space, $id_purchase) {

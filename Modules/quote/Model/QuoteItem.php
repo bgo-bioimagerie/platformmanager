@@ -6,13 +6,27 @@ class QuoteItem extends Model {
 
     public function __construct() {
         $this->tableName = "qo_quoteitems";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_quote", "int(11)", 0);
-        $this->setColumnsInfo("id_content", "int(11)", 0);
-        $this->setColumnsInfo("module", "varchar(255)", "");
-        $this->setColumnsInfo("quantity", "varchar(255)", "");
-        $this->setColumnsInfo("comment", "TEXT", "");
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_quote", "int(11)", 0);
+        //$this->setColumnsInfo("id_content", "int(11)", 0);
+        //$this->setColumnsInfo("module", "varchar(255)", "");
+        //$this->setColumnsInfo("quantity", "varchar(255)", "");
+        //$this->setColumnsInfo("comment", "TEXT", "");
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `qo_quoteitems` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT '0',
+            `id_quote` int NOT NULL DEFAULT '0',
+            `id_content` int NOT NULL DEFAULT '0',
+            `module` varchar(255) DEFAULT NULL,
+            `quantity` varchar(255) DEFAULT NULL,
+            `comment` text,
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
     }
 
     public function getList($id_space) {

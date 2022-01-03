@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Status extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_status";
+    }
+
     /**
      * Create the Status table
      * 
@@ -26,7 +30,7 @@ class Status extends Model {
 				);";
 
         $pdo = $this->runRequest($sql);
-        $this->addColumn("ac_status", "display_order", "INT(11)", 0);
+        //$this->addColumn("ac_status", "display_order", "INT(11)", 0);
         return $pdo;
     }
 

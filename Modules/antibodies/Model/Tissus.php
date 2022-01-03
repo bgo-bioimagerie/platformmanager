@@ -10,6 +10,10 @@ require_once 'Modules/antibodies/Model/AcProtocol.php';
  */
 class Tissus extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_j_tissu_anticorps";
+    }
+
     /**
      * Create the isotype table
      * 
@@ -35,7 +39,7 @@ class Tissus extends Model {
 
         $this->runRequest($sql);
 
-        $this->addColumn("ac_j_tissu_anticorps", "image_url", "varchar(512)", "");
+        //$this->addColumn("ac_j_tissu_anticorps", "image_url", "varchar(512)", "");
     }
 
     public function getTissusById($id_space ,$id) {

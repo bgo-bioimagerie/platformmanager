@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Kit extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_kits";
+    }
+
     /**
      * Create the espece table
      * 

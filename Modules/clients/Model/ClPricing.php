@@ -5,17 +5,30 @@ require_once 'Framework/Model.php';
 class ClPricing extends Model {
 
     public function __construct() {
-        $this->tableName = "cl_pricings";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_space", "int(11)", 0);
-        $this->setColumnsInfo("name", "varchar(255)", "");
-        $this->setColumnsInfo("color", "varchar(7)", "");
-        $this->setColumnsInfo("txtcolor", "varchar(7)", "");
-        $this->setColumnsInfo("type", "int(1)", 0);
-        $this->setColumnsInfo("display_order", "int(11)", 0);
+        //$this->tableName = "cl_pricings";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", 0);
+        //$this->setColumnsInfo("name", "varchar(255)", "");
+        //$this->setColumnsInfo("color", "varchar(7)", "");
+        //$this->setColumnsInfo("type", "int(1)", 0);
+        //$this->setColumnsInfo("display_order", "int(11)", 0);
         
         $this->primaryKey = "id";
     }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `cl_pricings` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT '0',
+            `name` varchar(255) DEFAULT NULL,
+            `color` varchar(7) DEFAULT NULL,
+            `txtcolor` varchar(7) DEFAULT NULL,
+            `type` int NOT NULL DEFAULT '0',
+            `display_order` int NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
+    }    
 
     public function getAll($id_space) {
         $sql = "SELECT * FROM cl_pricings WHERE id_space=? AND deleted=0";

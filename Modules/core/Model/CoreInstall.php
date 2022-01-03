@@ -74,6 +74,86 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("No bug 0, nothing to repair");
     }
 
+    public function repair1() {
+        Configuration::getLogger()->info("Upgrade db columns from pfm v1");
+        $this->addColumn("cache_urls", "isapi", "int(1)", 0);
+
+        $this->addColumn("ac_j_user_anticorps", "id_space", "int(11)", 0);
+
+        $this->addColumn("ac_anticorps", "id_staining", "float(11)", 1);
+        $this->addColumn("ac_anticorps", "id_application", "float(11)", 1);
+        $this->addColumn("ac_anticorps", "export_catalog", "int(1)", 0);
+        $this->addColumn("ac_anticorps", "image_url", "varchar(250)", "");
+        $this->addColumn("ac_anticorps", "image_desc", "varchar(250)", "");
+        $this->addColumn("ac_anticorps", "id_space", "INT(11)", 0);
+    
+	    $this->addColumn("ac_status", "display_order", "INT(11)", 0);
+	
+	    $this->addColumn("ac_j_tissu_anticorps", "image_url", "varchar(512)", "");
+
+        $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
+        $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
+        $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
+        
+        $this->addColumn('bk_calendar_period', 'enddate', 'date', "");
+
+        $this->addColumn("bk_color_codes", "who_can_use", "int(11)", 1);
+
+        $this->addColumn("bk_packages", "id_package", "int(11)", 0);
+
+	    $this->addColumn("ca_categories", "display_order", "int(4)", 0);
+        $this->addColumn("ca_categories", "id_space", "int(11)", 0);
+        
+                // add columns if no exists
+        $sql2 = "SHOW COLUMNS FROM `ca_entries` LIKE 'image_url'";
+        $pdo = $this->runRequest($sql2);
+        $isColumn = $pdo->fetch();
+        if ($isColumn == false) {
+            $sql = "ALTER TABLE `ca_entries` ADD `image_url` varchar(300) NOT NULL";
+            $this->runRequest($sql);
+        }
+        
+        $this->addColumn("ca_entries", "id_space", "int(11)", 0);
+        
+        $sqlCol = "SHOW COLUMNS FROM `core_config` WHERE Field='id';";
+        $reqCol = $this->runRequest($sqlCol);
+
+        if ($reqCol->rowCount() > 0){
+            $sql2 = "ALTER TABLE core_config CHANGE id `keyname` varchar(30) NOT NULL;";
+            $this->runRequest($sql2);
+            $sql3 = "alter table core_config drop primary key;";
+            $this->runRequest($sql3);
+        }
+
+        $this->addColumn('core_config', 'id_space', 'int(11)', 0);
+        
+        $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
+        $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
+        $this->addColumn('core_space_menus', 'color', "varchar(7)", "");
+        
+        $this->addColumn('core_spaces', 'color', 'varchar(7)', "");
+        $this->addColumn('core_spaces', 'description', 'text', '');
+        $this->addColumn('core_spaces', 'image', "varchar(255)", '');
+        
+        $this->addColumn('re_visas', 'is_active', 'int(0)', 1);
+        
+        $this->addColumn("se_order", "id_resp", "int(11)", 0);
+        $this->addColumn("se_order", "id_invoice", "int(11)", 0);
+        $this->addColumn("se_order", "created_by_id", "int(11)", 0);
+        $this->addColumn("se_order", "modified_by_id", "int(11)", 0);
+        
+        $this->addColumn('se_origin', 'display_order', 'int(11)', 0);
+        
+        $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
+        $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
+        $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
+        $this->addColumn('se_project', 'samplereturn', 'TEXT', '');
+        $this->addColumn('se_project', 'samplereturndate', 'date', '');
+        $this->addColumn('se_project', 'id_sample_cabinet', 'int(11)', 0);
+        $this->addColumn('se_project', 'samplestocked', 'int(1)', 0);
+        $this->addColumn('se_project', 'samplescomment', 'TEXT', "");
+    }
+
     /**
      * Fix for bug #332 introduced by release 2.1
      * if you installed 2.1->2.1.2 this patch needs to be used to fix database
@@ -602,6 +682,7 @@ class CoreDB extends Model {
 
         Configuration::getLogger()->debug('[core] add txtcolor');
         $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
+        $this->addColumn('core_spaces', 'txtcolor', "varchar(7)", "#ffffff");
         $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
         Configuration::getLogger()->debug('[core] add txtcolor, done');
 

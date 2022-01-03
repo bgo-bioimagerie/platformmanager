@@ -6,21 +6,41 @@ class ClCompany extends Model {
 
     public function __construct() {
         $this->tableName = "cl_company";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_space", "int(11)", 0);
-        $this->setColumnsInfo("name", "varchar(255)", 0);
-        $this->setColumnsInfo("address", "text", ""); 
-        $this->setColumnsInfo("zipcode", "varchar(255)", 0);
-        $this->setColumnsInfo("city", "varchar(255)", 0);
-        $this->setColumnsInfo("county", "varchar(255)", 0);
-        $this->setColumnsInfo("country", "varchar(255)", 0);
-        $this->setColumnsInfo("tel", "varchar(255)", 0);
-        $this->setColumnsInfo("fax", "varchar(255)", 0);
-        $this->setColumnsInfo("email", "varchar(255)", 0);
-        $this->setColumnsInfo("approval_number", "varchar(255)", 0);
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", 0);
+        //$this->setColumnsInfo("name", "varchar(255)", 0);
+        //$this->setColumnsInfo("address", "text", ""); 
+        //$this->setColumnsInfo("zipcode", "varchar(255)", 0);
+        //$this->setColumnsInfo("city", "varchar(255)", 0);
+        //$this->setColumnsInfo("county", "varchar(255)", 0);
+        //$this->setColumnsInfo("country", "varchar(255)", 0);
+        //$this->setColumnsInfo("tel", "varchar(255)", 0);
+        //$this->setColumnsInfo("fax", "varchar(255)", 0);
+        //$this->setColumnsInfo("email", "varchar(255)", 0);
+        //$this->setColumnsInfo("approval_number", "varchar(255)", 0);
         
-        $this->primaryKey = "id";
+        //$this->primaryKey = "id";
     }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `cl_company` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT '0',
+            `name` varchar(255) NOT NULL DEFAULT '0',
+            `address` text,
+            `zipcode` varchar(255) NOT NULL DEFAULT '0',
+            `city` varchar(255) NOT NULL DEFAULT '0',
+            `county` varchar(255) NOT NULL DEFAULT '0',
+            `country` varchar(255) NOT NULL DEFAULT '0',
+            `tel` varchar(255) NOT NULL DEFAULT '0',
+            `fax` varchar(255) NOT NULL DEFAULT '0',
+            `email` varchar(255) NOT NULL DEFAULT '0',
+            `approval_number` varchar(255) NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
+    }    
+   
 
     /**
      * Get the clCompany for this space

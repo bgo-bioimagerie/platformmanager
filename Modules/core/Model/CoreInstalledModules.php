@@ -10,6 +10,10 @@ require_once 'Modules/core/Model/CoreTranslator.php';
  */
 class CoreInstalledModules extends Model {
     
+    public function __construct() {
+        $this->tableName = "core_installed_modules";
+    }
+
     /**
      * Create the status table
      * 

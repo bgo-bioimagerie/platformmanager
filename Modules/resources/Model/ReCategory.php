@@ -17,10 +17,20 @@ class ReCategory extends Model {
     public function __construct() {
 
         $this->tableName = "re_category";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("name", "varchar(250)", "");
-        $this->setColumnsInfo("id_space", "int(11)", 0);
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("name", "varchar(250)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", 0);
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `re_category` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `name` varchar(250) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
     }
 
     public function get($id_space, $id) {

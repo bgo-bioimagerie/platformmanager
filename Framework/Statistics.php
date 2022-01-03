@@ -29,6 +29,11 @@ use InfluxDB2\Service\AuthorizationsService;
 
 class BucketStatistics extends Model {
 
+
+    public function __construct() {
+        $this->tableName = "stats_buckets";
+    }
+
     /**
      * Create the stats_buckets table
      * 

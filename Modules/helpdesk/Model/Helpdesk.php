@@ -9,6 +9,47 @@ require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
 
 require_once 'Modules/helpdesk/Model/HelpdeskTranslator.php';
 
+class HelpdeskMessage extends Model {
+    public function __construct() {
+        $this->tableName = 'hp_ticket_message';
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `hp_ticket_message` (
+            `created_at` DATETIME,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_ticket` int(11) NOT NULL,
+            `subject` varchar(200) NOT NULL,
+            `body` TEXT,
+            `from` varchar(200),
+            `to` varchar(250),
+            `type` int(11) DEFAULT 0,
+            PRIMARY KEY (`id`)
+            );";
+        $this->runRequest($sql);
+    }
+
+}
+
+class HelpdeskAttachment extends Model {
+    public function __construct() {
+        $this->tableName = 'hp_ticket_attachment';
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `hp_ticket_attachment` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_ticket` int(11) NOT NULL,
+            `id_message` int(11) NOT NULL,
+            `id_file` int(11),
+            `name_file` varchar(200),
+            PRIMARY KEY (`id`)
+            );";
+        $this->runRequest($sql);
+    }
+
+}
+
 class Helpdesk extends Model {
 
     public static $TYPE_EMAIL = 0;
@@ -19,6 +60,10 @@ class Helpdesk extends Model {
     public static $STATUS_REMINDER = 2;
     public static $STATUS_CLOSED = 3;
     public static $STATUS_SPAM = 4;
+
+    public function __construct() {
+        $this->tableName = 'hp_tickets';
+    }
 
     /**
      * Create the stats_buckets table
@@ -44,28 +89,12 @@ class Helpdesk extends Model {
             );";
         $this->runRequest($sql);
 
-        $sql = "CREATE TABLE IF NOT EXISTS `hp_ticket_message` (
-            `created_at` DATETIME,
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_ticket` int(11) NOT NULL,
-            `subject` varchar(200) NOT NULL,
-            `body` TEXT,
-            `from` varchar(200),
-            `to` varchar(250),
-            `type` int(11) DEFAULT 0,
-            PRIMARY KEY (`id`)
-            );";
-        $this->runRequest($sql);
+        $hpm = new HelpdeskMessage();
+        $hpm->createTable();
 
-        $sql = "CREATE TABLE IF NOT EXISTS `hp_ticket_attachment` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_ticket` int(11) NOT NULL,
-            `id_message` int(11) NOT NULL,
-            `id_file` int(11),
-            `name_file` varchar(200),
-            PRIMARY KEY (`id`)
-            );";
-        $this->runRequest($sql);
+        $hpa = new HelpdeskAttachment();
+        $hpa->createTable();
+
     }
 
     /**

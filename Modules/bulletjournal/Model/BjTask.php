@@ -18,12 +18,57 @@ class BjTask extends Model {
     public function __construct() {
 
         $this->tableName = "bj_tasks";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_note", "int(11)", 0);
-        $this->setColumnsInfo("priority", "int(5)", 0);
-        $this->setColumnsInfo("deadline", "date", "");
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_note", "int(11)", 0);
+        //$this->setColumnsInfo("priority", "int(5)", 0);
+        //$this->setColumnsInfo("deadline", "date", "");
+        //$this->primaryKey = "id";
     }
+    
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `bj_tasks` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL,
+            `id_note` int NOT NULL DEFAULT '0',
+            `priority` int NOT NULL DEFAULT '0',
+            `deadline` date DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        );";
+    
+        $this->runRequest($sql);
+    }
+
+    /*
+    public function migrate($id){
+        $modelHist = new BjTaskHistory();
+        
+        // get date of last status 
+        $lastHist = $modelHist->getLastStatus($id);
+        if (count($lastHist) > 0){
+            $date = date("Y-m-d", $lastHist["date"]);
+        }
+        else{
+            $sql = "SELECT date FROM bj_notes WHERE id=?";
+            $tmp = $this->runRequest($sql, array($id))->fetch();
+            $date = $tmp[0];
+        }
+        //echo "date = " . $date . "</br>";
+        $dateArray = explode("-", $date);
+        $year = $dateArray[0];
+        $month = $dateArray[1];
+        if($month == 12){
+            $month = 1;
+            $year = $year + 1;
+        }
+        else{
+            $month = $month + 1;
+        }
+        
+        $migratetime = mktime(0, 0, 0, $month, 1, $year);
+        // migrate to next month
+        $modelHist->addHist($id, BjTaskStatus::$migrated, $migratetime);
+    }
+    */
     
     public function openedForMigration($id_space, $year, $month){
         $firstDay = $year . "-" . $month . "-01";

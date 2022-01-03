@@ -17,24 +17,47 @@ class CoreUser extends Model {
 
     public function __construct() {
         $this->tableName = "core_users";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("login", "varchar(100)", "");
-        $this->setColumnsInfo("pwd", "varchar(100)", "");
-        $this->setColumnsInfo("name", "varchar(100)", "");
-        $this->setColumnsInfo("firstname", "varchar(100)", "");
-        $this->setColumnsInfo("email", "varchar(255)", "");
-        $this->setColumnsInfo("phone", "varchar(255)", "");
-        $this->setColumnsInfo("status_id", "int(2)", 1);
-        $this->setColumnsInfo("source", "varchar(30)", "local");
-        $this->setColumnsInfo("is_active", "int(1)", 1);
-        $this->setColumnsInfo("date_created", "date", "");
-        $this->setColumnsInfo("date_end_contract", "date", "");
-        $this->setColumnsInfo("date_last_login", "date", "");
-        $this->setColumnsInfo("remember_key", "varchar(255)", "");
-        $this->setColumnsInfo("validated", "int(1)", 1);
-        $this->setColumnsInfo("apikey", "varchar(30)", "");
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("login", "varchar(100)", "");
+        //$this->setColumnsInfo("pwd", "varchar(100)", "");
+        //$this->setColumnsInfo("name", "varchar(100)", "");
+        //$this->setColumnsInfo("firstname", "varchar(100)", "");
+        //$this->setColumnsInfo("email", "varchar(255)", "");
+        //$this->setColumnsInfo("phone", "varchar(255)", "");
+        //$this->setColumnsInfo("status_id", "int(2)", 1);
+        //$this->setColumnsInfo("source", "varchar(30)", "local");
+        //$this->setColumnsInfo("is_active", "int(1)", 1);
+        //$this->setColumnsInfo("date_created", "date", "");
+        //$this->setColumnsInfo("date_end_contract", "date", "");
+        //$this->setColumnsInfo("date_last_login", "date", "");
+        //$this->setColumnsInfo("remember_key", "varchar(255)", "");
+        //$this->setColumnsInfo("validated", "int(1)", 1);
+        //$this->setColumnsInfo("apikey", "varchar(30)", "");
+        //$this->primaryKey = "id";
     }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `core_users` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `login` varchar(100) DEFAULT NULL,
+            `pwd` varchar(100) DEFAULT NULL,
+            `name` varchar(100) DEFAULT NULL,
+            `firstname` varchar(100) DEFAULT NULL,
+            `email` varchar(255) DEFAULT NULL,
+            `phone` varchar(255) DEFAULT NULL,
+            `status_id` int NOT NULL DEFAULT '1',
+            `source` varchar(30) NOT NULL DEFAULT 'local',
+            `is_active` int NOT NULL DEFAULT '1',
+            `date_created` date DEFAULT NULL,
+            `date_end_contract` date DEFAULT NULL,
+            `date_last_login` date DEFAULT NULL,
+            `remember_key` varchar(255) DEFAULT NULL,
+            `validated` int NOT NULL DEFAULT '1',
+            `apikey` varchar(30) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
+    } 
 
     public function getResponsibles(){
        $sql = 'SELECT DISTINCT responsible_id FROM bk_calendar_entry';

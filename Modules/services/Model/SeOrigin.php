@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class SeOrigin extends Model {
 
+    public function __construct() {
+        $this->tableName = 'se_origin';
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_origin` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -18,7 +22,7 @@ class SeOrigin extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
-        $this->addColumn('se_origin', 'display_order', 'int(11)', 0);
+        //$this->addColumn('se_origin', 'display_order', 'int(11)', 0);
     }
     
     public function getName($id_space, $id){

@@ -4,12 +4,35 @@ require_once 'Framework/Model.php';
 
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+
+class SeOrderService extends Model {
+    public function __construct() {
+        $this->tableName = 'se_order_service';
+    }
+
+    public function createTable() {
+        $sql2 = "CREATE TABLE IF NOT EXISTS `se_order_service` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+                `id_order` int(11) NOT NULL,
+                `id_service` int(11) NOT NULL,
+		`quantity` varchar(255) NOT NULL,
+		PRIMARY KEY (`id`)
+		);";
+
+        $this->runRequest($sql2);
+    }
+}
+
 /**
  * Class defining the Unit model for consomable module
  *
  * @author Sylvain Prigent
  */
 class SeOrder extends Model {
+
+    public function __construct() {
+        $this->tableName = 'se_order';
+    }
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_order` (
@@ -29,20 +52,15 @@ class SeOrder extends Model {
 		);";
         $this->runRequest($sql);
 
+        /*
         $this->addColumn("se_order", "id_resp", "int(11)", 0);
         $this->addColumn("se_order", "id_invoice", "int(11)", 0);
         $this->addColumn("se_order", "created_by_id", "int(11)", 0);
         $this->addColumn("se_order", "modified_by_id", "int(11)", 0);
+        */
 
-        $sql2 = "CREATE TABLE IF NOT EXISTS `se_order_service` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `id_order` int(11) NOT NULL,
-                `id_service` int(11) NOT NULL,
-		`quantity` varchar(255) NOT NULL,
-		PRIMARY KEY (`id`)
-		);";
-
-        $this->runRequest($sql2);
+        $seos = new SeOrderService();
+        $seos->createTable();
     }
 
     public function setCreatedBy($id_space, $id, $id_user){

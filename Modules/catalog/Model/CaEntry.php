@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class CaEntry extends Model {
 
+    public function __construct() {
+        $this->tableName = "ca_entries";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `ca_entries` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -23,6 +27,7 @@ class CaEntry extends Model {
 
         $this->runRequest($sql);
 
+        /*
         // add columns if no exists
         $sql2 = "SHOW COLUMNS FROM `ca_entries` LIKE 'image_url'";
         $pdo = $this->runRequest($sql2);
@@ -33,6 +38,7 @@ class CaEntry extends Model {
         }
         
         $this->addColumn("ca_entries", "id_space", "int(11)", 0);
+        */
     }
 
     public function add($id_space, $id_category, $title, $short_desc, $full_desc) {

@@ -17,26 +17,52 @@ class InInvoice extends Model {
     public function __construct() {
 
         $this->tableName = "in_invoice";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("number", "varchar(50)", "");
-        $this->setColumnsInfo("id_space", "int(11)", "");
-        $this->setColumnsInfo("period_begin", "date", "");
-        $this->setColumnsInfo("period_end", "date", "");
-        $this->setColumnsInfo("date_generated", "date", "");
-        $this->setColumnsInfo("date_send", "date", "");
-        $this->setColumnsInfo("visa_send", "int(11)", 0);
-        $this->setColumnsInfo("date_paid", "date", "");
-        $this->setColumnsInfo("id_unit", "int(11)", 0);
-        $this->setColumnsInfo("id_responsible", "int(11)", 0);
-        $this->setColumnsInfo("total_ht", "varchar(50)", "0");
-        $this->setColumnsInfo("id_project", "int(11)", 0);
-        $this->setColumnsInfo('title', 'varchar(255)', "");
-        $this->setColumnsInfo("is_paid", "int(1)", 0);
-        $this->setColumnsInfo("module", "varchar(200)", "");
-        $this->setColumnsInfo("controller", "varchar(200)", "");
-        $this->setColumnsInfo("id_edited_by", "int(11)", 0);
-        $this->setColumnsInfo("discount", "varchar(100)", 0);
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("number", "varchar(50)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", "");
+        //$this->setColumnsInfo("period_begin", "date", "");
+        //$this->setColumnsInfo("period_end", "date", "");
+        //$this->setColumnsInfo("date_generated", "date", "");
+        //$this->setColumnsInfo("date_send", "date", "");
+        //$this->setColumnsInfo("visa_send", "int(11)", 0);
+        //$this->setColumnsInfo("date_paid", "date", "");
+        //$this->setColumnsInfo("id_unit", "int(11)", 0);
+        //$this->setColumnsInfo("id_responsible", "int(11)", 0);
+        //$this->setColumnsInfo("total_ht", "varchar(50)", "0");
+        //$this->setColumnsInfo("id_project", "int(11)", 0);
+        //$this->setColumnsInfo('title', 'varchar(255)', "");
+        //$this->setColumnsInfo("is_paid", "int(1)", 0);
+        //$this->setColumnsInfo("module", "varchar(200)", "");
+        //$this->setColumnsInfo("controller", "varchar(200)", "");
+        //$this->setColumnsInfo("id_edited_by", "int(11)", 0);
+        //$this->setColumnsInfo("discount", "varchar(100)", 0);
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `in_invoice` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `number` varchar(50) DEFAULT NULL,
+            `id_space` int DEFAULT NULL,
+            `period_begin` date DEFAULT NULL,
+            `period_end` date DEFAULT NULL,
+            `date_generated` date DEFAULT NULL,
+            `date_send` date DEFAULT NULL,
+            `visa_send` int NOT NULL DEFAULT '0',
+            `date_paid` date DEFAULT NULL,
+            `id_unit` int NOT NULL DEFAULT '0',
+            `id_responsible` int NOT NULL DEFAULT '0',
+            `total_ht` varchar(50) NOT NULL DEFAULT '0',
+            `id_project` int NOT NULL DEFAULT '0',
+            `title` varchar(255) DEFAULT NULL,
+            `is_paid` int NOT NULL DEFAULT '0',
+            `module` varchar(200) DEFAULT NULL,
+            `controller` varchar(200) DEFAULT NULL,
+            `id_edited_by` int NOT NULL DEFAULT '0',
+            `discount` varchar(100) NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
     }
     
     public function mergeUsers($users){

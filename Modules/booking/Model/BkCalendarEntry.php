@@ -13,6 +13,10 @@ require_once 'Modules/clients/Model/ClClientUser.php';
  */
 class BkCalendarEntry extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calendar_entry";
+    }
+
     /**
      * Create the calendar entry table
      *
@@ -44,9 +48,11 @@ class BkCalendarEntry extends Model {
 
         $this->runRequest($sql);
 
+        /*
         $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
         $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
         $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
+        */
     }
     
     public function getEntriesForUserResource($id_space, $id_user, $id_resource){

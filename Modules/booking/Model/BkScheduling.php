@@ -17,22 +17,46 @@ class BkScheduling extends Model {
     public function __construct() {
 
         $this->tableName = "bk_schedulings";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("is_monday", "int(1)", 1);
-        $this->setColumnsInfo("is_tuesday", "int(1)", 1);
-        $this->setColumnsInfo("is_wednesday", "int(1)", 1);
-        $this->setColumnsInfo("is_thursday", "int(1)", 1);
-        $this->setColumnsInfo("is_friday", "int(1)", 1);
-        $this->setColumnsInfo("is_saturday", "int(1)", 1);
-        $this->setColumnsInfo("is_sunday", "int(1)", 1);
-        $this->setColumnsInfo("day_begin", "int(2)", 8);
-        $this->setColumnsInfo("day_end", "int(2)", 18);
-        $this->setColumnsInfo("size_bloc_resa", "int(4)", 3600);
-        $this->setColumnsInfo("booking_time_scale", "int(5)", 1);
-        $this->setColumnsInfo("resa_time_setting", "int(1)", 1);
-        $this->setColumnsInfo("default_color_id", "int(11)", 1);
-        $this->setColumnsInfo("id_rearea", "int(11)", 0);
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("is_monday", "int(1)", 1);
+        //$this->setColumnsInfo("is_tuesday", "int(1)", 1);
+        //$this->setColumnsInfo("is_wednesday", "int(1)", 1);
+        //$this->setColumnsInfo("is_thursday", "int(1)", 1);
+        //$this->setColumnsInfo("is_friday", "int(1)", 1);
+        //$this->setColumnsInfo("is_saturday", "int(1)", 1);
+        //$this->setColumnsInfo("is_sunday", "int(1)", 1);
+        //$this->setColumnsInfo("day_begin", "int(2)", 8);
+        //$this->setColumnsInfo("day_end", "int(2)", 18);
+        //$this->setColumnsInfo("size_bloc_resa", "int(4)", 3600);
+        //$this->setColumnsInfo("booking_time_scale", "int(5)", 1);
+        //$this->setColumnsInfo("resa_time_setting", "int(1)", 1);
+        //$this->setColumnsInfo("default_color_id", "int(11)", 1);
+        //$this->setColumnsInfo("id_rearea", "int(11)", 0);
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `bk_schedulings` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL,
+            `is_monday` int NOT NULL DEFAULT '1',
+            `is_tuesday` int NOT NULL DEFAULT '1',
+            `is_wednesday` int NOT NULL DEFAULT '1',
+            `is_thursday` int NOT NULL DEFAULT '1',
+            `is_friday` int NOT NULL DEFAULT '1',
+            `is_saturday` int NOT NULL DEFAULT '1',
+            `is_sunday` int NOT NULL DEFAULT '1',
+            `day_begin` int NOT NULL DEFAULT '8',
+            `day_end` int NOT NULL DEFAULT '18',
+            `size_bloc_resa` int NOT NULL DEFAULT '3600',
+            `booking_time_scale` int NOT NULL DEFAULT '1',
+            `resa_time_setting` int NOT NULL DEFAULT '1',
+            `default_color_id` int NOT NULL DEFAULT '1',
+            `id_rearea` int NOT NULL DEFAULT '0',
+            PRIMARY KEY (`id`)
+        );";
+    
+        $this->runRequest($sql);
     }
 
     public function getDefault() {

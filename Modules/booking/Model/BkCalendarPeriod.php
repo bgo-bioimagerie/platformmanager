@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkCalendarPeriod extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calendar_period";
+    }
+
     /**
      * Create the calendar entry table
      *
@@ -26,7 +30,7 @@ class BkCalendarPeriod extends Model {
 
         $this->runRequest($sql);
         
-        $this->addColumn('bk_calendar_period', 'enddate', 'date', "");
+        //$this->addColumn('bk_calendar_period', 'enddate', 'date', "");
     }
 
     public function setEndDate($id_space, $id, $date) {

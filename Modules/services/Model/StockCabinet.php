@@ -11,11 +11,22 @@ class StockCabinet extends Model {
 
     public function __construct() {
         $this->tableName = "stock_cabinets";
-        $this->setColumnsInfo("id", "int(11)", "");
-        $this->setColumnsInfo("id_space", "int(11)", 0);
-        $this->setColumnsInfo("name", "varchar(255)", "");
-        $this->setColumnsInfo("room_number", "varchar(255)", "");
-        $this->primaryKey = "id";
+        //$this->setColumnsInfo("id", "int(11)", "");
+        //$this->setColumnsInfo("id_space", "int(11)", 0);
+        //$this->setColumnsInfo("name", "varchar(255)", "");
+        //$this->setColumnsInfo("room_number", "varchar(255)", "");
+        //$this->primaryKey = "id";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `stock_cabinets` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT '0',
+            `name` varchar(255) DEFAULT NULL,
+            `room_number` varchar(255) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
     }
 
     public function getForList($id_space) {
