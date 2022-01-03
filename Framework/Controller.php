@@ -25,6 +25,7 @@ abstract class Controller {
     protected $twig;
 
     protected ?array $currentSpace = null;
+    protected int $role = -1;
 
     public function args() {
         return $this->args;
@@ -49,6 +50,10 @@ abstract class Controller {
         }
 
         $this->currentSpace = $space;
+        if($space && $space['id'] && isset($_SESSION['id_user'])) {
+            $m = new CoreSpace();
+            $this->role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
+        }
     }
 
         /**
@@ -209,13 +214,16 @@ abstract class Controller {
         }
 
        
-        // Geneate the view
-
-        $dataView["mainMenu"] = $this->mainMenu();
-        $dataView["sideMenu"] = $this->sideMenu();
-        $dataView["spaceMenu"] = $this->spaceMenu();
-        $dataView["rootWeb"] = Configuration::get("rootWeb", "/");
+        // Generate the view
         $dataView["currentSpace"] = $this->currentSpace;
+        $dataView["context"] = [
+            "mainMenu" => $this->mainMenu(),
+            "sideMenu" => $this->sideMenu(),
+            "spaceMenu" => $this->spaceMenu(),
+            "rootWeb" => Configuration::get("rootWeb", "/"),
+            "currentSpace" => $this->currentSpace,  // current space if any
+            "role" => $this->role   // user role in space if any
+        ];
         if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
             // TODO add navbar generation
             require_once 'Modules/core/Controller/CorenavbarController.php';

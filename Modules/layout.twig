@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{{metadesc | default('')}}"/>
         <meta name="mode" description="{{isdev}}">
-        <base href="{{rootWeb}}" >
+        <base href="{{context.rootWeb}}" >
         <title>
             {% block title %}{% endblock %}
         </title>
@@ -37,8 +37,7 @@
             {{navbar | raw}}
         {% endblock %}
 
-        {{mainMenu | raw}}
-
+        {{context.mainMenu | raw}}
 
         <div class="row">
 
@@ -52,11 +51,13 @@
                 </div>
             {% endif %}
 
-            {{ spaceMenu | raw }}
+            <div class="col-md-12 col-lg-12">
+            {{ context.spaceMenu | raw }}
+            </div>
 
-            {% if sideMenu %}
+            {% if context.sideMenu %}
                 <div class="col-md-2 col-lg-2">
-                    {{sideMenu | raw}}
+                    {{context.sideMenu | raw}}
                 </div>
                 <div class="col-md-10 col-lg-10">
             {% else %}

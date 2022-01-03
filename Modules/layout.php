@@ -21,7 +21,7 @@ if($isdev) {
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
         <meta name="mode" description="{{$isdev}}">
-        <base href="<?php echo  $rootWeb ?>" >
+        <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
             Platform-Manager
@@ -64,8 +64,8 @@ if($isdev) {
 
         <div id="mainmenu">
         <?php
-        if ($mainMenu) {
-            echo $mainMenu;
+        if ($context['mainMenu']) {
+            echo $context['mainMenu'];
         }
         ?>
         </div>
@@ -84,14 +84,18 @@ if($isdev) {
                     <?php }?>
                     <div class="col-md-12 col-lg-12">
                         <?php startblock('spacemenu') ?>
+                        <?php
+                        if ($context['spaceMenu']) {
+                            echo $context['spaceMenu'];
+                        } ?>
                         <?php endblock() ?>
                     </div>
                     <?php
-                    if ($sideMenu) {
+                    if ($context['sideMenu']) {
                     ?>
                     <div class="col-md-2 col-lg-2" id="sidemenu">
                     <?php
-                        echo $sideMenu;
+                        echo $context['sideMenu'];
                     ?>
                     </div>
                     <div class="col-md-10 col-lg-10" id="content">

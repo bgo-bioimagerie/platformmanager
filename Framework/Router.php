@@ -51,6 +51,8 @@ class Router {
     private function call($target, $args, $request) {
         if(isset($args['id_space'])){
             $_SESSION['id_space'] = $args['id_space'];
+        } else {
+            unset($_SESSION['id_space']);
         }
         $route_info = explode("/", $target);
         $module = $route_info[0];

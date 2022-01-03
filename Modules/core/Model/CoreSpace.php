@@ -384,7 +384,7 @@ class CoreSpace extends Model {
         return $roles;
     }
 
-    public function getUserSpaceRole($id_space, $id_user) {
+    public function getUserSpaceRole($id_space, $id_user):int {
         // is super admin?
         $um = new CoreUser();
         if($um->getStatus($id_user) >= CoreStatus::$ADMIN) {
