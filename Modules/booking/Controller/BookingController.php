@@ -195,7 +195,7 @@ class BookingController extends BookingabstractController {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
         }
 
-        if ($curentAreaId == "" && isset($_SESSION['bk_id_area'])) {
+        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
             $curentResource = $_SESSION['bk_id_resource'];
             $curentAreaId = $_SESSION['bk_id_area'];
             $curentDate = $_SESSION['bk_curentDate'];
@@ -319,9 +319,9 @@ class BookingController extends BookingabstractController {
         }
 
         if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
-            $curentResource = $_SESSION['bk_id_resource'];
-            $curentAreaId = $_SESSION['bk_id_area'];
-            $curentDate = $_SESSION['bk_curentDate'];
+            if($_SESSION['bk_id_resource']) {$curentResource = $_SESSION['bk_id_resource'];}
+            if($_SESSION['bk_id_area']) {$curentAreaId = $_SESSION['bk_id_area'];}
+            if($_SESSION['bk_curentDate']) {$curentDate = $_SESSION['bk_curentDate'];}
         }
 
         // change input if action
@@ -449,10 +449,10 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d");
         }
 
-        if ($curentAreaId == "") {
-            $curentResource = $_SESSION['bk_id_resource'];
-            $curentAreaId = $_SESSION['bk_id_area'];
-            $curentDate = $_SESSION['bk_curentDate'];
+        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
+            if($_SESSION['bk_id_resource']) { $curentResource = $_SESSION['bk_id_resource'];}
+            if($_SESSION['bk_id_area']) {$curentAreaId = $_SESSION['bk_id_area'];}
+            if($_SESSION['bk_curentDate']) {$curentDate = $_SESSION['bk_curentDate'];}
         }
 
         // change input if action
@@ -581,7 +581,7 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d");
         }
 
-        if ($curentAreaId == "") {
+        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
             $curentResource = $_SESSION['bk_id_resource'];
             $curentAreaId = $_SESSION['bk_id_area'];
             $curentDate = $_SESSION['bk_curentDate'];
@@ -722,10 +722,10 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d");
         }
 
-        if ($curentAreaId == "") {
-            $curentResource = $_SESSION['bk_id_resource'];
-            $curentAreaId = $_SESSION['bk_id_area'];
-            $curentDate = $_SESSION['bk_curentDate'];
+        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
+            if ($_SESSION['bk_id_resource']) { $curentResource = $_SESSION['bk_id_resource']; }
+            if ($_SESSION['bk_id_area']) { $curentAreaId = $_SESSION['bk_id_area']; }
+            if ($_SESSION['bk_curentDate']) { $curentDate = $_SESSION['bk_curentDate']; }
         }
 
         // change input if action

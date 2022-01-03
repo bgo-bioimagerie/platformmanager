@@ -64,7 +64,12 @@ class BkCalendarEntry extends Model {
     }
 
     public function getStatsQuantities($id_space, $dateBegin, $dateEnd) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $beginTime = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]);
         $dateEndArray = explode("-", $dateEnd);
@@ -95,7 +100,12 @@ class BkCalendarEntry extends Model {
     }
     
     public function getStatTimeResps($id_space, $dateBegin, $dateEnd){
-        
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         //dates to time
         $dateBeginArray = explode("-", $dateBegin);
         $dateBeginTime = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]);
@@ -315,7 +325,12 @@ class BkCalendarEntry extends Model {
     }
 
     public function getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $id_resource, $id_resp) {
-
+        if($beginPeriod == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($endPeriod == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $beginPeriodArray = explode("-", $beginPeriod);
         $searchDate_start = mktime(0, 0, 0, $beginPeriodArray[1], $beginPeriodArray[2], $beginPeriodArray[0]);
         $endPeriodArray = explode("-", $endPeriod);
@@ -409,6 +424,9 @@ class BkCalendarEntry extends Model {
      * @return multitype:
      */
     public function getEntriesForDay($id_space, $curentDate) {
+        if($curentDate == "") {
+            throw new PfmParamException("invalid date");
+        }
         $dateArray = explode("-", $curentDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
@@ -648,7 +666,12 @@ class BkCalendarEntry extends Model {
      * @return boolean
      */
     public function hasResponsibleEntry($id_space, $resp_id, $startdate, $enddate) {
-
+        if($startdate == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($enddate == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $beginPeriodArray = explode("-", $startdate);
         $searchDate_start = mktime(0, 0, 0, $beginPeriodArray[1], $beginPeriodArray[2], $beginPeriodArray[0]);
         $endPeriodArray = explode("-", $enddate);

@@ -672,6 +672,12 @@ class BkStatsUser extends Model {
 
     public function bookingUsers($id_space, $startdate, $enddate) {
         // convert start date to unix date
+        if($startdate == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($enddate == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $tabDate = explode("-", $startdate);
         $searchDate_start = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]), intval($tabDate[0]));        
 

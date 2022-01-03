@@ -17,7 +17,12 @@ class BookingInvoice extends InvoiceModel {
 
 
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
-
+        if($beginPeriod == "") {
+            throw new PfmParamException("invalid begin period");
+        }
+        if($endPeriod == "") {
+            throw new PfmParamException("invalid end period");
+        }
         $beginArray = explode("-", $beginPeriod);
         $startPeriodeTime = mktime(0, 0, 0, $beginArray[1], $beginArray[2], $beginArray[0]);
 
@@ -123,7 +128,7 @@ class BookingInvoice extends InvoiceModel {
                 foreach ($packagesPrices[$res["id"]] as $p) {
                     if ($userPackages[$p["id"]] > 0) {
 
-                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName( $p["id"] );
+                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName($id_space, $p["id"] );
                         $resourceCount["quantity"] = $userPackages[$p["id"]];
                         $resourceCount["unitprice"] = $p["price"];
 
