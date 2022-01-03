@@ -5,6 +5,7 @@
 * [booking] clicking on blank days in month view gives access to day area view
 * [projects] fix closed projects listing change of year
 * [resources] fix re_visa is_active default value
+* [core] add possibility for a space manager to add an existing account #479
 
 ## 2.2.2
 

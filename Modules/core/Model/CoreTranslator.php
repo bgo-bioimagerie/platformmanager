@@ -1144,6 +1144,13 @@ class CoreTranslator {
         return "Login already exists";
     }
 
+    public static function LoginDoesNotExists($lang) {
+        if ($lang == "fr") {
+            return "Le login est inconnu";
+        }
+        return "Login does not exists";
+    }
+
     public static function EmailAlreadyExists($lang) {
         if ($lang == "fr") {
             return "Un compte existe déjà avec cette adresse mail";
@@ -1756,6 +1763,13 @@ class CoreTranslator {
         return "Create an account";
     }
 
+    public static function JoinAccount($lang) {
+        if ($lang == "fr") {
+            return "Ajouter un compte existant";
+        }
+        return "Add existing account";
+    }
+
     public static function AccessTo($lang){
         if ($lang == "fr") {
             return "Demande accès à";
@@ -1782,6 +1796,13 @@ class CoreTranslator {
             return "Comptes en attente d'activation";
         }
         return "Pending users accounts";
+    }
+
+    public static function PendingUserAccount($lang){
+        if ($lang == "fr") {
+            return "Compte en attente d'activation";
+        }
+        return "Pending user account";
     }
     
     public static function DateCreated($lang){

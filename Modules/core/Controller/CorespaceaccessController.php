@@ -245,6 +245,7 @@ class CorespaceaccessController extends CoresecureController {
         $this->indexAction($id_space, $letter, "unactive");
     }
 
+
     public function useraddAction($id_space){
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -259,6 +260,38 @@ class CorespaceaccessController extends CoresecureController {
         $form->addText("phone", CoreTranslator::Phone($lang), false);
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd/".$id_space);
+
+        $formjoin = new Form($this->request, "joinuseraccountform");
+        $formjoin->setTitle(CoreTranslator::JoinAccount($lang));
+
+        $formjoin->addText("login", CoreTranslator::Login($lang), true);
+        $modelSpace = new CoreSpace();
+        $roles = $modelSpace->roles($lang);
+        $formjoin->addSelect("role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"], "");
+
+
+        $formjoin->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd/".$id_space);
+
+        if($formjoin->check()) {
+            $modelCoreUser = new CoreUser();
+            $user = null;
+            try {
+                $user = $modelCoreUser->getUserByLogin($this->request->getParameter('login'));
+            } catch(PfmParamException) {
+                $this->displayFormWarnings("LoginDoesNotExists", $id_space, $lang);
+                return;
+            }
+
+            $pendingModel = new CorePendingAccount();
+            if($pendingModel->exists($id_space, $user['idUser'])) {
+                $this->displayFormWarnings("PendingUserAccount", $id_space, $lang);
+                return;
+            }
+
+            $modelUserSpace = new CoreSpaceUser();
+            $modelUserSpace->setRole($user['idUser'], $id_space, $form->getParameter("role"));
+            return $this->redirect('corespaceaccessusers/'. $id_space);
+        }
 
         if ($form->check()) {
             $modelCoreUser = new CoreUser();
@@ -325,7 +358,8 @@ class CorespaceaccessController extends CoresecureController {
             'lang' => $lang,
             'id_space' => $id_space,
             'space' => $space,
-            "formHtml" => $form->getHtml($lang)
+            "formHtml" => $form->getHtml($lang),
+            "formJoinHtml" => $formjoin->getHtml($lang)
         ));
     }
 
