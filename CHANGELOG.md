@@ -6,6 +6,7 @@
 * [projects] fix closed projects listing change of year
 * [resources] fix re_visa is_active default value
 * [core] add possibility for a space manager to add an existing account #479
+* [core] allow space plan modification #429
 
 ## 2.2.2
 

@@ -105,7 +105,7 @@ abstract class Controller {
 
     /**
      * 
-     * @return type The navigator language
+     * @return string The navigator language
      */
     public function getLanguage() {
         $lang = substr(filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'), 0, 2);

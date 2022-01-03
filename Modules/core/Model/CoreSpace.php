@@ -652,4 +652,12 @@ class CoreSpace extends Model {
         ]);
     }
 
+
+    /**
+     * Update space plan (id) and plan expiration (timestamp)
+     */
+    public function setPlan($id_space, int $plan=0, int $plan_expire=0) {
+        $sql = "UPDATE core_spaces SET plan=?,plan_expire=? WHERE id=?";
+        $this->runRequest($sql, array($plan, $plan_expire, $id_space));
+    }
 }

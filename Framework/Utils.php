@@ -32,9 +32,6 @@ class Utils {
      */
     public static function timestamp(string $date, string $lang='en', int $hour=0, int $min=0, int $sec=0, bool $now=false):int|false {
         $defaultTs = strtotime(date('Y-m-d'));
-        if($now) {
-        echo "now \n";
-        }
         if(!$date) {
             if($now) {
                 return $defaultTs;

@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Utils.php';
 
 
 require_once 'Framework/TableView.php';
@@ -97,6 +98,22 @@ class CorespaceadminController extends CoresecureController {
             $usersNames[] = $user["name"] . " " . $user["firstname"];
             $usersIds[] = $user["id"];
         }
+
+        if($isSuperAdmin) {
+            $configPlans = Configuration::get('plans', []);
+            $plans = [];
+            $plansIds = [];
+            foreach($configPlans as $p) {
+                $plans[] = $p['name'];
+                $plansIds[] = $p['id'];
+            }
+            $form->addSelect('plan', 'Plan', $plans, $plansIds, $space['plan']);
+            $expires = $space['plan_expire'];
+            if($expires) {
+                $expires = date('Y-m-d', $expires);
+            }
+        }
+
         
         $formAdd = new FormAdd($this->request, "addformspaceedit");
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
@@ -126,7 +143,20 @@ class CorespaceadminController extends CoresecureController {
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
                     $this->request->getParameter("txtcolor"),
-                    );
+                );
+                $plan = $this->request->getParameterNoException("plan");
+                if($plan !== "") {
+                    //plan_expire , plan
+                    $expires = $this->request->getParameterNoException("plan_expire");
+                    if($expires) {
+                        $expires = Utils::timestamp($expires, $lang);
+
+                    } else {
+                        $expires = 0;
+                    }
+                    Configuration::getLogger()->debug("???", ["plan" => $plan, "e" => $expires]);
+                    $modelSpace->setPlan($id_space, intval($plan), $expires);
+                }
             } else {
                 // Space admin can edit
                 Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);
