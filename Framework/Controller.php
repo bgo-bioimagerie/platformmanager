@@ -50,7 +50,7 @@ abstract class Controller {
         }
 
         $this->currentSpace = $space;
-        if($space && $space['id'] && isset($_SESSION['id_user'])) {
+        if($space && $space['id'] && isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
             $m = new CoreSpace();
             $this->role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
         }
