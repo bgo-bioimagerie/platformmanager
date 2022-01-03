@@ -210,7 +210,7 @@ class ServicesconfigController extends CoresecureController {
 
     protected function menuNameForm($id_space, $lang) {
         $modelCoreConfig = new CoreConfig();
-        $bookingmenuname = $modelCoreConfig->getParam("servicesmenuname", $id_space);
+        $bookingmenuname = $modelCoreConfig->getParamSpace("servicesmenuname", $id_space);
 
         $form = new Form($this->request, "servicesmenunameForm");
         $form->addSeparator(CoreTranslator::MenuName($lang));
