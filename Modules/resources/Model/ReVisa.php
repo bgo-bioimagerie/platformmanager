@@ -30,7 +30,7 @@ class ReVisa extends Model {
 		`id_resource_category` int(11) NOT NULL,
 		`id_instructor` int(11) NOT NULL,
 		`instructor_status` int(11) NOT NULL,
-        `is_active` int(0) NOT NULL,
+        `is_active` int NOT NULL DEFAULT '1',
 		PRIMARY KEY (`id`)
 		);";
 
