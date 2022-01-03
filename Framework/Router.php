@@ -422,8 +422,14 @@ class Router {
         $view = new View('error');
         $view->setFile('Modules/error.php');
         $view->generate(array(
-            'mainMenu' => null,
-            'sideMenu' => null,
+            'context' => [
+                    "mainMenu" =>null,
+                    "sideMenu" => null,
+                    "spaceMenu" => null,
+                    "rootWeb" => Configuration::get("rootWeb", "/"),
+                    "currentSpace" => null,  // current space if any
+                    "role" => -1   // user role in space if any
+            ],
             'type' => $type,
             'message' => $exception->getMessage()
         ));
