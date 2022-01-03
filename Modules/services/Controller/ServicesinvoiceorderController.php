@@ -168,7 +168,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $lang = $this->getLanguage();
 
         // get the bill number
-        $number = $modelInvoice->getNextNumber();
+        $number = $modelInvoice->getNextNumber($id_space);
         $module = "services";
         $controller = "servicesinvoiceorder";
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, $id_resp);

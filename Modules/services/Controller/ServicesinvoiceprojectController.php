@@ -293,7 +293,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelInvoice = new InInvoice();
         $module = "services";
         $controller = "servicesinvoiceproject";
-        $number = $modelInvoice->getNextNumber();
+        $number = $modelInvoice->getNextNumber($id_space);
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_resp);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         

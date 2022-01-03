@@ -70,9 +70,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $id_resp = $this->request->getParameter("id_resp");
             if ($id_resp != 0) {
 
-                $this->invoice($id_space, $beginPeriod, $endPeriod, $id_resp);
-                $this->redirect("invoices/" . $id_space);
-                return;
+                $invoice_id = $this->invoice($id_space, $beginPeriod, $endPeriod, $id_resp);
+                return $this->redirect("invoices/" . $id_space, [], ['invoice' => ['id' => $invoice_id]]);
             }
         }
 
@@ -310,7 +309,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         foreach ($resps as $resp) {
             $billIt = $modelCal->hasResponsibleEntry($id_space, $resp["id"], $beginPeriod, $endPeriod);
             if ($billIt) {
-                $number = $modelInvoice->getNextNumber($number);
+                $number = $modelInvoice->getNextNumber($id_space);
                 $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"], $number);
             }
         }
@@ -337,7 +336,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
      * 
      */
 
-    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $number = "") {
+    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $number = ""):int {
         $lang = $this->getLanguage();
 
         require_once 'Modules/booking/Model/BkPackage.php';
@@ -355,7 +354,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         
         // add the invoice to the database
         $modelInvoice = new InInvoice();
-        $number = ($number === "") ? $modelInvoice->getNextNumber() : $number;
+        $number = ($number === "") ? $modelInvoice->getNextNumber($id_space) : $number;
         $module = "booking";
         $controller = "Bookinginvoice";
         $date_generated = date("Y-m-d", time());
@@ -503,6 +502,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
             "space" => ["id" => intval($id_space)],
             "invoice" => ["id" => intval($invoice_id)]
         ]);
+        return $invoice_id;
     }
 
     protected function getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_client) {
@@ -676,7 +676,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoice = new InInvoice();
         $module = "services";
         $controller = "servicesinvoiceproject";
-        $number = $modelInvoice->getNextNumber();
+        $number = $modelInvoice->getNextNumber($id_space);
         $id_invoice = $modelInvoice->addInvoice($id_space, $module, $controller, $number, date("Y-m-d", time()), $id_unit, $id_resp);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
 

@@ -7,6 +7,7 @@
 * [resources] fix re_visa is_active default value
 * [core] add possibility for a space manager to add an existing account #479
 * [core] allow space plan modification #429
+* [invoice] get invoice number per space, and not global
 
 ## 2.2.2
 

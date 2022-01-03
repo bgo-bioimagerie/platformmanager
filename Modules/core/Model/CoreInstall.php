@@ -37,7 +37,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/core/Model/CoreMail.php';
 
 
-define("DB_VERSION", 4);
+define("DB_VERSION", 5);
 /**
  * Class defining the database version installed
  */
@@ -671,7 +671,6 @@ class CoreDB extends Model {
             $statHandler = new EventHandler();
             foreach($spaces as $space) {
                 $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
-
             }
             Configuration::getLogger()->debug('[db] update grafana dashboards and sql views, done!');
         }
@@ -681,6 +680,32 @@ class CoreDB extends Model {
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00, done!');
 
+    }
+
+    public function update_v4_v5() {
+        // Update invoices in redis
+        Configuration::getLogger()->debug('[db] Update invoice numbers in redis');
+        $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
+        $req = $this->runRequest($sql);
+        $lastNumber = "";
+        if ($req->rowCount() > 0) {
+            $bill = $req->fetch();
+            $lastNumber = $bill["number"];
+        }
+        if ($lastNumber != "") {
+            $lastNumber = explode("-", $lastNumber);
+            $lastNumberY = $lastNumber[0];
+            $lastNumberN = $lastNumber[1];
+            if ($lastNumberY == date("Y", time())) {
+                $s = new CoreSpace();
+                $spaces = $s->getSpaces('id');
+                $cv = new CoreVirtual();
+                foreach($spaces as $space) {
+                    $cv->set($space['id'], "invoices:$lastNumberY", $lastNumberN);
+                }
+            }
+        }
+        Configuration::getLogger()->debug('[db] Update invoice numbers in redis, done!');
     }
 
     /**

@@ -85,7 +85,7 @@ class BookingTest extends BookingBaseTest {
         }
 
         // user book all resources
-        // only res0 is allowed
+        // only res0 and res1 is allowed
         $this->asUser($user['login'], $space['id']);
         foreach($resources as $resource) {
             try {

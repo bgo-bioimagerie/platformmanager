@@ -179,8 +179,25 @@ class InInvoice extends Model {
     }
 
     // @bug, should get unique ids, no increment (parallel requests will result in conflicts)
-    public function getNextNumber($previousNumber = "") {
+    public function getNextNumber(int $id_space) {
 
+        $cv = new CoreVirtual();
+        $curYear = date("Y", time());
+        $newNumber = $cv->incr($id_space, "invoices:$curYear");
+
+        $num = "";
+        if ($newNumber < 10) {
+            $num = "000" . $newNumber;
+        } else if ($newNumber >= 10 && $newNumber < 100) {
+            $num = "00" . $newNumber;
+        } else if ($newNumber >= 100 && $newNumber < 1000) {
+            $num = "0" . $newNumber;
+        } else {
+            $num = $newNumber;
+        }
+        return $curYear . "-" . $num;
+
+        /*
         if ($previousNumber == "") {
             $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
             $req = $this->runRequest($sql);
@@ -216,6 +233,7 @@ class InInvoice extends Model {
         } else {
             return date("Y", time()) . "-0001";
         }
+        */
     }
 
     public function allPeriodYears($id_space, $periodBegin, $periodEnd){

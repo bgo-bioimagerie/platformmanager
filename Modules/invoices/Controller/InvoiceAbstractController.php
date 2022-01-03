@@ -24,7 +24,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null) {
+    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false) {
         $address = nl2br($address);
         $adress = $address; // backwark compat
         $date = CoreTranslator::dateFromEn($date, 'fr');
@@ -67,7 +67,11 @@ abstract class InvoiceAbstractController extends InvoicesController {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content);
-            $html2pdf->Output($unit . "_" . $resp . " " . $number . '.pdf');
+            if($toFile || getenv("PFM_MODE") == "test") {
+                $html2pdf->Output(__DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf", 'F');
+            } else {
+                $html2pdf->Output($unit . "_" . $resp . "_" . $number . '.pdf');
+            }
             return;
         } catch (Exception $e) {
             throw new PfmException("Pdf generation error: " . $e. "\n$content", 500);
