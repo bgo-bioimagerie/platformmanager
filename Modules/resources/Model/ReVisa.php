@@ -213,7 +213,7 @@ class ReVisa extends Model {
         if ($req->rowCount() == 1) {
             $visaInfo = $req->fetch();  // get the first line of the result
 
-            return $this->getVisaDesc($visaInfo, $lang);
+            return $this->getVisaDesc($id_space, $visaInfo, $lang);
         } else{
             return "";
         }
