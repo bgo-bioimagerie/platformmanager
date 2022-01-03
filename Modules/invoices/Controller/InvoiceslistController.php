@@ -144,7 +144,7 @@ class InvoiceslistController extends InvoicesController {
         //echo '<br/> Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         //return;
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
-        $object = new $controllerName(new Request(array(), false));
+        $object = new $controllerName(new Request(array(), false), $this->currentSpace);
         $object->setRequest($this->request);
         $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
     }
@@ -238,7 +238,7 @@ class InvoiceslistController extends InvoicesController {
 
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
-        $object = new $controllerName(new Request(array(), false));
+        $object = new $controllerName(new Request(array(), false), $this->currentSpace);
         $object->setRequest($this->request);
         $object->runAction($service["module"], "delete", array($id_space, $id));
         

@@ -70,7 +70,7 @@ abstract class CorecookiesecureController extends Controller {
                 //echo "controller file = " . $fileController . "<br/>";
                 // Instantiate controler
                 require ($fileController);
-                $controller = new $classController ($this->request);
+                $controller = new $classController ($this->request, $this->currentSpace);
                 //$controller->setRequest($this->request);
                 $controller->runAction($module, "index");
                 //echo "controller file = " . $fileController . "done <br/>";

@@ -123,7 +123,7 @@ class BookingInvoice extends InvoiceModel {
                 foreach ($packagesPrices[$res["id"]] as $p) {
                     if ($userPackages[$p["id"]] > 0) {
 
-                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName( $p["id"] );
+                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName($id_space, $p["id"] );
                         $resourceCount["quantity"] = $userPackages[$p["id"]];
                         $resourceCount["unitprice"] = $p["price"];
 
@@ -215,6 +215,7 @@ class BookingInvoice extends InvoiceModel {
         // get the pricing informations
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
+
         if(! array_key_exists('tarif_unique', $pricingInfo)){return Array();}
         $tarif_unique = $pricingInfo['tarif_unique'];
         $tarif_nuit = $pricingInfo['tarif_night'];

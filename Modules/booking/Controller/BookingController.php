@@ -858,7 +858,7 @@ class BookingController extends BookingabstractController {
             if (file_exists($fileController)) {
                 // Instantiate controler
                 require_once ($fileController);
-                $controller = new $classController ($this->request);
+                $controller = new $classController ($this->request, $this->currentSpace);
                 $action = $urlInfo["pathInfo"]["action"];
                 $args = $this->getArgs($urlInfo);
 

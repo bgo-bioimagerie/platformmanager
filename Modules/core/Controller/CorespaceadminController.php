@@ -154,7 +154,6 @@ class CorespaceadminController extends CoresecureController {
                     } else {
                         $expires = 0;
                     }
-                    Configuration::getLogger()->debug("???", ["plan" => $plan, "e" => $expires]);
                     $modelSpace->setPlan($id_space, intval($plan), $expires);
                 }
             } else {
