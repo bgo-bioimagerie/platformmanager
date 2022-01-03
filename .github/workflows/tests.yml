@@ -3,7 +3,7 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  deploy:
+  testing:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
