@@ -39,4 +39,4 @@ jobs:
         run: |
           composer install --ignore-platform-reqs
           ./tests/wait-for-it.sh localhost:3306
-          DEBUG=1 PFM_CONFIG=Config/conf_test.ini PFM_MODE=test ./vendor/phpunit/phpunit/phpunit --stderr
+          PFM_REDIS_HOST=redis DEBUG=1 PFM_CONFIG=Config/conf_test.ini PFM_MODE=test ./vendor/phpunit/phpunit/phpunit --stderr

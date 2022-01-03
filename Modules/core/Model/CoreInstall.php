@@ -682,7 +682,7 @@ class CoreDB extends Model {
 
     }
 
-    public function update_v4_v5() {
+    public function upgrade_v4_v5() {
         // Update invoices in redis
         Configuration::getLogger()->debug('[db] Update invoice numbers in redis');
         $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
@@ -691,6 +691,7 @@ class CoreDB extends Model {
         if ($req->rowCount() > 0) {
             $bill = $req->fetch();
             $lastNumber = $bill["number"];
+            Configuration::getLogger()->debug('[invoice]', ['number' => $lastNumber]);
         }
         if ($lastNumber != "") {
             $lastNumber = explode("-", $lastNumber);
@@ -701,6 +702,7 @@ class CoreDB extends Model {
                 $spaces = $s->getSpaces('id');
                 $cv = new CoreVirtual();
                 foreach($spaces as $space) {
+                    Configuration::getLogger()->debug('[invoice][set]', ['space' => $space['id'], 'number' => $lastNumberN]);
                     $cv->set($space['id'], "invoices:$lastNumberY", $lastNumberN);
                 }
             }
