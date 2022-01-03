@@ -26,17 +26,6 @@ require_once 'Modules/services/Controller/ServicesController.php';
  */
 class ServicesprojectsController extends ServicesController {
 
-    private $serviceModel;
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "services";
-        //$this->checkAuthorizationMenu("services");
-    }
-
     public function userAction($id_space) {
         if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
             throw new PfmAuthException('need login', 403);
@@ -107,7 +96,7 @@ class ServicesprojectsController extends ServicesController {
             $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
-            $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodbegin, $projectperiodend);
+            $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodend);
             $yearsUrl = "servicesprojectsclosed";
             
             if ($year == "") {

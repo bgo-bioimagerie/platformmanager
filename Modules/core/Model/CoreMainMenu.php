@@ -59,7 +59,7 @@ class CoreMainMenu extends Model {
         return array( "names" => $names, "ids" => $ids);
     }
     
-    public function getAll(){
+    public function getAll(): array{
         $sql = "SELECT * FROM core_main_menus ORDER BY display_order ASC;";
         return $this->runRequest($sql)->fetchAll();
     }

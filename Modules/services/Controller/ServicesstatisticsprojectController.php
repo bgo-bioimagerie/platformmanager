@@ -14,7 +14,7 @@ require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/services/Model/SeStats.php';
 require_once 'Modules/services/Model/SeOrigin.php';
-
+require_once 'Modules/services/Model/SeVisa.php';
 require_once 'Modules/invoices/Model/InVisa.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
@@ -34,11 +34,11 @@ class ServicesstatisticsprojectController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
-        $_SESSION["openedNav"] = "statistics";
+
     }
 
     /**
@@ -237,7 +237,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         $spreadsheet->getActiveSheet()->SetCellValue('A2', CoreTranslator::Responsible($lang));
         $spreadsheet->getActiveSheet()->getStyle('A2')->applyFromArray($styleBorderedCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('B2', CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B2', ClientsTranslator::Client($lang));
         $spreadsheet->getActiveSheet()->getStyle('B2')->applyFromArray($styleBorderedCell);
 
         $spreadsheet->getActiveSheet()->SetCellValue('C2', CoreTranslator::User($lang));
@@ -303,15 +303,29 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
-
         $modelOrigin = new SeOrigin();
         $curentLine = 2;
-        foreach ($openedProjects as $proj) {
-            // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
-            $curentLine++;
-            $unitName = $modelClient->getName($id_space ,$proj["id_resp"]);
 
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+        $modelVisa = new SeVisa();
+        $pstats = ['in_charge' => [], 'client' => [], 'institution' => []];
+        
+
+        foreach ($openedProjects as $proj) {
+            // responsable, client, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
+            $curentLine++;
+
+            $unitName = $modelClient->getName($id_space ,$proj["id_resp"]);
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]);
+            $visaName = $modelUser->getUserFUllName($visa["id_user"]);
+            if(!array_key_exists($visaName, $pstats['in_charge'])) { $pstats['in_charge'][$visaName] = 0; }
+            $pstats['in_charge'][$visaName] += 1;
+            if(!array_key_exists($unitName, $pstats['client'])) { $pstats['client'][$unitName] = 0; }
+            $pstats['client'][$unitName] += 1;
+            $institutionName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
+            if(!array_key_exists($institutionName, $pstats['institution'])) { $pstats['institution'][$institutionName] = 0; }
+            $pstats['institution'][$institutionName] += 1;
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $visaName);
+            
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -410,7 +424,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         $curentLine = 2;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
 
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Institution($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Title($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Total_HT($lang));
@@ -443,29 +457,18 @@ class ServicesstatisticsprojectController extends ServicesController {
             $curentLine++;
 
             $unitName = $modelClient->getInstitution($id_space ,$invoice["id_responsible"]);
-            
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]); 
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($visa["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
 
-            //$spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
             $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
             $spreadsheet->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
             $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($id_space, $invoice["visa_send"]));
 
-            //echo "invoice controller = " . $invoice["controller"] . '<br/>';
             if ($invoice["controller"] == "servicesinvoiceproject") {
                 $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
-                
-                //if ( $proj["name"] == "16-004 (Pancréas triple marquages)" ){
-                //if( $proj["id"] == 90){
-                //throw new Exception(print_r($proj));
-                //}
-                
-                //print_r($proj);
-                //echo "<br/>";
-                //return;
 
                 if (isset($proj["new_team"])) {
 
@@ -601,6 +604,54 @@ class ServicesstatisticsprojectController extends ServicesController {
                 . ServicesTranslator::To($lang) . CoreTranslator::dateFromEn($periodEnd, $lang);
         $spreadsheet->getActiveSheet()->setCellValue('A1', $text);
 
+        $curentLine = 3;
+        $spreadsheet->getActiveSheet()->setCellValue('D2', 'Projects per responsible');
+        foreach($pstats['in_charge'] as $key=>$value) {
+        	$spreadsheet->getActiveSheet()->setCellValue('D'.$curentLine, $key);
+        	$spreadsheet->getActiveSheet()->setCellValue('E'.$curentLine, $value);
+        	$curentLine += 1;
+        }
+        for ($r = 1; $r <= $curentLine; $r++) {
+            for ($c = 'D'; $c !== 'F'; $c++) {
+                $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+            }
+        }
+        for ($col = 'D'; $col !== 'F'; $col++) {
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $curentLine = 3;
+        $spreadsheet->getActiveSheet()->setCellValue('G2', 'Projects per client');
+        foreach($pstats['client'] as $key=>$value) {
+                $spreadsheet->getActiveSheet()->setCellValue('G'.$curentLine, $key);
+                $spreadsheet->getActiveSheet()->setCellValue('H'.$curentLine, $value);
+                $curentLine += 1;
+	     }
+        for ($r = 1; $r <= $curentLine; $r++) { 
+            for ($c = 'G'; $c !== 'I'; $c++) {
+                $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+            }
+        }
+        for ($col = 'G'; $col !== 'I'; $col++) {
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $curentLine = 3;
+        $spreadsheet->getActiveSheet()->setCellValue('J2', 'Projects per institution');
+        foreach($pstats['institution'] as $key=>$value) {
+                $spreadsheet->getActiveSheet()->setCellValue('J'.$curentLine, $key);
+                $spreadsheet->getActiveSheet()->setCellValue('K'.$curentLine, $value);
+                $curentLine += 1;
+	     }
+        for ($r = 1; $r <= $curentLine; $r++) { 
+            for ($c = 'J'; $c !== 'L'; $c++) {
+                $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
+            }
+        }
+        for ($col = 'J'; $col !== 'L'; $col++) {
+            $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+        }
+        
         // ////////////////////////////////////////////////////
         //                  Origin
         // ////////////////////////////////////////////////////
@@ -645,7 +696,7 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->setCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Institution($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
@@ -672,8 +723,9 @@ class ServicesstatisticsprojectController extends ServicesController {
         
         foreach ($projects as $proj) {
             $curentLine++;
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]);
             $unitName = $modelClient->getInstitution($id_space ,$proj["id_resp"]);
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($visa["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
@@ -739,7 +791,7 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
-        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Institution($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
         //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
@@ -780,7 +832,9 @@ class ServicesstatisticsprojectController extends ServicesController {
             $curentLine++;
             
             $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]);
+            $visaName = $modelUser->getUserFUllName($visa["id_user"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $visaName);
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);

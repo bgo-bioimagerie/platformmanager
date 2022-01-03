@@ -24,6 +24,9 @@ abstract class Controller {
 
     protected $twig;
 
+    protected ?array $currentSpace = null;
+    protected int $role = -1;
+
     public function args() {
         return $this->args;
     }
@@ -32,7 +35,7 @@ abstract class Controller {
         $this->args = $args;
     }
 
-    public function __construct(Request $request) {
+    public function __construct(Request $request, ?array $space=null) {
         $this->request = $request;
         $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/..');
         if(!is_dir('/tmp/pfm')) {
@@ -45,13 +48,13 @@ abstract class Controller {
                 'cache' => '/tmp/pfm'
             ]);
         }
-    }
 
-    /*
-    public function mainMenu() {
-        return null;
+        $this->currentSpace = $space;
+        if($space && $space['id'] && isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
+            $m = new CoreSpace();
+            $this->role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
+        }
     }
-    */
 
         /**
      * 
@@ -63,8 +66,13 @@ abstract class Controller {
         if (!$id_space) {
             return null;
         }
-        $m = new CoreSpace();
-        $space = $m->getSpace($id_space);
+        
+        //$m = new CoreSpace();
+        //$space = $m->getSpace($id_space);
+        $space = $this->currentSpace;
+        if($space === null) {
+            return '';
+        }
 
 
         $spaceColor = "#ffffff";
@@ -105,7 +113,7 @@ abstract class Controller {
 
     /**
      * 
-     * @return type The navigator language
+     * @return string The navigator language
      */
     public function getLanguage() {
         $lang = substr(filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'), 0, 2);
@@ -191,7 +199,10 @@ abstract class Controller {
         }
 
         if (getenv("PFM_MODE") == "test") {
-            return $dataView;
+            if(isset($dataView['data'])) {
+                return $dataView['data'];
+            }
+            return null;
         }
 
         if(isset($_SESSION['flash'])) {
@@ -204,11 +215,18 @@ abstract class Controller {
         } else {
             $dataView['flash'] = null;
         }
-        // Geneate the view
 
-        $dataView["mainMenu"] = $this->mainMenu();
-        $dataView["sideMenu"] = $this->sideMenu();
-        $dataView["spaceMenu"] = $this->spaceMenu();
+       
+        // Generate the view
+        $dataView["currentSpace"] = $this->currentSpace;
+        $dataView["context"] = [
+            "mainMenu" => $this->mainMenu(),
+            "sideMenu" => $this->sideMenu(),
+            "spaceMenu" => $this->spaceMenu(),
+            "rootWeb" => Configuration::get("rootWeb", "/"),
+            "currentSpace" => $this->currentSpace,  // current space if any
+            "role" => $this->role   // user role in space if any
+        ];
         if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
             // TODO add navbar generation
             require_once 'Modules/core/Controller/CorenavbarController.php';
@@ -236,6 +254,10 @@ abstract class Controller {
      * @param type $args Get arguments
      */
     protected function redirect($path, $args = array(), $data = array()) {
+        if (getenv("PFM_MODE") == "test") {
+            return $data;
+        }
+
         if(!empty($data) && isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
             header('Content-Type: application/json');
             ob_start();
@@ -253,7 +275,9 @@ abstract class Controller {
         } else {
             Configuration::getLogger()->debug('headers already sent', ['file' => $filename, 'line' => $filenum]);
         }
-        header("Location:" . $rootWeb . $path);
+        $newUrl = $rootWeb . $path;
+        $newUrl = str_replace('//', '/', $newUrl);
+        header("Location:" . $newUrl);
     }
 
     protected function redirectNoRemoveHeader($path, $args = array()){
@@ -261,7 +285,10 @@ abstract class Controller {
         foreach ($args as $key => $val) {
             $path .= "?" . $key . "=" . $val;
         }
-        header("Location:" . $rootWeb . $path);
+        $newUrl = $rootWeb . $path;
+        $newUrl = str_replace('//', '/', $newUrl);
+        header("Location:" . $newUrl);
+        // header("Location:" . $rootWeb . $path);
     }
 
 }

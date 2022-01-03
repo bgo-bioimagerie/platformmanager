@@ -123,10 +123,11 @@ class CoreConfig extends Model {
     /**
      * Get a parameter
      * @param string $key
+     * @param mixed $default default value
      * @return string value
      */
-    public function getParam($key) {
-        return $this->getParamSpace($key , 0);
+    public function getParam($key, $default="") {
+        return $this->getParamSpace($key , 0, $default);
     }
 
    /**
@@ -134,13 +135,13 @@ class CoreConfig extends Model {
      * @param string $key
      * @return string value
      */
-    public function getParamSpace($key, $id_space) {
+    public function getParamSpace($key, $id_space, $default="") {
         $this->loadParams($id_space);
         if(!isset(self::$params[$id_space])) {
-            return "";
+            return $default;
         }
         if(!isset(self::$params[$id_space][$key])) {
-            return "";
+            return $default;
         }
         return self::$params[$id_space][$key];
     }

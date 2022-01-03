@@ -19,11 +19,11 @@ class RecategoriesController extends ResourcesBaseController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->categoryModel = new ReCategory();
         //$this->checkAuthorizationMenu("resources");
-        $_SESSION["openedNav"] = "resources";
+
     }
     
     /**
@@ -49,7 +49,7 @@ class RecategoriesController extends ResourcesBaseController {
         
         $categories = $this->categoryModel->getBySpace($id_space);
         $tableHtml = $table->view($categories, $headers);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array("data" => ["recategories" => $categories], "id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
     
       /**

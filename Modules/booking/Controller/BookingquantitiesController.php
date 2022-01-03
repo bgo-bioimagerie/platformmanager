@@ -15,15 +15,6 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
  * Controller for the home page
  */
 class BookingquantitiesController extends BookingsettingsController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bookingsettings");
-        $_SESSION["openedNav"] = "bookingsettings";
-    }
     
     /**
      * (non-PHPdoc)
@@ -48,6 +39,7 @@ class BookingquantitiesController extends BookingsettingsController {
         $supsIdsRes = array();
         $supsNames = array();
         $supsMandatories = array();
+        $supIsInvoicingUnit = array();
         foreach($sups as $sup){
             $supsIds[] = $sup["id_quantity"];
             $supsIdsRes[] = $sup["id_resource"];
@@ -105,6 +97,9 @@ class BookingquantitiesController extends BookingsettingsController {
                 }
             }
             for ($sup = 0; $sup < count($supID); $sup++) {
+                if($supName[$sup] == "") {
+                    continue;
+                }
                 if (!$supID[$sup]) {
                     // If package id not set, use from known packages
                     if(isset($supacks[$supName[$sup]])) {

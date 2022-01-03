@@ -22,7 +22,6 @@ headless = false
 
 [Modules]
 modules[] = "core"
-modules[] = "transfer"
 modules[] = "clients"
 modules[] = "users"
 modules[] = "resources"
@@ -36,8 +35,7 @@ modules[] = "documents"
 modules[] = "antibodies"
 modules[] = "quote"
 modules[] = "com"
-;modules[] = "breeding"
-;modules[] = "estore"
+;modules[] = "helpdesk"
 
 [Company]
 name = "Platform-Manager"

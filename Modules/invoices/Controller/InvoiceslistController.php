@@ -22,15 +22,6 @@ require_once 'Modules/invoices/Controller/InvoicesController.php';
  * Controller for the home page
  */
 class InvoiceslistController extends InvoicesController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("invoices");
-        $_SESSION["openedNav"] = "invoices";
-    }
     
     protected function getInvoicePeriod($id_space, $year) {
         $modelCoreConfig = new CoreConfig();
@@ -142,6 +133,9 @@ class InvoiceslistController extends InvoicesController {
 
         $modelInvoice = new InInvoice();
         $service = $modelInvoice->get($id_space, $id);
+        if(!$service) {
+            throw new PfmUserException('invoice not found', 404);
+        }
 
         //print_r($service);
         
@@ -152,9 +146,7 @@ class InvoiceslistController extends InvoicesController {
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName(new Request(array(), false));
         $object->setRequest($this->request);
-        $object->runAction($service["module"], "edit", array($id_space, $id));
-
-        return;
+        $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
     }
 
     public function createPurcentageDiscountForm($discountValue) {

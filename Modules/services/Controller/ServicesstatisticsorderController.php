@@ -16,7 +16,6 @@ require_once 'Modules/services/Model/SePrice.php';
 //require_once 'Modules/services/Model/SeStats.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
-// require_once 'Modules/ecosystem/Model/EcUnit.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -37,11 +36,11 @@ class ServicesstatisticsorderController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
-        $_SESSION["openedNav"] = "statistics";
+
     }
 
     /**

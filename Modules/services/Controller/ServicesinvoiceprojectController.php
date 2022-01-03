@@ -31,11 +31,11 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
-        $_SESSION["openedNav"] = "invoices";
+
     }
 
     /**

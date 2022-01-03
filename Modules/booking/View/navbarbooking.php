@@ -116,13 +116,10 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                     <fieldset>
                         <legend><?php echo CoreTranslator::Date($lang) ?></legend>
                         <div >
-                            <div class='input-group date form_date_<?php echo $lang ?>'>
-                                <input id="date-daily" type='text' class="form-control" name="curentDate"
+                            <div class='input-group date '>
+                                <input id="date-daily" type='date' class="form-control" name="curentDate"
                                        value="<?php echo CoreTranslator::dateFromEn($menuData["curentDate"], $lang) ?>"
                                        />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
                             </div>
                         </div>
                     </fieldset>
@@ -138,6 +135,3 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                 </div>   
             </form>
     </div>
-    
-
-<?php include "Framework/timepicker_script.php" ?>

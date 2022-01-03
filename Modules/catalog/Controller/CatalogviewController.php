@@ -24,15 +24,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 class CatalogviewController extends CoresecureController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("catalog");
-    }
-
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

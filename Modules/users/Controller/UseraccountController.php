@@ -21,13 +21,6 @@ require_once 'Modules/core/Model/CoreOpenId.php';
  * Controller for the provider example of users module
  */
 class UseraccountController extends CoresecureController {
-    
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
 
 
     /**

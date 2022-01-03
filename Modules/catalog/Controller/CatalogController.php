@@ -14,14 +14,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class CatalogController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("catalog");
-    }
-
     public function sideMenu() {
 
         $id_space = $this->args['id_space'];

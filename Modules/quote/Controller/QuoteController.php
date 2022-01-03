@@ -13,15 +13,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class QuoteController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("quote");
-    }
-
-
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
@@ -36,8 +27,7 @@ class QuoteController extends CoresecureController {
             'color' => $menuInfo['txtcolor'] ?? '',
             'Quotes' => QuoteTranslator::Quotes($lang),
             'CreateExistingUserQuote' => QuoteTranslator::CreateExistingUserQuote($lang),
-            'CreateNewUserQuote}}' => QuoteTranslator::CreateNewUserQuote($lang)
-
+            'CreateNewUserQuote' => QuoteTranslator::CreateNewUserQuote($lang)
         ];
         return $this->twig->render("Modules/quote/View/Quote/navbar.twig", $dataView);
     }

@@ -50,12 +50,9 @@
         <div class="form-group">
             <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::Beginning_of_the_reservation($lang) ?>:</label>
             <div class="col-xs-8">
-                <div class='input-group date form_date_<?php echo $lang ?>'>
-                    <input type='text' class="form-control" name="begin_date"
+                <div class='input-group date'>
+                    <input type='date' class="form-control" name="begin_date"
                            value=""/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
                 </div>
             </div>
         </div>
@@ -84,12 +81,9 @@
         <div class="form-group">
             <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::End_of_the_reservation($lang) ?>:</label>
             <div class="col-xs-8">
-                <div class='input-group date form_date_<?php echo $lang ?>'>
-                    <input type='text' class="form-control" name="end_date"
+                <div class='input-group date'>
+                    <input type='date' class="form-control" name="end_date"
                            value=""/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
                 </div>
             </div>
         </div>
@@ -146,8 +140,6 @@
     </form>
 </div>
 </div>
-
-<?php include "Framework/timepicker_script.php" ?>
 
 <?php
 endblock();

@@ -16,13 +16,6 @@ require_once 'Modules/clients/Controller/ClientsController.php';
 class ClientsuseraccountsController extends ClientsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::index()
      *
@@ -54,7 +47,8 @@ class ClientsuseraccountsController extends ClientsController {
 
             $modelClientUser->set($id_space, $form->getParameter("id_client"), $id_user);
 
-            $_SESSION["message"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flashClass"] = "success";
             $this->redirect("clientsuseraccounts/" . $id_space . "/" . $id_user);
             return;
         }

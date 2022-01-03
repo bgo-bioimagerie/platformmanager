@@ -8,19 +8,11 @@ require_once 'Modules/bulletjournal/Model/BjNote.php';
 require_once 'Modules/bulletjournal/Model/BjTask.php';
 
 /**
- * 
+ * @deprecated
  * @author sprigent
  * Controller for the home page
  */
 class BjmigrationsController extends CoresecureController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bulletjournal");
-    }
 
     /**
      * (non-PHPdoc)

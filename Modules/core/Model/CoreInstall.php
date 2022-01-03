@@ -670,11 +670,26 @@ class CoreDB extends Model {
     }
 
     public function upgrade_v3_v4() {
+
+        Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name');
+        try {
+            $sql = 'ALTER TABLE bk_calsupinfo RENAME COLUMN `       mandatory` TO `mandatory`';
+            $this->runRequest($sql);
+        } catch (Exception $e) {
+            Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name: already ni good state, good!');
+        }
+        Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name, done!');
+
         Configuration::getLogger()->debug('[core] add txtcolor');
         $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
         $this->addColumn('core_spaces', 'txtcolor', "varchar(7)", "#ffffff");
         $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
         Configuration::getLogger()->debug('[core] add txtcolor, done');
+
+        Configuration::getLogger()->debug('[core] add space plan');
+        $this->addColumn('core_spaces', 'plan', "int", '0');
+        $this->addColumn('core_spaces', 'plan_expire', "int", '0');
+        Configuration::getLogger()->debug('[core] add space plan, done');
 
         if(Statistics::enabled()) {
             $eventHandler = new EventHandler();
@@ -684,7 +699,7 @@ class CoreDB extends Model {
             $cp = new CoreSpace();
             $spaces = $cp->getSpaces('id');
             foreach ($spaces as $space) {
-                $g->createOrg($space['shortname']);
+                $g->createOrg($space);
             }
             Configuration::getLogger()->debug('[grafana] create orgs, done!');
 
@@ -697,11 +712,16 @@ class CoreDB extends Model {
                 $csu = new CoreSpaceUser();
                 $managers = $csu->managersOrAdmin($space['id']);
                 $g = new Grafana();
-                foreach($managers as $manager) {
-                    $u = new CoreUser();
-                    $user = $u->getInfo($manager['id_user']);
-                    Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
-                    $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                $plan = new CorePlan($space['plan'], $space['plan_expire']);
+                if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                    foreach($managers as $manager) {
+                        $u = new CoreUser();
+                        $user = $u->getInfo($manager['id_user']);
+                        Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
+                        $g->addUser($space['shortname'], $user['login'], $user['apikey']);
+                    }
+                } else {
+                    Configuration::getLogger()->debug('[flags][disabled] ', ['space' => $space['name'] , 'flags' => [CorePlan::FLAGS_GRAFANA]]);
                 }
                 $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
             }
@@ -714,9 +734,35 @@ class CoreDB extends Model {
                 Configuration::getLogger()->debug('[stats] import clients, done!');
             }
         }
+
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN id_client INT(11)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column id_client, done!');
+
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email');
+        $sql = "ALTER TABLE qo_quotes ADD COLUMN recipient_email VARCHAR(100)";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
+
+        if(Statistics::enabled()) {
+            Configuration::getLogger()->debug('[db] update grafana dashboards and sql views');
+            $s = new CoreSpace();
+            $spaces = $s->getSpaces('id');
+            $statHandler = new EventHandler();
+            foreach($spaces as $space) {
+                $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
+
+            }
+            Configuration::getLogger()->debug('[db] update grafana dashboards and sql views, done!');
+        }
+
+        Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00');
+        $sql = "UPDATE core_j_spaces_user SET date_contract_end=null WHERE date_contract_end='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00, done!');
+
     }
-
-
 
     /**
      * Get current database version
@@ -934,7 +980,7 @@ class CoreInstall extends Model {
             $eventHandler->spaceCount(null);
             // create org
             $g = new Grafana();
-            $g->createOrg($pfmOrg);
+            $g->createOrg(['shortname' => $pfmOrg]);
             $u = new CoreUser();
             $adminUser = $u->getUserByLogin(Configuration::get('admin_user'));
             $g->addUser($pfmOrg, $adminUser['login'], $adminUser['apikey']);

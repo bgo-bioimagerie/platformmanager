@@ -99,7 +99,7 @@ InInvoiceItem -> InInvoice [label="id_invoice"];
 
 InVisa -> CoreUser [label="id_user"];
 
-Quote -> id_belonging;
+Quote -> ClPricing[label="id_belonging"]; // not used anymore
 Quote -> id_user;
 QuoteItem -> Quote [label="id_quote"]
 // module defines which object is linked to id_content
@@ -141,7 +141,7 @@ SeProject -> CoreUser [label="id_resp"];
 SeProject ->CoreUser [label="id_user"];
 SeProject -> SeOrigin [label="id_origin"];
 SeProject -> CoreUser [label="closed_by"];
-SeProject -> CoreUser [label="in_charge"];
+SeProject -> SeVisa [label="in_charge"];
 
 SePurchase;
 SePurchaseItem -> SePurcharse [label="id_purchase"];

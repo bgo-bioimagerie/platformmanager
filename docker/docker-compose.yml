@@ -17,8 +17,8 @@ services:
       SMTP_HOST: ${PFM_SMTP_HOST}
       SMTP_PORT: 1025
       SMTP_FROM: ${PFM_SMTP_FROM}
-      DEBUG: 1
-      DEBUG_SQL: 1
+      DEBUG: 0
+      DEBUG_SQL: 0
       PFM_MODE: dev
       PFM_PUBLIC_URL: ${PFM_WEB_URL}
       PFM_AMQP_HOST: pfm-rabbitmq
@@ -33,6 +33,10 @@ services:
       PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER}
       PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
       PFM_HELPDESK_IMAP_TLS:
+      PFM_ADMIN_USER: pfmadmin
+      PFM_ADMIN_EMAIL: admin@pfm.org
+      PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
     working_dir: /var/www/platformmanager
     entrypoint: ["/pfmextra-entrypoint.sh", "helpdesk"]
     volumes:
@@ -48,6 +52,7 @@ services:
       MYSQL_DBNAME: platformmanager # name of the database on the mysql server
       MYSQL_USER: platform_manager # Admin account to connect to mysql
       MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
+      MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}
       SMTP_HOST: ${PFM_SMTP_HOST}
       SMTP_PORT: 1025
       SMTP_FROM: ${PFM_SMTP_FROM}
@@ -69,6 +74,10 @@ services:
       PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
       PFM_HELPDESK_IMAP_TLS:
       PFM_JWT_SECRET: ${PFM_JWT_SECRET}
+      PFM_ADMIN_USER: pfmadmin
+      PFM_ADMIN_EMAIL: admin@pfm.org
+      PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
     depends_on:
         - mysql
         - pfm-rabbitmq
@@ -88,6 +97,7 @@ services:
       MYSQL_DBNAME: platformmanager # name of the database on the mysql server
       MYSQL_USER: platform_manager # Admin account to connect to mysql
       MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
+      MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}
       SMTP_HOST: ${PFM_SMTP_HOST}
       SMTP_PORT: 1025
       SMTP_FROM: ${PFM_SMTP_FROM}
@@ -96,6 +106,7 @@ services:
       PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
       PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
       PFM_PUBLIC_URL: ${PFM_WEB_URL}
+      PFM_ROOTWEB: "/"
       PFM_AMQP_HOST: pfm-rabbitmq
       PFM_AMQP_USER: pfm
       PFM_AMQP_PASSWORD: pfm

@@ -7,7 +7,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 
 /**
- * 
+ * @deprecated
  * @author sprigent
  * 	Install the Core database
  */
@@ -17,8 +17,8 @@ class CoreinstallController extends Controller {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->installModel = new CoreInstall();
     }
 

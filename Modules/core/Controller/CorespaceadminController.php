@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Utils.php';
 
 
 require_once 'Framework/TableView.php';
@@ -25,8 +26,8 @@ class CorespaceadminController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             //throw new PfmAuthException("Error 403: Permission denied", 403);
@@ -62,17 +63,17 @@ class CorespaceadminController extends CoresecureController {
         return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml, "data" => ["spaces" => $data]));
     }
     
-    public function editAction($id){
+    public function editAction($id_space){
         // Check user is superadmin or space admin
-        $this->checkSpaceAdmin($id, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
         $modelSpace = new CoreSpace();
-        $space = $modelSpace->getSpace($id);
+        $space = $modelSpace->getSpace($id_space);
         if(!$space) {
             $space = CoreSpace::new();
         }
 
-        $spaceAdmins = $modelSpace->spaceAdmins($id);
+        $spaceAdmins = $modelSpace->spaceAdmins($id_space);
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "corespaceadminedit");
@@ -97,14 +98,31 @@ class CorespaceadminController extends CoresecureController {
             $usersNames[] = $user["name"] . " " . $user["firstname"];
             $usersIds[] = $user["id"];
         }
+
+        if($isSuperAdmin) {
+            $configPlans = Configuration::get('plans', []);
+            $plans = [];
+            $plansIds = [];
+            foreach($configPlans as $p) {
+                $plans[] = $p['name'];
+                $plansIds[] = $p['id'];
+            }
+            $form->addSelect('plan', 'Plan', $plans, $plansIds, $space['plan']);
+            $expires = $space['plan_expire'];
+            if($expires) {
+                $expires = date('Y-m-d', $expires);
+            }
+        }
+
         
         $formAdd = new FormAdd($this->request, "addformspaceedit");
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id_space);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
 
+        $id = $id_space;
         if ($form->check()){ 
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
@@ -117,19 +135,32 @@ class CorespaceadminController extends CoresecureController {
             // set base informations
             if($isSuperAdmin) {
                 // Only super admin can create
-                Configuration::getLogger()->debug('[admin][space] create space', ["space" => $id, "name" => $this->request->getParameter("name")]);
-                $id = $modelSpace->setSpace($id, $this->request->getParameter("name"), 
+                Configuration::getLogger()->debug('[admin][space] create space', ["space" => $id_space, "name" => $this->request->getParameter("name")]);
+                $id = $modelSpace->setSpace($id_space, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
                     $this->request->getParameter("txtcolor"),
-                    );
+                );
+                $plan = $this->request->getParameterNoException("plan");
+                if($plan !== "") {
+                    //plan_expire , plan
+                    $expires = $this->request->getParameterNoException("plan_expire");
+                    if($expires) {
+                        $expires = Utils::timestamp($expires, $lang);
+
+                    } else {
+                        $expires = 0;
+                    }
+                    Configuration::getLogger()->debug("???", ["plan" => $plan, "e" => $expires]);
+                    $modelSpace->setPlan($id_space, intval($plan), $expires);
+                }
             } else {
                 // Space admin can edit
                 Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);
-                $modelSpace->editSpace($id, $this->request->getParameter("name"), 
+                $modelSpace->editSpace($id_space, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
                     $shortname,
@@ -155,8 +186,7 @@ class CorespaceadminController extends CoresecureController {
             
             $newSpace = $modelSpace->getSpace($id);
             if($isSuperAdmin) {
-                $this->redirect("spaceadmin", [], ['space' => $newSpace]);
-                return;
+                return $this->redirect("spaceadmin", [], ['space' => $newSpace]);
             }
         }
         
@@ -164,12 +194,12 @@ class CorespaceadminController extends CoresecureController {
         
     }
     
-    public function deleteAction($id){
+    public function deleteAction($id_space){
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $model = new CoreSpace();
-        $model->delete($id);
+        $model->delete($id_space);
         $this->redirect("spaceadmin");
         
     }

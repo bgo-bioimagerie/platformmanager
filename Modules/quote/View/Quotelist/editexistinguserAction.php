@@ -26,6 +26,19 @@ if ($id_quote > 0) {
         ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
         <?php echo $formHtml ?>
+        <script type="module">
+            import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+            let dynamicForms = new DynamicForms();
+            let spaceId = <?php echo $id_space?>;
+            let sourceId = "id_user";
+            let targets = [
+                {
+                    elementId: "id_client",
+                    apiRoute: `clientusers/getclients/`
+                }
+            ];
+            dynamicForms.dynamicFields(sourceId, targets, spaceId);
+        </script>
     </div>
 
     <?php

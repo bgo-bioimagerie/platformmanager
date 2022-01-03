@@ -9,6 +9,11 @@ require_once 'Framework/Model.php';
  */
 class BkAccess extends Model {
 
+    public static int $AccessUser = 1;
+    public static int $AccessAuthorizedUser = 2;
+    public static int $AccessManager = 3;
+    public static int $AccessAdmin = 4;
+
     /**
      * Create the BkAccess table
      * 

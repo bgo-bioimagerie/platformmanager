@@ -24,7 +24,7 @@
         <div class="form-group ">
             <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
             <div class="col-xs-10">
-                <div class='input-group date form_date_<?php echo $lang ?>'>
+                <div class='input-group date'>
 
                     <?php
                     $date = "";
@@ -32,29 +32,23 @@
                         $date = CoreTranslator::dateFromEn($searchDate_start, $lang);
                     }
                     ?> 
-                    <input type='text' class="form-control" data-date-format="YYYY-MM-DD" name="searchDate_start" id="searchDate_start"
+                    <input type='date' class="form-control" data-date-format="YYYY-MM-DD" name="searchDate_start" id="searchDate_start"
                            value="<?php echo $date ?>" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
                 </div>
             </div>
         </div>
         <div class="form-group ">
             <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
             <div class="col-xs-10">
-                <div class='input-group date form_date_<?php echo $lang ?>'>
+                <div class='input-group date'>
                     <?php
                     $date = "";
                     if (isset($searchDate_end)) {
                         $date = CoreTranslator::dateFromEn($searchDate_end, $lang);
                     }
                     ?> 
-                    <input id="test32" type='text' class="form-control" data-date-format="YYYY-MM-DD" name="searchDate_end" 
+                    <input id="test32" type='date' class="form-control" data-date-format="YYYY-MM-DD" name="searchDate_end" 
                            value="<?php echo $date ?>" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
                 </div>
             </div>
         </div>
@@ -358,9 +352,6 @@
     ?>
 
 </div>
-
-
-<?php include "Framework/timepicker_script.php" ?>
 
 <?php
 endblock();

@@ -15,14 +15,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 class BjnotesController extends CoresecureController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bulletjournal");
-    }
-    
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

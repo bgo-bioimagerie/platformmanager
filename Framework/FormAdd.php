@@ -90,12 +90,12 @@ class FormAdd {
      * @param array $choicesid List of choices Ids
      * @param array $values List of default values
      */
-    public function addSelect($name, $label, $choices, $choicesid, $values = array()) {
+    public function addSelect($name, $label, $choices, $choicesid, $values = array(), $isMandatory=false) {
         $this->types[] = "select";
         $this->names[] = $name;
         $this->labels[] = $label;
         $this->setValue($name, $values);
-        $this->isMandatory[] = false;
+        $this->isMandatory[] = $isMandatory;
         $this->choices[] = $choices;
         $this->choicesid[] = $choicesid;
     }
@@ -212,9 +212,8 @@ class FormAdd {
                 }
                 for ($j = 0; $j < count($this->types); $j++) {
                     $html .= "<td>";
-
                     if ($this->types[$j] == "select") {
-                        $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], $this->values[$j][$i], false, true);
+                        $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], $this->values[$j][$i], $this->isMandatory[$j] ?? false, true);
                     } else if ($this->types[$j] == "text") {
                         $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "textdate") {
@@ -243,7 +242,7 @@ class FormAdd {
             for ($j = 0; $j < count($this->names); $j++) {
                 $html .= "<td>";
                 if ($this->types[$j] == "select") {
-                    $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], "", false, true);
+                    $html .= $formHtml->inlineSelect($this->names[$j], $this->choices[$j], $this->choicesid[$j], "", $this->isMandatory[$j] ?? false, true);
                 } else if ($this->types[$j] == "text") {
                     $html .= $formHtml->inlineText($this->names[$j], "", false, true);
                 } else if ($this->types[$j] == "textdate") {

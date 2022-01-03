@@ -81,14 +81,14 @@ class ReVisa extends Model {
      * @return PDOStatement
      */
     public function createDefaultVisa($id_space) {
-        $sql = "insert into re_visas(id_resource_category, id_instructor, instructor_status, id_space)"
-                . " values(?,?,?, ?)";
+        $sql = "insert into re_visas(id_resource_category, id_instructor, instructor_status, id_space, is_active)"
+                . " values(?,?,?, ?, 1)";
         $this->runRequest($sql, array(0, 1, 1, $id_space));
     }
     
     public function importVisa($id_space, $id, $id_cat, $id_instructor, $instructor_status){
-        $sql = "insert into re_visas(id, id_resource_category, id_instructor, instructor_status, id_space)"
-                . " values(?,?,?,?,?)";
+        $sql = "insert into re_visas(id, id_resource_category, id_instructor, instructor_status, id_space, is_active)"
+                . " values(?,?,?,?,?,1)";
         $this->runRequest($sql, array($id, $id_cat, $id_instructor, $instructor_status, $id_space));
     }
 
@@ -137,8 +137,8 @@ class ReVisa extends Model {
      */
     public function addVisa($id_space, $id_resource_category, $id_instructor, $instructor_status) {
 
-        $sql = "insert into re_visas(id_resource_category, id_instructor, instructor_status, id_space)"
-                . " values(?,?,?,?)";
+        $sql = "insert into re_visas(id_resource_category, id_instructor, instructor_status, id_space, is_active)"
+                . " values(?,?,?,?,1)";
         $this->runRequest($sql, array($id_resource_category, $id_instructor, $instructor_status, $id_space));
         return $this->getDatabase()->lastInsertId();
     }

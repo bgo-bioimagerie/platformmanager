@@ -29,14 +29,6 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 class InvoiceglobalController extends InvoiceAbstractController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "invoices";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

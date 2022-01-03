@@ -16,6 +16,8 @@
     } ?>
 
     <?php echo $formHtml ?>
+    <br/>
+    <?php echo $formJoinHtml ?>
 
 </div>
 

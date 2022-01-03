@@ -20,9 +20,9 @@ class ServicesvisaController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "services";
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
+
         $this->visaModel = new SeVisa();
         //$this->checkAuthorizationMenu("services");
     }

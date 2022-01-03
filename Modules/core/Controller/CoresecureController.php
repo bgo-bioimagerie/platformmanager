@@ -19,8 +19,8 @@ require_once 'Modules/core/Model/CoreStatus.php';
  */
 abstract class CoresecureController extends CorecookiesecureController {
 
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->checkRememberMeCookie();
     }
 
@@ -79,8 +79,8 @@ abstract class CoresecureController extends CorecookiesecureController {
      */
     public function runAction($module, $action, $args = array()) {
         $modelConfig = new CoreConfig();
-        if ($modelConfig->getParam("is_maintenance") && ($this->request->getSession()->getAttribut("user_status") < 4)) {
-                throw new PfmException($modelConfig->getParam("maintenance_message"), 503);
+        if ($modelConfig->getParam("is_maintenance") && ($this->request->getSession()->getAttribut("user_status") < CoreStatus::$ADMIN)) {
+                throw new PfmUserException($modelConfig->getParam("maintenance_message"), 503);
         }
 
         $cookieCheck = $this->checkRememberMeCookie();
@@ -204,7 +204,10 @@ abstract class CoresecureController extends CorecookiesecureController {
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
+            if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
+                throw new PfmAuthException("Error 403: Permission denied", 403);
+            }
+            throw new PfmAuthException("Error 401: need to log", 401);
         } else {
             return true;
         }

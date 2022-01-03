@@ -24,16 +24,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class MailerController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("mailer");
-        $_SESSION["openedNav"] = "mailer";
-    }
-
-
     public function navbar($id_space) {
         return "";
     }
@@ -90,6 +80,11 @@ class MailerController extends CoresecureController {
                 // get all the adresses of users who book in this resource
                 $modelCalEntry = new BkCalendarEntry();
                 $to = $modelCalEntry->getEmailsBookerResource($id_space, $toEx[1]);
+            }
+        } else {
+            if ($to === "managers") {
+                $modelUser = new CoreUser();
+                $content = "From " . $modelUser->getUserFUllName($_SESSION["id_user"]) . " :</br>" . $content;
             }
         }
 

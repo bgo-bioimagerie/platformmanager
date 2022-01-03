@@ -27,15 +27,6 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
  */
 class BookingController extends BookingabstractController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("booking");
-    }
-
-
     public function navbar($id_space) {
         $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
 
@@ -204,22 +195,26 @@ class BookingController extends BookingabstractController {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
         }
 
-        if ($curentAreaId == "") {
+        if ($curentAreaId == "" && isset($_SESSION['bk_id_area'])) {
             $curentResource = $_SESSION['bk_id_resource'];
             $curentAreaId = $_SESSION['bk_id_area'];
             $curentDate = $_SESSION['bk_curentDate'];
         }
 
+        if(!$curentDate) {
+            $curentDate = date('Y-m-d');
+        }
+
         // change input if action
         if ($action == "daybefore") {
             $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
+            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
             $curentTime = $curentTime - 86400;
             $curentDate = date("Y-m-d", $curentTime);
         }
         if ($action == "dayafter") {
             $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
+            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
             $curentTime = $curentTime + 86400;
             $curentDate = date("Y-m-d", $curentTime);
         }
@@ -279,7 +274,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($menuData["resources"])) {
@@ -344,6 +339,9 @@ class BookingController extends BookingabstractController {
         }
         if ($action == "today") {
             $curentDate = date("Y-m-d", time());
+        } else if (DateTime::createFromFormat('Y-m-d', $action) !== false) {
+            // getting selected date from month view
+            $curentDate = $action;
         }
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
@@ -409,7 +407,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
@@ -544,7 +542,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // view
         $this->render(array(
@@ -678,7 +676,7 @@ class BookingController extends BookingabstractController {
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->get($id_space, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
@@ -840,8 +838,8 @@ class BookingController extends BookingabstractController {
         $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $id_space);
         
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
-            $modelDefault = new BookingdefaultController($this->request);
-            $modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
+            $modelDefault = new BookingdefaultController($this->request, $this->currentSpace);
+            //$modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
             $modelDefault->editreservationdefault($id_space, $param);
         } else {
 

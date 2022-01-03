@@ -27,8 +27,7 @@ if ($space['color'] == "") {
 
 <div class="row">
 <div  style="background-color: #fff; ">
-
-    <div class="container" style="background-color: #fff;">
+    <div id="tiles" class="container" style="background-color: #fff;">
 
         <?php
         require_once 'Modules/com/Controller/ComtileController.php';
@@ -53,6 +52,7 @@ if ($space['color'] == "") {
                             <a href="<?php echo $item["url"] . "/" . $id_space ?>">
                                 <span class="pm-tiles glyphicon <?php echo $item["icon"] ?>" aria-hidden="true"></span>
                                 <span style="<?php echo "color: ".$item["txtcolor"]; ?>" class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
+                                <span v-if="notifs?.<?php echo strtolower($item['url']); ?>" class="label label-info">{{notifs?.<?php echo strtolower($item['url']); ?>}}</span>
                             </a>
                         </li>
                         <?php
@@ -97,6 +97,7 @@ if ($space['color'] == "") {
                             <a href="<?php echo "corespaceaccess/" . $space["id"] ?>">
                                 <span class="pm-tiles glyphicon glyphicon-user" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Users($lang) ?></span>
+                                <span v-if="notifs?.spaceaccess" class="label label-info">{{notifs.spaceaccess}}</span>
                             </a>
                         </li> 
 
@@ -107,7 +108,7 @@ if ($space['color'] == "") {
                             </a>
                         </li>
                         <li style="background-color:<?php echo $space['color'] ?>;">
-                            <a href="/grafana">
+                            <a href="grafana">
                                 <span class="pm-tiles glyphicon glyphicon-stats" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::GrafanaStats($lang) ?></span>
                             </a>
@@ -138,6 +139,65 @@ if ($space['color'] == "") {
     </div> <!-- /container -->
 </div>
 </div>
+
+<?php
+$spaceModules = ['spaceaccess'];
+foreach($spaceMenuItems as $item) {
+    $spaceModules[] = $item['url'];
+}
+
+?>
+
+<script>
+
+
+var app = new Vue({
+    el: '#tiles',
+    data () {
+        return {
+            id_space: <?php echo $id_space ?>,
+            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
+            modules: <?php echo json_encode($spaceModules ); ?> ,
+            notifs: {}
+        }
+    },
+    mounted: function() {
+        if(!this.logged) {
+            return
+        }
+        const headers = new Headers();
+                headers.append('Content-Type','application/json');
+                headers.append('Accept', 'application/json');
+        const cfg = {
+            headers: headers,
+            method: 'GET',
+        };
+        this.modules.forEach(mod => {
+            let modName = mod.replace(' ', '').toLowerCase();
+            if(!modName) {
+                return;
+            }
+            fetch(`/core/tiles/${this.id_space}/module/${modName}/notifs`, cfg).
+            then((response) => response.json(), (error) => {}).
+            then(data => {
+                let n = {...this.notifs}
+                n[modName] = data.notifs
+                this.notifs = n
+            }).catch((error) => {
+                console.debug('failed to get notifications', modName, error);
+            })
+
+        });
+        
+    },
+    methods: {
+    }
+})
+
+
+</script>
+
+
 <?php
 endblock();
 ?>

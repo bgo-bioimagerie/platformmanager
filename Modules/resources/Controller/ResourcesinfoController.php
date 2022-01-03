@@ -31,15 +31,6 @@ require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 class ResourcesinfoController extends ResourcesBaseController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("resources");
-        $_SESSION["openedNav"] = "resources";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
@@ -64,6 +55,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getBySpaceWithoutCategory($id_space);
+        $data = $resources;
 
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
@@ -77,7 +69,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $tableHtml = $table->view($resources, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array("data" => ["resources" => $data], "id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
     public function editAction($id_space, $id) {
@@ -148,7 +140,7 @@ class ResourcesinfoController extends ResourcesBaseController {
             
             // upload image
             $target_dir = "data/resources/";
-            if ($_FILES["image"]["name"] != "") {
+            if (array_key_exists("image", $_FILES) && $_FILES["image"]["name"] != "") {
                 $ext = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
 
                 $url = $id . "." . $ext;
@@ -157,8 +149,7 @@ class ResourcesinfoController extends ResourcesBaseController {
                 $modelResource->setImage($id_space, $id, $target_dir . $url);
             }
             
-            $this->redirect("resources/" . $id_space);
-            return;
+            return $this->redirect("resources/" . $id_space, [], ['resource' => ['id' => $id]]);
         }
 
         $headerInfo["curentTab"] = "info";
@@ -433,6 +424,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
     public function respsAction($id_space, $id_resource) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
 
         $modelResps = new ReResps();
         $respsData = $modelResps->getResps($id_space, $id_resource);
@@ -460,13 +452,14 @@ class ResourcesinfoController extends ResourcesBaseController {
             $choicesS[] = $status["name"];
             $choicesidS[] = $status["id"];
         }
+        if (empty($choicesidS)) {
+            $_SESSION['flash'] = ResourcesTranslator::StatusNeeded($lang);
+        }
 
-
-        $lang = $this->getLanguage();
         $form = new Form($this->request, "respsform");
         $formAdd = new FormAdd($this->request, "respaddform");
         $formAdd->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $resps);
-        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus);
+        $formAdd->addSelect("id_status", ResourcesTranslator::Status($lang), $choicesS, $choicesidS, $rstatus, isMandatory:true);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, "");

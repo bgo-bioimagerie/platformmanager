@@ -7,6 +7,8 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorenavbarController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreStar.php';
@@ -28,8 +30,8 @@ class CoretilesController extends CorecookiesecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->user = new CoreUser();
         //$this->checkAuthorization(CoreStatus::$USER);
     }
@@ -46,7 +48,10 @@ class CoretilesController extends CorecookiesecureController {
             $id = 0;
         }
         if ( $id < 0 ){
-            $this->redirect("coretilesdoc");
+            $_SESSION['flash'] = 'Page not found, sorry...';
+            //$this->showMainSubMenu(0);
+            $this->redirect('');
+            return;
         }
         if ( $level == 0) {
             $this->showMainSubMenu(0);
@@ -60,7 +65,6 @@ class CoretilesController extends CorecookiesecureController {
         else{
             $this->redirect("corehome");
         }
-        
     }
     
     public function showMainMenu($id){
@@ -70,7 +74,10 @@ class CoretilesController extends CorecookiesecureController {
             $id = $modelMenu->getFirstIdx();
         }
         // get default sub menu
-        $id_sub = $modelMenu->getFirstSubMenu($id);
+        $id_sub = 0;
+        if($id > 0) {
+            $id_sub = $modelMenu->getFirstSubMenu($id);
+        }
         
         $this->showMainSubMenu($id_sub);
     }
@@ -141,6 +148,19 @@ class CoretilesController extends CorecookiesecureController {
             $resourceModel = new ResourceInfo();
             $resources = $resourceModel->getAll(); // name, description, long_description
             
+            $modelMainMenus = new CoreMainMenu();
+            $mainMenus = $modelMainMenus->getAll();
+            usort($mainMenus, function($item1, $item2){
+                return $item1['name'] <=> $item2['name'];
+            });
+
+            $menuItemsModel = new CoreMainMenuItem();
+            $itemsMenusList = $menuItemsModel->getMainMenus();
+            $itemsMenus = [];
+            foreach($itemsMenusList as $item) {
+                $itemsMenus[$item['id']] = $item['name']; 
+            }
+
             return $this->render(array(
                 'lang' => $lang,
                 'content' => $content,
@@ -149,6 +169,8 @@ class CoretilesController extends CorecookiesecureController {
                 'catalog' => $catalog,
                 'resources' => $resources,
                 'mainSubMenus' => [],
+                'mainMenus' => $mainMenus,
+                'itemsMenus' => $itemsMenus,
                 'iconType' => $modelCoreConfig->getParam("space_icon_type"),
                 'showSubBar' => false
                 ), "welcomeAction");
@@ -174,7 +196,7 @@ class CoretilesController extends CorecookiesecureController {
 
         $starModel = new CoreStar();
         $starList = [];
-        if(isset($_SESSION["id_user"])) {
+        if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
             $starList = $starModel->stars($_SESSION["id_user"]);
         }
         $stars = [];
@@ -226,7 +248,7 @@ class CoretilesController extends CorecookiesecureController {
      * @return array of arrays: [userSpaceIds, userPendingSpaceIds, SpacesUserIsAdminOf]
      */
     public function getUserSpaces() {
-        if(!isset($_SESSION["id_user"])) {
+        if(!isset($_SESSION["id_user"]) || $_SESSION["id_user"] <= 0) {
             return array(
                 "userSpaceIds" => [],
                 "userPendingSpaceIds" => [],
@@ -310,11 +332,13 @@ class CoretilesController extends CorecookiesecureController {
 
                 $modelUser = new CoreUser();
                 $userEmail = $modelUser->getEmail($id_user);
+                $userFullName = $modelUser->getUserFUllName($id_user);
 
                 $mailParams = [
                     "id_space" => $id_space,
                     "space_name" => $spaceName,
-                    "user_email" => $userEmail
+                    "email" => $userEmail,
+                    "fullName" => $userFullName
                 ];
                 $email = new Email();
                 $email->notifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());

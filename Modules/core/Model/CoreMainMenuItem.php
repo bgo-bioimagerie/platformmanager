@@ -106,6 +106,17 @@ class CoreMainMenuItem extends Model {
     public function delete($id){
         $sql = "DELETE FROM core_main_menu_items WHERE id=?";
         $this->runRequest($sql, array($id));
-    }  
+    }
+
+    public function getMainMenus() {
+        $sql = "SELECT mainmenus.name as name, item.id_space as id FROM core_main_menu_items as item ";
+        $sql .= "INNER JOIN core_main_sub_menus  as submenus ON submenus.id = item.id_sub_menu ";
+        $sql .= "INNER JOIN core_main_menus as mainmenus ON mainmenus.id = submenus.id_main_menu";
+        $res =  $this->runRequest($sql);
+        if($res->rowCount() > 0) {
+            return $res->fetchAll();
+        }
+        return [];
+    }
 
 }

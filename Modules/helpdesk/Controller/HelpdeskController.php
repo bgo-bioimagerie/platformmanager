@@ -35,6 +35,30 @@ class HelpdeskController extends CoresecureController {
         ));
     }
 
+    public function notifsAction($id_space) {
+        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $sm = new CoreSpace();
+        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if(!$role || $role < CoreSpace::$MANAGER) {
+            $this->render(['data' => ['notifs' => 0]]);
+            return;
+        }
+
+        $hm = new Helpdesk();
+        $unread = $hm->unread($id_space);
+        $total = 0;
+        if(!empty($unread)) {
+            foreach($unread as $u) {
+                $status = intval($u['status']);
+                if($status == Helpdesk::$STATUS_SPAM) {
+                    continue;
+                }
+                $total += intval($u['total']);
+            }
+        }
+        $this->render(['data' => ['notifs' => $total]]);
+    }
+
     public function setSettingsAction($id_space) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $role = $this->spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
@@ -83,7 +107,7 @@ class HelpdeskController extends CoresecureController {
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
         if(!$ticket) {
-            throw new PfmException('ticket not found', 404);
+            throw new PfmParamException('ticket not found', 404);
         }
         if($ticket['id_space'] != $id_space) {
             throw new PfmAuthException('not authorized', 403);
@@ -229,13 +253,10 @@ class HelpdeskController extends CoresecureController {
         $messages = $hm->getMessages($id_ticket);
         $filter = false;
         $sm = new CoreSpace();
-        $um = new CoreUser();
 
-        if($um->getStatus($_SESSION['id_user']) != CoreUser::$ADMIN) {
-            $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
-            if(!$role || $role < CoreSpace::$MANAGER) {
-                $filter = true;
-            }
+        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        if(!$role || $role < CoreSpace::$MANAGER) {
+            $filter = true;
         }
         $filteredMessages = [];
         if($filter) {

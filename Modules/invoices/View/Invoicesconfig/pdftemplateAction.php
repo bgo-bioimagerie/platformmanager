@@ -28,7 +28,16 @@
         </div>
     </div>
     <div class="col-md-5 pm-form">
-        <?php echo $formDownload ?>
+        <?php if ($formDownload) {
+            echo $formDownload;
+        } else {
+        ?>
+        <div class="row">
+            <div class="col-xs-12 col-lg-12">
+                <a href="externals/pfm/templates/invoice_template.twig" download="template.twig" target="_blank" rel="noreferrer,noopener"><button style="margin: 10px;" class="btn btn-primary">Download example template</button></a>
+            </div>
+        </div>
+        <?php } ?>
         <?php echo $formUpload ?>
     </div>
 

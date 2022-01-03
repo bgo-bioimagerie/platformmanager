@@ -27,8 +27,8 @@ class CorespaceController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
 
         $this->spaceModel = new CoreSpace ();
     }
@@ -58,6 +58,9 @@ class CorespaceController extends CoresecureController {
     public function viewAction($id_space) {
 
         $space = $this->spaceModel->getSpace($id_space);
+        if(!$space) {
+            throw new PfmUserException('space not found', 404);
+        }
         if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
@@ -131,7 +134,7 @@ class CorespaceController extends CoresecureController {
             "spaceMenuItems" => $spaceMenuItems,
             "showAdmMenu" => $showAdmMenu,
             "showCom" => $showCom,
-            "data" => ["space" => $space]
+            "data" => ["space" => $space, "spaceMenuItems" => $spaceMenuItems]
         ));
     }
 
@@ -141,7 +144,7 @@ class CorespaceController extends CoresecureController {
      */
     public function configAction($id_space) {
 
-        $_SESSION["openedNav"] = "config";
+
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $space = $this->spaceModel->getSpace($id_space);
@@ -155,7 +158,7 @@ class CorespaceController extends CoresecureController {
      */
     public function configusersAction($id_space) {
 
-        $_SESSION["openedNav"] = "configusers";
+
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -270,7 +273,7 @@ class CorespaceController extends CoresecureController {
      * @return \Form
      */
     protected function configUsersForm($lang, $id_space) {
-        $_SESSION["openedNav"] = "configusers";
+
         $modeluser = new CoreUser();
         $users = $modeluser->getActiveUsers("name");
         $usersNames = array();

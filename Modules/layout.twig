@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{{metadesc | default('')}}"/>
         <meta name="mode" description="{{isdev}}">
-        <base href="{{rootWeb}}" >
+        <base href="{{context.rootWeb}}" >
         <title>
             {% block title %}{% endblock %}
         </title>
@@ -16,15 +16,20 @@
             <script src="externals/vuejs/vue.min.js"></script>
         {% endif %}
         <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
+        
         <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-        <link rel="stylesheet" href="Modules/core/Theme/core.css">
-        <link rel='stylesheet' href='Modules/core/Theme/spacemenu.css' />
         <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
         <script src="externals/jquery-1.11.1.js"></script>
         <script src="externals/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+        <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
         {% block stylesheet %}
 
         {% endblock %}
+
+        <link rel="stylesheet" href="Modules/core/Theme/core.css">
+        <link rel="stylesheet" href="Modules/core/Theme/space.css">
+        <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
     <body style="background-color: #e7ecf0;">
@@ -32,8 +37,7 @@
             {{navbar | raw}}
         {% endblock %}
 
-        {{mainMenu | raw}}
-
+        {{context.mainMenu | raw}}
 
         <div class="row">
 
@@ -47,11 +51,13 @@
                 </div>
             {% endif %}
 
-            {{ spaceMenu | raw }}
+            <div class="col-md-12 col-lg-12">
+            {{ context.spaceMenu | raw }}
+            </div>
 
-            {% if sideMenu %}
+            {% if context.sideMenu %}
                 <div class="col-md-2 col-lg-2">
-                    {{sideMenu | raw}}
+                    {{context.sideMenu | raw}}
                 </div>
                 <div class="col-md-10 col-lg-10">
             {% else %}
@@ -71,7 +77,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <div class="col-sm-4"><a href="/coreabout">About</a></div>
+                <div class="col-sm-4"><a href="core/about">About</a></div>
+                <div class="col-sm-4"><a href="core/privacy">Privacy</a></div>
             </div>
         </div>
         </footer>

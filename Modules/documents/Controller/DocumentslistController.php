@@ -17,14 +17,6 @@ require_once 'Modules/documents/Controller/DocumentsController.php';
 class DocumentslistController extends DocumentsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("documents");
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
@@ -63,7 +55,6 @@ class DocumentslistController extends DocumentsController {
     public function editAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
         $model = new Document();
         $data = $model->get($id_space, $id);
 
@@ -71,19 +62,17 @@ class DocumentslistController extends DocumentsController {
         $form->setTitle(DocumentsTranslator::Edit_Document($lang));
         $form->addText("title", DocumentsTranslator::Title($lang), true, $data["title"]);
         $form->addUpload("file_url", DocumentsTranslator::File($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "documentsedit/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "documentsedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "documents/" . $id_space);
 
         if ($form->check()) {
             $title = $this->request->getParameter("title");
             $id_user = $_SESSION["id_user"];
             $idNew = $model->set($id, $id_space, $title, $id_user);
-
             $target_dir = "data/documents/";
             if ($_FILES["file_url"]["name"] != "") {
                 $ext = pathinfo($_FILES["file_url"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "file_url", $idNew . "_" . $ext);
-
                 $model->setUrl($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
             }
 
@@ -95,22 +84,23 @@ class DocumentslistController extends DocumentsController {
     }
 
     public function openAction($id_space, $id) {
-
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
 
         $model = new Document();
         $file = $model->getUrl($id_space,$id);
-        
-        header("Cache-Control: public");
-        header("Content-Description: File Transfer");
-        header('Content-Disposition: attachment; filename="'.basename($file).'"' );
-        header("Content-Type: application/zip");
-        header("Content-Transfer-Encoding: binary");
-
-        // read the file from disk
-        readfile($file);
-        //    return;
-        //$this->redirect($path);
+        if (file_exists($file)) {
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header('Content-Disposition: attachment; filename="'.basename($file).'"' );
+            header("Content-Type: binary/octet-stream");
+            header("Content-Transfer-Encoding: binary");
+            // read the file from disk
+            readfile($file);
+        } else {
+            $_SESSION['flash'] = DocumentsTranslator::Missing_Document($this->getLanguage());
+            $_SESSION['flashClass'] = "warning";
+            $this->redirect("documents/" . $id_space);
+        }
     }
 
     public function deleteAction($id_space, $id) {

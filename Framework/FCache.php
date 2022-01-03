@@ -245,7 +245,7 @@ class FCache extends Model {
         foreach ($urlInfo as $url) {
             $sqlg = "SELECT * FROM cache_urls_gets WHERE url_id=?";
             $params = $this->runRequest($sqlg, array($url["id"]))->fetchAll();
-            $urlParams = [$url['url']];
+            $urlParams = [$url['url'], sprintf('%s/%s/%s', $url['module'], $url['controller'], $url['action'])];
             foreach ($params as $param) {
                $urlParams[] = $param['name'];
             }
