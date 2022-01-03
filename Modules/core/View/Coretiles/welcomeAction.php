@@ -47,7 +47,7 @@
                     </a>
                     <p></p>
                     <p style="color:#018181; ">
-                        <a :href="`corespace/${space.id}`">{{space.name}}  <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="glyphicon glyphicon-lock"></span></a>
+                        <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="glyphicon glyphicon-lock"></span></a>
                     </p>
                     <p style="color:#a1a1a1; font-size:12px;">{{space.description}}</p>
                     <div>
@@ -73,7 +73,7 @@
                     </a>
                     <p></p>
                     <p style="color:#018181; ">
-                        <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
+                        <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
                         <?php if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
                                 <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="glyphicon glyphicon-star"></span></a>
                         <?php } ?>
@@ -146,6 +146,7 @@ var app = new Vue({
             matches: [],
             bookings: [],
             projects: [],
+            menus: <?php echo json_encode($itemsMenus); ?>
         }
     },
     mounted: function() {

@@ -154,6 +154,13 @@ class CoretilesController extends CorecookiesecureController {
                 return $item1['name'] <=> $item2['name'];
             });
 
+            $menuItemsModel = new CoreMainMenuItem();
+            $itemsMenusList = $menuItemsModel->getMainMenus();
+            $itemsMenus = [];
+            foreach($itemsMenusList as $item) {
+                $itemsMenus[$item['id']] = $item['name']; 
+            }
+
             return $this->render(array(
                 'lang' => $lang,
                 'content' => $content,
@@ -163,6 +170,7 @@ class CoretilesController extends CorecookiesecureController {
                 'resources' => $resources,
                 'mainSubMenus' => [],
                 'mainMenus' => $mainMenus,
+                'itemsMenus' => $itemsMenus,
                 'iconType' => $modelCoreConfig->getParam("space_icon_type"),
                 'showSubBar' => false
                 ), "welcomeAction");
