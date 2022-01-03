@@ -300,7 +300,7 @@ class CoreconfigadminController extends CoresecureController {
         $value = $modelCoreConfig->getParam("admin_email");
 
         $form = new Form($this->request, "emailForm");
-        $form->addSeparator(CoreTranslator::non_active_users($lang));
+        $form->addSeparator(CoreTranslator::Admin($lang));
         $form->addText("admin_email", CoreTranslator::Email($lang), false, $value);
 
         $form->setButtonsWidth(2, 9);
