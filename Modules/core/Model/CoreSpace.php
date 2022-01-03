@@ -184,7 +184,9 @@ class CoreSpace extends Model {
             "support" => "",
             "description" => "",
             "admins" => [],
-            "txtcolor" => "#ffffff"
+            "txtcolor" => "#ffffff",
+            "plan" => 0,
+            "plan_expire" => 0,
         ];
     }
     
