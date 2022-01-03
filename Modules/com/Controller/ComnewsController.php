@@ -17,14 +17,6 @@ require_once 'Modules/com/Controller/ComController.php';
  */
 class ComnewsController extends ComController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("com");
-    }
-
     public function indexAction($id_space) {
 
         //$this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);

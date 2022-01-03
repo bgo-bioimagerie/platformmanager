@@ -13,19 +13,7 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class DocumentsController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("users/institutions");
-    }
-
     public function navbar($id_space){
-        $html = file_get_contents('Modules/documents/View/Documents/navbar.php');
-        
-        
-        return $html;
-
+        return file_get_contents('Modules/documents/View/Documents/navbar.php');
     }
 }

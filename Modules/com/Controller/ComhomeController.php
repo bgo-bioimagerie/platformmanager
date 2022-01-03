@@ -14,14 +14,6 @@ require_once 'Modules/com/Controller/ComController.php';
  */
 class ComhomeController extends ComController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("com");
-    }
-
     public function indexAction($id_space) {
 
         $modelParam = new CoreConfig();

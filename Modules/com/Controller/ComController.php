@@ -13,16 +13,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class ComController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("com");
-        $_SESSION["openedNav"] = "com";
-    }
-
-
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();

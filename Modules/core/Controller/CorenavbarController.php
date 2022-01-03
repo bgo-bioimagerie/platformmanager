@@ -16,14 +16,6 @@ class CorenavbarController extends CoresecureController {
     /**
      * 
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorization(CoreStatus::$USER);
-    }
-    
-    /**
-     * 
-     */
     public function indexAction() {
         
     }

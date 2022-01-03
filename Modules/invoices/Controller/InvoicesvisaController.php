@@ -22,9 +22,9 @@ class InvoicesvisaController extends InvoicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "invoices";
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
+
         $this->visaModel = new InVisa();
         //$this->checkAuthorizationMenu("invoices");
     }

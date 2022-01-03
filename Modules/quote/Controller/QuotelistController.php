@@ -32,15 +32,6 @@ require_once 'Modules/quote/Controller/QuoteController.php';
 class QuotelistController extends QuoteController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("quote");
-        $_SESSION["openedNav"] = "quote";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

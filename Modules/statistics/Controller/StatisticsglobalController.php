@@ -22,14 +22,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  */
 class StatisticsglobalController extends StatisticsController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("statistics");
-    }
-
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
@@ -108,10 +100,10 @@ class StatisticsglobalController extends StatisticsController {
 
     protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space) {
 
-        $controllerServices = new ServicesstatisticsprojectController($this->request);
+        $controllerServices = new ServicesstatisticsprojectController($this->request, $this->currentSpace);
         $spreadsheet = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
 
-        $controllerBooking = new BookingstatisticsController($this->request);
+        $controllerBooking = new BookingstatisticsController($this->request, $this->currentSpace);
         $spreadsheet = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet);
         $spreadsheet->setActiveSheetIndex(1);
 

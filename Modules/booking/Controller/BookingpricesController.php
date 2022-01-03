@@ -28,13 +28,6 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
 class BookingpricesController extends BookingsettingsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

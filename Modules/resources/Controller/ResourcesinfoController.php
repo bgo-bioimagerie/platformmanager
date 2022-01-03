@@ -31,15 +31,6 @@ require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 class ResourcesinfoController extends ResourcesBaseController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("resources");
-        $_SESSION["openedNav"] = "resources";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

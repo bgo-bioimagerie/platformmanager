@@ -16,8 +16,8 @@ class CorehomeController extends CorecookiesecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->user = new CoreUser();
         //$this->checkAuthorization(CoreStatus::$USER);
     }

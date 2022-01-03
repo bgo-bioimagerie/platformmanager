@@ -12,14 +12,6 @@ require_once 'Modules/invoices/Controller/InvoicesController.php';
  * Controller for the home page
  */
 abstract class InvoiceAbstractController extends InvoicesController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("invoices");
-    }
     
     /**
      * To desplay the form that allows to edit an order and xport as pdf

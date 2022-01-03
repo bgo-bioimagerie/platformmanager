@@ -27,7 +27,6 @@ if ($space['color'] == "") {
 
 <div class="row">
 <div  style="background-color: #fff; ">
-
     <div id="tiles" class="container" style="background-color: #fff;">
 
         <?php

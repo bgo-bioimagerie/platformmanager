@@ -27,15 +27,6 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
  */
 class BookingController extends BookingabstractController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("booking");
-    }
-
-
     public function navbar($id_space) {
         $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
 
@@ -847,8 +838,8 @@ class BookingController extends BookingabstractController {
         $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $id_space);
         
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
-            $modelDefault = new BookingdefaultController($this->request);
-            $modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
+            $modelDefault = new BookingdefaultController($this->request, $this->currentSpace);
+            //$modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
             $modelDefault->editreservationdefault($id_space, $param);
         } else {
 

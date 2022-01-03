@@ -11,14 +11,6 @@ require_once 'Modules/bulletjournal/Model/BulletjournalTranslator.php';
  * Controller for the home page
  */
 class BulletjournalController extends CoresecureController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bulletjournal");
-    }
     
     /**
      * (non-PHPdoc)

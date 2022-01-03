@@ -25,14 +25,6 @@ require_once 'Modules/core/Model/CoreTranslator.php';
  */
 class CorespaceaccessController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
-
-
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();

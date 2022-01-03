@@ -26,15 +26,6 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
  * Controller for the home page
  */
 class ServicesinvoiceorderController extends InvoiceAbstractController {
-    //private $serviceModel;
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "invoices";
-    }
 
     /**
      * (non-PHPdoc)

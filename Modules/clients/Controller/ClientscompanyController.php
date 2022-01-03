@@ -23,10 +23,10 @@ class ClientscompanyController extends ClientsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->companyModel = new ClCompany();
-        $_SESSION["openedNav"] = "clients";
+
     }
 
     /**

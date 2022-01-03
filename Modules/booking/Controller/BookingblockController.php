@@ -19,15 +19,6 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
 class BookingblockController extends BookingsettingsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bookingsettings");
-        $_SESSION["openedNav"] = "bookingsettings";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

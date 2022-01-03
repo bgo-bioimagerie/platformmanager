@@ -11,12 +11,6 @@ require_once 'Modules/core/Model/CoreInstall.php';
  */
 class CoreaboutController extends CorecookiesecureController {
 
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $this->user = new CoreUser();
-        $this->logger = Configuration::getLogger();
-    }
-
     /**
      * (non-PHPdoc)
      * @see Controller::index()

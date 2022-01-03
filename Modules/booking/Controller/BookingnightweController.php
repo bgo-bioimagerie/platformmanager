@@ -18,14 +18,6 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
  */
 class BookingnightweController extends BookingsettingsController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "bookingsettings";
-    }
-
     public function indexAction($id_space){
         
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);

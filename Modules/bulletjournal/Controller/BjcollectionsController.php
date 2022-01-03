@@ -16,14 +16,6 @@ require_once 'Modules/bulletjournal/Model/BjCollection.php';
 class BjcollectionsController extends CoresecureController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bulletjournal");
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

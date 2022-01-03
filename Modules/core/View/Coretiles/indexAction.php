@@ -26,7 +26,6 @@
 </div>
 <?php } ?>
 
-
 <div class="row" style="background-color: #fff">
     <div class="container"<?php if ($showSubBar){echo 'style="margin-top: 50px;"';} ?> >
         <h3><?php echo $title ?></h3>    
