@@ -46,10 +46,6 @@ class CoreconnectionController extends CorecookiesecureController {
         $logo = $modelConfig->getParam("logo");
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
-        $urlCarousel1 = $modelConfig->getParam("connection_carousel1");
-        $urlCarousel2 = $modelConfig->getParam("connection_carousel2");
-        $urlCarousel3 = $modelConfig->getParam("connection_carousel3");
-        $viewCarousel = $modelConfig->getParam("home_view_carousel");
 
         if(isset($_SESSION['message'])) {
             $message =  $_SESSION['message'];
@@ -77,20 +73,16 @@ class CoreconnectionController extends CorecookiesecureController {
         $_SESSION["redirect"] = "coretiles";
 
         if(isset($_GET['redirect_url'])) {
-            $redirection = $_GET['redirect_url'];
+            $redirection = urldecode($_GET['redirect_url']);
         }
 
 
         return $this->render(array("msgError" => $message, "admin_email" => $admin_email, "logo" => $logo,
             "home_title" => $home_title, "home_message" => $home_message,
             "redirection" => $redirection,
-            "urlCarousel1" => $urlCarousel1,
-            "urlCarousel2" => $urlCarousel2,
-            "urlCarousel3" => $urlCarousel3,
             "language" => $language,
             "metadesc" => 'platform manager login page',
-            "providers" => $providers,
-            "viewCarousel" => $viewCarousel), "indexAction");
+            "providers" => $providers), "indexAction");
     }
 
     /**
@@ -98,9 +90,7 @@ class CoreconnectionController extends CorecookiesecureController {
      * @throws Exception
      */
     public function loginAction() {
-        $modelConfig = new CoreConfig();
-        $admin_email = $modelConfig->getParam("admin_email");
-
+        $lang = $this->getLanguage();
         if ($this->request->isparameter("login") && $this->request->isParameter("pwd")) {
             $login = $this->request->getParameter("login");
             $pwd = $this->request->getparameter("pwd", false);
@@ -110,47 +100,61 @@ class CoreconnectionController extends CorecookiesecureController {
                 $redirection = $this->request->getParameter('redirection');
             }
 
-            if ($login == "--") {
-                $this->render(array('msgError' => 'Login not correct', "admin_email" => $admin_email), "index");
-                return;
-            }
-
             $connect = $this->connect($login, $pwd);
-            //print_r($connect);
-
-            if ($connect == "allowed") {
-
+            if ($connect === "allowed") {                
                 $loggedUser = $this->initSession($login);
-
                 // generate the remember me cookie
                 if ($this->request->isparameter("remember")) {
-                    //throw new Exception("Set cookie <br/>");
                     $key = sha1($this->generateRandomKey());
-                    //echo "set cookie with id = " . $key . "<br/>";
                     $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
-                        //die("die failed to set cookie with key " . $key . "<br/>");
                         throw new PfmException("failed to set cookie with key " . $key);
                     }
                     $modelUser = new CoreUser();
                     $modelUser->setRememberKey($loggedUser['idUser'], $key);
                 }
-
                 if($redirection) {
                     $this->redirect($redirection);
                     return;
                 }
-
                 // redirect
                 $redirectPath = $this->getRedirectPath();
                 $this->redirectNoRemoveHeader($redirectPath);
             } else {
-                $this->redirect('/coreconnection?redirect_url='.$redirection);
-                //$this->indexAction($connect);
+                $this->loginError($redirection, $connect);
             }
         } else {
-            throw new PfmAuthException("Action not allowed : login or password undefined", 401);
+            throw new PfmAuthException(CoreTranslator::UndefinedCredentials($lang), 401);
         }
+    }
+
+    /**
+     * In case of connection failure,
+     * redirects and sets flash message depending on connection error message
+     * 
+     * @param string $redirection redirection string
+     * @param string $connection_error error returned at connection failure
+     * 
+     */
+    private function loginError($redirection, $connection_error = "") {
+        $lang = $this->getLanguage();
+        $_SESSION['flashClass'] = "danger";
+        switch ($connection_error) {
+            case "inactive":
+                $msg = CoreTranslator::AccountInactive($lang);
+                break;
+            case "invalid_password":
+                $msg = CoreTranslator::InvalidPassword($lang);
+                break;
+            case "invalid_login":
+                $msg = CoreTranslator::InvalidLogin($lang);
+                break;
+            default:
+                $msg = ($connection_error != "") ? $connection_error : CoreTranslator::ConnectionError($lang);
+                break;
+        }
+        $_SESSION['flash'] = $msg;
+        $this->redirect('/coreconnection?redirect_url='.$redirection);
     }
 
     /**
@@ -195,16 +199,11 @@ class CoreconnectionController extends CorecookiesecureController {
         // test if local account
         if ($this->user->isLocalUser($login)) {
             $this->logger->debug('[auth] local user', ['user' => $login]);
-            //echo "found local user <br/>";
             return $this->user->connect($login, $pwd);
-        }
-
-        // search for LDAP account
-        else {
-            //echo "into LDap <br/>";
-            $modelCoreConfig = new CoreConfig();
-            $this->logger->debug('[auth] check ldap', ['ldap' => $modelCoreConfig->getParam("useLdap")]);
-            if ($modelCoreConfig->getParam("useLdap")) {
+        } else {
+            // search for LDAP account
+            $this->logger->debug('[auth] check ldap', ['ldap' => CoreLdapConfiguration::get('ldap_use', 0)]);
+            if (CoreLdapConfiguration::get('ldap_use', 0)) {
                 $this->logger->debug('[auth] ldap user', ['user' => $login]);
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
@@ -212,27 +211,23 @@ class CoreconnectionController extends CorecookiesecureController {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = $modelCoreConfig->getParam("ldapDefaultStatus");
+                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
 
                     $userInfo = $this->user->getUserByLogin($login);
                     if(!$userInfo['apikey']) {
                         $this->user->newApiKey($userInfo['idUser']);
                     }
-                    //print_r($userInfo);
-
                     $modelSpace = new CoreSpace();
                     $spacesToActivate = $modelSpace->getSpaces('id');
                     foreach ($spacesToActivate as $spa) {
                         $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
                     }
-
                     return $this->user->isActive($login);
                 }
             }
         }
-
-        return "Login or password not correct";
+        return "invalid_login";
     }
 
     public function passwordforgottenAction() {

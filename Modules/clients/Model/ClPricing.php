@@ -79,6 +79,25 @@ class ClPricing extends Model {
         return array("names" => $names, "ids" => $ids);
     }
 
+    /**
+     * Get a client's pricing
+     * 
+     * @param int|string $id_space
+     * @param int|string $id_client
+     * 
+     * @return array(string) pricings
+     */
+    public function getPricingByClient($id_space, $id_client) {
+        $sql =
+            "SELECT cl_pricings.* FROM cl_pricings
+            INNER JOIN cl_clients
+            ON cl_clients.pricing = cl_pricings.id
+            WHERE cl_clients.id_space = ?
+            AND cl_clients.id = ?
+            AND cl_pricings.deleted = 0";
+            return $this->runRequest($sql, array($id_space, $id_client))->fetchAll();
+    }
+
     public function delete($id_space, $id) {
         $sql = "UPDATE cl_pricings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));

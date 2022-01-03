@@ -131,9 +131,9 @@ class CoreTranslator {
     public static function AccountPendingCreationEmail($lang, $jwt, $url) {
         $confirmUrl = $url."/corecreateaccountconfirm?token=".$jwt;
         if($lang == "fr") {
-            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl;
+            return "Merci de confirmer votre inscription en allant sur le lien suivant.\n".$confirmUrl."\nLe lien expirera dans 2 jours.";
         }
-        return "Please confirm your registration at the following link.\n".$confirmUrl;
+        return "Please confirm your registration at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Link will expire in 2 days.";
     }
 
     public static function WaitingAccountMessage($lang) {
@@ -664,9 +664,9 @@ class CoreTranslator {
 
     public static function Activate_desactivate_menus($lang = "") {
         if ($lang == "fr") {
-            return "Activer/désactiver les menus";
+            return "Activer/désactiver le module";
         }
-        return "Activate/deactivate menus";
+        return "Activate/deactivate module";
     }
 
     public static function disable($lang = "") {
@@ -1034,9 +1034,9 @@ class CoreTranslator {
 
     public static function menu_color($lang) {
         if ($lang == "fr") {
-            return "Couleur du menu";
+            return "Couleur du module";
         }
-        return "Menu color";
+        return "Module color";
     }
 
     public static function color($lang) {
@@ -1142,6 +1142,13 @@ class CoreTranslator {
             return "Le login est déjà pris";
         }
         return "Login already exists";
+    }
+
+    public static function LoginDoesNotExists($lang) {
+        if ($lang == "fr") {
+            return "Le login est inconnu";
+        }
+        return "Login does not exists";
     }
 
     public static function EmailAlreadyExists($lang) {
@@ -1286,9 +1293,9 @@ class CoreTranslator {
 
     public static function Menus($lang) {
         if ($lang == "fr") {
-            return "Menus";
+            return "Structures";
         }
-        return "Menus";
+        return "Structures";
     }
 
     public static function Menus_saved($lang) {
@@ -1433,9 +1440,9 @@ class CoreTranslator {
 
     public static function MenuName($lang) {
         if ($lang == "fr") {
-            return "Nom du menu";
+            return "Nom du module";
         }
-        return "Menu name";
+        return "Module name";
     }
 
     public static function ExportAll($lang) {
@@ -1496,11 +1503,9 @@ class CoreTranslator {
     
     public static function CreatedAccountMessage($lang){
         if ($lang == "fr") {
-            return "Votre compte a bien été créé et un email avec vos identifiants vous a été envoyé. Votre compte sera actif lorsqu'un-e responsable"
-            . " de l'accès que vous avez demandé l'activera";
+            return "Votre compte a bien été créé et un email avec vos identifiants vous a été envoyé.";
         }
-        return "Your account has been created and you will receive an email with your credentials. You will be able to connect to your account when a manager of"
-        . " the acces you asked for will validate your account";
+        return "Your account has been created and you will receive an email with your credentials.";
     }
 
     public static function ExtAccountMessage($lang) {
@@ -1634,72 +1639,72 @@ class CoreTranslator {
 
     public static function MainSubMenus($lang) {
         if ($lang == "fr") {
-            return "Sous menus";
+            return "Sous-structures";
         }
-        return "Sub menus";
+        return "Substructures";
     }
 
     public static function MainMenus($lang) {
         if ($lang == "fr") {
-            return "Menus";
+            return "Structures";
         }
-        return "Menus";
+        return "Structures";
     }
 
     public static function MainMenu($lang) {
         if ($lang == "fr") {
-            return "Menu";
+            return "Structure";
         }
-        return "Menu";
+        return "Structure";
     }
 
     public static function NewMainMenu($lang) {
         if ($lang == "fr") {
-            return "Ajouter menu";
+            return "Ajouter structure";
         }
-        return "New menu";
+        return "New structure";
     }
 
     public static function NewMainSubMenu($lang) {
         if ($lang == "fr") {
-            return "Ajouter sous menu";
+            return "Ajouter sous-structure";
         }
-        return "New sub menu";
+        return "New substructure";
     }
 
     public static function EditMainMenu($lang) {
         if ($lang == "fr") {
-            return "Edition menu";
+            return "Edition structure";
         }
-        return "Edit menu";
+        return "Edit structure";
     }
 
     public static function EditMainSubMenu($lang) {
         if ($lang == "fr") {
-            return "Edition sous menu";
+            return "Edition sous-structure";
         }
-        return "Edit sub menu";
+        return "Edit substructure";
     }
 
     public static function MenuSaved($lang) {
         if ($lang == "fr") {
-            return "Le menu a bien été sauvegardé";
+            return "La structure a bien été sauvegardée";
         }
-        return "The menu has been saved";
+        return "Structure has been saved";
     }
 
     public static function SubMenus($lang) {
         if ($lang == "fr") {
-            return "Sous menus";
+            return "Sous-structures";
         }
-        return "Sub menus";
+        return "Substructures";
     }
 
     public static function SubMenu($lang) {
         if ($lang == "fr") {
-            return "Sous menu";
+            return "Sous-structure";
         }
-        return "Sub menu";
+        return "Substructure";
     }
 
     public static function ItemsFor($lang) {
@@ -1758,6 +1763,13 @@ class CoreTranslator {
         return "Create an account";
     }
 
+    public static function JoinAccount($lang) {
+        if ($lang == "fr") {
+            return "Ajouter un compte existant";
+        }
+        return "Add existing account";
+    }
+
     public static function AccessTo($lang){
         if ($lang == "fr") {
             return "Demande accès à";
@@ -1784,6 +1796,13 @@ class CoreTranslator {
             return "Comptes en attente d'activation";
         }
         return "Pending users accounts";
+    }
+
+    public static function PendingUserAccount($lang){
+        if ($lang == "fr") {
+            return "Compte en attente d'activation";
+        }
+        return "Pending user account";
     }
     
     public static function DateCreated($lang){
@@ -1877,9 +1896,11 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $spaceName, $userEmail, $lang, $organization = null, $team = null) {
+    public static function JoinRequestEmail($login, $spaceName, $userEmail, $userFullName, $lang, $organization = null, $team = null) {
         if ($lang == "fr") {
-            $message = "Bonjour, <br><br>" . $login . " (" . $userEmail . ") demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            $message = "Bonjour, <br><br>" . $userFullName . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
+            $message .= ("<br>Login : " . $login);
+            $message .= ("<br>Email : " . $userEmail);
             if ($organization) {
                 $message .= ("<br>Organisation : " . $organization);
             }
@@ -1888,7 +1909,9 @@ class CoreTranslator {
             }
             return $message;
         }
-        $message = "Hi, <br><br>" . $login . " (" . $userEmail . ") requests to join your space " . $spaceName. " on Platform-Manager";
+        $message = "Hi, <br><br>" . $userFullName . " requests to join your space " . $spaceName. " on Platform-Manager";
+        $message .= ("<br>Login: " . $login);
+        $message .= ("<br>Email: " . $userEmail);
         if ($organization) {
             $message .= ("<br>Organization: " . $organization);
         }
@@ -1979,6 +2002,48 @@ class CoreTranslator {
             return "Français";
         }
         return "French";
+    }
+
+    public static function InvalidCredentials($lang = "") {
+        if ($lang == "fr") {
+            return "Login ou mot de passe incorrect";
+        }
+        return "Wrong login or password";
+    }
+
+    public static function UndefinedCredentials($lang = "") {
+        if ($lang == "fr") {
+            return "Action non autorisée : login ou mot de passe non défini";
+        }
+        return "Action not allowed: undefined login or password";
+    }
+
+    public static function AccountInactive($lang = "") {
+        if ($lang == "fr") {
+            return "Votre compte n'est pas actif.";
+        }
+        return "Your account is not active";
+    }
+
+    public static function InvalidPassword($lang = "") {
+        if ($lang == "fr") {
+            return "Votre mot de passe est erroné.";
+        }
+        return "Wrong password";
+    }
+
+    public static function InvalidLogin($lang = "") {
+        if ($lang == "fr") {
+            return "Ce login n'existe pas.";
+        }
+        return "This login doesn't exist.";
+    }
+
+    public static function ConnectionError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant la connexion.";
+        }
+        return "An error occured during connection.";
     }
     
 }

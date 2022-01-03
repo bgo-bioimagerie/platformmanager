@@ -101,6 +101,9 @@ class BookingpackagesController extends BookingsettingsController {
                 }
             }
             for ($p = 0; $p < count($packageID); $p++) {
+                if($packageName[$p] == "") {
+                    continue;
+                }
                 if (!$packageID[$p]) {
                     // If package id not set, use from known packages
                     if(isset($packs[$packageName[$p]])) {

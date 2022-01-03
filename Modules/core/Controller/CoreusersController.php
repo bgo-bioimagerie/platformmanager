@@ -20,7 +20,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 class CoreusersController extends CoresecureController {
 
     public function mainMenu() {
-        if ($_SERVER['REQUEST_URI'] != "coremyaccount") {
+        if (!str_contains($_SERVER['REQUEST_URI'], "coremyaccount")) {
             return null;
         }
         $lang = $this->getLanguage();

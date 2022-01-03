@@ -96,9 +96,9 @@ class CoreLdap {
         }
         if ($ds) {
 
-            $modelCoreconfig = new CoreConfig();
+            //$modelCoreconfig = new CoreConfig();
             // Attributs testés pour egalite avec le login
-            $atts = explode("|", $modelCoreconfig->getParam("ldapSearchAtt"));
+            $atts = explode("|", CoreLdapConfiguration::get('ldap_search_attr', "uid"));
             // $atts = array('uid', 'login', 'userid', 'cn', 'sn', 'samaccountname', 'userprincipalname');
             $login_search = preg_replace("/[^\-@._[:space:]a-zA-Z0-9]/", "", $_login);
             // Tenter une recherche pour essayer de retrouver le DN
@@ -151,15 +151,16 @@ class CoreLdap {
      * @param string $l_pwd User password
      * @param boolean $use_tls
      * @param string $msg_error
-     * @return string|boolean error message or true/false if $msg_error=="no"
+     * @return mixed|boolean error message or true/false if $msg_error=="no"
      */
     private function grr_connect_ldap($l_adresse, $l_port, $l_login, $l_pwd, $use_tls, $msg_error = "no") {
-        Configuration::getLogger()->debug('[ldap][grr_connect_ldap]');
+        
 
         $ldap_dsn = "ldap://$l_adresse:$l_port";
         if($use_tls) {
             $ldap_dsn = "ldaps://$l_adresse:$l_port";
         }
+        Configuration::getLogger()->debug('[ldap][grr_connect_ldap]', ['dsn' => $ldap_dsn]);
         $ds = ldap_connect($ldap_dsn);
         if ($ds) {
             
@@ -211,7 +212,7 @@ class CoreLdap {
 
     /**
      * Search if a user exists in LDAP (adapted from GRR)
-     * @param string $ds
+     * @param mixed $ds
      * @param string $basedn
      * @param string $login_attr
      * @param string $login
@@ -220,20 +221,21 @@ class CoreLdap {
      * @return string|boolean
      */
     private function grr_ldap_search_user($ds, $basedn, $login_attr, $login, $filtre_sup = "", $diagnostic = "no") {
-        Configuration::getLogger()->debug('[ldap][grr_ldap_search_user]');
+        
 
         // Construction du filtre
         $filter = "(" . $login_attr . "=" . $login . ")";
         if (!empty($filtre_sup)) {
             $filter = "(& " . $filter . $filtre_sup . ")";
         }
-
+        Configuration::getLogger()->debug('[ldap][grr_ldap_search_user]', ['filter' => $filter, 'dn' => $basedn]);
         $res = @ldap_search($ds, $basedn, $filter, array(
                     "dn",
                     $login_attr
                         ), 0, 0);
         
         if ($res) {
+            Configuration::getLogger()->debug('[ldap][grr_ldap_search_user] geet entries');
             $info = @ldap_get_entries($ds, $res);
             if ((!is_array($info)) || ( $info ['count'] == 0)) {
                 return false;
@@ -244,6 +246,7 @@ class CoreLdap {
                 return $info [0] ['dn'];
             }
         } else {
+            Configuration::getLogger()->debug('[ldap][grr_ldap_search_user] failed');
             return false;
         }
     }
@@ -258,10 +261,9 @@ class CoreLdap {
     private function grr_getinfo_ldap($_dn, $_login, $_password) {
         Configuration::getLogger()->debug('[ldap][grr_getinfo_ldap]');
 
-        $modelCoreConfig = new CoreConfig();
-        $m_setting_ldap_champ_nom = $modelCoreConfig->getParam("ldapNameAtt");
-        $m_setting_ldap_champ_prenom = $modelCoreConfig->getParam("ldapFirstnameAtt");
-        $m_setting_ldap_champ_email = $modelCoreConfig->getParam("ldapMailAtt");
+        $m_setting_ldap_champ_nom = CoreLdapConfiguration::get('ldap_name_attr', 'sn');
+        $m_setting_ldap_champ_prenom = CoreLdapConfiguration::get('ldap_firstname_attr', 'givenname');
+        $m_setting_ldap_champ_email = CoreLdapConfiguration::get('ldap_mail_attr', 'email');
 
         $ldap_adresse = CoreLdapConfiguration::get("ldap_host");
         $ldap_port = CoreLdapConfiguration::get("ldap_port", 389);
@@ -278,7 +280,7 @@ class CoreLdap {
         }
         $result = false;
         if ($ds) {
-            Configuration::getLogger()->debug('[ldap][get user info]', ["fields" => array(
+            Configuration::getLogger()->debug('[ldap][get user info]', ["dn" => $_dn, "fields" => array(
                 $m_setting_ldap_champ_nom,
                 $m_setting_ldap_champ_prenom,
                 $m_setting_ldap_champ_email

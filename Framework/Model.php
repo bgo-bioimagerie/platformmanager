@@ -128,9 +128,9 @@ abstract class Model {
 
     /**
      * 
-     * @param type $dsn
-     * @param type $login
-     * @param type $pwd
+     * @param string $dsn
+     * @param string $login
+     * @param string $pwd
      */
     public function setDatabase($dsn, $login, $pwd) {
 
@@ -144,10 +144,10 @@ abstract class Model {
 
     /**
      * 
-     * @param type $tableName
-     * @param type $columnName
-     * @param type $columnType
-     * @param type $defaultValue
+     * @param string $tableName
+     * @param string $columnName
+     * @param string $columnType
+     * @param mixed $defaultValue
      */
     public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
 
@@ -180,7 +180,7 @@ abstract class Model {
 
     /**
      * 
-     * @param type $table
+     * @param string $table
      * @return boolean
      */
     public function isTable($table) {
@@ -262,9 +262,9 @@ abstract class Model {
 
     /**
      * 
-     * @param type $name
-     * @param type $type
-     * @param type $value
+     * @param string $name
+     * @param string $type
+     * @param mixed $value
      */
     public function setColumnsInfo($name, $type, $value) {
         $this->columnsNames[] = $name;
@@ -375,8 +375,8 @@ abstract class Model {
         $sql = "SELECT * from $tableName WHERE $key=?";
         $params = array($value);
         if ($id_space) {
-            $sql = " AND id_space=?";
-            $params .= [$value, $id_space];
+            $sql .= " AND id_space=?";
+            $params[] = $id_space;
 
         }
         return $this->runRequest($sql,$params)->fetch();
@@ -402,6 +402,51 @@ abstract class Model {
 
         }
         return $this->runRequest($sql, $params)->fetch();
+    }
+
+    /**
+     * @param $space space object
+     */
+    public function createDbAndViews($space){
+        $dsn = Configuration::get("dsn", null);
+        if(!$dsn) {
+            $dsn = Configuration::get("dsn", 'mysql:host='.Configuration::get('mysql_host', 'mysql').';dbname='.Configuration::get('mysql_dbname', 'platform_manager').';charset=utf8');
+        }
+        $login = Configuration::get("mysql_admin_login", "root");
+        $pwd = Configuration::get("mysql_admin_pwd", "platform_manager");
+        $pdo = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+        $pdo->exec("SET CHARACTER SET utf8");
+
+        $spaceID = $space['id'];
+        $spaceName = "pfm".$spaceID;
+        $sql = "CREATE DATABASE IF NOT EXISTS $spaceName";
+        $pdo->query($sql);
+        $password = crypt($spaceName, Configuration::get('jwt_secret'));
+        $sql = "CREATE USER IF NOT EXISTS '$spaceName'@'%' IDENTIFIED BY '$password'";
+        $pdo->query($sql);
+        $sql = "GRANT SELECT ON $spaceName.* TO '$spaceName'@'%'";
+        $pdo->query($sql);
+
+        $sql = "show tables";
+        $tables = $pdo->query($sql)->fetchAll();
+        foreach ($tables as $tb) {
+            $table = $tb[0];
+            try {
+            $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
+            $pdo->query($sql);
+            } catch(Exception $e) {
+                Configuration::getLogger()->warning("[db] could not create view", ["error" => $e->getMessage()]);
+            }
+        }
+        try {
+            $sql = "CREATE or REPLACE VIEW $spaceName.users AS ";
+            $sql .= "SELECT core_users.login, core_users.id from core_users ";
+            $sql .= "INNER JOIN core_j_spaces_user on core_j_spaces_user.id_user=core_users.id ";
+            $sql .= "WHERE core_j_spaces_user.status > 0 and core_j_spaces_user.id_space=$spaceID";
+            $pdo->query($sql);
+        } catch(Exception $e) {
+            Configuration::getLogger()->warning("[db] could not create user view", ["error" => $e->getMessage()]);
+        }
     }
 
 }

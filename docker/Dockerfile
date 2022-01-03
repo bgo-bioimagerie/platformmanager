@@ -68,6 +68,7 @@ RUN git clone https://github.com/bgo-bioimagerie/platformmanager.git /tmp/platfo
   && cp -r /tmp/platformmanager_git/* /var/www/platformmanager \
   && cp /tmp/platformmanager_git/.htaccess /var/www/platformmanager \
   && cp -r /tmp/platformmanager_git/.git /var/www/platformmanager \
+  && cp -r /tmp/platformmanager_git/.gitignore /var/www/platformmanager \
   && rm -rf /tmp/platformmanager_git \
   && cd /var/www/ \
   && mkdir platformmanager/tmp \

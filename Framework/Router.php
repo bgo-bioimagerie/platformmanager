@@ -404,7 +404,7 @@ class Router {
 
             
             if($exception instanceof PfmAuthException && $errCode == 401) {
-                header("Location:" . '/coreconnection?redirect_url='.$_SERVER['REQUEST_URI']);
+                header("Location:" . '/coreconnection?redirect_url='.urlencode($_SERVER['REQUEST_URI']));
                 return;
             }
         }

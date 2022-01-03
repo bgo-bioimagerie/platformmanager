@@ -134,7 +134,7 @@ class CorespaceController extends CoresecureController {
             "spaceMenuItems" => $spaceMenuItems,
             "showAdmMenu" => $showAdmMenu,
             "showCom" => $showCom,
-            "data" => ["space" => $space]
+            "data" => ["space" => $space, "spaceMenuItems" => $spaceMenuItems]
         ));
     }
 

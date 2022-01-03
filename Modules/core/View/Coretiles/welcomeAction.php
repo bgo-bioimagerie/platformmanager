@@ -6,7 +6,7 @@
     .modulebox{
         border: solid 1px #e1e1e1; 
         border-bottom: solid 3px #e1e1e1; 
-        height:325px; 
+        min-height:325px; 
         width:220px; 
         margin-left: 25px;
         margin-top: 25px;
@@ -22,7 +22,7 @@
 <div class="container" id="welcome">
     <div class="row">
 
-        <div class="col-xs-2">
+        <div class="col-md-2">
                 <div class="col-xs-12"><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
                 <?php 
             foreach ($mainMenus as $menu) {
@@ -55,12 +55,12 @@
                         support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
                         </small>
                     </div>
-                    <div v-if="space.join" style="position: absolute; bottom: 20px; right: 10px">
+                    <div v-if="space.join" style="bottom: 20px; right: 10px">
                         <a :href="`coretilesselfjoinspace/${space.id}`">
                             <button type="button" class="btn btn-md btn-success">{{space.join}}</button>
                         </a>
                     </div>
-                    <div v-if="space.join_requested" style="position: absolute; bottom: 20px; right: 10px">
+                    <div v-if="space.join_requested" style="bottom: 20px; right: 10px">
                         <button type="button" class="btn btn-md btn-info" disabled>{{space.join_requested}}</button>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                     <p></p>
                     <p style="color:#018181; ">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
-                        <?php if(isset($_SESSION["login"])) { ?>
+                        <?php if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
                                 <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="glyphicon glyphicon-star"></span></a>
                         <?php } ?>
                         <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
@@ -90,7 +90,7 @@
                 </div>  
                 <?php } ?>
             </div>
-            <?php if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) { ?>
+            <?php if(!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
             <div class="row">
                 <div class="col-xs-12">
                     <?php echo $content; ?>
@@ -99,7 +99,7 @@
             <?php } ?>
         </div>
         <div class="col-md-4" id="user_home">
-            <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user']) { ?>
+            <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { ?>
                 <div v-if="bookings && bookings.length > 0" id="future_bookings">
                     <div class="panel panel-default">
                         <div class="panel-heading">Bookings</div>
@@ -138,7 +138,7 @@ var app = new Vue({
     el: '#welcome',
     data () {
         return {
-            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user']) { echo "true"; } else { echo "false";} ?>,
+            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
             spaces: <?php echo json_encode($spaceMap); ?> ,
             catalog: <?php echo json_encode($resources); ?>,
             resources: <?php echo json_encode($catalog); ?>,

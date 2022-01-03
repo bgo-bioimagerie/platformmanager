@@ -36,20 +36,13 @@ class ClientscompanyController extends ClientsController {
      * Page showing a table containing all the providers in the database
      */
     public function indexAction($id_space) {
-
-        // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
-        // lang
+
         $lang = $this->getLanguage();
-
         $data = $this->companyModel->getForSpace($id_space);
-
-        // form
-        // build the form
-
         $formKeys = ["name", "address", "zipcode", "city", "county", "country", "tel", "fax", "email", "approval_number"];
         foreach ($formKeys as $key) {
-            $data[$key] = array_key_exists($key, $data) ?: "";
+            $data[$key] = array_key_exists($key, $data) ? $data[$key]: "";
         }
 
         $form = new Form($this->request, "pricing/edit");

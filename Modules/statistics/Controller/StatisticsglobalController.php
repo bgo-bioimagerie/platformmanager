@@ -84,7 +84,7 @@ class StatisticsglobalController extends StatisticsController {
             $generateclientstats = $this->request->getParameter("generateclientstats");
 
             if ($dateBegin != "" && $dateEnd != "" && $dateBegin > $dateEnd) {
-                $_SESSION['message'] = ServicesTranslator::Dates_are_not_correct($lang);
+                $_SESSION["flash"] = ServicesTranslator::Dates_are_not_correct($lang);
                 $this->redirect('statisticsglobal/' . $id_space);
                 return;
             }

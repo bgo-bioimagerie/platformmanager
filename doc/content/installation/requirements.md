@@ -28,7 +28,7 @@ Apache should also have specific pfm configuration:
       </FilesMatch>
     </Directory>
 
-* Rabbitmq server for additional services
+* Rabbitmq server for additional services (pfm-events, etc.)
 * Influxdb server for statistics (optional)
 * Redis for prometheus statistics support (optional for prometheus, mandatory for module antibodies)
 

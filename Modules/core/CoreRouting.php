@@ -11,7 +11,7 @@ class CoreRouting extends Routing{
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
         $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
         $router->map('GET', '/corespaces', 'core/corespace/spaces', 'core_space_list');
-        $router->map('GET', '/coreabout', 'core/coreabout/index', 'core_about');
+        $router->map('GET', '/core/about', 'core/coreabout/index', 'core_about');
         $router->map('GET', '/coretiles/[i:level]/[i:id]/star/[i:id_space]', 'core/coretiles/corestar', 'core_star');
         $router->map('GET', '/coretiles/[i:level]/[i:id]/unstar/[i:id_space]', 'core/coretiles/coreunstar', 'core_unstar');
         $router->map('GET|POST', '/coremail/[i:id_space]', 'core/coremail/index', 'core_mail');
@@ -19,13 +19,15 @@ class CoreRouting extends Routing{
         $router->map('GET', '/core/tiles/[i:id_space]/module/spaceaccess/notifs', 'core/corespaceaccess/notifs', 'corespaceaccess_notifs');
         $router->map('GET', '/core/plans', 'core/coreabout/plans', 'core_plans');
         $router->map('GET', '/core/spaceaccess/[i:id_space]/users/[i:id_user]/convention', 'core/corespaceaccess/downloadConvention', 'corespaceaccess_download_user_convention');
+        $router->map('GET', '/core/privacy', 'core/coreabout/privacy', 'core_privacy');
+
     }
     
     public function listRoutes(){
         
         // config
         $this->addRoute("coreconfigadmin", "coreconfigadmin", "coreconfigadmin", "index");
-        $this->addRoute("coreldapconfig", "coreldapconfig", "coreldapconfig", "index");
+        //$this->addRoute("coreldapconfig", "coreldapconfig", "coreldapconfig", "index");
         
         // connection
         $this->addRoute("coreconnection", "coreconnection", "coreconnection", "index");

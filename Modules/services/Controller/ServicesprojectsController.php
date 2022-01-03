@@ -96,7 +96,7 @@ class ServicesprojectsController extends ServicesController {
             $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
-            $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodbegin, $projectperiodend);
+            $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodend);
             $yearsUrl = "servicesprojectsclosed";
             
             if ($year == "") {

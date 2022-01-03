@@ -40,6 +40,7 @@ class RevisasController extends ResourcesBaseController {
         // get the user list
         $visaModel = new ReVisa();
         $visaTable = $visaModel->getVisasBySpace($id_space);
+        $revisas = $visaTable;
 
         $table = new TableView ();
 
@@ -70,7 +71,8 @@ class RevisasController extends ResourcesBaseController {
         );
         $tableHtml = $table->view($visaTable, $tableContent);
 
-        $this->render(array(
+        return $this->render(array(
+            'data' => ['revisas' => $revisas],
             'lang' => $lang,
             'id_space' => $id_space,
             'tableHtml' => $tableHtml
@@ -128,7 +130,7 @@ class RevisasController extends ResourcesBaseController {
                 $id = $modelVisa->addVisa($id_space, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             }
             $modelVisa->setActive($id_space, $id, $form->getParameter("is_active"));
-            $this->redirect("resourcesvisa/" . $id_space);
+            return $this->redirect("resourcesvisa/" . $id_space, [], ['revisa' => ['id' => $id]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();

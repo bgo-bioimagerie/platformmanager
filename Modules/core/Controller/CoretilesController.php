@@ -188,7 +188,7 @@ class CoretilesController extends CorecookiesecureController {
 
         $starModel = new CoreStar();
         $starList = [];
-        if(isset($_SESSION["id_user"])) {
+        if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
             $starList = $starModel->stars($_SESSION["id_user"]);
         }
         $stars = [];
@@ -240,7 +240,7 @@ class CoretilesController extends CorecookiesecureController {
      * @return array of arrays: [userSpaceIds, userPendingSpaceIds, SpacesUserIsAdminOf]
      */
     public function getUserSpaces() {
-        if(!isset($_SESSION["id_user"])) {
+        if(!isset($_SESSION["id_user"]) || $_SESSION["id_user"] <= 0) {
             return array(
                 "userSpaceIds" => [],
                 "userPendingSpaceIds" => [],
@@ -324,11 +324,13 @@ class CoretilesController extends CorecookiesecureController {
 
                 $modelUser = new CoreUser();
                 $userEmail = $modelUser->getEmail($id_user);
+                $userFullName = $modelUser->getUserFUllName($id_user);
 
                 $mailParams = [
                     "id_space" => $id_space,
                     "space_name" => $spaceName,
-                    "user_email" => $userEmail
+                    "email" => $userEmail,
+                    "fullName" => $userFullName
                 ];
                 $email = new Email();
                 $email->notifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());

@@ -1,7 +1,61 @@
 # Changes
 
-## 2.2
+## 2.3
 
+* [booking] clicking on blank days in month view gives access to day area view
+* [projects] fix closed projects listing change of year
+* [resources] fix re_visa is_active default value
+* [core] add possibility for a space manager to add an existing account #479
+* [core] allow space plan modification #429
+
+## 2.2.2
+
+* [coreconfig] fix maintenance mode authorizations
+* [coreconfig] remove carousel
+## 2.2.1
+
+* [login] clarify messages toward users
+* [booking] fix authorizations when related to user's roles
+* [helpdesk] sort tickets and fix refresh
+* [helpdesk] ignore auto replies
+* [core] check id_user to see if user is logged
+* [core] on register after email validation validate the account #472
+* [statistics] require env var MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD} in pfm/pfm-events containers
+* [core] use module url and not name for notifications #476
+* [cli][core] update way to expire users, and on delete just anon user
+* [clients] on user add , fix flash message display #477
+
+## 2.2.0
+
+**Warning**: [admin] Ldap configuration modification from ini or env variables
+only, not configurable via UI anymore and existing values not taken into account.
+See ldap.ini.example if needed or doc for env variables.
+
+* [coreTiles] fix join button display
+* [booking] fix booking authorizations bug
+* [booking] fix booking display if no bk_scheduling set
+* [CoreTiles] fix display
+* [statistics] fix service/projects statistics, invalid responsible and
+ add count of projects per client and responsible (in charge) #455
+* [booking] avoid any resource selection in resources input
+* [booking] Fix reservation form unexpected submissions
+* [booking] fix bk_scheduling fetching from booking view
+* [self_registration] add structures names to listed spaces
+* [clients] fix company infos
+* [documents] Avoid missing files opening
+* [documents] fix documents duplication on edition
+* [core] Remove references to ecUnit, ecBelonging and ecUser
+* [booking][email] Add userName in emails sent to resources managers
+* [core][email] Add userName in emails sent to admins
+* [core][formAdd] fix last row deletion
+* [booking] fix bk_calsupinfo mandatory column name which caused errors on supplementaries info
+* [core][email] fix from header when helpdesk not activated
+* [core][ldap] get all config from ini files or env variables
+* [Menus] Change word "Menu" to "Structure"
+* [forms] prevent errors on form submissions
+* [Documentation] Add quote documentation
+* [module:quote] improve new user quote interface
+* [module:quote] expose client infos to invoice templates
 * [Services] Remove deprecated functions from servicesController
 * [Exceptions] Add PfmUserException class
 * [Users] Remove login from edit function
@@ -118,7 +172,7 @@
 * #244 Allow impersonation
 * #142 fix resource with no category handling
 * #272 allow to display news in popup on space home page
-* #275 Fix color codes error in booking schedulings 
+* #275 Fix color codes error in booking schedulings
 * #292 [ServicesinvoiceorderController] calls to deprecated function createByUnitForm()
 * #298 Add invoice by quantities
 * #281 Add front-end controls in user forms. Improves ergonomy

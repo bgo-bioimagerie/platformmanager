@@ -49,6 +49,7 @@ Following env variables can be used to override Config/conf.ini:
   * MYSQL_DBNAME: platform_manager # name of the database on the mysql server
   * MYSQL_USER: platform_manager # Admin account to connect to mysql
   * MYSQL_PASS: platform_manager # Password to connect to mysql
+  * MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}  # used for statistics
 * SMTP_HOST: mailhog  # smtp host name
 * SMTP_PORT: 25  # smtp port
 * SMTP_FROM: support@genouest.org  # mail *from* address
@@ -86,6 +87,29 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER} # mail account name
   * PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password
   * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
+
+And .env file should define (according to variables used):
+
+* PFM_WEB_URL=http://localhost:4000
+* PFM_ADMIN=pfmadmin
+* PFM_ADMIN_PASSWORD=admin4genouest  # min 8 characters
+* PFM_ADMIN_EMAIL=admin@pfm.org
+* PFM_ADMIN_APIKEY=123456
+* PFM_INFLUXDB_TOKEN=123456
+* PFM_OPENID=  # comma separated list of supported providers, if empty no external auth
+* If PFM_OPENID is defined:
+  * PFM_OPENID_GOOGLE_URL=https://oauth2.googleapis.com/token
+  * PFM_OPENID_GOOGLE_LOGIN=https://accounts.google.com/o/oauth2/v2/auth
+  * PFM_OPENID_GOOGLE_CLIENT_ID=XXX
+  * PFM_OPENID_GOOGLE_CLIENT_SECRET=XXX
+* MYSQL_ROOT_PASSWORD=XXX
+* MYSQL_PASSWORD=XXX
+* PFM_JWT_SECRET=xxxx  # used for jwt messages in different actions
+* PFM_HELPDESK_EMAIL=myemail@mydomain
+* PFM_HELPDESK_IMAP_SERVER=x.y.z  # keep empty if not using helpdesk
+* PFM_HELPDESK_IMAP_USER=yyyy
+* PFM_HELPDESK_IMAP_PASSWORD=xxxxx
+
 * PFM_LDAP_HOST: # optional LDAP configuration overiding ldap.ini, leave empty if non
   * PFM_LDAP_PORT: 389  # ldap port to use, default 389 or 636 if tls enabled
   * PFM_LDAP_USER: ""  # ldap user id if not anonymous search/bind
@@ -93,3 +117,9 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_LDAP_DN: ""  # base dn for ldap (dc=pfm,dc=org for example)
   * PFM_LDAP_SEARCH_DN: ""  # base dn for user search and binding (ou=people,dc=pfm,dc=org for example)
   * PFM_LDAP_TLS: [0|1]  # use TLS
+  * PFM_LDAP_DEFAULT_STATUS: [1|2] visitor or user
+  * PFM_LDAP_SEARCH_ATTR: "uid" ldap search attributes (pipe separated, ex: "uid|mail")
+  * PFM_LDAP_NAME_ATTR: "sn" ldap name attribute
+  * PFM_LDAP_FIRSTNAME_ATTR: "givenname" ldap firstname attribute
+  * PFM_LDAP_MAIL_ATTR: "mail" ldap email attribute
+  * PFM_USE: [0|1] use ldap  , if ldap_host is set, pfm_use is set to 1 by default unless explicitely set

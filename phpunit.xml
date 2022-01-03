@@ -3,5 +3,10 @@
     <testsuite name="admin">
 	    <directory>tests/admin</directory>
     </testsuite>
+    <testsuite name="manager">
+	    <file>tests/manager/ResourcesTest.php</file>
+      <file>tests/manager/ClientsTest.php</file>
+      <file>tests/manager/BookingTest.php</file>
+    </testsuite>
   </testsuites>
 </phpunit>

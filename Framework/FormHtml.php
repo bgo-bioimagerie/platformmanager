@@ -247,11 +247,8 @@ class FormHtml {
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $star . "</label>";
 
         $html .= "<div class='col-xs-" . $inputWidth . "'>";
-        $html .= "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-        $html .= "<input type='text' " . $required . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
-        $html .= "          <span class=\"input-group-addon\">";
-        $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
-        $html .= "          </span>";
+        $html .= "<div class='col-xs-12 input-group date'>";
+        $html .= "<input type='date' " . $required . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value . "\"/>";
         $html .= "</div>";
         $html .= "</div>";
         $html .= "</div>";
@@ -273,21 +270,10 @@ class FormHtml {
             $vectv = "[]";
         }
 
-        $html = "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-        $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" value=\"" . $value . "\"/>";
-        $html .= "          <span class=\"input-group-addon\">";
-        $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
-        $html .= "          </span>";
+        $html = "<div class='col-xs-12 input-group date'>";
+        $html .= "<input id=\"date-daily\" type='date' class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" value=\"" . $value . "\"/>";
         $html .= "</div>";
         $html .= "</div>";
-        /*
-          $html = "<div class='col-xs-12 input-group date form_date_" . $lang . "'>";
-          $html .= "<input id=\"date-daily\" type='text' class=\"form-control\" name=\"" . $name . $vectv . "\" value=\"" . $value . "\"/>";
-          $html .= "          <span class=\"input-group-addon\">";
-          $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
-          $html .= "          </span>";
-          $html .= "</div>";
-         */
 
         return $html;
     }
@@ -336,11 +322,8 @@ class FormHtml {
         $html .= "<div class=\"form-group row\">";
 
         $html .= "<div class=\"col-md-7\">";
-        $html .= "<div class='input-group date form_date_" . $lang . "'>";
-        $html .= "<input type='text' class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value[0] . "\"/>";
-        $html .= "          <span class=\"input-group-addon\">";
-        $html .= "          <span class=\"glyphicon glyphicon-calendar\"></span>";
-        $html .= "          </span>";
+        $html .= "<div class='input-group date '>";
+        $html .= "<input type='date' class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\" value=\"" . $value[0] . "\"/>";
         $html .= "</div>";
         $html .= "</div>";
 

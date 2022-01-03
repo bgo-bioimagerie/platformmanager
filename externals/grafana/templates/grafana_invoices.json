@@ -19,14 +19,19 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
-  "iteration": 1635861433970,
+  "id": 2,
+  "iteration": 1640079821018,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
-      "datasource": null,
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -75,11 +80,36 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "services"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 16,
+        "h": 5,
+        "w": 13,
         "x": 0,
         "y": 0
       },
@@ -96,16 +126,46 @@
       },
       "targets": [
         {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"invoice\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> group(columns: [\"module\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> yield(name: \"total\")",
-          "refId": "A"
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  date_generated as time_sec,\n  sum(CAST(total_ht AS DECIMAL(10,2)))/1000 as value,\n  module as metric\nFROM in_invoice\nWHERE\n  $__timeFilter(date_generated)\nGROUP BY $__timeGroup(date_generated, $__interval), module\nORDER BY date_generated",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "in_invoice",
+          "timeColumn": "created_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Invoices",
+      "title": "Invoices in Keuros / module",
       "type": "timeseries"
     },
     {
-      "datasource": null,
-      "description": "",
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -129,12 +189,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
+        "h": 5,
+        "w": 11,
+        "x": 13,
         "y": 0
       },
-      "id": 9,
+      "id": 4,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -147,148 +207,171 @@
           "fields": "",
           "values": false
         },
-        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "8.3.3",
       "targets": [
         {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"invoice\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> drop(columns: [\"client\", \"module\"])\n  |> sum()\n  |> map(fn: (r) => ({\n      r with\n      _value: r._value / 1000.0\n    })\n  )\n  |> yield(name: \"total\")",
-          "refId": "A"
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(CAST(total_ht AS DECIMAL(10,2)))/1000 as value\nFROM in_invoice\nWHERE\n  $__timeFilter(date_generated)",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "ac_aciincs",
+          "timeColumn": "deleted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Total invoiced (keuros)",
+      "title": "Total keuros",
       "type": "stat"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql_0"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
-            }
+            },
+            "lineWidth": 1
           },
-          "mappings": []
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
+        "w": 24,
         "x": 0,
-        "y": 8
+        "y": 5
       },
-      "id": 7,
+      "id": 6,
       "options": {
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
         "legend": {
+          "calcs": [],
           "displayMode": "list",
           "placement": "bottom"
         },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
         "tooltip": {
           "mode": "single"
-        }
+        },
+        "xTickLabelRotation": 0
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "8.3.3",
       "targets": [
         {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"invoice\")\n  |> filter(fn: (r) => r[\"client\"] == \"${customer}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |>sum()\n  |> map(fn: (r) => ({\n      r with\n      _value: r._value / 1000.0\n    })\n  )\n  |> drop(columns: [\"client\", \"_start\", \"_stop\", \"_field\"])\n  |> yield(name: \"total\")",
-          "refId": "A"
-        }
-      ],
-      "title": "Invoices total for customer (Keuros)",
-      "type": "piechart"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql_0"
           },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  sum(CAST(in_invoice.total_ht AS DECIMAL(10,2)))/1000 as total_ht,\n  module as metric\nFROM in_invoice\nINNER JOIN cl_clients ON cl_clients.id = in_invoice.id_responsible\nWHERE\n  $__timeFilter(in_invoice.date_generated) AND cl_clients.name='$client'\nGROUP BY module",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "ac_aciincs",
+          "timeColumn": "deleted_at",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
             }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 8
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.1",
-      "targets": [
-        {
-          "query": "from(bucket: \"space1\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"invoice\")\n  |> filter(fn: (r) => r[\"client\"] == \"${customer}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> drop(columns: [\"client\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: count, createEmpty: false)\n  |> yield(name: \"total\")",
-          "refId": "A"
+          ]
         }
       ],
-      "title": "Number of invoices for customer",
-      "type": "piechart"
+      "title": "Invoices for $client (keuros)",
+      "type": "barchart"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 30,
+  "refresh": "",
+  "schemaVersion": 34,
   "style": "dark",
   "tags": ["pfm"],
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
-          "selected": false,
-          "text": "CHEVET Eric",
-          "value": "CHEVET Eric"
+          "selected": true,
+          "text": "Samson Michel",
+          "value": "Samson Michel"
         },
-        "datasource": null,
-        "definition": "import \"influxdata/influxdb/schema\"\nschema.measurementTagValues(\nbucket: \"space1\",\ntag: \"client\",\nmeasurement: \"calentry\")",
-        "description": null,
-        "error": null,
+        "datasource": {
+          "type": "mysql",
+          "uid": "mysql_0"
+        },
+        "definition": "select name from cl_clients",
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
-        "name": "customer",
+        "name": "client",
         "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.measurementTagValues(\nbucket: \"space1\",\ntag: \"client\",\nmeasurement: \"calentry\")",
+        "query": "select name from cl_clients",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -298,12 +381,13 @@
     ]
   },
   "time": {
-    "from": "now-90d",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Invoices",
-  "uid": "m_ZN4-F7z",
-  "version": 2
+  "uid": "dash_0",
+  "version": 9,
+  "weekStart": ""
 }

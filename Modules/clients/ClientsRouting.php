@@ -3,6 +3,12 @@
 require_once 'Framework/Routing.php';
 
 class ClientsRouting extends Routing{
+
+    public function routes($router) {
+        $router->map('GET|POST', '/clientusers/getclients/[i:id_space]/[i:id_user]', 'clients/clientsusers/getuserclients', 'clients_getuserclients');
+        $router->map('GET|POST', '/clientspricings/getpricing/[i:id_space]/[i:id_client]', 'clients/clientspricings/getclientpricing', 'clients_getclientpricing');
+        $router->map('GET|POST', '/clientslist/getaddress/[i:id_space]/[i:id_client]', 'clients/clientslist/getaddress', 'clients_getaddress');
+    }
     
     public function listRoutes(){
         

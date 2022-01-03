@@ -49,12 +49,15 @@ class CoreconfigadminController extends CoresecureController {
         }
 
         // ldap form
+        /*
         $formLdap = $this->ldapForm($lang);
         if ($formLdap->check()) {
 
             $this->redirect("coreldapconfig");
             return;
         }
+        */
+        
 
 
 
@@ -71,15 +74,6 @@ class CoreconfigadminController extends CoresecureController {
         if ($formConnectionPage->check()) {
             $modelCoreConfig->setParam("home_title", $this->request->getParameter("home_title"));
             $modelCoreConfig->setParam("home_message", $this->request->getParameter("home_message"));
-            $modelCoreConfig->setParam("home_view_carousel", $this->request->getParameter("home_view_carousel"));
-
-            for ($i = 1; $i < 4; $i++) {
-                $target_dir = "data/core/";
-                if ($_FILES["image_url" . $i]["name"] != "") {
-                    FileUpload::uploadFile($target_dir, "image_url" . $i);
-                    $modelCoreConfig->setParam("connection_carousel" . strval($i), $target_dir . $_FILES["image_url" . $i]["name"]);
-                }
-            }
             $this->redirect("coreconfigadmin");
             return;
         }
@@ -131,6 +125,7 @@ class CoreconfigadminController extends CoresecureController {
             return;
         }
         // who can delete user
+        /*
         $formDeleteUser = $this->whoCanDeleteUserForm($modelCoreConfig, $lang);
 
         if ($formDeleteUser->check()) {
@@ -139,14 +134,16 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
+        */
 
         // view
         $forms = array($formMaintenance->getHtml($lang),
             $formSpaceIconsForm->getHtml($lang),
             $formDesactivateUser->getHtml($lang),
-            $formLdap->getHtml($lang), $formHomePage->getHtml($lang),
+            //$formLdap->getHtml($lang),
+            $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang),
-            $formDeleteUser->getHtml($lang),
+            //$formDeleteUser->getHtml($lang),
             $formEmail->getHtml($lang), $formNavbar->getHtml($lang)
         );
 
@@ -160,7 +157,7 @@ class CoreconfigadminController extends CoresecureController {
      * @return \Form
      */
     protected function maintenanceForm($modelCoreConfig, $lang) {
-        $is_maintenance = $modelCoreConfig->getParam("is_maintenance");
+        $is_maintenance = $modelCoreConfig->getParam("is_maintenance", 0);
         $maintenance_message = $modelCoreConfig->getParam("maintenance_message");
 
         $formMaintenance = new Form($this->request, "maintenanceForm");
@@ -207,7 +204,7 @@ class CoreconfigadminController extends CoresecureController {
     /**
      *
      * @param type $modelCoreConfig
-     * @param type $lang
+     * @param string $lang
      * @return \Form
      */
     protected function homePageForm($modelCoreConfig, $lang) {
@@ -224,32 +221,25 @@ class CoreconfigadminController extends CoresecureController {
     /**
      *
      * @param type $modelCoreConfig
-     * @param type $lang
+     * @param string $lang
      * @return \Form
      */
     protected function connectionPageForm($modelCoreConfig, $lang) {
 
         $home_title = $modelCoreConfig->getParam("home_title");
         $home_message = $modelCoreConfig->getParam("home_message");
-        $home_view_carousel = $modelCoreConfig->getParam("home_view_carousel");
 
         $form = new Form($this->request, "connectionPageForm");
         $form->addSeparator(CoreTranslator::ConnectionPageData($lang));
         $form->addText("home_title", CoreTranslator::title($lang), false, $home_title);
         $form->addText("home_message", CoreTranslator::Description($lang), false, $home_message);
-        $form->addSelect("home_view_carousel", CoreTranslator::ViewCarousel($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $home_view_carousel);
-
-        for ($i = 1; $i < 4; $i++) {
-            $form->addSeparator2(CoreTranslator::Carousel($lang) . " " . strval($i));
-            $form->addUpload("image_url" . strval($i), CoreTranslator::Image_Url($lang));
-        }
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
 
     protected function spaceIconForm($modelCoreConfig, $lang) {
-        $value = $modelCoreConfig->getParam("space_icon_type");
+        $value = $modelCoreConfig->getParam("space_icon_type", 2);
         $choices = array();
         $choicesid = array();
         $choicesid[] = 1;
@@ -269,12 +259,12 @@ class CoreconfigadminController extends CoresecureController {
     /**
      *
      * @param type $modelCoreConfig
-     * @param type $lang
+     * @param string $lang
      * @return \Form
      */
     protected function desactivateUserForm($modelCoreConfig, $lang) {
 
-        $value = $modelCoreConfig->getParam("user_desactivate");
+        $value = $modelCoreConfig->getParam("user_desactivate", 1);
 
         $choices = array();
         $choicesid = array();
@@ -319,7 +309,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     *
+     * @deprecated
      * @param type $lang
      * @return \Form
      */
@@ -334,7 +324,7 @@ class CoreconfigadminController extends CoresecureController {
     }
 
     /**
-     *
+     * @deprecated
      * @param type $modelCoreConfig
      * @param type $lang
      * @return \Form
@@ -357,8 +347,12 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
 
+    /**
+     * @deprecated
+     */
+
     protected function whoCanDeleteUserForm($modelCoreConfig, $lang) {
-        $who_can_delete_user = $modelCoreConfig->getParam("who_can_delete_user");
+        $who_can_delete_user = $modelCoreConfig->getParam("who_can_delete_user", 2);
 
         $form = new Form($this->request, "whoCanDeleteUserForm");
         $form->addSeparator(CoreTranslator::Who_can_delete_users($lang));

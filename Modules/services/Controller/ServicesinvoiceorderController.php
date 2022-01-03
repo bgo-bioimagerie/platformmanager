@@ -124,7 +124,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
 
         $unitId = $this->request->getParameterNoException("id_unit");
-        // $respId = $this->request->getParameterNoException("id_resp");
         $dateBegin = $this->request->getParameterNoException("date_begin");
         $dateEnd = $this->request->getParameterNoException("date_end");
 
@@ -132,20 +131,15 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $clients = $modelClient->getAll($id_space);
         $clientsNames = [];
         $clientsIds = [];
-        // TODO: foreach on clients to get institutions names (or clients names ?) and resps
+        
         foreach($clients as $client) {
             array_push($clientsNames, $client['name']);
             array_push($clientsIds, $client['id']);
         }
 
-        // $modelUser = new EcUser();
-        // $resps = $modelUser->getResponsibleOfUnit($unitId);
-        // TODO: Replaced EcUnit by client => check if it is ok !!!
-
         $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
         $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
         $form->addSelect("id_client", ClientsTranslator::Institution($lang), $clientsNames, $clientsIds, $unitId, false);
-        // $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
@@ -155,22 +149,20 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         // return "";
     }
 
-    // @bug calls EcUnit
-    // TODO: debug that
-    private function generateRespBill($dateBegin, $dateEnd, $id_unit, $id_resp, $id_space) {
+    /**
+    * @deprecated
+    **/
+    private function generateRespBill($dateBegin, $dateEnd, $id_client, $id_resp, $id_space) {
 
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
-        // $modelUnit = new EcUnit();
         $modelClient = new ClClient();
         // select all the opened order
         $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
 
         if (count($orders) == 0) {
             throw new PfmException("there are no orders open for this responsible");
-            //echo "there are no orders open for this responsible";
-            //return;
         }
 
         $lang = $this->getLanguage();
@@ -179,13 +171,13 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $number = $modelInvoice->getNextNumber();
         $module = "services";
         $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, $id_resp);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         $modelInvoice->setTitle($id_space, $id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
 
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForResp($id_space, $id_resp);
-        $belonging = $modelUnit->getBelonging($id_unit, $id_space);
+        $belonging = $modelClient->get($id_space, $id_client);
         $content = $this->parseServicesToContent($id_space, $services, $belonging);
         $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
 
@@ -209,8 +201,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     protected function parseOrdersToDetails($orders, $id_space) {
         $details = "";
         foreach ($orders as $order) {
-            //echo "<br/>";
-            //print_r($order);
             $details .= $order["no_identification"] . "=servicesorderedit/" . $id_space . "/" . $order["id"] . ";";
         }
         return $details;
@@ -270,8 +260,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $itemQuantities = array();
         $itemPrices = array();
         $modelInvoiceItem = new InInvoiceItem();
-
-        //print_r($id_item);
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
 
         $contentArray = explode(";", $item["content"]);
@@ -317,7 +305,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelItems = new InInvoiceItem();
         foreach ($id_items as $item) {
             $itemData = $modelItems->getItem($id_space, $item[0]);
-            //print_r($itemData) . "<br/>";
             $dArray = explode(";", $itemData["details"]);
 
             foreach ($dArray as $d) {
@@ -331,7 +318,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $details;
     }
 
-    // @bug call EcUnit
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
 
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
@@ -347,7 +333,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
         $content = $this->unparseContent($id_space, $id_item);
-        //print_r($invoice);
         $total = 0;
         foreach ($content as $d) {
             $table .= "<tr>";
@@ -372,7 +357,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         
         $modelClient = new ClClient();
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
         $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);

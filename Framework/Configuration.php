@@ -71,7 +71,7 @@ class Configuration {
      * @return array Table containing the configuration parameters
      * @throws Exception If the configuration file cannot be located
      */
-    private static function getParameters() {
+    public static function getParameters() {
         if (self::$parameters == null) {
             $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
@@ -108,6 +108,13 @@ class Configuration {
      */
     private static function override() {
 
+        if(getenv('MYSQL_ADMIN_LOGIN')) {
+            self::$parameters['mysql_admin_login']= getenv('MYSQL_ADMIN_LOGIN');
+        }
+        if(getenv('MYSQL_ADMIN_PWD')) {
+            self::$parameters['mysql_admin_pwd']= getenv('MYSQL_ADMIN_PWD');
+        }
+
         if(getenv('MYSQL_HOST')) {
             self::$parameters['mysql_host']= getenv('MYSQL_HOST');
         }
@@ -120,8 +127,14 @@ class Configuration {
         if(getenv('MYSQL_PASS')) {
             self::$parameters['pwd']= getenv('MYSQL_PASS');
         }
+        if(getenv('MYSQL_DSN')) {
+            self::$parameters['dsn'] = getenv('MYSQL_DSN');
+        }
         if(!isset(self::$parameters['dsn'])) {
             try {
+                if(!isset(self::$parameters['mysql_host']) || !isset(self::$parameters['mysql_dbname'])) {
+                    throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
+                }
                 self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
             } catch(Exception $e) {
                 throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);

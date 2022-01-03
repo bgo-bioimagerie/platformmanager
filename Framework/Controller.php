@@ -113,7 +113,7 @@ abstract class Controller {
 
     /**
      * 
-     * @return type The navigator language
+     * @return string The navigator language
      */
     public function getLanguage() {
         $lang = substr(filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'), 0, 2);
@@ -199,7 +199,10 @@ abstract class Controller {
         }
 
         if (getenv("PFM_MODE") == "test") {
-            return $dataView;
+            if(isset($dataView['data'])) {
+                return $dataView['data'];
+            }
+            return null;
         }
 
         if(isset($_SESSION['flash'])) {
@@ -251,6 +254,10 @@ abstract class Controller {
      * @param type $args Get arguments
      */
     protected function redirect($path, $args = array(), $data = array()) {
+        if (getenv("PFM_MODE") == "test") {
+            return $data;
+        }
+
         if(!empty($data) && isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
             header('Content-Type: application/json');
             ob_start();

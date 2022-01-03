@@ -30,9 +30,15 @@ class CorePlan {
      * @var int $plan_id  id of the plan
      * @var int $plan_expire optional timestamp of plan. If expired, get plan id = 0
      */
-    public function __construct(int $plan_id, int $plan_expire=0) {
+    public function __construct(?int $plan_id, ?int $plan_expire=0) {
         $plans = Configuration::get('plans', []);
         $now = time();
+        if($plan_id === null) {
+            $plan_id = 0;
+        }
+        if($plan_expire === null) {
+            $plan_expire = 0;
+        }
         $id = intval($plan_id);
         if($plan_expire && $plan_expire > $now) {
             $id = 0;
@@ -80,12 +86,26 @@ class CoreSpace extends Model {
         $this->tableName = 'core_spaces';
     }
 
-    public static function roles($lang) {
+    /**
+     * List module roles
+     * 
+     * @var int $minRole minimal role + inactive, if 0/unset return all roles
+     */
+    public static function roles($lang, $minRole=0) {
 
         $names = array(CoreTranslator::Inactive($lang), CoreTranslator::Visitor($lang), CoreTranslator::User($lang),
             CoreTranslator::Manager($lang), CoreTranslator::Admin($lang));
         $ids = array(0, 1, 2, 3, 4);
-        return array("names" => $names, "ids" => $ids);
+
+        $roles = ['names' => $names, 'ids' => $ids];
+        if($minRole > 0) {
+            $roles = ['names' => [CoreTranslator::Inactive($lang)], 'ids' => [0]];
+            for($i=$minRole;$i<count($ids);$i++) {
+                $roles['ids'][] = $ids[$i];
+                $roles['names'][] = $names[$i];
+            }
+        }
+        return $roles;
     }
 
     /**
@@ -164,7 +184,9 @@ class CoreSpace extends Model {
             "support" => "",
             "description" => "",
             "admins" => [],
-            "txtcolor" => "#ffffff"
+            "txtcolor" => "#ffffff",
+            "plan" => 0,
+            "plan_expire" => 0,
         ];
     }
     
@@ -260,6 +282,9 @@ class CoreSpace extends Model {
     }
 
     public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu = 1, $color = "", $txtcolor= "") {
+        if($display_order === '') {
+            $display_order = 0;
+        }
         if ($this->isSpaceMenu($id_space, $url)) {
             $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=?, txtcolor=? WHERE id_space=? AND url=?";
             $this->runRequest($sql, array($module, $icon, $user_role, $display_order, $has_sub_menu, $color, $txtcolor, $id_space, $url));
@@ -410,8 +435,8 @@ class CoreSpace extends Model {
 
         // is menu public
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
-        $roleArrray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
-        $menuRole = $roleArrray[0];
+        $roleArray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
+        $menuRole = $roleArray ? $roleArray[0] : CoreSpace::$MANAGER;
         $userRole = $this->getUserSpaceRole($id_space, $id_user);
 
         if ($this->isSpacePublic($id_space) && $userRole == -1) {    
@@ -497,7 +522,7 @@ class CoreSpace extends Model {
     }
 
     public function addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor) {
-        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support, txtcolor) VALUES (?,?,?,?,?,?, ?)";
+        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support, txtcolor, description) VALUES (?,?,?,?,?,?, ?,'')";
         $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $txtcolor));
         $id = $this->getDatabase()->lastInsertId();
         Events::send(["action" => Events::ACTION_SPACE_CREATE, "space" => ["id" => intval($id)]]);
@@ -633,4 +658,12 @@ class CoreSpace extends Model {
         ]);
     }
 
+
+    /**
+     * Update space plan (id) and plan expiration (timestamp)
+     */
+    public function setPlan($id_space, int $plan=0, int $plan_expire=0) {
+        $sql = "UPDATE core_spaces SET plan=?,plan_expire=? WHERE id=?";
+        $this->runRequest($sql, array($plan, $plan_expire, $id_space));
+    }
 }

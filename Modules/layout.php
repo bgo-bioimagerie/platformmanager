@@ -38,11 +38,8 @@ if($isdev) {
         <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
         
         <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-        <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
         <script src="externals/jquery-1.11.1.js"></script>
         <script src="externals/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
@@ -80,7 +77,7 @@ if($isdev) {
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                    </div>
+                        </div>
                     <?php }?>
                     <div class="col-md-12 col-lg-12">
                         <?php startblock('spacemenu') ?>
@@ -114,7 +111,8 @@ if($isdev) {
         <div class="container">
             <div class="row">
                 <div class="col-sm-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <div class="col-sm-4"><a href="coreabout">About</a></div>
+                <div class="col-sm-4"><a href="core/about">About</a></div>
+                <div class="col-sm-4"><a href="core/privacy">Privacy</a></div>
             </div>
         </div>
         </footer>
