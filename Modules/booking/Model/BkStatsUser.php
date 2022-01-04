@@ -155,7 +155,7 @@ class BkStatsUser extends Model {
         // Header
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
-        $objDrawing = \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
+        $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
         // $objDrawing = new PHPExcel_Worksheet_HeaderFooterDrawing();
         $objDrawing->setName('PHPExcel logo');
         $objDrawing->setPath($reqIcon[0]);
@@ -306,7 +306,7 @@ class BkStatsUser extends Model {
         //$NouvelleHauteur = (($TailleImageChoisie[1] * $Reduction)/100 );
         $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
         //j’initialise la nouvelle image
-        $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur) or die(“Erreur”);
+        $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);
 
         //je mets l’image obtenue après redimensionnement en variable
         imagecopyresampled($NouvelleImage, $ImageChoisie, 0, 0, 0, 0, $NouvelleLargeur, $NouvelleHauteur, $TailleImageChoisie[0], $TailleImageChoisie[1]);
@@ -328,7 +328,7 @@ class BkStatsUser extends Model {
         // $writer = PHPExcel_IOFactory::createWriter($spreadsheet, 'Excel2007');
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
-        $writer->save('./data/' . $nom);
+        $writer->save('./data/statistics/' . $nom);
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $nom . '"');
         header('Cache-Control: max-age=0');
@@ -641,7 +641,7 @@ class BkStatsUser extends Model {
         //$NouvelleHauteur = (($TailleImageChoisie[1] * $Reduction)/100 );
         $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
         //j’initialise la nouvelle image
-        $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur) or die(“Erreur”);
+        $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);
 
         //je mets l’image obtenue après redimensionnement en variable
         imagecopyresampled($NouvelleImage, $ImageChoisie, 0, 0, 0, 0, $NouvelleLargeur, $NouvelleHauteur, $TailleImageChoisie[0], $TailleImageChoisie[1]);
@@ -662,7 +662,7 @@ class BkStatsUser extends Model {
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
-        $writer->save('./data/' . $nom);
+        $writer->save('./data/statistics/' . $nom);
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $nom . '"');
         header('Cache-Control: max-age=0');
