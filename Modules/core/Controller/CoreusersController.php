@@ -4,6 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
@@ -25,8 +26,8 @@ class CoreusersController extends CoresecureController {
         }
         $lang = $this->getLanguage();
         $dataView = [
-            'bgcolor' => '#ffffff',
-            'color' => '#000000',
+            'bgcolor' => Constants::COLOR_WHITE,
+            'color' => Constants::COLOR_BLACK,
             'My_Account' => CoreTranslator::My_Account($lang),
             'Informations' => CoreTranslator::Informations($lang),
             'Password' => CoreTranslator::Password($lang),

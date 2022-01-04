@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Constants.php';
 
 class ClPricing extends Model {
 
@@ -27,8 +28,8 @@ class ClPricing extends Model {
             return [
                 "id" => 0,
                 "name" => "",
-                "color" => "#ffffff",
-                "txtcolor" => "#000000",
+                "color" => Constants::COLOR_WHITE,
+                "txtcolor" => Constants::COLOR_BLACK,
                 "type" => 0,
                 "display_order" => 0
             ];

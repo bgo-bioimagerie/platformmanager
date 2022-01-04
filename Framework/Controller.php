@@ -4,6 +4,7 @@ require_once 'Configuration.php';
 require_once 'Request.php';
 require_once 'View.php';
 require_once 'Errors.php';
+require_once 'Constants.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 
@@ -75,11 +76,11 @@ abstract class Controller {
         }
 
 
-        $spaceColor = "#ffffff";
+        $spaceColor = Constants::COLOR_WHITE;
         if ($space["color"] != "") {
             $spaceColor = $space["color"];
         }
-        $spaceTxtColor = "#000000";
+        $spaceTxtColor = Constants::COLOR_BLACK;
         if ($space['txtcolor'] != "") {
             $spaceTxtColor = $space["txtcolor"];
         }

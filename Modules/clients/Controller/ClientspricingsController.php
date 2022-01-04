@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClPricing.php';
@@ -89,8 +90,8 @@ class ClientspricingsController extends ClientsController {
             $pricing = array(
                 "id" => 0,
                 "name" => "",
-                "color" => "#ffffff",
-                "txtcolor" => "#000000",
+                "color" => Constants::COLOR_WHITE,
+                "txtcolor" => Constants::COLOR_BLACK,
                 "display_order" => 0,
                 "type" => 0
             );

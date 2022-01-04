@@ -206,7 +206,7 @@ class ServicesprojectsController extends ServicesController {
             $entriesArray[$i]["color"] = $pricingInfo["color"];
             $entriesArray[$i]["txtcolor"] = $pricingInfo["txtcolor"];
 
-            $entriesArray[$i]["time_color"] = "#ffffff";
+            $entriesArray[$i]["time_color"] = Constants::COLOR_WHITE;
             if ($entriesArray[$i]["time_limit"] != "") {
 
                 if ($entriesArray[$i]["time_limit"] && strval($entriesArray[$i]["time_limit"]) != "0000-00-00") {
@@ -215,7 +215,7 @@ class ServicesprojectsController extends ServicesController {
             }
 
 
-            $entriesArray[$i]["closed_color"] = "#ffffff";
+            $entriesArray[$i]["closed_color"] = Constants::COLOR_WHITE;
             if ($entriesArray[$i]["date_close"] && $entriesArray[$i]["date_close"] != "0000-00-00") {
                 $entriesArray[$i]["closed_color"] = "#99CC00";
             }

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Constants.php';
 
 /**
  * Class defining the Area model
@@ -19,7 +20,7 @@ class ReState extends Model {
         $this->tableName = "re_state";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");
-        $this->setColumnsInfo("color", "varchar(7)", "#ffffff");
+        $this->setColumnsInfo("color", "varchar(7)", Constants::COLOR_WHITE);
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->primaryKey = "id";
     }

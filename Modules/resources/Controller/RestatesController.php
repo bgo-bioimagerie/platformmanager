@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReState.php';
@@ -62,7 +63,7 @@ class RestatesController extends ResourcesBaseController {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         // get belonging info
-        $data = array("id" => 0, "name" => "", "color" => "#ffffff", "id_space" => $id_space);
+        $data = array("id" => 0, "name" => "", "color" => Constants::COLOR_WHITE, "id_space" => $id_space);
         if ($id > 0) {
             $data = $this->model->get($id_space, $id);
         }

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
@@ -179,12 +180,11 @@ class CoreSpace extends Model {
             "shortname" => "",
             "contact" => "",
             "status" => 0,
-            "color" => "",
-            "txtcolor" => "",
+            "color" => Constants::COLOR_BLACK,
+            "txtcolor" => Constants::COLOR_WHITE,
             "support" => "",
             "description" => "",
             "admins" => [],
-            "txtcolor" => "#ffffff",
             "plan" => 0,
             "plan_expire" => 0,
         ];
@@ -322,7 +322,7 @@ class CoreSpace extends Model {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return "#000000";
+            return Constants::COLOR_BLACK;
         }
         return $req[0];
     }
@@ -331,7 +331,7 @@ class CoreSpace extends Model {
         $sql = "SELECT txtcolor FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return "#ffffff";
+            return Constants::COLOR_WHITE;
         }
         return $req[0];
     }
@@ -474,7 +474,7 @@ class CoreSpace extends Model {
         return intval($res[0]);
     }
 
-    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor='#ffffff') {
+    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor=Constants::COLOR_WHITE) {
         if ($this->isSpace($id)) {
             $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor);
             return $id;

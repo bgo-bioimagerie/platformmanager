@@ -6,6 +6,7 @@ require_once 'Framework/TableView.php';
 require_once 'Framework/FileUpload.php';
 require_once 'Framework/Download.php';
 require_once 'Framework/Email.php';
+require_once 'Framework/Constants.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -35,8 +36,8 @@ class CorespaceaccessController extends CoresecureController {
             'id_space' => $id_space,
             'title' => CoreTranslator::Users($lang),
             'glyphicon' => $menuInfo['icon'] ?? '',
-            'bgcolor' => $menuInfo['color'] ?? '#000000',
-            'color' => $menuInfo['txtcolor'] ?? '#ffffff',
+            'bgcolor' => $menuInfo['color'] ?? Constants::COLOR_BLACK,
+            'color' => $menuInfo['txtcolor'] ?? Constants::COLOR_WHITE,
             'PendingUsers' => CoreTranslator::PendingUsers($lang),
             'Active_Users' => CoreTranslator::Active_Users($lang),
             'Inactive' => CoreTranslator::Inactive($lang),

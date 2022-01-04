@@ -1,5 +1,7 @@
 <?php
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Framework/Constants.php';
+
 $modelMenu = new CoreSpace();
 
 $menucolor = $modelMenu->getSpaceMenusColor($id_space, "booking");
@@ -8,7 +10,7 @@ if ($menucolor == "") {
     $menucolor = "#428bca";
 }
 if ($menucolortxt == "") {
-    $menucolortxt = "#ffffff";
+    $menucolortxt = Constants::COLOR_WHITE;
 }
 ?>
 

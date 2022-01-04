@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Request.php';
+require_once 'Framework/Constants.php';
 
 /**
  * Class allowing to generate and check a form html view. 
@@ -335,7 +336,7 @@ class TableView {
                 }
                 foreach ($headers as $key => $value) {
 
-                    $ccolor = "#ffffff";
+                    $ccolor = Constants::COLOR_WHITE;
                     if (isset($this->colorIndexes[$key])){  
                         $ccolor = $dat[$this->colorIndexes[$key]];
                     }
@@ -344,7 +345,7 @@ class TableView {
                             $ccolor = $dat[$this->colorIndexes["all"]];
 	    		        }
                     }
-                    $tcolor = "#000000";
+                    $tcolor = Constants::COLOR_BLACK;
                     if(isset($this->colorIndexes["all_text"])) {
                         $tcolor = $dat[$this->colorIndexes["all_text"]];
                     }

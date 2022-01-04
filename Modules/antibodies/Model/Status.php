@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Constants.php';
 
 /**
  * Class defining the Status model
@@ -68,7 +69,7 @@ class Status extends Model {
      */
     public function get($id_space, $id) {
         if(!$id){
-            return array("color" => "#ffffff", "nom" => "");
+            return array("color" => Constants::COLOR_WHITE, "nom" => "");
         }
         
         $sql = "select * from ac_status where id=? AND id_space=? AND deleted=0";

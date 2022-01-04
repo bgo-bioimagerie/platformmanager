@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Constants.php';
 
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -124,7 +125,7 @@ class CorespaceController extends CoresecureController {
                 $menuColor = '#428bca';
             }
             $spaceMenuItems[$i]['color'] = $menuColor;
-            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: "#ffffff";
+            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: Constants::COLOR_WHITE;
         }
         return $this->render(array(
             "role" => $role,
@@ -320,11 +321,11 @@ class CorespaceController extends CoresecureController {
         $space = $this->spaceModel->getSpace($id_space);
 
 
-        $spaceColor = "#ffffff";
+        $spaceColor = Constants::COLOR_WHITE;
         if ($space["color"] != "") {
             $spaceColor = $space["color"];
         }
-        $spaceTxtColor = "#000000";
+        $spaceTxtColor = Constants::COLOR_BLACK;
         if ($space['txtcolor'] != "") {
             $spaceTxtColor = $space["txtcolor"];
         }

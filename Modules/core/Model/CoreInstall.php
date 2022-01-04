@@ -6,6 +6,7 @@ require_once 'Framework/FCache.php';
 require_once 'Framework/Errors.php';
 require_once 'Framework/Statistics.php';
 require_once 'Framework/Events.php';
+require_once 'Framework/Constants.php';
 
 
 require_once 'Modules/core/Model/CoreStatus.php';
@@ -601,8 +602,8 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name, done!');
 
         Configuration::getLogger()->debug('[core] add txtcolor');
-        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
-        $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
+        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", Constants::COLOR_WHITE);
+        $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", Constants::COLOR_WHITE);
         Configuration::getLogger()->debug('[core] add txtcolor, done');
 
         Configuration::getLogger()->debug('[core] add space plan');
@@ -863,7 +864,7 @@ class CoreInstall extends Model {
         $modelConfig->setParam("navbar_bg_color", "#404040");
         $modelConfig->setParam("navbar_bg_highlight", "#333333");
         $modelConfig->setParam("navbar_text_color", "#e3e2e4");
-        $modelConfig->setParam("navbar_text_highlight", "#ffffff");
+        $modelConfig->setParam("navbar_text_highlight", Constants::COLOR_WHITE);
 
         $modelUser = new CoreUser();
         $modelUser->createTable();
