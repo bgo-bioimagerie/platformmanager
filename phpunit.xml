@@ -7,6 +7,7 @@
       <file>tests/manager/ResourcesTest.php</file>
       <file>tests/manager/ClientsTest.php</file>
       <file>tests/manager/BookingTest.php</file>
+      <file>tests/manager/ServicesTest.php</file>
       <file>tests/manager/InvoicesTest.php</file>
     </testsuite>
   </testsuites>

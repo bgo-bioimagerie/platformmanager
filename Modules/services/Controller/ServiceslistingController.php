@@ -84,7 +84,7 @@ class ServiceslistingController extends ServicesController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "serviceslisting/" . $id_space);
 
         if ($form->check()) {
-            $this->serviceModel->setService(
+            $service_id = $this->serviceModel->setService(
                 $id, $id_space,
                 $this->request->getParameter("name"),
                 $this->request->getParameter("description"),
@@ -92,8 +92,7 @@ class ServiceslistingController extends ServicesController {
                 $this->request->getParameter("type_id")
             );
 
-            $this->redirect("serviceslisting/" . $id_space);
-            return;
+            return $this->redirect("serviceslisting/" . $id_space, [], ['service' => ['id' => $service_id]]);
         }
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
