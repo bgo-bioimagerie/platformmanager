@@ -66,7 +66,7 @@ class ServicesBaseTest extends BaseTest {
             "formid" => "editserviceform",
             "name" => $service,
             "description" => "new service",
-            "display_order" => "",
+            "display_order" => "0",
             "type_id" => 1  // quantity
 
         ], false);
