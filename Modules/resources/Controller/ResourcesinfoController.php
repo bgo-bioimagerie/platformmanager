@@ -407,7 +407,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $form = new Form($this->request, "editevent");
         $form->addSeparator(ResourcesTranslator::Edit_event_for($lang) . " " . $modelResources->getName($id_space, $id_resource));
-        $form->addDate("date", CoreTranslator::Date($lang), true, CoreTranslator::dateFromEn($data["date"], $lang));
+        $form->addDate("date", CoreTranslator::Date($lang), true, $data["date"], $lang);
         $form->addHidden("id_resource", $id_resource);
         $form->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $data["id_user"]);
         $form->addSelect("id_eventtype", ResourcesTranslator::Event_Type($lang), $choicesET, $choicesidET, $data["id_eventtype"]);

@@ -56,8 +56,8 @@ class ComnewsController extends ComController {
         $form->setTitle(ComTranslator::NewsEdit($lang));
         $form->addHidden("id", $data["id"]);
         $form->addText("title", ComTranslator::Title($lang), true, $data["title"]);
-        $form->addDate("date", ComTranslator::Date($lang), true, CoreTranslator::dateFromEn($data["date"], $lang));
-        $form->addDate("expire", ComTranslator::Date($lang), false, CoreTranslator::dateFromEn($data["expires"], $lang));
+        $form->addDate("date", ComTranslator::Date($lang), true, $data["date"]);
+        $form->addDate("expire", ComTranslator::Date($lang), false, $data["expires"]);
         $form->addUpload("media", ComTranslator::Media($lang));
         $form->addTextArea("content", ComTranslator::Content($lang), false, $data["content"], true);
 

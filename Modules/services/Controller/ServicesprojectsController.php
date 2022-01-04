@@ -275,10 +275,10 @@ class ServicesprojectsController extends ServicesController {
 
 
         $form = new Form($this->request, "projectclosingform");
-        $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($project["date_close"], $lang));
+        $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, $project["date_close"]);
         $form->addSelect("closed_by", ServicesTranslator::Closed_by($lang), $visas["names"], $visas["ids"], $project["closed_by"]);
         $form->addTextArea("samplereturn", ServicesTranslator::SampleReturn($lang), false, $project["samplereturn"]);
-        $form->addDate("samplereturndate", ServicesTranslator::DateSampleReturn($lang), false, CoreTranslator::dateFromEn($project["samplereturndate"], $lang));
+        $form->addDate("samplereturndate", ServicesTranslator::DateSampleReturn($lang), false, $project["samplereturndate"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectclosing/" . $id_space . "/" . $id);
         $form->setButtonsWidth(2, 10);
@@ -396,8 +396,8 @@ class ServicesprojectsController extends ServicesController {
         $origins = $modelOrigin->getForList($id_space);
         $form->addSelect("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
 
-        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, CoreTranslator::dateFromEn($value["time_limit"], $lang));
-        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
+        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, $value["time_limit"]);
+        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
         $form->setButtonsWidth(2, 10);
@@ -548,10 +548,10 @@ class ServicesprojectsController extends ServicesController {
         $origins = $modelOrigin->getForList($id_space);
         $form->addSelectMandatory("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
 
-        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), true, CoreTranslator::dateFromEn($value["time_limit"], $lang));
-        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
+        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), true, $value["time_limit"]);
+        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
         if ($id > 0) {
-            $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));
+            $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, $value["date_close"]);
         } else {
             $form->addHidden("date_close", $value["date_close"]);
         }
@@ -564,6 +564,7 @@ class ServicesprojectsController extends ServicesController {
 
             $trDates = array();
             foreach ($items["dates"] as $d) {
+                // TODO: should we remove dateFromEn here ?
                 $trDates[] = CoreTranslator::dateFromEn($d, $lang);
             }
 

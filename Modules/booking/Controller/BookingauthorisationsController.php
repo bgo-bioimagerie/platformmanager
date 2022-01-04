@@ -238,9 +238,9 @@ class BookingauthorisationsController extends CoresecureController {
 
 
         $form->addSelect("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"], $data["visa_id"]);
-        $form->addDate("date", BookingTranslator::DateActivation($lang), true, CoreTranslator::dateFromEn($data["date"], $lang));
+        $form->addDate("date", BookingTranslator::DateActivation($lang), true, $data["date"], $lang);
 
-        $form->addDate("date_desactivation", BookingTranslator::DateDesactivation($lang), false, CoreTranslator::dateFromEn($data["date_desactivation"], $lang));
+        $form->addDate("date_desactivation", BookingTranslator::DateDesactivation($lang), false, $data["date_desactivation"]);
         $form->addSelect("is_active", ResourcesTranslator::IsActive($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $data["is_active"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsedit/" . $id_space . "/" . $id);

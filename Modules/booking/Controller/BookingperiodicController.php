@@ -359,7 +359,7 @@ class BookingdefaultController extends BookingabstractController {
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
         // date time
-        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["start_time"]), $lang));
+        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["start_time"]));
         $form->addHour("hour_start", BookingTranslator::time($lang), false, array(date("H", $resaInfo["start_time"]), date("i", $resaInfo["start_time"])));
 
         // conditionnal on package
@@ -380,7 +380,7 @@ class BookingdefaultController extends BookingabstractController {
         $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, $resaInfo["package_id"], false);
 
         $formEndDate = new Form($this->request, "formEndDate");
-        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["end_time"]), $lang));
+        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["end_time"]));
         $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
 
         $packageChecked = $resaInfo["package_id"];
