@@ -12,18 +12,18 @@ class CoreTranslator {
         if($date == null) {
             return "";
         }
-        //echo "to translate = " . $date . "<br/>";
         if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
             if (count($dateArray) == 3) {
-                //print_r($dateArray);
+                if(strlen($dateArray[2]) != 4) {
+                    return false;
+                }
                 $day = $dateArray[0];
                 $month = $dateArray[1];
                 $year = $dateArray[2];
-                //echo "translated = " . $year . "-" . $month . "-" . $day . "<br/>";
                 return $year . "-" . $month . "-" . $day;
             }
-            return "";
+            return $date;
         }
         // En
         return $date;
