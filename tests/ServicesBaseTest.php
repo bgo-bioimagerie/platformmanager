@@ -7,6 +7,9 @@ require_once 'Framework/Configuration.php';
 
 require_once 'Modules/services/Controller/ServicesconfigController.php';
 require_once 'Modules/services/Controller/ServiceslistingController.php';
+require_once 'Modules/services/Controller/ServicesvisaController.php';
+require_once 'Modules/services/Controller/ServicesoriginsController.php';
+require_once 'Modules/services/Controller/ServicesprojectsController.php';
 
 require_once 'tests/BaseTest.php';
 
@@ -70,10 +73,65 @@ class ServicesBaseTest extends BaseTest {
         $c = new ServiceslistingController($req);
         $data = $c->editAction($space['id'], '');
         $this->assertTrue($data['service']['id'] > 0);
+        return $data['service'];
+    }
+
+    protected function createVisa($space, $user) {
+        Configuration::getLogger()->debug('create visa', ['user' => $user, 'space' => $space]);
+        $this->asUser($user['login'], $space['id']);
+        $req = new Request([
+            "path" => "servicesvisaedit/".$space['id']."/0",
+            "formid" => "editserviceform",
+            "id_user" => $user['id'],
+        ], false);
+        $c = new ServicesvisaController($req);
+        $data = $c->editAction($space['id'], 0);
+        $this->assertTrue($data['visa']['id'] > 0);
+        return $data['visa'];
+
+    }
+
+    protected function createOrigin($space, $user, $origin) {
+        Configuration::getLogger()->debug('create origin', ['user' => $user, 'space' => $space, 'origin' => $origin]);
+        $this->asUser($user['login'], $space['id']);
+        $req = new Request([
+            "path" => "servicesoriginedit/".$space['id']."/0",
+            "formid" => "editserviceform",
+            "name" => $origin,
+            "display_order" => 1
+        ], false);
+        $c = new ServicesoriginsController($req);
+        $data = $c->editAction($space['id'], 0);
+        $this->assertTrue($data['origin']['id'] > 0);
+        return $data['origin'];
     }
 
     
+    protected function createProject($space, $user, $name, $visa, $client, $client_user, $origin) {
+        Configuration::getLogger()->debug('create origin', ['user' => $user, 'space' => $space, 'name' => $name]);
+        $this->asUser($user['login'], $space['id']);
+        $date = new DateTime();
+        $date->modify('next monday');
+        $req = new Request([
+            "path" => "servicesprojectsedit/".$space['id']."/0",
+            "formid" => "projectEditForm",
+            "in_charge" => $visa['id'],
+            "id_resp" => $client['id'],
+            "name" => $name,
+            "id_user" => $client_user['id'],
+            "new_team" => 1,
+            "new_project" => 1,
+            "id_origin" => $origin['id'],
+            "time_limit" => $date->format('Y-m-d'),
+            "date_open" => date('Y-m-d'),
+            "date_close" => ""
+        ], false);
+        $c = new ServicesprojectsController($req);
+        $data = $c->editAction($space['id'], 0);
+        $this->assertTrue($data['project']['id'] > 0);
+        return $data['project'];
 
+    }
 
 
 }

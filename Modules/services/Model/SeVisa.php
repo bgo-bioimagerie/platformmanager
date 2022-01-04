@@ -46,10 +46,12 @@ class SeVisa extends Model {
         if (!$id) {
             $sql = "INSERT INTO se_visa (id_user, id_space) VALUES (?,?)";
             $this->runRequest($sql, array($id_user, $id_space));
+            $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE se_visa SET id_user=? WHERE id=? AND id_space=?";
             $this->runRequest($sql, array($id_user, $id, $id_space));
         }
+        return $id;
     }
 
     public function getAll($id_space) {

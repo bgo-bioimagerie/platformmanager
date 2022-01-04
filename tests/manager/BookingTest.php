@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tests/BookingBaseTest.php';
-
+require_once 'Modules/clients/Controller/ClientslistController.php';
 
 class BookingTest extends BookingBaseTest {
 

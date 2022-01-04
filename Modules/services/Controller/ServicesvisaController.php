@@ -81,11 +81,10 @@ class ServicesvisaController extends ServicesController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "servicesvisas/" . $id_space);
 
         if ($form->check()) {
-            $this->visaModel->set($id, $this->request->getParameter("id_user") 
+            $id_visa = $this->visaModel->set($id, $this->request->getParameter("id_user") 
                     , $id_space);
             
-            $this->redirect("servicesvisas/" . $id_space);
-            return;
+            return $this->redirect("servicesvisas/" . $id_space, [], ['visa' => ['id' => $id_visa]]);
         }
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));

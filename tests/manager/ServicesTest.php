@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tests/ServicesBaseTest.php';
-
+require_once 'Modules/clients/Controller/ClientslistController.php';
 
 class ServicesTest extends ServicesBaseTest {
 
@@ -28,7 +28,20 @@ class ServicesTest extends ServicesBaseTest {
             foreach(['service1', 'service2'] as $service) {
                 $this->createServices($space, $user, $service);
             }
+            $visa = $this->createVisa($space, $user);
+            $origin = $this->createOrigin($space, $user, 'origin1');
 
+
+            $this->asUser($user['login'], $space['id']);
+            $req = new Request([
+                "path" => "clclients/".$space['id'],
+                "id" => 0
+             ], false); 
+            $c = new ClientslistController($req);
+            $clients_data = $c->indexAction($space['id']);
+            $clients = $clients_data['clients'];
+            $client_user = $this->user($data['users'][0]);
+            $this->createProject($space, $user, 'project1', $visa, $clients[0], $client_user, $origin);
         } 
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tests/InvoicesBaseTest.php';
-
+require_once 'Modules/clients/Controller/ClientslistController.php';
 
 class InvoicesTest extends InvoicesBaseTest {
 
