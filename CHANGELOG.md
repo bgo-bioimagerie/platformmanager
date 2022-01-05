@@ -9,11 +9,9 @@
 * [core] allow space plan modification #429
 * [invoice] get invoice number per space, and not global
 * [core] fix prometheus redis port
-
-## 2.2.2
-
 * [coreconfig] fix maintenance mode authorizations
 * [coreconfig] remove carousel
+
 ## 2.2.1
 
 * [login] clarify messages toward users
