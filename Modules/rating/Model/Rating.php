@@ -28,6 +28,7 @@ class Rating extends Model {
 		`rate` int NOT NULL,
         `comment` VARCHAR(255),
         `module` VARCHAR(100) NOT NULL,
+        `resourcename` VARCHAR(255) NOT NULL,
         `resource` int NOT NULL,
         `id_user` int NOT NULL,
 		PRIMARY KEY (`id`)
@@ -36,12 +37,17 @@ class Rating extends Model {
     }
 
     public function get(int $id_space, string $module, int $resource) {
-        $sql = "SELECT * from rating WHERE deleted=0 AND id_space=? AND module=? AND resource=?";
+        $sql = "SELECT * FROM rating WHERE deleted=0 AND id_space=? AND module=? AND resource=?";
         $res = $this->runRequest($sql, [$id_space, $module, $resource]);
         if ($res->rowCount() > 0) {
             return $res->fetch();
         }
         return null;
+    }
+
+    public function stat(int $id_space) {
+        $sql = "SELECT module,resource,AVG(rate) FROM rating WHERE id_space=? GROUP BY module,resource";
+        return $this->runRequest($sql,[$id_space])->fetchAll();
     }
 
     public function list(int $id_space, string $module=null) {
@@ -55,14 +61,14 @@ class Rating extends Model {
         return $res->fetchAll();
     }
 
-    public function set(int $id_space, int $id_user, string $module, int $resource, int $rate, string $comment) {
+    public function set(int $id_space, int $id_user, string $module, int $resource, int $resourcename, int $rate, string $comment) {
         $exists = $this->get($id_space, $module, $resource);
         if($exists) {
             $sql = 'UPDATE rating set rate=?,comment=? WHERE id_space=? AND id_user=? AND module=? AND resource=?';
             $this->runRequest($sql, [$rate, $comment, $id_space, $id_user, $module, $resource]);
         } else {
-            $sql = 'INSERT INTO rating (rate, comment, id_space, id_user, module, resource) VALUES (?, ?, ?, ?, ?, ?)';
-            $this->runRequest($sql, [$rate, $comment, $id_space, $id_user, $module, $resource]);
+            $sql = 'INSERT INTO rating (rate, comment, id_space, id_user, module, resource, resourcename) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            $this->runRequest($sql, [$rate, $comment, $id_space, $id_user, $module, $resource, $resourcename]);
         }
     }
 }
