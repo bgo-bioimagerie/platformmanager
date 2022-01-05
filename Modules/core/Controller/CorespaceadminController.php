@@ -123,7 +123,7 @@ class CorespaceadminController extends CoresecureController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
 
         $id = $id_space;
-        if ($form->check()){ 
+        if ($form->check()){
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
             # $shortname = str_replace(" ", "", $shortname);
@@ -154,8 +154,24 @@ class CorespaceadminController extends CoresecureController {
                     } else {
                         $expires = 0;
                     }
-                    $modelSpace->setPlan($id_space, intval($plan), $expires);
+                    $modelSpace->setPlan($id, intval($plan), $expires);
                 }
+
+                $planChanged = false;
+                if(!$space['id']) {
+                    $planChanged = true;
+                }
+                if(intval($space['plan']) != intval($plan)) {
+                    $planChanged = true;
+                }
+                if($planChanged) {
+                    Events::send([
+                        "action" => Events::ACTION_PLAN_EDIT,
+                        "space" => ["id" => intval($id)],
+                        "plan" => ["id" => intval($plan)]
+                    ]);
+                }
+
             } else {
                 // Space admin can edit
                 Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);

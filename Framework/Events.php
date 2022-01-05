@@ -300,6 +300,42 @@ class EventHandler {
         }
     }
 
+    public function spacePlanEdit($msg) {
+        $u = new CoreUser();
+        $user = $u->getInfo($msg['user']['id']);
+
+        // If owner, add to grafana
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        
+
+        $plan = new CorePlan($space['plan'], $space['plan_expire']);
+        if(!$plan) {
+            Configuration::getLogger()->error('invalid plan', $msg);
+            return;
+        }
+        $csu = new CoreSpaceUser();
+        $managers = $csu->managersOrAdmin($space['id']);
+        $planInfo = $plan->plan();
+        Configuration::getLogger()->debug('[plan] edit check flags', ['flags' => $plan->Flags()]);
+        if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+            Configuration::getLogger()->debug('[plan] add grafana', ['plan' => $planInfo['name']]);
+            foreach($managers as $manager){
+                $g->addUser($space['shortname'], $manager['login'], $user['apikey']);
+            }
+        } else {
+            Configuration::getLogger()->debug('[plan] del grafana', ['plan' => $planInfo['name']]);
+            foreach($managers as $manager){
+                $g->delUser($space['shortname'], $manager['login']);
+            }
+        }
+
+        $m = new CoreHistory();
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "Space plan updated: ".$planInfo['name']);
+    
+    }
+
     public function customerImport() {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
@@ -435,6 +471,9 @@ class EventHandler {
                 case Events::ACTION_SERVICE_DELETE:
                     $this->spaceServiceEdit($action, $data);
                     break;
+                case Events::ACTION_PLAN_EDIT:
+                    $this->spacePlanEdit($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     break;
@@ -454,6 +493,7 @@ class Events {
     public const ACTION_SPACE_USER_UNJOIN = 3;
     public const ACTION_SPACE_USER_ROLEUPDATE = 4;
     public const ACTION_USER_APIKEY = 5;
+    public const ACTION_PLAN_EDIT = 6;
     public const ACTION_CAL_ENTRY_EDIT = 100;
     public const ACTION_CAL_ENTRY_REMOVE = 101;
     public const ACTION_HELPDESK_TICKET = 200;

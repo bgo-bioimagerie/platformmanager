@@ -67,6 +67,10 @@ class CorePlan {
         }
         return false;
     }
+
+    public function plan(): ?array {
+        return $this->plan;
+    }
 }
 
 
