@@ -32,10 +32,6 @@ class ComnewsController extends ComController {
             "date" => ComTranslator::Date($lang),
             "expires" => ComTranslator::Expire($lang)
         );
-        for($i = 0 ; $i < count($data) ; $i++){
-            $data[$i]["date"] = CoreTranslator::dateFromEn($data[$i]["date"], $lang); 
-            $data[$i]["expires"] = CoreTranslator::dateFromEn($data[$i]["expires"], $lang); 
-        }
 
         $table->addLineEditButton("comnewsedit/".$id_space, "id");
         $table->addDeleteButton("comnewsdelete/".$id_space, "id", "title");
@@ -70,9 +66,8 @@ class ComnewsController extends ComController {
             $id = $this->request->getParameter("id");
             $title = $this->request->getParameter("title");
             $content = $this->request->getParameter("content", false);
-            $date = CoreTranslator::dateToEn($this->request->getParameter("date"), $lang);
-            $expire = CoreTranslator::dateToEn($this->request->getParameter("expire"), $lang);
-
+            $date = $this->request->getParameter("date");
+            $expire = $this->request->getParameter("expire");
             $idNew = $modelComNews->set($id, $id_space, $title, $content, $date, $expire);
 
             // upload
