@@ -209,7 +209,7 @@ class BookingdefaultController extends BookingabstractController {
             $modelResource = new ResourceInfo();
             $modelScheduling = new BkScheduling();
             $schedul = $modelScheduling->get($id_space, $modelResource->getAreaID($id_space ,$id_resource));
-            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
         else{
             $hour_endH = $this->request->getParameter("hour_endH");
