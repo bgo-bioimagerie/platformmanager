@@ -70,6 +70,8 @@ try {
 
 // update db release and launch upgrade
 $cdb->upgrade();
+$cdb->scanUpgrades();
+$cdb->base();
 
 $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 
