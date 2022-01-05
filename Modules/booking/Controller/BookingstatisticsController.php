@@ -563,7 +563,12 @@ class BookingstatisticsController extends StatisticsController {
     }
 
     public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
         $year_start = $dateBeginArray[0];
@@ -608,7 +613,12 @@ class BookingstatisticsController extends StatisticsController {
     }
 
     public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
         $year_start = $dateBeginArray[0];

@@ -58,8 +58,15 @@ class BookingdefaultController extends BookingabstractController {
         // get the parameters
         $paramVect = explode("_", $param);
         $date = $paramVect[1];
+        if($date == "") {
+            throw new PfmParamException("invalid date");
+        }
+
         $dateArray = explode("-", $date);
         $hour = $paramVect[2];
+        if($hour == "") {
+            throw new PfmParamException("invalid time");
+        }
         $hourArray = explode("-", $hour);
         $id_resource = $paramVect[3];
 
@@ -114,6 +121,11 @@ class BookingdefaultController extends BookingabstractController {
         $lang = $this->getLanguage();
         $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
         $dateResaStartArray = explode("-", $dateResaStart);
+        if($dateResaStart == "") {
+            throw new PfmParamException("invalid start date");
+        }
+
+
         $hour_startH = $this->request->getParameter("hour_startH");
         $hour_startM = $this->request->getParameter("hour_startm");
         $start_time = mktime($hour_startH, $hour_startM, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
@@ -121,6 +133,10 @@ class BookingdefaultController extends BookingabstractController {
         $dateResaEnd = CoreTranslator::dateToEn($this->request->getParameter("resa_end"), $lang);
         
         $dateResaEndArray = explode("-", $dateResaEnd);
+        if($dateResaEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
+
         $hour_endH = $this->request->getParameter("hour_endH");
         //echo "hour_endH = " . $hour_endH . "<br/>";
         $hour_endM = $this->request->getParameter("hour_endm");

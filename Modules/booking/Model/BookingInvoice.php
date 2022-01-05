@@ -17,7 +17,12 @@ class BookingInvoice extends InvoiceModel {
 
 
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
-
+        if($beginPeriod == "") {
+            throw new PfmParamException("invalid begin period");
+        }
+        if($endPeriod == "") {
+            throw new PfmParamException("invalid end period");
+        }
         $beginArray = explode("-", $beginPeriod);
         $startPeriodeTime = mktime(0, 0, 0, $beginArray[1], $beginArray[2], $beginArray[0]);
 
