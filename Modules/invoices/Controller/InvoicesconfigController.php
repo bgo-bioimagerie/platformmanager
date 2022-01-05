@@ -234,8 +234,8 @@ class InvoicesconfigController extends CoresecureController {
     }
 
     public function periodForm($modelCoreConfig, $id_space, $lang) {
-        $invoiceperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space), $lang);
-        $invoiceperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodend", $id_space), $lang);
+        $invoiceperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space);
+        $invoiceperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $id_space);
 
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));

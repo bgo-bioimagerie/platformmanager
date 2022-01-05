@@ -170,7 +170,7 @@ class BookingdefaultController extends BookingabstractController {
         $full_description = $this->request->getParameterNoException("full_description");
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
 
-        $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
+        $dateResaStart = $this->request->getParameter("resa_start");
         $dateResaStartArray = explode("-", $dateResaStart);
         if($dateResaStart == "") {
             throw new PfmParamException("invalid start date");
@@ -199,7 +199,7 @@ class BookingdefaultController extends BookingabstractController {
         }
 
 
-        $dateResaEnd = CoreTranslator::dateToEn($this->request->getParameter("resa_end"), $lang);
+        $dateResaEnd = $this->request->getParameter("resa_end");
         $dateResaEndArray = explode("-", $dateResaEnd);
         if($dateResaEnd == "") {
             throw new PfmParamException("invalid end date");
@@ -329,7 +329,7 @@ class BookingdefaultController extends BookingabstractController {
                 $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
             }
         } else {
-            $periodicEndDate = CoreTranslator::dateToEn($this->request->getParameter("periodic_enddate"), $lang);
+            $periodicEndDate = $this->request->getParameter("periodic_enddate");
             $periodicEndDateArray = explode("-", $periodicEndDate);
             if($periodicEndDate == "") {
                 throw new PfmParamException("invalid end date");
@@ -714,7 +714,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // date time
         $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"] ?? 0);
-        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["start_time"]), $lang));
+        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["start_time"]), $lang);
         $form->addHour("hour_start", BookingTranslator::time($lang), false, array(date("H", $resaInfo["start_time"]), date("i", $resaInfo["start_time"])));
 
         // conditionnal on package
@@ -735,7 +735,7 @@ class BookingdefaultController extends BookingabstractController {
         $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, $resaInfo["package_id"], false);
 
         $formEndDate = new Form($this->request, "formEndDate");
-        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["end_time"]), $lang));
+        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["end_time"]));
         $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
         $packageChecked = $resaInfo["package_id"];
 

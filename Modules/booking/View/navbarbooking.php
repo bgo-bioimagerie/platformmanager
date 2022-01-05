@@ -120,7 +120,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                         <div >
                             <div class='input-group date '>
                                 <input id="date-daily" type='date' class="form-control" name="curentDate"
-                                       value="<?php echo CoreTranslator::dateFromEn($menuData["curentDate"], $lang) ?>"
+                                       value="<?php echo $menuData["curentDate"] ?>"
                                        />
                             </div>
                         </div>

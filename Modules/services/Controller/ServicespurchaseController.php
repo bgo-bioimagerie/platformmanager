@@ -64,11 +64,10 @@ class ServicespurchaseController extends ServicesController {
         $lang = $this->getLanguage();
         $modelItem = new SePurchaseItem();
         if (!$id) {
-            $value = array("comment" => "", "date" => CoreTranslator::dateFromEn(date("Y-m-d", time()), $lang));
+            $value = array("comment" => "", "date" => date("Y-m-d", time()));
             $items = array("services" => array(), "quantities" => array());
         } else {
             $value = $this->serviceModel->getItem($id_space, $id);
-            $value["date"] = CoreTranslator::dateFromEn($value["date"], $lang);
             $items = $modelItem->getForPurchase($id_space, $id);
         }
         

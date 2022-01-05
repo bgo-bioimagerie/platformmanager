@@ -59,7 +59,7 @@ class ServicesstatisticsprojectController extends ServicesController {
                 $y = date("Y") - 1;
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_begin = $y . "-" . $m . "-" . $d;
             } else {
                 $date_begin = date("Y", time()) . "-01-01";
             }
@@ -72,7 +72,7 @@ class ServicesstatisticsprojectController extends ServicesController {
                 $y = date("Y");
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_end = $y . "-" . $m . "-" . $d;
             } else {
                 $date_end = date("Y", time()) . "-12-31";
             }
@@ -1111,7 +1111,7 @@ class ServicesstatisticsprojectController extends ServicesController {
             $y = date("Y") - 1;
             $m = $dateArray[1];
             $d = $dateArray[2];
-            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            $date_begin = $y . "-" . $m . "-" . $d;
         }
         $date_end = $this->request->getParameterNoException("date_end");
         if ($date_end == "") {
@@ -1120,7 +1120,7 @@ class ServicesstatisticsprojectController extends ServicesController {
             $y = date("Y");
             $m = $dateArray[1];
             $d = $dateArray[2];
-            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            $date_end = $y . "-" . $m . "-" . $d;
         }
 
         // build the form
