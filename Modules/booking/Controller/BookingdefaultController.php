@@ -204,13 +204,11 @@ class BookingdefaultController extends BookingabstractController {
         if($dateResaEnd == "") {
             throw new PfmParamException("invalid end date");
         }
-
         if($all_day_long == 1){
             $modelResource = new ResourceInfo();
             $modelScheduling = new BkScheduling();
             $schedul = $modelScheduling->get($id_space, $modelResource->getAreaID($id_space ,$id_resource));
-            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
-            Configuration::getLogger()->debug("[TEST]", ["end_time" => $end_time]);
+            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
         else{
             $hour_endH = $this->request->getParameter("hour_endH");
@@ -575,8 +573,7 @@ class BookingdefaultController extends BookingabstractController {
         $canEditReservation = false;
         if ($role > CoreSpace::$USER) {
             $canEditReservation = true;
-        }
-        Configuration::getLogger()->debug("[TEST]", ["in edit reservation"]);
+        }        
         $id_resource = $resaInfo["resource_id"];
 
         $modelResource = new ResourceInfo();
@@ -735,7 +732,6 @@ class BookingdefaultController extends BookingabstractController {
         $formPackage = new Form($this->request, "formPackage");
         $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, $resaInfo["package_id"], false);
 
-        Configuration::getLogger()->debug("[TEST]", ["resa_info before end date" => date("Y-m-d", $resaInfo["end_time"])]);
         $formEndDate = new Form($this->request, "formEndDate");
         $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["end_time"]));
         $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
