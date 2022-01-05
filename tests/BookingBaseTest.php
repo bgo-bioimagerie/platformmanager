@@ -35,9 +35,9 @@ class BookingBaseTest extends BaseTest {
             "colorTxtSettingsMenu" => "#ffffff"
 
         ], false);
-        $c = new BookingconfigController($req);
+        $c = new BookingconfigController($req, $space);
         $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false));
+        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
         $spaceView = $c->viewAction($space['id']);
         $clientsEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
@@ -70,7 +70,7 @@ class BookingBaseTest extends BaseTest {
             "display_order" => 0,
             "who_can_use" => 2
         ], false);
-        $c = new BookingcolorcodesController($req);
+        $c = new BookingcolorcodesController($req, $space);
         $data = $c->editAction($space['id'], 0);
         $bkcode = $data['bkcode'];
         $this->assertTrue($bkcode['id'] > 0);
@@ -89,7 +89,7 @@ class BookingBaseTest extends BaseTest {
             "display_order" => 0,
             "who_can_use" => 3
         ], false);
-        $c = new BookingcolorcodesController($req);
+        $c = new BookingcolorcodesController($req, $space);
         $data = $c->editAction($space['id'], 0);
         $bkcode = $data['bkcode'];
         $this->assertTrue($bkcode['id'] > 0);
@@ -102,7 +102,7 @@ class BookingBaseTest extends BaseTest {
             "path" => "resources/".$space['id'],
             "id" => 0
         ], false);
-        $c = new ResourcesinfoController($req);
+        $c = new ResourcesinfoController($req, $space);
         $data = $c->indexAction($space['id']);
         $resources = $data['resources'];
         $form = [
@@ -118,13 +118,13 @@ class BookingBaseTest extends BaseTest {
             $resources[2]['id'] => 3
         ];
         $req = new Request($form, false);
-        $c = new BookingaccessibilitiesController($req);
+        $c = new BookingaccessibilitiesController($req, $space);
         $c->indexAction($space['id']);
         $form = [
             "path" => "bookingaccessibilities/".$space['id'],
         ];
         $req = new Request($form, false);
-        $c = new BookingaccessibilitiesController($req);
+        $c = new BookingaccessibilitiesController($req, $space);
         $data = $c->indexAction($space['id']);
         Configuration::getLogger()->debug('bkaccess', ['expects' => $expects, 'data' => $data]);
         foreach($data['bkaccess'] as $bkaccess) {
@@ -159,7 +159,7 @@ class BookingBaseTest extends BaseTest {
             "hour_endH" => $time+1,
             "hour_endm" => 0 
         ], false);
-        $c = new BookingdefaultController($req);
+        $c = new BookingdefaultController($req, $space);
         $data = $c->editreservationqueryAction($space['id']);
         $this->assertTrue($data !== null);
         $this->assertTrue(array_key_exists('bkcalentry', $data));
@@ -185,7 +185,7 @@ class BookingBaseTest extends BaseTest {
             "visa_id" => $visas['ids'][0],
             "date" => date('Y-m-d')
         ], false);
-        $c = new BookingauthorisationsController($req);
+        $c = new BookingauthorisationsController($req, $space);
         $c->addAction($space['id'], $id_resource_category."_".$user['id']);
     }
 

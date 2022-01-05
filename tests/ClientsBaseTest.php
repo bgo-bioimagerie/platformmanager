@@ -26,9 +26,9 @@ class ClientsBaseTest extends BaseTest {
             "colorMenu" =>  "#000000",
             "colorTxtMenu" => "#ffffff"
         ], false);
-        $c = new ClientsconfigController($req);
+        $c = new ClientsconfigController($req, $space);
         $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false));
+        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
         $spaceView = $c->viewAction($space['id']);
         $clientsEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
@@ -54,7 +54,7 @@ class ClientsBaseTest extends BaseTest {
             "display_order" => 0,
             "type" => 1
         ], false);
-        $c = new ClientspricingsController($req);
+        $c = new ClientspricingsController($req, $space);
         $data = $c->editAction($space['id'], 0);
         $pricing = $data['pricing'];
         $this->assertTrue($pricing['id'] > 0);
@@ -76,7 +76,7 @@ class ClientsBaseTest extends BaseTest {
             "invoice_send_preference" => 1
 
         ], false);
-        $c = new ClientslistController($req);
+        $c = new ClientslistController($req, $space);
         $data = $c->editAction($space['id'], 0);
         $client = $data['client'];
         $this->assertTrue($client['id'] > 0);
@@ -95,12 +95,12 @@ class ClientsBaseTest extends BaseTest {
             "formid" => "clientsusersform",
             "id_user" => $clientUser['id'],
         ], false);
-        $c = new ClientsusersController($req);
+        $c = new ClientsusersController($req, $space);
         $c->indexAction($space['id'], $client['id']);
         $req = new Request([
             "path" => "clclientusers/".$space['id']."/".$client['id'],
         ], false);
-        $c = new ClientsusersController($req);
+        $c = new ClientsusersController($req, $space);
         $data = $c->indexAction($space['id'], $client['id']);
         $clientsusers = $data['clientsusers'];
         $this->assertTrue(!empty($clientsusers));

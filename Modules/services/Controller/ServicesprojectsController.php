@@ -586,8 +586,7 @@ class ServicesprojectsController extends ServicesController {
             $modelProject->setOrigin($id_space ,$id_project, $this->request->getParameter("id_origin"));
             $modelProject->setInCharge($id_space, $id_project, $this->request->getParameter("in_charge"));
 
-            $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
-            return;
+            return $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project, [], ['project' => ['id' => $id_project]]);
         }
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));

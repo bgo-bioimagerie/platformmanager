@@ -34,12 +34,49 @@ class EventModel extends Model {
 
 }
 
+/**
+ * Private test class to simulate messages
+ */
+class FakeMsg {
+    public string $body = "";
+}
+
+/**
+ * Handler to manage messages from RabbitMQ
+ */
 class EventHandler {
 
     private $logger;
 
     public function __construct() {
         $this->logger = Configuration::getLogger();
+    }
+
+    private function prometheus($reqStart, $reqEnd, $action, $ok=true) {
+        if(!Configuration::get('redis_host')) {
+            return;
+        }
+        Configuration::getLogger()->info('[prometheus] stat', ['action' => $action]);
+        try {
+            \Prometheus\Storage\Redis::setDefaultOptions(
+                [
+                    'host' => Configuration::get('redis_host'),
+                    'port' => intval(Configuration::get('redis_port', 6379)),
+                    'password' => null,
+                    'timeout' => 0.1, // in seconds
+                    'read_timeout' => '10', // in seconds
+                    'persistent_connections' => false
+                ]
+            );
+            $event = "event_$action";
+            $registry = \Prometheus\CollectorRegistry::getDefault();
+            $counter = $registry->getOrRegisterCounter('pfmevent', 'request_nb', 'quantity', ['action', 'status']);
+            $counter->incBy(1, [$event, $ok ? 'success' : 'error']);
+            $gauge = $registry->getOrRegisterHistogram('pfmevent', 'request_time', 'time', ['action'], [10, 20, 50, 100, 1000]);
+            $gauge->observe(($reqEnd - $reqStart)*1000, [$event]);
+        } catch(Exception $e) {
+            Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
+        }
     }
 
     public function ticketCount($msg) {
@@ -300,6 +337,48 @@ class EventHandler {
         }
     }
 
+    public function spacePlanEdit($msg) {
+        // If owner, add to grafana
+        $g = new Grafana();
+        $s = new CoreSpace();
+        $space = $s->getSpace($msg['space']['id']);
+        
+
+        $plan = new CorePlan($msg['plan']['id'], 0);
+        if(!$plan) {
+            Configuration::getLogger()->error('invalid plan', $msg);
+            return;
+        }
+        $oldplan = null;
+        if(!array_key_exists('old', $msg)) {
+            $msg['old'] = ['id' => 0];
+        }
+        $oldplan = new CorePlan($msg['old']['id'], 0);
+
+        $csu = new CoreSpaceUser();
+        $managers = $csu->managersOrAdmin($space['id']);
+        $planInfo = $plan->plan();
+        Configuration::getLogger()->debug('[plan] edit check flags', ['flags' => $plan->Flags()]);
+        if($plan->hasFlag(CorePlan::FLAGS_GRAFANA) !== $oldplan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+            if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                Configuration::getLogger()->debug('[plan] add grafana', ['plan' => $planInfo['name']]);
+                foreach($managers as $manager){
+                    $g->addUser($space['shortname'], $manager['login'], $manager['apikey']);
+                }
+            } else {
+                Configuration::getLogger()->debug('[plan] del grafana', ['plan' => $planInfo['name']]);
+                foreach($managers as $manager){
+                    $g->delUser($space['shortname'], $manager['login']);
+                }
+            }
+        } else {
+            Configuration::getLogger()->debug('[plan] no grafana change');
+        }
+        $m = new CoreHistory();
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "Space plan updated: ".$planInfo['name']);
+    
+    }
+
     public function customerImport() {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
@@ -378,6 +457,8 @@ class EventHandler {
      */
     public function message($msg) {
         $this->logger->debug('[message]', ['message' => $msg]);
+        $reqStart = microtime(true);
+        $ok = true;
         try {
             $data = json_decode($msg->body, true);
             $action = $data['action'] ?? -1;  // if action not in message, set to -1 and fail
@@ -435,13 +516,20 @@ class EventHandler {
                 case Events::ACTION_SERVICE_DELETE:
                     $this->spaceServiceEdit($action, $data);
                     break;
+                case Events::ACTION_PLAN_EDIT:
+                    $this->spacePlanEdit($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
+                    $ok = false;
                     break;
             }
         } catch(Throwable $e) {
+            $ok = false;
             $this->logger->error('[message] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'stack' => $e->getTraceAsString()]);
         }
+        $reqEnd = microtime(true);
+        $this->prometheus($reqStart, $reqEnd, $action, $ok);
     }
 }
 
@@ -454,6 +542,7 @@ class Events {
     public const ACTION_SPACE_USER_UNJOIN = 3;
     public const ACTION_SPACE_USER_ROLEUPDATE = 4;
     public const ACTION_USER_APIKEY = 5;
+    public const ACTION_PLAN_EDIT = 6;
     public const ACTION_CAL_ENTRY_EDIT = 100;
     public const ACTION_CAL_ENTRY_REMOVE = 101;
     public const ACTION_HELPDESK_TICKET = 200;
@@ -507,13 +596,20 @@ class Events {
             self::$channel = null;
         }
     }
-        
 
     /**
      * Sends a message to rabbitmq
      * @param array $message message to send
      */
     public static function send(array $message) {
+        if(getenv("PFM_MODE") == "test") {
+            Configuration::getLogger()->error('[event] test mode, call method', ['message' => $message]);
+            $m = new EventHandler();
+            $msg = new FakeMsg();
+            $message['_user'] = $_SESSION['login'] ?? 'unknown';
+            $msg->body  = json_encode($message);
+            $m->message($msg);
+        }
         try {
             $channel = self::getChannel();
             if($channel === null) {

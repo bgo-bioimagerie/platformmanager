@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tests/BookingBaseTest.php';
-
+require_once 'Modules/clients/Controller/ClientslistController.php';
 
 class BookingTest extends BookingBaseTest {
 
@@ -55,7 +55,7 @@ class BookingTest extends BookingBaseTest {
             "path" => "resources/".$space['id'],
             "id" => 0
          ], false); 
-        $c = new ResourcesinfoController($req);
+        $c = new ResourcesinfoController($req, $space);
         $data = $c->indexAction($space['id']);
         $resources = $data['resources'];
 
@@ -63,7 +63,7 @@ class BookingTest extends BookingBaseTest {
             "path" => "clclients/".$space['id'],
             "id" => 0
          ], false); 
-        $c = new ClientslistController($req);
+        $c = new ClientslistController($req, $space);
         $data = $c->indexAction($space['id']);
         $clients = $data['clients'];
 

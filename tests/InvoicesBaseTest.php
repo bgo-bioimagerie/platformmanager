@@ -24,9 +24,9 @@ class InvoicesBaseTest extends BaseTest {
             "invoicesmenucolor" =>  "#000000",
             "invoicesmenucolorTxt" => "#ffffff"
         ], false);
-        $c = new InvoicesconfigController($req);
+        $c = new InvoicesconfigController($req, $space);
         $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false));
+        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
         $spaceView = $c->viewAction($space['id']);
         $invoicesEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
@@ -43,7 +43,7 @@ class InvoicesBaseTest extends BaseTest {
             "path" => "invoicepdftemplate/".$space['id'],
             "formid" => "formUploadTemplate"
         ], false);
-        $c = new InvoicesconfigController($req);
+        $c = new InvoicesconfigController($req, $space);
         try {
         $c->pdftemplateAction($space['id']);
         } catch(Throwable) {
@@ -66,7 +66,7 @@ class InvoicesBaseTest extends BaseTest {
             "period_end" => $dateEnd->format('Y-m-d'),
             "id_resp" => $client['id']
         ], false);
-        $c = new BookinginvoiceController($req);
+        $c = new BookinginvoiceController($req, $space);
         $data = $c->indexAction($space['id']);
         $invoice_id = $data['invoice']["id"];
         $this->assertTrue($invoice_id > 0);
@@ -74,7 +74,7 @@ class InvoicesBaseTest extends BaseTest {
             "path" => "bookinginvoiceedit/".$space['id'].'/'.$invoice_id.'/1'
         ], false);
         // try generate pdf
-        $c = new BookinginvoiceController($req);
+        $c = new BookinginvoiceController($req, $space);
         $c->editAction($space['id'], $invoice_id, 1);
         // with details
         $c->editAction($space['id'], $invoice_id, 2);

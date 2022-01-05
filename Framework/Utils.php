@@ -9,12 +9,15 @@ class Utils {
         if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
             if (count($dateArray) == 3) {
+                if(strlen($dateArray[2]) != 4) {
+                    return false;
+                }
                 $day = $dateArray[0];
                 $month = $dateArray[1];
                 $year = $dateArray[2];
                 return $year . "-" . $month . "-" . $day;
             }
-            return false;
+            return $date;
         }
         // En
         return $date;

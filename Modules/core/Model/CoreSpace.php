@@ -52,8 +52,11 @@ class CorePlan {
         }
     }
 
-    public function Flags() {
-        return $this?->plan['flags'];
+    public function Flags(): array {
+        if($this->plan === null || !array_key_exists('flags', $this->plan)) {
+            return [];
+        }
+        return $this->plan['flags'];
     }
 
     public function hasFlag(string $flag) : bool {
@@ -66,6 +69,10 @@ class CorePlan {
             }
         }
         return false;
+    }
+
+    public function plan(): ?array {
+        return $this->plan;
     }
 }
 
@@ -482,8 +489,7 @@ class CoreSpace extends Model {
             if ($this->alreadyExists('name', $name)) {
                 throw new PfmDbException("Space name already exists", 1);
             }
-            $this->addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor);
-            return $this->getDatabase()->lastInsertId();
+            return $this->addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor);
         }
     }
     

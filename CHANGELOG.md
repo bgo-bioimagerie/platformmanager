@@ -1,6 +1,6 @@
 # Changes
 
-## 2.3
+## 2.3.0
 
 * [booking] clicking on blank days in month view gives access to day area view
 * [projects] fix closed projects listing change of year
@@ -8,11 +8,10 @@
 * [core] add possibility for a space manager to add an existing account #479
 * [core] allow space plan modification #429
 * [invoice] get invoice number per space, and not global
-
-## 2.2.2
-
+* [core] fix prometheus redis port
 * [coreconfig] fix maintenance mode authorizations
 * [coreconfig] remove carousel
+
 ## 2.2.1
 
 * [login] clarify messages toward users

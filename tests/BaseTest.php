@@ -51,7 +51,8 @@ abstract class BaseTest extends TestCase {
         $_SESSION['user_status'] = CoreStatus::$USER;
         $_SESSION['id_user'] = $user['id'];
         $_SESSION['id_space'] = $id_space;
-        $_SESSION["user_settings"] = ["language" => "en"];
+        $_SESSION['user_settings'] = ["language" => "en"];
+        $_SESSION['login'] = $name;
         return $user;
     }
 
