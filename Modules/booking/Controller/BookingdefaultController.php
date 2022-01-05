@@ -172,6 +172,9 @@ class BookingdefaultController extends BookingabstractController {
 
         $dateResaStart = $this->request->getParameter("resa_start");
         $dateResaStartArray = explode("-", $dateResaStart);
+        if($dateResaStart == "") {
+            throw new PfmParamException("invalid start date");
+        }
 
         $ri = $modelResource->get($id_space ,$id_resource);
         if(!$ri){
@@ -198,6 +201,9 @@ class BookingdefaultController extends BookingabstractController {
 
         $dateResaEnd = $this->request->getParameter("resa_end");
         $dateResaEndArray = explode("-", $dateResaEnd);
+        if($dateResaEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
 
         if($all_day_long == 1){
             $modelResource = new ResourceInfo();
@@ -325,6 +331,9 @@ class BookingdefaultController extends BookingabstractController {
         } else {
             $periodicEndDate = $this->request->getParameter("periodic_enddate");
             $periodicEndDateArray = explode("-", $periodicEndDate);
+            if($periodicEndDate == "") {
+                throw new PfmParamException("invalid end date");
+            }
             // check parameters order here !!!
             $last_start_time = mktime($hour_startH, $hour_startM, 0, $periodicEndDateArray[1], $periodicEndDateArray[2], $periodicEndDateArray[0]);
             $modelPeriodic = new BkCalendarPeriod();

@@ -14,7 +14,12 @@ class BkGraph extends Model {
      * @deprecated since ec_user depreciation
      */
     public function getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $day_start = $dateBeginArray[2];
         $month_start = $dateBeginArray[1];
@@ -69,7 +74,12 @@ class BkGraph extends Model {
     }
 
     public function getStatReservationPerClient($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $day_start = $dateBeginArray[2];
         $month_start = $dateBeginArray[1];
@@ -171,6 +181,13 @@ class BkGraph extends Model {
     }
 
     public function getReservationPerResourceColor($id_space, $dateBegin, $dateEnd, $idResource, $idColorCode) {
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
+
         $dateBeginArray = explode('-', $dateBegin);
         $dateEndArray = explode('-', $dateEnd);
         $dstart = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]); // Le premier jour du mois en cours
@@ -210,6 +227,14 @@ class BkGraph extends Model {
 
         $resourcesNames = array();
         $resourcesIdsOut = array();
+
+
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
 
         $dateBeginArray = explode('-', $dateBegin);
         $dateEndArray = explode('-', $dateEnd);
