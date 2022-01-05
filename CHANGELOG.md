@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [booking] fix all_day reservation end date
 * [booking] clicking on blank days in month view gives access to day area view
 * [projects] fix closed projects listing change of year
 * [resources] fix re_visa is_active default value
