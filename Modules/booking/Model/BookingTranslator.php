@@ -1504,7 +1504,7 @@ class BookingTranslator {
 
     public static function DeletePeriod($lang) {
         if ($lang == "fr") {
-            return "Suprimé périodicité";
+            return "Supprimer périodicité";
         }
         return "Delete periodicity";
     }

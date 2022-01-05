@@ -150,8 +150,8 @@ class ServicesordersController extends ServicesController {
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
         $form->addSelect("id_status", CoreTranslator::Status($lang), array(CoreTranslator::Open($lang), CoreTranslator::Close($lang)), array(1, 0), $value["id_status"]);
 
-        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
-        $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));
+        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
+        $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, $value["date_close"]);
         
         if ($id > 0) {
             $form->addText("date_last_modified", ServicesTranslator::Last_modified_date($lang), false, CoreTranslator::dateFromEn($value["date_last_modified"], $lang), "disabled");

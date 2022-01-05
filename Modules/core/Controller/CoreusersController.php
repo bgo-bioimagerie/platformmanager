@@ -119,7 +119,7 @@ class CoreusersController extends CoresecureController {
             $statusId[] = $statu["id"];
         }
         $form->addSelect("status_id", CoreTranslator::Status($lang), $statusNames, $statusId, $user["status_id"]);
-        $form->addDate("date_end_contract", CoreTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
+        $form->addDate("date_end_contract", CoreTranslator::Date_end_contract($lang), false, $user["date_end_contract"]);
         $form->addSelect("is_active", CoreTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $user["is_active"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);

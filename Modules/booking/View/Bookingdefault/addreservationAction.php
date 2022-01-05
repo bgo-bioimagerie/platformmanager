@@ -89,7 +89,7 @@
             </label>
             <div class="col-xs-6">
                 <div class='col-xs-12 input-group date'>
-                    <input type='date' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo CoreTranslator::dateFromEn($periodInfo['enddate'], $lang) ?>"/>          
+                    <input type='date' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo $periodInfo['enddate'] ?>"/>          
                     <span class="input-group-addon">          
                         <span class="glyphicon glyphicon-calendar"></span>          
                     </span>

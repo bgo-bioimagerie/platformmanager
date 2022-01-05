@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [core] remove most references to CoreTranslator::dateFromEn()
 * [spaces] remove request access button from private spaces
 * [booking] clicking on blank days in month view gives access to day area view
 * [projects] fix closed projects listing change of year

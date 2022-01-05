@@ -380,8 +380,8 @@ class CorespaceaccessController extends CoresecureController {
         $form = new Form($this->request, "coreaccessusereditform");
         $form->setTitle(CoreTranslator::AccessFor($lang) . ": " . $fullname);
         $form->addSelect("role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"], $spaceUserInfo["status"] ?? "");
-        $form->addDate("date_contract_end", CoreTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($spaceUserInfo["date_contract_end"] ?? "", $lang));
-        $form->addDate("date_convention", CoreTranslator::Date_convention($lang), false, CoreTranslator::dateFromEn($spaceUserInfo["date_convention"] ?? "", $lang));
+        $form->addDate("date_contract_end", CoreTranslator::Date_end_contract($lang), false, $spaceUserInfo["date_contract_end"] ?? "");
+        $form->addDate("date_convention", CoreTranslator::Date_convention($lang), false, $spaceUserInfo["date_convention"] ?? "");
         $form->addUpload("convention", CoreTranslator::Convention($lang), $spaceUserInfo["convention_url"] ?? "");
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreaccessuseredit/".$id_space."/".$id);
