@@ -34,17 +34,18 @@ class CoreTranslator {
             return "";
         }
 
-        if ($lang == "fr") {
+        if ($lang == "en") {
             $dateArray = explode("-", $date);
             if (count($dateArray) == 3) {
                 $day = $dateArray[2];
                 $month = $dateArray[1];
                 $year = $dateArray[0];
-                return $day . "/" . $month . "/" . $year;
+                $date = $day . "/" . $month . "/" . $year; 
             }
+            Configuration::getLogger()->debug("[TEST]", ["date in dateFromEn" => $date]);
             return $date;
         }
-        // En
+        // Fr
         return $date;
     }
 

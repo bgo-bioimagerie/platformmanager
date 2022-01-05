@@ -210,6 +210,7 @@ class BookingdefaultController extends BookingabstractController {
             $modelScheduling = new BkScheduling();
             $schedul = $modelScheduling->get($id_space, $modelResource->getAreaID($id_space ,$id_resource));
             $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+            Configuration::getLogger()->debug("[TEST]", ["end_time" => $end_time]);
         }
         else{
             $hour_endH = $this->request->getParameter("hour_endH");
@@ -575,7 +576,7 @@ class BookingdefaultController extends BookingabstractController {
         if ($role > CoreSpace::$USER) {
             $canEditReservation = true;
         }
-
+        Configuration::getLogger()->debug("[TEST]", ["in edit reservation"]);
         $id_resource = $resaInfo["resource_id"];
 
         $modelResource = new ResourceInfo();
@@ -714,7 +715,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // date time
         $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"] ?? 0);
-        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["start_time"]), $lang));
+        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, CoreTranslator::dateFromEn(date("Y-m-d", $resaInfo["start_time"]), $lang));
         $form->addHour("hour_start", BookingTranslator::time($lang), false, array(date("H", $resaInfo["start_time"]), date("i", $resaInfo["start_time"])));
 
         // conditionnal on package
@@ -734,8 +735,9 @@ class BookingdefaultController extends BookingabstractController {
         $formPackage = new Form($this->request, "formPackage");
         $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, $resaInfo["package_id"], false);
 
+        Configuration::getLogger()->debug("[TEST]", ["resa_info before end date" => date("Y-m-d", $resaInfo["end_time"])]);
         $formEndDate = new Form($this->request, "formEndDate");
-        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["end_time"]), $lang));
+        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["end_time"]));
         $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
         $packageChecked = $resaInfo["package_id"];
 
