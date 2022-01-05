@@ -29,6 +29,7 @@ $cli = Cli::create()
     ->command('install')
     ->description('Install/upgrade database and routes')
     ->opt('from', 'Force install from release', false, 'integer')
+    ->opt('module', 'install module', false, 'string')
     ->command('space')
     ->description('show space info')
     ->opt('flags', 'Show space plan flags', false, 'boolean')
@@ -94,6 +95,24 @@ try {
             cliFix($args->getOpt('bug', 0));
             break;
         case 'install':
+            if($args->getOpt('module')) {
+                $module = $args->getOpt('module');
+                $moduleName = ucfirst(strtolower($module));
+                if ($moduleName == 'Core') {
+                    Configuration::getLogger()->error('Cannot force reinstall of core module');
+                    break;
+                }
+                $installFile = "Modules/" . $module . "/Model/" . $moduleName . "Install.php";
+                if (file_exists($installFile)) {
+                    $logger->info('Update database for module ' . $moduleName . " => ". $installFile);
+                    require_once $installFile;
+                    $className = $moduleName . "Install";
+                    $object = new $className();
+                    $object->createDatabase();
+                    $logger->info('update database for module ' .$modules[$i]  . "done");
+                }
+                break;
+            }
             cliInstall($args->getOpt('from', -1));
             break;
         case 'routes':
