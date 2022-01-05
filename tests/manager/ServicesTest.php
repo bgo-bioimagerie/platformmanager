@@ -37,7 +37,7 @@ class ServicesTest extends ServicesBaseTest {
                 "path" => "clclients/".$space['id'],
                 "id" => 0
              ], false); 
-            $c = new ClientslistController($req);
+            $c = new ClientslistController($req, $space);
             $clients_data = $c->indexAction($space['id']);
             $clients = $clients_data['clients'];
             $client_user = $this->user($data['users'][0]);

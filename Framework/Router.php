@@ -113,7 +113,7 @@ class Router {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
                     'host' => Configuration::get('redis_host'),
-                    'port' => intval(Configuration::get('redis_host', 6379)),
+                    'port' => intval(Configuration::get('redis_port', 6379)),
                     'password' => null,
                     'timeout' => 0.1, // in seconds
                     'read_timeout' => '10', // in seconds
@@ -194,7 +194,7 @@ class Router {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
                     'host' => Configuration::get('redis_host'),
-                    'port' => intval(Configuration::get('redis_host', 6379)),
+                    'port' => intval(Configuration::get('redis_port', 6379)),
                     'password' => null,
                     'timeout' => 0.1, // in seconds
                     'read_timeout' => '10', // in seconds

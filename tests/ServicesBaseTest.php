@@ -26,9 +26,9 @@ class ServicesBaseTest extends BaseTest {
             "displayColor" =>  "#000000",
             "displayColorTxt" => "#ffffff"
         ], false);
-        $c = new ServicesconfigController($req);
+        $c = new ServicesconfigController($req, $space);
         $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false));
+        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
         $spaceView = $c->viewAction($space['id']);
         $invoicesEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
@@ -45,7 +45,7 @@ class ServicesBaseTest extends BaseTest {
             "servicesuseproject" => 1,
             "servicesusecommand" => 1,
         ], false);
-        $c = new ServicesconfigController($req);
+        $c = new ServicesconfigController($req, $space);
         $c->indexAction($space['id']);
 
         $req = new Request([
@@ -53,7 +53,7 @@ class ServicesBaseTest extends BaseTest {
             "formid" => "stockForm",
             "servicesusestock" => 1,
         ], false);
-        $c = new ServicesconfigController($req);
+        $c = new ServicesconfigController($req, $space);
         $c->indexAction($space['id']);
 
     }
@@ -70,7 +70,7 @@ class ServicesBaseTest extends BaseTest {
             "type_id" => 1  // quantity
 
         ], false);
-        $c = new ServiceslistingController($req);
+        $c = new ServiceslistingController($req, $space);
         $data = $c->editAction($space['id'], '');
         $this->assertTrue($data['service']['id'] > 0);
         return $data['service'];
@@ -84,7 +84,7 @@ class ServicesBaseTest extends BaseTest {
             "formid" => "editserviceform",
             "id_user" => $user['id'],
         ], false);
-        $c = new ServicesvisaController($req);
+        $c = new ServicesvisaController($req, $space);
         $data = $c->editAction($space['id'], 0);
         $this->assertTrue($data['visa']['id'] > 0);
         return $data['visa'];
@@ -100,7 +100,7 @@ class ServicesBaseTest extends BaseTest {
             "name" => $origin,
             "display_order" => 1
         ], false);
-        $c = new ServicesoriginsController($req);
+        $c = new ServicesoriginsController($req, $space);
         $data = $c->editAction($space['id'], 0);
         $this->assertTrue($data['origin']['id'] > 0);
         return $data['origin'];
@@ -126,7 +126,7 @@ class ServicesBaseTest extends BaseTest {
             "date_open" => date('Y-m-d'),
             "date_close" => ""
         ], false);
-        $c = new ServicesprojectsController($req);
+        $c = new ServicesprojectsController($req, $space);
         $data = $c->editAction($space['id'], 0);
         $this->assertTrue($data['project']['id'] > 0);
         return $data['project'];

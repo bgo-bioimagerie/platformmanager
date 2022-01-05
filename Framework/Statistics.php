@@ -78,7 +78,7 @@ class Statistics {
 
     public function getClient($space) {
         if(!isset($this->clients[$space])) {
-            if (Configuration::get('influxdb_url', '') === '') {
+            if (!$this->enabled()) {
                 Configuration::getLogger()->debug('[stats] disabled');
                 return null;
             }
@@ -98,6 +98,9 @@ class Statistics {
     }
 
     public function closeClient($space) {
+        if(!$this->enabled() || !array_key_exists($space, $this->clients)) {
+            return;
+        }
         $this->clients[$space]->close();
         unset($this->clients[$space]);
         unset($this->wapis[$space]);
@@ -119,6 +122,9 @@ class Statistics {
      * 
     */
     public function record($space, $stat) {
+        if(!$this->enabled()) {
+            return true;
+        }
         try {
             if (!isset($stat['fields']['value'])) {
                 Configuration::getLogger()->error('[stats] missing value in fields', ['stat' => $stat]);

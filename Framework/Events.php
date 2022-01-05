@@ -34,6 +34,16 @@ class EventModel extends Model {
 
 }
 
+/**
+ * Private test class to simulate messages
+ */
+class FakeMsg {
+    public string $body = "";
+}
+
+/**
+ * Handler to manage messages from RabbitMQ
+ */
 class EventHandler {
 
     private $logger;
@@ -51,7 +61,7 @@ class EventHandler {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
                     'host' => Configuration::get('redis_host'),
-                    'port' => intval(Configuration::get('redis_host', 6379)),
+                    'port' => intval(Configuration::get('redis_port', 6379)),
                     'password' => null,
                     'timeout' => 0.1, // in seconds
                     'read_timeout' => '10', // in seconds
@@ -328,16 +338,13 @@ class EventHandler {
     }
 
     public function spacePlanEdit($msg) {
-        $u = new CoreUser();
-        $user = $u->getInfo($msg['user']['id']);
-
         // If owner, add to grafana
         $g = new Grafana();
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
         
 
-        $plan = new CorePlan($space['plan'], $space['plan_expire']);
+        $plan = new CorePlan($msg['plan']['id'], 0);
         if(!$plan) {
             Configuration::getLogger()->error('invalid plan', $msg);
             return;
@@ -356,7 +363,7 @@ class EventHandler {
             if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
                 Configuration::getLogger()->debug('[plan] add grafana', ['plan' => $planInfo['name']]);
                 foreach($managers as $manager){
-                    $g->addUser($space['shortname'], $manager['login'], $user['apikey']);
+                    $g->addUser($space['shortname'], $manager['login'], $manager['apikey']);
                 }
             } else {
                 Configuration::getLogger()->debug('[plan] del grafana', ['plan' => $planInfo['name']]);
@@ -367,7 +374,6 @@ class EventHandler {
         } else {
             Configuration::getLogger()->debug('[plan] no grafana change');
         }
-
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "Space plan updated: ".$planInfo['name']);
     
@@ -590,13 +596,20 @@ class Events {
             self::$channel = null;
         }
     }
-        
 
     /**
      * Sends a message to rabbitmq
      * @param array $message message to send
      */
     public static function send(array $message) {
+        if(getenv("PFM_MODE") == "test") {
+            Configuration::getLogger()->error('[event] test mode, call method', ['message' => $message]);
+            $m = new EventHandler();
+            $msg = new FakeMsg();
+            $message['_user'] = $_SESSION['login'] ?? 'unknown';
+            $msg->body  = json_encode($message);
+            $m->message($msg);
+        }
         try {
             $channel = self::getChannel();
             if($channel === null) {

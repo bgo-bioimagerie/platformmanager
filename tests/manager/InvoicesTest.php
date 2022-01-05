@@ -30,7 +30,7 @@ class InvoicesTest extends InvoicesBaseTest {
                 "path" => "clclients/".$space['id'],
                 "id" => 0
              ], false); 
-            $c = new ClientslistController($req);
+            $c = new ClientslistController($req, $space);
             $data = $c->indexAction($space['id']);
             $clients = $data['clients'];
             $this->doInvoice($space, $user, $clients[0]);

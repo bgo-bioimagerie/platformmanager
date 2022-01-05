@@ -135,7 +135,7 @@ class CorespaceadminController extends CoresecureController {
             // set base informations
             if($isSuperAdmin) {
                 // Only super admin can create
-                Configuration::getLogger()->debug('[admin][space] create space', ["space" => $id_space, "name" => $this->request->getParameter("name")]);
+                Configuration::getLogger()->debug('[admin][space] create/edit space', ["space" => $id_space, "name" => $this->request->getParameter("name")]);
                 $id = $modelSpace->setSpace($id_space, $this->request->getParameter("name"), 
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),

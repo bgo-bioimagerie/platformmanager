@@ -28,9 +28,9 @@ class ResourcesBaseTest extends BaseTest {
             "displayColor" =>  "#000000",
             "displayTxtColor" => "#ffffff"
         ], true);
-        $c = new ResourcesconfigController($req);
+        $c = new ResourcesconfigController($req, $space);
         $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false));
+        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
         $spaceView = $c->viewAction($space['id']);
         $resourcesEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
@@ -52,7 +52,7 @@ class ResourcesBaseTest extends BaseTest {
             "name" => "rearea1".$suffix,
             "is_restricted" => 0
         ], false);
-        $c = new ReareasController($req);
+        $c = new ReareasController($req, $space);
         $c->editAction($space['id'], 0);
         $data = $c->indexAction($space['id']);
         $reareas = $data['reareas'];
@@ -64,7 +64,7 @@ class ResourcesBaseTest extends BaseTest {
             "id" => 0,
             "name" => "cat1".$suffix,
         ], false);
-        $c = new RecategoriesController($req);
+        $c = new RecategoriesController($req, $space);
         $c->editAction($space['id'], 0);
         $data = $c->indexAction($space['id']);
         $categories = $data['recategories'];
@@ -80,7 +80,7 @@ class ResourcesBaseTest extends BaseTest {
             "is_active" => 1,
             "instructor_status" => 1
         ], false);
-        $c = new RevisasController($req);
+        $c = new RevisasController($req, $space);
         $visa = $c->editAction($space['id'], 0);
         $this->assertTrue($visa['revisa']['id'] > 0);
         $data = $c->indexAction($space['id']);
@@ -101,7 +101,7 @@ class ResourcesBaseTest extends BaseTest {
                 "id_area" => $reareas[0]['id'],
                 "display_order" => 0
             ], false);
-            $c = new ResourcesinfoController($req);
+            $c = new ResourcesinfoController($req, $space);
             $resource = $c->editAction($space['id'], 0);
             $this->assertTrue($resource['resource']['id'] > 0);
         }
