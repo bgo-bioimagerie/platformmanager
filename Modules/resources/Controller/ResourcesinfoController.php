@@ -402,7 +402,6 @@ class ResourcesinfoController extends ResourcesBaseController {
             );
         } else {
             $data = $modelEvent->get($id_space, $id_event);
-            $data["date"] = $data["date"];
         }
 
         $form = new Form($this->request, "editevent");
