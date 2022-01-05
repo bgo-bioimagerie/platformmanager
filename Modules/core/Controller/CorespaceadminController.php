@@ -165,11 +165,13 @@ class CorespaceadminController extends CoresecureController {
                     $planChanged = true;
                 }
                 if($planChanged) {
-                    Events::send([
+                    $event = [
                         "action" => Events::ACTION_PLAN_EDIT,
                         "space" => ["id" => intval($id)],
-                        "plan" => ["id" => intval($plan)]
-                    ]);
+                        "plan" => ["id" => intval($plan)],
+                        "old" => ["id" => intval($space['plan'])]
+                    ];
+                    Events::send($event);
                 }
 
             } else {

@@ -42,6 +42,33 @@ class EventHandler {
         $this->logger = Configuration::getLogger();
     }
 
+    private function prometheus($reqStart, $reqEnd, $action, $ok=true) {
+        if(!Configuration::get('redis_host')) {
+            return;
+        }
+        Configuration::getLogger()->info('[prometheus] stat', ['action' => $action]);
+        try {
+            \Prometheus\Storage\Redis::setDefaultOptions(
+                [
+                    'host' => Configuration::get('redis_host'),
+                    'port' => intval(Configuration::get('redis_host', 6379)),
+                    'password' => null,
+                    'timeout' => 0.1, // in seconds
+                    'read_timeout' => '10', // in seconds
+                    'persistent_connections' => false
+                ]
+            );
+            $event = "event_$action";
+            $registry = \Prometheus\CollectorRegistry::getDefault();
+            $counter = $registry->getOrRegisterCounter('pfmevent', 'request_nb', 'quantity', ['action', 'status']);
+            $counter->incBy(1, [$event, $ok ? 'success' : 'error']);
+            $gauge = $registry->getOrRegisterHistogram('pfmevent', 'request_time', 'time', ['action'], [10, 20, 50, 100, 1000]);
+            $gauge->observe(($reqEnd - $reqStart)*1000, [$event]);
+        } catch(Exception $e) {
+            Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
+        }
+    }
+
     public function ticketCount($msg) {
         $hm = new Helpdesk();
         $model = new CoreSpace();
@@ -315,20 +342,30 @@ class EventHandler {
             Configuration::getLogger()->error('invalid plan', $msg);
             return;
         }
+        $oldplan = null;
+        if(!array_key_exists('old', $msg)) {
+            $msg['old'] = ['id' => 0];
+        }
+        $oldplan = new CorePlan($msg['old']['id'], 0);
+
         $csu = new CoreSpaceUser();
         $managers = $csu->managersOrAdmin($space['id']);
         $planInfo = $plan->plan();
         Configuration::getLogger()->debug('[plan] edit check flags', ['flags' => $plan->Flags()]);
-        if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
-            Configuration::getLogger()->debug('[plan] add grafana', ['plan' => $planInfo['name']]);
-            foreach($managers as $manager){
-                $g->addUser($space['shortname'], $manager['login'], $user['apikey']);
+        if($plan->hasFlag(CorePlan::FLAGS_GRAFANA) !== $oldplan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+            if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                Configuration::getLogger()->debug('[plan] add grafana', ['plan' => $planInfo['name']]);
+                foreach($managers as $manager){
+                    $g->addUser($space['shortname'], $manager['login'], $user['apikey']);
+                }
+            } else {
+                Configuration::getLogger()->debug('[plan] del grafana', ['plan' => $planInfo['name']]);
+                foreach($managers as $manager){
+                    $g->delUser($space['shortname'], $manager['login']);
+                }
             }
         } else {
-            Configuration::getLogger()->debug('[plan] del grafana', ['plan' => $planInfo['name']]);
-            foreach($managers as $manager){
-                $g->delUser($space['shortname'], $manager['login']);
-            }
+            Configuration::getLogger()->debug('[plan] no grafana change');
         }
 
         $m = new CoreHistory();
@@ -414,6 +451,8 @@ class EventHandler {
      */
     public function message($msg) {
         $this->logger->debug('[message]', ['message' => $msg]);
+        $reqStart = microtime(true);
+        $ok = true;
         try {
             $data = json_decode($msg->body, true);
             $action = $data['action'] ?? -1;  // if action not in message, set to -1 and fail
@@ -476,11 +515,15 @@ class EventHandler {
                     break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
+                    $ok = false;
                     break;
             }
         } catch(Throwable $e) {
+            $ok = false;
             $this->logger->error('[message] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'stack' => $e->getTraceAsString()]);
         }
+        $reqEnd = microtime(true);
+        $this->prometheus($reqStart, $reqEnd, $action, $ok);
     }
 }
 
