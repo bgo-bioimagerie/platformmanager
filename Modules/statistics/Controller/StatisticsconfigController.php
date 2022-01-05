@@ -101,8 +101,8 @@ class StatisticsconfigController extends CoresecureController {
     }
 
     public function periodProjectForm($modelCoreConfig, $id_space, $lang) {
-        $projectperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space), $lang);
-        $projectperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("statisticsperiodend", $id_space), $lang);
+        $projectperiodbegin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+        $projectperiodend = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
 
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(StatisticsTranslator::Statisticsperiod($lang));

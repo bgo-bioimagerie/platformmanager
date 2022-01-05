@@ -564,7 +564,6 @@ class ServicesprojectsController extends ServicesController {
 
             $trDates = array();
             foreach ($items["dates"] as $d) {
-                // TODO: should we remove dateFromEn here ?
                 $trDates[] = CoreTranslator::dateFromEn($d, $lang);
             }
 

@@ -394,7 +394,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         if ($id_event == 0) {
             $data = array(
-                "date" => CoreTranslator::dateFromEn(date("Y-m-d"), $lang),
+                "date" => date("Y-m-d"),
                 "id_user" => $_SESSION["id_user"],
                 "id_eventtype" => 0,
                 "id_state" => 0,
@@ -402,12 +402,12 @@ class ResourcesinfoController extends ResourcesBaseController {
             );
         } else {
             $data = $modelEvent->get($id_space, $id_event);
-            $data["date"] = CoreTranslator::dateFromEn($data["date"], $lang);
+            $data["date"] = $data["date"];
         }
 
         $form = new Form($this->request, "editevent");
         $form->addSeparator(ResourcesTranslator::Edit_event_for($lang) . " " . $modelResources->getName($id_space, $id_resource));
-        $form->addDate("date", CoreTranslator::Date($lang), true, $data["date"], $lang);
+        $form->addDate("date", CoreTranslator::Date($lang), true, $data["date"]);
         $form->addHidden("id_resource", $id_resource);
         $form->addSelect("id_user", CoreTranslator::User($lang), $choicesU, $choicesidU, $data["id_user"]);
         $form->addSelect("id_eventtype", ResourcesTranslator::Event_Type($lang), $choicesET, $choicesidET, $data["id_eventtype"]);

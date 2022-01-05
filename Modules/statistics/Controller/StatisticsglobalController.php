@@ -36,7 +36,7 @@ class StatisticsglobalController extends StatisticsController {
                 $y = date("Y") - 1;
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_begin = $y . "-" . $m . "-" . $d;
             } else {
                 $date_begin = date("Y", time()) . "-01-01";
             }
@@ -49,7 +49,7 @@ class StatisticsglobalController extends StatisticsController {
                 $y = date("Y");
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_end = $y . "-" . $m . "-" . $d;
             } else {
                 $date_end = date("Y", time()) . "-12-31";
             }
@@ -58,10 +58,9 @@ class StatisticsglobalController extends StatisticsController {
 
         $form = new Form($this->request, "generateGlobalStatForm");
         $form->setTitle(StatisticsTranslator::StatisticsGlobal($lang));
-        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, CoreTranslator::dateFromEn($date_begin, $lang) );
-        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, CoreTranslator::dateFromEn($date_end, $lang) );
+        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, $date_begin);
+        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, $date_end, $lang);
 
-        // TODO: replace by clients stats ?
         $form->addSelect("generateclientstats", BookingTranslator::GenerateStatsPerClient($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateclientstats"));
 
         $modelColorCode = new BkColorCode();
