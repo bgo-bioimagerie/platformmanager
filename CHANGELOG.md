@@ -1,5 +1,9 @@
 # Changes
 
+## 2.2.2
+
+* [core] fix prometheus redis port 
+
 ## 2.2.1
 
 * [login] clarify messages toward users
