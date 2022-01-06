@@ -15,6 +15,7 @@
 * [coreconfig] fix maintenance mode authorizations
 * [coreconfig] remove carousel
 * [invoices] remove hidden characters in template
+* [docker] fix mysql db name in docker-compose
 
 ## 2.2.1
 
