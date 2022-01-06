@@ -4,6 +4,7 @@
 
 * [core] fix prometheus redis port 
 * [invoices] remove hidden characters from template
+* [docker] fix db name in compose #495
 
 ## 2.2.1
 
