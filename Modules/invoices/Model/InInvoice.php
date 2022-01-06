@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
  * Class defining the Area model
