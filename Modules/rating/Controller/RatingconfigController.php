@@ -6,7 +6,7 @@ require_once 'Framework/Errors.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
-
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * Controller for the rating config page
@@ -22,6 +22,7 @@ class RatingconfigController extends CoresecureController {
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
+
     }
     
     /**
@@ -29,7 +30,10 @@ class RatingconfigController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space) {
-
+        $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
+        if(!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
+            throw new PfmAuthException('Sorry, space does not have this feature plan');
+        }
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 

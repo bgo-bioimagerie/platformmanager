@@ -19,6 +19,10 @@ class RatingController extends DocumentsController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space) {
+        $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
+        if(!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
+            throw new PfmAuthException('Sorry, space does not have this feature plan');
+        }
         $this->checkAuthorizationMenuSpace("rating", $id_space, $_SESSION["id_user"]);
         $r = new Rating();
         $stats = $r->stat($id_space);
@@ -26,6 +30,10 @@ class RatingController extends DocumentsController {
     }
 
     public function rateAction($id_space, $module, $resource) {
+        $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
+        if(!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
+            throw new PfmAuthException('Sorry, space does not have this feature plan');
+        }
         $userSpaceStatus = $this->getUserSpaceStatus($id_space, $_SESSION["id_user"]);
         if($userSpaceStatus != CoreSpace::$USER) {
             throw new PfmAuthException("only user space member can evaluate!");
