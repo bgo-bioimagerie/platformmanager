@@ -3,6 +3,7 @@
 ## 2.2.2
 
 * [core] fix prometheus redis port 
+* [invoices] remove hidden characters from template
 
 ## 2.2.1
 
