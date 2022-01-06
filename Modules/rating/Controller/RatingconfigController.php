@@ -7,7 +7,7 @@ require_once 'Framework/Errors.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
-
+require_once 'Modules/rating/Model/RatingTranslator.php';
 /**
  * Controller for the rating config page
  */

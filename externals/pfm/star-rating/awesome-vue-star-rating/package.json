@@ -1,0 +1,74 @@
+{
+  "name": "awesome-vue-star-rating",
+  "version": "1.0.9",
+  "description": "A simple, highly customisable star rating component for Vue 2.x without any external libraries",
+  "main": "dist/AwesomeVueStarRating.common.js",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --target lib --inline-vue --name AwesomeVueStarRating",
+    "lint": "vue-cli-service lint"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "star rating",
+    "star",
+    "rating",
+    "vue",
+    "vue.js",
+    "vue 2",
+    "fontawesome",
+    "vue-fontawesome"
+  ],
+  "author": "Jebasuthan <itjebasuthan@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^2.6.10"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-regular-svg-icons": "^5.11.2",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/vue-fontawesome": "^0.1.7",
+    "core-js": "^2.6.5",
+    "i": "^0.3.6",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.0",
+    "@vue/cli-plugin-babel": "^3.12.0",
+    "@vue/cli-plugin-eslint": "^3.12.0",
+    "@vue/cli-service": "^3.12.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jebasuthan/vue-star-rating"
+  }
+}

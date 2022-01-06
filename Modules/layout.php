@@ -29,10 +29,10 @@ if($isdev) {
         </title>
         <?php
         if($isdev) {
-            echo '<script src="externals/vuejs/vue.js"></script>';
+            echo '<script src="externals/vuejs/vue.js"></script>'."\n";
             echo $debugbarRenderer->renderHead();
         } else {
-            echo '<script src="externals/vuejs/vue.min.js"></script>';
+            echo '<script src="externals/vuejs/vue.min.js"></script>'."\n";
         }
         ?>
         <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">

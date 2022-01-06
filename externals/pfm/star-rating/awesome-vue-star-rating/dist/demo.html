@@ -1,0 +1,51 @@
+<meta charset="utf-8">
+<title>AwesomeVueStarRating demo</title>
+<script src="https://unpkg.com/vue"></script>
+<script src="./AwesomeVueStarRating.umd.js"></script>
+
+
+<div id="app">
+  <demo :star="this.star" size="2x" :disabled="this.disabled" :maxstars="this.maxstars" :starsize="this.starsize" :hasresults="this.hasresults"
+    :hasdescription="this.hasdescription" :ratingdescription="this.ratingdescription"></demo>
+</div>
+
+<script>
+  new Vue({
+    name: 'demo',
+    components: {
+      demo: AwesomeVueStarRating,
+    },
+    data() {
+      return {
+        star: 1,
+        ratingdescription: [
+          {
+            text: "Poor",
+            class: "star-poor"
+          },
+          {
+            text: "Below Average",
+            class: "star-belowAverage"
+          },
+          {
+            text: "Average",
+            class: "star-average"
+          },
+          {
+            text: "Good",
+            class: "star-good"
+          },
+          {
+            text: "Excellent",
+            class: "star-excellent"
+          }
+        ],
+        hasresults: true,
+        hasdescription: true,
+        starsize: "lg",
+        maxstars: 5,
+        disabled: false
+      }
+    }
+  }).$mount('#app')
+</script>

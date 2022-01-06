@@ -37,7 +37,7 @@ class Rating extends Model {
     }
 
     public function get(int $id_space, string $module, int $resource) {
-        $sql = "SELECT * FROM rating WHERE deleted=0 AND id_space=? AND module=? AND resource=?";
+        $sql = "SELECT * FROM rating WHERE deleted=0 AND id_space=? AND module=? AND resource=? ORDER BY id DESC";
         $res = $this->runRequest($sql, [$id_space, $module, $resource]);
         if ($res->rowCount() > 0) {
             return $res->fetch();
@@ -46,12 +46,12 @@ class Rating extends Model {
     }
 
     public function stat(int $id_space) {
-        $sql = "SELECT module,resource,AVG(rate) FROM rating WHERE id_space=? GROUP BY module,resource";
+        $sql = "SELECT module, resourcename,resource,AVG(rate) as rate,count(*) as count FROM rating WHERE id_space=? GROUP BY module,resource";
         return $this->runRequest($sql,[$id_space])->fetchAll();
     }
 
     public function list(int $id_space, string $module=null) {
-        $sql = "SELECT * from rating WHERE deleted=0 AND id_space=?";
+        $sql = "SELECT * from rating WHERE deleted=0 AND id_space=? ORDER BY id DESC";
         $cond = [$id_space];
         if($module) {
             $sql .= " AND module=?";

@@ -12,7 +12,7 @@ require_once 'Modules/core/Model/CoreSpace.php';
  * 
  * Controller for the rating page
  */
-class RatingController extends DocumentsController {
+class RatingController extends CoresecureController {
 
     /**
      * (non-PHPdoc)
@@ -26,6 +26,9 @@ class RatingController extends DocumentsController {
         $this->checkAuthorizationMenuSpace("rating", $id_space, $_SESSION["id_user"]);
         $r = new Rating();
         $stats = $r->stat($id_space);
+        foreach($stats as $i => $stat){
+            $stats[$i]['rate'] = round($stat['rate']);
+        }
         return $this->render(['data' => ['stats' => $stats]]);
     }
 
