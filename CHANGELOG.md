@@ -14,6 +14,7 @@
 * [core] fix prometheus redis port
 * [coreconfig] fix maintenance mode authorizations
 * [coreconfig] remove carousel
+* [invoices] remove hidden characters in template
 
 ## 2.2.1
 
