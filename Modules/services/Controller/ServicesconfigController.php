@@ -159,8 +159,8 @@ class ServicesconfigController extends CoresecureController {
     }
 
     public function periodProjectForm($modelCoreConfig, $id_space, $lang) {
-        $projectperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("projectperiodbegin", $id_space), $lang);
-        $projectperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("projectperiodend", $id_space), $lang);
+        $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
+        $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(ServicesTranslator::projectperiod($lang));

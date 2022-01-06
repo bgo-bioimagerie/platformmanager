@@ -2,6 +2,9 @@
 
 ## 2.3.0
 
+* [booking] fix all_day reservation end date
+* [core] remove most references to CoreTranslator::dateFromEn()
+* [spaces] remove request access button from private spaces
 * [booking] clicking on blank days in month view gives access to day area view
 * [projects] fix closed projects listing change of year
 * [resources] fix re_visa is_active default value
@@ -11,6 +14,8 @@
 * [core] fix prometheus redis port
 * [coreconfig] fix maintenance mode authorizations
 * [coreconfig] remove carousel
+* [invoices] remove hidden characters in template
+* [docker] fix mysql db name in docker-compose
 
 ## 2.2.1
 

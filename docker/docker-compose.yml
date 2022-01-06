@@ -50,7 +50,7 @@ services:
     environment:
       WAIT_HOSTS: pfm-rabbitmq:5672,mysql:3306,influxdb:8086
       MYSQL_HOST: mysql # Host of the the mysql server
-      MYSQL_DBNAME: platformmanager # name of the database on the mysql server
+      MYSQL_DBNAME: platform_manager # name of the database on the mysql server
       MYSQL_USER: platform_manager # Admin account to connect to mysql
       MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
       MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}
@@ -95,7 +95,7 @@ services:
     environment:
       WAIT_HOSTS: pfm-rabbitmq:5672,mysql:3306,influxdb:8086,grafana:3000
       MYSQL_HOST: mysql # Host of the the mysql server
-      MYSQL_DBNAME: platformmanager # name of the database on the mysql server
+      MYSQL_DBNAME: platform_manager # name of the database on the mysql server
       MYSQL_USER: platform_manager # Admin account to connect to mysql
       MYSQL_PASS: ${MYSQL_PASSWORD} # Password to connect to mysql
       MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}

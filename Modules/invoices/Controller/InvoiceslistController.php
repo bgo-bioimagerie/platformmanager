@@ -174,8 +174,8 @@ class InvoiceslistController extends InvoicesController {
         $form->setTitle(InvoicesTranslator::InvoiceInfo($lang));
         $form->addText("number", InvoicesTranslator::Number($lang), false, $invoice["number"], false);
         $form->addText("resp", ClientsTranslator::ClientAccount($lang), false, $modelClient->getName($id_space, $invoice["id_responsible"]), false);
-        $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, CoreTranslator::dateFromEn($invoice["date_generated"], $lang));
-        $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
+        $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, $invoice["date_generated"]);
+        $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, $invoice["date_send"]);
         
         $modelVisa = new InVisa();
         $visasList = $modelVisa->getForList($id_space);
@@ -183,7 +183,7 @@ class InvoiceslistController extends InvoicesController {
         
         $modelConfig = new CoreConfig();
         if($modelConfig->getParamSpace("useInvoiceDatePaid", $id_space) == 1){
-            $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, CoreTranslator::dateFromEn($invoice["date_paid"], $lang));
+            $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, $invoice["date_paid"]);
         }
         else{
             $form->addHidden("date_paid", "");
