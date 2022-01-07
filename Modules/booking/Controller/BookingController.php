@@ -57,6 +57,13 @@ class BookingController extends BookingabstractController {
         return $html;
     }
 
+    public function journalAction($id_space){
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $m = new BkCalendarEntry();
+        $bookings = $m->journal($id_space, $_SESSION['id_user'], 100);
+        return $this->render(['data' => ['bookings' => $bookings]]);
+    }
+
     public function futureAction($id_space, $id_resource) {
         if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
             throw new PfmAuthException('need login', 403);

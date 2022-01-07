@@ -817,4 +817,16 @@ class BkCalendarEntry extends Model {
         return [];
     }
 
+    public function journal(int $id_space, int $id_user, int $max=100) {
+        $now = time() - 30*24*3600; // from last 30 days to future
+        $sql = 'SELECT bk_calendar_entry.*, resources.name as resource FROM bk_calendar_entry';
+        $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
+        $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
+        $sql .= ' WHERE bk_calendar_entry.id_space=:id_space AND bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user';
+        $sql .= ' ORDER BY bk_calendar_entry.start_time DESC LIMIT '.$max;
+        $q = array('today' => $now, 'id_user' => $id_user, 'id_space' => $id_space);
+        $res = $this->runRequest($sql, $q);
+        return $res->fetchAll();
+    }
+
 }

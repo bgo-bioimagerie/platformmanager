@@ -23,6 +23,14 @@ require_once 'Modules/core/Model/CoreUser.php';
  */
 class BookingabstractController extends CoresecureController {
 
+    public function spaceExtraMenus(){
+        $lang = $this->getLanguage();
+        return [
+            ['name' => BookingTranslator::booking($lang), 'url' => 'bookingdayarea/'.$this->currentSpace['id'].'/'],
+            ['name' => BookingTranslator::journal($lang), 'url' => 'booking/'.$this->currentSpace['id'].'/journal']
+        ];
+    }
+
     /**
      * Get the content of of the booking menu for the calendar pages
      * @param number $curentAreaId ID of the curent area
