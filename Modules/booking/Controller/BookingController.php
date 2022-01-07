@@ -19,6 +19,7 @@ require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/rating/Model/Rating.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * 
@@ -64,7 +65,9 @@ class BookingController extends BookingabstractController {
         $bookings = $m->journal($id_space, $_SESSION['id_user'], 100, $from);
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         $bookingRates = null;
-        if($plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
+        $modelSpace = new CoreSpace();
+        $ratingRole = $modelSpace->getSpaceMenusRole($id_space, 'rating');
+        if($ratingRole >= CoreSpace::$USER && $plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
             $r = new Rating();
             $bookingRates = [];
             $ratings = $r->list($id_space, 'booking', $from);
