@@ -204,7 +204,7 @@ class Router {
             $registry = \Prometheus\CollectorRegistry::getDefault();
             $counter = $registry->getOrRegisterCounter('pfm', 'request_nb', 'quantity', ['url', 'code']);
             $counter->incBy(1, [$reqRoute, http_response_code()]);
-            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [10, 20, 50, 100, 1000]);
+            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [20, 50, 100, 1000, 5000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
         } catch(Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
