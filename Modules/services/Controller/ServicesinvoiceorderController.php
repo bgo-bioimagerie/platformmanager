@@ -159,7 +159,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
-        $modelClient = new ClClient();
         // select all the opened orders
         $orders = $modelOrder->openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space);
 
