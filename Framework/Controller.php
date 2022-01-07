@@ -90,6 +90,7 @@ abstract class Controller {
             'name' => $space['name'],
             'color' => $spaceColor,
             'txtcolor' => $spaceTxtColor,
+            'extraSpaceMenus' => $this->spaceExtraMenus()
         ];
 
         return $this->twig->render("Modules/core/View/Corespace/navbar.twig", $dataView);
@@ -101,6 +102,10 @@ abstract class Controller {
 
     public function spaceMenu() {
         return null;
+    }
+
+    public function spaceExtraMenus() {
+        return [];
     }
 
     /**
@@ -224,6 +229,7 @@ abstract class Controller {
             "mainMenu" => $this->mainMenu(),
             "sideMenu" => $this->sideMenu(),
             "spaceMenu" => $this->spaceMenu(),
+            "extraSpaceMenus" => $this->spaceExtraMenus(),
             "rootWeb" => Configuration::get("rootWeb", "/"),
             "currentSpace" => $this->currentSpace,  // current space if any
             "role" => $this->role   // user role in space if any
