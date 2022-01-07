@@ -18,7 +18,7 @@ require_once 'Modules/resources/Model/ReEvent.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
-
+require_once 'Modules/rating/Model/Rating.php';
 
 /**
  * 
@@ -60,8 +60,19 @@ class BookingController extends BookingabstractController {
     public function journalAction($id_space){
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $m = new BkCalendarEntry();
-        $bookings = $m->journal($id_space, $_SESSION['id_user'], 100);
-        return $this->render(['data' => ['bookings' => $bookings]]);
+        $from = time() - 30*24*3600; // from last 30 days to future
+        $bookings = $m->journal($id_space, $_SESSION['id_user'], 100, $from);
+        $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
+        $bookingRates = null;
+        if($plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
+            $r = new Rating();
+            $bookingRates = [];
+            $ratings = $r->list($id_space, 'booking', $from);
+            foreach($ratings as $rate) {
+                $bookingRates[$rate['resource']] = $rate;
+            }
+        }
+        return $this->render(['data' => ['bookings' => $bookings, 'rating' => $bookingRates]]);
     }
 
     public function futureAction($id_space, $id_resource) {
