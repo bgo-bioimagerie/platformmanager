@@ -16,7 +16,7 @@
             <?php if (isset($data['rating'][$booking['id']])) { ?>
                 <?php echo $data['rating'][$booking['id']]['rate']; ?>
             <?php } else { ?>
-                <a href="/rating/<?php echo $context['currentSpace']['id']; ?>/booking/<?php echo $booking['id']; ?>"><button class="btn btn-primary">Evaluate</button></a>
+                <?php if($booking['end_time'] < time()) { ?><a href="/rating/<?php echo $context['currentSpace']['id']; ?>/booking/<?php echo $booking['id']; ?>"><button class="btn btn-primary">Evaluate</button></a><?php } ?>
             <?php } ?>
             <?php } ?>
         </td></tr>
