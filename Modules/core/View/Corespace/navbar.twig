@@ -5,5 +5,15 @@
             <a style="color: {{txtcolor}}" class="text-center" href="corespace/{{id}}"><h3 style="text-align: center; font-size: 16px;">{{name}}</h3></a>
         </div>
         
+        <div  id="extraspacemenus">
+            <ul class="nav navbar-nav">
+                {% if extraSpaceMenus %}
+                    {% for menu in extraSpaceMenus %}
+                    <li><a href="{{menu.url}}"><button type="btn" class="btn btn-primary">{{menu.name}}</button></a></li>
+                    {% endfor %}
+                {% endif %}
+            </ul>                 
+        </div>
+
     </div>
 </nav>
