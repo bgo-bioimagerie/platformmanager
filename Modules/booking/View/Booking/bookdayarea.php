@@ -28,6 +28,7 @@ a{
 
 #tcelltop{
 	border: 1px solid #d1d1d1;
+	overflow: hidden;
 }
 
 #colDiv{
@@ -53,6 +54,7 @@ a{
 	-moz-border-radius: 0px;
 	border-radius: 0px;
 	border: 1px solid #f1f1f1;
+	overflow: hidden;
 }
 
 #resa_link{

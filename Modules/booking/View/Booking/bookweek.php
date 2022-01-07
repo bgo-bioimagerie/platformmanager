@@ -37,6 +37,7 @@ a{
 
 #tcelltop{
 	border: 1px solid #d1d1d1;
+	overflow: hidden;
 }
 
 #colDiv{
@@ -60,6 +61,7 @@ a{
 
 #tcellResa{
 	border: 1px solid #d1d1d1;
+	overflow: hidden;
 }
 
 #resa_link{

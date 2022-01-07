@@ -15,7 +15,7 @@
             </div>
         </div>
         <div>À utiliser avec précautions !!! La suppression d'utilisateurs ne supprime pas les données associées. N'utiliser qu'en cas de doublon ou de cas exotiques.</div>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <?php if (isset($_SESSION["message"]) && $_SESSION["message"]) { ?>
                 <div class="alert alert-danger alert-dismissible">
                     <?php echo $_SESSION["message"] ?>
