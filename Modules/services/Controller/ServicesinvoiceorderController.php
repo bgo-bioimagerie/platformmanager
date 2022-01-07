@@ -49,10 +49,12 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         if ($formUnit->check()) {
             $dateBegin = $this->request->getParameterNoException("date_begin");
             $dateEnd = $this->request->getParameterNoException("date_end");
-            $unitId = $this->request->getParameterNoException("id_unit");
+            $clientId = $this->request->getParameterNoException("id_client");
             $respId = $this->request->getParameterNoException("id_resp");
-            if ($unitId != 0 && $respId != 0) {
-                $this->generateRespBill($dateBegin, $dateEnd, $unitId, $respId, $id_space);
+            Configuration::getLogger()->debug("[TEST] [generating respBill]", ["respId" => $respId, "unitId" => $clientId]);
+            if ($clientId != '' || $respId != '') {
+                Configuration::getLogger()->debug("[TEST] [generating respBill]", ["respId" => $respId, "unitId" => $clientId]);
+                $this->generateRespBill($dateBegin, $dateEnd, $clientId, $respId, $id_space);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
@@ -153,14 +155,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
         return $form;
-
-         
-        // return "";
     }
 
-    /**
-    * @deprecated
-    **/
     private function generateRespBill($dateBegin, $dateEnd, $id_client, $id_resp, $id_space) {
 
         $modelOrder = new SeOrder();
@@ -168,7 +164,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelInvoiceItem = new InInvoiceItem();
         $modelClient = new ClClient();
         // select all the opened order
-        $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
+        $orders = $modelOrder->openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space);
+        Configuration::getLogger()->debug("[TEST]", ["orders" => $orders]);
 
         if (count($orders) == 0) {
             throw new PfmException("there are no orders open for this responsible");
