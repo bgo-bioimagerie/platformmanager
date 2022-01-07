@@ -91,6 +91,13 @@ class CoreTranslator {
         return "Home";
     }
 
+    public static function Welcome($lang = "") {
+        if ($lang == "fr") {
+            return "Bienvenue!";
+        }
+        return "Welcome!";
+    }
+
     public static function Tools($lang = "") {
         if ($lang == "fr") {
             return "Outils";
