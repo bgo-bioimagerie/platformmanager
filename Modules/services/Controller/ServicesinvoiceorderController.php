@@ -50,9 +50,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $dateBegin = $this->request->getParameterNoException("date_begin");
             $dateEnd = $this->request->getParameterNoException("date_end");
             $clientId = $this->request->getParameterNoException("id_client");
-            $respId = $this->request->getParameterNoException("id_resp");
-            if ($clientId != '' || $respId != '') {
-                $this->generateRespBill($dateBegin, $dateEnd, $clientId, $respId, $id_space);
+            if ($clientId != '') {
+                $this->generateClientBill($dateBegin, $dateEnd, $clientId, $id_space);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
@@ -155,7 +154,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $form;
     }
 
-    private function generateRespBill($dateBegin, $dateEnd, $id_client, $id_resp, $id_space) {
+    private function generateClientBill($dateBegin, $dateEnd, $id_client, $id_space) {
 
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
@@ -180,11 +179,11 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForClient($id_space, $id_client);
-        $belonging = $modelClient->get($id_space, $id_client);
-        $content = $this->parseServicesToContent($id_space, $services, $belonging);
+        $modelClPricing = new ClPricing();
+        $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0]; // why an array ???
+        $content = $this->parseServicesToContent($id_space, $services, $pricing['id']);
         $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
-
-        $total_ht = $this->calculateTotal($id_space, $services, $belonging);
+        $total_ht = $this->calculateTotal($id_space, $services, $pricing['id']);
 
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
@@ -229,11 +228,11 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $content;
     }
 
-    protected function calculateTotal($id_space, $services, $id_belongings) {
+    protected function calculateTotal($id_space, $services, $id_belonging) {
         $total_HT = 0;
         $modelPrice = new SePrice();
         foreach ($services as $service) {
-            $price = $modelPrice->getPrice($id_space, $service["id_service"], $id_belongings);
+            $price = $modelPrice->getPrice($id_space, $service["id_service"], $id_belonging);
             $total_HT += floatval($service["quantity"]) *  floatval($price);
         }
         return $total_HT;
