@@ -38,28 +38,17 @@ class HelpdeskconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'helpdesk', $lang);
         if ($formMenusactivation->check()) {
-
-            $modelSpace->setSpaceMenu($id_space, "helpdesk", "helpdesk", "glyphicon-credit-card", 
-                    $this->request->getParameter("helpdeskmenustatus"),
-                    $this->request->getParameter("displayMenu"),
-                    1,
-                    $this->request->getParameter("colorMenu"),
-                    $this->request->getParameter("colorTxtMenu")
-            );
-                
-            $this->redirect("helpdeskconfig/".$id_space);
-            return;
+            $this->menusactivation($id_space, 'helpdesk', 'credit-card');
+            return $this->redirect("helpdeskconfig/".$id_space);
         }
         
         // menu name
-        $menuNameForm = $this->menuName($lang, $id_space);
+        $menuNameForm = $this->menuNameForm($id_space, 'helpdesk', $lang);
         if ($menuNameForm->check()) {
-            $modelConfig = new CoreConfig();
-            $modelConfig->setParam("helpdeskMenuName", $this->request->getParameter("helpdeskMenuName"), $id_space);
-            $this->redirect("helpdeskconfig/" . $id_space);
-            return;
+            $this->setMenuName($id_space, 'helpdesk');
+            return $this->redirect("helpdeskconfig/" . $id_space);
         }
 
         // view
@@ -78,45 +67,6 @@ class HelpdeskconfigController extends CoresecureController {
             "lang" => $lang,
             "fromAddress" => $fromAddress
         ));
-    }
-
-    protected function menusactivationForm($lang, $id_space) {
-
-        $modelSpace = new CoreSpace();
-        $statusHelpdeskMenu = $modelSpace->getSpaceMenusRole($id_space, "helpdesk");
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "helpdesk");
-        $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "helpdesk");
-        $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "helpdesk");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("helpdeskmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusHelpdeskMenu);
-        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
-        $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
-        $form->addColor("colorTxtMenu", CoreTranslator::text_color($lang), false, $colorTxtMenu);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "helpdeskconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-    
-    protected function menuName($lang, $id_space) {
-        $modelConfig = new CoreConfig();
-        $menuName = $modelConfig->getParamSpace("helpdeskMenuName", $id_space);
-
-        $form = new Form($this->request, "helpdeskMenuNameForm");
-        $form->addSeparator(HelpdeskTranslator::MenuName($lang));
-
-        $form->addText("helpdeskMenuName", CoreTranslator::Name($lang), false, $menuName);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "helpdeskconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
     }
 
 }

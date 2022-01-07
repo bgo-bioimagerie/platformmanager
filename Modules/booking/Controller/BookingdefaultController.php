@@ -774,7 +774,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
         $formDeletePeriod->setButtonsWidth(2, 10);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "menuData" => $menuData,
+        return $this->render(array("id_space" => $id_space, "lang" => $lang, "menuData" => $menuData,
             "form" => $form, "use_packages" => $use_packages,
             "packageChecked" => $packageChecked,
             "userCanEdit" => $userCanEdit,

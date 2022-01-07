@@ -302,4 +302,59 @@ abstract class CoresecureController extends CorecookiesecureController {
         return true;
     }
 
+    protected function menusactivationForm($id_space, $module, $lang) {
+
+        $modelSpace = new CoreSpace();
+        $statusMenu = $modelSpace->getSpaceMenusRole($id_space, $module);
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, $module);
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, $module);
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, $module);
+
+        $form = new Form($this->request, $module."menusactivationForm");
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang). " ($module)");
+
+        $roles = $modelSpace->roles($lang);
+
+        $form->addSelect($module."Menustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusMenu);
+        $form->addNumber($module."DisplayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor($module."DisplayColor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor($module."DisplayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+
+    protected function menusactivation($id_space, $module, $icon) {
+        $modelSpace = new CoreSpace();
+        $modelSpace->setSpaceMenu($id_space, $module, $module, "glyphicon-".$icon, 
+        $this->request->getParameter($module."Menustatus"),
+        $this->request->getParameter($module."DisplayMenu"),
+        1,
+        $this->request->getParameter($module."DisplayColor"),
+        $this->request->getParameter($module."DisplayColorTxt")
+        );
+    }
+
+    protected function menuNameForm($id_space, $module, $lang) {
+        $modelConfig = new CoreConfig();
+        $menuName = $modelConfig->getParamSpace($module."menuname", $id_space);
+
+        $form = new Form($this->request, $module."MenuNameForm");
+        $form->addSeparator(CoreTranslator::MenuName($lang)." ($module)");
+
+        $form->addText($module."MenuName", CoreTranslator::Name($lang), false, $menuName);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+
+    protected function setMenuName($id_space, $module) {
+        $modelConfig = new CoreConfig();
+        $modelConfig->setParam($module."menuname", $this->request->getParameter($module."MenuName"), $id_space);
+    }
+
 }
