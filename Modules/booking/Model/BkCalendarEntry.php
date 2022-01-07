@@ -450,34 +450,35 @@ class BkCalendarEntry extends Model {
     public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id) {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
-        $sql = 'SELECT * FROM bk_calendar_entry WHERE
-				(start_time <=:end AND end_time >= :start)
-                AND resource_id = :res
-                AND deleted=0
-                AND id_space=:id_space
-				ORDER BY start_time';
+        $sql = 'SELECT bk_calendar_entry.* , bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+                INNER JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
+                INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+                WHERE
+				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
+                AND bk_calendar_entry.resource_id = :res
+                AND bk_calendar_entry.deleted=0
+                AND bk_calendar_entry.id_space=:id_space
+				ORDER BY bk_calendar_entry.start_time';
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
 
-        $modelUser = new CoreUser();
-        $modelColor = new BkColorCode();
+        //$modelUser = new CoreUser();
+        //$modelColor = new BkColorCode();
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                $userInfo = $modelUser->userAllInfo($rid);
-                $data[$i]["recipient_fullname"] = $userInfo["name"] . " " . $userInfo["firstname"];
-                $data[$i]["phone"] = "";
-                if (isset($userInfo["phone"])) {
-                    $data[$i]["phone"] = $userInfo["phone"];
-                }
-                $data[$i]["color_bg"] = $modelColor->getColorCodeValue($id_space, $data[$i]["color_type_id"]);
-                $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space ,$data[$i]["color_type_id"]);
+                //$userInfo = $modelUser->userAllInfo($rid);
+                $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
             } else {
                 $data[$i]["recipient_fullname"] = "";
                 $data[$i]["phone"] = "";
-                $data[$i]["color_bg"] = $modelColor->getColorCodeValue($id_space, $data[$i]["color_type_id"]);
-                $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space, $data[$i]["color_type_id"]);
+            }
+            if(!$data[$i]["color_bg"]) {
+                $data[$i]["color_bg"] = "aaaaaa";
+            }
+            if(!$data[$i]["color_text"]) {
+                $data[$i]["color_text"] = "000000";
             }
         }
 
