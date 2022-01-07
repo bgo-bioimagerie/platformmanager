@@ -126,7 +126,7 @@ class CorespaceaccessController extends CoresecureController {
         $file = explode('/', $path);
         if($path == null || !file_exists($path)) {
             Configuration::getLogger()->warning('file not found', ['file' => $path]);
-            throw new PfmFileException('file does not exists');
+            throw new PfmFileException('file does not exists', 404);
         }
         $mime = mime_content_type($path);
         header('Content-Description: File Transfer');

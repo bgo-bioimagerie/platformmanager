@@ -49,7 +49,7 @@ abstract class CoresecureController extends CorecookiesecureController {
                     $key = sha1($this->generateRandomKey());
                     $cookieSet = setcookie("auth", $authArray[0] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
-                        throw new PfmAuthException('cannot set the cookie in coresecure <br>', 403);
+                        throw new PfmAuthException('cannot set the cookie in coresecure', 403);
                     }
                     $modelUser->setRememberKey($authArray[0], $key);
 
@@ -154,7 +154,7 @@ abstract class CoresecureController extends CorecookiesecureController {
     public function checkAuthorization($minimumStatus) {
         $auth = $this->isUserAuthorized($minimumStatus);
         if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
+            throw new PfmAuthException("Error: Permission denied", 403);
         }
         if ($auth == -1) {
             $this->redirect("coreconnection");
@@ -172,23 +172,6 @@ abstract class CoresecureController extends CorecookiesecureController {
         }
         return false;
     }
-
-    /**
-     * @deprecated
-     * @param type $menuName
-     * @throws Exception
-     */
-    /*
-    public function checkAuthorizationMenu($menuName) {
-        $auth = $this->isUserMenuAuthorized($menuName);
-        if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
-        }
-        if ($auth == -1) {
-            $this->redirect("coreconnection");
-        }
-    }
-    */
 
     /**
      * 

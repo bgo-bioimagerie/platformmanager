@@ -55,9 +55,10 @@ class BkNightWE extends Model {
 
     /**
      * get pricing ID from ID
-     * @param unknown $id
+     * @param int $id
+     * @param int $id_space
      * @throws Exception
-     * @return mixed
+     * @return array
      */
     public function getPricing($id, $id_space) {
         $sql = "select * from bk_nightwe where id_belonging=? AND id_space=? AND deleted=0";
@@ -66,13 +67,12 @@ class BkNightWE extends Model {
             return $data->fetch();  // get the first line of the result
         } else {
             return array();
-            //throw new Exception("Cannot find the pricing using the given id:" . $id);
         }
     }
 
     /**
      * add a unique pricing
-     * @param unknown $id
+     * @param int $id
      * @return PDOStatement
      */
     public function addUnique($id, $id_space) {
@@ -91,7 +91,7 @@ class BkNightWE extends Model {
 
     /**
      * add a pricing
-     * @param unknown $id
+     * @param int $id
      * @param unknown $tarif_unique
      * @param unknown $tarif_nuit
      * @param unknown $night_start
@@ -108,7 +108,7 @@ class BkNightWE extends Model {
 
     /**
      * Update a pricing infos
-     * @param unknown $id_belonging
+     * @param int $id_belonging
      * @param unknown $tarif_unique
      * @param unknown $tarif_nuit
      * @param unknown $night_start
@@ -125,7 +125,8 @@ class BkNightWE extends Model {
 
     /**
      * Check if a pricing exists
-     * @param unknown $name
+     * @param int id_belonging
+     * @param int id_space
      * @return boolean
      */
     private function isPricing($id_belonging, $id_space) {
@@ -136,7 +137,8 @@ class BkNightWE extends Model {
 
     /**
      * Add pricing if pricing name does not exists
-     * @param unknown $nom
+     * @param int $id_belonging
+     * @param int $id_space
      * @param unknown $tarif_unique
      * @param unknown $tarif_nuit
      * @param unknown $night_start

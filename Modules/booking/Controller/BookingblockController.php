@@ -63,10 +63,10 @@ class BookingblockController extends BookingsettingsController {
         $color_type_id = $this->request->getParameter("color_code_id");
 
         if($begin_date == "") {
-            throw new PfmParamException("invalid begin date", 403);
+            throw new PfmParamException("invalid begin date");
         }
         if($end_date == "") {
-            throw new PfmParamException("invalid end date", 403);
+            throw new PfmParamException("invalid end date");
         }
 
         $beginDate = CoreTranslator::dateToEn($begin_date, $lang);

@@ -380,7 +380,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
     protected function getProjectsResp($id_space, $id_projects) {
 
         if (empty($id_projects)) {
-            throw new PfmParamException("You need to select at least one project", 403);
+            throw new PfmParamException("You need to select at least one project");
         }
 
         $modelProject = new SeProject();
@@ -389,7 +389,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         for ($i = 1; $i < count($id_projects); $i++) {
             $id_respi = $modelProject->getResp($id_space, $id_projects[$i]);
             if ($id_respi != $id_resp) {
-                throw new PfmParamException("Projects must have the same responsible", 403);
+                throw new PfmParamException("Projects must have the same responsible");
             }
         }
         return $id_resp;

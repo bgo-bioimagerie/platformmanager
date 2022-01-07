@@ -487,7 +487,7 @@ class CoreSpace extends Model {
             return $id;
         } else {
             if ($this->alreadyExists('name', $name)) {
-                throw new PfmDbException("Space name already exists", 1);
+                throw new PfmParamException("Space name already exists");
             }
             return $this->addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor);
         }

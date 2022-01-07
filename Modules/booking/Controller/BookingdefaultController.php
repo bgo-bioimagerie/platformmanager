@@ -277,7 +277,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $canEdit = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $id, $recipient_id, $start_time);
         if (!$canEdit) {
-            throw new PfmException("ERROR: You're not allowed to modify this reservation");
+            throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
 
         $modelCalEntry = new BkCalendarEntry();
@@ -839,7 +839,7 @@ class BookingdefaultController extends BookingabstractController {
         $id_resource = $entryInfo["resource_id"];
         $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
         if (!$canEdit) {
-            throw new PfmException("ERROR: You're not allowed to modify this reservation");
+            throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
         if ($sendEmail == 1) {
             $resourceModel = new ResourceInfo();

@@ -30,7 +30,7 @@ class CoreFiles extends Model {
         $path = $this->path($file);
         if($path == null || !file_exists($path)) {
             Configuration::getLogger()->warning('file not found', ['file' => $path]);
-            throw new PfmFileException('file does not exists');
+            throw new PfmFileException('file does not exists', 404);
         }
         $mime = mime_content_type($path);
         header('Content-Description: File Transfer');
@@ -53,7 +53,7 @@ class CoreFiles extends Model {
         $path = $this->path($file);
         if($path == null) {
             Configuration::getLogger()->warning('file not found', ['file' => $path]);
-            throw new PfmFileException('file does not exists');
+            throw new PfmFileException('file does not exists', 404);
         }
         $base = dirname($path);
         $name = basename($path);

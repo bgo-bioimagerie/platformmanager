@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Configuration.php';
+require_once 'Framework/Errors.php';
 
 /**
  * Class model the view.
@@ -20,7 +21,6 @@ class View {
      */
     public function __construct($action, $controller = "", $module = "") {
         $file = 'Modules/' . strtolower($module) . '/View/' . $controller . "/" . $action . '.php';
-        //echo "view file = " . $file . "<br/>";
         if (file_exists($file)) {
             $this->file = $file;
         }
@@ -52,6 +52,7 @@ class View {
     /**
      * Generate a view file and return it's content
      * 
+     * @deprecated
      * @param string $file URL of the view file vue to generate
      * @param array $data Needed data to generate the view
      * @return string Generated view
@@ -67,7 +68,7 @@ class View {
 
             return ob_get_clean();
         } else {
-            throw new Exception("unable to find the file in view: '$file' ");
+            throw new PfmException("unable to find the file in view: '$file' ", 500);
         }
     }
 

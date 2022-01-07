@@ -1,7 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
-
+require_once 'Framework/Errors.php';
 /**
  * Cache the url informations to speed the routing
  *
@@ -38,15 +38,15 @@ class FCache extends Model {
 
                 $this->addRoutsToDatabase($moduleName, $routingClassUrl);
             } else {
-                throw new Exception("The module '$moduleName' has a not valid routing file");
+                throw new PfmException("The module '$moduleName' has a not valid routing file", 500);
             }
         }
     }
 
     /**
      * Get all the route information to add it to the database
-     * @param type $moduleName Name of the module
-     * @param type $routingClassUrl url of the controller
+     * @param string $moduleName Name of the module
+     * @param string $routingClassUrl url of the controller
      */
     protected function addRoutsToDatabase($moduleName, $routingClassUrl) {
         require_once ($routingClassUrl);

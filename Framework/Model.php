@@ -39,7 +39,7 @@ abstract class Model {
      */
     protected function alreadyExists($columnName, $value) {
         if(!isset($this->tableName) || empty($this->tableName)) {
-            throw new PfmDbException("Table name not defined", 1);
+            throw new PfmDbException("Table name not defined", 500);
             
         }
         $table = $this->tableName;

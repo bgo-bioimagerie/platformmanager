@@ -162,7 +162,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
 
         if (count($orders) == 0) {
-            throw new PfmException("there are no orders open for this responsible");
+            throw new PfmParamException("there are no orders open for this responsible");
         }
 
         $lang = $this->getLanguage();
