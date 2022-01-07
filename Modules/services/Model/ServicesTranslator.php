@@ -388,6 +388,13 @@ class ServicesTranslator {
         return "Invoice by unit";
     }
 
+    public static function Invoice_by_client($lang = "") {
+        if ($lang == "fr") {
+            return "Facturation par client";
+        }
+        return "Invoice by client";
+    }
+
     public static function Orders($lang = "") {
         if ($lang == "fr") {
             return "Commandes";

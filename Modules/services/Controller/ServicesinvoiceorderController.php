@@ -51,9 +51,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $dateEnd = $this->request->getParameterNoException("date_end");
             $clientId = $this->request->getParameterNoException("id_client");
             $respId = $this->request->getParameterNoException("id_resp");
-            Configuration::getLogger()->debug("[TEST] [generating respBill]", ["respId" => $respId, "unitId" => $clientId]);
             if ($clientId != '' || $respId != '') {
-                Configuration::getLogger()->debug("[TEST] [generating respBill]", ["respId" => $respId, "unitId" => $clientId]);
                 $this->generateRespBill($dateBegin, $dateEnd, $clientId, $respId, $id_space);
                 $this->redirect("invoices/" . $id_space);
                 return;
@@ -132,9 +130,9 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
     protected function createByUnitForm($id_space, $lang) {
         $form = new Form($this->request, "invoicebyunitform");
-        $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
+        $form->setTitle(ServicesTranslator::Invoice_by_client($lang));
 
-        $unitId = $this->request->getParameterNoException("id_unit");
+        $clientId = $this->request->getParameterNoException("id_client");
         $dateBegin = $this->request->getParameterNoException("date_begin");
         $dateEnd = $this->request->getParameterNoException("date_end");
 
@@ -150,7 +148,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
         $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
-        $form->addSelect("id_client", ClientsTranslator::Institution($lang), $clientsNames, $clientsIds, $unitId, false);
+        $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clientsNames, $clientsIds, $clientId, false);
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
@@ -163,9 +161,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
         $modelClient = new ClClient();
-        // select all the opened order
+        // select all the opened orders
         $orders = $modelOrder->openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space);
-        Configuration::getLogger()->debug("[TEST]", ["orders" => $orders]);
 
         if (count($orders) == 0) {
             throw new PfmException("there are no orders open for this responsible");
@@ -177,12 +174,12 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $number = $modelInvoice->getNextNumber();
         $module = "services";
         $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, $id_resp);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         $modelInvoice->setTitle($id_space, $id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
 
         // add the counts to the Invoice
-        $services = $modelOrder->openedItemsForResp($id_space, $id_resp);
+        $services = $modelOrder->openedItemsForClient($id_space, $id_client);
         $belonging = $modelClient->get($id_space, $id_client);
         $content = $this->parseServicesToContent($id_space, $services, $belonging);
         $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
