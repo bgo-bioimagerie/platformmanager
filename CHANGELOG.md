@@ -16,6 +16,7 @@
 * [coreconfig] remove carousel
 * [invoices] remove hidden characters in template
 * [docker] fix mysql db name in docker-compose
+* [booking] add journal page to show future and last 30 days bookings
 
 ## 2.2.1
 
