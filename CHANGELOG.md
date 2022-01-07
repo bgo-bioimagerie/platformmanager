@@ -17,6 +17,7 @@
 * [invoices] remove hidden characters in template
 * [docker] fix mysql db name in docker-compose
 * [booking] add journal page to show future and last 30 days bookings
+* [core] manage http error codes #184
 
 ## 2.2.1
 
