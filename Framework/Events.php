@@ -345,10 +345,6 @@ class EventHandler {
         
 
         $plan = new CorePlan($msg['plan']['id'], 0);
-        if(!$plan) {
-            Configuration::getLogger()->error('invalid plan', $msg);
-            return;
-        }
         $oldplan = null;
         if(!array_key_exists('old', $msg)) {
             $msg['old'] = ['id' => 0];
@@ -358,6 +354,10 @@ class EventHandler {
         $csu = new CoreSpaceUser();
         $managers = $csu->managersOrAdmin($space['id']);
         $planInfo = $plan->plan();
+        if(!$planInfo) {
+            Configuration::getLogger()->error('invalid plan', $msg);
+            return;
+        }
         Configuration::getLogger()->debug('[plan] edit check flags', ['flags' => $plan->Flags()]);
         if($plan->hasFlag(CorePlan::FLAGS_GRAFANA) !== $oldplan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
             if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
@@ -609,6 +609,7 @@ class Events {
             $message['_user'] = $_SESSION['login'] ?? 'unknown';
             $msg->body  = json_encode($message);
             $m->message($msg);
+            return;
         }
         try {
             $channel = self::getChannel();
