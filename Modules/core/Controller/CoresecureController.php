@@ -243,22 +243,7 @@ abstract class CoresecureController extends CorecookiesecureController {
     }
     */
 
-    /**
-     * 
-     * @param type $id_space
-     * @param type $id_user
-     * @return int
-     */
-    public function getUserSpaceStatus($id_space, $id_user) {
-        $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($id_user);
-        if ($userAppStatus > 1) {
-            return 4;
-        }
-        $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        return $spaceRole;
-    }
+
 
     /**
      * 
