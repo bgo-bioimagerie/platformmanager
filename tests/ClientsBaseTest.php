@@ -20,11 +20,11 @@ class ClientsBaseTest extends BaseTest {
         // activate clients module
         $req = new Request([
             "path" => "clientsconfig/".$space['id'],
-            "formid" => "menusactivationForm",
-            "clientsmenustatus" => 3,
-            "displayMenu" => 0,
-            "colorMenu" =>  "#000000",
-            "colorTxtMenu" => "#ffffff"
+            "formid" => "clientsmenusactivationForm",
+            "clientsMenustatus" => 3,
+            "clientsDisplayMenu" => 0,
+            "clientsDisplayColor" =>  "#000000",
+            "clientsDisplayColorTxt" => "#ffffff"
         ], false);
         $c = new ClientsconfigController($req, $space);
         $c->indexAction($space['id']);

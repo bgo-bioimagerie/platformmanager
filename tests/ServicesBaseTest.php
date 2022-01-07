@@ -20,11 +20,11 @@ class ServicesBaseTest extends BaseTest {
         $this->asUser($user['login'], $space['id']);
         $req = new Request([
             "path" => "servicesconfig/".$space['id'],
-            "formid" => "menusactivationForm",
-            "servicesmenustatus" => 3,
-            "displayMenu" => 0,
-            "displayColor" =>  "#000000",
-            "displayColorTxt" => "#ffffff"
+            "formid" => "servicesmenusactivationForm",
+            "servicesMenustatus" => 3,
+            "servicesDisplayMenu" => 0,
+            "servicesDisplayColor" =>  "#000000",
+            "servicesDisplayColorTxt" => "#ffffff"
         ], false);
         $c = new ServicesconfigController($req, $space);
         $c->indexAction($space['id']);
