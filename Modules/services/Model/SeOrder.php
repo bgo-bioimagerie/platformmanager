@@ -101,10 +101,11 @@ class SeOrder extends Model {
         return 0;
     }
 
-    public function setOrder($id, $id_space, $id_user, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = "0000-00-00"){
+    public function setOrder($id, $id_space, $id_user, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
         $id_status = 0;
 
-        if ($date_close=="0000-00-00"){
+        if ($date_close == "") {
+            $date_close = null;
             $id_status = 1;
         }
 
@@ -136,7 +137,10 @@ class SeOrder extends Model {
         return false;
     }
 
-    public function addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "0000-00-00") {
+    public function addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
+        if($date_close == "") {
+            $date_close = null;
+        }
 
         if($date_open == "") {
             $date_open = null;
@@ -154,8 +158,9 @@ class SeOrder extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "0000-00-00") {      
-        if ($date_close == "0000-00-00"){
+    public function updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {      
+        if ($date_close == "") {
+            $date_close = null;
             $id_status = 1;
         }
 
@@ -249,7 +254,7 @@ class SeOrder extends Model {
         $entry["id_status"] = 1;
         $entry["date_open"] = date("Y-m-d", time());
         $entry["date_last_modified"] = "";
-        $entry["date_close"] = "0000-00-00";
+        $entry["date_close"] = "";
         $entry["orders"] = array();
         $entry["no_identification"] = "";
         return $entry;
