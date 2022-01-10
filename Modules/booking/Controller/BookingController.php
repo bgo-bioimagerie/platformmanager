@@ -373,17 +373,38 @@ class BookingController extends BookingabstractController {
         //$area = $modelArea->getArea($curentAreaId);
         // get the resource info
         $modelRes = new ResourceInfo();
-        $modelAccess = new BkAccess();
         $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
+
+        $resIds = [];
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            $resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase[$r]["id"]);
+            //$resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
+            $resIds[] = $resourcesBase[$r]["id"];
         }
 
-        // get last state
+
         $modelEvent = new ReEvent();
-        for ($r = 0; $r < count($resourcesBase); $r++) {
-            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
+        $colors =$modelEvent->getLastStateColors($id_space, $resIds);
+        $cmap = [];
+        foreach($colors as $c) {
+            $cmap[$c['id_resource']] = $c['color'];
         }
+
+
+        $modelAccess = new BkAccess();
+        $accessIds = $modelAccess->getAccessIds($id_space, $resIds);
+        $amap = [];
+        foreach($accessIds as $a) {
+            $amap[$a['id_resource']] = $a['id_access'];
+        }
+
+
+
+        for ($r = 0; $r < count($resourcesBase); $r++) {
+            //$resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase[$r]["id"]);
+            $resourcesBase[$r]["accessibility_id"] = $amap[$resourcesBase[$r]["id"]] ?? "";
+            $resourcesBase[$r]["last_state"] = $cmap[$resourcesBase[$r]["id"]] ?? "";
+        }
+
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
@@ -392,10 +413,24 @@ class BookingController extends BookingabstractController {
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
 
+        /*
         for ($t = 0; $t < count($resourcesBase); $t++) {
             $calEntries[] = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resourcesBase[$t]["id"]);
         }
-
+        */
+        $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds);
+        $calmap = [];
+        $calEntries = [];
+        foreach($resourcesBase as $r) {
+            $calEntries[] = [];
+        }
+        foreach($cals as $cal) {
+            $calmap[$cal['resource_id']][] = $cal;
+        }
+        foreach($resourcesBase as $i => $r) {
+            $calEntries[$i] = $calmap[$r['id']] ?? [];
+        }
+        
         // curentdate unix
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
@@ -412,10 +447,8 @@ class BookingController extends BookingabstractController {
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
-
         $modelScheduling = new BkScheduling();
         $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
-
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
             $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
@@ -642,13 +675,28 @@ class BookingController extends BookingabstractController {
 
         // get last state
         $modelEvent = new ReEvent();
+        $resIds = [];
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            $resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
+            //$resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
+            $resIds[] = $resourcesBase[$r]["id"];
+        }
+        $colors =$modelEvent->getLastStateColors($id_space, $resIds);
+        $cmap = [];
+        foreach($colors as $c) {
+            $cmap[$c['id_resource']] = $c['color'];
         }
 
         $modelRescal = new ResourceInfo();
+        $resources  = $modelRescal->getBySpace($id_space);
+        $rmap = [];
+        foreach($resources as $r) {
+            $rmap[$r['id']] = $r;
+        }
         for ($t = 0; $t < count($resourcesBase); $t++) {
-            $resourcesInfo[$t] = $modelRescal->get($id_space, $resourcesBase[$t]["id"]);
+            //$resourcesInfo[$t] = $modelRescal->get($id_space, $resourcesBase[$t]["id"]);
+            $resourceInfo[$t] = $rmap[$resourcesBase[$t]["id"]];
+            $resourcesBase[$t]['last_state'] = $cmap[$resourcesBase[$i]['id']] ?? "";
+
         }
 
         // get the entries for this resource
@@ -657,7 +705,6 @@ class BookingController extends BookingabstractController {
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
         $calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId);
-
         // curentdate unix
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
@@ -669,8 +716,14 @@ class BookingController extends BookingabstractController {
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
         $isUserAuthorizedToBook = array();
+        $accessIds = $modelAccess->getAccessIds($id_space, $resIds);
+        $amap = [];
+        foreach($accessIds as $a) {
+            $amap[$a['id_resource']] = $a['id_access'];
+        }
         foreach ($resourcesBase as $resourceBase) {
-            $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
+            //$resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
+            $resourceBase["accessibility_id"] = $amap[$resourceBase["id"]] ?? null;
             $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
         }
 

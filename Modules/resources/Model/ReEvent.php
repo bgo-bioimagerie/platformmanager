@@ -38,8 +38,16 @@ class ReEvent extends Model {
                 . " INNER JOIN re_state ON re_event.id_state = re_state.id"
                 . " WHERE id_resource=? AND re_event.id_space=? AND re_event.deleted=0 ORDER BY date DESC;";
         $data = $this->runRequest($sql, array($id_resource, $id_space))->fetch();
-        return  $data ? $data[0] : null;
-        
+        return  $data ? $data[0] : null;   
+    }
+
+    public function getLastStateColors($id_space, array $id_resources){
+        $sql = "SELECT id_resource, re_state.color as color"
+                . " FROM re_event "
+                . " INNER JOIN re_state ON re_event.id_state = re_state.id"
+                . " WHERE id_resource in (".implode(',', $id_resources).") AND re_event.id_space=? AND re_event.deleted=0 ORDER BY date DESC;";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+        //return  $data;   
     }
     
     public function getAll($id_space, $sort = "date") {
