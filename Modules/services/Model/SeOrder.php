@@ -208,14 +208,14 @@ class SeOrder extends Model {
         return $req->fetchAll();
     }
 
-    public function openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space){
+    public function openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space) {
+        $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_client' => $id_client, 'id_space' => $id_space);
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
-                . "AND id_user IN (SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=? AND deleted=0) "
-                . "AND date_open>=? "
-                . "AND date_close<=? "
-                . "AND id_space=? AND deleted=0";
-
-        $req = $this->runRequest($sql, array($id_client, $id_space, $dateBegin, $dateEnd, $id_space));
+                . "AND id_user IN (SELECT id_user FROM cl_j_client_user WHERE id_client=:id_client AND id_space=:id_space AND deleted=0) "
+                . "AND date_open>=:start "
+                . "AND (date_close IS NULL OR date_close<=:end) "
+                . "AND id_space=:id_space AND deleted=0";
+        $req = $this->runRequest($sql, $q);
         return $req->fetchAll();
     }
 

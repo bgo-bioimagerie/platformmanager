@@ -18,7 +18,6 @@ require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
-//require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
 /**
  *
@@ -26,7 +25,6 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
  * Controller for the home page
  */
 class ServicesinvoiceorderController extends InvoiceAbstractController {
-    //private $serviceModel;
 
     /**
      * Constructor
