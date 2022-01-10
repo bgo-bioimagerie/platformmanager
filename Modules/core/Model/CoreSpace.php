@@ -98,7 +98,7 @@ class CoreSpace extends Model {
         public string $color = '#000000',
         public string $txtcolor ='#ffffff',
         public ?string $description = null,
-        public string $image = '',
+        public ?string $image = '',
         public string $shortname = '',
         public string $contact = '',
         public string $support = '',

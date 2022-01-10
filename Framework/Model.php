@@ -462,13 +462,20 @@ abstract class Model {
 
     /**
      * Load an object from db based on its id, returns false if not found
+     * 
+     * @param int $id_space optional control on id_space
      */
-    public function from() {
+    public function from(int $id_space=0): int {
         if(!$this->tableName) {
             throw new PfmDbException('No table name defined');
         }
         $sql = "SELECT * FROM ".$this->tableName." WHERE id=?";
-        $res = $this->runRequest($sql, array($this->id));
+        $params = array($this->id);
+        if($id_space) {
+            $sql .= " AND id_space=?";
+            $params[] = $id_space;
+        }
+        $res = $this->runRequest($sql, $params);
         if($res->rowCount() == 0) {
             return false;
         }
@@ -491,8 +498,10 @@ abstract class Model {
 
     /**
      * Create/update object in db
+     * 
+     * @param int $id_space optional control on id_space
      */
-    public function save() {
+    public function save(int $id_space=0) {
         if(!$this->tableName) {
             throw new PfmDbException('No table name defined');
         }
@@ -520,6 +529,10 @@ abstract class Model {
             }
             $sql = "UPDATE ".$this->tableName." SET ".implode(',', $update)." WHERE id=?";
             $values[] = $this->id;
+            if($id_space) {
+                $sql .= " AND id_space=?";
+                $values[] = $id_space;
+            }
             $this->runRequest($sql, $values);
         } else {
             $sql = "INSERT INTO ".$this->tableName." (".implode(',', $columns).") VALUES (".implode(',', $params).")";
