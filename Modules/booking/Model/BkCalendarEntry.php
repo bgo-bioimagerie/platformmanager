@@ -451,7 +451,7 @@ class BkCalendarEntry extends Model {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
         $sql = 'SELECT bk_calendar_entry.* , bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
-                INNER JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
+                LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
                 INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
                 WHERE
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
@@ -495,7 +495,7 @@ class BkCalendarEntry extends Model {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
 
         $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
-            INNER JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
+            LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
             INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
             WHERE
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
