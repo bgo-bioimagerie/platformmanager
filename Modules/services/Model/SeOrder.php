@@ -103,10 +103,9 @@ class SeOrder extends Model {
 
     public function setOrder($id, $id_space, $id_user, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
         $id_status = 0;
-        if($date_close == "") {
+
+        if ($date_close == "") {
             $date_close = null;
-        }
-        if ($date_close==null){
             $id_status = 1;
         }
 
@@ -159,11 +158,9 @@ class SeOrder extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
-        if($date_close == "") {
+    public function updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {      
+        if ($date_close == "") {
             $date_close = null;
-        }
-        if ($date_close==null){
             $id_status = 1;
         }
 
@@ -200,6 +197,9 @@ class SeOrder extends Model {
     }
 
     // @bug refers to ec_j_user_responsible
+    /**
+     * @deprecated
+     */
     public function openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space){
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
                 . "AND id_user IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=? AND id_space=? AND deleted=0) "
@@ -208,6 +208,17 @@ class SeOrder extends Model {
                 . "AND id_space=? AND deleted=0";
 
         $req = $this->runRequest($sql, array($id_resp, $id_space, $dateBegin, $dateEnd, $id_space));
+        return $req->fetchAll();
+    }
+
+    public function openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space) {
+        $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_client' => $id_client, 'id_space' => $id_space);
+        $sql = "SELECT * FROM se_order WHERE id_status=1 "
+                . "AND id_user IN (SELECT id_user FROM cl_j_client_user WHERE id_client=:id_client AND id_space=:id_space AND deleted=0) "
+                . "AND date_open>=:start "
+                . "AND (date_close IS NULL OR date_close<=:end) "
+                . "AND id_space=:id_space AND deleted=0";
+        $req = $this->runRequest($sql, $q);
         return $req->fetchAll();
     }
 
@@ -273,12 +284,12 @@ class SeOrder extends Model {
     }
 
     // @bug refers to ec_j_user_responsible
-    public function openedItemsForResp($id_space, $id_resp){
+    public function openedItemsForClient($id_space, $id_client){
 
-        $userList = " SELECT id_user FROM ec_j_user_responsible WHERE id_resp=? AND id_space=? AND deleted=0 ";
+        $userList = " SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=? AND deleted=0 ";
         $orderList = " SELECT id FROM se_order WHERE id_user IN (".$userList.") AND id_status=1 AND id_space=? AND deleted=0";
         $sql = "SELECT * FROM se_order_service WHERE id_order IN (".$orderList.")";
-        return $this->runRequest($sql, array($id_resp, $id_space, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_client, $id_space, $id_space))->fetchAll();
     }
 
     // @bug refers to ec_j_user_responsible
