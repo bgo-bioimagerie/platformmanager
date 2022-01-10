@@ -2,7 +2,12 @@
 
 ## 2.2.2
 
-* [core] fix prometheus redis port 
+* [db] add upgrade_v3_v4 migration script on se_order
+  **Warning**: if you installed release <= 2.2.2 you need to run a db fix script
+  php cli/pfm-cli.php repair --bug 499
+* [services] fix orders blocking bugs
+* [invoices] fix orders invoice
+* [core] fix prometheus redis port
 * [invoices] remove hidden characters from template
 * [docker] fix db name in compose #495
 

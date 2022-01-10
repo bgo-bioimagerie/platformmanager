@@ -22,9 +22,12 @@ class SePrice extends Model {
         
     }
     
-    public function getPrice($id_space, $id_service, $id_belongings){
+    /**
+     * Belonging = pricing
+     */
+    public function getPrice($id_space, $id_service, $id_pricing) {
         $sql = "SELECT price FROM se_prices WHERE id_service=? AND id_belonging=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_service, $id_belongings, $id_space));
+        $req = $this->runRequest($sql, array($id_service, $id_pricing, $id_space));
         if ($req->rowCount() == 1){
             $tmp = $req->fetch();
             return $tmp[0];
