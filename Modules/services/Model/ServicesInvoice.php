@@ -14,7 +14,9 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
  */
 class ServicesInvoice extends InvoiceModel {
 
-    
+    /**
+     * @deprecated ?
+     */
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
         
         // projects
@@ -47,8 +49,9 @@ class ServicesInvoice extends InvoiceModel {
         $services = $this->runRequest($sql, array($id_space))->fetchAll();
 
         // get all purchase
+        // get client => id_client
         $modelOrder = new SeOrder();
-        $orders = $modelOrder->openedForRespPeriod($beginPeriod, $endPeriod, $id_resp, $id_space);
+        $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_resp, $id_space);
 
         // get all projects
         $sqlps = "SELECT * FROM se_project WHERE id_space=? AND id_resp=? AND date_close is null";
