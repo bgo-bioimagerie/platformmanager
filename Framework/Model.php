@@ -452,7 +452,7 @@ abstract class Model {
     /**
      * Get an object instance from an array
      */
-    public function load(array $data) {
+    public function loadFrom(array $data) {
         foreach(get_object_vars($this) as $attrName => $attrValue) {
             if(array_key_exists($attrName, $data)) {
                 $this->{$attrName} = $data[$attrName];
@@ -472,7 +472,7 @@ abstract class Model {
         if($res->rowCount() == 0) {
             return false;
         }
-        $this->load($res->fetch());
+        $this->loadFrom($res->fetch());
         return true;
     }
 
