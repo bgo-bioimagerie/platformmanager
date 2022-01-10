@@ -262,7 +262,7 @@ class TableView {
         $html .= "<tr>";
 
         for ($b = 0 ; $b < $isButtons ; $b++){
-            $html .= "<th></th>";
+            $html .= "<th class=\"no-sort\"></th>";
         }
         //if ($isButtons){
         //    $html .= "<th></th>";
