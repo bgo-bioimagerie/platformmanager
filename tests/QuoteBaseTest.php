@@ -45,7 +45,7 @@ class QuoteBaseTest extends BaseTest {
             "id_space" => $space['id'],
             "id_user" => $user['id'],
             "id_client" => $client['id'],
-            'date_open' => date('Y-md-d')
+            'date_open' => date('Y-m-d')
         ], false);
         $c = new QuotelistController($req, $space);
         $data = $c->editexistinguserAction($space['id'], 0);
