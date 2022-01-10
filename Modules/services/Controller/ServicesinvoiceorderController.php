@@ -18,7 +18,6 @@ require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
-//require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
 /**
  *
@@ -26,6 +25,14 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
  * Controller for the home page
  */
 class ServicesinvoiceorderController extends InvoiceAbstractController {
+
+    /**
+     * Constructor
+     */
+    public function __construct(Request $request) {
+        parent::__construct($request);
+        $_SESSION["openedNav"] = "invoices";
+    }
 
     /**
      * (non-PHPdoc)
@@ -40,10 +47,9 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         if ($formUnit->check()) {
             $dateBegin = $this->request->getParameterNoException("date_begin");
             $dateEnd = $this->request->getParameterNoException("date_end");
-            $unitId = $this->request->getParameterNoException("id_unit");
-            $respId = $this->request->getParameterNoException("id_resp");
-            if ($unitId != 0 && $respId != 0) {
-                $this->generateRespBill($dateBegin, $dateEnd, $unitId, $respId, $id_space);
+            $clientId = $this->request->getParameterNoException("id_client");
+            if ($clientId != '') {
+                $this->generateClientBill($dateBegin, $dateEnd, $clientId, $id_space);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
@@ -121,9 +127,9 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
     protected function createByUnitForm($id_space, $lang) {
         $form = new Form($this->request, "invoicebyunitform");
-        $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
+        $form->setTitle(ServicesTranslator::Invoice_by_client($lang));
 
-        $unitId = $this->request->getParameterNoException("id_unit");
+        $clientId = $this->request->getParameterNoException("id_client");
         $dateBegin = $this->request->getParameterNoException("date_begin");
         $dateEnd = $this->request->getParameterNoException("date_end");
 
@@ -139,27 +145,20 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
         $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
-        $form->addSelect("id_client", ClientsTranslator::Institution($lang), $clientsNames, $clientsIds, $unitId, false);
+        $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clientsNames, $clientsIds, $clientId, false);
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
         return $form;
-
-         
-        // return "";
     }
 
-    /**
-    * @deprecated
-    **/
-    private function generateRespBill($dateBegin, $dateEnd, $id_client, $id_resp, $id_space) {
+    private function generateClientBill($dateBegin, $dateEnd, $id_client, $id_space) {
 
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
-        $modelClient = new ClClient();
-        // select all the opened order
-        $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
+        // select all the opened orders
+        $orders = $modelOrder->openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space);
 
         if (count($orders) == 0) {
             throw new PfmParamException("there are no orders open for this responsible");
@@ -171,17 +170,17 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $number = $modelInvoice->getNextNumber($id_space);
         $module = "services";
         $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, $id_resp);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         $modelInvoice->setTitle($id_space, $id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
 
         // add the counts to the Invoice
-        $services = $modelOrder->openedItemsForResp($id_space, $id_resp);
-        $belonging = $modelClient->get($id_space, $id_client);
-        $content = $this->parseServicesToContent($id_space, $services, $belonging);
+        $services = $modelOrder->openedItemsForClient($id_space, $id_client);
+        $modelClPricing = new ClPricing();
+        $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0]; // why an array ???
+        $content = $this->parseServicesToContent($id_space, $services, $pricing['id']);
         $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
-
-        $total_ht = $this->calculateTotal($id_space, $services, $belonging);
+        $total_ht = $this->calculateTotal($id_space, $services, $pricing['id']);
 
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
@@ -226,11 +225,11 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $content;
     }
 
-    protected function calculateTotal($id_space, $services, $id_belongings) {
+    protected function calculateTotal($id_space, $services, $id_belonging) {
         $total_HT = 0;
         $modelPrice = new SePrice();
         foreach ($services as $service) {
-            $price = $modelPrice->getPrice($id_space, $service["id_service"], $id_belongings);
+            $price = $modelPrice->getPrice($id_space, $service["id_service"], $id_belonging);
             $total_HT += floatval($service["quantity"]) *  floatval($price);
         }
         return $total_HT;

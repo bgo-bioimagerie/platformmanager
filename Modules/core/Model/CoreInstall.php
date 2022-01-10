@@ -122,6 +122,19 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
     }
 
+    public function repair499() {
+        Configuration::getLogger()->info("Run repair script 499 (PR #499)");
+        $sql = "alter table se_order modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_order modify column date_close date NULL";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_close=null where date_close='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_open=null where date_open='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->info("Run repair script 499 (PR #499)");
+    }
+
     public function upgrade_v0_v1() {
 
         Configuration::getLogger()->debug("[db] Old existing db patch");
@@ -681,6 +694,16 @@ class CoreDB extends Model {
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00, done!');
 
+        Configuration::getLogger()->debug('[se_order] fix column types');
+        $sql = "alter table se_order modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_order modify column date_close date NULL";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_close=null where date_close='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_open=null where date_open='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[se_order] fix column types, done!');
     }
 
     public function upgrade_v4_v5() {
