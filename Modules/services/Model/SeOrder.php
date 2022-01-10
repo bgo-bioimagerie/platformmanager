@@ -197,6 +197,9 @@ class SeOrder extends Model {
     }
 
     // @bug refers to ec_j_user_responsible
+    /**
+     * @deprecated
+     */
     public function openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space){
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
                 . "AND id_user IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=? AND id_space=? AND deleted=0) "
