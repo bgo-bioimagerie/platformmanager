@@ -311,9 +311,12 @@ abstract class CoresecureController extends CorecookiesecureController {
         return $form;
     }
 
-    protected function menusactivation($id_space, $module, $icon) {
+    protected function menusactivation($id_space, $module, $icon, $basemodule=null) {
+        if($basemodule == null) {
+            $basemodule = $module;
+        }
         $modelSpace = new CoreSpace();
-        $modelSpace->setSpaceMenu($id_space, $module, $module, "glyphicon-".$icon, 
+        $modelSpace->setSpaceMenu($id_space, $basemodule, $module, "glyphicon-".$icon, 
         $this->request->getParameter($module."Menustatus"),
         $this->request->getParameter($module."DisplayMenu"),
         1,
