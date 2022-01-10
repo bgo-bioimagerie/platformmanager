@@ -38,6 +38,22 @@ class QuoteBaseTest extends BaseTest {
 
     }
 
+    protected function createQuoteUser($space, $user, $client) {
+        $req = new Request([
+            "path" => "quoteuser/".$space['id'],
+            "formid" => "editexistinguserForm",
+            "id_space" => $space['id'],
+            "id_user" => $user['id'],
+            "id_client" => $client['id'],
+            'date_open' => date('Y-md-d')
+        ], false);
+        $c = new QuotelistController($req, $space);
+        $data = $c->editexistinguserAction($space['id'], 0);
+        $this->assertTrue($data['quote']['id'] > 0);
+        return $data['quote']['id'];
+
+    }
+
 }
 
 

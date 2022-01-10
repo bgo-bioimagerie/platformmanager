@@ -45,7 +45,7 @@ class InvoicesBaseTest extends BaseTest {
         ], false);
         $c = new InvoicesconfigController($req, $space);
         try {
-        $c->pdftemplateAction($space['id']);
+            $c->pdftemplateAction($space['id']);
         } catch(Throwable) {
             copy($template, __DIR__."/../data/invoices/".$space["id"]."/template.twig");
         }

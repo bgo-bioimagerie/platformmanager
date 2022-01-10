@@ -900,7 +900,7 @@ class BookingController extends BookingabstractController {
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
             $modelDefault = new BookingdefaultController($this->request, $this->currentSpace);
             //$modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
-            $modelDefault->editreservationdefault($id_space, $param);
+            return $modelDefault->editreservationdefault($id_space, $param);
         } else {
 
             /// todo run plugin
@@ -922,7 +922,7 @@ class BookingController extends BookingabstractController {
                 $action = $urlInfo["pathInfo"]["action"];
                 $args = $this->getArgs($urlInfo);
 
-                $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
+                return $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             } else {
                 throw new PfmException("Unable to find the controller file '$fileController' ", 404);
             }
