@@ -134,10 +134,20 @@ class ServicesordersController extends ServicesController {
         $form->setTitle(ServicesTranslator::Edit_order($lang), 3);
 
         $modelOrder = new SeOrder();
+        $clientSelect['choices'] = [""];
+        $clientSelect['choicesid'] = [""];
+        $clientSelect['value'] = "";
 
         if ($id > 0) {
             $value = $modelOrder->getEntry($id_space, $id);
             $items = $modelOrder->getOrderServices($id_space, $id);
+            $modelClientUser = new ClClientUser();
+            $userClients = $modelClientUser->getUserClientAccounts($value['id_user'], $id_space) ?: [];
+            foreach($userClients as $client) {
+                array_push($clientSelect['choices'], $client['name']);
+                array_push($clientSelect['choicesid'], $client['id']);
+            }
+            $clientSelect['value'] = ($value['id_client'] != 0) ? $value['id_client'] : $userClients[0]['id'] ?? "";
         } else {
             $value = $modelOrder->defaultEntryValues();
             $items = array("services" => array(), "quantities" => array());
@@ -146,27 +156,10 @@ class ServicesordersController extends ServicesController {
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
 
-        
-
         $form->addSeparator(CoreTranslator::Description($lang));
         $form->addText("no_identification", ServicesTranslator::No_identification($lang), false, $value["no_identification"]);
         $form->addSelectMandatory("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
-
-        $clientSelect['choices'] = [""];
-        $clientSelect['choicesid'] = [""];
-        $clientSelect['value'] = "";
-
-        if ($id > 0) {
-            $modelClientUser = new ClClientUser();
-            $userClients = $modelClientUser->getUserClientAccounts($value['id_user'], $id_space) ?: [];
-            foreach($userClients as $client) {
-                array_push($clientSelect['choices'], $client['name']);
-                array_push($clientSelect['choicesid'], $client['id']);
-            }
-            $clientSelect['value'] = ($value['id_client'] != 0) ? $value['id_client'] : $userClients[0]['id'] ?? "";
-        }
         $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
-
         $form->addSelect("id_status", CoreTranslator::Status($lang), array(CoreTranslator::Open($lang), CoreTranslator::Close($lang)), array(1, 0), $value["id_status"]);
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, CoreTranslator::dateFromEn($value["date_open"], $lang));
         $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, CoreTranslator::dateFromEn($value["date_close"], $lang));
@@ -191,7 +184,6 @@ class ServicesordersController extends ServicesController {
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
-
             $id_order = $modelOrder->setOrder(
                     $id,
                     $id_space,
@@ -209,11 +201,7 @@ class ServicesordersController extends ServicesController {
             $servicesQuantities = $this->request->getParameter("quantities");
 
             for ($i = 0; $i < count($servicesQuantities); $i++) {
-                if (!$id) {
-                    $qOld = 0;
-                } else {
-                    $qOld = $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
-                }
+                $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
                 $qDelta = $servicesQuantities[$i] - $qOld[0];
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
                 $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
