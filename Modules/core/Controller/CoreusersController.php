@@ -58,10 +58,15 @@ class CoreusersController extends CoresecureController {
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll() ?? [];
         $modelStatus = new CoreStatus();
+        $statusNames = $modelStatus->statusIDName();
+        $smap = [];
+        foreach ($statusNames as $s) {
+            $smap[$s['id']] = $s['name'];
+        }
         $users = [];
         for ($i = 0; $i < count($data); $i++) {
             $users[] = $data[$i];
-            $data[$i]["status"] = CoreTranslator::Translate_status($lang, $modelStatus->getStatusName($data[$i]["status_id"]));
+            $data[$i]["status"] = CoreTranslator::Translate_status($lang, $smap[$data[$i]["status_id"]]);
             if ($data[$i]["is_active"] == 1) {
                 $data[$i]["is_active"] = CoreTranslator::yes($lang);
             } else {
