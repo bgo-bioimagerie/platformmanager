@@ -165,7 +165,7 @@ class QuotelistController extends QuoteController {
                 "",
                 "",
                 "",
-                "",
+                0,
                 $form->getParameter('id_user'),
                 $form->getParameter('id_client'),
                 $this->request->getParameterNoException('date_open')
