@@ -278,8 +278,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
-        $formAdd->addNumber("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addNumber("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addFloat("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addFloat("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");

@@ -470,9 +470,9 @@ class ServicesprojectsController extends ServicesController {
         $form->addHidden("formprojectentryid", 0);
         $form->addHidden("formprojectentryprojectid", 0);
         $form->addDate("formprojectentrydate", CoreTranslator::Date($lang), true, "");
-        $form->addSelect("formserviceid", ServicesTranslator::service($lang), $services["names"], $services["ids"]);
-        $form->addText("formservicequantity", ServicesTranslator::Quantity($lang), true, 0);
-        $form->addTextArea("formservicecomment", ServicesTranslator::Comment($lang), false, "", false);
+        $form->addSelectMandatory("formserviceid", ServicesTranslator::service($lang), $services["names"], $services["ids"]);
+        $form->addFloat("formservicequantity", ServicesTranslator::Quantity($lang), true, 0);
+        $form->addTextArea("formservicecomment", ServicesTranslator::Comment($lang), false, "");
 
         $form->setColumnsWidth(2, 9);
         $form->setButtonsWidth(2, 10);
@@ -569,7 +569,7 @@ class ServicesprojectsController extends ServicesController {
 
             $formAdd->addDate("date", CoreTranslator::Date($lang), $trDates);
             $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
-            $formAdd->addNumber("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
+            $formAdd->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
             $formAdd->addText("comment", ServicesTranslator::Comment($lang), $items["comments"]);
             $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
             $form->addSeparator(ServicesTranslator::Services_list($lang));

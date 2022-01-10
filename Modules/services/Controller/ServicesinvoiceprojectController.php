@@ -211,8 +211,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $formAdd = new FormAdd($this->request, "editinvoiceprojectformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
-        $formAdd->addText("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addText("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addFloat("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addFloat("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
         $formAdd->addText("comment", ServicesTranslator::Comment($lang), $itemComments);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));

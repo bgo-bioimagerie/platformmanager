@@ -176,7 +176,7 @@ class ServicesordersController extends ServicesController {
 
         $formAdd = new FormAdd($this->request, "orderEditForm");
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
-        $formAdd->addText("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
+        $formAdd->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->addSeparator(ServicesTranslator::Services_list($lang));
         $form->setFormAdd($formAdd);
