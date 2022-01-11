@@ -60,6 +60,9 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
+						if($text === '') {
+							$text = '#'.$calEntry['id'];
+						}
 						$linkAdress = "bookingeditreservation/".$id_space ."/r_" . $calEntry['id'];
 						?>
 						<div class="text-center" id="tcellResa" style="height:<?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
@@ -97,6 +100,9 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
 						$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
+					}
+					if($text === '') {
+						$text = '#'.$calEntry['id'];
 					}
 					$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id']; 
 					?>
@@ -195,6 +201,9 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
+						if($text === '') {
+							$text = '#'.$calEntry['id'];
+						}
 						$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
 						?>
 						<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
@@ -232,7 +241,10 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
 						$text .= $modelBookingSupplemetary->getSummary($id_space, $calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
-					}	
+					}
+					if($text === '') {
+						$text = '#'.$calEntry['id'];
+					}
 					$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
 					?>
 						<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
@@ -322,6 +334,9 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
+						if($text === '') {
+							$text = '#'.$calEntry['id'];
+						}
 						$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
 						?>
 						<div class="text-center" id="tcellResa" style="height: <?php echo $pixelHeight?>px; background-color:<?php echo $calEntry['color_bg']?>;">
@@ -359,6 +374,9 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
 						$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
+					}
+					if($text === '') {
+						$text = '#'.$calEntry['id'];
 					}
 					$linkAdress = "bookingeditreservation/".$id_space ."/r_" . $calEntry['id'];
 					?>

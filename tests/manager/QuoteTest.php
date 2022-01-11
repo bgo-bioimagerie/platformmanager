@@ -55,9 +55,20 @@ class QuoteTest extends QuoteBaseTest {
         $c = new ServiceslistingController($req, $space);
         $data = $c->listingAction($space['id']);
         $services = $data['services'];
+        // Add items to quote
         foreach ($services as $service) {
             $this->addQuoteItem($space, ['id' => $id_quote], ['id' => 'services_'.$service['id'] , 'quantity' => 1, 'comment' => $service['name']]);
         }
+
+        // user tries to modify quote, forbiden
+        $canQuote = true;
+        try {
+            $this->asUser($user['login'], $space['id']);
+            $this->createQuoteUser($space, $user, $client);
+        } catch(Exception) {
+            $canQuote = false;
+        }
+        $this->assertFalse($canQuote, 'user cannot edit quote');
 
     }
 
