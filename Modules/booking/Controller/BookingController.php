@@ -104,13 +104,8 @@ class BookingController extends BookingabstractController {
         $lang = $this->getLanguage();
 
         $curentDate = date("Y-m-d", time());
-        if (isset($_SESSION['bk_curentDate'])) {
-            if ($this->request->getParameterNoException("curentDate") != "") {
-                $curentDate = CoreTranslator::dateToEn($this->request->getParameterNoException("curentDate"), $lang);
-                $_SESSION['bk_curentDate'] = $curentDate;
-            } else {
-                $curentDate = $_SESSION['bk_curentDate'];
-            }
+        if ($this->request->getParameterNoException("curentDate") != "") {
+            $curentDate = CoreTranslator::dateToEn($this->request->getParameterNoException("curentDate"), $lang);
         }
 
         $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
@@ -135,10 +130,6 @@ class BookingController extends BookingabstractController {
                 $id_resource = $modelResource->firstResourceIDForArea($id_space, $id_area);
             }
 
-            $_SESSION['bk_id_resource'] = $id_resource;
-            $_SESSION['bk_id_area'] = $id_area;
-            $_SESSION['bk_curentDate'] = $curentDate;
-
             if ($id_resource == 0) {
                 $this->render(array(
                     'lang' => $lang,
@@ -149,14 +140,19 @@ class BookingController extends BookingabstractController {
             }
         }
 
+        $bk_id_resource = $this->request->getParameterNoException("id_resource");
+        $bk_id_area = $this->request->getParameterNoException("id_area");
+        $qc = ["bk_curentDate" => $curentDate, "bk_id_resource" => $bk_id_resource, "bk_id_area" => $bk_id_area];
+
+
         $calendarDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
         if (isset($_SESSION['lastbookview'])) {
             $lastView = $_SESSION['lastbookview'];
-            $this->redirect($lastView . "/" . $id_space);
+            $this->redirect($lastView . "/" . $id_space, $qc);
         } else if ($calendarDefaultView == "") {
-            $this->redirect("bookingdayarea/" . $id_space);
+            $this->redirect("bookingdayarea/" . $id_space, $qc);
         } else {
-            $this->redirect($calendarDefaultView . "/" . $id_space);
+            $this->redirect($calendarDefaultView . "/" . $id_space, $qc);
         }
     }
 
@@ -202,32 +198,17 @@ class BookingController extends BookingabstractController {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
         }
 
-        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
-            $curentResource = $_SESSION['bk_id_resource'];
-            $curentAreaId = $_SESSION['bk_id_area'];
-            $curentDate = $_SESSION['bk_curentDate'];
-        }
-
         if(!$curentDate) {
             $curentDate = date('Y-m-d');
         }
 
-        // change input if action
-        if ($action == "daybefore") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
-            $curentTime = $curentTime - 86400;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "dayafter") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, intval($curentDate[1]), intval($curentDate[2]), intval($curentDate[0]));
-            $curentTime = $curentTime + 86400;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "today") {
-            $curentDate = date("Y-m-d", time());
-        }
+        $tmpDate = explode("-", $curentDate);
+        $tmpTime = mktime(0, 0, 0, intval($tmpDate[1]), intval($tmpDate[2]), intval($tmpDate[0]));
+        $beforeTime = $tmpTime - 86400;
+        $beforeDate = date("Y-m-d", $beforeTime);
+        $afterTime = $tmpTime + 86400;
+        $afterDate = date("Y-m-d", $afterTime);
+
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
 
@@ -240,10 +221,7 @@ class BookingController extends BookingabstractController {
         }
         if (!$foundR) {
             $curentResource = $menuData["resources"][0]["id"];
-            $_SESSION['bk_id_resource'] = $curentResource;
         }
-
-        $curentDate = $_SESSION['bk_curentDate'];
 
         // get the resource info
         $modelRescal = new ResourceInfo();
@@ -304,8 +282,12 @@ class BookingController extends BookingabstractController {
             'calEntries' => $calEntries,
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
-            'agendaStyle' => $agendaStyle
-                ), "bookday");
+            'agendaStyle' => $agendaStyle,
+            'afterDate' => $afterDate,
+            'beforeDate' => $beforeDate,
+            'bk_id_resource' => $curentResource,
+            'bk_id_area' => $curentAreaId
+        ), "bookday");
     }
 
     public function dayareaAction($id_space, $action, $message) {
@@ -325,32 +307,14 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d");
         }
 
-        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
-            if($_SESSION['bk_id_resource']) {$curentResource = $_SESSION['bk_id_resource'];}
-            if($_SESSION['bk_id_area']) {$curentAreaId = $_SESSION['bk_id_area'];}
-            if($_SESSION['bk_curentDate']) {$curentDate = $_SESSION['bk_curentDate'];}
-        }
+        $tmpDate = explode("-", $curentDate);
+        $tmpTime = mktime(0, 0, 0, intval($tmpDate[1]), intval($tmpDate[2]), intval($tmpDate[0]));
+        $beforeTime = $tmpTime - 86400;
+        $beforeDate = date("Y-m-d", $beforeTime);
+        $afterTime = $tmpTime + 86400;
+        $afterDate = date("Y-m-d", $afterTime);
 
-        // change input if action
-        if ($action == "daybefore") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime - 86400;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "dayafter") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime + 86400;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "today") {
-            $curentDate = date("Y-m-d", time());
-        } else if (DateTime::createFromFormat('Y-m-d', $action) !== false) {
-            // getting selected date from month view
-            $curentDate = $action;
-        }
-
+        
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $foundA = false;
         foreach ($menuData["areas"] as $are) {
@@ -363,21 +327,12 @@ class BookingController extends BookingabstractController {
             $curentAreaId = $menuData["areas"][0]["id"];
         }
 
-        // save the menu info in the session
-        $_SESSION['bk_id_resource'] = $curentResource;
-        $_SESSION['bk_id_area'] = $curentAreaId;
-        $_SESSION['bk_curentDate'] = $curentDate;
-
-        // get the area info
-        //$modelArea = new ReArea();
-        //$area = $modelArea->getArea($curentAreaId);
         // get the resource info
         $modelRes = new ResourceInfo();
         $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
 
         $resIds = [];
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            //$resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
             $resIds[] = $resourcesBase[$r]["id"];
         }
 
@@ -389,7 +344,6 @@ class BookingController extends BookingabstractController {
             $cmap[$c['id_resource']] = $c['color'];
         }
 
-
         $modelAccess = new BkAccess();
         $accessIds = $modelAccess->getAccessIds($id_space, $resIds);
         $amap = [];
@@ -397,10 +351,7 @@ class BookingController extends BookingabstractController {
             $amap[$a['id_resource']] = $a['id_access'];
         }
 
-
-
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            //$resourcesBase[$r]["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase[$r]["id"]);
             $resourcesBase[$r]["accessibility_id"] = $amap[$resourcesBase[$r]["id"]] ?? "";
             $resourcesBase[$r]["last_state"] = $cmap[$resourcesBase[$r]["id"]] ?? "";
         }
@@ -413,11 +364,6 @@ class BookingController extends BookingabstractController {
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
 
-        /*
-        for ($t = 0; $t < count($resourcesBase); $t++) {
-            $calEntries[] = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resourcesBase[$t]["id"]);
-        }
-        */
         $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds);
         $calmap = [];
         $calEntries = [];
@@ -468,8 +414,12 @@ class BookingController extends BookingabstractController {
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
             'message' => $message,
-            'agendaStyle' => $agendaStyle
-                ), "bookdayarea");
+            'agendaStyle' => $agendaStyle,
+            'afterDate' => $afterDate,
+            'beforeDate' => $beforeDate,
+            'bk_id_resource' => $curentResource,
+            'bk_id_area' => $curentAreaId
+        ), "bookdayarea");
     }
 
     public function weekAction($id_space, $action, $message) {
@@ -489,28 +439,13 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d");
         }
 
-        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
-            if($_SESSION['bk_id_resource']) { $curentResource = $_SESSION['bk_id_resource'];}
-            if($_SESSION['bk_id_area']) {$curentAreaId = $_SESSION['bk_id_area'];}
-            if($_SESSION['bk_curentDate']) {$curentDate = $_SESSION['bk_curentDate'];}
-        }
+        $tmpDate = explode("-", $curentDate);
+        $tmpTime = mktime(0, 0, 0, intval($tmpDate[1]), intval($tmpDate[2]), intval($tmpDate[0]));
+        $beforeTime = $tmpTime - (86400 * 7);
+        $beforeDate = date("Y-m-d", $beforeTime);
+        $afterTime = $tmpTime + (86400 * 7);
+        $afterDate = date("Y-m-d", $afterTime);
 
-        // change input if action
-        if ($action == "dayweekbefore") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime - 86400 * 7;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "dayweekafter") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime + 86400 * 7;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "thisWeek") {
-            $curentDate = date("Y-m-d", time());
-        }
 
         // get the closest monday to curent day
         $i = 0;
@@ -535,11 +470,7 @@ class BookingController extends BookingabstractController {
             $curentResource = $menuData["resources"][0]["id"];
             $_SESSION['bk_id_resource'] = $curentResource;
         }
-        // save the menu info in the session
-        //$_SESSION['bk_id_resource'] = $curentResource;
-        //$_SESSION['bk_id_area'] = $curentAreaId;
-        //$_SESSION['bk_id_area'] = $curentAreaId;
-        $_SESSION['bk_curentDate'] = $curentDate;
+
         // get the resource info
         $modelRescal = new ResourceInfo();
         $resourceInfo = $modelRescal->get($id_space, $curentResource);
@@ -600,8 +531,12 @@ class BookingController extends BookingabstractController {
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
             'message' => $message,
             'agendaStyle' => $agendaStyle,
-            'scheduling' => $scheduling
-                ), "bookweek");
+            'scheduling' => $scheduling,
+            'afterDate' => $afterDate,
+            'beforeDate' => $beforeDate,
+            'bk_id_resource' => $curentResource,
+            'bk_id_area' => $curentAreaId
+        ), "bookweek");
     }
 
     public function weekareaAction($id_space, $action, $message) {
@@ -620,12 +555,6 @@ class BookingController extends BookingabstractController {
             // set a default value to currentDate to today => avoids mkTime() errors
             $curentDate = date("Y-m-d");
         }
-
-        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
-            $curentResource = $_SESSION['bk_id_resource'];
-            $curentAreaId = $_SESSION['bk_id_area'];
-            $curentDate = $_SESSION['bk_curentDate'];
-        }
         
         $modelArea = new ReArea();
         $areaSpace = $modelArea->getSpace($curentAreaId);
@@ -633,23 +562,13 @@ class BookingController extends BookingabstractController {
             $curentAreaId = $modelArea->getDefaultArea($id_space);
             $curentResource = 0;
         }
-        
-        // change input if action
-        if ($action == "dayweekbefore") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime - 86400 * 7;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "dayweekafter") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime + 86400 * 7;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "thisWeek") {
-            $curentDate = date("Y-m-d", time());
-        }
+
+        $tmpDate = explode("-", $curentDate);
+        $tmpTime = mktime(0, 0, 0, intval($tmpDate[1]), intval($tmpDate[2]), intval($tmpDate[0]));
+        $beforeTime = $tmpTime - (86400 * 7);
+        $beforeDate = date("Y-m-d", $beforeTime);
+        $afterTime = $tmpTime + (86400 * 7);
+        $afterDate = date("Y-m-d", $afterTime);
 
         $i = 0;
         $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
@@ -661,10 +580,6 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
-
-
-        // save the menu info in the session
-        $_SESSION['curentDate'] = $curentDate;
          
         // get the area info
         $area = $modelArea->get($id_space, $curentAreaId);
@@ -677,7 +592,6 @@ class BookingController extends BookingabstractController {
         $modelEvent = new ReEvent();
         $resIds = [];
         for ($r = 0; $r < count($resourcesBase); $r++) {
-            //$resourcesBase[$r]["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase[$r]["id"]);
             $resIds[] = $resourcesBase[$r]["id"];
         }
         $colors =$modelEvent->getLastStateColors($id_space, $resIds);
@@ -693,7 +607,6 @@ class BookingController extends BookingabstractController {
             $rmap[$r['id']] = $r;
         }
         for ($t = 0; $t < count($resourcesBase); $t++) {
-            //$resourcesInfo[$t] = $modelRescal->get($id_space, $resourcesBase[$t]["id"]);
             $resourceInfo[$t] = $rmap[$resourcesBase[$t]["id"]];
             $resourcesBase[$t]['last_state'] = $cmap[$resourcesBase[$i]['id']] ?? "";
 
@@ -722,15 +635,10 @@ class BookingController extends BookingabstractController {
             $amap[$a['id_resource']] = $a['id_access'];
         }
         foreach ($resourcesBase as $resourceBase) {
-            //$resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
             $resourceBase["accessibility_id"] = $amap[$resourceBase["id"]] ?? null;
             $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
         }
 
-
-        //echo "area id = "  . $curentAreaId . "</br>";
-        //print_r($calEntries);
-        //return;
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
@@ -761,8 +669,12 @@ class BookingController extends BookingabstractController {
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
             'message' => $message,
             'agendaStyle' => $agendaStyle,
-            'scheduling' => $scheduling
-                ), "bookweekarea");
+            'scheduling' => $scheduling,
+            'afterDate' => $afterDate,
+            'beforeDate' => $beforeDate,
+            'bk_id_resource' => $curentResource,
+            'bk_id_area' => $curentAreaId
+        ), "bookweekarea");
     }
 
     public function monthAction($id_space, $action, $message) {
@@ -782,30 +694,12 @@ class BookingController extends BookingabstractController {
             $curentDate = date("Y-m-d");
         }
 
-        if ($curentAreaId == "" && isset($_SESSION['bk_id_resource'])) {
-            if ($_SESSION['bk_id_resource']) { $curentResource = $_SESSION['bk_id_resource']; }
-            if ($_SESSION['bk_id_area']) { $curentAreaId = $_SESSION['bk_id_area']; }
-            if ($_SESSION['bk_curentDate']) { $curentDate = $_SESSION['bk_curentDate']; }
-        }
-
-        // change input if action
-        $curentTime = time();
-        if ($action == "daymonthbefore") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime - 86400 * 30;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "daymonthafter") {
-            $curentDate = explode("-", $curentDate);
-            $curentTime = mktime(0, 0, 0, $curentDate[1], $curentDate[2], $curentDate[0]);
-            $curentTime = $curentTime + 86400 * 30;
-            $curentDate = date("Y-m-d", $curentTime);
-        }
-        if ($action == "thisMonth") {
-            $curentDate = date("Y-m-d", time());
-            $curentTime = time();
-        }
+        $tmpDate = explode("-", $curentDate);
+        $tmpTime = mktime(0, 0, 0, intval($tmpDate[1]), intval($tmpDate[2]), intval($tmpDate[0]));
+        $beforeTime = $tmpTime - (86400 * 30);
+        $beforeDate = date("Y-m-d", $beforeTime);
+        $afterTime = $tmpTime + (86400 * 30);
+        $afterDate = date("Y-m-d", $afterTime);
 
         // get the closest monday to curent day
         $i = 0;
@@ -828,12 +722,7 @@ class BookingController extends BookingabstractController {
         }
         if (!$foundR) {
             $curentResource = $menuData["resources"][0]["id"];
-            $_SESSION['bk_id_resource'] = $curentResource;
         }
-        // save the menu info in the session
-        //$_SESSION['id_resource'] = $curentResource;
-        //$_SESSION['id_area'] = $curentAreaId;
-        $_SESSION['curentDate'] = $curentDate;
 
         // get the resource info
         $modelRescal = new ResourceInfo();
@@ -879,8 +768,8 @@ class BookingController extends BookingabstractController {
             'resourceInfo' => $resourceInfo,
             'resourcesBase' => $resourcesBase,
             'date' => $curentDate,
-            'month' => date("n", $curentTime),
-            'year' => date("Y", $curentTime),
+            'month' => date("n", $tmpTime),
+            'year' => date("Y", $tmpTime),
             'date_unix' => $curentDateUnix,
             'mondayDate' => $mondayDate,
             'sundayDate' => $sundayDate,
@@ -888,8 +777,12 @@ class BookingController extends BookingabstractController {
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
             'message' => $message,
-            'agendaStyle' => $agendaStyle
-                ), "bookmonth");
+            'agendaStyle' => $agendaStyle,
+            'afterDate' => $afterDate,
+            'beforeDate' => $beforeDate,
+            'bk_id_resource' => $curentResource,
+            'bk_id_area' => $curentAreaId
+        ), "bookmonth");
     }
 
     public function editreservationAction($id_space, $param) {

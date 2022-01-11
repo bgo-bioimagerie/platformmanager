@@ -46,7 +46,15 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 <div class="row" style="background-color: #ffffff;">
     <div class="col-xs-12">
     <?php
-    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo);
+
+    $nav = [
+        'date' => $date,
+        'beforeDate' => $beforeDate,
+        'afterDate' => $afterDate,
+        'bk_id_area' => $bk_id_area,
+        'bk_id_resource' => $bk_id_resource
+    ];
+    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo, $nav);
     ?>
     </div>
 </div>
