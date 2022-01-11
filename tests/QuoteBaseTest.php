@@ -38,7 +38,7 @@ class QuoteBaseTest extends BaseTest {
 
     }
 
-    protected function createQuoteUser($space, $user, $client) {
+    protected function createQuoteUser($space, $user, $client):int {
         $req = new Request([
             "path" => "quoteuser/".$space['id'],
             "formid" => "editexistinguserForm",
@@ -51,7 +51,30 @@ class QuoteBaseTest extends BaseTest {
         $data = $c->editexistinguserAction($space['id'], 0);
         $this->assertTrue($data['quote']['id'] > 0);
         return $data['quote']['id'];
+    }
 
+    protected function getQuote($space, $id):array {
+        $req = new Request([
+            "path" => "quoteuser/".$space['id'],
+        ], false);
+        $c = new QuotelistController($req, $space);
+        return $c->editAction($space['id'], $id);
+    }
+
+    protected function addQuoteItem($space, $quote, $item): int{
+        $req = new Request([
+            "path" => "quoteedititem/".$space['id'],
+            "formid" => "createItemForm",
+            "id" => 0,
+            "id_quote" => $quote['id'],
+            "id_item" => $item['id'],
+            "quantity" => $item['quantity'],
+            "comment" => $item['comment']
+        ], false);
+        $c = new QuotelistController($req, $space);
+        $data = $c->edititemAction($space['id']);
+        $this->assertTrue($data['item']['id'] > 0);
+        return $data['item']['id'];        
     }
 
 }

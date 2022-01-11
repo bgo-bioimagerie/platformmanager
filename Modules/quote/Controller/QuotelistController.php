@@ -87,19 +87,19 @@ class QuotelistController extends QuoteController {
         ));
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id): ?array {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
         $modelQuote = new Quote();
         $info = $modelQuote->get($id_space, $id);
 
         if ($info["id_user"] > 0) {
-            $this->editexistinguserAction($id_space, $id);
+            return $this->editexistinguserAction($id_space, $id);
         } else {
-            $this->editnewuserAction($id_space, $id);
+            return $this->editnewuserAction($id_space, $id);
         }
     }
 
-    public function editexistinguserAction($id_space, $id) {
+    public function editexistinguserAction($id_space, $id): ?array {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -156,8 +156,7 @@ class QuotelistController extends QuoteController {
             if (!$pricing || $pricing === null) {
                 $_SESSION['flash'] = QuoteTranslator::pricingNeeded($lang);
                 $_SESSION['flashClass'] = "danger";
-                $this->redirect("quoteuser/" . $id_space . "/" . $id);
-                return;
+                return $this->redirect("quoteuser/" . $id_space . "/" . $id, [], ['error' => 'pricingNeeded']);
             }
             $id = $modelQuote->set(
                 $id,
@@ -238,7 +237,7 @@ class QuotelistController extends QuoteController {
         return $table->view($items, $headers);
     }
 
-    public function editnewuserAction($id_space, $id) {
+    public function editnewuserAction($id_space, $id): ?array {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -308,8 +307,7 @@ class QuotelistController extends QuoteController {
             if (!$pricing || $pricing === null) {
                 $_SESSION['flash'] = QuoteTranslator::pricingNeeded($lang);
                 $_SESSION['flashClass'] = "danger";
-                $this->redirect("quotenew/" . $id_space . "/" . $id);
-                return;
+                return $this->redirect("quotenew/" . $id_space . "/" . $id, [], ['error' => 'pricingNeeded']);
             }
             $quote_id = $modelQuote->set(
                     $id,
@@ -364,7 +362,7 @@ class QuotelistController extends QuoteController {
         if ($quote["id_user"] == 0) {
             return $this->redirect("quotenew/" . $quote["id_space"] . '/' . $quote["id"], [], ['quote' => ['id' => $id_quote], 'item' => ['id' => $id_item]]);
         } else {
-            $this->redirect("quoteuser/" . $quote["id_space"] . '/' . $quote["id"], [], ['quote' => ['id' => $id_quote], 'item' => ['id' => $id_item]]);
+            return $this->redirect("quoteuser/" . $quote["id_space"] . '/' . $quote["id"], [], ['quote' => ['id' => $id_quote], 'item' => ['id' => $id_item]]);
         }
     }
 

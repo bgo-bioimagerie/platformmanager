@@ -842,7 +842,7 @@ class BkCalendarEntry extends Model {
     /**
      * Get user future bookings
      */
-    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): array{
+    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): ?array{
         $now = time();
         $q = array('today' => $now, 'id_user' => $id_user);
         $sql = 'SELECT bk_calendar_entry.*, spaces.name as space, resources.name as resource FROM bk_calendar_entry';

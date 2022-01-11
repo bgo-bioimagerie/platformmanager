@@ -2,7 +2,7 @@
 
 require_once 'tests/QuoteBaseTest.php';
 require_once 'Modules/clients/Controller/ClientslistController.php';
-
+require_once 'Modules/services/Controller/ServiceslistingController.php';
 
 class QuoteTest extends QuoteBaseTest {
 
@@ -44,9 +44,20 @@ class QuoteTest extends QuoteBaseTest {
             $canQuote = false;
         }
         $this->assertFalse($canQuote);
-         
+
         $this->asUser($manager['login'], $space['id']);
-        $this->createQuoteUser($space, $user, $client);
+        $id_quote = $this->createQuoteUser($space, $user, $client);
+
+        $req = new Request([
+            "path" => "services/".$space['id'],
+
+        ], false);
+        $c = new ServiceslistingController($req, $space);
+        $data = $c->listingAction($space['id']);
+        $services = $data['services'];
+        foreach ($services as $service) {
+            $this->addQuoteItem($space, ['id' => $id_quote], ['id' => 'services_'.$service['id'] , 'quantity' => 1, 'comment' => $service['name']]);
+        }
 
     }
 

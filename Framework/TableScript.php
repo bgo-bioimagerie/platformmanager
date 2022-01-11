@@ -12,7 +12,7 @@
     <script>
         $(document).ready(function () {
             //var tableHeight = window.innerHeight - 200;
-            var table = $('#tableID').DataTable({
+            $('#tableID').DataTable({
                 columnDefs: [{targets: 'no-sort', orderable: false, searchable: false}],
             });
         });
