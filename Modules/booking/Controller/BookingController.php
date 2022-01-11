@@ -608,7 +608,10 @@ class BookingController extends BookingabstractController {
         }
         for ($t = 0; $t < count($resourcesBase); $t++) {
             $resourceInfo[$t] = $rmap[$resourcesBase[$t]["id"]];
-            $resourcesBase[$t]['last_state'] = $cmap[$resourcesBase[$i]['id']] ?? "";
+            $resourcesBase[$t]['last_state'] = '';
+            if(array_key_exists($resourcesBase[$t]['id'], $cmap)){
+                $resourcesBase[$t]['last_state'] = $cmap[$resourcesBase[$t]['id']];
+            }
 
         }
 
