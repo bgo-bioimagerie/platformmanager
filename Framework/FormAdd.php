@@ -74,8 +74,8 @@ class FormAdd {
      */
     public function addLabel($name, $values){
         $this->types[] = "label";
-        $this->names[] = $name;
-        $this->labels[] = "";
+        $this->names[] = "";
+        $this->labels[] = $name;
         $this->setValue($name, $values);
         $this->isMandatory[] = false;
         $this->choices[] = "";
@@ -225,7 +225,7 @@ class FormAdd {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true, true);
                     } else if ($this->types[$j] == "hidden") {
                         $html .= $formHtml->inlineHidden($this->names[$j], $this->values[$j][$i], false, true);
-                    } else if ($this->types[$j] == "l"){
+                    } else if ($this->types[$j] == "label"){
                         $html .= $formHtml->inlineLabel($this->names[$j], $this->values[$j][$i], true);
                     } else {
                         $html .= "error undefine form input type " . $this->types[$j];

@@ -206,11 +206,48 @@ class ServicesTranslator {
         return "Edit service";
     }
 
-    public static function Quantity($lang) {
+    /* public static function Quantity($lang) {
         if ($lang == "fr") {
             return "Quantité/Temps/Prix";
         }
         return "Quantity/Time/Price";
+    } */
+
+    public static function Quantity($lang) {
+        if ($lang == "fr") {
+            return "Quantité";
+        }
+        return "Quantity";
+    }
+
+    public static function ServicesTypes($type, $lang) {
+        $result = $type;
+        if ($lang == "fr") {
+            switch($type) {
+                case "Quantity":
+                    $result = "Quantité";
+                    break;
+                case "Time minutes":
+                    $result = "Temps en minutes";
+                    break;
+                case "Time hours":
+                    $result = "Temps en heures";
+                    break;
+                case "Price":
+                    $result = "Prix";
+                    break;
+                case "Half day":
+                    $result = "Demi-journée";
+                    break;
+                case "Day":
+                    $result = "Journée";
+                    break;
+                default:
+                $result = "Quantité";
+                    break;
+            }
+        }
+        return $result;
     }
 
     public static function Services_Orders($lang) {

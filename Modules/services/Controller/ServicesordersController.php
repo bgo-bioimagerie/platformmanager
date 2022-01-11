@@ -150,7 +150,7 @@ class ServicesordersController extends ServicesController {
             $clientSelect['value'] = ($value['id_client'] != 0) ? $value['id_client'] : $userClients[0]['id'] ?? "";
         } else {
             $value = $modelOrder->defaultEntryValues();
-            $items = array("services" => array(), "quantities" => array());
+            $items = array("services" => array(), "quantities" => array(), "quantity_types" => array());
         }
 
         $modelUser = new CoreUser();
@@ -177,6 +177,7 @@ class ServicesordersController extends ServicesController {
         $formAdd = new FormAdd($this->request, "orderEditForm");
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
         $formAdd->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
+        $formAdd->addLabel("Type", $items["quantity_types"]);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->addSeparator(ServicesTranslator::Services_list($lang));
         $form->setFormAdd($formAdd);

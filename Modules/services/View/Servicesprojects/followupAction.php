@@ -32,6 +32,20 @@
 <div id="entriespopup_box" class="pm_popup_box" style="display: none;">
     <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a></div>
         <?php echo $formedit ?>
+        <script type="module">
+            import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+            let dynamicForms = new DynamicForms();
+            let spaceId = <?php echo $id_space?>;
+            let sourceId = "formserviceid";
+            let targets = [
+                {
+                    elementId: "formservicequantity",
+                    apiRoute: `services/getServiceType/`,
+                    activateOnLoad: true
+                }
+            ];
+            dynamicForms.dynamicFields(sourceId, targets, spaceId, true);
+        </script>
 </div> 
 
 
