@@ -140,7 +140,7 @@ img{
 	$sufixStream = date("S", $time);
 
 	?>
-	<b> <?php echo  BookingTranslator::DateFromTime($time, $lang) ?> -  </b>
+	<strong> <?php echo  BookingTranslator::DateFromTime($time, $lang) ?> -  </strong>
 	<?php 
 	$d = explode("-", $sundayDate);
 	$time = mktime(0,0,0,$d[1],$d[2],$d[0]);
@@ -193,10 +193,10 @@ if ($size_bloc_resa == 900){
 	$heightCol = 4*$agendaStyle["line_height"] . "px";
 }
 else if($size_bloc_resa == 1800){
-	$heightCol = 2*$agendaStyle["line_height"] . "px";;
+	$heightCol = 2*$agendaStyle["line_height"] . "px";
 }
 else if($size_bloc_resa == 3600){
-	$heightCol = $agendaStyle["line_height"] . "px";;
+	$heightCol = $agendaStyle["line_height"] . "px";
 }
 ?>
 	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]+50 ?>px; background-color:<?php echo $agendaStyle["header_background"]?>; color: <?php echo  $agendaStyle["header_color"]?>"></div> <!-- For the resource title space -->
@@ -263,9 +263,7 @@ else if($size_bloc_resa == 3600){
 				$dayNumStream = date("d", $date_unix);
 				$sufixStream = date("S", $date_unix);
 				
-				$dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);
-				//$dayTitle = $dayStream . " " . $monthStream . ". " . $dayNumStream . $sufixStream;
-				
+				$dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);				
 				?>
 				
 				

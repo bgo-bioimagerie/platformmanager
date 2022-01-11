@@ -177,22 +177,16 @@ $dayWidth = 100 / 8;
             <?php
             $resourceCount = - 1;
             $modelBookingSetting = new BkBookingSettings ();
-            //$moduleProject = new CoreProject ();
-            //$ModulesManagerModel = new CoreMenu ();
-            $isProjectMode = false; //$ModulesManagerModel->getDataMenusUserType("projects");
+            $isProjectMode = false;
 
             for ($i = -1; $i < count($resourcesBase); $i++) {
-                //foreach ( $resourcesBase as $ResourceBase ) {
-
                 $resourceID = -1;
                 if ($i >= 0) {
                     $resourceID = $resourcesBase [$i] ["id"];
                 }
-                // echo "resource id = " . $resourcesBase[$resourceCount]["id"] . "</br>";
-                // resource title
-                ?>
+            ?>
 
-                <?php
+            <?php
                 $styleLine = "";
                 $styleLineHeader = "style=\"text-align: center; background-color:" . $agendaStyle["header_background"] . "; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1; color: " . $agendaStyle["header_color"] . ";\"";
                 if (!($i % 2)) {
@@ -200,9 +194,9 @@ $dayWidth = 100 / 8;
                 } else {
                     $styleLine = "style=\"background-color:#ffffff; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1;\"";
                 }
-                ?>
+            ?>
 
-                <div class="row"  > <!-- id="colDivglobal" -->
+                <div class="row"  >
 
                     <div class="col-lg-12" id="colDiv">
                         <!-- Content of each day -->

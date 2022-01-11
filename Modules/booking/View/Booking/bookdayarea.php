@@ -71,7 +71,6 @@ a{
   .seven-cols .col-sm-1,
   .seven-cols .col-lg-1 {
     width: <?php echo $dayWidth?>%;
-
   }
 }
 /* 14% = 100% (full-width row) divided by 7 */
