@@ -46,20 +46,28 @@ class CoreDB extends Model {
 
     /**
      * Drops all tables content
+     * 
+     * @param bool $drop delete tables and not just content
      */
-    public function dropAll() {
-        $sql = "show tables";
+    public function dropAll($drop=false) {
+        $sql = "SHOW tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach ($tables as $tb) {
             $table = $tb[0];
-            Configuration::getLogger()->warning('Drop', ["table" => $table]);
-            $sql = "delete from ".$table;
-            $this->runRequest($sql);
+            if($drop) {
+                Configuration::getLogger()->warning('Drop table', ["table" => $table]);
+                $sql = "DROP TABLE ".$table;
+                $this->runRequest($sql);
+            } else {
+                Configuration::getLogger()->warning('Delete table content', ["table" => $table]);
+                $sql = "DELETE FROM ".$table;
+                $this->runRequest($sql);
+            }
         }
     }
 
     public function isFreshInstall() {
-        $sql = "show tables";
+        $sql = "SHOW tables";
         $nbTables = $this->runRequest($sql)->rowCount();
         $freshInstall = true;
         if($nbTables > 0) {
@@ -785,6 +793,10 @@ class CoreDB extends Model {
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
             $this->addColumn($table, "id_space", "int(11)", 0);
+            $space_index = "DROP INDEX  `idx_${table}_space` ON `$table";
+            $this->runRequest($space_index);
+            $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
+            $this->runRequest($space_index);
         }
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
 

@@ -50,7 +50,7 @@ class ServicespurchaseController extends ServicesController {
         );
 
         $table = new TableView();
-        $table->setTitle(ServicesTranslator::services($lang), 3);
+        $table->setTitle(ServicesTranslator::Purchase($lang), 3);
         $table->addLineEditButton("servicespurchaseedit/" . $id_space);
         $table->addDeleteButton("servicespurchasedelete/" . $id_space, "id", "date");
         
@@ -75,7 +75,7 @@ class ServicespurchaseController extends ServicesController {
         $services = $modelServices->getForList($id_space);
 
         $form = new Form($this->request, "editserviceform");
-        $form->addSeparator(ServicesTranslator::Edit_service($lang));
+        $form->addSeparator(ServicesTranslator::New_Purchase($lang));
 
         $form->addText("comment", CoreTranslator::Description($lang), false, $value["comment"]);
         $form->addDate("date", CoreTranslator::Date($lang), false, $value["date"]);

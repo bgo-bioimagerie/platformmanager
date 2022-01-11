@@ -19,6 +19,7 @@
 * [booking] add journal page to show future and last 30 days bookings
 * [core] manage http error codes #184
 * [layout] display enhancements
+* [core] add index on id_space
 
 ## 2.2.2
 
