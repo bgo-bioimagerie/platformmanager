@@ -95,16 +95,17 @@ class StockshelfController extends ServicesController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($id_space ,$form->getParameter("id"), $form->getParameter("name"), $form->getParameter("id_cabinet")); 
-            $this->redirect("stockshelfs/" . $id_space);
+            $shelf_id = $this->model->set($id_space ,$form->getParameter("id"), $form->getParameter("name"), $form->getParameter("id_cabinet")); 
+            return $this->redirect("stockshelfs/" . $id_space, [], ['shelf' => ['id' => $shelf_id]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['shelf' => $unit]
             ));
         }
     }
