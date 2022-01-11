@@ -100,6 +100,10 @@ abstract class Controller {
     }
 
     public function spaceExtraMenus() {
+        $modelSpace = new CoreSpace();
+        if($this->currentSpace && $modelSpace->getSpaceMenusRole($this->currentSpace['id'], "helpdesk")) {
+            return [['name' => 'Report issue', 'url' => '/helpdesk/'.$this->currentSpace['id'].'?'.$_SERVER['REQUEST_URI'], 'class' => 'btn-danger']];
+        }
         return [];
     }
 

@@ -25,10 +25,10 @@ class BookingabstractController extends CoresecureController {
 
     public function spaceExtraMenus(){
         $lang = $this->getLanguage();
-        return [
+        return array_merge([
             ['name' => BookingTranslator::booking($lang), 'url' => 'bookingdayarea/'.$this->currentSpace['id'].'/'],
             ['name' => BookingTranslator::journal($lang), 'url' => 'booking/'.$this->currentSpace['id'].'/journal']
-        ];
+        ], parent::spaceExtraMenus());
     }
 
     /**
