@@ -53,6 +53,7 @@ if ($menucolortxt == "") {
 <?php
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Modules/booking/Model/BookingTranslator.php';
 ?>
 
     <div class="bs-docs-header" id="">
@@ -114,7 +115,15 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                         </div>
                     </fieldset>
                 </div>
-                <div class='col-md-3' id="well">
+                <?php
+                $dateSize = 6;
+                if(isset($users) && count($users) > 1) {
+                    $dateSize = 3;
+                }
+                ?>
+
+
+                <div class='col-md-<?php echo $dateSize; ?>' id="well">
                     <fieldset>
                         <legend><?php echo CoreTranslator::Date($lang) ?></legend>
                         <div >
@@ -149,8 +158,8 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                                 <?php
                                 if($context['role']<CoreSpace::$MANAGER) { ?>
                                     <select class="form-control" id="id_user" name="id_user" onchange="$('#navform').submit();">
-                                        <option value="0">Show all</option>
-                                        <option <?php if($id_user) { echo "selected";} ?> value="<?php echo $users[1]['id'] ?>">Me only</option>
+                                        <option value="0"><?php echo BookingTranslator::ShowAll($lang); ?></option>
+                                        <option <?php if($id_user) { echo "selected";} ?> value="<?php echo $users[1]['id'] ?>"><?php echo BookingTranslator::ShowMine($lang); ?></option>
                                     </select>
                                 <?php } else {
                                 ?>

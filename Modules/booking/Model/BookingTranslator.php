@@ -1685,4 +1685,18 @@ class BookingTranslator {
         }
         return "You need first to create at leat one color code in Bokking settings module > Color codes";
     }
+
+    public static function ShowAll($lang = "") {
+        if($lang == "fr") {
+            return "Toutes";
+        }
+        return "Show all";
+    }
+
+    public static function ShowMine($lang = "") {
+        if($lang == "fr") {
+            return "Mes réservations";
+        }
+        return "My bookings";
+    }
 }
