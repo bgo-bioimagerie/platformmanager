@@ -59,7 +59,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
         
             <form role="form" class="form-horizontal" action="booking/<?php echo $id_space ?>" method="post" id="navform">
 
-                <div class='col-md-4' id="well">
+                <div class='col-md-2' id="well">
                     <fieldset>
                         <legend><?php echo ResourcesTranslator::Area($lang) ?></legend>
                         <div >
@@ -86,7 +86,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                         </div>
                     </fieldset>
                 </div>
-                <div class='col-md-4' id="well">
+                <div class='col-md-3' id="well">
                     <fieldset>
                         <legend><?php echo ResourcesTranslator::Resource($lang) ?></legend>
                         <div >
@@ -126,7 +126,39 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                         </div>
                     </fieldset>
                 </div>
-
+                <div class='col-md-3' id="well">
+                    <fieldset>
+                        <legend><?php echo CoreTranslator::User($lang) ?></legend>
+                        <div >
+                            <div class='input-group'>
+                                <input type="hidden" id="id_user" name="id_user" value="<?php echo $id_user ?>"/>
+                                <input class="form-control" list="user_list" value="<?php echo $id_user ?>" onchange="getuserval(this.value)"/>
+                                <datalist id="user_list">
+                                <?php
+                                    foreach($users as $i => $user){
+                                        $selected = "";
+                                        if($i == 0 && !$id_user) {
+                                            $selected = 'selected';
+                                        }
+                                        if($id_user == $user['id']) {
+                                            $selected = 'selected';
+                                        }
+                                    ?>
+                                    <option <?php echo $selected ?> value="<?php echo $user['id'].':'.$user['name'].' '.$user['firstname']?>">
+                                    <?php } ?>                                    
+                                </datalist>
+                                <script type="text/javascript">
+                                function getuserval(sel) {
+                                    let user = sel.split(':')
+                                    let id_user = document.getElementById('id_user');
+                                    id_user.value = user[0];
+                                    $("#navform").submit();
+                                }
+                                </script>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
                 <div class='col-md-1' id="well">
                     <fieldset>
                         <legend style="color:<?php echo $menucolor ?>;">.</legend>

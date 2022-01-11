@@ -26,10 +26,11 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
         $afterDate = $nav['afterDate'];
         $bk_id_area = $nav['bk_id_area'];
         $bk_id_resource = $nav['bk_id_resource'];
-        $qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
-        $qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
-        $qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
-        $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
+        $id_user = $nav['id_user'];
+        $qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+        $qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+        $qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+        $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
     }
 ?>
 			<button type="button" class="btn btn-default"><a aria-label="previous month" href="bookingmonth/<?php echo "$id_space/$qb" ?>"> &lt; </a></button>

@@ -142,7 +142,8 @@ class BookingController extends BookingabstractController {
 
         $bk_id_resource = $this->request->getParameterNoException("id_resource");
         $bk_id_area = $this->request->getParameterNoException("id_area");
-        $qc = ["bk_curentDate" => $curentDate, "bk_id_resource" => $bk_id_resource, "bk_id_area" => $bk_id_area];
+        $id_user = $this->request->getParameterNoException('id_user');
+        $qc = ["bk_curentDate" => $curentDate, "bk_id_resource" => $bk_id_resource, "bk_id_area" => $bk_id_area, "id_user" => $id_user];
 
 
         $calendarDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
@@ -194,6 +195,11 @@ class BookingController extends BookingabstractController {
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
 
+        $id_user = $this->request->getParameterNoException('id_user');
+        if($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
+        }
+
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
         }
@@ -235,7 +241,7 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $curentDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
 
         // curentdate unix
         $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
@@ -266,6 +272,17 @@ class BookingController extends BookingabstractController {
             $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
             $_SESSION["flashClass"] = "danger";
         }
+
+        $u = new CoreSpaceUser();
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
+        if($user === false) {
+            $user = [];
+        }
+        
+        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        if($this->role > CoreSpace::$USER) {
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
+        }
         
 
         // view
@@ -286,7 +303,9 @@ class BookingController extends BookingabstractController {
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
             'bk_id_resource' => $curentResource,
-            'bk_id_area' => $curentAreaId
+            'bk_id_area' => $curentAreaId,
+            'users' => $users,
+            'id_user' => $id_user
         ), "bookday");
     }
 
@@ -299,6 +318,11 @@ class BookingController extends BookingabstractController {
         $curentResource = $this->request->getParameterNoException('bk_id_resource');
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
+
+        $id_user = $this->request->getParameterNoException('id_user');
+        if($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
+        }
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
@@ -364,7 +388,7 @@ class BookingController extends BookingabstractController {
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
 
-        $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds);
+        $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
         $calmap = [];
         $calEntries = [];
         foreach($resourcesBase as $r) {
@@ -401,6 +425,17 @@ class BookingController extends BookingabstractController {
             $_SESSION["flashClass"] = "danger";
         }
 
+        $u = new CoreSpaceUser();
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
+        if($user === false) {
+            $user = [];
+        }
+        
+        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        if($this->role > CoreSpace::$USER) {
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
+        }
+
         // view
         $this->render(array(
             'id_space' => $id_space,
@@ -418,7 +453,9 @@ class BookingController extends BookingabstractController {
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
             'bk_id_resource' => $curentResource,
-            'bk_id_area' => $curentAreaId
+            'bk_id_area' => $curentAreaId,
+            'users' => $users,
+            'id_user' => $id_user
         ), "bookdayarea");
     }
 
@@ -431,6 +468,11 @@ class BookingController extends BookingabstractController {
         $curentResource = $this->request->getParameterNoException('bk_id_resource');
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
+
+        $id_user = $this->request->getParameterNoException('id_user');
+        if($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
+        }
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
@@ -489,7 +531,7 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
 
         // curentdate unix
         $temp = explode("-", $curentDate);
@@ -515,6 +557,16 @@ class BookingController extends BookingabstractController {
         $modelScheduling = new BkScheduling();
         $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
+        $u = new CoreSpaceUser();
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
+        if($user === false) {
+            $user = [];
+        }
+        
+        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        if($this->role > CoreSpace::$USER) {
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
+        }
         // view
         $this->render(array(
             'lang' => $lang,
@@ -535,7 +587,9 @@ class BookingController extends BookingabstractController {
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
             'bk_id_resource' => $curentResource,
-            'bk_id_area' => $curentAreaId
+            'bk_id_area' => $curentAreaId,
+            'users' => $users,
+            'id_user' => $id_user
         ), "bookweek");
     }
 
@@ -548,6 +602,11 @@ class BookingController extends BookingabstractController {
         $curentResource = $this->request->getParameterNoException('bk_id_resource');
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
+
+        $id_user = $this->request->getParameterNoException('id_user');
+        if($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
+        }
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
@@ -620,7 +679,7 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId, $id_user);
         // curentdate unix
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
@@ -655,6 +714,17 @@ class BookingController extends BookingabstractController {
             $_SESSION["flashClass"] = "danger";
         }
 
+        $u = new CoreSpaceUser();
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
+        if($user === false) {
+            $user = [];
+        }
+        
+        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        if($this->role > CoreSpace::$USER) {
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
+        }
+
         // view
         $this->render(array(
             'lang' => $lang,
@@ -676,7 +746,9 @@ class BookingController extends BookingabstractController {
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
             'bk_id_resource' => $curentResource,
-            'bk_id_area' => $curentAreaId
+            'bk_id_area' => $curentAreaId,
+            'users' => $users,
+            'id_user' => $id_user
         ), "bookweekarea");
     }
 
@@ -689,6 +761,11 @@ class BookingController extends BookingabstractController {
         $curentResource = $this->request->getParameterNoException('bk_id_resource');
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
+
+        $id_user = $this->request->getParameterNoException('id_user');
+        if($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
+        }
 
         if ($curentDate != "") {
             $curentDate = CoreTranslator::dateToEn($curentDate, $lang);
@@ -744,7 +821,7 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 31, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
 
         //echo "Cal entry count = " . count($calEntries) . "</br>";
         // curentdate unix
@@ -762,6 +839,17 @@ class BookingController extends BookingabstractController {
 
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
+
+        $u = new CoreSpaceUser();
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
+        if($user === false) {
+            $user = [];
+        }
+        
+        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        if($this->role > CoreSpace::$USER) {
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
+        }
 
         // view
         $this->render(array(
@@ -784,7 +872,9 @@ class BookingController extends BookingabstractController {
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
             'bk_id_resource' => $curentResource,
-            'bk_id_area' => $curentAreaId
+            'bk_id_area' => $curentAreaId,
+            'users' => $users,
+            'id_user' => $id_user
         ), "bookmonth");
     }
 

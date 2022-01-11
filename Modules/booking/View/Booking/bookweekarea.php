@@ -99,10 +99,10 @@ $dayWidth = 100 / 8;
         <div class="btn-group" role="group" aria-label="navigate by week">
         <?php
 	$today = date("Y-m-d", time());
-	$qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
-	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
-	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
-	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area"]);
+	$qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 ?>
 			<button type="button" class="btn btn-default"><a aria-label="previous week" href="bookingweekarea/<?php echo "$id_space/$qb" ?>"> &lt; </a></button>
 			<button type="button" class="btn btn-default"><a aria-label="next week" href="bookingweekarea/<?php echo "$id_space/$qa" ?>"> > </a></button>
