@@ -84,6 +84,7 @@ class BookingController extends BookingabstractController {
         $id_resource = $this->request->getParameterNoException("id_resource");
         $curentDate = $this->request->getParameterNoException("curentDate");
 
+        /*
         if ($id_area == "" && isset($_SESSION['bk_id_area'])) {
             $id_area = $_SESSION['bk_id_area'];
         }
@@ -93,6 +94,7 @@ class BookingController extends BookingabstractController {
         if ($id_resource == "" && isset($_SESSION['bk_curentDate'])) {
             $curentDate = $_SESSION['bk_curentDate'];
         }
+        */
 
         $this->bookingAction($id_space, $id_area, $id_resource, $curentDate);
     }

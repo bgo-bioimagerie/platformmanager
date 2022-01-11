@@ -126,13 +126,37 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                         </div>
                     </fieldset>
                 </div>
+                <?php if(isset($users) && count($users) > 1) {  ?>
                 <div class='col-md-3' id="well">
                     <fieldset>
                         <legend><?php echo CoreTranslator::User($lang) ?></legend>
-                        <div >
+                        <div>
                             <div class='input-group'>
+                                <?php
+                                $curUser = "all:0";
+                                if(!isset($id_user)){
+                                    $id_user = '';
+                                }
+                                if($id_user){
+                                    for($i=0;$i<count($users);$i++){
+                                        if($users[$i]['id'] == $id_user) {
+                                            $curUser = ($users[$i]['firstname'] ? $users[$i]['name'].' '.$users[$i]['firstname'] : $users[$i]['name']).':'.$users[$i]['id'];
+                                        }
+                                    }
+                                }
+                                ?>
+
+                                <?php
+                                if($context['role']<CoreSpace::$MANAGER) { ?>
+                                    <select class="form-control" id="id_user" name="id_user" onchange="$('#navform').submit();">
+                                        <option value="0">Show all</option>
+                                        <option <?php if($id_user) { echo "selected";} ?> value="<?php echo $users[1]['id'] ?>">Me only</option>
+                                    </select>
+                                <?php } else {
+                                ?>
                                 <input type="hidden" id="id_user" name="id_user" value="<?php echo $id_user ?>"/>
-                                <input class="form-control" list="user_list" value="<?php echo $id_user ?>" onchange="getuserval(this.value)"/>
+                                <input class="form-control" list="user_list" value="<?php echo $curUser?>" onchange="getuserval(this.value)"/>
+
                                 <datalist id="user_list">
                                 <?php
                                     foreach($users as $i => $user){
@@ -144,21 +168,24 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                                             $selected = 'selected';
                                         }
                                     ?>
-                                    <option <?php echo $selected ?> value="<?php echo $user['id'].':'.$user['name'].' '.$user['firstname']?>">
+                                    <option <?php echo $selected ?> value="<?php echo ($user['firstname'] ? $user['name'].' '.$user['firstname'] : $user['name']).':'.$user['id'] ?>">
                                     <?php } ?>                                    
                                 </datalist>
                                 <script type="text/javascript">
                                 function getuserval(sel) {
+                                    console.log('??', sel)
                                     let user = sel.split(':')
                                     let id_user = document.getElementById('id_user');
-                                    id_user.value = user[0];
+                                    id_user.value = user[1];
                                     $("#navform").submit();
                                 }
                                 </script>
+                                <?php } ?>
                             </div>
                         </div>
                     </fieldset>
                 </div>
+                <?php } ?>
                 <div class='col-md-1' id="well">
                     <fieldset>
                         <legend style="color:<?php echo $menucolor ?>;">.</legend>
