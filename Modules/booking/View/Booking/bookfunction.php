@@ -139,7 +139,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 								if ($he[1] == "75"){$he[1] = "45";}
 								if ($he[0] < 10){$he[0] = "0". $he[0];}
 								$hed = $he[0] . "-" .$he[1];
-								if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+								if( $user_space_role >=CoreSpace::$MANAGER  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
 									$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
 							?>
 							<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
