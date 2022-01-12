@@ -800,15 +800,27 @@ class CoreDB extends Model {
         $tables = $this->runRequest($sql)->fetchAll();
         foreach($tables as $t) {
             $table = $t[0];
+            $sql = "show index from `$table`";
+            $indexes = $this->runRequest($sql)->fetchAll();
             $this->addColumn($table, "deleted", "int(1)", 0);
             $this->addColumn($table, "deleted_at", "DATETIME", "", true);
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
             $this->addColumn($table, "id_space", "int(11)", 0);
-            $space_index = "DROP INDEX  `idx_${table}_space` ON `$table`";
-            $this->runRequest($space_index);
-            $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
-            $this->runRequest($space_index);
+
+            $indexExists = false;
+            foreach($indexes as $index) {
+                if($index['Key_name'] == "idx_${table}_space") {
+                    $indexExists = true;
+                    Configuration::getLogger()->debug('[db] id_space index already exists');
+                    break;
+                }
+            }
+            if(!$indexExists) {
+                Configuration::getLogger()->debug('[db] create id_space index');
+                $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
+                $this->runRequest($space_index);
+            }
         }
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
     }
