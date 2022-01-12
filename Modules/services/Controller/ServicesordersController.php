@@ -174,10 +174,11 @@ class ServicesordersController extends ServicesController {
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
 
+
         $formAdd = new FormAdd($this->request, "orderEditForm");
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
         $formAdd->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
-        $formAdd->addLabel("Type", $items["quantity_types"]);
+        $formAdd->addLabel("type", $items["quantity_types"]);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->addSeparator(ServicesTranslator::Services_list($lang));
         $form->setFormAdd($formAdd);

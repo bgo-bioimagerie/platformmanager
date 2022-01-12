@@ -6,18 +6,32 @@
 <div class="pm-form">
     <?php echo $formHtml ?>
     <script type="module">
-            import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
-            let dynamicForms = new DynamicForms();
-            let spaceId = <?php echo $id_space?>;
-            let sourceId = "id_user";
+        import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+        let dynamicForms = new DynamicForms();
+        let spaceId = <?php echo $id_space?>;
+        let sourceId = "id_user";
+        let targets = [
+            {
+                elementId: "id_client",
+                apiRoute: `clientusers/getclients/`
+            }
+        ];
+        
+        let services = [...document.getElementsByName("services[]")];
+        let types = [...document.getElementsByName("type[]")];
+        for (let i=0; i<services.length; i++) {
+            services[i].id += i;
+            types[i].id += i;
+            let sourceId = services[i].id;
             let targets = [
                 {
-                    elementId: "id_client",
-                    apiRoute: `clientusers/getclients/`
+                    elementId: types[i].id,
+                    apiRoute: `services/getServiceType/`
                 }
             ];
             dynamicForms.dynamicFields(sourceId, targets, spaceId);
-        </script>
+        }
+    </script>
 </div>
 
 <?php endblock();

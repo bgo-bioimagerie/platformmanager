@@ -74,7 +74,7 @@ class FormAdd {
      */
     public function addLabel($name, $values){
         $this->types[] = "label";
-        $this->names[] = "";
+        $this->names[] = $name;
         $this->labels[] = $name;
         $this->setValue($name, $values);
         $this->isMandatory[] = false;

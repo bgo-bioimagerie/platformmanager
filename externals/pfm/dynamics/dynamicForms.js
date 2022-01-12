@@ -27,7 +27,6 @@ export class DynamicForms {
             body: null
         };
         const source = document.getElementById(sourceId);
-        console.log("source:", source);
         let initialId = (source.options[source.selectedIndex] != -1) ? source.options[source.selectedIndex].value : null;
         targets.forEach(target => {
             if (target.activateOnLoad && initialId) {
