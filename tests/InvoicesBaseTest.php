@@ -90,6 +90,25 @@ class InvoicesBaseTest extends BaseTest {
         return $data['invoices'];
     }
 
+    protected function editInvoice($space, $invoice) {
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$invoice['id'],
+        ]);
+
+        $i = new InvoiceslistController($req, $space);
+        $data = $i->editAction($space['id'], $invoice['id']);
+        return $data['invoice'];
+    }
+
+    protected function deleteInvoice($space, $invoice) {
+        $req = $this->request([
+            "path" => "invoicedelete/".$space['id'].'/'.$invoice['id'],
+        ]);
+        $i = new InvoiceslistController($req, $space);
+        $data = $i->deleteAction($space['id'], $invoice['id']);
+        return $data['invoice'];
+    }
+
 
 
 }

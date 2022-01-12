@@ -57,8 +57,20 @@ class ServicesTest extends ServicesBaseTest {
         }
     }
 
-    // stock cabinets /shelves
     // stock
+    public function testPurchase(){
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $space = $this->space($spaceName);
+            $user = $this->user($data['managers'][0]);
+            $this->asUser($user['login'], $space['id']);
+            $services = $this->getServices($space);
+            $this->createPurchase($space, $services[0], 10);
+            $services = $this->getServices($space);
+            $this->assertEquals($services[0]['quantity'], 10);
+        }
+    }
     // orders
 
     public function testNotAllowed() {

@@ -93,12 +93,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         // generate pdf
         if ($pdf == 1) {
-            $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
-            return;
+            return $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
         }
         if ($pdf == 2) {
-            $this->generatePDFInvoiceDetails($id_space, $invoice, $id_items[0]["id"], $lang);
-            return;
+            return $this->generatePDFInvoiceDetails($id_space, $invoice, $id_items[0]["id"], $lang);
         }
 
         // unparse details
@@ -148,7 +146,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 "invoice" => ["id" => intval($id_invoice)]
             ]);
 
-            return $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O");
+            return $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O", [], ['invoice' => $invoice]);
         }
 
         // render

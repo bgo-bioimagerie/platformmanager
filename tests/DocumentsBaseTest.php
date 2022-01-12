@@ -14,7 +14,7 @@ require_once 'tests/BaseTest.php';
 class DocumentsBaseTest extends BaseTest {
 
     protected function activateDocuments($space, $user) {
-        Configuration::getLogger()->debug('activate documentss', ['user' => $user, 'space' => $space]);
+        Configuration::getLogger()->debug('activate documents', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
         $req = new Request([
             "path" => "documentsconfig/".$space['id'],

@@ -85,8 +85,7 @@ abstract class CoresecureController extends CorecookiesecureController {
 
         $cookieCheck = $this->checkRememberMeCookie();
         if ($cookieCheck == 2) {
-            parent::runAction($module, $action, $args);
-            return;
+            return parent::runAction($module, $action, $args);
         } else if ($cookieCheck == 1) {
             return;
         }
@@ -98,8 +97,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             if($apiUser != null) {
                 Configuration::getLogger()->debug('[api][auth]', ['login' => $apiUser['login']]);
                 $this->initSession($apiUser['login']);
-                parent::runAction($module, $action, $args);
-                return;
+                return parent::runAction($module, $action, $args);
             }
         }
 
@@ -119,15 +117,14 @@ abstract class CoresecureController extends CorecookiesecureController {
             $modelUser = new CoreUser();
 
             if ($modelUser->isUser($login) && Configuration::get("name") == $company) {
-                parent::runAction($module, $action, $args);
+                return  parent::runAction($module, $action, $args);
             } else {
                 if($this->request->getSession()->getAttribut("id_user") == -1) {
                     Configuration::getLogger()->debug("[core] anonymous");
-                    parent::runAction($module, $action, $args);
-                    return;
+                    return parent::runAction($module, $action, $args);
                 }
-                Configuration::getLogger()->debug("[core] unknown user redirect to login");                
-                $this->redirect("coreconnection");
+                Configuration::getLogger()->debug("[core] unknown user, redirect to login");                
+                return $this->redirect("coreconnection");
             }
         } else {
             Configuration::getLogger()->debug('no session, anonymous user');
@@ -142,7 +139,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             $this->request->getSession()->setAttribut("user_status", CoreStatus::$USER);
 
             //$this->redirect("coreconnection");
-            parent::runAction($module, $action, $args);
+            return parent::runAction($module, $action, $args);
         }
     }
 

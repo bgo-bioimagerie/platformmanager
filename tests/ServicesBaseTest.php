@@ -9,6 +9,8 @@ require_once 'Modules/services/Controller/ServicesconfigController.php';
 require_once 'Modules/services/Controller/ServiceslistingController.php';
 require_once 'Modules/services/Controller/ServicesvisaController.php';
 require_once 'Modules/services/Controller/ServicesoriginsController.php';
+require_once 'Modules/services/Controller/ServicespurchaseController.php';
+
 require_once 'Modules/services/Controller/ServicesprojectsController.php';
 require_once 'Modules/services/Controller/StockcabinetController.php';
 require_once 'Modules/services/Controller/StockshelfController.php';
@@ -76,6 +78,15 @@ class ServicesBaseTest extends BaseTest {
         $data = $c->editAction($space['id'], '');
         $this->assertTrue($data['service']['id'] > 0);
         return $data['service'];
+    }
+
+    protected function getServices($space) {
+        $req = new Request([
+            "path" => "services/".$space['id']
+        ], false);
+        $c = new ServiceslistingController($req, $space);
+        $data = $c->listingAction($space['id']);
+        return $data['services'];        
     }
 
     protected function createVisa($space, $user) {
@@ -167,6 +178,23 @@ class ServicesBaseTest extends BaseTest {
 
     }
 
+
+    protected function createPurchase($space, $service, $count) {
+        Configuration::getLogger()->debug('create puchase', ['service' => $service, 'space' => $space]);
+        $req = new Request([
+            "path" => "servicespurchaseedit/".$space['id']."/0",
+            "formid" => "editserviceform",
+            "comment" => "new purchase",
+            "date" => date('Y-m-d'),
+            "services" => [$service['id']],
+            "quantities" => [$count]
+
+        ], false);
+        $c = new ServicespurchaseController($req, $space);
+        $data = $c->editAction($space['id'], 0);
+        $this->assertTrue($data['purchase']['id'] > 0);
+        return $data['purchase'];
+    }
 
 }
 
