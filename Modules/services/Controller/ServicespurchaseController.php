@@ -101,18 +101,22 @@ class ServicespurchaseController extends ServicesController {
                    $qOld = 0; 
                 }
                 else{
-                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id);
+                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id)['quantity'];
                 }
-                $qDelta = $servicesQuantities[$i] - $qOld[0];
+                $qDelta = $servicesQuantities[$i] - $qOld;
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "add");
                 $modelItem->set($id_space, $id_purchase, $servicesIds[$i], $servicesQuantities[$i], "");
             }
 
-            $this->redirect("servicespurchase/" . $id_space);
-            return;
+            return $this->redirect("servicespurchase/" . $id_space, [], ['purchase' => ['id' => $id_purchase]]);
         }
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang),
+            "data" => ['purchase' => $value, 'items' => $items]
+        ));
     }
 
     public function deleteAction($id_space, $id) {

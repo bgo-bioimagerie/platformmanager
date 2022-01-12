@@ -138,7 +138,7 @@ abstract class Controller {
         if (method_exists($this, $actionName)) {
             $this->action = $action;
             //print_r($args);
-            call_user_func_array(array($this, $actionName), $args);
+            return call_user_func_array(array($this, $actionName), $args);
             //$this->{$this->action}();
         } else {
             $classController = get_class($this);

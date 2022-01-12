@@ -3,6 +3,7 @@ title: "Upgrade"
 date: 2021-06-23T16:05:10+02:00
 weight: 4
 ---
+## Installation/upgrade
 
 For first installation, and for any later upgrade, at code root location:
 

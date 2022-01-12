@@ -126,7 +126,7 @@ ReVisa -> ReCategory [label="id_resource_category"];
 
 SeOrder -> InInvoice [label="id_invoice"];
 SeOrder -> id_unit; // ????
-SeOrder -> CoreUser [label="id_responsible"];
+SeOrder -> ClClient [label="id_resp"];
 SeOrder -> SeProject [label="id_project"];
 SeOrder -> CoreUser [label="id_edited_by"];
 

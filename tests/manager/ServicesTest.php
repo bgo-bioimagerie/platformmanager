@@ -57,9 +57,45 @@ class ServicesTest extends ServicesBaseTest {
         }
     }
 
-    // stock cabinets /shelves
     // stock
+    public function testPurchase(){
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $space = $this->space($spaceName);
+            $user = $this->user($data['managers'][0]);
+            $this->asUser($user['login'], $space['id']);
+            $services = $this->getServices($space);
+            $this->createPurchase($space, $services[0], 10);
+            $services = $this->getServices($space);
+            $this->assertEquals($services[0]['quantity'], 10);
+        }
+    }
     // orders
+
+    public function testOrder(){
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $space = $this->space($spaceName);
+            $manager = $this->user($data['managers'][0]);
+            $this->asUser($manager['login'], $space['id']);
+            $services = $this->getServices($space);
+            $user = $this->user($data['users'][0]);
+
+            $req = new Request([
+                "path" => "clclients/".$space['id'],
+                "id" => 0
+             ], false); 
+            $c = new ClientslistController($req, $space);
+            $data = $c->indexAction($space['id']);
+            $clients = $data['clients'];
+            
+            $this->createOrder($space, $services[0], $user, $clients[0], 2);
+            $services = $this->getServices($space);
+            $this->assertEquals($services[0]['quantity'], 8);
+        }
+    }
 
     public function testNotAllowed() {
         $ctx = $this->Context();

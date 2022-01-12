@@ -96,12 +96,12 @@ class SeOrder extends Model {
 
         $req =  $this->runRequest($sql, array($id_order, $id_service, $id_space));
         if ($req->rowCount() == 1){
-            return $req->fetch();
+            return $req->fetch()['quantity'];
         }
         return 0;
     }
 
-    public function setOrder($id, $id_space, $id_user, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
+    public function setOrder($id, $id_space, $id_user, $id_client, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
         $id_status = 0;
 
         if ($date_close == "") {
@@ -118,11 +118,11 @@ class SeOrder extends Model {
         }
 
         if ($this->isOrder($id_space, $id)){
-            $this->updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
+            $this->updateEntry($id, $id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
             return $id;
         }
         else{
-            $idNew = $this->addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
+            $idNew = $this->addEntry($id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
             $this->setCreatedBy($id_space, $idNew, $id_creator);
             return $idNew;
         }
@@ -137,7 +137,7 @@ class SeOrder extends Model {
         return false;
     }
 
-    public function addEntry($id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
+    public function addEntry($id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
         if($date_close == "") {
             $date_close = null;
         }
@@ -150,15 +150,15 @@ class SeOrder extends Model {
             $date_last_modified = null;
         }
 
-        $sql = "INSERT INTO se_order (id_space, id_user, no_identification, id_status, date_open, date_last_modified, date_close)
-				 VALUES(?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO se_order (id_space, id_user, id_resp, no_identification, id_status, date_open, date_last_modified, date_close)
+				 VALUES(?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array(
-            $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close
+            $id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close
         ));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateEntry($id, $id_space, $id_user, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {      
+    public function updateEntry($id, $id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {      
         if ($date_close == "") {
             $date_close = null;
             $id_status = 1;
@@ -171,9 +171,9 @@ class SeOrder extends Model {
         if($date_last_modified == "") {
             $date_last_modified = null;
         }
-        $sql = "UPDATE se_order set id_user=?, no_identification=?, id_status=?, date_open=?, date_last_modified=?, date_close=?
+        $sql = "UPDATE se_order set id_user=?, id_resp=?, no_identification=?, id_status=?, date_open=?, date_last_modified=?, date_close=?
 		        where id=? AND id_space=?";
-        $this->runRequest($sql, array($id_user, $no_identification, $id_status, $date_open, $date_last_modified, $date_close, $id, $id_space));
+        $this->runRequest($sql, array($id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close, $id, $id_space));
     }
 
     public function entries($id_space, $sortentry = 'id') {
