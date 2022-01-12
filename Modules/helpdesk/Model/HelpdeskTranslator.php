@@ -52,4 +52,11 @@ class HelpdeskTranslator {
         return "Reminder date has been reached";
     }
 
+    public static function Subject($lang = "") {
+        if($lang == "fr") {
+            return "Titre";
+        }
+        return "Subject";
+    }
+
 }

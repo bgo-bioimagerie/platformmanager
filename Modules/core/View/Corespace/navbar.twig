@@ -6,10 +6,10 @@
         </div>
         
         <div  id="extraspacemenus">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav navbar-right">
                 {% if extraSpaceMenus %}
                     {% for menu in extraSpaceMenus %}
-                    <li><a href="{{menu.url}}"><button type="btn" class="btn btn-primary">{{menu.name}}</button></a></li>
+                    <li><a href="{{menu.url}}"><button type="btn" class="btn {{menu.class ? menu.class : 'btn-primary'}}">{{menu.name}}</button></a></li>
                     {% endfor %}
                 {% endif %}
             </ul>                 

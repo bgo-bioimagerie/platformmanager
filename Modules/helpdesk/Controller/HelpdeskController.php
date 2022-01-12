@@ -35,6 +35,60 @@ class HelpdeskController extends CoresecureController {
         ));
     }
 
+    public function reportAction($id_space) {
+        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        if($this->role<CoreSpace::$USER) {
+            throw new PfmAuthException('you need to be a space user to create a report');
+        }
+        $form = new Form($this->request, 'helpdeskreport');
+        if($form->check()) {
+            if(!$this->request->getParameter('subject')) {
+                throw new PfmParamException('Empty subject!');
+            }
+            $u = new CoreUser();
+            $user = $u->userAllInfo($_SESSION['id_user']);
+            $hm = new Helpdesk();
+            $from = $hm->fromAddress($this->currentSpace);
+            $subject = $this->request->getParameter('subject');
+            $newTicket = $hm->createTicket($id_space, $user['email'], $from, $subject, $this->request->getParameter('message'), $_SESSION['id_user'], []);
+            $id_ticket = $newTicket['ticket'];
+            $_SESSION['flash'] = "Ticket #$id_ticket created, thank you!";
+            $hm->notify($id_space, $newTicket, "en", true);
+
+            $spaceName = $this->currentSpace['shortname'];
+            $from = Configuration::get('helpdesk_email');
+            if(!$from) {
+                $from = $this->currentSpace['support'] ?? null;
+            }
+            if($from) {
+                $fromInfo = explode('@', $from);
+                $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
+                $fromName = $fromInfo[0]. '+' . $spaceName;
+                $subject = '[Ticket #' . $id_ticket . '] '.$subject;
+                $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
+                $e = new Email();
+                $e->sendEmail($from, $fromName, $user['email'], $subject, $content);
+            }
+            
+            Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+            return $this->redirect($this->request->getParameterNoException('url'), [], ['ticket' => ['id' => $newTicket]]);
+        }
+
+        $url = urldecode($this->request->getParameterNoException('url') ?? '');
+        $form->addText('subject', HelpdeskTranslator::Subject($lang), true, '');
+        $form->addHidden('url', $url);
+        $msg = "Description:\n\nWhat happened:\nWhat is expected:\n\nUrl: $url";
+        $form->addTextArea('message', 'Message', true, $msg);
+        $form->setValidationButton(CoreTranslator::Save($lang), "/helpdesk/$id_space/report");
+
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "form" => $form->getHtml(),
+        ));
+    }
+
     public function notifsAction($id_space) {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $sm = new CoreSpace();

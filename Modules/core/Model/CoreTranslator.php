@@ -2052,5 +2052,12 @@ class CoreTranslator {
         }
         return "An error occured during connection.";
     }
+
+    public static function ReportIssue($lang = '') {
+        if($lang == "fr") {
+            return 'Rapporter un problème';
+        }
+        return 'Report issue';
+    }
     
 }

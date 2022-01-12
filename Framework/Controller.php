@@ -7,6 +7,7 @@ require_once 'Errors.php';
 require_once 'Constants.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
 
 /**
  * Abstract class defining a controller. 
@@ -100,6 +101,11 @@ abstract class Controller {
     }
 
     public function spaceExtraMenus() {
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
+        if($this->currentSpace && $modelSpace->getSpaceMenusRole($this->currentSpace['id'], "helpdesk")) {
+            return [['name' => CoreTranslator::ReportIssue($lang), 'url' => '/helpdesk/'.$this->currentSpace['id'].'/report?url='.urlencode($_SERVER['REQUEST_URI']), 'class' => 'btn-danger']];
+        }
         return [];
     }
 
