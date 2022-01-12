@@ -450,7 +450,6 @@ class FormHtml {
      * 
      * @param type $name
      * @param type $value
-     * @param type $required
      * @param type $vect
      * @return string
      */
@@ -461,8 +460,7 @@ class FormHtml {
             $vectv = "[]";
         }
         $html = "<label class=\"label\" style=\"color:black;\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
-        $html .= ">" . $value . "</span>";
-
+        $html .= ">" . $value . "</label>";
         return $html;
     }
     /**

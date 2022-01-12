@@ -217,7 +217,6 @@ class FormAdd {
                     } else if ($this->types[$j] == "text") {
                         $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "textdate") {
-
                         $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true, $lang);
                     } else if ($this->types[$j] == "number") {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
@@ -253,6 +252,8 @@ class FormAdd {
                     $html .= $formHtml->inlineNumber($this->names[$j], "", false, true, true);
                 } else if ($this->types[$j] == "hidden") {
                     $html .= $formHtml->inlineHidden($this->names[$j], "", false, true);
+                } else if ($this->types[$j] == "label") {
+                    $html .= $formHtml->inlineLabel($this->names[$j], "", true);
                 }
                 $html .= "</td>";
             }

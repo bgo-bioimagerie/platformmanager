@@ -16,7 +16,8 @@
                 apiRoute: `clientusers/getclients/`
             }
         ];
-        
+        dynamicForms.dynamicFields(sourceId, targets, spaceId);
+
         let services = [...document.getElementsByName("services[]")];
         let types = [...document.getElementsByName("type[]")];
         for (let i=0; i<services.length; i++) {
@@ -26,7 +27,8 @@
             let targets = [
                 {
                     elementId: types[i].id,
-                    apiRoute: `services/getServiceType/`
+                    apiRoute: `services/getServiceType/`,
+                    activateOnLoad: true
                 }
             ];
             dynamicForms.dynamicFields(sourceId, targets, spaceId);
