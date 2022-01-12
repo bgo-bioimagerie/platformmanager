@@ -81,16 +81,17 @@ class RecategoriesController extends ResourcesBaseController {
         if ($form->check()) {
             // run the database query
             $model = new ReCategory();
-            $model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
-            $this->redirect("recategories/".$id_space);
+            $id_cat = $model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
+            return $this->redirect("recategories/".$id_space, [], ['recategory' => ['id' => $id_cat]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['recategory' => $data]
             ));
         }
     }
@@ -103,13 +104,15 @@ class RecategoriesController extends ResourcesBaseController {
         $resourceModel = new ResourceInfo();
         $linkedResources = $resourceModel->resourcesForCategory($id_space, $id);
 
+        $error = null;
         if ($linkedResources == null || empty($linkedResources)) {
             // not linked to resources, deletion is authorized
             $this->categoryModel->delete($id_space, $id);
         } else {
             // linked to resources, notify the user
             $_SESSION["message"] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Category($lang), $lang);
+            $error = 'deletionnotauthorized';
         }
-        $this->redirect("recategories/".$id_space);
+        return $this->redirect("recategories/".$id_space, [], ['error' => $error]);
     }
 }

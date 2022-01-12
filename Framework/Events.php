@@ -603,7 +603,7 @@ class Events {
      */
     public static function send(array $message) {
         if(getenv("PFM_MODE") == "test") {
-            Configuration::getLogger()->error('[event] test mode, call method', ['message' => $message]);
+            Configuration::getLogger()->info('[event] test mode, call method', ['message' => $message]);
             $m = new EventHandler();
             $msg = new FakeMsg();
             $message['_user'] = $_SESSION['login'] ?? 'unknown';

@@ -45,6 +45,56 @@ class ResourcesTest extends ResourcesBaseTest {
         $this->assertFalse($success);
     }
 
+    public function testResponsible() {
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $user = $this->user($data['managers'][0]);
+            $space = $this->space($spaceName);
+            $this->asUser($user['login'], $space['id']);
+            $space = $this->space($spaceName);
+            $this->addInstructorStatus($space, 'resp_status_1');
+        }
+    }
+
+    public function testEventType() {
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $user = $this->user($data['managers'][0]);
+            $space = $this->space($spaceName);
+            $this->asUser($user['login'], $space['id']);
+            $this->addEventType($space, 'resp_evt_type_1');
+        }
+    }
+
+    public function testState() {
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $user = $this->user($data['managers'][0]);
+            $space = $this->space($spaceName);
+            $this->asUser($user['login'], $space['id']);
+            $this->addState($space, 'resp_state_1');
+        }
+    }
+
+    public function testReEvent() {
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $user = $this->user($data['managers'][0]);
+            $space = $this->space($spaceName);
+            $this->asUser($user['login'], $space['id']);
+            $et = $this->addEventType($space, 're_eventtype_event');
+            $s = $this->addState($space, 'resp_state_event');
+            $resources = $this->getResources($space);
+            $r = $resources[0];
+            $this->addResourceEvent($space, $r, $user, $et, $s);
+        }
+
+    }
+
 }
 
 ?>
