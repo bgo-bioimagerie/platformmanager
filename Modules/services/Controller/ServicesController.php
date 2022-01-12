@@ -43,16 +43,14 @@ class ServicesController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
         if ($servicesuseproject == 1) {
-            $this->redirect('servicesprojectsopened/' . $id_space);
-            return;
+            return $this->redirect('servicesprojectsopened/' . $id_space);
         }
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
         if ($servicesusecommand == 1) {
-            $this->redirect('servicesorders/' . $id_space);
-            return;
+            return $this->redirect('servicesorders/' . $id_space);
         }
 
-        $this->redirect('serviceslisting/' . $id_space);
+        return $this->redirect('serviceslisting/' . $id_space);
     }
 
     public function navbar($id_space) {

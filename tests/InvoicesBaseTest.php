@@ -7,6 +7,7 @@ require_once 'Framework/Configuration.php';
 
 require_once 'Modules/booking/Controller/BookinginvoiceController.php';
 require_once 'Modules/invoices/Controller/InvoicesconfigController.php';
+require_once 'Modules/invoices/Controller/InvoiceslistController.php';
 
 require_once 'tests/BaseTest.php';
 
@@ -78,6 +79,34 @@ class InvoicesBaseTest extends BaseTest {
         $c->editAction($space['id'], $invoice_id, 1);
         // with details
         $c->editAction($space['id'], $invoice_id, 2);
+    }
+
+    protected function listInvoices($space) {
+        $req = new Request([
+            "path" => "invoices/".$space['id'],
+        ], false);
+        $i = new InvoiceslistController($req, $space);
+        $data = $i->indexAction($space['id'], 0);
+        return $data['invoices'];
+    }
+
+    protected function editInvoice($space, $invoice) {
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$invoice['id'],
+        ]);
+
+        $i = new InvoiceslistController($req, $space);
+        $data = $i->editAction($space['id'], $invoice['id']);
+        return $data['invoice'];
+    }
+
+    protected function deleteInvoice($space, $invoice) {
+        $req = $this->request([
+            "path" => "invoicedelete/".$space['id'].'/'.$invoice['id'],
+        ]);
+        $i = new InvoiceslistController($req, $space);
+        $data = $i->deleteAction($space['id'], $invoice['id']);
+        return $data['invoice'];
     }
 
 

@@ -20,6 +20,7 @@
 * [core] manage http error codes #184
 * [layout] display enhancements
 * [core] add index on id_space
+* [services] fix services orders errors with client not registered
 
 ## 2.2.2
 

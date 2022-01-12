@@ -30,6 +30,17 @@ abstract class BaseTest extends TestCase {
         $_SERVER['REQUEST_URI'] = '';
     }
 
+    public function request(array $params){
+        $req = new Request($params, true);
+
+        $req->getSession()->setAttribut("id_user", $_SESSION['id_user']);
+        $req->getSession()->setAttribut("login", $_SESSION['login']);
+        $req->getSession()->setAttribut("email", 'fake@pfm.org');
+        $req->getSession()->setAttribut("company", Configuration::get("name"));
+        $req->getSession()->setAttribut("user_status", $_SESSION['user_status']);
+        return $req;
+    }
+
     public function Context():mixed {
         return self::$context;
     }

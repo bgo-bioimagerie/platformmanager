@@ -46,7 +46,7 @@ class ServicesordersController extends ServicesController {
 
         // get the commands list
         $modelEntry = new SeOrder();
-        $entriesArray = array();
+        $data = array();
         if ($status == "") {
             if (isset($_SESSION["supplies_lastvisited"])) {
                 $status = $_SESSION["supplies_lastvisited"];
@@ -56,12 +56,14 @@ class ServicesordersController extends ServicesController {
         }
 
         if ($status == "all") {
-            $entriesArray = $modelEntry->entries($id_space, $sortentry);
+            $data = $modelEntry->entries($id_space, $sortentry);
         } else if ($status == "opened") {
-            $entriesArray = $modelEntry->openedEntries($id_space, $sortentry);
+            $data = $modelEntry->openedEntries($id_space, $sortentry);
         } else if ($status == "closed") {
-            $entriesArray = $modelEntry->closedEntries($id_space, $sortentry);
+            $data = $modelEntry->closedEntries($id_space, $sortentry);
         }
+
+        $entriesArray = $data;
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Services_Orders($lang), 3);
@@ -99,31 +101,31 @@ class ServicesordersController extends ServicesController {
         $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
-            'tableHtml' => $tableHtml
-                ), "indexAction");
+            'tableHtml' => $tableHtml,
+            'data' => ['orders' => $data]
+        ), "indexAction");
     }
 
     public function openedAction($id_space) {
         $_SESSION["supplies_lastvisited"] = "opened";
-        $this->indexAction($id_space, "opened");
+        return $this->indexAction($id_space, "opened");
     }
 
     public function closedAction($id_space) {
         $_SESSION["supplies_lastvisited"] = "closed";
-        $this->indexAction($id_space, "closed");
+        return $this->indexAction($id_space, "closed");
     }
 
     public function AllAction($id_space) {
-
         $_SESSION["supplies_lastvisited"] = "all";
-        $this->indexAction($id_space, "all");
+        return $this->indexAction($id_space, "all");
     }
 
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $this->serviceModel->delete($id_space, $id);
-        $this->redirect("servicesorders/" . $id_space);
+        return $this->redirect("servicesorders/" . $id_space, ['order' => ['id' => $id]]);
     }
 
     public function editAction($id_space, $id) {
@@ -147,7 +149,7 @@ class ServicesordersController extends ServicesController {
                 array_push($clientSelect['choices'], $client['name']);
                 array_push($clientSelect['choicesid'], $client['id']);
             }
-            $clientSelect['value'] = ($value['id_client'] != 0) ? $value['id_client'] : $userClients[0]['id'] ?? "";
+            $clientSelect['value'] = ($value['id_resp'] != 0) ? $value['id_resp'] : $userClients[0]['id'] ?? "";
         } else {
             $value = $modelOrder->defaultEntryValues();
             $items = array("services" => array(), "quantities" => array(), "quantity_types" => array());
@@ -190,7 +192,8 @@ class ServicesordersController extends ServicesController {
             $id_order = $modelOrder->setOrder(
                     $id,
                     $id_space,
-                    $this->request->getParameter("id_user"), 
+                    $this->request->getParameter("id_user"),
+                    $this->request->getParameter("id_client"),
                     $this->request->getParameter("no_identification"), 
                     $_SESSION["id_user"], 
                     CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
@@ -205,16 +208,20 @@ class ServicesordersController extends ServicesController {
 
             for ($i = 0; $i < count($servicesQuantities); $i++) {
                 $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
-                $qDelta = $servicesQuantities[$i] - $qOld[0];
+                $qDelta = $servicesQuantities[$i] - $qOld;
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
                 $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
             }
 
-            $this->redirect("servicesorders/" . $id_space);
-            return;
+            return $this->redirect("servicesorders/" . $id_space, [], ['order' => ['id' => $id_order]]);
         }
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang),
+            "data" => ['order' => $value, 'items' => $items]
+        ));
     }
 
 }
