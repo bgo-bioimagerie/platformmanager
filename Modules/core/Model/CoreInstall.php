@@ -793,7 +793,7 @@ class CoreDB extends Model {
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
             $this->addColumn($table, "id_space", "int(11)", 0);
-            $space_index = "DROP INDEX  `idx_${table}_space` ON `$table";
+            $space_index = "DROP INDEX  `idx_${table}_space` ON `$table`";
             $this->runRequest($space_index);
             $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
             $this->runRequest($space_index);
