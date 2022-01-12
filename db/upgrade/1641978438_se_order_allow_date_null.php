@@ -2,7 +2,7 @@
 require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
 # Upgrade: se_order allow date null
-class CoreUpgradeDB extends Model {
+class CoreUpgradeDB1641978438 extends Model {
   public function run(){
 	Configuration::getLogger()->info("[db][upgrade] Apply se_order allow date null");
         Configuration::getLogger()->info("[db][upgrade] Run repair script 499 (PR #499)");
@@ -17,6 +17,6 @@ class CoreUpgradeDB extends Model {
         Configuration::getLogger()->info("Run repair script 499 (PR #499), done!");
   }
 }
-$db = new CoreUpgradeDB();
+$db = new CoreUpgradeDB1641978438();
 $db->run();
 ?>

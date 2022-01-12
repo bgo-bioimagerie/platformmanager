@@ -2,7 +2,7 @@
 require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
 # Upgrade: Update invoice numbers in redis
-class CoreUpgradeDB extends Model {
+class CoreUpgradeDB1641387865 extends Model {
   public function run(){
     Configuration::getLogger()->info("[db][upgrade] Apply Update invoice numbers in redis");
     $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
@@ -33,6 +33,6 @@ class CoreUpgradeDB extends Model {
 
   }
 }
-$db = new CoreUpgradeDB();
+$db = new CoreUpgradeDB1641387865();
 $db->run();
 ?>

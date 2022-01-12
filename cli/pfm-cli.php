@@ -67,7 +67,7 @@ try {
             $desc = $args->getOpt('desc');
             $title = str_replace('__', '_', preg_replace('/[^a-z0-9_]/', '_', substr($desc, 0, 40)));
             $name = "$ts"."_"."$title.php";
-            $template = "<?php\nrequire_once 'Framework/Model.php';\nrequire_once 'Framework/Configuration.php';\n# Upgrade: $desc\nclass CoreUpgradeDB extends Model {\n  public function run(){\n    Configuration::getLogger()->info(\"[db][upgrade] Apply $desc\");\n  }\n}\n\$db = new CoreUpgradeDB();\n\$db->run();\n?>\n";
+            $template = "<?php\nrequire_once 'Framework/Model.php';\nrequire_once 'Framework/Configuration.php';\n# Upgrade: $desc\nclass CoreUpgradeDB$ts extends Model {\n  public function run(){\n    Configuration::getLogger()->info(\"[db][upgrade] Apply $desc\");\n  }\n}\n\$db = new CoreUpgradeDB$ts();\n\$db->run();\n?>\n";
             file_put_contents("db/upgrade/$name", $template);
             Configuration::getLogger()->info("Created upgrade file db/upgrade/$name");
             break;
