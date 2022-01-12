@@ -58,8 +58,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
 
             $this->invoiceAll($id_space, $beginPeriod, $endPeriod);
-            $this->redirect("invoices/" . $id_space);
-            return;
+            return $this->redirect("invoices/" . $id_space);
         }
 
         $formByPeriod = $this->createByPeriodForm($id_space, $lang);
@@ -75,7 +74,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
         }
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang,
+        return $this->render(array("id_space" => $id_space, "lang" => $lang,
             "formByProjects" => $formByProjects->getHtml($lang),
             "formByPeriod" => $formByPeriod->getHtml($lang)));
     }
@@ -104,7 +103,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         // unparse details
         $detailsData = array();
-        if (!empty($id_items) > 0) {
+        if (!empty($id_items)) {
             $item = $modelInvoiceItem->getItem($id_space, $id_items[0]["id"]);
             $details = $item["details"];
             
@@ -119,7 +118,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         // create edit form
         $idItem = 0;
-        if (!empty($id_items) > 0) {
+        if (!empty($id_items)) {
             $idItem = $id_items[0]["id"];
         }
         $form = $this->editForm($idItem, $id_space, $id_invoice, $lang);
@@ -149,12 +148,18 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 "invoice" => ["id" => intval($id_invoice)]
             ]);
 
-            $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O");
-            return;
+            return $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O");
         }
 
         // render
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "invoice" => $invoice, "details" => $detailsData, "htmlForm" => $form->getHtml($lang)));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "invoice" => $invoice,
+            "details" => $detailsData,
+            "htmlForm" => $form->getHtml($lang),
+            "data" => ['invoice' => $invoice, 'items' => $id_items]
+        ));
     }
 
     public function deleteAction($id_space, $id_invoice) {

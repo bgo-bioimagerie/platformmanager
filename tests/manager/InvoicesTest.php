@@ -38,6 +38,26 @@ class InvoicesTest extends InvoicesBaseTest {
         }
     }
 
+    public function testListInvoice() {
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $space = $this->space($spaceName);
+            $user = $this->user($data['managers'][0]);
+            $this->asUser($user['login'], $space['id']);
+            $this->listInvoices($space);
+            $canList = true;
+            try {
+                $user = $this->user($data['users'][0]);
+                $this->asUser($user['login'], $space['id']);
+                $this->listInvoices($space);
+            } catch(Exception) {
+                $canList = false;
+            }
+            $this->assertFalse($canList);
+        }       
+    }
+
 }
 
 ?>

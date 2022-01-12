@@ -77,7 +77,8 @@ class InvoiceslistController extends InvoicesController {
             }
         }
         $dates = $this->getInvoicePeriod($id_space, $year);
-        $invoices = $modelInvoices->getSentByPeriod($id_space, $sent, $dates["yearBegin"], $dates["yearEnd"], "number");
+        $data = $modelInvoices->getSentByPeriod($id_space, $sent, $dates["yearBegin"], $dates["yearEnd"], "number");
+        $invoices = $data;
         for ($i = 0; $i < count($invoices); $i++) {
             $invoices[$i]["date_generated"] = CoreTranslator::dateFromEn($invoices[$i]["date_generated"], $lang);
             $invoices[$i]["date_paid"] = CoreTranslator::dateFromEn($invoices[$i]["date_paid"], $lang);
@@ -114,8 +115,14 @@ class InvoiceslistController extends InvoicesController {
         }
         $tableView = $table->view($invoices, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableView,
-            "year" => $year, "years" => $years, "sent" => $sent
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableView,
+            "year" => $year,
+            "years" => $years,
+            "sent" => $sent,
+            "data" => ['invoices' => $data]
         ));
     }
     
@@ -146,7 +153,7 @@ class InvoiceslistController extends InvoicesController {
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName(new Request(array(), false), $this->currentSpace);
         $object->setRequest($this->request);
-        $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
+        return $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
     }
 
     public function createPurcentageDiscountForm($discountValue) {
