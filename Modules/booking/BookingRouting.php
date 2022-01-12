@@ -6,6 +6,7 @@ class BookingRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/user/booking/future/[i:id_space]/[i:id_resource]', 'booking/booking/future', 'booking_list_future');
+        $router->map('GET', '/booking/[i:id_space]/journal', 'booking/booking/journal', 'booking_journal');
     }
 
     
@@ -13,7 +14,8 @@ class BookingRouting extends Routing{
         
         // config
         $this->addRoute("bookingconfig", "bookingconfig", "bookingconfig", "index", array("id_space"), array(""));
-        $this->addRoute("bookingconfigadmin", "bookingconfigadmin", "bookingconfigadmin", "index");
+        $this->addRoute("bookingsettingsconfig", "bookingsettingsconfig", "bookingconfig", "index", array("id_space"), array(""));
+        // $this->addRoute("bookingconfigadmin", "bookingconfigadmin", "bookingconfigadmin", "index");
         
         // user srttings
         $this->addRoute("bookingusersettings", "bookingusersettings", "bookingusersettings", "index");

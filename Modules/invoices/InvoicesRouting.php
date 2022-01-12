@@ -7,7 +7,7 @@ class InvoicesRouting extends Routing{
     public function listRoutes(){
         
         // config
-        $this->addRoute("invoicesconfigadmin", "invoicesconfigadmin", "invoicesconfigadmin", "index");
+        //$this->addRoute("invoicesconfigadmin", "invoicesconfigadmin", "invoicesconfigadmin", "index");
         $this->addRoute("invoicesconfig", "invoicesconfig", "invoicesconfig", "index", array("id_space"), array(""));
 
         $this->addRoute("invoicepdftemplate", "invoicepdftemplate", "invoicesconfig", "pdftemplate", array("id_space"), array(""));

@@ -10,6 +10,8 @@ require_once 'Modules/services/Controller/ServiceslistingController.php';
 require_once 'Modules/services/Controller/ServicesvisaController.php';
 require_once 'Modules/services/Controller/ServicesoriginsController.php';
 require_once 'Modules/services/Controller/ServicesprojectsController.php';
+require_once 'Modules/services/Controller/StockcabinetController.php';
+require_once 'Modules/services/Controller/StockshelfController.php';
 
 require_once 'tests/BaseTest.php';
 
@@ -20,11 +22,11 @@ class ServicesBaseTest extends BaseTest {
         $this->asUser($user['login'], $space['id']);
         $req = new Request([
             "path" => "servicesconfig/".$space['id'],
-            "formid" => "menusactivationForm",
-            "servicesmenustatus" => 3,
-            "displayMenu" => 0,
-            "displayColor" =>  "#000000",
-            "displayColorTxt" => "#ffffff"
+            "formid" => "servicesmenusactivationForm",
+            "servicesMenustatus" => 3,
+            "servicesDisplayMenu" => 0,
+            "servicesDisplayColor" =>  "#000000",
+            "servicesDisplayColorTxt" => "#ffffff"
         ], false);
         $c = new ServicesconfigController($req, $space);
         $c->indexAction($space['id']);
@@ -88,8 +90,40 @@ class ServicesBaseTest extends BaseTest {
         $data = $c->editAction($space['id'], 0);
         $this->assertTrue($data['visa']['id'] > 0);
         return $data['visa'];
-
     }
+
+    protected function createCabinet($space, $cabinet) {
+        Configuration::getLogger()->debug('create cabinet', ['cabinet' => $cabinet, 'space' => $space]);
+        $req = new Request([
+            "path" => "stockcabineteditedit/".$space['id']."/0",
+            "formid" => "stockcabineteditform",
+            "id" => 0,
+            "room_number" => $cabinet["room_number"],
+            "name" => $cabinet['name'],
+
+        ], false);
+        $c = new StockcabinetController($req, $space);
+        $data = $c->editAction($space['id'], 0);
+        $this->assertTrue($data['cabinet']['id'] > 0);
+        return $data['cabinet'];
+    }
+
+    protected function createShelf($space, $cabinet, $shelf) {
+        Configuration::getLogger()->debug('create shelf', ['shelf' => $shelf, 'space' => $space]);
+        $req = new Request([
+            "path" => "stockshelfeditedit/".$space['id']."/0",
+            "formid" => "stockshelfeditform",
+            "id" => 0,
+            "id_cabinet" => $cabinet['id'],
+            "name" => $shelf['name'],
+
+        ], false);
+        $c = new StockshelfController($req, $space);
+        $data = $c->editAction($space['id'], 0);
+        $this->assertTrue($data['shelf']['id'] > 0);
+        return $data['shelf'];
+    }
+
 
     protected function createOrigin($space, $user, $origin) {
         Configuration::getLogger()->debug('create origin', ['user' => $user, 'space' => $space, 'origin' => $origin]);

@@ -204,7 +204,7 @@ class Router {
             $registry = \Prometheus\CollectorRegistry::getDefault();
             $counter = $registry->getOrRegisterCounter('pfm', 'request_nb', 'quantity', ['url', 'code']);
             $counter->incBy(1, [$reqRoute, http_response_code()]);
-            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [10, 20, 50, 100, 1000]);
+            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [20, 50, 100, 1000, 5000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
         } catch(Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
@@ -240,37 +240,13 @@ class Router {
      * @throws Exception
      */
     private function install($request) {
-        throw new PfmDbException("Install not supported anymore");
-        /*
-        $path = "";
-        if ($request->isParameterNotEmpty('path')) {
-            $path = $request->getParameter('path');
-        }
-
-        if ($path == "install") {
-
-            $dsn = Configuration::get('dsn', '');
-            if ($dsn != '') {
-                throw new PfmDbException("The database is already installed");
-            }
-
-            $controller = $this->createControllerImp("core", "coreinstall", 0, $request);
-            $controller->runAction("core", "index");
-            return true;
-        } else if ($path == "caches") {
-            $install_modelCache = new FCache();
-            $install_modelCache->load();
-            echo "Caches are up to date";
-            return true;
-        }
-        return false;
-        */
+        throw new PfmDbException("Install not supported anymore", 403);
     }
 
     /**
      * 
      * @param Request $request
-     * @return type
+     * @return array
      */
     private function getUrlData(Request $request) {
 
@@ -280,7 +256,6 @@ class Router {
             $path = $request->getParameter('path');
         } else {
             $path = "coretiles";
-            // throw new Exception("The URL is not valid: unable to find the path");
         }
 
         $pathData = explode("/", $path);
@@ -359,11 +334,11 @@ class Router {
                     }
                 }
                 else{
-                    throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
+                    throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName", 500);
                 }
             }
             else{
-                throw new PfmRoutingException("Unable to find the controller file '$fileController' ");
+                throw new PfmRoutingException("Unable to find the controller file '$fileController' ", 500);
             }
         }
     }

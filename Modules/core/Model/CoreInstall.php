@@ -46,20 +46,28 @@ class CoreDB extends Model {
 
     /**
      * Drops all tables content
+     * 
+     * @param bool $drop delete tables and not just content
      */
-    public function dropAll() {
-        $sql = "show tables";
+    public function dropAll($drop=false) {
+        $sql = "SHOW tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach ($tables as $tb) {
             $table = $tb[0];
-            Configuration::getLogger()->warning('Drop', ["table" => $table]);
-            $sql = "delete from ".$table;
-            $this->runRequest($sql);
+            if($drop) {
+                Configuration::getLogger()->warning('Drop table', ["table" => $table]);
+                $sql = "DROP TABLE ".$table;
+                $this->runRequest($sql);
+            } else {
+                Configuration::getLogger()->warning('Delete table content', ["table" => $table]);
+                $sql = "DELETE FROM ".$table;
+                $this->runRequest($sql);
+            }
         }
     }
 
     public function isFreshInstall() {
-        $sql = "show tables";
+        $sql = "SHOW tables";
         $nbTables = $this->runRequest($sql)->rowCount();
         $freshInstall = true;
         if($nbTables > 0) {
@@ -120,6 +128,19 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
         $this->addColumn("users_info", "organization", "varchar(255)", "");
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
+    }
+
+    public function repair499() {
+        Configuration::getLogger()->info("Run repair script 499 (PR #499)");
+        $sql = "alter table se_order modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_order modify column date_close date NULL";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_close=null where date_close='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_open=null where date_open='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->info("Run repair script 499 (PR #499)");
     }
 
     public function upgrade_v0_v1() {
@@ -681,6 +702,16 @@ class CoreDB extends Model {
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00, done!');
 
+        Configuration::getLogger()->debug('[se_order] fix column types');
+        $sql = "alter table se_order modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_order modify column date_close date NULL";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_close=null where date_close='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_open=null where date_open='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[se_order] fix column types, done!');
     }
 
     /**
@@ -774,6 +805,10 @@ class CoreDB extends Model {
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
             $this->addColumn($table, "id_space", "int(11)", 0);
+            $space_index = "DROP INDEX  `idx_${table}_space` ON `$table`";
+            $this->runRequest($space_index);
+            $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
+            $this->runRequest($space_index);
         }
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
     }

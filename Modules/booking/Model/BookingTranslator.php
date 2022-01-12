@@ -12,7 +12,14 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Calendrier";
         }
-        return "booking";
+        return "Bookings";
+    }
+
+    public static function journal($lang) {
+        if ($lang == "fr") {
+            return "Journal";
+        }
+        return "Journal";
     }
 
     public static function MAD($lang) {
@@ -1504,7 +1511,7 @@ class BookingTranslator {
 
     public static function DeletePeriod($lang) {
         if ($lang == "fr") {
-            return "Suprimé périodicité";
+            return "Supprimer périodicité";
         }
         return "Delete periodicity";
     }

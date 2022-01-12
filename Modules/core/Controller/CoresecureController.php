@@ -49,7 +49,7 @@ abstract class CoresecureController extends CorecookiesecureController {
                     $key = sha1($this->generateRandomKey());
                     $cookieSet = setcookie("auth", $authArray[0] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
-                        throw new PfmAuthException('cannot set the cookie in coresecure <br>', 403);
+                        throw new PfmAuthException('cannot set the cookie in coresecure', 403);
                     }
                     $modelUser->setRememberKey($authArray[0], $key);
 
@@ -154,7 +154,7 @@ abstract class CoresecureController extends CorecookiesecureController {
     public function checkAuthorization($minimumStatus) {
         $auth = $this->isUserAuthorized($minimumStatus);
         if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
+            throw new PfmAuthException("Error: Permission denied", 403);
         }
         if ($auth == -1) {
             $this->redirect("coreconnection");
@@ -172,23 +172,6 @@ abstract class CoresecureController extends CorecookiesecureController {
         }
         return false;
     }
-
-    /**
-     * @deprecated
-     * @param type $menuName
-     * @throws Exception
-     */
-    /*
-    public function checkAuthorizationMenu($menuName) {
-        $auth = $this->isUserMenuAuthorized($menuName);
-        if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
-        }
-        if ($auth == -1) {
-            $this->redirect("coreconnection");
-        }
-    }
-    */
 
     /**
      * 
@@ -260,22 +243,7 @@ abstract class CoresecureController extends CorecookiesecureController {
     }
     */
 
-    /**
-     * 
-     * @param type $id_space
-     * @param type $id_user
-     * @return int
-     */
-    public function getUserSpaceStatus($id_space, $id_user) {
-        $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($id_user);
-        if ($userAppStatus > 1) {
-            return 4;
-        }
-        $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        return $spaceRole;
-    }
+
 
     /**
      * 
@@ -317,6 +285,64 @@ abstract class CoresecureController extends CorecookiesecureController {
             return false;
         }
         return true;
+    }
+
+    protected function menusactivationForm($id_space, $module, $lang) {
+
+        $modelSpace = new CoreSpace();
+        $statusMenu = $modelSpace->getSpaceMenusRole($id_space, $module);
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, $module);
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, $module);
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, $module);
+
+        $form = new Form($this->request, $module."menusactivationForm");
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang). " ($module)");
+
+        $roles = $modelSpace->roles($lang);
+
+        $form->addSelect($module."Menustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusMenu);
+        $form->addNumber($module."DisplayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor($module."DisplayColor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor($module."DisplayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+
+    protected function menusactivation($id_space, $module, $icon, $basemodule=null) {
+        if($basemodule == null) {
+            $basemodule = $module;
+        }
+        $modelSpace = new CoreSpace();
+        $modelSpace->setSpaceMenu($id_space, $basemodule, $module, "glyphicon-".$icon, 
+        $this->request->getParameter($module."Menustatus"),
+        $this->request->getParameter($module."DisplayMenu"),
+        1,
+        $this->request->getParameter($module."DisplayColor"),
+        $this->request->getParameter($module."DisplayColorTxt")
+        );
+    }
+
+    protected function menuNameForm($id_space, $module, $lang) {
+        $modelConfig = new CoreConfig();
+        $menuName = $modelConfig->getParamSpace($module."menuname", $id_space);
+
+        $form = new Form($this->request, $module."MenuNameForm");
+        $form->addSeparator(CoreTranslator::MenuName($lang)." ($module)");
+
+        $form->addText($module."MenuName", CoreTranslator::Name($lang), false, $menuName);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
+        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+
+    protected function setMenuName($id_space, $module) {
+        $modelConfig = new CoreConfig();
+        $modelConfig->setParam($module."menuname", $this->request->getParameter($module."MenuName"), $id_space);
     }
 
 }

@@ -90,7 +90,21 @@ class CoreSpace extends Model {
     public static $MANAGER = 3;
     public static $ADMIN = 4;
 
-    public function __construct() {
+
+    public function __construct(
+        public int $id=0,
+        public string $name='',
+        public int $status = 0,
+        public string $color = '#000000',
+        public string $txtcolor ='#ffffff',
+        public ?string $description = null,
+        public ?string $image = '',
+        public string $shortname = '',
+        public string $contact = '',
+        public string $support = '',
+        public int $plan = 0,
+        public int $plan_expire = 0
+    ) {
         $this->tableName = 'core_spaces';
     }
 
@@ -487,7 +501,7 @@ class CoreSpace extends Model {
             return $id;
         } else {
             if ($this->alreadyExists('name', $name)) {
-                throw new PfmDbException("Space name already exists", 1);
+                throw new PfmParamException("Space name already exists");
             }
             return $this->addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor);
         }

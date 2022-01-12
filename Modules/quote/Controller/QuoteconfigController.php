@@ -41,51 +41,16 @@ class QuoteconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
         
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'quote', $lang);
         if ($formMenusactivation->check()) {
-
-            $modelSpace->setSpaceMenu($id_space, "quote", "quote", "glyphicon-book", 
-                    $this->request->getParameter("quotemenustatus"),
-                    $this->request->getParameter("quotemenusdisplay"),
-                    1,
-                    $this->request->getParameter("quotemenuscolor"),
-                    $this->request->getParameter("quotemenuscolorTxt")
-                    );
-            
-            $this->redirect("quoteconfig/".$id_space);
-            return;
+            $this->menusactivation($id_space, 'quote', 'book');
+            return $this->redirect("quoteconfig/".$id_space);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang));
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
-    }
-
-    protected function menusactivationForm($lang, $id_space) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "quote");
-        $quotemenusdisplay = $modelSpace->getSpaceMenusDisplay($id_space, "quote");
-        $quotemenuscolor = $modelSpace->getSpaceMenusColor($id_space, "quote");
-        $quotemenuscolorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "quote");
-        
-        
-        
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("quotemenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("quotemenusdisplay", CoreTranslator::Display_order($lang), false, $quotemenusdisplay);
-        $form->addColor("quotemenuscolor", CoreTranslator::color($lang), false, $quotemenuscolor);
-        $form->addColor("quotemenuscolorTxt", CoreTranslator::text_color($lang), false, $quotemenuscolorTxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "quoteconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
     }
 
 }

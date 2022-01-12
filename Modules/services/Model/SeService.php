@@ -172,7 +172,7 @@ class SeService extends Model {
             return $unit->fetch();  // get the first line of the result
         }
         else{
-            throw new PfmException("Cannot find the item using the given id = " . $id, 404);
+            throw new PfmParamException("Cannot find the item using the given id = " . $id, 404);
         }
     }
 
@@ -184,7 +184,6 @@ class SeService extends Model {
             return $tmp[0];  // get the first line of the result
         } else {
             return "unknown";
-            //	throw new Exception("Cannot find the item using the given id = " . $id);
         }
     }
 

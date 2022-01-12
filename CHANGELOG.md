@@ -2,6 +2,9 @@
 
 ## 2.3.0
 
+* [booking] fix all_day reservation end date
+* [core] remove most references to CoreTranslator::dateFromEn()
+* [spaces] remove request access button from private spaces
 * [booking] clicking on blank days in month view gives access to day area view
 * [projects] fix closed projects listing change of year
 * [resources] fix re_visa is_active default value
@@ -11,6 +14,23 @@
 * [core] fix prometheus redis port
 * [coreconfig] fix maintenance mode authorizations
 * [coreconfig] remove carousel
+* [invoices] remove hidden characters in template
+* [docker] fix mysql db name in docker-compose
+* [booking] add journal page to show future and last 30 days bookings
+* [core] manage http error codes #184
+* [layout] display enhancements
+* [core] add index on id_space
+
+## 2.2.2
+
+* [db] add upgrade_v3_v4 migration script on se_order
+  **Warning**: if you installed release <= 2.2.2 you need to run a db fix script
+  php cli/pfm-cli.php repair --bug 499
+* [services] fix orders blocking bugs
+* [invoices] fix orders invoice
+* [core] fix prometheus redis port
+* [invoices] remove hidden characters from template
+* [docker] fix db name in compose #495
 
 ## 2.2.1
 

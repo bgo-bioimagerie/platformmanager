@@ -7,7 +7,7 @@ class ComRouting extends Routing{
     public function listRoutes(){
         
         // config
-        $this->addRoute("comconfigadmin", "comconfigadmin", "comconfigadmin", "index");
+        //$this->addRoute("comconfigadmin", "comconfigadmin", "comconfigadmin", "index");
         $this->addRoute("comconfig", "comconfig", "comconfig", "index", array("id_space"), array(""));
 
         

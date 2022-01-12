@@ -7,7 +7,7 @@ class MailerRouting extends Routing{
     public function listRoutes(){
         
         // config
-        $this->addRoute("mailerconfigadmin", "mailerconfigadmin", "mailerconfigadmin", "index");
+        // $this->addRoute("mailerconfigadmin", "mailerconfigadmin", "mailerconfigadmin", "index");
         $this->addRoute("mailerconfig", "mailerconfig", "mailerconfig", "index", array("id_space"), array(""));
 
         

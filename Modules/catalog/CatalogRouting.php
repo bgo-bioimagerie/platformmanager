@@ -7,7 +7,7 @@ class CatalogRouting extends Routing{
     public function listRoutes(){
         
         // config
-        $this->addRoute("catalogconfigadmin", "catalogconfigadmin", "catalogconfigadmin", "index");
+        //$this->addRoute("catalogconfigadmin", "catalogconfigadmin", "catalogconfigadmin", "index");
         $this->addRoute("catalogconfig", "catalogconfig", "catalogconfig", "index", array("id_space"), array(""));
 
         

@@ -9,6 +9,8 @@ require_once 'Modules/booking/Controller/BookingconfigController.php';
 require_once 'Modules/booking/Controller/BookingcolorcodesController.php';
 require_once 'Modules/booking/Controller/BookingaccessibilitiesController.php';
 require_once 'Modules/booking/Controller/BookingdefaultController.php';
+require_once 'Modules/booking/Controller/BookingController.php';
+
 require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
@@ -24,19 +26,27 @@ class BookingBaseTest extends BaseTest {
         // activate booking module
         $req = new Request([
             "path" => "bookingconfig/".$space['id'],
-            "formid" => "menusactivationForm",
-            "bookingmenustatus" => 2,
-            "displayBookingMenu" => 0,
-            "colorBookingMenu" =>  "#000000",
-            "colorTxtBookingMenu" => "#ffffff",
-            "bookingsettingsmenustatus" => 3,
-            "displaySettingsMenu" => 0,
-            "colorSettingsMenu" =>  "#000000",
-            "colorTxtSettingsMenu" => "#ffffff"
+            "formid" => "bookingmenusactivationForm",
+            "bookingMenustatus" => 2,
+            "bookingDisplayMenu" => 0,
+            "bookingDisplayColor" =>  "#000000",
+            "bookingDisplayColorTxt" => "#ffffff"
+        ], false);
+        $c = new BookingconfigController($req, $space);
+        $c->indexAction($space['id']);
+
+        $req = new Request([
+            "path" => "bookingconfig/".$space['id'],
+            "formid" => "bookingsettingsmenusactivationForm",
+            "bookingsettingsMenustatus" => 3,
+            "bookingsettingsDisplayMenu" => 0,
+            "bookingsettingsDisplayColor" =>  "#000000",
+            "bookingsettingsDisplayColorTxt" => "#ffffff"
 
         ], false);
         $c = new BookingconfigController($req, $space);
         $c->indexAction($space['id']);
+
         $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
         $spaceView = $c->viewAction($space['id']);
         $clientsEnabled = false;
@@ -132,11 +142,30 @@ class BookingBaseTest extends BaseTest {
         }
     }
 
+    protected function viewBooking($space, $user, $id) {
+        Configuration::getLogger()->debug('view booking', ['user' => $user, 'space' => $space, 'booking' => $id]);
+        $req = new Request([
+            "path" => "bookingeditreservation/".$space['id'].'/r_'.$id,
+        ], false);
+        $c = new BookingController($req, $space);
+        return $c->editreservationAction($space['id'], $id);
+    }
+
+    protected function cancelBooking($space, $user, $id) {
+        $req = new Request([
+            "path" => "bookingeditreservationdefaultdelete/".$space['id']."/".$id,
+            "formid" => "bookingeditreservationdefaultdeleteform",
+            "id_reservation" => $id,
+            "sendmail" => 0
+        ], false);
+        $c = new BookingdefaultController($req, $space);
+        $c->deleteAction($space['id'], $id);
+    }
+
     /**
      * Book resource on next monday between $time and $time+1 for user
      */
     protected function book($space, $user, $client, $resource, $time=9):mixed {
-
         Configuration::getLogger()->debug('book', ['for' => $user, 'space' => $space, 'resource' => $resource]);
         
         $date = new DateTime();
@@ -165,7 +194,7 @@ class BookingBaseTest extends BaseTest {
         $this->assertTrue(array_key_exists('bkcalentry', $data));
         $bkcalentry = $data['bkcalentry'];
         $this->assertTrue($bkcalentry['id'] > 0);
-        return $bkcalentry;
+        return $bkcalentry['id'];
     }
 
     protected function addAuthorization($space, $user, $resource) {

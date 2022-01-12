@@ -92,8 +92,15 @@
             </div>
             <?php if(!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
             <div class="row">
-                <div class="col-xs-12">
-                    <?php echo $content; ?>
+                <div class="col-xs-12 text-center">
+                    <?php if($content) { echo $content; } else {?>
+                        <h3 style="margin: 20px"><?php echo CoreTranslator::welcome($lang) ?></h3>
+                        <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
+                        <?php if(Configuration::get('allow_registration', 0)) { ?>
+                            OR
+                            <a href="corecreateaccount"><button class="btn btn-primary"><?php echo CoreTranslator::CreateAccount($lang) ?></button></a>
+                        <?php } ?>
+                    <?php } ?>
                 </div>
             </div>
             <?php } ?>

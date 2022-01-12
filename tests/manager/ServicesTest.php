@@ -45,6 +45,22 @@ class ServicesTest extends ServicesBaseTest {
         } 
     }
 
+    public function testStock(){
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $space = $this->space($spaceName);
+            $user = $this->user($data['managers'][0]);
+            $this->asUser($user['login'], $space['id']);
+            $cabinet = $this->createCabinet($space, ['name' => 'cab1', 'room_number' => '1']);
+            $shelf = $this->createShelf($space, $cabinet, ['name' => 'shelf1']);
+        }
+    }
+
+    // stock cabinets /shelves
+    // stock
+    // orders
+
     public function testNotAllowed() {
         $ctx = $this->Context();
         $spaces = array_keys($ctx['spaces']);

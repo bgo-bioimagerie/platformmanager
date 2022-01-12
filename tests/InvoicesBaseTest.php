@@ -18,11 +18,11 @@ class InvoicesBaseTest extends BaseTest {
         // activate booking module
         $req = new Request([
             "path" => "invoicesconfig/".$space['id'],
-            "formid" => "menusactivationForm",
-            "invoicesmenustatus" => 3,
-            "invoicesmenudisplay" => 0,
-            "invoicesmenucolor" =>  "#000000",
-            "invoicesmenucolorTxt" => "#ffffff"
+            "formid" => "invoicesmenusactivationForm",
+            "invoicesMenustatus" => 3,
+            "invoicesDisplayMenu" => 0,
+            "invoicesDisplayColor" =>  "#000000",
+            "invoicesDisplayColorTxt" => "#ffffff"
         ], false);
         $c = new InvoicesconfigController($req, $space);
         $c->indexAction($space['id']);
@@ -45,7 +45,7 @@ class InvoicesBaseTest extends BaseTest {
         ], false);
         $c = new InvoicesconfigController($req, $space);
         try {
-        $c->pdftemplateAction($space['id']);
+            $c->pdftemplateAction($space['id']);
         } catch(Throwable) {
             copy($template, __DIR__."/../data/invoices/".$space["id"]."/template.twig");
         }

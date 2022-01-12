@@ -58,10 +58,15 @@ class CoreusersController extends CoresecureController {
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll() ?? [];
         $modelStatus = new CoreStatus();
+        $statusNames = $modelStatus->statusIDName();
+        $smap = [];
+        foreach ($statusNames as $s) {
+            $smap[$s['id']] = $s['name'];
+        }
         $users = [];
         for ($i = 0; $i < count($data); $i++) {
             $users[] = $data[$i];
-            $data[$i]["status"] = CoreTranslator::Translate_status($lang, $modelStatus->getStatusName($data[$i]["status_id"]));
+            $data[$i]["status"] = CoreTranslator::Translate_status($lang, $smap[$data[$i]["status_id"]]);
             if ($data[$i]["is_active"] == 1) {
                 $data[$i]["is_active"] = CoreTranslator::yes($lang);
             } else {
@@ -119,7 +124,7 @@ class CoreusersController extends CoresecureController {
             $statusId[] = $statu["id"];
         }
         $form->addSelect("status_id", CoreTranslator::Status($lang), $statusNames, $statusId, $user["status_id"]);
-        $form->addDate("date_end_contract", CoreTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
+        $form->addDate("date_end_contract", CoreTranslator::Date_end_contract($lang), false, $user["date_end_contract"]);
         $form->addSelect("is_active", CoreTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $user["is_active"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);

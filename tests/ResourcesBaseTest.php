@@ -22,11 +22,11 @@ class ResourcesBaseTest extends BaseTest {
         // activate resources module
         $req = new Request([
             "path" => "resourcesconfig/".$space['id'],
-            "formid" => "menusactivationForm",
-            "resourcesmenustatus" => 3,
-            "displayMenu" => 0,
-            "displayColor" =>  "#000000",
-            "displayTxtColor" => "#ffffff"
+            "formid" => "resourcesmenusactivationForm",
+            "resourcesMenustatus" => 3,
+            "resourcesDisplayMenu" => 0,
+            "resourcesDisplayColor" =>  "#000000",
+            "resourcesDisplayColorTxt" => "#ffffff"
         ], true);
         $c = new ResourcesconfigController($req, $space);
         $c->indexAction($space['id']);

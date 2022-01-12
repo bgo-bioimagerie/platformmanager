@@ -61,10 +61,10 @@ class BookingdefaultController extends BookingabstractController {
 
         if ($this->isNew($param)) {
             $resaInfo = $this->addreservation($id_space, $param);
-            $this->editReservation($id_space, $resaInfo, $param);
+            return $this->editReservation($id_space, $resaInfo, $param);
         } else {
             $resaInfo = $this->editReservationInfo($id_space, $param);
-            $this->editReservation($id_space, $resaInfo, $param);
+            return $this->editReservation($id_space, $resaInfo, $param);
         }
     }
 
@@ -154,7 +154,7 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
-            return $this->redirect("booking/".$id_space);
+            return $this->redirect("booking/".$id_space, [], ['error' => 'resourceBookingUnauthorized']);
         }
 
         $responsible_id = $this->request->getParameterNoException("responsible_id");
@@ -170,7 +170,7 @@ class BookingdefaultController extends BookingabstractController {
         $full_description = $this->request->getParameterNoException("full_description");
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
 
-        $dateResaStart = CoreTranslator::dateToEn($this->request->getParameter("resa_start"), $lang);
+        $dateResaStart = $this->request->getParameter("resa_start");
         $dateResaStartArray = explode("-", $dateResaStart);
         if($dateResaStart == "") {
             throw new PfmParamException("invalid start date");
@@ -199,7 +199,7 @@ class BookingdefaultController extends BookingabstractController {
         }
 
 
-        $dateResaEnd = CoreTranslator::dateToEn($this->request->getParameter("resa_end"), $lang);
+        $dateResaEnd = $this->request->getParameter("resa_end");
         $dateResaEndArray = explode("-", $dateResaEnd);
         if($dateResaEnd == "") {
             throw new PfmParamException("invalid end date");
@@ -209,7 +209,7 @@ class BookingdefaultController extends BookingabstractController {
             $modelResource = new ResourceInfo();
             $modelScheduling = new BkScheduling();
             $schedul = $modelScheduling->get($id_space, $modelResource->getAreaID($id_space ,$id_resource));
-            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
         else{
             $hour_endH = $this->request->getParameter("hour_endH");
@@ -277,7 +277,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $canEdit = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $id, $recipient_id, $start_time);
         if (!$canEdit) {
-            throw new PfmException("ERROR: You're not allowed to modify this reservation");
+            throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
 
         $modelCalEntry = new BkCalendarEntry();
@@ -302,11 +302,14 @@ class BookingdefaultController extends BookingabstractController {
         $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
         $periodic_option = intval($this->request->getParameterNoException("periodic_radio"));
 
+        $error = null;
+
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
             // test if a resa already exists on this periode
             $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
             if ($conflict) {
                 $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                $error = 'reservationError';
                 $valid = false;
             }
             // test if the user is above quota
@@ -319,17 +322,18 @@ class BookingdefaultController extends BookingabstractController {
                     if ($userHasTooManyReservations){
                         $_SESSION["message"] = BookingTranslator::quotaReservationError($bookingQuota, $lang);
                         $valid = false;
+                        $error = 'quotaReservationError';
                     }
                 }
             }
-
             if ($valid) {
                 $id_entry = $modelCalEntry->setEntry($id_space ,$id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                 $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
                 $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
+
             }
         } else {
-            $periodicEndDate = CoreTranslator::dateToEn($this->request->getParameter("periodic_enddate"), $lang);
+            $periodicEndDate = $this->request->getParameter("periodic_enddate");
             $periodicEndDateArray = explode("-", $periodicEndDate);
             if($periodicEndDate == "") {
                 throw new PfmParamException("invalid end date");
@@ -356,6 +360,7 @@ class BookingdefaultController extends BookingabstractController {
                         $_SESSION["message"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
+                        $error = 'reservationError';
                     }
                     if ($valid) {
                         $id_entry = $modelCalEntry->setEntry($id_space, 0, $btime, $end_time + $pass, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
@@ -387,6 +392,7 @@ class BookingdefaultController extends BookingabstractController {
                         $_SESSION["message"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
+                        $error = 'reservationError';
                     }
                     if ($valid) {
                         $id_entry = $modelCalEntry->setEntry($id_space ,0, $btime, $end_time + $pass, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
@@ -472,6 +478,7 @@ class BookingdefaultController extends BookingabstractController {
                         $_SESSION["message"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
+                        $error = 'reservationError';
                     }
                     if ($valid) {
                         $id_entry = $modelCalEntry->setEntry($id_space, 0, $start_m_time, $end_m_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
@@ -522,6 +529,7 @@ class BookingdefaultController extends BookingabstractController {
                         $_SESSION["message"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
+                        $error = 'reservationError';
                     }
                     if ($valid) {
                         $id_entry = $modelCalEntry->setEntry($id_space, 0, $start_m_time, $end_m_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
@@ -563,12 +571,14 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
-        return $this->redirect("booking/".$id_space."/".$bk_id_area."/".$id_resource, [], ['bkcalentry' => ['id' => $id_entry]]);
+        return $this->redirect("booking/".$id_space."/".$bk_id_area."/".$id_resource, [], ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
         //return $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"], [], ['bkcalentry' => ['id' => $id_entry]]);
     }
 
     private function editreservation($id_space, $resaInfo, $param = "") {
         $lang = $this->getLanguage();
+
+
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
         $canEditReservation = false;
@@ -577,6 +587,10 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $id_resource = $resaInfo["resource_id"];
+        $canView = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $resaInfo['id'], $resaInfo['recipient_id'], $resaInfo['start_time']);
+        if (!$canView) {
+            throw new PfmAuthException("ERROR: You're not allowed to edit this reservation", 403);
+        }
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getAllForSelect($id_space, "name");
@@ -714,7 +728,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // date time
         $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"] ?? 0);
-        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["start_time"]), $lang));
+        $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["start_time"]), $lang);
         $form->addHour("hour_start", BookingTranslator::time($lang), false, array(date("H", $resaInfo["start_time"]), date("i", $resaInfo["start_time"])));
 
         // conditionnal on package
@@ -735,7 +749,7 @@ class BookingdefaultController extends BookingabstractController {
         $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, $resaInfo["package_id"], false);
 
         $formEndDate = new Form($this->request, "formEndDate");
-        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, CoreTranslator::DateFromEn(date("Y-m-d", $resaInfo["end_time"]), $lang));
+        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["end_time"]));
         $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
         $packageChecked = $resaInfo["package_id"];
 
@@ -774,8 +788,13 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
         $formDeletePeriod->setButtonsWidth(2, 10);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "menuData" => $menuData,
-            "form" => $form, "use_packages" => $use_packages,
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "menuData" => $menuData,
+            "data" => ["booking" => $resaInfo],
+            "form" => $form,
+            "use_packages" => $use_packages,
             "packageChecked" => $packageChecked,
             "userCanEdit" => $userCanEdit,
             "id_reservation" => $resaInfo["id"],
@@ -788,7 +807,8 @@ class BookingdefaultController extends BookingabstractController {
             "id_period" => $id_period,
             "formDelete" => $formDelete->getHtml($lang),
             "formDeletePeriod" => $formDeletePeriod->getHtml($lang)),
-                "addreservationAction");
+            "addreservationAction"
+        );
     }
 
     private function canBookForOthers($id_space, $id_user) {
@@ -803,6 +823,9 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
+        if(!$entryInfo) {
+            throw new PfmParamException('entry not found');
+        }
 
         $modelResource = new ResourceInfo();
         $_SESSION['bk_id_resource'] = $entryInfo["resource_id"];
@@ -839,7 +862,7 @@ class BookingdefaultController extends BookingabstractController {
         $id_resource = $entryInfo["resource_id"];
         $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
         if (!$canEdit) {
-            throw new PfmException("ERROR: You're not allowed to modify this reservation");
+            throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
         if ($sendEmail == 1) {
             $resourceModel = new ResourceInfo();

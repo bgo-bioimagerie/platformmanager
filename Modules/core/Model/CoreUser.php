@@ -179,7 +179,7 @@ class CoreUser extends Model {
         }
 
         if($sql == null) {
-            throw new PfmException('something went wrong!');
+            throw new PfmException('something went wrong!', 500);
         }
 
         if($dry) {

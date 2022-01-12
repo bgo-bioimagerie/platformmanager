@@ -7,7 +7,7 @@ class DocumentsRouting extends Routing{
     public function listRoutes(){
         
         // config
-        $this->addRoute("documentsconfigadmin", "documentsconfigadmin", "documentsconfigadmin", "index");
+        //$this->addRoute("documentsconfigadmin", "documentsconfigadmin", "documentsconfigadmin", "index");
         $this->addRoute("documentsconfig", "documentsconfig", "documentsconfig", "index", array("id_space"), array(""));
 
         // add here the module routes

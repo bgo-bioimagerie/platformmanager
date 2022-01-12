@@ -262,7 +262,7 @@ class TableView {
         $html .= "<tr>";
 
         for ($b = 0 ; $b < $isButtons ; $b++){
-            $html .= "<th></th>";
+            $html .= "<th class=\"no-sort\"></th>";
         }
         //if ($isButtons){
         //    $html .= "<th></th>";
@@ -287,6 +287,8 @@ class TableView {
 
         // table body			
         $html .= "<tbody>";
+
+        $addDelete = false;
         
         foreach ($data as $dat) {
             if ($this->printIt($dat)) {
@@ -323,6 +325,7 @@ class TableView {
                     $html .= '<td style="width: 1%; white-space: nowrap;">';
                     $html .= $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]);
                     $html .= "</td>";
+                    $addDelete = true;
                 }
                 
                 //if ($isButtons){
@@ -395,6 +398,9 @@ class TableView {
         }
         $html .= "</tbody>";
         $html .= "</table>";
+        if($addDelete) {
+            $html .= $this->addDeleteScript();
+        }
 
         return $html;
     }
@@ -519,10 +525,7 @@ class TableView {
      * @return string
      */
     private function addDeleteButtonHtml($id, $name) {
-
-        $html = $this->addDeleteScript($id, $name);
-        $html = $html . "<input class=\"btn btn-xs btn-danger\" type=\"button\" onclick=\"ConfirmDelete" . $id . "()\" value=\"Delete\">";
-        return $html;
+        return "<input class=\"btn btn-xs btn-danger\" type=\"button\" onclick=\"ConfirmDelete($id, '$name')\" value=\"Delete\">";
     }
 
     /**
@@ -531,12 +534,12 @@ class TableView {
      * @param type $name
      * @return string
      */
-    private function addDeleteScript($id, $name) {
+    private function addDeleteScript() {
         $html = "<script type=\"text/javascript\">";
-        $html .= "function ConfirmDelete" . $id . "()";
+        $html .= "function ConfirmDelete(id, name)";
         $html .= "{";
-        $html .= "	if (confirm(\"Delete " . $name . " ?\"))";
-        $html .= "		location.href='" . $this->deleteURL . "/" . $id . "';";
+        $html .= '	if (confirm(`Delete ${name} ?`))';
+        $html .= '		location.href=`'.$this->deleteURL . '/${id}`;';
         $html .= "	}";
         $html .= "</script>";
         return $html;

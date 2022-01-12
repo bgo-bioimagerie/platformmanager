@@ -41,27 +41,32 @@ class CatalogconfigController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // menu activation form
-        $formMenusactivation = $this->menusactivationForm($id_space, $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'catalog', $lang);
+        
         if ($formMenusactivation->check()) {
-
-            $modelSpace = new CoreSpace();
-            $modelSpace->setSpaceMenu($id_space, "catalog", "catalog", "glyphicon glyphicon-th-list", $this->request->getParameter("catalogmenustatus"), $this->request->getParameter("displayCatalogMenu"), 0, $this->request->getParameter("colorCatalogMenu"), $this->request->getParameter("colorTxtCatalogMenu")
-            );
-            $modelSpace->setSpaceMenu($id_space, "catalog", "catalogsettings", "glyphicon glyphicon-th-list", $this->request->getParameter("catalogsettingsmenustatus"), $this->request->getParameter("displaySettingsMenu"), 1, $this->request->getParameter("colorSettingsMenu"),$this->request->getParameter("colorTxtSettingsMenu")
-            );
-
-            $this->redirect("catalogconfig/" . $id_space);
-            return;
+            $this->menusactivationForm($id_space, 'catalog', 'th-list');
+            return $this->redirect("catalogconfig/" . $id_space);
         }
 
-        $formMenuName = $this->menuNameForm($id_space, $lang);
-        if ($formMenuName->check()) {
-            $modelConfig = new CoreConfig();
-            $modelConfig->setParam("catalogmenuname", $this->request->getParameter("catalogmenuname"), $id_space);
-
-            $this->redirect("catalogconfig/" . $id_space);
-            return;
+        $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'catalogsettings', $lang);
+        if ($formSettingsMenusactivation->check()) {
+            $this->menusactivationForm($id_space, 'catalogsettings', 'th-list');
+            return $this->redirect("catalogconfig/" . $id_space);
         }
+
+
+        $formMenuName = $this->menuNameForm($id_space, 'catalog', $lang);
+        if($formMenuName->check()){
+            $this->setMenuName($id_space, 'catalog');
+            return $this->redirect("catalogconfig/".$id_space);
+        }
+        $formSettingsMenuName = $this->menuNameForm($id_space, 'catalogsettings', $lang);
+        if($formSettingsMenuName->check()){
+            $this->setMenuName($id_space, 'catalogsettings');
+            return $this->redirect("catalogconfig/".$id_space);
+        }
+
+
 
         $formUseAntibodies = $this->antibodiesForm($id_space, $lang);
         if ($formUseAntibodies->check()) {
@@ -90,66 +95,16 @@ class CatalogconfigController extends CoresecureController {
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang),
+        $forms = array(
+            $formMenusactivation->getHtml($lang),
             $formMenuName->getHtml($lang),
+            $formSettingsMenusactivation->getHtml($lang),
+            $formSettingsMenuName->getHtml($lang),
             $formUseAntibodies->getHtml($lang),
             $formUseResources->getHtml($lang),
             $formPublicPageHeader->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
-    }
-
-    protected function menusactivationForm($id_space, $lang) {
-
-        $modelMenu = new CoreSpace();
-        $statusCatalogMenu = $modelMenu->getSpaceMenusRole($id_space, "catalog");
-        $displayCatalogMenu = $modelMenu->getSpaceMenusDisplay($id_space, "catalog");
-        $colorCatalogMenu = $modelMenu->getSpaceMenusColor($id_space, "catalog");
-        $colorTxtCatalogMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "catalog");
-
-        $statusSettingsMenu = $modelMenu->getSpaceMenusRole($id_space, "catalogsettings");
-        $displaySettingsMenu = $modelMenu->getSpaceMenusDisplay($id_space, "catalogsettings");
-        $colorSettingsMenu = $modelMenu->getSpaceMenusColor($id_space, "catalogsettings");
-        $colorTxtSettingsMenu = $modelMenu->getSpaceMenusTxtColor($id_space, "catalogsettings");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $modelStatus = new CoreSpace();
-        $status = $modelStatus->roles($lang);
-
-        $status["names"][] = CoreTranslator::Unactive($lang);
-        $status["ids"][] = 0;
-
-        $form->addSelect("catalogmenustatus", CatalogTranslator::Catalog($lang), $status["names"], $status["ids"], $statusCatalogMenu);
-        $form->addNumber("displayCatalogMenu", CoreTranslator::Display_order($lang), false, $displayCatalogMenu);
-        $form->addColor("colorCatalogMenu", CoreTranslator::color($lang), false, $colorCatalogMenu);
-        $form->addColor("colorTxtCatalogMenu", CoreTranslator::text_color($lang), false, $colorTxtCatalogMenu);
-
-        $form->addSelect("catalogsettingsmenustatus", CatalogTranslator::Catalog_settings($lang), $status["names"], $status["ids"], $statusSettingsMenu);
-        $form->addNumber("displaySettingsMenu", CoreTranslator::Display_order($lang), false, $displaySettingsMenu);
-        $form->addColor("colorSettingsMenu", CoreTranslator::color($lang), false, $colorSettingsMenu);
-        $form->addColor("colorTxtSettingsMenu", CoreTranslator::text_color($lang), false, $colorTxtSettingsMenu);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    protected function menuNameForm($id_space, $lang) {
-        $modelCoreConfig = new CoreConfig();
-        $catalogmenuname = $modelCoreConfig->getParam("catalogmenuname", $id_space);
-
-        $form = new Form($this->request, "catalogmenunameForm");
-        $form->addSeparator(CoreTranslator::MenuName($lang));
-
-        $form->addText("catalogmenuname", CoreTranslator::Name($lang), false, $catalogmenuname);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
     }
 
     protected function antibodiesForm($id_space, $lang) {

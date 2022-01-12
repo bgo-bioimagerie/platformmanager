@@ -35,22 +35,21 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        //$modelConfig = new CoreConfig();
         $modelCoreConfig = new CoreConfig();
 
         $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
         $dateArray = explode("-", $date_begin);
         $y = date("Y") - 1;
-        $m = $dateArray[1] ?? '1';
-        $d = $dateArray[2] ?? '1';
-        $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        $m = $dateArray[1] ?? '01';
+        $d = $dateArray[2] ?? '01';
+        $date_begin = $y . "-" . $m . "-" . $d;
 
         $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
         $dateArray = explode("-", $date_end);
         $y = date("Y");
         $m = $dateArray[1] ?? '12';
         $d = $dateArray[2] ?? '31';
-        $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+        $date_end = $y . "-" . $m . "-" . $d;
 
 
         $form = new Form($this->request, "bookingstatisticauthorizations");
@@ -61,8 +60,8 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatisticauthorizations/" . $id_space);
 
         if ($form->check()) {
-            $period_begin = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
-            $period_end = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
+            $period_begin = $this->request->getParameter("period_begin");
+            $period_end = $this->request->getParameter("period_end");
 
             $this->generateStats($id_space, $period_begin, $period_end);
             return;

@@ -365,12 +365,10 @@ class BookingstatisticsController extends StatisticsController {
 
             // convert start date to unix date
             $tabDate = explode("-", $searchDate_start);
-            $date_debut = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
             $searchDate_s = mktime(0, 0, 0, $tabDate[1], $tabDate[2], $tabDate[0]);
 
             // convert end date to unix date
             $tabDate = explode("-", $searchDate_end);
-            $date_fin = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
             $searchDate_e = mktime(0, 0, 0, $tabDate[1], $tabDate[2] + 1, $tabDate[0]);
 
             if ($searchDate_e <= $searchDate_s) {
@@ -391,14 +389,8 @@ class BookingstatisticsController extends StatisticsController {
             $contition_et_ou = $this->request->getParameterNoException('condition_et_ou');
             $entrySummary = $this->request->getParameterNoException('summary_rq');
 
-            //print_r($champ);
-            //print_r($type_recherche);
-            //print_r($text);
-
             $reportModel = new BkReport();
             $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
-
-            //print_r($table);
 
             $outputType = $this->request->getParameterNoException('output');
 
