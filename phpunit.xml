@@ -11,6 +11,7 @@
       <file>tests/manager/InvoicesTest.php</file>
       <file>tests/manager/QuoteTest.php</file>
       <file>tests/manager/DocumentsTest.php</file>
+      <file>tests/manager/HelpdeskTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>
