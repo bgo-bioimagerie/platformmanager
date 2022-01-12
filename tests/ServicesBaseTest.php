@@ -10,6 +10,7 @@ require_once 'Modules/services/Controller/ServiceslistingController.php';
 require_once 'Modules/services/Controller/ServicesvisaController.php';
 require_once 'Modules/services/Controller/ServicesoriginsController.php';
 require_once 'Modules/services/Controller/ServicespurchaseController.php';
+require_once 'Modules/services/Controller/ServicesordersController.php';
 
 require_once 'Modules/services/Controller/ServicesprojectsController.php';
 require_once 'Modules/services/Controller/StockcabinetController.php';
@@ -194,6 +195,27 @@ class ServicesBaseTest extends BaseTest {
         $data = $c->editAction($space['id'], 0);
         $this->assertTrue($data['purchase']['id'] > 0);
         return $data['purchase'];
+    }
+
+    protected function createOrder($space, $service, $user, $client, $count) {
+        Configuration::getLogger()->debug('create puchase', ['service' => $service, 'space' => $space]);
+        $req = new Request([
+            "path" => "servicesorderedit/".$space['id']."/0",
+            "formid" => "orderEditForm",
+            "no_identification" => 'order'.time(),
+            "id_user" => $user['id'],
+            "id_client" => $client['id'],
+            "id_status" => 1,
+            "date_open" => date('Y-m-d'),
+            "date_close" => '',
+            "services" => [$service['id']],
+            "quantities" => [$count]
+
+        ], false);
+        $c = new ServicesordersController($req, $space);
+        $data = $c->editAction($space['id'], 0);
+        $this->assertTrue($data['order']['id'] > 0);
+        return $data['order'];
     }
 
 }

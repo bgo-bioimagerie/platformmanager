@@ -101,7 +101,7 @@ class ServicespurchaseController extends ServicesController {
                    $qOld = 0; 
                 }
                 else{
-                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id);
+                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id)['quantity'];
                 }
                 $qDelta = $servicesQuantities[$i] - $qOld;
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "add");
