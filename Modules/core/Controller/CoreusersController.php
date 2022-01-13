@@ -180,8 +180,7 @@ class CoreusersController extends CoresecureController {
                 $_SESSION["flashClass"] = "success";
                 $id_user = $this->editQuery($form, $lang);
                 $user = $modelUser->getInfo($id_user);
-                $this->redirect("coreusers", [], ['user' => $user]);
-                return;
+                return $this->redirect("coreusers", [], ['user' => $user]);
             }
         }
         
@@ -196,7 +195,12 @@ class CoreusersController extends CoresecureController {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
 
-        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+        return $this->render(array(
+            "formHtml" => $form->getHtml($lang),
+            "formPwdHtml" => $formPwdHtml,
+            "script" => $script,
+            "data" => ['user' => $user]
+        ));
     }
 
     protected function displayFormWarnings($cause, $id, $lang) {

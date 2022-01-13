@@ -9,6 +9,8 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Controller/CorespaceadminController.php';
 require_once 'Modules/core/Controller/CorespaceaccessController.php';
 require_once 'Modules/core/Controller/CoremainmenuController.php';
+require_once 'Modules/core/Controller/CoreusersController.php';
+
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreInstall.php';
@@ -56,7 +58,20 @@ class CoreTest extends BaseTest {
             $newSpace = $data['space'];
             $this->assertTrue($newSpace['id'] > 0);
             $this->assertNotFalse($this->space($spaceName));
+            $req = $this->request([
+                "path" => "spaceadminedit/".$newSpace['id'],
+            ]);
+            $c = new CorespaceadminController($req);
+            $data = $c->runAction('core', 'edit', ['id_space' => $newSpace['id']]);
+            $this->assertTrue($data['space']['name'] == $spaceName);
         }
+        // list spaces
+        $req = $this->request([
+            "path" => "spaceadmin",
+        ]);
+        $c = new CorespaceadminController($req);
+        $data = $c->runAction('core', 'index');
+        $this->assertTrue(!empty($data['spaces']));
     }
 
     public function testCreateMenus() {
@@ -146,6 +161,25 @@ class CoreTest extends BaseTest {
                 $pm = new CorePendingAccount();
                 $this->assertTrue($pm->isActuallyPending($space['id'], $newUser['id']));
 
+            }
+        }
+
+        // list users
+        $req = $this->request([
+            "path" => "coreusers",
+        ]);
+        $c = new CoreusersController($req);
+        $data = $c->runAction('core', 'index');
+        $this->assertTrue(!empty($data['users']));
+        foreach($data['users'] as $user){
+            if($user['name'] == 'user1') {
+                $req = $this->request([
+                    "path" => "coreusersedit/".$user['id'],
+                ]);
+                $c = new CoreusersController($req);
+                $data = $c->runAction('core', 'edit', ['id' => $user['id']]);
+                $this->assertTrue($data['user']['name'] == 'user1');
+                break;
             }
         }
     }
