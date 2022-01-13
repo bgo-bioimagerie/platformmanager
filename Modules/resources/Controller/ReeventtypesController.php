@@ -50,7 +50,12 @@ class ReeventtypesController extends ResourcesBaseController {
 
         $tableHtml = $table->view($categories, $headers);
 
-        $this->render(array( "id_space" => $id_space, "lang" => $lang, "htmlTable" => $tableHtml));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "htmlTable" => $tableHtml,
+            "data" => ['reeventtypes' => $categories]
+        ));
     }
 
     /**
@@ -81,16 +86,17 @@ class ReeventtypesController extends ResourcesBaseController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
-            $this->redirect("reeventtypes/".$id_space);
+            $id_type = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
+            return $this->redirect("reeventtypes/".$id_space, [], ['reeventtype' => ['id' => $id_type]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['reeventtype' => $site]
             ));
         }
     }

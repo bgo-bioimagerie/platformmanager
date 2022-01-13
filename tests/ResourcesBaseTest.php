@@ -7,6 +7,10 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/resources/Controller/ResourcesconfigController.php';
 require_once 'Modules/resources/Controller/ReareasController.php';
 require_once 'Modules/resources/Controller/RecategoriesController.php';
+require_once 'Modules/resources/Controller/RerespsstatusController.php';
+require_once 'Modules/resources/Controller/RestatesController.php';
+require_once 'Modules/resources/Controller/ReeventtypesController.php';
+
 require_once 'Modules/resources/Controller/RevisasController.php';
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Controller/ResourcesController.php';
@@ -39,6 +43,15 @@ class ResourcesBaseTest extends BaseTest {
             }
         }
         $this->assertTrue($resourcesEnabled);
+    }
+
+    protected function getResources($space) {
+        $req = new Request([
+            "path" => "resources/".$space['id']
+        ], false);
+        $c = new ResourcesinfoController($req, $space);
+        $data = $c->indexAction($space['id']);
+        return $data['resources'];        
     }
 
     protected function setupResources($space, $user, $suffix='') {
@@ -112,6 +125,61 @@ class ResourcesBaseTest extends BaseTest {
     }
 
 
+    protected function addInstructorStatus($space, $name){
+        $req = new Request([
+            "path" => "rerespsstatusedit/".$space['id']."/0",
+            "formid" => "rerespsstatusedit",
+            "id" => 0,
+            "name" => $name
+        ], false);
+        $c = new RerespsstatusController($req, $space);
+        $status = $c->editAction($space['id'], 0);
+        $this->assertTrue($status['rerespsstatus']['id'] > 0);
+        return $status['rerespsstatus'];
+    }
+
+    protected function addEventType($space, $name){
+        $req = new Request([
+            "path" => "reeventtypesedit/".$space['id']."/0",
+            "formid" => "reeventtypesedit",
+            "id" => 0,
+            "name" => $name
+        ], false);
+        $c = new ReeventtypesController($req, $space);
+        $status = $c->editAction($space['id'], 0);
+        $this->assertTrue($status['reeventtype']['id'] > 0);
+        return $status['reeventtype'];
+    }
+
+    protected function addState($space, $name){
+        $req = new Request([
+            "path" => "restatesedit/".$space['id']."/0",
+            "formid" => "restatesedit",
+            "id" => 0,
+            "name" => $name,
+            "color" => '#ff0000'
+        ], false);
+        $c = new RestatesController($req, $space);
+        $status = $c->editAction($space['id'], 0);
+        $this->assertTrue($status['restate']['id'] > 0);
+        return $status['restate'];
+    }
+
+    protected function addResourceEvent($space, $resource, $user, $eventtype, $state) {
+        $req = new Request([
+            "path" => "resourceeditevent/".$space['id']."/".$resource['id']."/0",
+            "formid" => "editevent",
+            "date" => date('Y-m-d'),
+            "id_user" => $user['id'],
+            "id_eventtype" => $eventtype['id'],
+            "id_state" => $state['id'],
+            "comment" => "some event at ".time()
+        ], false);
+        $c = new ResourcesinfoController($req, $space);
+        $status = $c->editeventAction($space['id'], $resource['id'], 0);
+        $this->assertTrue($status['reevent']['id'] > 0);
+        return $status['reevent'];     
+    }
 }
 
 

@@ -52,7 +52,12 @@ class RerespsstatusController extends ResourcesBaseController {
 
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlTable" => $tableHtml));
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "htmlTable" => $tableHtml,
+            "data" => ["rerespsstatus" => $data]
+        ));
     }
 
     /**
@@ -83,16 +88,17 @@ class RerespsstatusController extends ResourcesBaseController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
-            $this->redirect("rerespsstatus/".$id_space);
+            $id_status = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
+            return $this->redirect("rerespsstatus/".$id_space, [], ['rerespsstatus' => ['id' => $id_status]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
-            $this->render(array(
+            return $this->render(array(
                 "id_space" => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'rerespsstatus' => $data
             ));
         }
     }

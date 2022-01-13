@@ -44,10 +44,11 @@ class ReState extends Model {
     public function set($id, $name, $color, $id_space) {
         if ($this->exists($id_space, $id)) {
             $sql = "UPDATE re_state SET name=?, color=? WHERE id=? AND id_space=? AND deleted=0";
-            $id = $this->runRequest($sql, array($name, $color, $id, $id_space));
+            $this->runRequest($sql, array($name, $color, $id, $id_space));
         } else {
             $sql = "INSERT INTO re_state (name, color, id_space) VALUES (?,?,?)";
             $this->runRequest($sql, array($name, $color, $id_space));
+            $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }

@@ -247,25 +247,39 @@ class ResourcesinfoController extends ResourcesBaseController {
         $formEvent = $this->createEventForm($id_space, $id_resource, $id_event, $lang, false);
         $filesTable = $this->createFilesTable($id_space, $id_event, $lang);
 
+        $data = null;
+        if($id_event > 0) {
+            $modelEvent = new ReEvent();
+            $data = $modelEvent->get($id_space, $id_event);
+        }
+
         $modelResource = new ResourceInfo();
         $resourceInfo = $modelResource->get($id_space, $id_resource);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formEvent" => $formEvent->getHtml($lang),
-            "filesTable" => $filesTable, "resourceInfo" => $resourceInfo, "id_event" => $id_event));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formEvent" => $formEvent->getHtml($lang),
+            "filesTable" => $filesTable,
+            "resourceInfo" => $resourceInfo,
+            "id_event" => $id_event,
+            "data" => ["reevent" => $data]
+        ));
     }
 
     public function editEventAction($id_space, $id_resource, $id_event) {
         $authorized = $this->checkAuthorizationMenuSpaceNoException("resources", $id_space, $_SESSION["id_user"]);
         if (!$authorized) {
-            $this->editeventroAction($id_space, $id_resource, $id_event);
-            return;
+            return $this->editeventroAction($id_space, $id_resource, $id_event);
         }
 
+        $modelEvent = new ReEvent();
+        $data = null;
         if ($id_event == 0) {
-            $modelEvent = new ReEvent();
-            $id_event = $modelEvent->addDefault($id_space, $id_resource, $_SESSION["id_user"]);
-            $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
-            return;
+            //$id_event = $modelEvent->addDefault($id_space, $id_resource, $_SESSION["id_user"]);
+            //return $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
+        } else {
+            $data = $modelEvent->get($id_space, $id_event);
         }
 
         $lang = $this->getLanguage();
@@ -274,10 +288,9 @@ class ResourcesinfoController extends ResourcesBaseController {
         if ($formEvent->check()) {
 
             $modelEvent = new ReEvent();
-            $modelEvent->set($id_space , $id_event, $id_resource, CoreTranslator::dateToEn($formEvent->getParameter("date"), $lang), $formEvent->getParameter("id_user"), $formEvent->getParameter("id_eventtype"), $formEvent->getParameter("id_state"), $formEvent->getParameter("comment"));
-
-            $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
-            return;
+            $new_id_event = $modelEvent->set($id_space , $id_event, $id_resource, CoreTranslator::dateToEn($formEvent->getParameter("date"), $lang), $formEvent->getParameter("id_user"), $formEvent->getParameter("id_eventtype"), $formEvent->getParameter("id_state"), $formEvent->getParameter("comment"));
+            $_SESSION['flash'] = 'Event updated';
+            return $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $new_id_event, [], ['reevent' => ['id' => $new_id_event]]);
         }
         $formDownload = $this->createDownloadForm($id_space, $id_resource, $id_event, $lang);
 
@@ -286,9 +299,16 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $headerInfo["curentTab"] = "events";
         $headerInfo["resourceId"] = $id_resource;
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formEvent" => $formEvent->getHtml($lang),
-            "formDownload" => $formDownloadHtml, "headerInfo" => $headerInfo,
-            "filesTable" => $filesTable, "id_event" => $id_event));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formEvent" => $formEvent->getHtml($lang),
+            "formDownload" => $formDownloadHtml,
+            "headerInfo" => $headerInfo,
+            "filesTable" => $filesTable,
+            "id_event" => $id_event,
+            "data" => ['reevent' => $data]
+        ));
     }
 
     public function editeventfileAction($id_space) {
@@ -427,6 +447,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $modelResps = new ReResps();
         $respsData = $modelResps->getResps($id_space, $id_resource);
+        $data = $respsData;
         $resps = array();
         $rstatus = array();
         foreach ($respsData as $r) {
@@ -471,17 +492,23 @@ class ResourcesinfoController extends ResourcesBaseController {
             $id_users = $this->request->getParameter("id_user");
             $id_statuss = $this->request->getParameter("id_status");
 
+            $ids = [];
             for ($i = 0; $i < count($id_users); $i++) {
-                $modelResps->setResp($id_space, $id_resource, $id_users[$i], $id_statuss[$i]);
+                $ids[] = $modelResps->setResp($id_space, $id_resource, $id_users[$i], $id_statuss[$i]);
             }
             $modelResps->clean($id_space ,$id_resource, $id_users);
-            $this->redirect("resourcesresp/" . $id_space . "/" . $id_resource);
-            return;
+            return $this->redirect("resourcesresp/" . $id_space . "/" . $id_resource, [], ['reresps' => $ids]);
         }
 
         $headerInfo["curentTab"] = "resps";
         $headerInfo["resourceId"] = $id_resource;
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang), "headerInfo" => $headerInfo));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang),
+            "headerInfo" => $headerInfo,
+            "data" => ["reresps" => $data]
+        ));
     }
 
     public function deleteAction($id_space, $id) {

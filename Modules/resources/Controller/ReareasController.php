@@ -86,17 +86,18 @@ class ReareasController extends ResourcesBaseController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), 
+            $id_area = $this->model->set($form->getParameter("id"), $form->getParameter("name"), 
                     $form->getParameter("is_restricted"), $id_space);
-            $this->redirect("reareas/".$id_space);
+            return $this->redirect("reareas/".$id_space, [], ['rearea' => ['id' => $id_area]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['rearea' => $area]
             ));
         }
     }
@@ -109,14 +110,16 @@ class ReareasController extends ResourcesBaseController {
         $resourceModel = new ResourceInfo();
         $linkedResources = $resourceModel->resourcesForArea($id_space, $id);
 
+        $error = null;
         if ($linkedResources == null || empty($linkedResources)) {
             // not linked to resources, deletion is authorized
             $this->model->delete($id_space, $id);
         } else {
             // linked to resources, notify the user
             $_SESSION["message"] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Area($lang), $lang);
+            $error = 'deletionnotauthorized';
         }
-        $this->redirect("reareas/".$id_space);
+        return $this->redirect("reareas/".$id_space, [], ['error' => $error]);
     }
 
 }
