@@ -2,6 +2,7 @@
 
 ## 2.2.2
 
+* [booking] fix scheduling creation for new resource areas
 * [db] add upgrade_v3_v4 migration script on se_order
   **Warning**: if you installed release <= 2.2.2 you need to run a db fix script
   php cli/pfm-cli.php repair --bug 499

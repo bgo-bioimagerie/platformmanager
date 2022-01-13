@@ -111,7 +111,7 @@ class BookingschedulingController extends BookingsettingsController {
         $form->setButtonsWidth(3, 9);
 
         if ($form->check()) {
-            $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],
+            $modelScheduling->edit($id_space, $id_rearea,
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 
