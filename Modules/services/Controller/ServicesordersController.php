@@ -194,7 +194,7 @@ class ServicesordersController extends ServicesController {
                     $id_space,
                     $this->request->getParameter("id_user"),
                     $this->request->getParameter("id_client"),
-                    $this->request->getParameter("no_identification"), 
+                    $this->request->getParameter("no_identification"),
                     $_SESSION["id_user"], 
                     CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
                     date("Y-m-d", time()), 
@@ -205,7 +205,23 @@ class ServicesordersController extends ServicesController {
             
             $servicesIds = $this->request->getParameter("services");
             $servicesQuantities = $this->request->getParameter("quantities");
+            
+            // set deleted = 1 for removed services
+            $oldServicesIds = $modelOrder->getOrderServices($id_space ,$id)['services'];
+            Configuration::getLogger()->debug("[TEST]", ["oldIds" => $oldServicesIds, "currentIds" => $servicesIds]);
+            $deletedServicesIds = array_diff_key($oldServicesIds, $servicesIds);
+            Configuration::getLogger()->debug("[TEST]", ["deletedServicesIds" => $deletedServicesIds]);
 
+            if (!empty($deletedServicesIds)) {
+                // delete removed order services
+                foreach($deletedServicesIds as $deletedServiceId) {
+                    Configuration::getLogger()->debug("[TEST]", ["deletedServiceId" => $deletedServiceId]);
+                    $modelOrder->deleteOrderService($id_space, $deletedServiceId, $id);
+                }
+            }
+
+            // TODO: can't remove services from orders
+            Configuration::getLogger()->debug("[TEST]", ["servicesQuantities" => $servicesQuantities, "servicesIds" => $servicesIds]);
             for ($i = 0; $i < count($servicesQuantities); $i++) {
                 $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
                 $qDelta = $servicesQuantities[$i] - $qOld;

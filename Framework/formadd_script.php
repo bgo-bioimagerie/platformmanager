@@ -43,7 +43,6 @@
 
     function deleteRow(tableID) {
         try {
-
             var idx = 2;
             if (tableID === "tableIDname") {
                 idx = 2;
