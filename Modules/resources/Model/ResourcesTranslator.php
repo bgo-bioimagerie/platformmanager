@@ -395,4 +395,11 @@ class ResourcesTranslator {
         return "You need first to create a status in Resources module > Instructors status";
     }
     
+    public static function AreaNotAuthorized($lang = "") {
+        if ($lang == "fr") {
+            return "Le domaine demandé ne fait pas partie de cet espace";
+        }
+        return "Required area is not part of this space";
+    }
+
 }

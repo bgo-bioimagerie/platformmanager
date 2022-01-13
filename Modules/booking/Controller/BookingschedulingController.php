@@ -5,6 +5,7 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ReArea.php';
@@ -60,15 +61,17 @@ class BookingschedulingController extends BookingsettingsController {
         
         $modelArea = new ReArea();
         $area = $modelArea->get($id_space, $id_rearea);
+        if (!$area) {
+            throw new PfmUserException(ResourcesTranslator::AreaNotAuthorized($lang), 403);
+        }
+        
         $name = $area['name'];
         
         $modelScheduling = new BkScheduling();
         $bkScheduling = $modelScheduling->getByReArea($id_space, $id_rearea);
-
-        if (!$bkScheduling) {
-            $bkScheduling = $modelScheduling->getDefault();
+        if ($bkScheduling['id_rearea'] == 0) {
+            $bkScheduling['id_rearea'] = $id_rearea;
             $bkScheduling["id_space"] = $id_space;
-            $bkScheduling["id_rearea"] = $id_rearea;
         }
 
         $form = new Form($this->request, "bookingschedulingedit");
@@ -111,7 +114,7 @@ class BookingschedulingController extends BookingsettingsController {
         $form->setButtonsWidth(3, 9);
 
         if ($form->check()) {
-            $modelScheduling->edit($id_space, $id_rearea,
+            $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 
