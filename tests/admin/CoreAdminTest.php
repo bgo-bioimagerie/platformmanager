@@ -24,9 +24,10 @@ class CoreTest extends BaseTest {
 
     public function testInstallAndCoreAccess()
     {
-        $req = new Request(["path" => ""], true);
+        $this->asAdmin();
+        $req = $this->request(["path" => ""]);
         $c = new CoreconnectionController($req);
-        $c->indexAction();
+        $c->runAction('core', 'index');
         $m = new CoreUser();
         $users = $m->getAll();
         Configuration::getLogger()->debug('[core] users', ['users' => $users]);
@@ -38,7 +39,7 @@ class CoreTest extends BaseTest {
         $spaces = $ctx['spaces'];
         foreach($spaces as $spaceName => $data) {
             $this->asAdmin();
-            $req = new Request([
+            $req = $this->request([
                 "path" => "spaceadminedit/0",
                 "formid" => "corespaceadminedit",
                 "name" => $spaceName,
@@ -49,9 +50,9 @@ class CoreTest extends BaseTest {
                 "support" => "",
                 "description" => "",
                 "admins" => []
-            ], true);
+            ]);
             $c = new CorespaceadminController($req);
-            $data = $c->editAction(0);
+            $data = $c->runAction('core', 'edit', ['id_space' => 0]);
             $newSpace = $data['space'];
             $this->assertTrue($newSpace['id'] > 0);
             $this->assertNotFalse($this->space($spaceName));
@@ -62,28 +63,28 @@ class CoreTest extends BaseTest {
         $this->asAdmin();
 
         $menuName = 'menu1';
-        $req = new Request([
+        $req = $this->request([
             "path" => "coremainmenuedit/0",
             "formid" => "editmainmenuform",
             "name" => $menuName,
             "display_order" => 0
-        ], true);
+        ]);
         $c = new CoremainmenuController($req);
-        $c->editAction(0);
+        $c->runAction('core', 'edit', ['id' => 0]);
 
         $menuModel = new CoreMainMenu();
         $menus = $menuModel->getAll();
 
         $subMenuName = 'submenu1';
-        $req = new Request([
+        $req = $this->request([
             "path" => "coresubmenuedit/0",
             "formid" => "editmainsubmenuform",
             "name" => $subMenuName,
             "id_main_menu" => $menus[0]['id'],
             "display_order" => 0
-        ], true);
+        ]);
         $c = new CoremainmenuController($req);
-        $c->submenueditAction(0);
+        $c->runAction('core', 'submenuedit', ['id' => 0]);
 
         $subMenuModel = new CoreMainSubMenu();
         $subMenus = $subMenuModel->getAll();
@@ -91,16 +92,16 @@ class CoreTest extends BaseTest {
         $spaces = $this->spaces();
         foreach ($spaces as $space) {
             $itemMenuName = $space['name'];
-            $req = new Request([
+            $req = $this->request([
                 "path" => "coremainmenuitemedit/0",
                 "formid" => "editmenuitemform",
                 "name" => $itemMenuName,
                 "id_sub_menu" => $subMenus[0]['id'],
                 "id_space" => $space['id'],
                 "display_order" => 0
-            ], true);
+            ]);
             $c = new CoremainmenuController($req);
-            $c->itemeditAction(0);
+            $c->runAction('core', 'itemedit', ['id' => 0]);
         }
         $itemMenuModel = new CoreMainMenuItem();
         $itemMenus = $itemMenuModel->getAll();
@@ -125,7 +126,7 @@ class CoreTest extends BaseTest {
                 $usersToAdd[] = $u;
             }
             foreach($usersToAdd as $userName) {
-                $req = new Request([
+                $req = $this->request([
                     "path" => "corespaceaccessuseradd/".$space['id'],
                     "formid" => "createuseraccountform",
                     "name" => $userName,
@@ -133,9 +134,9 @@ class CoreTest extends BaseTest {
                     "login" =>  $userName,
                     "email" => $userName."@pfm.org",
                     "phone" => ""
-                ], true);
+                ]);
                 $c = new CorespaceaccessController($req);
-                $data = $c->useraddAction($space['id']);
+                $data = $c->runAction('core', 'useradd', ['id_space' => $space['id']]);
                 $newUser = $data['user'];
                 $this->assertTrue($newUser && $newUser['id'] > 0);
     
@@ -154,14 +155,14 @@ class CoreTest extends BaseTest {
         $pm = new CorePendingAccount();
         $pendings = $pm->getBySpaceIdAndUserId($space_id, $user_id);
 
-        $req = new Request([
+        $req = $this->request([
             "path" => "corespacependinguseredit/".$space_id."/".$pendings['id'],
             "formid" => "pendingusereditactionform",
             "role" => $role
-        ], true);
+        ]);
 
         $c = new CorespaceaccessController($req);
-        $c->pendingusereditAction($space_id, $pendings['id']);
+        $c->runAction('core', 'pendinguseredit', ['id_space' => $space_id, 'id' => $pendings['id']]);
         $sm = new CoreSpace();
         $urole = $sm->getUserSpaceRole($space_id, $user_id);
         $this->assertEquals($role, $urole);

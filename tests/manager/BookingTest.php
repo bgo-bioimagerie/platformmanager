@@ -51,20 +51,20 @@ class BookingTest extends BookingBaseTest {
         $space = $this->space($spaces[0]);
 
         $this->asAdmin();
-        $req = new Request([
+        $req = $this->request([
             "path" => "resources/".$space['id'],
             "id" => 0
-         ], false); 
+         ]); 
         $c = new ResourcesinfoController($req, $space);
-        $data = $c->indexAction($space['id']);
+        $data = $c->runAction('resources', 'index', ['id_space' =>$space['id']]);
         $resources = $data['resources'];
 
-        $req = new Request([
+        $req = $this->request([
             "path" => "clclients/".$space['id'],
             "id" => 0
-         ], false); 
+         ]); 
         $c = new ClientslistController($req, $space);
-        $data = $c->indexAction($space['id']);
+        $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
         $clients = $data['clients'];
 
         $admin = $this->user($ctx['spaces'][$spaces[0]]['admins'][0]);

@@ -33,12 +33,12 @@ class ServicesTest extends ServicesBaseTest {
 
 
             $this->asUser($user['login'], $space['id']);
-            $req = new Request([
+            $req = $this->request([
                 "path" => "clclients/".$space['id'],
                 "id" => 0
-             ], false); 
+             ]); 
             $c = new ClientslistController($req, $space);
-            $clients_data = $c->indexAction($space['id']);
+            $clients_data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
             $clients = $clients_data['clients'];
             $client_user = $this->user($data['users'][0]);
             $this->createProject($space, $user, 'project1', $visa, $clients[0], $client_user, $origin);
@@ -83,12 +83,12 @@ class ServicesTest extends ServicesBaseTest {
             $services = $this->getServices($space);
             $user = $this->user($data['users'][0]);
 
-            $req = new Request([
+            $req = $this->request([
                 "path" => "clclients/".$space['id'],
                 "id" => 0
-             ], false); 
+             ]); 
             $c = new ClientslistController($req, $space);
-            $data = $c->indexAction($space['id']);
+            $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
             $clients = $data['clients'];
             
             $this->createOrder($space, $services[0], $user, $clients[0], 2);

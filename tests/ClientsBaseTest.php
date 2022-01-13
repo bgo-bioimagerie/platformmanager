@@ -18,18 +18,19 @@ class ClientsBaseTest extends BaseTest {
         Configuration::getLogger()->debug('setup clients', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
         // activate clients module
-        $req = new Request([
+        $req = $this->request([
             "path" => "clientsconfig/".$space['id'],
             "formid" => "clientsmenusactivationForm",
             "clientsMenustatus" => 3,
             "clientsDisplayMenu" => 0,
             "clientsDisplayColor" =>  "#000000",
             "clientsDisplayColorTxt" => "#ffffff"
-        ], false);
+        ]);
         $c = new ClientsconfigController($req, $space);
-        $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
-        $spaceView = $c->viewAction($space['id']);
+        $c->runAction('clients', 'index', ['id_space' => $space['id']]);
+        $req = $this->request(["path" => "corespace/".$space['id']]);
+        $c = new CorespaceController($req, $space);
+        $spaceView = $c->runAction('core', 'view', ['id_space' => $space['id']]);
         $clientsEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
             if($menu['url'] == 'clients') {
@@ -44,7 +45,7 @@ class ClientsBaseTest extends BaseTest {
         $this->asUser($user['login'], $space['id']);
 
         // Create pricing
-        $req = new Request([
+        $req = $this->request([
             "path" => "clpricingedit/".$space['id']."/0",
             "formid" => "pricing/edit",
             "id" => 0,
@@ -53,18 +54,27 @@ class ClientsBaseTest extends BaseTest {
             "txtcolor" => "#ffffff",
             "display_order" => 0,
             "type" => 1
-        ], false);
+        ]);
         $c = new ClientspricingsController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('clients', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $pricing = $data['pricing'];
         $this->assertTrue($pricing['id'] > 0);
-        $data = $c->indexAction($space['id']);
+        $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
         $pricings = $data['pricings'];
         $this->assertFalse(empty($pricings));
 
+        // Check edit on pricing
+        $req = $this->request([
+            "path" => "clpricingedit/".$space['id']."/".$pricing['id'],
+        ]);
+        $c = new ClientspricingsController($req, $space);
+        $data = $c->runAction('clients', 'edit', ['id_space' => $space['id'], 'id' => $pricing['id']]);
+        $this->assertTrue($data['pricing']['id'] == $pricing['id']);
+        $this->assertTrue($data['pricing']['name'] == "pricing1".$suffix);
+
         
         // Create client
-        $req = new Request([
+        $req = $this->request([
             "path" => "clclientedit/".$space['id']."/0",
             "formid" => "client/edit",
             "id" => 0,
@@ -75,12 +85,12 @@ class ClientsBaseTest extends BaseTest {
             "pricing" => $pricing['id'],
             "invoice_send_preference" => 1
 
-        ], false);
+        ]);
         $c = new ClientslistController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('clients', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $client = $data['client'];
         $this->assertTrue($client['id'] > 0);
-        $data = $c->indexAction($space['id']);
+        $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
         $clients = $data['clients'];
         $this->assertFalse(empty($clients));
         return $client;
@@ -90,18 +100,18 @@ class ClientsBaseTest extends BaseTest {
         Configuration::getLogger()->debug('add to clients', ['client' => $client, 'user' => $clientUser, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
         // activate resources module
-        $req = new Request([
+        $req = $this->request([
             "path" => "clclientusers/".$space['id']."/".$client['id'],
             "formid" => "clientsusersform",
             "id_user" => $clientUser['id'],
-        ], false);
+        ]);
         $c = new ClientsusersController($req, $space);
-        $c->indexAction($space['id'], $client['id']);
-        $req = new Request([
+        $c->runAction('clients', 'index', ['id_space' => $space['id'], 'id_client' => $client['id']]);
+        $req = $this->request([
             "path" => "clclientusers/".$space['id']."/".$client['id'],
-        ], false);
+        ]);
         $c = new ClientsusersController($req, $space);
-        $data = $c->indexAction($space['id'], $client['id']);
+        $data = $c->runAction('clients', 'index', ['id_space' => $space['id'], 'id_client' => $client['id']]);
         $clientsusers = $data['clientsusers'];
         $this->assertTrue(!empty($clientsusers));
         $userInClient = false;

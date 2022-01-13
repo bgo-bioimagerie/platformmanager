@@ -199,12 +199,6 @@ abstract class Controller {
             return null;
         }
 
-        if (getenv("PFM_MODE") == "test") {
-            if(isset($dataView['data'])) {
-                return $dataView['data'];
-            }
-            return null;
-        }
 
         if(isset($_SESSION['flash'])) {
             $dataView['flash'] = ['msg' => $_SESSION['flash'], 'class' => 'warning'];
@@ -216,6 +210,8 @@ abstract class Controller {
         } else {
             $dataView['flash'] = null;
         }
+
+
 
        
         // Generate the view
@@ -229,6 +225,18 @@ abstract class Controller {
             "currentSpace" => $this->currentSpace,  // current space if any
             "role" => $this->role   // user role in space if any
         ];
+
+        if (getenv("PFM_MODE") == "test") {
+            // Need to know module name and action
+            $view = new View($actionView, $controllerView, $this->module);
+            $view->generate($dataView);
+            ob_end_clean();
+            if(isset($dataView['data'])) {
+                return $dataView['data'];
+            }
+            return null;
+        }
+
         if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
             // TODO add navbar generation
             require_once 'Modules/core/Controller/CorenavbarController.php';
