@@ -26,12 +26,19 @@ class QuoteTest extends QuoteBaseTest {
         $manager = $this->user($ctx['spaces'][$spaces[0]]['managers'][0]);
         $user = $this->user($ctx['spaces'][$spaces[0]]['users'][0]);
         $this->asUser($manager['login'], $space['id']);
+        /*
         $req = new Request([
             "path" => "clclients/".$space['id'],
             "id" => 0
-         ], false); 
+         ], false);
+        */
+        $req = $this->request([
+            "path" => "clclients/".$space['id'],
+            "id" => 0
+        ]);
         $c = new ClientslistController($req, $space);
-        $data = $c->indexAction($space['id']);
+        //$data = $c->indexAction($space['id']);
+        $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
         $clients = $data['clients'];
         $client = $clients[0];
 
@@ -48,12 +55,12 @@ class QuoteTest extends QuoteBaseTest {
         $this->asUser($manager['login'], $space['id']);
         $id_quote = $this->createQuoteUser($space, $user, $client);
 
-        $req = new Request([
+        $req = $this->request([
             "path" => "services/".$space['id'],
 
-        ], false);
+        ]);
         $c = new ServiceslistingController($req, $space);
-        $data = $c->listingAction($space['id']);
+        $data = $c->runAction('services', 'listing', ['id_space' => $space['id']]);
         $services = $data['services'];
         // Add items to quote
         foreach ($services as $service) {

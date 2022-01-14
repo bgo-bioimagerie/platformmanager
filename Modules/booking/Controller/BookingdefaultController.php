@@ -219,6 +219,34 @@ class BookingdefaultController extends BookingabstractController {
 
             $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
+
+        $modelScheduling = new BkScheduling();
+        $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
+        $bk_start_start_time = mktime($schedule["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+        $bk_start_end_time = mktime($schedule["day_end"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+
+        $bk_end_start_time = mktime($schedule["day_begin"], 0, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
+        $bk_end_end_time = mktime($schedule["day_end"], 0, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
+
+
+        $dayofweek = strtolower(date('l', $start_time));
+        if(!$schedule['is_'.$dayofweek]) {
+            throw new PfmParamException('invalid booking start day: '.$dayofweek);
+        }
+        $dayofweek = strtolower(date('l', $end_time));
+        if(!$schedule['is_'.$dayofweek]) {
+            throw new PfmParamException('invalid bookin end day: '.$dayofweek);
+        }
+
+        if($bk_start_start_time > $start_time || $start_time > $bk_start_end_time) {
+            throw new PfmParamException("start hour not in schedule [".$schedule["day_begin"].":".$schedule["day_end"]."]");
+        }
+
+        if($bk_end_start_time > $end_time || $end_time > $bk_end_end_time) {
+            throw new PfmParamException("end hour not in schedule [".$schedule["day_begin"].":".$schedule["day_end"]."]");
+        }
+
+
         $modelSupInfo = new BkCalSupInfo();
         $supInfos = $modelSupInfo->getForResource($id_space, $id_resource);
         $supplementaries = "";

@@ -71,10 +71,12 @@ class BookingabstractController extends CoresecureController {
         $modelResource = new ResourceInfo();
         $resources = $modelResource->resourceIDNameForArea($curentSiteId, $curentAreaId);
 
+        /*
         $_SESSION['bk_id_resource'] = $curentResourceId;
         $_SESSION['bk_id_area'] = $curentAreaId;
         $_SESSION['bk_id_site'] = $curentSiteId;
         $_SESSION['bk_curentDate'] = $curentDate;
+        */
 
         return array(
             'areas' => $areas,
@@ -82,7 +84,7 @@ class BookingabstractController extends CoresecureController {
             'curentSiteId' => $curentSiteId,
             'curentAreaId' => $curentAreaId,
             'curentResourceId' => $curentResourceId,
-            'curentDate' => $curentDate
+            'curentDate' => $curentDate,
         );
     }
     

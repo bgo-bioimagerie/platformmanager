@@ -23,18 +23,19 @@ class ServicesBaseTest extends BaseTest {
     protected function activateServices($space, $user) {
         Configuration::getLogger()->debug('activate services', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesconfig/".$space['id'],
             "formid" => "servicesmenusactivationForm",
             "servicesMenustatus" => 3,
             "servicesDisplayMenu" => 0,
             "servicesDisplayColor" =>  "#000000",
             "servicesDisplayColorTxt" => "#ffffff"
-        ], false);
+        ]);
         $c = new ServicesconfigController($req, $space);
-        $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
-        $spaceView = $c->viewAction($space['id']);
+        $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $req = $this->request(["path" => "corespace/".$space['id']]);
+        $c = new CorespaceController($req, $space);
+        $spaceView = $c->runAction('core', 'view', ['id_space' => $space['id']]);
         $invoicesEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
             if($menu['url'] == 'services') {
@@ -44,29 +45,29 @@ class ServicesBaseTest extends BaseTest {
         $this->assertTrue($invoicesEnabled);
 
 
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesconfig/".$space['id'],
             "formid" => "periodCommandForm",
             "servicesuseproject" => 1,
             "servicesusecommand" => 1,
-        ], false);
+        ]);
         $c = new ServicesconfigController($req, $space);
-        $c->indexAction($space['id']);
+        $c->runAction('services', 'index', ['id_space' => $space['id']]);
 
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesconfig/".$space['id'],
             "formid" => "stockForm",
             "servicesusestock" => 1,
-        ], false);
+        ]);
         $c = new ServicesconfigController($req, $space);
-        $c->indexAction($space['id']);
+        $c->runAction('services', 'index', ['id_space' => $space['id']]);
 
     }
 
     protected function createServices($space, $user, string $service) {
         Configuration::getLogger()->debug('create services', ['user' => $user, 'space' => $space, 'service' => $service]);
         $this->asUser($user['login'], $space['id']);
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesedit/".$space['id'],
             "formid" => "editserviceform",
             "name" => $service,
@@ -74,64 +75,64 @@ class ServicesBaseTest extends BaseTest {
             "display_order" => "0",
             "type_id" => 1  // quantity
 
-        ], false);
+        ]);
         $c = new ServiceslistingController($req, $space);
-        $data = $c->editAction($space['id'], '');
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => '']);
         $this->assertTrue($data['service']['id'] > 0);
         return $data['service'];
     }
 
     protected function getServices($space) {
-        $req = new Request([
+        $req = $this->request([
             "path" => "services/".$space['id']
-        ], false);
+        ]);
         $c = new ServiceslistingController($req, $space);
-        $data = $c->listingAction($space['id']);
+        $data = $c->runAction('services', 'listing', ['id_space' => $space['id']]);
         return $data['services'];        
     }
 
     protected function createVisa($space, $user) {
         Configuration::getLogger()->debug('create visa', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesvisaedit/".$space['id']."/0",
             "formid" => "editserviceform",
             "id_user" => $user['id'],
-        ], false);
+        ]);
         $c = new ServicesvisaController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $this->assertTrue($data['visa']['id'] > 0);
         return $data['visa'];
     }
 
     protected function createCabinet($space, $cabinet) {
         Configuration::getLogger()->debug('create cabinet', ['cabinet' => $cabinet, 'space' => $space]);
-        $req = new Request([
+        $req = $this->request([
             "path" => "stockcabineteditedit/".$space['id']."/0",
             "formid" => "stockcabineteditform",
             "id" => 0,
             "room_number" => $cabinet["room_number"],
             "name" => $cabinet['name'],
 
-        ], false);
+        ]);
         $c = new StockcabinetController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $this->assertTrue($data['cabinet']['id'] > 0);
         return $data['cabinet'];
     }
 
     protected function createShelf($space, $cabinet, $shelf) {
         Configuration::getLogger()->debug('create shelf', ['shelf' => $shelf, 'space' => $space]);
-        $req = new Request([
+        $req = $this->request([
             "path" => "stockshelfeditedit/".$space['id']."/0",
             "formid" => "stockshelfeditform",
             "id" => 0,
             "id_cabinet" => $cabinet['id'],
             "name" => $shelf['name'],
 
-        ], false);
+        ]);
         $c = new StockshelfController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $this->assertTrue($data['shelf']['id'] > 0);
         return $data['shelf'];
     }
@@ -140,14 +141,14 @@ class ServicesBaseTest extends BaseTest {
     protected function createOrigin($space, $user, $origin) {
         Configuration::getLogger()->debug('create origin', ['user' => $user, 'space' => $space, 'origin' => $origin]);
         $this->asUser($user['login'], $space['id']);
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesoriginedit/".$space['id']."/0",
             "formid" => "editserviceform",
             "name" => $origin,
             "display_order" => 1
-        ], false);
+        ]);
         $c = new ServicesoriginsController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $this->assertTrue($data['origin']['id'] > 0);
         return $data['origin'];
     }
@@ -158,7 +159,7 @@ class ServicesBaseTest extends BaseTest {
         $this->asUser($user['login'], $space['id']);
         $date = new DateTime();
         $date->modify('next monday');
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesprojectsedit/".$space['id']."/0",
             "formid" => "projectEditForm",
             "in_charge" => $visa['id'],
@@ -171,9 +172,9 @@ class ServicesBaseTest extends BaseTest {
             "time_limit" => $date->format('Y-m-d'),
             "date_open" => date('Y-m-d'),
             "date_close" => ""
-        ], false);
+        ]);
         $c = new ServicesprojectsController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $this->assertTrue($data['project']['id'] > 0);
         return $data['project'];
 
@@ -182,7 +183,7 @@ class ServicesBaseTest extends BaseTest {
 
     protected function createPurchase($space, $service, $count) {
         Configuration::getLogger()->debug('create puchase', ['service' => $service, 'space' => $space]);
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicespurchaseedit/".$space['id']."/0",
             "formid" => "editserviceform",
             "comment" => "new purchase",
@@ -190,16 +191,16 @@ class ServicesBaseTest extends BaseTest {
             "services" => [$service['id']],
             "quantities" => [$count]
 
-        ], false);
+        ]);
         $c = new ServicespurchaseController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $this->assertTrue($data['purchase']['id'] > 0);
         return $data['purchase'];
     }
 
     protected function createOrder($space, $service, $user, $client, $count) {
         Configuration::getLogger()->debug('create puchase', ['service' => $service, 'space' => $space]);
-        $req = new Request([
+        $req = $this->request([
             "path" => "servicesorderedit/".$space['id']."/0",
             "formid" => "orderEditForm",
             "no_identification" => 'order'.time(),
@@ -211,9 +212,9 @@ class ServicesBaseTest extends BaseTest {
             "services" => [$service['id']],
             "quantities" => [$count]
 
-        ], false);
+        ]);
         $c = new ServicesordersController($req, $space);
-        $data = $c->editAction($space['id'], 0);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);
         $this->assertTrue($data['order']['id'] > 0);
         return $data['order'];
     }

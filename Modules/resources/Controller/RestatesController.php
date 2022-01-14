@@ -53,7 +53,12 @@ class RestatesController extends ResourcesBaseController {
         
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlTable" => $tableHtml));
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "htmlTable" => $tableHtml,
+            "data" => ['restates' => $data]
+        ));
     }
 
     /**
@@ -84,16 +89,17 @@ class RestatesController extends ResourcesBaseController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"), $id_space);
-            $this->redirect("restates/" . $id_space);
+            $id_state = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"), $id_space);
+            return $this->redirect("restates/" . $id_space, [], ['restate' => ['id' => $id_state]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['restate'  => $data]
             ));
         }
     }

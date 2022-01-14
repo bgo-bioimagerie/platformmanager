@@ -21,9 +21,12 @@
 * [layout] display enhancements
 * [core] add index on id_space
 * [services] fix services orders errors with client not registered
+* [booking] check booking start/end time and day at reservation
+* [core] add button to user spaces
 
 ## 2.2.2
 
+* [booking] fix scheduling creation for new resource areas
 * [db] add upgrade_v3_v4 migration script on se_order
   **Warning**: if you installed release <= 2.2.2 you need to run a db fix script
   php cli/pfm-cli.php repair --bug 499

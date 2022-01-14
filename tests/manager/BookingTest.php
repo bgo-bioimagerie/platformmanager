@@ -2,6 +2,8 @@
 
 require_once 'tests/BookingBaseTest.php';
 require_once 'Modules/clients/Controller/ClientslistController.php';
+require_once 'Modules/resources/Model/ReArea.php';
+require_once 'Modules/booking/Controller/BookingschedulingController.php';
 
 class BookingTest extends BookingBaseTest {
 
@@ -51,20 +53,20 @@ class BookingTest extends BookingBaseTest {
         $space = $this->space($spaces[0]);
 
         $this->asAdmin();
-        $req = new Request([
+        $req = $this->request([
             "path" => "resources/".$space['id'],
             "id" => 0
-         ], false); 
+         ]); 
         $c = new ResourcesinfoController($req, $space);
-        $data = $c->indexAction($space['id']);
+        $data = $c->runAction('resources', 'index', ['id_space' =>$space['id']]);
         $resources = $data['resources'];
 
-        $req = new Request([
+        $req = $this->request([
             "path" => "clclients/".$space['id'],
             "id" => 0
-         ], false); 
+         ]); 
         $c = new ClientslistController($req, $space);
-        $data = $c->indexAction($space['id']);
+        $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
         $clients = $data['clients'];
 
         $admin = $this->user($ctx['spaces'][$spaces[0]]['admins'][0]);
@@ -170,6 +172,83 @@ class BookingTest extends BookingBaseTest {
         $user = $this->user($ctx['spaces'][$spaces[0]]['users'][0]);
         $this->asUser($user['login'], $space['id']);
         $bookingId = $this->book($space, $user, $clients[0], $resources[0], 10);
+    }
+
+    public function testBookinSCheduling() {
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        $space = null;
+        $manager = null;
+        $user = null;
+        foreach($spaces as $spaceName => $data) {
+            $space = $this->space($spaceName);
+            $manager = $this->user($data['managers'][0]);
+            $user = $this->user($data['users'][0]);
+
+            break;
+        }
+        $this->asUser($manager['login'], $space['id']);
+        $req = $this->request([
+            "path" => "resources/".$space['id'],
+            "id" => 0
+         ]); 
+        $c = new ResourcesinfoController($req, $space);
+        $data = $c->runAction('resources', 'index', ['id_space' =>$space['id']]);
+        $resources = $data['resources'];
+        $resource = $resources[0];
+        $req = $this->request([
+            "path" => "clclients/".$space['id'],
+            "id" => 0
+         ]); 
+        $c = new ClientslistController($req, $space);
+        $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
+        $clients = $data['clients'];
+
+        $r = new ReArea();
+        $areas = $r->getForSpace($space['id']);
+        $area = $areas[0];
+        $req = $this->request([
+            'path' => 'bookingschedulingedit/'.$space['id'].'/'.$area['id']
+        ]);
+        $c = new BookingschedulingController($req, $space);
+        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
+        $bkScheduling = $data['bkScheduling'];
+        $this->assertTrue($bkScheduling['id']  == 0);
+
+        // cannot book at 19h
+        $this->asUser($user['login'], $space['id']);
+        $canBook = true;
+        try {
+            $this->book($space, $user, $clients[0], $resource, 19);
+        } catch(Exception) {
+            $canBook = false;
+        }
+        $this->assertFalse($canBook, 'should not be able to book at 19h');
+
+        $this->asUser($manager['login'], $space['id']);
+        $bkScheduling['day_end'] = '20';
+        $form = array_merge([
+            'path' => 'bookingschedulingedit/'.$space['id'].'/'.$area['id'],
+            'formid' => 'bookingschedulingedit'
+        ], $bkScheduling);
+        $req = $this->request($form);
+
+        $c = new BookingschedulingController($req, $space);
+        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
+        $bkScheduling = $data['bkScheduling'];
+
+        $this->assertTrue($bkScheduling['id']  > 0);
+
+        $this->asUser($user['login'], $space['id']);
+        // cannot book at 19h
+        $canBook = true;
+        try {
+        $this->book($space, $user, $clients[0], $resource, 19);
+        } catch(Exception $e) {
+            $canBook = false;
+            Configuration::getLogger()->error('should be able to book at 19h', ['error' => $e]);
+        }
+        $this->assertTrue($canBook, 'should be able to book at 19h');
     }
 
 }

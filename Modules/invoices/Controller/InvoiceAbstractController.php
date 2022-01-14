@@ -74,7 +74,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
             }
             return;
         } catch (Exception $e) {
-            throw new PfmException("Pdf generation error: " . $e. "\n$content", 500);
+            throw new PfmException("Pdf generation error: " . $e, 500);
         }
     }
 

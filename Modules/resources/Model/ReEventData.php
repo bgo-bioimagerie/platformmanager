@@ -41,10 +41,11 @@ class ReEventData extends Model {
     public function set($id_space, $id, $id_event, $url) {
         if ($this->exists($id_space, $id)) {
             $sql = "UPDATE re_event_data SET id_event=?, url=? WHERE id=? AND id_space=? AND deleted=0";
-            $id = $this->runRequest($sql, array($id_event, $url, $id, $id_space));
+            $this->runRequest($sql, array($id_event, $url, $id, $id_space));
         } else {
             $sql = "INSERT INTO re_event_data (id_event, url, id_space) VALUES (?,?,?)";
             $this->runRequest($sql, array($id_event, $url, $id_space));
+            $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }

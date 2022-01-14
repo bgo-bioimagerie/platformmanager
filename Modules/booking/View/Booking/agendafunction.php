@@ -1,6 +1,6 @@
 <?php
 
-function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo) {
+function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo, $nav=null) {
 
     $mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
 
@@ -16,10 +16,27 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
         <table class="tableau">
             <caption>
                 <div class="col-md-3" style="text-align: left;">
-                    <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" onclick="location.href = 'bookingmonth/<?php echo $id_space ?>/daymonthbefore'" class="btn btn-default"> &lt; </button>
-                        <button type="button" onclick="location.href = 'bookingmonth/<?php echo $id_space ?>/daymonthafter'" class="btn btn-default"> > </button>
-                        <button type="button" onclick="location.href = 'bookingmonth/<?php echo $id_space ?>/thisMonth'" class="btn btn-default"><?php echo BookingTranslator::This_month($lang) ?> </button>
+                    <div class="btn-group" role="group" aria-label="navigate by month">
+                    <?php
+	$today = date("Y-m-d", time());
+    $qc = $qt = $qb = $qa = '';
+    if($nav){
+        $date = $nav['date'];
+        $beforeDate = $nav['beforeDate'];
+        $afterDate = $nav['afterDate'];
+        $bk_id_area = $nav['bk_id_area'];
+        $bk_id_resource = $nav['bk_id_resource'];
+        $id_user = $nav['id_user'];
+        $qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+        $qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+        $qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+        $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    }
+?>
+			<a aria-label="previous month" href="bookingmonth/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="next month" href="bookingmonth/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current month" href="bookingmonth/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::This_month($lang) ?> </button></a>
+
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -35,26 +52,29 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 <div class="col-md-6" style="text-align: right;">
                     <div class="btn-group" role="group" aria-label="...">
                         <div class="btn btn-default" type="button">
-                            <a style="color:#333;" href="bookingday/<?php echo $id_space ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
+                            <a style="color:#333;" href="bookingday/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
                         </div>
                         <div class="btn btn-default " type="button">
-                            <a style="color:#333;" href="bookingdayarea/<?php echo $id_space ?>" ><?php echo BookingTranslator::Day_Area($lang) ?></a>
+                            <a style="color:#333;" href="bookingdayarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day_Area($lang) ?></a>
                         </div>
                         <div class="btn btn-default" type="button">
-                            <a style="color:#333;" href="bookingweek/<?php echo $id_space ?>" ><?php echo BookingTranslator::Week($lang) ?></a>
+                            <a style="color:#333;" href="bookingweek/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week($lang) ?></a>
                         </div>
                         <div class="btn btn-default" type="button">
-                            <a style="color:#333;" href="bookingweekarea/<?php echo $id_space ?>" ><?php echo BookingTranslator::Week_Area($lang) ?></a>
+                            <a style="color:#333;" href="bookingweekarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week_Area($lang) ?></a>
                         </div>
                         <div class="btn btn-default active" type="button">
-                            <a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo BookingTranslator::Month($lang) ?></a>
+                            <a style="color:#333;" href="bookingmonth/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Month($lang) ?></a>
                         </div> 
 
                     </div>
                 </div>
                 </div>
             </caption>
-            <tr><th scope="col">Lun</th><th scope="col">Mar</th><th scope="col">Mer</th><th scope="col">Jeu</th><th scope="col">Ven</th><th scope="col">Sam</th><th scope="col">Dim</th></tr>
+            <thead>
+                <tr><th scope="col">Lun</th><th scope="col">Mar</th><th scope="col">Mer</th><th scope="col">Jeu</th><th scope="col">Ven</th><th scope="col">Sam</th><th scope="col">Dim</th></tr>
+            </thead>
+            <tbody>
             <tr>
                 <?php
                 $case = 0;
@@ -124,6 +144,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 }
             }
             ?></tr>
+            </tbody>
         </table>
     </div>
 <?php
