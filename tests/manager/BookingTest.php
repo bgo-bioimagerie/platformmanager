@@ -226,7 +226,7 @@ class BookingTest extends BookingBaseTest {
         $this->assertFalse($canBook, 'should not be able to book at 19h');
 
         $this->asUser($manager['login'], $space['id']);
-        $bkScheduling['day_end'] = '20h';
+        $bkScheduling['day_end'] = '20';
         $form = array_merge([
             'path' => 'bookingschedulingedit/'.$space['id'].'/'.$area['id'],
             'formid' => 'bookingschedulingedit'
