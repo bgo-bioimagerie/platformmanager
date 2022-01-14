@@ -40,9 +40,14 @@ a{
 	border: 1px solid #d1d1d1;
 	overflow: hidden;
 }
+
 #resa_link{
-	color: <?php echo  "#" . $agendaStyle["resa_color"] ?>;
-	font-size: <?php echo  $agendaStyle["resa_font_size"] ?>;
+	font-family: Arial;
+	font-size: 12px;
+	line-height: 12px;
+	letter-spacing: 1px;
+	font-weight: normal;
+	color: #000;
 }
 
 </style>
