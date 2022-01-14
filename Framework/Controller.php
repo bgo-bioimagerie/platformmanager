@@ -277,8 +277,14 @@ abstract class Controller {
             return null;
         }
         $rootWeb = Configuration::get("rootWeb", "/");
-        foreach ($args as $key => $val) {
-            $path .= "?" . $key . "=" . $val;
+        if($args) {
+            $path .= "?";
+            $pathElements = [];
+            foreach ($args as $key => $val) {
+                $pathElements[] = $key . "=" . $val;
+                //$path .= "&" . $key . "=" . $val;
+            }
+            $path .= implode('&', $pathElements);
         }
         if(!headers_sent($filename, $filenum)) {
             header_remove();
