@@ -130,12 +130,21 @@ class CoretilesController extends CorecookiesecureController {
 
             $allSpaces = $spaceModel->getSpaces('id');
             $spaceMap = [];
+            $userSpacesOnly = $this->request->getParameterNoException('mine') === '1' ? true: false;
+            if($userSpacesOnly) {
+                $spaces= [];
+            }
+            $userSpacesList = [];
+
             foreach($allSpaces as $space) {
                 if ($logged && !in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
                     if (!in_array($space["id"], $userSpaces['userPendingSpaceIds'])) {
                         $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
                         if(!$isMemberOfSpace) {
                             $space['join'] = CoreTranslator::RequestJoin($isMemberOfSpace, $lang);
+                        }
+                        if($userSpacesOnly) {
+                            $userSpacesList[] = $space;
                         }
                     } else {
                         $space['join_requested'] = CoreTranslator::JoinRequested($lang);
@@ -166,6 +175,7 @@ class CoretilesController extends CorecookiesecureController {
                 'content' => $content,
                 'spaces' => $spaces,
                 'spaceMap' => $spaceMap,
+                'userSpaces' => $userSpacesList,
                 'catalog' => $catalog,
                 'resources' => $resources,
                 'mainSubMenus' => [],
