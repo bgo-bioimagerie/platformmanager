@@ -40,9 +40,14 @@ a{
 	border: 1px solid #d1d1d1;
 	overflow: hidden;
 }
+
 #resa_link{
-	color: <?php echo  "#" . $agendaStyle["resa_color"] ?>;
-	font-size: <?php echo  $agendaStyle["resa_font_size"] ?>;
+	font-family: Arial;
+	font-size: 12px;
+	line-height: 12px;
+	letter-spacing: 1px;
+	font-weight: normal;
+	color: #000;
 }
 
 </style>
@@ -85,9 +90,9 @@ a{
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 ?>
-			<button type="button" class="btn btn-default"><a aria-label="day before" href="bookingday/<?php echo "$id_space/$qb" ?>"> &lt; </a></button>
-			<button type="button" class="btn btn-default"><a aria-label="day after" href="bookingday/<?php echo "$id_space/$qa" ?>"> > </a></button>
-			<button type="button" class="btn btn-default"><a aria-label="current day" href="bookingday/<?php echo "$id_space/$qt" ?>"> <?php echo  BookingTranslator::Today($lang) ?> </a></button>
+			<a aria-label="day before" href="bookingday/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="day after" href="bookingday/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current day" href="bookingday/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
 		</div>
 		<?php 
 	$d = explode("-", $date);

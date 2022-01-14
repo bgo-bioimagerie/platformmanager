@@ -2073,5 +2073,12 @@ class CoreTranslator {
         }
         return "Your access to $space has been removed";
     }
+
+    public static function MySpaces($lang = "") {
+        if($lang == "fr") {
+            return "Mes espaces";
+        }
+        return "My spaces";
+    }
     
 }

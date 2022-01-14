@@ -23,9 +23,13 @@ function version()
     }
 
 $cli = Cli::create()
+    ->command('upgrade')
+    ->description('create a new upgrade file')
+    ->opt('desc', 'description', '', 'string')
     ->command('install')
     ->description('Install/upgrade database and routes')
     ->opt('from', 'Force install from release', false, 'integer')
+    ->opt('module', 'install module', false, 'string')
     ->command('space')
     ->description('show space info')
     ->opt('flags', 'Show space plan flags', false, 'boolean')
@@ -55,9 +59,20 @@ $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'upgrade':
+            $ts = time();
+            if(!file_exists('db/upgrade')){
+                mkdir('db/upgrade', 0755, true);
+            }
+            $desc = $args->getOpt('desc');
+            $title = str_replace('__', '_', preg_replace('/[^a-z0-9_]/', '_', substr($desc, 0, 40)));
+            $name = "$ts"."_"."$title.php";
+            $template = "<?php\nrequire_once 'Framework/Model.php';\nrequire_once 'Framework/Configuration.php';\n# Upgrade: $desc\nclass CoreUpgradeDB$ts extends Model {\n  public function run(){\n    Configuration::getLogger()->info(\"[db][upgrade] Apply $desc\");\n  }\n}\n\$db = new CoreUpgradeDB$ts();\n\$db->run();\n?>\n";
+            file_put_contents("db/upgrade/$name", $template);
+            Configuration::getLogger()->info("Created upgrade file db/upgrade/$name");
+            break;
         case 'config':
             $params =  Configuration::getParameters();
-            Configuration::getLogger()->error("?", ["d"=>$args->getOpt('yaml', false)]);
             if($args->getOpt('yaml', false)) {
                 echo Yaml::dump(['config' => $params], 10);
             } else {
@@ -80,6 +95,24 @@ try {
             cliFix($args->getOpt('bug', 0));
             break;
         case 'install':
+            if($args->getOpt('module')) {
+                $module = $args->getOpt('module');
+                $moduleName = ucfirst(strtolower($module));
+                if ($moduleName == 'Core') {
+                    Configuration::getLogger()->error('Cannot force reinstall of core module');
+                    break;
+                }
+                $installFile = "Modules/" . $module . "/Model/" . $moduleName . "Install.php";
+                if (file_exists($installFile)) {
+                    $logger->info('Update database for module ' . $moduleName . " => ". $installFile);
+                    require_once $installFile;
+                    $className = $moduleName . "Install";
+                    $object = new $className();
+                    $object->createDatabase();
+                    $logger->info('update database for module ' .$modules[$i]  . "done");
+                }
+                break;
+            }
             cliInstall($args->getOpt('from', -1));
             break;
         case 'routes':
@@ -265,54 +298,71 @@ function cliInstall($from=-1) {
 
     // Create db release table if not exists
     $cdb = new CoreDB();
+    $release = $cdb->getRelease();
+    if($from > -1) {
+        $release = $from;
+    }
     $freshInstall = $cdb->isFreshInstall();
     if($from == -1 && $freshInstall) {
         $from = 0;
     }
-    $cdb->createTable();
 
-    $modelCreateDatabase = new CoreInstall();
-    $modelCreateDatabase->createDatabase();
-    $logger->info("Database installed");
-    
+    if($freshInstall || $release < $cdb->getVersion()) {
+        $expected = $cdb->getVersion();
+        $logger->info("Install from version $release to $expected");
+        $cdb->createTable();
 
-    $logger->info("Upgrading modules");
+        $modelCreateDatabase = new CoreInstall();
+        $modelCreateDatabase->createDatabase();
+        $logger->info("Database installed");
+        
 
-    $modulesInstalled = '';
+        $logger->info("Upgrading modules");
 
-    try {
-        $first = true;
-        $modules = Configuration::get('modules');
-        for ($i = 0; $i < count($modules); ++$i) {
-            $moduleName = ucfirst(strtolower($modules[$i]));
-            if ($moduleName == 'Core') {
-                continue;
-            }
-            $installFile = "Modules/" . $modules[$i] . "/Model/" . $moduleName . "Install.php";
-            if (file_exists($installFile)) {
-                $logger->info('Update database for module ' . $moduleName . " => ". $installFile);
-                if (!$first){
-                    $modulesInstalled .= ", ";
+        $modulesInstalled = '';
+
+        try {
+            $first = true;
+            $modules = Configuration::get('modules');
+            for ($i = 0; $i < count($modules); ++$i) {
+                $moduleName = ucfirst(strtolower($modules[$i]));
+                if ($moduleName == 'Core') {
+                    continue;
                 }
-                else{
-                    $first = false;
+                $installFile = "Modules/" . $modules[$i] . "/Model/" . $moduleName . "Install.php";
+                if (file_exists($installFile)) {
+                    $logger->info('Update database for module ' . $moduleName . " => ". $installFile);
+                    if (!$first){
+                        $modulesInstalled .= ", ";
+                    }
+                    else{
+                        $first = false;
+                    }
+                    $modulesInstalled .= $modules[$i];
+                    require_once $installFile;
+                    $className = $moduleName . "Install";
+                    $object = new $className();
+                    $object->createDatabase();
+                    $logger->info('update database for module ' .$modules[$i]  . "done");
                 }
-                $modulesInstalled .= $modules[$i];
-                require_once $installFile;
-                $className = $moduleName . "Install";
-                $object = new $className();
-                $object->createDatabase();
-                $logger->info('update database for module ' .$modules[$i]  . "done");
             }
+            $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
+        } catch (Exception $e) {
+                $logger->error("Error", ["error" => $e->getMessage()]);
         }
-    } catch (Exception $e) {
-            $logger->error("Error", ["error" => $e->getMessage()]);
+
+        // update db release and launch upgrade
+        $cdb->upgrade($from);
+    } else {
+        $logger->info("Db already at release ".$cdb->getVersion());
     }
 
-    // update db release and launch upgrade
-    $cdb->upgrade($from);
+    $logger->info("Check for upgrades");
+    $cdb->scanUpgrades();
+    $cdb->base();
 
-    $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
+
+    
 
 }
 

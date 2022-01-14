@@ -33,9 +33,9 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
         $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
     }
 ?>
-			<button type="button" class="btn btn-default"><a aria-label="previous month" href="bookingmonth/<?php echo "$id_space/$qb" ?>"> &lt; </a></button>
-			<button type="button" class="btn btn-default"><a aria-label="next month" href="bookingmonth/<?php echo "$id_space/$qa" ?>"> > </a></button>
-			<button type="button" class="btn btn-default"><a aria-label="current month" href="bookingmonth/<?php echo "$id_space/$qt" ?>"> <?php echo  BookingTranslator::This_month($lang) ?> </a></button>
+			<a aria-label="previous month" href="bookingmonth/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="next month" href="bookingmonth/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current month" href="bookingmonth/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::This_month($lang) ?> </button></a>
 
                     </div>
                 </div>
