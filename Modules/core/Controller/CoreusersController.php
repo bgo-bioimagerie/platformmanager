@@ -57,12 +57,8 @@ class CoreusersController extends CoresecureController {
             "date_last_login" => CoreTranslator::Last_connection($lang));
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll() ?? [];
-        $modelStatus = new CoreStatus();
-        $statusNames = $modelStatus->statusIDName();
-        $smap = [];
-        foreach ($statusNames as $s) {
-            $smap[$s['id']] = $s['name'];
-        }
+
+        $smap = [ 1 => CoreStatus::$USER, 2 => CoreStatus::$ADMIN];
         $users = [];
         for ($i = 0; $i < count($data); $i++) {
             $users[] = $data[$i];

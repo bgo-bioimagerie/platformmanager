@@ -228,9 +228,24 @@ abstract class Controller {
 
         if (getenv("PFM_MODE") == "test") {
             // Need to know module name and action
-            $view = new View($actionView, $controllerView, $this->module);
-            $view->generate($dataView);
-            ob_end_clean();
+            if(getenv('PFM_TEST_VIEW') !== '0') { // do not test views
+                if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
+                    require_once 'Modules/core/Controller/CorenavbarController.php';
+                    $navController = new CorenavbarController($this->request);
+                    $dataView["navbar"] = $navController->navbar();
+                    try {
+                        echo $this->twig->render("Modules/core/View/$controllerView/$actionView.twig", $dataView);
+                    } catch(Throwable $e) {
+                        Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
+                        $view = new View($actionView, $controllerView, $this->module);
+                        $view->generate($dataView);
+                    }
+                } else {
+                    $view = new View($actionView, $controllerView, $this->module);
+                    $view->generate($dataView);
+                }
+                ob_end_clean();
+            }
             if(isset($dataView['data'])) {
                 return $dataView['data'];
             }

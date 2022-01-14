@@ -85,7 +85,6 @@ class CorenavbarController extends CoresecureController {
         $lang = $this->getLanguage();
         $toolMenu = $this->getMenu();
         $toolAdmin = $this->getAdminMenu();
-        
         //print_r($toolMenu);
 
         // get the view menu,fill it, and return the content
