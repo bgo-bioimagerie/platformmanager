@@ -22,6 +22,7 @@
 * [core] add index on id_space
 * [services] fix services orders errors with client not registered
 * [booking] check booking start/end time and day at reservation
+* [core] add button to user spaces
 
 ## 2.2.2
 

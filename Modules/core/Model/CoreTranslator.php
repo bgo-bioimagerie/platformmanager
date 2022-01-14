@@ -2052,5 +2052,12 @@ class CoreTranslator {
         }
         return "An error occured during connection.";
     }
+
+    public static function MySpaces($lang = "") {
+        if($lang == "fr") {
+            return "Mes espaces";
+        }
+        return "My spaces";
+    }
     
 }
