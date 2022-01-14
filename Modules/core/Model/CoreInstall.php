@@ -740,6 +740,10 @@ class CoreDB extends Model {
             }
         }
         Configuration::getLogger()->debug('[db] Update invoice numbers in redis, done!');
+
+        Configuration::getLogger()->debug('[db] New core space user deactivate option');
+        $this->addColumn('core_spaces', 'user_desactivate', "int(1)", '1');
+        Configuration::getLogger()->debug('[db] New core space user deactivate option, done!');
     }
 
     /**

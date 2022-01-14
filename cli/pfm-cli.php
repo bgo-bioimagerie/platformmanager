@@ -126,8 +126,8 @@ try {
             $modelUser = new CoreUser();
             $modelSettings = new CoreConfig();
             $desactivateSetting = $modelSettings->getParam("user_desactivate", 6);
-            $count = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'), $args->getOpt('dry'));
-            $logger->info("Expired ".$count. " users");
+            $users = $modelUser->disableUsers(intval($desactivateSetting), $args->getOpt('del'), 0, $args->getOpt('dry'));
+            $logger->info("Expired ".count($count). " users");
             break;
         case 'stats':
             $logger = Configuration::getLogger();

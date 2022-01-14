@@ -21,6 +21,7 @@
 * [layout] display enhancements
 * [core] add index on id_space
 * [services] fix services orders errors with client not registered
+* [core] set user deactivation settings per space
 
 ## 2.2.2
 

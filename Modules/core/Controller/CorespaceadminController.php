@@ -114,6 +114,22 @@ class CorespaceadminController extends CoresecureController {
             }
         }
 
+        $choices = array();
+        $choicesid = array();
+        $choicesid[] = 1;
+        $choices[] = CoreTranslator::never($lang);
+        $choicesid[] = 2;
+        $choices[] = CoreTranslator::contract_ends($lang);
+        $choicesid[] = 3;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(1, $lang);
+        $choicesid[] = 4;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(2, $lang);
+        $choicesid[] = 5;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(3, $lang);
+        $choicesid[] = 6;
+        $choices[] = CoreTranslator::contract_ends_or_does_not_login_for_1_year($lang);
+
+        $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $space['user_desactivate'] ?? 1);
         
         $formAdd = new FormAdd($this->request, "addformspaceedit");
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
@@ -189,6 +205,7 @@ class CorespaceadminController extends CoresecureController {
 
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
+            $modelSpace->setDeactivate($id, $this->request->getParameter('user_desactivate'));
             
             // upload image
             $target_dir = "data/core/menu/";

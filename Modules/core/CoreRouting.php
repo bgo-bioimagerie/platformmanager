@@ -6,6 +6,8 @@ class CoreRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/corefiles/[i:id_space]/[i:id_file]', 'core/corefiles/download', 'files_download');
+        $router->map('GET', '/corespaceaccess/[i:id_space]/user/expire', 'core/corespaceaccess/expire', 'userspace_expire');
+        $router->map('GET', '/corespaceaccess/[i:id_space]/user/expire/run', 'core/corespaceaccess/doexpire', 'userspace_expire_run');
         $router->map('GET', '/corespaceaccess/[i:id_space]/impersonate/[i:id_user]', 'core/corespaceaccess/impersonate', 'user_impersonate');
         $router->map('GET', '/corespaceaccess/[i:id_space]/unimpersonate', 'core/corespaceaccess/unimpersonate', 'user_unimpersonate');
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
