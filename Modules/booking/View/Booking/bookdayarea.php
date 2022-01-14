@@ -120,9 +120,9 @@ img{
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 ?>
-			<button type="button" class="btn btn-default"><a aria-label="day before" href="bookingdayarea/<?php echo "$id_space/$qb" ?>"> &lt; </a></button>
-			<button type="button" class="btn btn-default"><a aria-label="day after" href="bookingdayarea/<?php echo "$id_space/$qa" ?>"> > </a></button>
-			<button type="button" class="btn btn-default"><a aria-label="current day" href="bookingdayarea/<?php echo "$id_space/$qt" ?>"> <?php echo  BookingTranslator::Today($lang) ?> </a></button>
+			<a aria-label="day before" href="bookingdayarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="day after" href="bookingdayarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current day" href="bookingdayarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
 		</div>
 
 		<?php 
