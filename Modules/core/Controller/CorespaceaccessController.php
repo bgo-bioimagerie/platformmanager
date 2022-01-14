@@ -42,8 +42,7 @@ class CorespaceaccessController extends CoresecureController {
             'Active_Users' => CoreTranslator::Active_Users($lang),
             'Inactive' => CoreTranslator::Inactive($lang),
             'Add' => CoreTranslator::Add_User($lang),
-
-
+            'Expire' => CoreTranslator::Expiring($lang)
         ];
         return $this->twig->render("Modules/core/View/Corespaceaccess/navbar.twig", $dataView);
     }
@@ -137,6 +136,52 @@ class CorespaceaccessController extends CoresecureController {
         header('Pragma: public');
         header('Content-Length: ' . filesize($path));
         readfile($path);
+    }
+
+    public function doexpireAction($id_space){
+        if($this->role < CoreSpace::$ADMIN) {
+            throw new PfmAuthException('space admin only access');
+        }
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+        $u = new CoreUser();
+        $users = $u->disableUsers($space['user_desactivate'], true, $id_space, false);
+        $this->redirect("/corespaceaccess/$id_space/user/expire", [], ['users' => $users]);    
+    }
+
+    public function expireAction($id_space) {
+        if($this->role < CoreSpace::$ADMIN) {
+            throw new PfmAuthException('space admin only access');
+        }
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+
+        $u = new CoreUser();
+        $users = $u->disableUsers($space['user_desactivate'], false, $id_space, true);
+
+        $tableContent = array(
+            "id" => "ID",
+            "login" => CoreTranslator::Login($lang),
+            "fullname" => CoreTranslator::Name($lang),
+            "email" => CoreTranslator::Email($lang),
+            "date_contract_end" => CoreTranslator::Date_end_contract($lang),
+            "date_last_login" => CoreTranslator::Last_connection($lang)
+        );
+
+        $table = new TableView();
+        $table->addLineButton("coreaccessuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
+        $tableHtml = $table->view($users, $tableContent);
+
+        return $this->render(array(
+            'lang' => $lang,
+            'id_space' => $id_space,
+            'tableHtml' => $tableHtml,
+            'space' => $space,
+            'data' => ['users' => $users]
+        ));
+
+
     }
 
     /**

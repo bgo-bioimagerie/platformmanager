@@ -15,6 +15,8 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreConfig.php';
+
 
 /**
  * 
@@ -114,6 +116,13 @@ class CorespaceadminController extends CoresecureController {
             }
         }
 
+        $cc = new CoreConfig();
+        $expirationChoices = $cc->getExpirationChoices($lang);
+        $choices = $expirationChoices['labels'];
+        $choicesid = $expirationChoices['ids'];
+
+
+        $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $space['user_desactivate'] ?? 1);
         
         $formAdd = new FormAdd($this->request, "addformspaceedit");
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
@@ -189,6 +198,7 @@ class CorespaceadminController extends CoresecureController {
 
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
+            $modelSpace->setDeactivate($id, $this->request->getParameter('user_desactivate'));
             
             // upload image
             $target_dir = "data/core/menu/";

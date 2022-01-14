@@ -829,6 +829,13 @@ class CoreTranslator {
         return "Inactive";
     }
 
+    public static function Expiring($lang) {
+        if ($lang == "fr") {
+            return "Expiration";
+        }
+        return "Expiring";
+    }
+
     public static function Search($lang) {
         if ($lang == "fr") {
             return "Rechercher";
@@ -2051,6 +2058,20 @@ class CoreTranslator {
             return "Une erreur est survenue durant la connexion.";
         }
         return "An error occured during connection.";
+    }
+
+    public static function spaceUserUnjoin($lang = "") {
+        if ($lang == "fr") {
+            return "Accès supprimé";
+        }
+        return "Access removal";
+    }
+
+    public static function spaceUserUnjoinTxt($space, $lang = "") {
+        if ($lang == "fr") {
+            return "Vos accès à l'espace $space ont été supprimés";
+        }
+        return "Your access to $space has been removed";
     }
 
     public static function MySpaces($lang = "") {

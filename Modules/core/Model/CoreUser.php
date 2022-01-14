@@ -128,12 +128,22 @@ class CoreUser extends Model {
         }
     }
 
-    public function disableUsers($desactivateSetting, $remove=false, $dry=false) {
+    /**
+     * Remove user or set as inactive from spaces according to deactivate settings in space or global
+     * 
+     * @param int $desactivateSetting core or space deactivation setting
+     * @param bool $remove if set, remove from space and also delete user authorisations, else only set status to inactive in space
+     * @param int $id_space space to check else apply on all users
+     * @param bool $dry list users only, do not remove users
+     * @return array list of users to remove or that should be removed
+     */
+    public function disableUsers($desactivateSetting, $remove=false, $id_space=0, $dry=false): array {
         $date = date('Y-m-d', time());
-        $nbUsers = 0;
 
         $expireDelay = null;
         $expireContract = false;
+
+        $usersToExpire = [];
 
         switch ($desactivateSetting) {
             case 6:
@@ -152,31 +162,39 @@ class CoreUser extends Model {
             case 2:
                 $expireContract = true;
                 break;
+            case 1:
+                Configuration::getLogger()->info('[deactivate] settings set to NEVER, nothing to do');
+                return [];
             default:
                 $expireDelay = null;
                 $expireContract = false;        
         }
         if($expireDelay == null && !$expireContract) {
             Configuration::getLogger()->info('[deactivate] nothing to do');
-            return 0;
+            return [];
         }
 
 
         $sql = null;
         $req = [];
+        $params = [];
         if($expireDelay!=null && $expireContract) {
-            $sql = "SELECT core_users.id,core_users.login,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE  (core_users.date_last_login is not null AND core_users.date_last_login<? ) OR (core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?)";
-            $req = $this->runRequest($sql, array($expireDelay, $date))->fetchAll();
+            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE  ((core_users.date_last_login is not null AND core_users.date_last_login<? ) OR (core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?))";
+            $params = [$expireDelay, $date];
 
         } else if($expireDelay!=null && !$expireContract) {
-            $sql = "SELECT core_users.id,core_users.login,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_users.date_last_login is not null AND core_users.date_last_login<?";
-
-            $req = $this->runRequest($sql, array($expireDelay))->fetchAll();
+            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_users.date_last_login is not null AND core_users.date_last_login<?";
+            $params = [$expireDelay];
         } else if($expireDelay==null && $expireContract) {
-            $sql = "SELECT core_users.id,core_users.login,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?";
-
-            $req = $this->runRequest($sql, array($date))->fetchAll();
+            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?";
+            $params = [$date];
         }
+        if($id_space > 0) {
+            $params[] = $id_space;
+            $sql .= ' AND core_j_spaces_user.id_space=?';
+        }
+
+        $req = $this->runRequest($sql, $params)->fetchAll();
 
         if($sql == null) {
             throw new PfmException('something went wrong!', 500);
@@ -186,40 +204,50 @@ class CoreUser extends Model {
             Configuration::getLogger()->info("[user][disable] dry mode");
         }
         foreach ($req as $r) {
+
+            $usersToExpire[] = [
+                'id' => $r['id'],
+                'login' => $r['login'],
+                'fullname' => $r['firstname'].' '.$r['name'],
+                'email' => $r['email'],
+                'date_contract_end' => $r['date_contract_end'],
+                'date_last_login' => $r['date_last_login']
+            ];
             if($dry) {
-                Configuration::getLogger()->info('Expire', ['user' => $r]);
-                $nbUsers += 1;
+                Configuration::getLogger()->info('[user][disable] should expire user', ['user' => $r]);
                 continue;
             }
 
-                $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
-                if($remove) {
-                    $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
-                    Events::send([
-                        "action" => Events::ACTION_SPACE_USER_UNJOIN,
-                        "space" => ["id" => $r['space']],
-                        "user" => ["id" => intval($r['id'])],
-                    ]); 
-                } else {
-                    Events::send([
-                        "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
-                        "space" => ["id" =>  $r['space']],
-                        "user" => ["id" => intval($r['id'])],
-                        "role" => 0
-                    ]); 
-                }
-                $this->runRequest($sql, array($r['id'], $r['space']));
+            $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
+            if($remove) {
+                $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_UNJOIN,
+                    "space" => ["id" => $r['space']],
+                    "user" => ["id" => intval($r['id'])],
+                ]); 
+            } else {
+                Events::send([
+                    "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
+                    "space" => ["id" =>  $r['space']],
+                    "user" => ["id" => intval($r['id'])],
+                    "role" => 0
+                ]); 
+            }
+            $this->runRequest($sql, array($r['id'], $r['space']));
             
 
             if($expireContract || $remove) {
+                Configuration::getLogger()->debug('[user][disable] disable bk_authorization', ['user' => $r]);
                 $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=? AND id_space=?";
                 $this->runRequest($sql, array(date("Y-m-s"), $r['id'], $r['space']));
             }
+            Configuration::getLogger()->info('[user][disable] expired user', ['user' => $r]);
 
-            $nbUsers += 1;
+
         }
 
-        return $nbUsers;
+        return $usersToExpire;
     }
 
     public function getRememberKey($id) {

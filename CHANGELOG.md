@@ -21,6 +21,7 @@
 * [layout] display enhancements
 * [core] add index on id_space
 * [services] fix services orders errors with client not registered
+* [core] set user deactivation settings per space
 * [booking] check booking start/end time and day at reservation
 * [core] add button to user spaces
 
