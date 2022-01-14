@@ -137,20 +137,21 @@ class CoretilesController extends CorecookiesecureController {
             $userSpacesList = [];
 
             foreach($allSpaces as $space) {
+                if($logged && isset($_SESSION['login']) && $userSpacesOnly) {
+                    $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
+                    if($isMemberOfSpace) {
+                        $userSpacesList[] = $space;
+                    }
+                }
                 if ($logged && !in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
                     if (!in_array($space["id"], $userSpaces['userPendingSpaceIds'])) {
                         $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
                         if(!$isMemberOfSpace) {
                             $space['join'] = CoreTranslator::RequestJoin($isMemberOfSpace, $lang);
                         }
-                        if($userSpacesOnly) {
-                            $userSpacesList[] = $space;
-                        }
                     } else {
                         $space['join_requested'] = CoreTranslator::JoinRequested($lang);
                     }
-                } else if($userSpacesOnly && $logged && in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
-                        $userSpacesList[] = $space;
                 }
                 $spaceMap[$space["id"]] = $space; // name, description
             }
