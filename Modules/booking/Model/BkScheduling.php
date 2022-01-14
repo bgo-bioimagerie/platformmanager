@@ -134,6 +134,7 @@ class BkScheduling extends Model {
             $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin,
             $day_end, $size_bloc_resa, $booking_time_scale,
             $resa_time_setting, $default_color_id, $id_space, $id_rearea));
+        return $this->getDatabase()->lastInsertId();
     }
 
     /**
@@ -180,7 +181,8 @@ class BkScheduling extends Model {
         $booking_time_scale,
         $resa_time_setting,
         $default_color_id) {
-        if ($this->existsByReArea($id_space, $id_rearea)) {
+        $id = 0;
+        if ($id = $this->existsByReArea($id_space, $id_rearea)) {
             $this->update2(
                 $id_space,
                 $id_rearea,
@@ -198,7 +200,7 @@ class BkScheduling extends Model {
                 $resa_time_setting,
                 $default_color_id);
         } else {
-            $this->add(
+            $id = $this->add(
                 $id_space,
                 $id_rearea,
                 $this->onToBool($is_monday),
@@ -215,6 +217,7 @@ class BkScheduling extends Model {
                 $resa_time_setting,
                 $default_color_id);
         }
+        return $id;
     }
 
     /**
@@ -234,10 +237,10 @@ class BkScheduling extends Model {
      * @param string $id_rearea
      * @return boolean
      */
-    public function existsByReArea($id_space, $id_rearea) {
+    public function existsByReArea($id_space, $id_rearea): ?array {
         $sql = "SELECT * from bk_schedulings WHERE id_rearea=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_rearea, $id_space));
-        return ($req->rowCount() == 1);
+        return ($req->rowCount() == 1) ? $req->fetch() : null;
     }
 
     /**
