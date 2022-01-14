@@ -1903,7 +1903,14 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $spaceName, $userEmail, $userFullName, $lang, $organization = null, $team = null) {
+    public static function JoinWhy($lang){
+        if ($lang == "fr") {
+            return "Qui êtes vous, de quoi avez vous besoin?";
+        }
+        return "Who are you, and what do you need?"; 
+    }
+
+    public static function JoinRequestEmail($login, $spaceName, $userEmail, $userFullName, $lang, $organization = null, $team = null, $comment='') {
         if ($lang == "fr") {
             $message = "Bonjour, <br><br>" . $userFullName . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
             $message .= ("<br>Login : " . $login);
@@ -1914,6 +1921,7 @@ class CoreTranslator {
             if ($team) {
                 $message .= ("<br>Equipe : " . $team);
             }
+            $message .= ('<br><br>Commentaire: ' . $comment);
             return $message;
         }
         $message = "Hi, <br><br>" . $userFullName . " requests to join your space " . $spaceName. " on Platform-Manager";
@@ -1925,6 +1933,7 @@ class CoreTranslator {
         if ($team) {
             $message .= ("<br>Team: " . $team);
         }
+        $message .= ('<br><br>Comment: '.$comment);
         return $message;
     }
 

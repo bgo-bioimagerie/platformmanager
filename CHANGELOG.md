@@ -23,6 +23,7 @@
 * [services] fix services orders errors with client not registered
 * [booking] check booking start/end time and day at reservation
 * [core] add button to user spaces
+* [core] on user join request, request a comment from user to be added to email
 
 ## 2.2.2
 

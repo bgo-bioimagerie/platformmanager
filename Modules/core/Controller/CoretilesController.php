@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Email.php';
+require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorenavbarController.php';
@@ -311,6 +312,7 @@ class CoretilesController extends CorecookiesecureController {
         $modelSpaceUser = new CoreSpaceUser();
         $id_user = $_SESSION["id_user"];
         $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
+        $lang = $this->getLanguage();
 
         if ($isMemberOfSpace) {
             // User is already member of space
@@ -326,6 +328,22 @@ class CoretilesController extends CorecookiesecureController {
                 // User hasn't already an unanswered request to join
                 $spaceModel = new CoreSpace();
                 $spaceName = $spaceModel->getSpaceName($id_space);
+
+                $comment = '';
+                if($this->role < CoreSpace::$MANAGER) {
+                    $comment = $this->request->getParameterNoException('comment');
+                    if(!$comment) {
+                        $form = new Form($this->request, 'selfJoinSpace');
+                        if($form->check() && !$comment) {
+                            $_SESSION['flash'] = 'Missing comment!!';
+                        }
+                        $form->addHidden('space', $id_space);
+                        $form->addTextArea('comment', CoreTranslator::JoinWhy($lang), true, '');
+                        $form->setValidationButton(CoreTranslator::RequestJoin(false, $lang), "coretilesselfjoinspace/".$id_space);
+                        $form->setCancelButton(CoreTranslator::Cancel($lang), "coretiles");
+                        return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName, 'form' => $form->getHtml()]);
+                    }
+                }
 
                 if ($modelSpacePending->exists($id_space, $id_user)) {
                     // This user is already associated to this space in core_pending_account 
@@ -351,10 +369,11 @@ class CoretilesController extends CorecookiesecureController {
                     "id_space" => $id_space,
                     "space_name" => $spaceName,
                     "email" => $userEmail,
-                    "fullName" => $userFullName
+                    "fullName" => $userFullName,
+                    "comment" => $comment
                 ];
                 $email = new Email();
-                $email->notifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());
+                $email->notifyAdminsByEmail($mailParams, "new_join_request", $lang);
             }
         } 
         $this->redirect("coretiles");
