@@ -149,6 +149,8 @@ class CoretilesController extends CorecookiesecureController {
                     } else {
                         $space['join_requested'] = CoreTranslator::JoinRequested($lang);
                     }
+                } else if($userSpacesOnly && $logged && in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
+                        $userSpacesList[] = $space;
                 }
                 $spaceMap[$space["id"]] = $space; // name, description
             }
