@@ -308,7 +308,8 @@ function cliInstall($from=-1) {
     }
 
     if($freshInstall || $release < $cdb->getVersion()) {
-        $logger->info("Install from scratch");
+        $expected = $cdb->getVersion();
+        $logger->info("Install from version $release to $expected");
         $cdb->createTable();
 
         $modelCreateDatabase = new CoreInstall();

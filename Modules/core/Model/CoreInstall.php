@@ -751,6 +751,34 @@ class CoreDB extends Model {
         $this->runRequest($sql);
     }
 
+    public function needUpgrade() : array {
+        $need = [];
+        $upgradeFiles = scandir('db/upgrade');
+        sort($upgradeFiles);
+
+        foreach ($upgradeFiles as $f) {
+            if(!str_ends_with($f, '.php')) {
+                continue;
+            }
+            $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+            $record = str_replace('.php', '', $f);
+            $res = $this->runRequest($sql, [$record]);
+            Configuration::getLogger()->error("?????", ['n' =>$f, 'r' => $res]);
+
+            if(!$res) {
+                Configuration::getLogger()->error('request failed');
+                $need[] = $f;
+                continue;
+            }
+            if($res->rowCount() > 0) {
+                Configuration::getLogger()->debug('[db][upgrade] already applied', ['file' => $f]);
+                continue;
+            }
+            $need[] = $f;
+        }
+        return $need;
+    }
+
     public function scanUpgrades() {
         if(file_exists('db/upgrade')) {
             $sql = "CREATE TABLE IF NOT EXISTS `pfm_upgrade` (

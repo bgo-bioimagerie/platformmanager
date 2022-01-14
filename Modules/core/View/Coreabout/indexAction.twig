@@ -11,5 +11,13 @@
             <li>Current DB version: {{ data["cdb"] }}</li>
         </ul>
     </div>
+    <div>
+    <h4>Needed upgrade</h4>
+    <ul>
+    {% for f in data.need %}
+        <li>{{f}}</li>
+    {% endfor %}
+    </ul>
+    </div>
 </div>
 {% endblock %}
