@@ -25,6 +25,7 @@
 * [core] set user deactivation settings per space
 * [booking] check booking start/end time and day at reservation
 * [core] add button to user spaces
+* [statistics] various fixes
 
 ## 2.2.2
 
