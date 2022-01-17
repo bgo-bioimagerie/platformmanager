@@ -7,6 +7,7 @@ require_once 'Framework/Configuration.php';
 
 require_once 'Modules/booking/Controller/BookinginvoiceController.php';
 require_once 'Modules/services/Controller/ServicesinvoiceprojectController.php';
+require_once 'Modules/services/Controller/ServicesinvoiceorderController.php';
 
 require_once 'Modules/invoices/Controller/InvoicesconfigController.php';
 require_once 'Modules/invoices/Controller/InvoiceslistController.php';
@@ -74,6 +75,22 @@ class InvoicesBaseTest extends BaseTest {
         $data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
         $invoice_id = $data['invoice']["id"];
         $this->assertTrue($invoice_id > 0);
+
+
+        // invoice order
+        /* FAILING in parseOrdersToDetails, a PR is in progress to fix orders
+        $req = $this->request([
+            "path" => "servicesinvoiceorder/".$space['id'],
+            "formid" => "invoicebyunitform",
+            "date_begin" => $dateStart->format('Y-m-d'),
+            "date_end" => $dateEnd->format('Y-m-d'),
+            "id_client" => $client['id']
+        ]);
+        $c = new ServicesinvoiceorderController($req, $space);
+        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $service_invoice_id = $data['invoice']["id"];
+        $this->assertTrue($service_invoice_id > 0);
+        */
 
 
         // invoice service

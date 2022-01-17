@@ -63,8 +63,8 @@ class BookingstatisticauthorizationsController extends StatisticsController {
             $period_begin = $this->request->getParameter("period_begin");
             $period_end = $this->request->getParameter("period_end");
 
-            $this->generateStats($id_space, $period_begin, $period_end);
-            return;
+            $f = $this->generateStats($id_space, $period_begin, $period_end);
+            return ['data' => ['file' => $f]];
         }
 
         $this->render(array("lang" => $lang, "id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
@@ -102,12 +102,12 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         // summary
         $summary["total"] = $modelAuthorizations->getTotalForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctuser"] = $modelAuthorizations->getDistinctUserForPeriod($id_space, $period_begin, $period_end);
-        $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($id_space, $period_begin, $period_end);
+        // $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctvisa"] = $modelAuthorizations->getDistinctVisaForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($id_space, $period_begin, $period_end);
         $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($id_space, $period_begin, $period_end);
 
-        $this->generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
+        return $this->generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
     }
 
     protected function generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end) {
@@ -252,8 +252,8 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         $spreadsheet->getActiveSheet()->SetCellValue('A4', "Nombre d'utilisateurs");
         $spreadsheet->getActiveSheet()->SetCellValue('B4', $summary["distinctuser"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A5', "Nombre d'unités");
-        $spreadsheet->getActiveSheet()->SetCellValue('B5', $summary["distinctunit"]);
+        //$spreadsheet->getActiveSheet()->SetCellValue('A5', "Nombre d'unités");
+        //$spreadsheet->getActiveSheet()->SetCellValue('B5', $summary["distinctunit"]);
 
         $spreadsheet->getActiveSheet()->SetCellValue('A6', "Nombre de Visas");
         $spreadsheet->getActiveSheet()->SetCellValue('B6', $summary["distinctvisa"]);
@@ -267,6 +267,11 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         // write excel file
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
+        if(getenv('PFM_MODE') == 'test') {
+            $tmpName = tempnam('/tmp', 'statistics').'.xlsx';
+            $objWriter->save($tmpName);
+            return $tmpName;
+        }
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-authorizations-stats.xlsx"');
@@ -384,11 +389,13 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         $lang = $this->getLanguage();
         // query
         $statUserModel = new BkStatsUser();
+        $f = null;
         if ($email != "") {
-            $statUserModel->authorizedUsersMail($resource_id, $id_space);
+            $f = $statUserModel->authorizedUsersMail($resource_id, $id_space);
         } else {
-            $statUserModel->authorizedUsers($resource_id, $id_space, $lang);
+            $f = $statUserModel->authorizedUsers($resource_id, $id_space, $lang);
         }
+        return ['data' => ['file' => $f]];
     }
 
 }

@@ -329,6 +329,9 @@ class BkStatsUser extends Model {
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         $writer->save('./data/statistics/' . $nom);
+        if(getenv('PFM_MODE') == 'test') {
+            return './data/statistics/' . $nom;
+        }
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $nom . '"');
         header('Cache-Control: max-age=0');
@@ -349,6 +352,9 @@ class BkStatsUser extends Model {
         // get resource category
         $modelResource = new ReCategory();
         $resourceInfo = $modelResource->getName($id_space, $resource_id); // ->getResourcesCategory($resource_id);
+        if(!$resourceInfo) {
+            throw new PfmParamException('resource not found');
+        }
         // header
         $today = date('d/m/Y');
         $equipement = $resourceInfo;
@@ -469,17 +475,20 @@ class BkStatsUser extends Model {
         $sheet->getColumnDimension('C')->setWidth(16);
         $sheet->getColumnDimension('D')->setWidth(8);
 
-        // Header
-        $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
-        $objDrawing->setName('PHPExcel logo');
+
 
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
 
         //echo "icon = " . $reqIcon[0] . "<br/>";
-        $objDrawing->setPath($reqIcon[0]);
-        $objDrawing->setHeight(60);
-        $spreadsheet->getActiveSheet()->getHeaderFooter()->addImage($objDrawing, \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooter::IMAGE_HEADER_LEFT);
+        if($reqIcon && $reqIcon['image']) {
+            // Header
+            $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
+            $objDrawing->setName('PHPExcel logo');
+            $objDrawing->setPath($reqIcon[0]);
+            $objDrawing->setHeight(60);
+            $spreadsheet->getActiveSheet()->getHeaderFooter()->addImage($objDrawing, \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooter::IMAGE_HEADER_LEFT);
+        }
         $sheet->getHeaderFooter()->setOddHeader('&L&G&R' . $header);
 
 
@@ -615,54 +624,62 @@ class BkStatsUser extends Model {
         $sheet->getHeaderFooter()->setOddFooter('&L ' . $footer . '&R Page &P / &N');
         $sheet->getHeaderFooter()->setEvenFooter('&L ' . $footer . '&R Page &P / &N');
 
-        $ImageNews = $reqIcon[0];
+        if($reqIcon && $reqIcon['image']) {
+            $ImageNews = $reqIcon[0];
 
-        //on récupère l'extension du fichier
-        $ExtensionPresumee = explode('.', $ImageNews);
-        $ExtensionPresumee = strtolower($ExtensionPresumee[count($ExtensionPresumee) - 1]);
-        //on utilise la fonction php associé au bon type d'image
-        if ($ExtensionPresumee == 'jpg' || $ExtensionPresumee == 'jpeg') {
-            $ImageChoisie = imagecreatefromjpeg($ImageNews);
-        } elseif ($ExtensionPresumee == 'gif') {
-            $ImageChoisie = imagecreatefromgif($ImageNews);
-        } elseif ($ExtensionPresumee == 'png') {
-            $ImageChoisie = imagecreatefrompng($ImageNews);
+            //on récupère l'extension du fichier
+            $ExtensionPresumee = explode('.', $ImageNews);
+            $ExtensionPresumee = strtolower($ExtensionPresumee[count($ExtensionPresumee) - 1]);
+            //on utilise la fonction php associé au bon type d'image
+            if ($ExtensionPresumee == 'jpg' || $ExtensionPresumee == 'jpeg') {
+                $ImageChoisie = imagecreatefromjpeg($ImageNews);
+            } elseif ($ExtensionPresumee == 'gif') {
+                $ImageChoisie = imagecreatefromgif($ImageNews);
+            } elseif ($ExtensionPresumee == 'png') {
+                $ImageChoisie = imagecreatefrompng($ImageNews);
+            }
+
+            //je redimensionne l’image
+            $TailleImageChoisie = getimagesize($ImageNews);
+            //la largeur voulu dans le document excel
+            //$NouvelleLargeur = 150;
+            $NouvelleHauteur = 80;
+            //calcul du pourcentage de réduction par rapport à l’original
+            //$Reduction = ( ($NouvelleLargeur * 100)/$TailleImageChoisie[0] );
+            $Reduction = ( ($NouvelleHauteur * 100) / $TailleImageChoisie[1] );
+            //PHPExcel m’aplatit verticalement l’image donc j’ai calculé de ratio d’applatissement de l’image et je l’étend préalablement
+            //$NouvelleHauteur = (($TailleImageChoisie[1] * $Reduction)/100 );
+            $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
+            //j’initialise la nouvelle image
+            $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);
+
+            //je mets l’image obtenue après redimensionnement en variable
+            imagecopyresampled($NouvelleImage, $ImageChoisie, 0, 0, 0, 0, $NouvelleLargeur, $NouvelleHauteur, $TailleImageChoisie[0], $TailleImageChoisie[1]);
+            $gdImage = $NouvelleImage;
+
+            //on créé l’objet de dessin et on lui donne un nom, l’image, la position de l’image, la compression de l’image, le type mime…
+            $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing();
+            $objDrawing->setName('Sample image');
+            $objDrawing->setImageResource($gdImage);
+            $objDrawing->setCoordinates('A1');
+            $objDrawing->setOffsetX(50);
+            $objDrawing->setOffsetY(8);
+            $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
+            $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
         }
-
-        //je redimensionne l’image
-        $TailleImageChoisie = getimagesize($ImageNews);
-        //la largeur voulu dans le document excel
-        //$NouvelleLargeur = 150;
-        $NouvelleHauteur = 80;
-        //calcul du pourcentage de réduction par rapport à l’original
-        //$Reduction = ( ($NouvelleLargeur * 100)/$TailleImageChoisie[0] );
-        $Reduction = ( ($NouvelleHauteur * 100) / $TailleImageChoisie[1] );
-        //PHPExcel m’aplatit verticalement l’image donc j’ai calculé de ratio d’applatissement de l’image et je l’étend préalablement
-        //$NouvelleHauteur = (($TailleImageChoisie[1] * $Reduction)/100 );
-        $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
-        //j’initialise la nouvelle image
-        $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);
-
-        //je mets l’image obtenue après redimensionnement en variable
-        imagecopyresampled($NouvelleImage, $ImageChoisie, 0, 0, 0, 0, $NouvelleLargeur, $NouvelleHauteur, $TailleImageChoisie[0], $TailleImageChoisie[1]);
-        $gdImage = $NouvelleImage;
-
-        //on créé l’objet de dessin et on lui donne un nom, l’image, la position de l’image, la compression de l’image, le type mime…
-        $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing();
-        $objDrawing->setName('Sample image');
-        $objDrawing->setImageResource($gdImage);
-        $objDrawing->setCoordinates('A1');
-        $objDrawing->setOffsetX(50);
-        $objDrawing->setOffsetY(8);
-        $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
-        $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
         
         //$objDrawing->setWorksheet($sheet);
 
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
-        $writer->save('./data/statistics/' . $nom);
+        if(!file_exists("./data/statistics/$id_space/")) {
+            mkdir("./data/statistics/$id_space/", 0755, true);
+        }
+        $writer->save("./data/statistics/$id_space/" . $nom);
+        if(getenv('PFM_MODE') == 'test') {
+            return './data/statistics/' . $nom;
+        }
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $nom . '"');
         header('Cache-Control: max-age=0');

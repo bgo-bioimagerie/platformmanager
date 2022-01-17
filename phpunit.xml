@@ -12,6 +12,7 @@
       <file>tests/manager/QuoteTest.php</file>
       <file>tests/manager/DocumentsTest.php</file>
       <file>tests/manager/HelpdeskTest.php</file>
+      <file>tests/manager/StatisticsTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>
