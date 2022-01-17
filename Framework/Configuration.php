@@ -87,11 +87,23 @@ class Configuration {
                     if(!isset($yamlData['plans'][0]['flags'])) {
                         $yamlData['plans'][0]['flags'] = [];
                     }
+                    if(!isset($yamlData['plans'][0]['limits'])) {
+                        $yamlData['plans'][0]['limits'] = [];
+                    }
                     for($i=1;$i<count($plans);$i++) {
-                            if(!isset($yamlData['plans'][$i]['flags'])) {
+                        if(!isset($yamlData['plans'][$i]['flags'])) {
                             $yamlData['plans'][$i]['flags'] = [];
                         }
+                        if(!isset($yamlData['plans'][$i]['limits'])) {
+                            $yamlData['plans'][$i]['limits'] = [];
+                        }
                         $yamlData['plans'][$i]['flags'] = array_merge($yamlData['plans'][$i]['flags'], $yamlData['plans'][$i-1]['flags']);
+                        $new_limits = $yamlData['plans'][$i-1]['limits'] ;
+                        foreach ($yamlData['plans'][$i]['limits'] as $key => $value) {
+                            $new_limits[$key] = $value ;
+                        }
+                        $yamlData['plans'][$i]['limits'] = $new_limits;
+                        //$yamlData['plans'][$i]['limits'] = array_merge($yamlData['plans'][$i-1]['limits'], $yamlData['plans'][$i]['limits']);
                     }
                 }
                 foreach ($yamlData as $key => $value){

@@ -53,10 +53,16 @@ class CorespaceadminController extends CoresecureController {
         $data = $modelSpace->getSpaces("name");
         for($i = 0 ; $i < count($data) ; $i++){
             $data[$i]["url"] = "corespace/" . $data[$i]["id"];
+            $data[$i]['plan_expire'] = date('Y-m-d', $data[$i]['plan_expire']);
         }
         
-        $headers = array("name" => CoreTranslator::Name($lang), "status" => CoreTranslator::Status($lang),
-                         "url" => CoreTranslator::Url($lang));
+        $headers = array(
+            "name" => CoreTranslator::Name($lang),
+            "status" => CoreTranslator::Status($lang),
+            "url" => CoreTranslator::Url($lang),
+            "plan" => 'Plan',
+            "plan_expire" => 'Expiration'
+        );
         
         $table->addLineEditButton("spaceadminedit");
         $table->addDeleteButton("spaceadmindelete");

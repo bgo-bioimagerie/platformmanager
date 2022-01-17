@@ -11,6 +11,8 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreSpace.php';
+
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Model/ReEvent.php';
@@ -59,6 +61,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
+        // TODO get all area/categories rather than a loop
         for ($i = 0; $i < count($resources); $i++) {
             $resources[$i]["area"] = $modelArea->getName($id_space, $resources[$i]["id_area"]);
             $resources[$i]["category"] = $modelCategory->getName($id_space, $resources[$i]["id_category"]);
@@ -121,6 +124,17 @@ class ResourcesinfoController extends ResourcesBaseController {
         $form->setColumnsWidth(2, 10);
 
         if ($form->check()) {
+            $rid = $form->getParameter("id");
+            if($rid == 0) {
+                $plan = (new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']))->plan();
+                if($plan && array_key_exists('limits', $plan) && array_key_exists('resources', $plan['limits']) && $plan['limits']['resources']) {
+                    // Count
+                    $spaceResources = $modelResource->getBySpace($id_space);
+                    if(count($spaceResources) >= $plan['limits']['resources']) {
+                        throw new PfmParamException("Resource plan limit reached: ".$plan['limits']['resources']);
+                    }
+                }
+            }
             $id = $modelResource->set($form->getParameter("id"),
             $form->getParameter("name"),
             $form->getParameter("brand"),
