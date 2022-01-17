@@ -20,6 +20,7 @@
 
         let services = [...document.getElementsByName("services[]")];
         let types = [...document.getElementsByName("type[]")];
+        let apiRoute = `services/getServiceType/`;
         for (let i=0; i<services.length; i++) {
             services[i].id += i;
             types[i].id += i;
@@ -27,12 +28,19 @@
             let targets = [
                 {
                     elementId: types[i].id,
-                    apiRoute: `services/getServiceType/`,
+                    apiRoute: apiRoute,
                     activateOnLoad: true
                 }
             ];
             dynamicForms.dynamicFields(sourceId, targets, spaceId);
         }
+
+        // add targets
+        let formAddName = "orderEditForm" /* <?php echo $formAddName?> */; // replace by $formAddName
+        let sourceItemsName = "services";
+        let targetItemsName = "type";
+        dynamicForms.manageLineAdd(formAddName, sourceItemsName, targetItemsName, apiRoute, spaceId);
+
     </script>
 </div>
 

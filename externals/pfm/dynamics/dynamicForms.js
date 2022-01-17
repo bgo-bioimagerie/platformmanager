@@ -30,18 +30,18 @@ export class DynamicForms {
         let initialId = (source.options[source.selectedIndex] != -1) ? source.options[source.selectedIndex].value : null;
         targets.forEach(target => {
             if (target.activateOnLoad && initialId) {
-                this.activateTarget(target, initialId, spaceId, cfg, headers, targetingLabel);
+                this.activateTarget(target, initialId, spaceId, cfg, targetingLabel);
             }
         });
         source.addEventListener("change", (event) => {
             const selectedId = event.target.value;
             targets.forEach((target) => {
-                this.activateTarget(target, selectedId, spaceId, cfg, headers, targetingLabel);
+                this.activateTarget(target, selectedId, spaceId, cfg, targetingLabel);
                 });
             });
     }
 
-    activateTarget(target, selectedId, spaceId, cfg, headers, targetingLabel = false) {
+    activateTarget(target, selectedId, spaceId, cfg, targetingLabel = false) {
         let targetElement = document.getElementById(target.elementId);
         let mandatory = false;
         if (targetingLabel) {
@@ -83,6 +83,21 @@ export class DynamicForms {
             });
     }
 
+    manageLineAdd(formAddName, sourceItemsName, targetItemsName, apiRoute, spaceId, targetingLabel = false) {
+        const addBtn = document.getElementById(formAddName + "_add");
+        addBtn.addEventListener("click", () => {
+            let sourceId = this.setLastElementId(sourceItemsName);
+            let targetId = this.setLastElementId(targetItemsName);
+            let targets = [
+                {
+                    elementId: targetId,
+                    apiRoute: apiRoute,
+                }
+            ]
+            this.dynamicFields(sourceId, targets, spaceId, targetingLabel);
+        });
+    }
+
     getElementLabel(element) {
         let result = null;
         const groupElement = element.parentElement.parentElement;
@@ -94,6 +109,14 @@ export class DynamicForms {
             }
         }
         return result;
+    }
+
+    setLastElementId(itemsName) {
+        let items = document.getElementsByName(itemsName + "[]");
+        let lastIndex = items.length - 1;
+        let newItem = items[lastIndex];
+        newItem.id = itemsName + lastIndex.toString();
+        return newItem.id;
     }
 
 }

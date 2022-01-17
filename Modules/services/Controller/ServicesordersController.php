@@ -176,8 +176,8 @@ class ServicesordersController extends ServicesController {
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
 
-
-        $formAdd = new FormAdd($this->request, "orderEditForm");
+        $formAddName = "orderEditForm";
+        $formAdd = new FormAdd($this->request, $formAddName);
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
         $formAdd->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
         $formAdd->addLabel("type", $items["quantity_types"]);
@@ -194,6 +194,7 @@ class ServicesordersController extends ServicesController {
 
         return $this->render(array(
             "id_space" => $id_space,
+            "formAddName" => $formAddName,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang),
             "data" => ['order' => $value, 'items' => $items]
@@ -221,7 +222,7 @@ class ServicesordersController extends ServicesController {
         $servicesIds = $this->request->getParameter("services");
         $servicesQuantities = $this->request->getParameter("quantities");
 
-        // avoid multiple entries for ,the same service
+        // avoid multiple entries for the same service
         if (count(array_unique($servicesIds)) === count($servicesIds)) { 
             $oldServicesIds = $modelOrder->getOrderServices($id_space ,$id)['services'];
             $deletedServicesIds = array_diff_key($oldServicesIds, $servicesIds);

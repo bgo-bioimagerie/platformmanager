@@ -206,13 +206,6 @@ class ServicesTranslator {
         return "Edit service";
     }
 
-    /* public static function Quantity($lang) {
-        if ($lang == "fr") {
-            return "Quantité/Temps/Prix";
-        }
-        return "Quantity/Time/Price";
-    } */
-
     public static function Quantity($lang) {
         if ($lang == "fr") {
             return "Quantité";
@@ -243,7 +236,6 @@ class ServicesTranslator {
                     $result = "Journée";
                     break;
                 default:
-                $result = "Quantité";
                     break;
             }
         }
