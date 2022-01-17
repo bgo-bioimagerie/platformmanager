@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [coreconfig] remove module color edition from core config
 * [booking] fix all_day reservation end date
 * [core] remove most references to CoreTranslator::dateFromEn()
 * [spaces] remove request access button from private spaces
