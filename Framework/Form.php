@@ -772,9 +772,9 @@ class Form {
     public function check() {
         $formID = $this->request->getParameterNoException("formid");
         if ($formID == $this->id) {
+            Configuration::getLogger()->debug('[form=check] form submit', ['form' => $this->id, 'data' => $this->request->params()]);
             return 1;
         }
-        Configuration::getLogger()->debug('[form=check] failed', ['form' => $this->id, 'data' => $this->request->params()]);
         return 0;
     }
 

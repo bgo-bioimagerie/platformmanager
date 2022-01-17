@@ -54,8 +54,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             //echo "id resp = " . $id_resp . "<br/>";
             //echo "id unit = " . $id_unit . "<br/>";
             $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp);
-            $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice);
-            return;
+            return $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice, [], ['invoice' => ['id' => $id_invoice]]);
         }
         $formByPeriod = $this->createByPeriodForm($id_space, $lang);
         if ($formByPeriod->check()) {
@@ -67,9 +66,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             if ($id_resp != 0) {
                 $id_projects = $modelProject->getProjectsOpenedPeriodResp($id_space, $beginPeriod, $endPeriod, $id_resp);
 
-                $this->invoiceProjects($id_space, $id_projects, $id_resp);
-                $this->redirect("invoices/" . $id_space);
-                return;
+                $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp);
+                return $this->redirect("invoices/" . $id_space, [], ['invoice' => ['id' => $id_invoice]]);
             }
         }
 
@@ -140,7 +138,14 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         
 
         // render
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "invoice" => $invoice, "details" => $detailsData, "htmlForm" => $form->getHtml($lang)));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "invoice" => $invoice,
+            "details" => $detailsData,
+            "htmlForm" => $form->getHtml($lang),
+            "data" => ['item' => $item, 'invoice' => $invoice]
+        ));
     }
     
     protected function unparseContent($id_space, $id_item) {
@@ -282,7 +287,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $id_projects = array();
         $id_projects[] = $id_project;
         $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp);
-        $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice);
+        return $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice, [], ['invoice' => ['id' => $id_invoice]]);
     }
 
     protected function invoiceProjects($id_space, $id_projects, $id_resp) {
@@ -311,7 +316,6 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $addedServicesPrice = array();
         $addedServicesComment = array();
         $modelPrice = new SePrice();
-
         foreach ($id_projects as $id_proj) {
             $services = $modelProject->getNoInvoicesServices($id_space, $id_proj);
 

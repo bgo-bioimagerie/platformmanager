@@ -6,6 +6,8 @@ require_once 'Framework/Request.php';
 require_once 'Framework/Configuration.php';
 
 require_once 'Modules/booking/Controller/BookinginvoiceController.php';
+require_once 'Modules/services/Controller/ServicesinvoiceprojectController.php';
+
 require_once 'Modules/invoices/Controller/InvoicesconfigController.php';
 require_once 'Modules/invoices/Controller/InvoiceslistController.php';
 
@@ -72,14 +74,71 @@ class InvoicesBaseTest extends BaseTest {
         $data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
         $invoice_id = $data['invoice']["id"];
         $this->assertTrue($invoice_id > 0);
+
+
+        // invoice service
+        $req = $this->request([
+            "path" => "servicesinvoiceproject/".$space['id'],
+            "formid" => "ByPeriodForm",
+            "period_begin" => $dateStart->format('Y-m-d'),
+            "period_end" => $dateEnd->format('Y-m-d'),
+            "id_resp" => $client['id']
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $service_invoice_id = $data['invoice']["id"];
+        $this->assertTrue($service_invoice_id > 0);
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 0]);
+        $itemDatas = explode(';', $data['item']['content']);
+        $itemData = explode('=', $itemDatas[0]);
+        $serviceId = $itemData[0];
+        $quantity = $itemData[1];
+        $unitPrice = $itemData[2];
+        $comment = $itemData[3];
+        $formid = 'editinvoiceprojectform';
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id,
+            "formid" => $formid,
+            "id_service" => [$serviceId],
+            "quantity" => [$quantity],
+            "unit_price" => [$unitPrice],
+            "comment" => [$comment],
+            "discount" => 0
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 0]);
+
+
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 0]);
+        $itemDatas = explode(';', $data['item']['content']);
+        $itemData = explode('=', $itemDatas[0]);
+        $this->assertTrue($itemData[1]==$quantity);
+
+
         $req = $this->request([
             "path" => "bookinginvoiceedit/".$space['id'].'/'.$invoice_id.'/1'
         ]);
         // try generate pdf
         $c = new BookinginvoiceController($req, $space);
         $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 1]);
+
         // with details
         $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 2]);
+
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 1]);
+        
     }
 
     protected function listInvoices($space) {

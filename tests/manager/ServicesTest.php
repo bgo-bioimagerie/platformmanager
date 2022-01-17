@@ -25,8 +25,9 @@ class ServicesTest extends ServicesBaseTest {
         foreach($spaces as $spaceName => $data) {
             $space = $this->space($spaceName);
             $user = $this->user($data['managers'][0]);
+            $services = [];
             foreach(['service1', 'service2'] as $service) {
-                $this->createServices($space, $user, $service);
+                $services[] = $this->createServices($space, $user, $service);
             }
             $visa = $this->createVisa($space, $user);
             $origin = $this->createOrigin($space, $user, 'origin1');
@@ -41,7 +42,9 @@ class ServicesTest extends ServicesBaseTest {
             $clients_data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
             $clients = $clients_data['clients'];
             $client_user = $this->user($data['users'][0]);
-            $this->createProject($space, $user, 'project1', $visa, $clients[0], $client_user, $origin);
+            $project = $this->createProject($space, $user, 'project1', $visa, $clients[0], $client_user, $origin);
+            $this->addServiceToProject($space, $project, $services[0]);
+            //$this->closeProject($space, $project, $visa);
         } 
     }
 
