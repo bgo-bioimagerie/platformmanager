@@ -137,7 +137,7 @@ class InvoicesBaseTest extends BaseTest {
             "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
         ]);
         $c = new ServicesinvoiceprojectController($req, $space);
-        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 1]);
+        $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 1]);
         
     }
 
