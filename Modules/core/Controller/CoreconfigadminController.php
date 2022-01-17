@@ -10,6 +10,7 @@ require_once 'Modules/core/Model/CoreInstall.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 
 /**
  *
@@ -124,6 +125,7 @@ class CoreconfigadminController extends CoresecureController {
             $this->redirect("coreconfigadmin");
             return;
         }
+
         // who can delete user
         /*
         $formDeleteUser = $this->whoCanDeleteUserForm($modelCoreConfig, $lang);
@@ -140,11 +142,12 @@ class CoreconfigadminController extends CoresecureController {
         $forms = array($formMaintenance->getHtml($lang),
             $formSpaceIconsForm->getHtml($lang),
             $formDesactivateUser->getHtml($lang),
-            //$formLdap->getHtml($lang),
+            // $formLdap->getHtml($lang),
             $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang),
-            //$formDeleteUser->getHtml($lang),
-            $formEmail->getHtml($lang), $formNavbar->getHtml($lang)
+            // $formDeleteUser->getHtml($lang),
+            $formEmail->getHtml($lang),
+            // $formNavbar->getHtml($lang)
         );
 
         $this->render(array("forms" => $forms, "lang" => $lang));
@@ -266,20 +269,11 @@ class CoreconfigadminController extends CoresecureController {
 
         $value = $modelCoreConfig->getParam("user_desactivate", 1);
 
-        $choices = array();
-        $choicesid = array();
-        $choicesid[] = 1;
-        $choices[] = CoreTranslator::never($lang);
-        $choicesid[] = 2;
-        $choices[] = CoreTranslator::contract_ends($lang);
-        $choicesid[] = 3;
-        $choices[] = CoreTranslator::does_not_login_for_n_year(1, $lang);
-        $choicesid[] = 4;
-        $choices[] = CoreTranslator::does_not_login_for_n_year(2, $lang);
-        $choicesid[] = 5;
-        $choices[] = CoreTranslator::does_not_login_for_n_year(3, $lang);
-        $choicesid[] = 6;
-        $choices[] = CoreTranslator::contract_ends_or_does_not_login_for_1_year($lang);
+        $cc = new CoreConfig();
+        $expirationChoices = $cc->getExpirationChoices($lang);
+        $choices = $expirationChoices['labels'];
+        $choicesid = $expirationChoices['ids'];
+
 
         $form = new Form($this->request, "desactivateUserForm");
         $form->addSeparator(CoreTranslator::non_active_users($lang));
@@ -350,7 +344,6 @@ class CoreconfigadminController extends CoresecureController {
     /**
      * @deprecated
      */
-
     protected function whoCanDeleteUserForm($modelCoreConfig, $lang) {
         $who_can_delete_user = $modelCoreConfig->getParam("who_can_delete_user", 2);
 

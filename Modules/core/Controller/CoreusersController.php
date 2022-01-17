@@ -57,12 +57,8 @@ class CoreusersController extends CoresecureController {
             "date_last_login" => CoreTranslator::Last_connection($lang));
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll() ?? [];
-        $modelStatus = new CoreStatus();
-        $statusNames = $modelStatus->statusIDName();
-        $smap = [];
-        foreach ($statusNames as $s) {
-            $smap[$s['id']] = $s['name'];
-        }
+
+        $smap = [ 1 => CoreStatus::$USER, 2 => CoreStatus::$ADMIN];
         $users = [];
         for ($i = 0; $i < count($data); $i++) {
             $users[] = $data[$i];
@@ -180,8 +176,7 @@ class CoreusersController extends CoresecureController {
                 $_SESSION["flashClass"] = "success";
                 $id_user = $this->editQuery($form, $lang);
                 $user = $modelUser->getInfo($id_user);
-                $this->redirect("coreusers", [], ['user' => $user]);
-                return;
+                return $this->redirect("coreusers", [], ['user' => $user]);
             }
         }
         
@@ -196,7 +191,12 @@ class CoreusersController extends CoresecureController {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
 
-        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+        return $this->render(array(
+            "formHtml" => $form->getHtml($lang),
+            "formPwdHtml" => $formPwdHtml,
+            "script" => $script,
+            "data" => ['user' => $user]
+        ));
     }
 
     protected function displayFormWarnings($cause, $id, $lang) {

@@ -6,6 +6,9 @@ require_once 'Framework/Request.php';
 require_once 'Framework/Configuration.php';
 
 require_once 'Modules/booking/Controller/BookinginvoiceController.php';
+require_once 'Modules/services/Controller/ServicesinvoiceprojectController.php';
+require_once 'Modules/services/Controller/ServicesinvoiceorderController.php';
+
 require_once 'Modules/invoices/Controller/InvoicesconfigController.php';
 require_once 'Modules/invoices/Controller/InvoiceslistController.php';
 
@@ -17,18 +20,19 @@ class InvoicesBaseTest extends BaseTest {
         Configuration::getLogger()->debug('activate invoices', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
         // activate booking module
-        $req = new Request([
+        $req = $this->request([
             "path" => "invoicesconfig/".$space['id'],
             "formid" => "invoicesmenusactivationForm",
             "invoicesMenustatus" => 3,
             "invoicesDisplayMenu" => 0,
             "invoicesDisplayColor" =>  "#000000",
             "invoicesDisplayColorTxt" => "#ffffff"
-        ], false);
+        ]);
         $c = new InvoicesconfigController($req, $space);
-        $c->indexAction($space['id']);
-        $c = new CorespaceController(new Request(["path" => "corespace/".$space['id']], false), $space);
-        $spaceView = $c->viewAction($space['id']);
+        $c->runAction('invoices', 'index', ['id_space' => $space['id']]);
+        $req = $this->request(["path" => "corespace/".$space['id']]);
+        $c = new CorespaceController($req, $space);
+        $spaceView = $c->runAction('core', 'view', ['id_space' => $space['id']]);
         $invoicesEnabled = false;
         foreach($spaceView['spaceMenuItems'] as $menu) {
             if($menu['url'] == 'invoices') {
@@ -40,13 +44,13 @@ class InvoicesBaseTest extends BaseTest {
         $template = __DIR__."/../externals/pfm/templates/invoice_template.twig";
         copy($template, "/tmp/test.twig");
         $_FILES = ["template" => ["error" => 0, "name" => "test.twig", "tmp_name" => "/tmp/test.twig", "size" => filesize($template)]];
-        $req = new Request([
+        $req = $this->request([
             "path" => "invoicepdftemplate/".$space['id'],
             "formid" => "formUploadTemplate"
-        ], false);
+        ]);
         $c = new InvoicesconfigController($req, $space);
         try {
-            $c->pdftemplateAction($space['id']);
+            $c->runAction('invoices', 'pdftemplate', ['id_space' => $space['id']]);
         } catch(Throwable) {
             copy($template, __DIR__."/../data/invoices/".$space["id"]."/template.twig");
         }
@@ -60,33 +64,106 @@ class InvoicesBaseTest extends BaseTest {
         $this->asUser($user['login'], $space['id']);
         $dateStart = new DateTime('first day of this month');
         $dateEnd = new DateTime('last day of this month');
-        $req = new Request([
+        $req = $this->request([
             "path" => "bookinginvoice/".$space['id'],
             "formid" => "ByPeriodForm",
             "period_begin" => $dateStart->format('Y-m-d'),
             "period_end" => $dateEnd->format('Y-m-d'),
             "id_resp" => $client['id']
-        ], false);
+        ]);
         $c = new BookinginvoiceController($req, $space);
-        $data = $c->indexAction($space['id']);
+        $data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
         $invoice_id = $data['invoice']["id"];
         $this->assertTrue($invoice_id > 0);
-        $req = new Request([
+
+
+        // invoice order
+        /* FAILING in parseOrdersToDetails, a PR is in progress to fix orders
+        $req = $this->request([
+            "path" => "servicesinvoiceorder/".$space['id'],
+            "formid" => "invoicebyunitform",
+            "date_begin" => $dateStart->format('Y-m-d'),
+            "date_end" => $dateEnd->format('Y-m-d'),
+            "id_client" => $client['id']
+        ]);
+        $c = new ServicesinvoiceorderController($req, $space);
+        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $service_invoice_id = $data['invoice']["id"];
+        $this->assertTrue($service_invoice_id > 0);
+        */
+
+
+        // invoice service
+        $req = $this->request([
+            "path" => "servicesinvoiceproject/".$space['id'],
+            "formid" => "ByPeriodForm",
+            "period_begin" => $dateStart->format('Y-m-d'),
+            "period_end" => $dateEnd->format('Y-m-d'),
+            "id_resp" => $client['id']
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $service_invoice_id = $data['invoice']["id"];
+        $this->assertTrue($service_invoice_id > 0);
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 0]);
+        $itemDatas = explode(';', $data['item']['content']);
+        $itemData = explode('=', $itemDatas[0]);
+        $serviceId = $itemData[0];
+        $quantity = $itemData[1];
+        $unitPrice = $itemData[2];
+        $comment = $itemData[3];
+        $formid = 'editinvoiceprojectform';
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id,
+            "formid" => $formid,
+            "id_service" => [$serviceId],
+            "quantity" => [$quantity],
+            "unit_price" => [$unitPrice],
+            "comment" => [$comment],
+            "discount" => 0
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 0]);
+
+
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 0]);
+        $itemDatas = explode(';', $data['item']['content']);
+        $itemData = explode('=', $itemDatas[0]);
+        $this->assertTrue($itemData[1]==$quantity);
+
+
+        $req = $this->request([
             "path" => "bookinginvoiceedit/".$space['id'].'/'.$invoice_id.'/1'
-        ], false);
+        ]);
         // try generate pdf
         $c = new BookinginvoiceController($req, $space);
-        $c->editAction($space['id'], $invoice_id, 1);
+        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 1]);
+
         // with details
-        $c->editAction($space['id'], $invoice_id, 2);
+        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 2]);
+
+        $req = $this->request([
+            "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
+        ]);
+        $c = new ServicesinvoiceprojectController($req, $space);
+        $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 1]);
+        
     }
 
     protected function listInvoices($space) {
-        $req = new Request([
+        $req = $this->request([
             "path" => "invoices/".$space['id'],
-        ], false);
+        ]);
         $i = new InvoiceslistController($req, $space);
-        $data = $i->indexAction($space['id'], 0);
+        $data = $i->runAction('invoices', 'index', ['id_space' => $space['id'], 'sent' => 0]);
         return $data['invoices'];
     }
 
@@ -96,7 +173,7 @@ class InvoicesBaseTest extends BaseTest {
         ]);
 
         $i = new InvoiceslistController($req, $space);
-        $data = $i->editAction($space['id'], $invoice['id']);
+        $data = $i->runAction('invoices', 'edit', ['id_space' => $space['id'], 'id' => $invoice['id']]);
         return $data['invoice'];
     }
 
@@ -105,7 +182,7 @@ class InvoicesBaseTest extends BaseTest {
             "path" => "invoicedelete/".$space['id'].'/'.$invoice['id'],
         ]);
         $i = new InvoiceslistController($req, $space);
-        $data = $i->deleteAction($space['id'], $invoice['id']);
+        $data = $i->runAction('invoices', 'delete', ['id_space' => $space['id'], 'id' => $invoice['id']]);
         return $data['invoice'];
     }
 

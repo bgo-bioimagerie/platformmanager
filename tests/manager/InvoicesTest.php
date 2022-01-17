@@ -26,12 +26,12 @@ class InvoicesTest extends InvoicesBaseTest {
             $space = $this->space($spaceName);
             $user = $this->user($data['managers'][0]);
             $this->asUser($user['login'], $space['id']);
-            $req = new Request([
+            $req = $this->request([
                 "path" => "clclients/".$space['id'],
                 "id" => 0
-             ], false); 
+             ]); 
             $c = new ClientslistController($req, $space);
-            $data = $c->indexAction($space['id']);
+            $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
             $clients = $data['clients'];
             $this->doInvoice($space, $user, $clients[0]);
 

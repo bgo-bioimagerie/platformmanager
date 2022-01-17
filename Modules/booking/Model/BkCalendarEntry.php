@@ -447,7 +447,7 @@ class BkCalendarEntry extends Model {
      * @param $dateEnd End of the periode in linux time
      * 
      */
-    public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id) {
+    public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id, $id_user='') {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
         $sql = 'SELECT bk_calendar_entry.* , bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
@@ -457,8 +457,12 @@ class BkCalendarEntry extends Model {
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id = :res
                 AND bk_calendar_entry.deleted=0
-                AND bk_calendar_entry.id_space=:id_space
-				ORDER BY bk_calendar_entry.start_time';
+                AND bk_calendar_entry.id_space=:id_space';
+        if($id_user) {
+            $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
+            $q['id_user'] = $id_user;
+        }
+		$sql .=	 ' ORDER BY bk_calendar_entry.start_time';
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
@@ -491,7 +495,7 @@ class BkCalendarEntry extends Model {
      * @param $dateEnd End of the periode in linux time
      * 
      */
-    public function getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, array $resource_ids) {
+    public function getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, array $resource_ids, $id_user='') {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
 
         $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
@@ -501,8 +505,12 @@ class BkCalendarEntry extends Model {
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id IN ('.implode(',', $resource_ids).')
                 AND bk_calendar_entry.deleted=0
-                AND bk_calendar_entry.id_space=:id_space
-				ORDER BY bk_calendar_entry.start_time';
+                AND bk_calendar_entry.id_space=:id_space';
+        if ($id_user) {
+            $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
+            $q['id_user'] = $id_user;
+        }
+		$sql .= ' ORDER BY bk_calendar_entry.start_time';
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
@@ -533,7 +541,7 @@ class BkCalendarEntry extends Model {
      * @param unknown $areaId
      * @return multitype:
      */
-    public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId) {
+    public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId, $id_user='') {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->resourceIDNameForArea($id_space, $areaId);
@@ -551,7 +559,7 @@ class BkCalendarEntry extends Model {
         foreach($resources as $r) {
             $rids[] = $r['id'];
         }
-       return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids);
+       return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids, $id_user);
     }
 
     public function isConflictP($id_space, $start_time, $end_time, $resource_id, $id_period) {

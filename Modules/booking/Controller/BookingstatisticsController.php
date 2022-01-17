@@ -35,7 +35,9 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
  */
 class BookingstatisticsController extends StatisticsController {
 
-    
+    /**
+     * @bug sends back stats as print_r, not a report
+     */
     public function statquantitiesAction($id_space){
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -58,7 +60,7 @@ class BookingstatisticsController extends StatisticsController {
             $stats = !empty($stats) ?: "No data found for this period";
             // TODO: link that to a report generation
             print_r($stats);
-            return;
+            return ['data' => ['stats' => $stats]];
         }
         
         $this->render(array(
@@ -103,6 +105,9 @@ class BookingstatisticsController extends StatisticsController {
                 $csv .= "\n";
             }
             
+            if(getenv('PFM_MODE') == 'test') {
+               return ['data' => ['stats' => $csv]];
+            }
             header('Content-Disposition: attachment; filename="filename.csv";');
             echo $csv;
             return;
@@ -175,6 +180,13 @@ class BookingstatisticsController extends StatisticsController {
             $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, null);
             // write excel file
             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
+
+
+            if(getenv('PFM_MODE') == 'test') {
+                $tmpName = tempnam('/tmp', 'statistics').'.xlsx';
+                $objWriter->save($tmpName);
+                return ['data' => ['file' => $tmpName]];
+            }
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
@@ -303,7 +315,7 @@ class BookingstatisticsController extends StatisticsController {
             $model = new BkStatsUser();
             $users = $model->bookingUsers($id_space, CoreTranslator::dateToEn($form->getParameter("startdate"), $lang), CoreTranslator::dateToEn($form->getParameter("enddate"), $lang));
 
-            $this->exportstatbookingusersCSV($users);
+            return $this->exportstatbookingusersCSV($users);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -323,15 +335,19 @@ class BookingstatisticsController extends StatisticsController {
      */
     private function exportstatbookingusersCSV($users) {
 
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=bookingusers.csv");
-
         $content = "name ; email \r\n";
 
         foreach ($users as $user) {
             $content.= $user["name"] . ";";
             $content.= $user["email"] . "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=bookingusers.csv");
         echo $content;
     }
 
@@ -440,12 +456,10 @@ class BookingstatisticsController extends StatisticsController {
                 ));
                 return;
             } else if ($outputType == 4) { // details csv
-                $this->exportDetailsCSV($table, $lang);
-                return;
+                return $this->exportDetailsCSV($table, $lang);
             } else if ($outputType == 5) { // summary csv
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
-                $this->exportSummaryCSV($summaryTable, $lang);
-                return;
+                return $this->exportSummaryCSV($summaryTable, $lang);
             }
         }
 
@@ -461,9 +475,6 @@ class BookingstatisticsController extends StatisticsController {
      * @param string $lang
      */
     private function exportDetailsCSV($table, $lang) {
-
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=rapport.csv");
 
         $content = "";
         $content.= ResourcesTranslator::Area($lang) . " ; "
@@ -489,6 +500,13 @@ class BookingstatisticsController extends StatisticsController {
             $content.= $t["login"] . " ";
             $content.= "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=rapport.csv");
         echo $content;
     }
 
@@ -498,8 +516,6 @@ class BookingstatisticsController extends StatisticsController {
      * @param string $lang
      */
     private function exportSummaryCSV($summaryTable, $lang) {
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=rapport.csv");
 
         $countTable = $summaryTable['countTable'];
         $timeTable = $summaryTable['timeTable'];
@@ -551,6 +567,13 @@ class BookingstatisticsController extends StatisticsController {
         }
         $content .= "(" . $totalCG . ")" . $totalHG / 3600;
         $content .= " \r\n ";
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=rapport.csv");
         echo $content;
     }
 

@@ -4,10 +4,12 @@ require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
 require_once 'Framework/Statistics.php';
 require_once 'Framework/Grafana.php';
+require_once 'Framework/Email.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
+require_once 'Modules/core/Model/CoreUserSettings.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
@@ -21,6 +23,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/quote/Model/Quote.php';
 require_once 'Modules/services/Model/SeService.php';
+
 
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -335,6 +338,15 @@ class EventHandler {
         if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
             $g->delUser($space['shortname'], $user['login']);
         }
+
+        $cus = new CoreUserSettings();
+        $user_lang = $cus->getUserSetting($user['id'], "language") ?? 'en';
+        // Send mail to user
+        $email = new Email();
+        $from = $email->getFromEmail($space['shortname']);
+        $fromName = "Platform-Manager";
+        $subject = CoreTranslator::MailSubjectPrefix($space['name'], $user_lang) . " " . CoreTranslator::spaceUserUnjoin($user_lang);
+        $email->sendEmail($from, $fromName, $user['email'], $subject, CoreTranslator::spaceUserUnjoinTxt($space['name'], $user_lang));
     }
 
     public function spacePlanEdit($msg) {

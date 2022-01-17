@@ -300,15 +300,20 @@ class ServicesprojectsController extends ServicesController {
             );
             
             $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
-            $this->redirect("servicesprojectclosing/" . $id_space . "/" . $id);
-            return;
+            return $this->redirect("servicesprojectclosing/" . $id_space . "/" . $id, [], ['project' => $project]);
         }
 
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "closing";
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang),
-            "headerInfo" => $headerInfo, "projectName" => $project["name"]));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang),
+            "headerInfo" => $headerInfo,
+            "projectName" => $project["name"],
+            "data" => ['project' => $project]
+        ));
     }
 
     public function samplestockAction($id_space, $id) {
@@ -455,10 +460,15 @@ class ServicesprojectsController extends ServicesController {
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "followup";
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "projectName" => $projectName,
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "projectName" => $projectName,
             "tableHtml" => $tableHtml, "headerInfo" => $headerInfo,
             "formedit" => $formEdit, "projectEntries" => $items,
-            "id_project" => $id));
+            "id_project" => $id,
+            "data" => ["entries" => $items]
+        ));
     }
 
     protected function createEditEntryForm($id_space, $lang) {
@@ -492,9 +502,9 @@ class ServicesprojectsController extends ServicesController {
         $comment = $this->request->getParameter("formservicecomment");
 
         $modelProject = new SeProject();
-        $modelProject->setEntry($id_space ,$id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
+        $id = $modelProject->setEntry($id_space ,$id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
 
-        $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
+        return $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project, [], ['entry' => ['id' => $id]]);
     }
 
     public function deleteentryAction($id_space, $id_project, $id) {

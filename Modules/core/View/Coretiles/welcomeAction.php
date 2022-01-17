@@ -24,6 +24,7 @@
 
         <div class="col-md-2">
                 <div class="col-xs-12"><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
+                    <div style="margin: 10px"><a href="coretiles?mine=1"><button class="btn btn-primary btn-block"><?php echo CoreTranslator::MySpaces($lang); ?></button></a></li></div>
                 <?php 
             foreach ($mainMenus as $menu) {
                 echo '<div style="margin: 10px" >';
@@ -90,6 +91,32 @@
                 </div>  
                 <?php } ?>
             </div>
+
+
+            <div class="row" id="user_spaces">
+                <?php foreach($userSpaces as $item) { ?>
+                <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
+                    <a href="<?php echo "corespace/" . $item["id"] ?>">
+                    <?php if(isset($icon)) {?><img aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                    </a>
+                    <p></p>
+                    <p style="color:#018181; ">
+                        <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
+                        <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
+                    </p>
+                    <p style="color:#a1a1a1; font-size:12px;">
+                        <?php echo $item["description"] ?>
+                    </p>
+                    <div style="position: absolute; bottom: 0px">
+                        <small>
+                        <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
+                        </small>
+                    </div>
+                </div>  
+                <?php } ?>
+            </div>
+
+
             <?php if(!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
             <div class="row">
                 <div class="col-xs-12 text-center">

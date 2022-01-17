@@ -140,6 +140,9 @@ class BkAuthorization extends Model {
         return $req->rowCount();
     }
 
+    /**
+     * @deprecated no lab_id
+     */
     public function getDistinctUnitForPeriod($id_space, $period_begin, $period_end){
         $sql = 'SELECT DISTINCT lab_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date>=? AND date<=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 )';
         $req = $this->runRequest($sql, array($id_space, $period_begin, $period_end, $id_space));

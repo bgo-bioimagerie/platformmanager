@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [coreconfig] remove module color edition from core config
 * [booking] fix all_day reservation end date
 * [core] remove most references to CoreTranslator::dateFromEn()
 * [spaces] remove request access button from private spaces
@@ -21,9 +22,14 @@
 * [layout] display enhancements
 * [core] add index on id_space
 * [services] fix services orders errors with client not registered
+* [core] set user deactivation settings per space
+* [booking] check booking start/end time and day at reservation
+* [core] add button to user spaces
+* [statistics] various fixes
 
 ## 2.2.2
 
+* [booking] fix scheduling creation for new resource areas
 * [db] add upgrade_v3_v4 migration script on se_order
   **Warning**: if you installed release <= 2.2.2 you need to run a db fix script
   php cli/pfm-cli.php repair --bug 499

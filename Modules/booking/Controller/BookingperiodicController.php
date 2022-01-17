@@ -204,36 +204,47 @@ class BookingdefaultController extends BookingabstractController {
         }
         
         $modelCalEntry = new BkCalendarEntry();
+
+        $error = null;
         
         $valid = true;
         if($start_time >= $end_time){
             $_SESSION["message"] = "Error: Start Time Must Be Before End Time";
             $valid = false;
+            $error = 'start time before end time';
         }
         if($start_time==0){
             $_SESSION["message"] = "Error: Start Time Cannot Be Null";
             $valid = false;
+            $error = 'start time null';
         }
         if($start_time==0){
             $_SESSION["message"] = "Error: End Time Cannot Be Null";
             $valid = false;
+            $error = 'end time null';
         }
         
-	// test if a resa already exists on this periode
-	$conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
-			
-	if ($conflict){
-            $_SESSION["message"] = BookingTranslator::reservationError($lang);
-            $valid = false;
-	}
+        // test if a resa already exists on this periode
+        $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
+                
+        if ($conflict){
+                $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                $valid = false;
+                $error = 'reservationError';
+        }
         
         if($valid){
-            $modelCalEntry->setEntry($id_space, $id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, 
+            $id_entry = $modelCalEntry->setEntry($id_space, $id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, 
                 $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
             $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);    
         }
         
-        $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
+        //$this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
+        $modelResource = new ResourceInfo();
+        $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
+        return $this->redirect("booking/".$id_space."/".$bk_id_area."/".$id_resource, [], ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
+
+
     }
 
     private function editreservation($id_space, $resaInfo, $param = "") {

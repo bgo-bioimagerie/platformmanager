@@ -125,10 +125,11 @@ class ClientslistController extends ClientsController {
         }
 
         // render the view
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
-            'formHtml' => $form->getHtml($lang)
+            'formHtml' => $form->getHtml($lang),
+            'data' => ['client'  => $client]
         ));
     }
 

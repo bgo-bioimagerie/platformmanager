@@ -49,9 +49,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $dateEnd = $this->request->getParameterNoException("date_end");
             $clientId = $this->request->getParameterNoException("id_client");
             if ($clientId != '') {
-                $this->generateClientBill($dateBegin, $dateEnd, $clientId, $id_space);
-                $this->redirect("invoices/" . $id_space);
-                return;
+                $id_invoice = $this->generateClientBill($dateBegin, $dateEnd, $clientId, $id_space);
+                return $this->redirect("invoices/" . $id_space, [], ['invoice' => ['id' => $id_invoice]]);
             }
         }
 
@@ -195,6 +194,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $modelOrder->setEntryCloded($id_space, $order["id"]);
             $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
         }
+
+        return $id_invoice;
     }
 
     protected function parseOrdersToDetails($orders, $id_space) {

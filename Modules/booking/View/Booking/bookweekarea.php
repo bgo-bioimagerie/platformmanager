@@ -96,13 +96,17 @@ $dayWidth = 100 / 8;
 <div class="row"  style="background-color: #ffffff; padding-bottom: 12px;">
 
     <div class="col-md-6 text-left">
-        <div class="btn-group" role="group" aria-label="...">
-            <button type="submit" class="btn btn-default"
-                    onclick="location.href = 'bookingweekarea/<?php echo $id_space ?>/dayweekbefore'">&lt;</button>
-            <button type="submit" class="btn btn-default"
-                    onclick="location.href = 'bookingweekarea/<?php echo $id_space ?>/dayweekafter'">></button>
-            <button type="submit" class="btn btn-default"
-                    onclick="location.href = 'bookingweekarea/<?php echo $id_space ?>/thisWeek'"><?php echo BookingTranslator::This_week($lang) ?></button>
+        <div class="btn-group" role="group" aria-label="navigate by week">
+        <?php
+	$today = date("Y-m-d", time());
+	$qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+?>
+			<a aria-label="previous week" href="bookingweekarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="next week" href="bookingweekarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current week" href="bookingweekarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
         </div>            
         <?php
         $d = explode("-", $mondayDate);
@@ -131,19 +135,19 @@ $dayWidth = 100 / 8;
         <div class="btn-group" role="group" aria-label="...">
 
             <div class="btn btn-default" type="button">
-                <a style="color:#333;" href="bookingday/<?php echo $id_space ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
+                <a style="color:#333;" href="bookingday/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
             </div>
             <div class="btn btn-default " type="button">
-                <a style="color:#333;" href="bookingdayarea/<?php echo $id_space ?>" ><?php echo BookingTranslator::Day_Area($lang) ?></a>
+                <a style="color:#333;" href="bookingdayarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day_Area($lang) ?></a>
             </div>
             <div class="btn btn-default" type="button">
-                <a style="color:#333;" href="bookingweek/<?php echo $id_space ?>" ><?php echo BookingTranslator::Week($lang) ?></a>
+                <a style="color:#333;" href="bookingweek/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week($lang) ?></a>
             </div>
             <div class="btn btn-default active" type="button">
-                <a style="color:#333;" href="bookingweekarea/<?php echo $id_space ?>" ><?php echo BookingTranslator::Week_Area($lang) ?></a>
+                <a style="color:#333;" href="bookingweekarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week_Area($lang) ?></a>
             </div>
             <div class="btn btn-default" type="button">
-                <a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo BookingTranslator::Month($lang) ?></a>
+                <a style="color:#333;" href="bookingmonth/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Month($lang) ?></a>
             </div>
         </div>
     </div>
@@ -173,22 +177,16 @@ $dayWidth = 100 / 8;
             <?php
             $resourceCount = - 1;
             $modelBookingSetting = new BkBookingSettings ();
-            //$moduleProject = new CoreProject ();
-            //$ModulesManagerModel = new CoreMenu ();
-            $isProjectMode = false; //$ModulesManagerModel->getDataMenusUserType("projects");
+            $isProjectMode = false;
 
             for ($i = -1; $i < count($resourcesBase); $i++) {
-                //foreach ( $resourcesBase as $ResourceBase ) {
-
                 $resourceID = -1;
                 if ($i >= 0) {
                     $resourceID = $resourcesBase [$i] ["id"];
                 }
-                // echo "resource id = " . $resourcesBase[$resourceCount]["id"] . "</br>";
-                // resource title
-                ?>
+            ?>
 
-                <?php
+            <?php
                 $styleLine = "";
                 $styleLineHeader = "style=\"text-align: center; background-color:" . $agendaStyle["header_background"] . "; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1; color: " . $agendaStyle["header_color"] . ";\"";
                 if (!($i % 2)) {
@@ -196,9 +194,9 @@ $dayWidth = 100 / 8;
                 } else {
                     $styleLine = "style=\"background-color:#ffffff; border-right: 1px solid #a1a1a1; border-top: 2px solid #a1a1a1;\"";
                 }
-                ?>
+            ?>
 
-                <div class="row"  > <!-- id="colDivglobal" -->
+                <div class="row"  >
 
                     <div class="col-lg-12" id="colDiv">
                         <!-- Content of each day -->

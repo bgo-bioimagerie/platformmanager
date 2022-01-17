@@ -140,10 +140,11 @@ class ClientspricingsController extends ClientsController {
             // set the view
             $formHtml = $form->getHtml($lang);
             // render the view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['pricing' => $pricing]
             ));
         }
     }
@@ -166,7 +167,7 @@ class ClientspricingsController extends ClientsController {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientPricing = new ClPricing();
         $pricingName = $modelClientPricing->getPricingByClient($id_space, $id_client)[0]['name'];
-        $this->render(['data' => ['elements' => $pricingName]]);
+        return $this->render(['data' => ['elements' => $pricingName]]);
     }
 
 }

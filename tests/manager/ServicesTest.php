@@ -25,23 +25,26 @@ class ServicesTest extends ServicesBaseTest {
         foreach($spaces as $spaceName => $data) {
             $space = $this->space($spaceName);
             $user = $this->user($data['managers'][0]);
+            $services = [];
             foreach(['service1', 'service2'] as $service) {
-                $this->createServices($space, $user, $service);
+                $services[] = $this->createServices($space, $user, $service);
             }
             $visa = $this->createVisa($space, $user);
             $origin = $this->createOrigin($space, $user, 'origin1');
 
 
             $this->asUser($user['login'], $space['id']);
-            $req = new Request([
+            $req = $this->request([
                 "path" => "clclients/".$space['id'],
                 "id" => 0
-             ], false); 
+             ]); 
             $c = new ClientslistController($req, $space);
-            $clients_data = $c->indexAction($space['id']);
+            $clients_data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
             $clients = $clients_data['clients'];
             $client_user = $this->user($data['users'][0]);
-            $this->createProject($space, $user, 'project1', $visa, $clients[0], $client_user, $origin);
+            $project = $this->createProject($space, $user, 'project1', $visa, $clients[0], $client_user, $origin);
+            $this->addServiceToProject($space, $project, $services[0]);
+            //$this->closeProject($space, $project, $visa);
         } 
     }
 
@@ -83,12 +86,12 @@ class ServicesTest extends ServicesBaseTest {
             $services = $this->getServices($space);
             $user = $this->user($data['users'][0]);
 
-            $req = new Request([
+            $req = $this->request([
                 "path" => "clclients/".$space['id'],
                 "id" => 0
-             ], false); 
+             ]); 
             $c = new ClientslistController($req, $space);
-            $data = $c->indexAction($space['id']);
+            $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
             $clients = $data['clients'];
             
             $this->createOrder($space, $services[0], $user, $clients[0], 2);

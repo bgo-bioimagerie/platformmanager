@@ -41,7 +41,7 @@ class ServiceBkPricing {
             bkPricing.belongingPrices = [];
             $.post('servicesgetprices/' + id_space + '/' + id_service)
                 .done((response) => {
-                    alert(response);
+                    //alert(response);
                     jsonData = response.includes("<br />") ?  jsonData = response.slice(0, response.indexOf("<br />")) : response;
                     data = JSON.parse(jsonData);
 

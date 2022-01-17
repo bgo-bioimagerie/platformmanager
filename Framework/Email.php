@@ -108,7 +108,7 @@ class Email extends Model {
         }
     }
 
-    private function getFromEmail($spaceShortName) {
+    public function getFromEmail($spaceShortName) {
         $from = Configuration::get('smtp_from');
         $helpdeskEmail = Configuration::get('helpdesk_email');
         if($helpdeskEmail) {

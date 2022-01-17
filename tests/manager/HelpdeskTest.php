@@ -5,7 +5,7 @@ require_once 'tests/HelpdeskBaseTest.php';
 
 class HelpdeskTest extends HelpdeskBaseTest {
 
-    public function testConfigureModuleDocuments() {
+    public function testConfigureModuleHelpdesk() {
         $ctx = $this->Context();
         $spaces = $ctx['spaces'];
         foreach($spaces as $spaceName => $data) {

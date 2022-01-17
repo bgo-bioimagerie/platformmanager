@@ -714,34 +714,6 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[se_order] fix column types, done!');
     }
 
-    public function upgrade_v4_v5() {
-        // Update invoices in redis
-        Configuration::getLogger()->debug('[db] Update invoice numbers in redis');
-        $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
-        $req = $this->runRequest($sql);
-        $lastNumber = "";
-        if ($req->rowCount() > 0) {
-            $bill = $req->fetch();
-            $lastNumber = $bill["number"];
-            Configuration::getLogger()->debug('[invoice]', ['number' => $lastNumber]);
-        }
-        if ($lastNumber != "") {
-            $lastNumber = explode("-", $lastNumber);
-            $lastNumberY = $lastNumber[0];
-            $lastNumberN = $lastNumber[1];
-            if ($lastNumberY == date("Y", time())) {
-                $s = new CoreSpace();
-                $spaces = $s->getSpaces('id');
-                $cv = new CoreVirtual();
-                foreach($spaces as $space) {
-                    Configuration::getLogger()->debug('[invoice][set]', ['space' => $space['id'], 'number' => $lastNumberN]);
-                    $cv->set($space['id'], "invoices:$lastNumberY", $lastNumberN);
-                }
-            }
-        }
-        Configuration::getLogger()->debug('[db] Update invoice numbers in redis, done!');
-    }
-
     /**
      * Get current database version
      */
@@ -779,26 +751,111 @@ class CoreDB extends Model {
         $this->runRequest($sql);
     }
 
-    public function upgrade($from=-1) {
-        $sqlRelease = "SELECT * FROM `pfm_db`;";
-        $reqRelease = $this->runRequest($sqlRelease);
+    public function needUpgrade() : array {
+        $need = [];
+        $upgradeFiles = scandir('db/upgrade');
+        sort($upgradeFiles);
 
+        foreach ($upgradeFiles as $f) {
+            if(!str_ends_with($f, '.php')) {
+                continue;
+            }
+            $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+            $record = str_replace('.php', '', $f);
+            $res = $this->runRequest($sql, [$record]);
+
+            if(!$res) {
+                Configuration::getLogger()->error('request failed');
+                $need[] = $f;
+                continue;
+            }
+            if($res->rowCount() > 0) {
+                Configuration::getLogger()->debug('[db][upgrade] already applied', ['file' => $f]);
+                continue;
+            }
+            $need[] = $f;
+        }
+        return $need;
+    }
+
+    public function scanUpgrades() {
+        if(file_exists('db/upgrade')) {
+            $sql = "CREATE TABLE IF NOT EXISTS `pfm_upgrade` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `record` varchar(255) NOT NULL,
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            );";
+            $this->runRequest($sql);
+
+            $upgradeFiles = scandir('db/upgrade');
+            sort($upgradeFiles);
+            foreach ($upgradeFiles as $f) {
+                if(!str_ends_with($f, '.php')) {
+                    continue;
+                }
+                $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+                $record = str_replace('.php', '', $f);
+                $res = $this->runRequest($sql, [$record]);
+                if(!$res) {
+                    Configuration::getLogger()->error('request failed');
+                    break;
+                }
+                if($res->rowCount() > 0) {
+                    Configuration::getLogger()->info('[db][upgrade] already applied', ['file' => $f]);
+                    continue;
+                }
+                Configuration::getLogger()->info('[db][upgrade] applying', ['file' => $f]);
+                try {
+                    include "db/upgrade/$f";
+                    $sql = 'INSERT INTO pfm_upgrade (record) VALUES (?)';
+                    $this->runRequest($sql, [$record]);
+                } catch(Throwable $e) {
+                    Configuration::getLogger()->error("[db][upgrade] an error occured", ["error" => $e]);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets base columns
+     */
+    public function base() {
         Configuration::getLogger()->info("[db] set base columns if not present");
         $sql = "show tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach($tables as $t) {
             $table = $t[0];
+            $sql = "show index from `$table`";
+            $indexes = $this->runRequest($sql)->fetchAll();
             $this->addColumn($table, "deleted", "int(1)", 0);
             $this->addColumn($table, "deleted_at", "DATETIME", "", true);
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
             $this->addColumn($table, "id_space", "int(11)", 0);
-            $space_index = "DROP INDEX  `idx_${table}_space` ON `$table`";
-            $this->runRequest($space_index);
-            $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
-            $this->runRequest($space_index);
+
+            $indexExists = false;
+            foreach($indexes as $index) {
+                if($index['Key_name'] == "idx_${table}_space") {
+                    $indexExists = true;
+                    Configuration::getLogger()->debug('[db] id_space index already exists');
+                    break;
+                }
+            }
+            if(!$indexExists) {
+                Configuration::getLogger()->debug('[db] create id_space index');
+                $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
+                $this->runRequest($space_index);
+            }
         }
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
+    }
+
+    public function upgrade($from=-1) {
+        $sqlRelease = "SELECT * FROM `pfm_db`;";
+        $reqRelease = $this->runRequest($sqlRelease);
+
 
         $isNewRelease = false;
         $oldRelease = 0;
@@ -828,6 +885,7 @@ class CoreDB extends Model {
         }
         
 
+        // old migration stuff, now using db/upgrade files, keep for backward compatiblity
         if($isNewRelease) {
             Configuration::getLogger()->info("[db] Need to migrate", ["oldrelease" => $oldRelease, "release" => DB_VERSION]);
             $updateFromRelease = $oldRelease;
@@ -868,7 +926,6 @@ class CoreDB extends Model {
         } else {
             Configuration::getLogger()->info("[db] no migration needed");
         }
-
     }
 }
 

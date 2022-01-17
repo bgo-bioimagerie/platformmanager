@@ -90,8 +90,8 @@ class ServicesstatisticsprojectController extends ServicesController {
         if ($form->check()) {
             $date_start = CoreTranslator::dateToEn($form->getParameter("begining_period"), $lang);
             $date_end = CoreTranslator::dateToEn($form->getParameter("end_period"), $lang);
-            $this->generateBalance($id_space, $date_start, $date_end);
-            return;
+            $f = $this->generateBalance($id_space, $date_start, $date_end);
+            return ['data' => ['file' => $f]];
         }
 
         // set the view
@@ -914,6 +914,11 @@ class ServicesstatisticsprojectController extends ServicesController {
             //$objWriter = new PHPExcel_Writer_Excel2007($spreadsheet);
             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
+            if(getenv('PFM_MODE') == 'test') {
+                $f = tempnam('/tmp', 'statistics').'.xlsx';
+                $objWriter->save($f);
+                return $f;
+            }
             //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="platorm-manager-projet-bilan.xlsx"');
@@ -1091,6 +1096,11 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
+        if(getenv('PFM_MODE') == 'test'){
+            $f = tempnam('/tmp', 'statistics').'.xlsx';
+            $objWriter->save($f);
+            return ['data' => ['file' => $f]];
+        }
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-samples-return.xlsx"');
@@ -1104,22 +1114,22 @@ class ServicesstatisticsprojectController extends ServicesController {
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
-        $date_begin = $this->request->getParameterNoException("date_begin");
+        $date_begin = $this->request->getParameterNoException("begining_period");
         if ($date_begin == "") {
             $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
             $dateArray = explode("-", $date_begin);
             $y = date("Y") - 1;
-            $m = $dateArray[1];
-            $d = $dateArray[2];
+            $m = $dateArray[1] ?? 1;
+            $d = $dateArray[2] ?? 1;
             $date_begin = $y . "-" . $m . "-" . $d;
         }
-        $date_end = $this->request->getParameterNoException("date_end");
+        $date_end = $this->request->getParameterNoException("end_period");
         if ($date_end == "") {
             $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
             $dateArray = explode("-", $date_end);
             $y = date("Y");
-            $m = $dateArray[1];
-            $d = $dateArray[2];
+            $m = $dateArray[1] ?? 12;
+            $d = $dateArray[2] ?? 31;
             $date_end = $y . "-" . $m . "-" . $d;
         }
 
@@ -1140,9 +1150,6 @@ class ServicesstatisticsprojectController extends ServicesController {
                     CoreTranslator::dateToEn($this->request->getParameter('end_period'), $lang)
             );
 
-            // export csv
-            header("Content-Type: application/csv-tab-delimited-table");
-            header("Content-disposition: filename=bookingusers.csv");
 
             $content = "name ; email \r\n";
 
@@ -1150,6 +1157,14 @@ class ServicesstatisticsprojectController extends ServicesController {
                 $content.= $user["name"] . ";";
                 $content.= $user["email"] . "\r\n";
             }
+
+            if(getenv('PFM_MODE') == 'test') {
+                return ['data' => ['stats' => $content]];
+            }
+
+            // export csv
+            header("Content-Type: application/csv-tab-delimited-table");
+            header("Content-disposition: filename=bookingusers.csv");
             echo $content;
             return;
         }

@@ -42,11 +42,9 @@ class View {
     public function generate($data) {
         $rootWeb = Configuration::get("rootWeb", "/");
         $data['rootWeb'] = $rootWeb;
-
         // Generate the dedicated part of the view
         extract($data);
         include ($this->file);
-        return;
     }
 
     /**
