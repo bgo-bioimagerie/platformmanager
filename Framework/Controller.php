@@ -228,7 +228,7 @@ abstract class Controller {
 
         if (getenv("PFM_MODE") == "test") {
             // Need to know module name and action
-            if(getenv('PFM_TEST_VIEW') !== '0') { // do not test views
+            if(getenv('PFM_TEST_VIEW') === '1') { // do not test views
                 if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
                     require_once 'Modules/core/Controller/CorenavbarController.php';
                     $navController = new CorenavbarController($this->request);

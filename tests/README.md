@@ -9,7 +9,7 @@ For code coverage you need xdebug extension and XDEBUG_MODE=coverage and specify
 
     XDEBUG_MODE=coverage DEBUG=0 PFM_CONFIG=Config/conf_test.ini PFM_MODE=test ./vendor/phpunit/phpunit/phpunit --stderr --coverage-html /tmp/out --whitelist Framework --whitelist Modules
 
-To disable tests on views add PFM_TEST_VIEW=1
+To also tests views add PFM_TEST_VIEW=1
 
 Credits:
 
