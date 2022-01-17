@@ -189,47 +189,7 @@ class ServicesordersController extends ServicesController {
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
-            $id_order = $modelOrder->setOrder(
-                    $id,
-                    $id_space,
-                    $this->request->getParameter("id_user"),
-                    $this->request->getParameter("id_client"),
-                    $this->request->getParameter("no_identification"),
-                    $_SESSION["id_user"], 
-                    CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
-                    date("Y-m-d", time()), 
-                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang)
-                );
-                
-            $modelOrder->setModifiedBy($id_space, $id, $_SESSION["id_user"]);
-            
-            $servicesIds = $this->request->getParameter("services");
-            $servicesQuantities = $this->request->getParameter("quantities");
-            
-            // set deleted = 1 for removed services
-            $oldServicesIds = $modelOrder->getOrderServices($id_space ,$id)['services'];
-            Configuration::getLogger()->debug("[TEST]", ["oldIds" => $oldServicesIds, "currentIds" => $servicesIds]);
-            $deletedServicesIds = array_diff_key($oldServicesIds, $servicesIds);
-            Configuration::getLogger()->debug("[TEST]", ["deletedServicesIds" => $deletedServicesIds]);
-
-            if (!empty($deletedServicesIds)) {
-                // delete removed order services
-                foreach($deletedServicesIds as $deletedServiceId) {
-                    Configuration::getLogger()->debug("[TEST]", ["deletedServiceId" => $deletedServiceId]);
-                    $modelOrder->deleteOrderService($id_space, $deletedServiceId, $id);
-                }
-            }
-
-            // TODO: can't remove services from orders
-            Configuration::getLogger()->debug("[TEST]", ["servicesQuantities" => $servicesQuantities, "servicesIds" => $servicesIds]);
-            for ($i = 0; $i < count($servicesQuantities); $i++) {
-                $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
-                $qDelta = $servicesQuantities[$i] - $qOld;
-                $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
-                $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
-            }
-
-            return $this->redirect("servicesorders/" . $id_space, [], ['order' => ['id' => $id_order]]);
+            $this->validateEditQuery($id_space, $id, $this->request);
         }
 
         return $this->render(array(
@@ -240,4 +200,51 @@ class ServicesordersController extends ServicesController {
         ));
     }
 
+    protected function validateEditQuery($id_space, $id, $request) {
+        $lang = $this->getLanguage();
+        $modelOrder = new SeOrder();
+        $modelServices = new SeService();
+        $id_order = $modelOrder->setOrder(
+            $id,
+            $id_space,
+            $request->getParameter("id_user"),
+            $request->getParameter("id_client"),
+            $request->getParameter("no_identification"),
+            $_SESSION["id_user"], 
+            CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), 
+            date("Y-m-d", time()), 
+            CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang)
+        );
+        
+        $modelOrder->setModifiedBy($id_space, $id, $_SESSION["id_user"]);
+        
+        $servicesIds = $this->request->getParameter("services");
+        $servicesQuantities = $this->request->getParameter("quantities");
+
+        // avoid multiple entries for ,the same service
+        if (count(array_unique($servicesIds)) === count($servicesIds)) { 
+            $oldServicesIds = $modelOrder->getOrderServices($id_space ,$id)['services'];
+            $deletedServicesIds = array_diff_key($oldServicesIds, $servicesIds);
+
+            if (!empty($deletedServicesIds)) {
+                // delete removed order services
+                foreach($deletedServicesIds as $deletedServiceId) {
+                    $modelOrder->deleteOrderService($id_space, $deletedServiceId, $id);
+                }
+            }
+
+            for ($i = 0; $i < count($servicesQuantities); $i++) {
+                $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
+                $qDelta = $servicesQuantities[$i] - $qOld;
+                $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
+                $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
+            }
+
+            return $this->redirect("servicesorders/" . $id_space, [], ['order' => ['id' => $id_order]]);
+                
+        } else {
+            $_SESSION['flash'] = "You can't have several lines for the same service";
+            $_SESSION['flashClass'] = 'danger';
+        }
+    }
 }
