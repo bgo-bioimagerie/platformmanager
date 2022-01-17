@@ -66,7 +66,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             if ($id_resp != 0) {
                 $id_projects = $modelProject->getProjectsOpenedPeriodResp($id_space, $beginPeriod, $endPeriod, $id_resp);
 
-                $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp);
+                $id_invoice = $this->invoiceProjects($id_space, $id_projects, $id_resp, $beginPeriod, $endPeriod);
                 return $this->redirect("invoices/" . $id_space, [], ['invoice' => ['id' => $id_invoice]]);
             }
         }
@@ -290,7 +290,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         return $this->redirect("invoiceedit/" . $id_space . "/" . $id_invoice, [], ['invoice' => ['id' => $id_invoice]]);
     }
 
-    protected function invoiceProjects($id_space, $id_projects, $id_resp) {
+    protected function invoiceProjects($id_space, $id_projects, $id_resp, $period_begin=null, $period_end=null) {
 
         // add invoice
         //echo "add invoice <br/>";
@@ -299,7 +299,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $module = "services";
         $controller = "servicesinvoiceproject";
         $number = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_resp);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_resp, 0, $period_begin, $period_end);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         
         // parse content
