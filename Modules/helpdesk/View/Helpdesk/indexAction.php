@@ -6,12 +6,7 @@
 <script src="externals/node_modules/marked/marked.min.js"></script>
 <script src="externals/node_modules/lodash/lodash.min.js"></script>
 <style>
-body {
-    font-size: 1.1em;
-}
-h3.panel-title {
-    font-size: 1.1em;
-}
+
 
 .btn {
     font-size: 1em;
