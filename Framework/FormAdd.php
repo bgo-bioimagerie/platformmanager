@@ -164,6 +164,10 @@ class FormAdd {
         $this->choicesid[] = "";
     }
 
+    public function getId() {
+        return $this->id;
+    }
+
     /**
      * 
      * @param type $lang Interface language

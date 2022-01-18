@@ -37,7 +37,6 @@
 
         // formadd targets
         let formAddName = <?php echo json_encode($formAddName); ?>;
-        console.log("name:", formAddName);
         let sourceItemsName = "services";
         let targetItemsName = "type";
         dynamicForms.manageLineAdd(formAddName, sourceItemsName, targetItemsName, apiRoute, spaceId);

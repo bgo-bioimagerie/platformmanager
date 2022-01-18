@@ -640,6 +640,10 @@ class Form {
         $this->checkUnicity[] = false;
     }
 
+
+    public function getFormAdd() {
+        return $this->formAdd;
+    }
     /**
      * Internal function to add the form header
      * @return type HTML content
