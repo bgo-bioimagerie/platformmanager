@@ -89,6 +89,14 @@ class InvoicesBaseTest extends BaseTest {
             $c->runAction('booking', 'editquery', ['id_space' => $space['id']]);
         }
 
+        $req = $this->request([
+            "path" => "bookingprices/".$space['id'],
+
+        ]);
+        $c = new BookingpricesController($req, $space);
+        $data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
+        $this->assertTrue(!empty($data['prices']));
+
     }
 
     protected function doInvoice($space, $user, $client){
