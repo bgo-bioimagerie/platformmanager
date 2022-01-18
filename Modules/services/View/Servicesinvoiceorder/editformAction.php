@@ -46,7 +46,6 @@
         let sourceItemsName = "id_service";
         let targetItemsName = "type";
         dynamicForms.manageLineAdd(formAddName, sourceItemsName, targetItemsName, apiRoute, spaceId);
-
     </script>
 </div>
 

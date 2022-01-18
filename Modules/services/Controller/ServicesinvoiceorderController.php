@@ -266,7 +266,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelServices = new SeService();
         $modelSeTypes = new SeServiceType();
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
-        Configuration::getLogger()->debug("[TEST]", ["items" => $item]);
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         foreach ($contentArray as $content) {
@@ -275,7 +274,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
                 $itemIds[] = $id_item;
                 $itemServices[] = $data[0];
                 $itemQuantities[] = $data[1];
-                // TODO: factorize next line requests ? getItemType not a request
                 $itemQuantityTypes[] = $modelSeTypes->getType($modelServices->getItemType($id_space, $data[0]));
                 $itemPrices[] = $data[2];
                 $total += $data[1] * $data[2];
