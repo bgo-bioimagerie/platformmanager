@@ -6,11 +6,15 @@ require_once 'Framework/Request.php';
 require_once 'Framework/Configuration.php';
 
 require_once 'Modules/booking/Controller/BookinginvoiceController.php';
+require_once 'Modules/booking/Controller/BookingpricesController.php';
+
 require_once 'Modules/services/Controller/ServicesinvoiceprojectController.php';
 require_once 'Modules/services/Controller/ServicesinvoiceorderController.php';
 
 require_once 'Modules/invoices/Controller/InvoicesconfigController.php';
 require_once 'Modules/invoices/Controller/InvoiceslistController.php';
+
+require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 
 require_once 'tests/BaseTest.php';
 
@@ -57,6 +61,34 @@ class InvoicesBaseTest extends BaseTest {
         unset($_FILES);
         // move fails in testing...
         //$this->assertTrue(file_exists(__DIR__."/../data/invoices/".$space["id"]."/template.twig"));
+
+        // Set resource / pricing
+        $req = $this->request([
+            "path" => "resources/".$space['id'],
+            "id" => 0
+        ]);
+        $c = new ResourcesinfoController($req, $space);
+        $data = $c->runAction('resources', 'index', ['id_space' => $space['id']]);
+        $resources = $data['resources'];
+        $form = [
+            "path" => "bookingpriceseditquery/".$space['id'],
+            "formid" => "bookingPricesForm",
+        ];
+        foreach ($resources as $resource) {
+            $form['resource_id'] = $resource['id'].'-day';
+            $form['resource'] = $resource['name'];
+            $cpm = new ClPricing();
+            $pricings = $cpm->getAll($space['id']);
+            $price = 10;
+            foreach($pricings as $p) {
+                $form["bel_" . $p['id']] = $price;
+                $price += 10;
+            }
+            $req = $this->request($form);
+            $c = new BookingpricesController($req, $space);
+            $c->runAction('booking', 'editquery', ['id_space' => $space['id']]);
+        }
+
     }
 
     protected function doInvoice($space, $user, $client){
