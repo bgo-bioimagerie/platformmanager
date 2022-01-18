@@ -26,6 +26,7 @@
 * [booking] check booking start/end time and day at reservation
 * [core] add button to user spaces
 * [statistics] various fixes
+* [antibodies] fix missing table creation at install
 
 ## 2.2.2
 

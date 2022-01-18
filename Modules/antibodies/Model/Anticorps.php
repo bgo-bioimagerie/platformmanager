@@ -63,7 +63,6 @@ class Anticorps extends Model {
         $this->addColumn("ac_anticorps", "image_url", "varchar(250)", "");
         $this->addColumn("ac_anticorps", "image_desc", "varchar(250)", "");
         $this->addColumn("ac_anticorps", "id_space", "INT(11)", 0);
-        $this->addColumn("ac_j_user_anticorps", "id_space", "INT(11)", 0);
 
     }
 
