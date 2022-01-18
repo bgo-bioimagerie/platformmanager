@@ -180,6 +180,9 @@ class CoreaccountController extends Controller {
                 $modelCoreUser = new CoreUser();
                 $modelUsersInfo = new UsersInfo();
                 $pwd = $modelCoreUser->generateRandomPassword();
+                if(getenv('PFM_MODE') == 'demo') {
+                    $pwd = $form->getParameter("login");
+                }
 
                 $id_user = $modelCoreUser->createAccount(
                     $form->getParameter("login"),

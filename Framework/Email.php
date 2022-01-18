@@ -31,11 +31,6 @@ class Email extends Model {
      */
     public function sendEmail($from, $fromName, $toAddress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true, $mailing=null) {        
 
-        if(getenv('PFM_MODE') == 'demo' && $mailing) {
-            Configuration::getLogger()->info('Mailing not allowed in demo mode');
-            return 'Mailing not allowed in demo mode';
-        }
-
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
