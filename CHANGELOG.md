@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [services] dynamize client selection in project edition
 * [coreconfig] remove module color edition from core config
 * [booking] fix all_day reservation end date
 * [core] remove most references to CoreTranslator::dateFromEn()
