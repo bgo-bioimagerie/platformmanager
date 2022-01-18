@@ -189,7 +189,10 @@ class ServicesordersController extends ServicesController {
         $form->setButtonsWidth(2, 10);
 
         if ($form->check()) {
-            $this->validateEditQuery($id_space, $id, $this->request);
+            $id_order = $this->validateEditQuery($id_space, $id, $this->request);
+            if($id_order) {
+                return $this->redirect("servicesorders/" . $id_space, [], ['order' => ['id' => $id_order]]);
+            }
         }
 
         return $this->render(array(
@@ -241,11 +244,12 @@ class ServicesordersController extends ServicesController {
                 $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
             }
 
-            return $this->redirect("servicesorders/" . $id_space, [], ['order' => ['id' => $id_order]]);
+            return $id_order;
                 
         } else {
             $_SESSION['flash'] = "You can't have several lines for the same service";
             $_SESSION['flashClass'] = 'danger';
+            return null;
         }
     }
 }
