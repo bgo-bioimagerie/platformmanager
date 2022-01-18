@@ -74,6 +74,7 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_INFLUXDB_TOKEN: ${PFM_INFLUXDB_TOKEN}  # influxdb access token
   * PFM_INFLUXDB_ORG: pfm  # influxdb default organization
 * PFM_ALLOW_REGISTRATION: 0  # (dis)allow user self registration
+* PFM_EMAIL_CONFIRM: 1 # on registration, confirm user email before registration
 * PFM_JWT_SECRET: ${PFM_JWT_SECRET}  # JWT tokens secret
 * PFM_MODULES:   # comma separated list of modules to load (in addition to those defined in conf.ini)
 * PFM_REDIS_HOST: redis # optional, redis host name, needed for prometheus stats

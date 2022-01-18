@@ -176,6 +176,41 @@ class CoreaccountController extends Controller {
                 return;
             }
 
+            if(!Configuration::get('email_confirm')){
+                $modelCoreUser = new CoreUser();
+                $modelUsersInfo = new UsersInfo();
+                $pwd = $modelCoreUser->generateRandomPassword();
+
+                $id_user = $modelCoreUser->createAccount(
+                    $form->getParameter("login"),
+                    $pwd,
+                    $form->getParameter("name"),
+                    $form->getParameter("firstname"),
+                    $form->getParameter("email")
+                );
+                if($form->getParameter("phone")??"") {
+                    $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
+                }
+                $modelUsersInfo->set(
+                    $id_user,
+                    $form->getParameter("phone") ?? '',
+                    $form->getParameter("unit") ?? '',
+                    $form->getParameter("organization") ?? ''
+                );
+                $email = new Email();
+                $userFullName = $modelCoreUser->getUserFUllName($id_user);
+                $mailParams = [
+                    "email" => $form->getParameter("email"),
+                    "login" => $form->getParameter("login"),
+                    "fullName" => $userFullName,
+                    "name" => $form->getParameter("name"),
+                    "pwd" => $pwd,
+                ];
+                $email->notifyUserByEmail($mailParams, "add_new_user", $lang);
+                $this->redirect("coreaccountcreated");
+                return;
+            }
+
             $payload = array(
                 "iss" => Configuration::get('public_url', ''),
                 "aud" => Configuration::get('public_url', ''),

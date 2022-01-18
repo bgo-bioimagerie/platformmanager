@@ -328,6 +328,13 @@ class Configuration {
             self::$parameters['redis_port'] = intval(getenv('PFM_REDIS_PORT'));
         }
 
+        if(!array_key_exists('email_confirm', self::$parameters)) {
+            self::$parameters['email_confirm'] = true;
+        }
+        if(getenv('PFM_EMAIL_CONFIRM')){
+            self::$parameters['email_confirm'] = getenv('PFM_EMAIL_CONFIRM') == '1' ? true : false;
+        }
+
     }
 
     /**

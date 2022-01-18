@@ -226,6 +226,13 @@ abstract class Controller {
             "role" => $this->role   // user role in space if any
         ];
 
+        if($this->request->getParameterNoException('norender') === true) {
+            if(isset($dataView['data'])) {
+                return $dataView['data'];
+            }
+            return null;
+        }
+
         if (getenv("PFM_MODE") == "test") {
             // Need to know module name and action
             if(getenv('PFM_TEST_VIEW') === '1') { // do not test views

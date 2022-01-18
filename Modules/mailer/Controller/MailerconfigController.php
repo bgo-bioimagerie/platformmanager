@@ -37,6 +37,10 @@ class MailerconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        if(getenv('PFM_MODE') == 'demo') {
+            throw new PfmParamException('Sorry this module is not available in demo mode');
+        }
+
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'mailer', $lang);
         if ($formMenusactivation->check()) {

@@ -1,5 +1,4 @@
 <?php
-
 class Utils {
 
     public static function dateToEn(string $date, string $lang='en'):string|false {
@@ -53,7 +52,4 @@ class Utils {
 
 }
 
-
 ?>
-
-

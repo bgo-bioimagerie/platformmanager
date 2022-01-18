@@ -109,6 +109,21 @@ class Router {
      * Examine a request and run the dedicated action
      */
     public function routerRequest() {
+        /* If uri starts with a space name, could redirect directly to space
+        if($_SERVER['REQUEST_URI'] == '/' ) {
+            $m = new CoreSpace();
+            $spaces = $m->getSpaces('id');
+            if($spaces) {
+                foreach($spaces as $space) {
+                    if(str_starts_with($_SERVER['SERVER_NAME'], $space['shortname'])) {
+                        header("Location: /corespace/".$space['id']);
+                        return;
+                    }
+                }
+            }
+        }
+        */
+
         if(Configuration::get('redis_host') && $_SERVER['REQUEST_URI'] == '/metrics') {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
