@@ -99,7 +99,6 @@ class ClientsBaseTest extends BaseTest {
     protected function addToClient($space, $client, $clientUser, $user) {
         Configuration::getLogger()->debug('add to clients', ['client' => $client, 'user' => $clientUser, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
-        // activate resources module
         $req = $this->request([
             "path" => "clclientusers/".$space['id']."/".$client['id'],
             "formid" => "clientsusersform",
