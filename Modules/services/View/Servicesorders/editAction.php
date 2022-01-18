@@ -35,9 +35,7 @@
             dynamicForms.dynamicFields(sourceId, targets, spaceId);
         }
 
-        // add targets
-        let test = <?php echo $id_space?>;
-        console.log("test:", test);
+        // formadd targets
         let formAddName = <?php echo json_encode($formAddName); ?>;
         console.log("name:", formAddName);
         let sourceItemsName = "services";
