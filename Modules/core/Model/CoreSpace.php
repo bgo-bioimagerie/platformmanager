@@ -375,7 +375,7 @@ class CoreSpace extends Model {
     }
 
     public function getDistinctSpaceMenusModules($id_space) {
-        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
+        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
