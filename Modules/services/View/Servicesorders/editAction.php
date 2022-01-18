@@ -36,7 +36,10 @@
         }
 
         // add targets
-        let formAddName = "orderEditForm" /* <?php echo $formAddName?> */; // replace by $formAddName
+        let test = <?php echo $id_space?>;
+        console.log("test:", test);
+        let formAddName = <?php echo json_encode($formAddName); ?>;
+        console.log("name:", formAddName);
         let sourceItemsName = "services";
         let targetItemsName = "type";
         dynamicForms.manageLineAdd(formAddName, sourceItemsName, targetItemsName, apiRoute, spaceId);

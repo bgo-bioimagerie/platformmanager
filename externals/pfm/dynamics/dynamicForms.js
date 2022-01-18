@@ -92,6 +92,7 @@ export class DynamicForms {
                 {
                     elementId: targetId,
                     apiRoute: apiRoute,
+                    activateOnLoad: true
                 }
             ]
             this.dynamicFields(sourceId, targets, spaceId, targetingLabel);
