@@ -75,7 +75,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $details = $this->unparseDetails($id_space, $id_items);
         $form = $this->editForm($id_items[0]["id"], $id_space, $id_invoice, $lang);
-        $formAddName = $form->getFormAdd()->getId();
+        $formAddName = $form->getFormAddId();
 
         if ($form->check() && $pdf == 0) {
             $total_ht = 0;

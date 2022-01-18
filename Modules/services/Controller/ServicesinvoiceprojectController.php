@@ -108,7 +108,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         // create edit form
         $form = $this->editForm($id_items[0]["id"], $id_space, $id_invoice, $lang);
-        $formAddName = $form->getFormAdd()->getId();
+        $formAddName = $form->getFormAddId();
         if ($form->check()) {
             $total_ht = 0;
             $id_services = $this->request->getParameter("id_service");

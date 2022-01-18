@@ -640,10 +640,14 @@ class Form {
         $this->checkUnicity[] = false;
     }
 
-
-    public function getFormAdd() {
-        return $this->formAdd;
+    /**
+     * If formAdd, gets its Id
+     * @return String
+     */
+    public function getFormAddId() {
+        return $this->isFormAdd ? $this->formAdd->getId() : false;
     }
+
     /**
      * Internal function to add the form header
      * @return type HTML content

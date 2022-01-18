@@ -164,6 +164,10 @@ class FormAdd {
         $this->choicesid[] = "";
     }
 
+    /**
+     * Get formAdd Id
+     * @return String   
+     */
     public function getId() {
         return $this->id;
     }
