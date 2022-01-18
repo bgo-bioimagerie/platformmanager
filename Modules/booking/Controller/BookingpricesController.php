@@ -123,7 +123,7 @@ class BookingpricesController extends BookingsettingsController {
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingpriceseditquery/".$id_space);
        
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "tableHtml" => $tableHtml,
