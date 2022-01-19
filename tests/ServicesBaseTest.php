@@ -201,7 +201,7 @@ class ServicesBaseTest extends BaseTest {
             "path" => "servicesprojectsedit/".$space['id']."/0",
             "formid" => "projectEditForm",
             "in_charge" => $visa['id'],
-            "id_resp" => $client['id'],
+            "id_client" => $client['id'],
             "name" => $name,
             "id_user" => $client_user['id'],
             "new_team" => 1,
