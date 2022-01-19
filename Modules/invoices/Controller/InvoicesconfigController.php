@@ -97,13 +97,6 @@ class InvoicesconfigController extends CoresecureController {
             $c = new InvoiceglobalController($this->request, $this->currentSpace);
             $dest = $c->generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, true, "", $client, true);
         } catch(Exception $e) {
-            if(file_exists('data/invoices/' . $id_space . '/template.twig.save')) {
-                // backup
-                Configuration::getLogger()->debug('[invoices][template] revert existing template');
-                copy('data/invoices/' . $id_space . '/template.twig.save', 'data/invoices/' . $id_space . '/template.twig');
-                unlink('data/invoices/' . $id_space . '/template.twig.save');
-            }
-            Configuration::getLogger()->debug('[invoices][template] invalid template', ['error' => $e->getMessage()]);
             throw new PfmParamException('Invalid template: '.$e->getMessage());
         }
         return $dest;
@@ -192,7 +185,22 @@ class InvoicesconfigController extends CoresecureController {
             }
             FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'template', 'template.twig');
 
-            $this->checkTemplate($id_space);
+            try {
+                $this->checkTemplate($id_space);
+            } catch(Exception $e) {
+                if(file_exists('data/invoices/' . $id_space . '/template.twig.save')) {
+                    // backup
+                    Configuration::getLogger()->debug('[invoices][template] revert existing template');
+                    copy('data/invoices/' . $id_space . '/template.twig.save', 'data/invoices/' . $id_space . '/template.twig');
+                    unlink('data/invoices/' . $id_space . '/template.twig.save');
+                }
+                Configuration::getLogger()->debug('[invoices][template] invalid template', ['error' => $e->getMessage()]);
+                throw $e;
+            }
+
+            if(file_exists('data/invoices/' . $id_space . '/template.twig.save')) {
+                unlink('data/invoices/' . $id_space . '/template.twig.save');
+            }
 
             $_SESSION["message"] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang) ;
             $this->redirect('invoicepdftemplate/' . $id_space);
@@ -224,7 +232,7 @@ class InvoicesconfigController extends CoresecureController {
             $files = scandir('data/invoices/' . $id_space);
 
             foreach ($files as $file) {
-                if (strpos($file, ".") > 0 && $file != "template.twig") {
+                if (strpos($file, ".") > 0 && $file != "template.twig" && !str_ends_with($file, '.pdf')) {
                     $data[] = array('name' => $file, 'id' => str_replace('.', "__pm__", $file));
                 }
             }
