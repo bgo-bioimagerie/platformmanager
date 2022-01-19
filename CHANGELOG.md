@@ -27,6 +27,7 @@
 * [core] add button to user spaces
 * [statistics] various fixes
 * [antibodies] fix missing table creation at install
+* [booking] send emails only if user status > VISITOR in space
 
 ## 2.2.2
 
