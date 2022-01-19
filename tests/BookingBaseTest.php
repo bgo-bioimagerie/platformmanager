@@ -141,6 +141,7 @@ class BookingBaseTest extends BaseTest {
         foreach($data['bkaccess'] as $bkaccess) {
             $this->assertEquals($expects[$bkaccess['resource']], $bkaccess['bkaccess']);
         }
+
     }
 
     protected function viewBooking($space, $user, $id) {

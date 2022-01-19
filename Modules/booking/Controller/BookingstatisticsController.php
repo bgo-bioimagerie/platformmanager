@@ -108,7 +108,8 @@ class BookingstatisticsController extends StatisticsController {
             if(getenv('PFM_MODE') == 'test') {
                return ['data' => ['stats' => $csv]];
             }
-            header('Content-Disposition: attachment; filename="filename.csv";');
+            $filename = "booking_stats_resps_".date('Y-m-d').".csv";
+            header('Content-Disposition: attachment; filename="'.$filename.'";');
             echo $csv;
             return;
         }
@@ -218,19 +219,16 @@ class BookingstatisticsController extends StatisticsController {
         $graphArray = $modelGraph->getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
         $graphTimeArray = $modelGraph->getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
 
-        $modelResource = new ResourceInfo();
-        $resources = $modelResource->getForSpace($id_space);
-        $resourcesNumber = count($resources);
+        // $modelResource = new ResourceInfo();
+        // $resources = $modelResource->getForSpace($id_space);
+        // $resourcesNumber = count($resources);
 
-        $modelResourceC = new ReCategory();
-        $resourcesCategory = $modelResourceC->getBySpace($id_space);
-        $resourcesCategoryNumber = count($resourcesCategory);
+        // $modelResourceC = new ReCategory();
+        // $resourcesCategory = $modelResourceC->getBySpace($id_space);
+        // $resourcesCategoryNumber = count($resourcesCategory);
         // render data
         $camembertCount = $modelGraph->getCamembertArray($id_space, $month_start, $year_start, $month_end, $year_end);
         $camembertTimeCount = $modelGraph->getCamembertTimeArray($id_space, $month_start, $year_start, $month_end, $year_end);
-
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=booking_stats.csv");
 
         $content = "";
         // annual number
@@ -263,8 +261,14 @@ class BookingstatisticsController extends StatisticsController {
         foreach ($camembertTimeCount as $g) {
             $content .= $g[0] . " ; " . $g[1] . "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return ['data' => ['stats' => $content]];
+        }
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=booking_stats.csv");
         echo $content;
-        return;
+        
     }
 
     public function statbookingusersAction($id_space) {
@@ -459,7 +463,7 @@ class BookingstatisticsController extends StatisticsController {
                 return $this->exportDetailsCSV($table, $lang);
             } else if ($outputType == 5) { // summary csv
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
-                return $this->exportSummaryCSV($summaryTable, $lang);
+                return $this->exportSummaryCSV($summaryTable);
             }
         }
 
@@ -513,9 +517,8 @@ class BookingstatisticsController extends StatisticsController {
     /**
      * Internal method for GRR stats
      * @param array $table
-     * @param string $lang
      */
-    private function exportSummaryCSV($summaryTable, $lang) {
+    private function exportSummaryCSV($summaryTable) {
 
         $countTable = $summaryTable['countTable'];
         $timeTable = $summaryTable['timeTable'];

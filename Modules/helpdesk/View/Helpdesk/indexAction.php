@@ -3,15 +3,10 @@
 
 
 <?php startblock('stylesheet') ?>
-<script src="https://unpkg.com/marked@0.3.6"></script>
-<script src="https://unpkg.com/lodash@4.16.0"></script>
+<script src="externals/node_modules/marked/marked.min.js"></script>
+<script src="externals/node_modules/lodash/lodash.min.js"></script>
 <style>
-body {
-    font-size: 1.1em;
-}
-h3.panel-title {
-    font-size: 1.1em;
-}
+
 
 .btn {
     font-size: 1em;
@@ -104,7 +99,7 @@ blockquote {
                     <button @click="setSettings" class="btn btn-primary">Save</button>
             </div>
         </div>
-        <div v-if="!settings && ticket !== null" class="col-sm-10 col-sm-offset-1 text-center">
+        <div v-if="!settings && ticket !== null" class="col-sm-10 text-center">
             <div class="row">
                 <div class="col-sm-8">
                     <div v-for="message in ticket.messages" :key="message.id">
@@ -134,7 +129,7 @@ blockquote {
                                 <form v-if="!textPreview">
                                     <div v-if="ticket.ticket.id==0" class="form-group">
                                         <label>Subject</label>
-                                        <input v-model="ticket.ticket.subject"/>
+                                        <input class="form-control" v-model="ticket.ticket.subject"/>
                                     </div>
                                     <div v-if="addType==0" class="form-group">
                                         <label>Destination</label>

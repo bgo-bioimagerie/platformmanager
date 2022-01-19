@@ -123,9 +123,15 @@ class BookingpricesController extends BookingsettingsController {
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingpriceseditquery/".$id_space);
        
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml,
-                        'formedit' => $form->getHtml($lang), 'resources' => $ress,
-                        'belongings' => $belongings));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml,
+            'formedit' => $form->getHtml($lang),
+            'resources' => $ress,
+            'belongings' => $belongings,
+            'data' => ['prices' => $prices]
+        ));
     }
     
     public function editqueryAction($id_space){

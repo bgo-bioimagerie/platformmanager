@@ -192,7 +192,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 			$isAvailableDay = true;
 		}
 		
-		bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle);
+		bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $bk_id_resource);
 		?>
 		
 	</div>
