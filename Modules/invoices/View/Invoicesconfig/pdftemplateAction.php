@@ -30,6 +30,7 @@
     <div class="col-md-5 pm-form">
         <?php if ($formDownload) {
             echo $formDownload;
+            echo $formPreview;
         } else {
         ?>
         <div class="row">

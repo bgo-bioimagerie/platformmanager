@@ -72,10 +72,10 @@ abstract class InvoiceAbstractController extends InvoicesController {
             } else {
                 $html2pdf->Output($unit . "_" . $resp . "_" . $number . '.pdf');
             }
-            return;
         } catch (Exception $e) {
             throw new PfmException("Pdf generation error: " . $e, 500);
         }
+        return __DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf";
     }
 
 }
