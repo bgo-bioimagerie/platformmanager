@@ -459,7 +459,7 @@ class FormHtml {
         if ($vect) {
             $vectv = "[]";
         }
-        $html = "<label class=\"label\" style=\"color:black;\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
+        $html = "<label class=\"control-label\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
         $html .= ">" . $value . "</label>";
         return $html;
     }
