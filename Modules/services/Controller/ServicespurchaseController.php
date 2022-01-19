@@ -82,7 +82,7 @@ class ServicespurchaseController extends ServicesController {
 
         $formAdd = new FormAdd($this->request, "editserviceformadd");
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
-        $formAdd->addNumber("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
+        $formAdd->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, ServicesTranslator::services($lang));

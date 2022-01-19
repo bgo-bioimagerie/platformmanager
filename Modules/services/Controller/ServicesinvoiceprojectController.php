@@ -108,6 +108,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         // create edit form
         $form = $this->editForm($id_items[0]["id"], $id_space, $id_invoice, $lang);
+        $formAddName = $form->getFormAddId();
         if ($form->check()) {
             $total_ht = 0;
             $id_services = $this->request->getParameter("id_service");
@@ -144,6 +145,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
             "invoice" => $invoice,
             "details" => $detailsData,
             "htmlForm" => $form->getHtml($lang),
+            "formAddName" => $formAddName,
             "data" => ['item' => $item, 'invoice' => $invoice]
         ));
     }
@@ -189,9 +191,11 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $itemQuantities = array();
         $itemPrices = array();
         $itemComments = array();
+        $itemQuantityTypes = array();
         $modelInvoiceItem = new InInvoiceItem();
+        $modelServices = new SeService();
+        $modelSeTypes = new SeServiceType();
 
-        //print_r($id_item);
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
 
         $contentArray = explode(";", $item["content"]);
@@ -203,6 +207,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 $itemServices[] = $data[0];
                 $itemQuantities[] = $data[1];
                 $itemPrices[] = $data[2];
+                $itemQuantityTypes[] = $modelSeTypes->getType($modelServices->getItemType($id_space, $data[0]));
                 $total += floatval($data[1]) * floatval($data[2]);
                 if (count($data) == 4) {
                     $itemComments[] = $data[3];
@@ -216,10 +221,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $formAdd = new FormAdd($this->request, "editinvoiceprojectformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
-        $formAdd->addText("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addText("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addFloat("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addLabel("type", $itemQuantityTypes);
+        $formAdd->addFloat("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
         $formAdd->addText("comment", ServicesTranslator::Comment($lang), $itemComments);
-        //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceprojectform");
         $form->setButtonsWidth(2, 9);

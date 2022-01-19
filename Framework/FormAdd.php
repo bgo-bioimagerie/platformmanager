@@ -75,7 +75,7 @@ class FormAdd {
     public function addLabel($name, $values){
         $this->types[] = "label";
         $this->names[] = $name;
-        $this->labels[] = "";
+        $this->labels[] = $name;
         $this->setValue($name, $values);
         $this->isMandatory[] = false;
         $this->choices[] = "";
@@ -165,6 +165,14 @@ class FormAdd {
     }
 
     /**
+     * Get formAdd Id
+     * @return String   
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
      * 
      * @param type $lang Interface language
      * @param type $label Form label
@@ -217,7 +225,6 @@ class FormAdd {
                     } else if ($this->types[$j] == "text") {
                         $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "textdate") {
-
                         $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true, $lang);
                     } else if ($this->types[$j] == "number") {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
@@ -225,7 +232,7 @@ class FormAdd {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true, true);
                     } else if ($this->types[$j] == "hidden") {
                         $html .= $formHtml->inlineHidden($this->names[$j], $this->values[$j][$i], false, true);
-                    } else if ($this->types[$j] == "l"){
+                    } else if ($this->types[$j] == "label"){
                         $html .= $formHtml->inlineLabel($this->names[$j], $this->values[$j][$i], true);
                     } else {
                         $html .= "error undefine form input type " . $this->types[$j];
@@ -253,6 +260,8 @@ class FormAdd {
                     $html .= $formHtml->inlineNumber($this->names[$j], "", false, true, true);
                 } else if ($this->types[$j] == "hidden") {
                     $html .= $formHtml->inlineHidden($this->names[$j], "", false, true);
+                } else if ($this->types[$j] == "label") {
+                    $html .= $formHtml->inlineLabel($this->names[$j], "", true);
                 }
                 $html .= "</td>";
             }
@@ -264,8 +273,8 @@ class FormAdd {
         
         if($this->buttonsVisible){
             $html .= "<div class=\"col-md-6\">";
-            $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
-            $html .= "<input type=\"button\" class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_add" . "\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_delete" . "\"  class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
             $html .= "<br>";
             $html .= "</div>";
         }

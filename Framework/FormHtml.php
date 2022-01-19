@@ -406,18 +406,18 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function number($label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
+    static public function number($label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9, $isFloat = false) {
 
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
         }
-
+        $float = $isFloat ? "step=\"any\"" : "";
         $html = "<div class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"number\" id=\"" . $name . "\" name=\"" . $name . "\"";
-        $html .= " value=\"" . $value . "\"" . $required;
+        $html .= " value=\"" . $value . "\"" . $required . " " . $float;
         $html .= "/>";
         $html .= "</div>";
         $html .= "</div>";
@@ -450,7 +450,6 @@ class FormHtml {
      * 
      * @param type $name
      * @param type $value
-     * @param type $required
      * @param type $vect
      * @return string
      */
@@ -460,9 +459,8 @@ class FormHtml {
         if ($vect) {
             $vectv = "[]";
         }
-        $html = "<span class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
-        $html .= ">" . $value . "</span>";
-
+        $html = "<label class=\"control-label\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
+        $html .= ">" . $value . "</label>";
         return $html;
     }
     /**

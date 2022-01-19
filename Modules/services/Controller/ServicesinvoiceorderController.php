@@ -11,6 +11,7 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SePrice.php';
+require_once 'Modules/services/Model/SeServiceType.php';
 
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
@@ -74,6 +75,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $details = $this->unparseDetails($id_space, $id_items);
         $form = $this->editForm($id_items[0]["id"], $id_space, $id_invoice, $lang);
+        $formAddName = $form->getFormAddId();
 
         if ($form->check() && $pdf == 0) {
             $total_ht = 0;
@@ -103,7 +105,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         }
 
         $formHtml = $form->getHtml($lang);
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "details" => $details, "htmlForm" => $formHtml,
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "formAddName" => $formAddName, "details" => $details, "htmlForm" => $formHtml,
             "invoice" => $invoice), "editformAction");
     }
 
@@ -259,9 +261,11 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $itemServices = array();
         $itemQuantities = array();
         $itemPrices = array();
+        $itemQuantityTypes = array();
         $modelInvoiceItem = new InInvoiceItem();
+        $modelServices = new SeService();
+        $modelSeTypes = new SeServiceType();
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
-
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         foreach ($contentArray as $content) {
@@ -270,6 +274,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
                 $itemIds[] = $id_item;
                 $itemServices[] = $data[0];
                 $itemQuantities[] = $data[1];
+                $itemQuantityTypes[] = $modelSeTypes->getType($modelServices->getItemType($id_space, $data[0]));
                 $itemPrices[] = $data[2];
                 $total += $data[1] * $data[2];
             }
@@ -279,8 +284,9 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
-        $formAdd->addNumber("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addNumber("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addFloat("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addLabel("type", $itemQuantityTypes);
+        $formAdd->addFloat("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
