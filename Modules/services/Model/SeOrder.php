@@ -80,15 +80,21 @@ class SeOrder extends Model {
     }
 
     public function getOrderServices($id_space, $id_order) {
-        $sql = "SELECT * FROM se_order_service WHERE id_order=? AND id_space=? AND deleted=0";
+        $sql = "SELECT orders.*, types.name as quantity_type "
+                . "FROM se_order_service as orders "
+                . "INNER JOIN se_services as services ON orders.id_service = services.id "
+                . "INNER JOIN se_service_types as types ON services.type_id = types.id "
+                . "WHERE orders.id_order=? AND orders.id_space=? AND orders.deleted=0";
         $data = $this->runRequest($sql, array($id_order, $id_space))->fetchAll();
         $services = array();
         $quantities = array();
+        $quantity_types = array();
         foreach($data as $d){
             $services[] = $d["id_service"];
             $quantities[] = $d["quantity"];
+            $quantity_types[] = $d["quantity_type"];
         }
-        return array("services" => $services, "quantities" => $quantities);
+        return array("services" => $services, "quantities" => $quantities, "quantity_types" => $quantity_types);
     }
 
     public function getOrderServiceQuantity($id_space, $id_order, $id_service){
@@ -380,6 +386,16 @@ class SeOrder extends Model {
     public function delete($id_space, $id) {
         $sql = "UPDATE se_order SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+    }
+
+    /**
+     * Delete se_order_service entry
+     * @param number $id_space
+     * @param number $id se_order_service
+     */
+    public function deleteOrderService($id_space, $id_service, $id_order) {
+        $sql = "UPDATE se_order_service SET deleted=1, deleted_at=NOW() WHERE id_service=? AND $id_order=? AND id_space=?";
+        $this->runRequest($sql, array($id_service, $id_order, $id_space));
     }
 
 }

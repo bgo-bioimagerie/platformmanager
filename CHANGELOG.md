@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [services] services quantity types differenciation in projects, orders and invoices
 * [coreconfig] remove module color edition from core config
 * [booking] fix all_day reservation end date
 * [core] remove most references to CoreTranslator::dateFromEn()

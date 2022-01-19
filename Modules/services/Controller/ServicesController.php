@@ -136,4 +136,14 @@ class ServicesController extends CoresecureController {
 
         return $html;
     }
+
+    public function getServiceTypeAction($id_space, $id_service) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        $modelService = new SeService();
+        $modelType = new SeServiceType();
+        $serviceTypeName = $modelType->getType($modelService->getItemType($id_space, $id_service));
+        $this->render(['data' => ['elements' => ServicesTranslator::ServicesTypes($serviceTypeName, $lang)]]);
+    }
+
 }
