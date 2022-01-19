@@ -537,14 +537,14 @@ class ServicesprojectsController extends ServicesController {
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
-        $resps = $modelClient->getForList($id_space);
+        $clients = $modelClient->getForList($id_space);
 
         $modelVisa = new SeVisa();
         $inChargeList = $modelVisa->getForList($id_space);
 
-        //$form->addSeparator(CoreTranslator::Description($lang));
         $form->addSelectMandatory("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
-        $form->addSelectMandatory("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
+        // id_client is denominated id_resp in se_project table
+        $form->addSelectMandatory("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"], $value["id_resp"]);
         $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
         $form->addSelectMandatory("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
 
@@ -591,7 +591,7 @@ class ServicesprojectsController extends ServicesController {
 
         if ($form->check()) {
 
-            $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_client"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
             $modelProject->setOrigin($id_space ,$id_project, $this->request->getParameter("id_origin"));
             $modelProject->setInCharge($id_space, $id_project, $this->request->getParameter("in_charge"));
 

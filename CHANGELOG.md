@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [services] dynamize client selection in project edition
 * [services] services quantity types differenciation in projects, orders and invoices
 * [coreconfig] remove module color edition from core config
 * [booking] fix all_day reservation end date
