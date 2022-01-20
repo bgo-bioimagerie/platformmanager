@@ -328,6 +328,8 @@ class Configuration {
             self::$parameters['redis_port'] = intval(getenv('PFM_REDIS_PORT'));
         }
 
+        self::$parameters['shibboleth'] = getenv('PFM_SHIBBOLETH') === "1" ? true : false;
+
     }
 
     /**

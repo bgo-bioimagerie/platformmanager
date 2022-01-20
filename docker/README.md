@@ -38,3 +38,16 @@ services:
 ```
 
 See [./docker-compose.yml](docker-compose.yml) for another example for development purpose.
+
+## With shibboleth
+
+After building base container, shibboleth container should be built with Dockerfile-shib.
+It expects X509 keys in apache2 directory
+
+* sp-cert.key
+* sp-cert.pem
+
+Keys can be overriden at runtime in /etc/shibboleth container directory.
+
+*shibboleth2.xml* should also be overriden with your settings (entityID etc.) and
+production requirements.

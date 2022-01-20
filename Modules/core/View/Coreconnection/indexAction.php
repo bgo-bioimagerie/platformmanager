@@ -50,8 +50,14 @@
                                 <div class="checkbox">
                                     <label><input type="checkbox" name="remember" value=""><?php echo CoreTranslator::RememberMe($language) ?></label>
                                 </div>
-
-                                <button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
+                                <?php if(Configuration::get('shibboleth', false)) { ?>
+                                <div class="row">
+                                <div class="col-sm-6"><button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button></div>
+                                <div class="col-sm-6"><a title="log or register with renater federation" href="ooc/shibboleth"><button class="btn btn-lg btn-secondary btn-block" type="button"> <img alt="renater federation" style="width:150px" src="externals/pfm/css/federation.png"/> </button></a></div>
+                                </div>
+                                <?php } else { ?>
+                                    <button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
+                                <?php } ?>
                             </form>
 
                         </div>

@@ -1,0 +1,13 @@
+FROM quay.io/genouest/pfm
+
+RUN apt-get update
+RUN apt-get install -y libapache2-mod-shib
+
+COPY entrypoint-shib.sh /entrypoint-shib.sh
+COPY shibboleth/* /etc/shibboleth/
+COPY apache2/sp-cert.key /etc/shibboleth/sp-cert.key
+COPY apache2/sp-cert.pem /etc/shibboleth/sp-cert.pem
+RUN mkdir -p /var/lock/subsys
+RUN mkdir -p /var/run/shibboleth
+
+ENTRYPOINT [ "/entrypoint-shib.sh" ]

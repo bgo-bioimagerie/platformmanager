@@ -17,7 +17,7 @@ use GuzzleHttp\Client;
  */
 class OpenidController extends CorecookiesecureController {
 
-/**
+    /**
      * Check ORCID code for user authentication
      */
     private function google($code) {
@@ -45,7 +45,7 @@ class OpenidController extends CorecookiesecureController {
         
         $status = $response->getStatusCode();
         if ($status != 200) {
-            Configuration::getLogger()->error('[oid][google] error', ['code' => $status, 'error' => $response->getMessage()]);
+            Configuration::getLogger()->error('[oid][google] error', ['code' => $status, 'error' => $response->getBody()]);
             return null;
         }
         $body = $response->getBody();
@@ -72,7 +72,7 @@ class OpenidController extends CorecookiesecureController {
 
         $status = $response->getStatusCode();
         if ($status != 200) {
-            Configuration::getLogger()->error('[oid][google] error', ['code' => $status, 'error' => $response->getMessage()]);
+            Configuration::getLogger()->error('[oid][google] error', ['code' => $status, 'error' => $response->getBody()]);
             return null;
         }
 
@@ -145,7 +145,7 @@ class OpenidController extends CorecookiesecureController {
         
         $status = $response->getStatusCode();
         if ($status != 200) {
-            Configuration::getLogger()->error('[oid][orcid] error', ['code' => $status, 'error' => $response->getMessage()]);
+            Configuration::getLogger()->error('[oid][orcid] error', ['code' => $status, 'error' => $response->getBody()]);
             return null;
         }
         $body = $response->getBody();
@@ -185,6 +185,18 @@ class OpenidController extends CorecookiesecureController {
             $login = $user['login'];
         }
         return $login;
+    }
+
+    /**
+     * Unlink auth provider
+     */
+    public function unlinkAction($provider) {
+        if(!$_SESSION['id_user'] || $_SESSION['id_user']<=0){
+            throw new PfmAuthException('need to login', 401);
+        }
+        $openidModel = new CoreOpenId();
+        $openidModel->del($provider, $_SESSION['id_user']);
+        $this->redirect('coretiles');
     }
 
     /**
