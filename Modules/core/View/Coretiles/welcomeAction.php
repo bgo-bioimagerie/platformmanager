@@ -119,7 +119,7 @@
 
             <?php if(!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
             <div class="row">
-                <div class="col-xs-12 text-center">
+                <div class="col-xs-12 text-center" id ="welcome" style="min-height: 400px">
                     <?php if($content) { echo $content; } else {?>
                         <h3 style="margin: 20px"><?php echo CoreTranslator::welcome($lang) ?></h3>
                         <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
