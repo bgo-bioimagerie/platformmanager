@@ -2,6 +2,7 @@
 
 ## 2.3.0
 
+* [invoices] fix non-numeric quantity and/or price cases in invoice edition
 * [services] dynamize client selection in project edition
 * [services] services quantity types differenciation in projects, orders and invoices
 * [coreconfig] remove module color edition from core config
