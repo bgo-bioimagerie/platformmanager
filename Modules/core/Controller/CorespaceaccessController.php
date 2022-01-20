@@ -469,7 +469,7 @@ class CorespaceaccessController extends CoresecureController {
      * @param type $id_user
      */
     public function userdeleteAction($id_space, $id_user) {
-        $this->checkAuthorization(CoreStatus::$ADMIN);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
