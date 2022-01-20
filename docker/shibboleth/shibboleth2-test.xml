@@ -20,7 +20,7 @@
     -->
 
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
-    <ApplicationDefaults entityID="https://pfm.genouest.org"
+    <ApplicationDefaults entityID="https://pfm2.genouest.org"
                          REMOTE_USER="eppn uid persistent-id targeted-id">
 
         <!--
@@ -41,7 +41,7 @@
             (Set discoveryProtocol to "WAYF" for legacy Shibboleth WAYF support.)
             You can also override entityID on /Login query string, or in RequestMap/htaccess.
             -->
-            <SSO discoveryProtocol="SAMLDS" discoveryURL="https://discovery.renater.fr/renater"> 
+            <SSO discoveryProtocol="SAMLDS" discoveryURL="https://discovery.renater.fr/test"> 
               SAML2
             </SSO>
 
@@ -88,8 +88,8 @@
         <MetadataProvider type="XML" validate="true" path="partner-metadata.xml"/>
         -->
         <MetadataProvider type="XML"
-          url="https://pub.federation.renater.fr/metadata/renater/main/main-all-renater-metadata.xml"
-          backingFilePath="main-all-renater-metadata.xml" reloadInterval="7200">
+          url="https://pub.federation.renater.fr/metadata/test/preview/preview-all-renater-test-metadata.xml"
+          backingFilePath="preview-all-renater-test-metadata.xml" reloadInterval="7200">
           <MetadataFilter type="Signature" certificate="renater-metadata-signing-cert-2016.pem"/>
         </MetadataProvider>
         <!-- <MetadataProvider type="XML" validate="true" path="idp-metadata.xml"/> -->

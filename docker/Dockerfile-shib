@@ -3,6 +3,8 @@ FROM quay.io/genouest/pfm
 RUN apt-get update
 RUN apt-get install -y libapache2-mod-shib
 
+COPY apache2/pfm-shib.conf /tmp/pfm-shib.conf
+RUN cat /tmp/pfm-shib.conf >> /etc/apache2/conf-enabled/platformmanager.conf
 COPY entrypoint-shib.sh /entrypoint-shib.sh
 COPY shibboleth/* /etc/shibboleth/
 COPY apache2/sp-cert.key /etc/shibboleth/sp-cert.key
