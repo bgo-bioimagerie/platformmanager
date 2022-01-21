@@ -30,6 +30,7 @@
 * [statistics] various fixes
 * [antibodies] fix missing table creation at install
 * [booking] send emails only if user status > VISITOR in space
+* [mailer] allow access to space users, users can see sent emails
 
 ## 2.2.2
 
