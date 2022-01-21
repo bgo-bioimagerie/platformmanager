@@ -31,6 +31,7 @@
 * [statistics] various fixes
 * [antibodies] fix missing table creation at install
 * [booking] send emails only if user status > VISITOR in space
+* [documents] add visibility controls on documents to have public, private, user/client scopes
 
 ## 2.2.2
 

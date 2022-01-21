@@ -9,6 +9,12 @@ require_once 'Framework/Model.php';
  */
 class Document extends Model {
 
+    public static $VISIBILITY_PRIVATE = 0; // space managers or admin
+    public static $VISIBILITY_MEMBERS = 1; // all space members
+    public static $VISIBILITY_USER = 2; // a specific user 
+    public static $VISIBILITY_CLIENT = 3; // a specific client
+    public static $VISIBILITY_PUBLIC = 10; // anyone
+
     /**
      * Create the site table
      * 
@@ -23,6 +29,8 @@ class Document extends Model {
         $this->setColumnsInfo("id_user", "int(11)", 0);
         $this->setColumnsInfo("date_modified", "date", "");
         $this->setColumnsInfo("url", "TEXT", "");
+        $this->setColumnsInfo('visibility', 'int', 0);
+        $this->setColumnsInfo('id_ref', 'int', ''); // according to visibility, user or client id
         $this->primaryKey = "id";
     }
     
@@ -48,6 +56,28 @@ class Document extends Model {
     public function edit($id, $id_space, $title, $id_user){
         $sql = "UPDATE dc_documents SET title=?, id_user=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($title, $id_user, $id, $id_space));
+    }
+
+    public function setVisibility($id_space, $id, $visibility, $id_ref) {
+        $sql = "UPDATE dc_documents SET visibility=?, id_ref=? WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($visibility, $id_ref, $id, $id_space));   
+    }
+
+    public function getPublicDocs($id_space){
+        $sql = "SELECT * FROM dc_documents WHERE id_space=? AND visibility=?";
+        $req = $this->runRequest($sql, array($id_space, self::$VISIBILITY_PUBLIC));
+        return $req->fetchAll();
+    }
+
+    public function getRestrictedDocs($id_space, $visibility, $id_ref=0) {
+        if($visibility == self::$VISIBILITY_MEMBERS) {
+            $sql = "SELECT * FROM dc_documents WHERE id_space=? AND visibility=?";
+            $req = $this->runRequest($sql, array($id_space, self::$VISIBILITY_MEMBERS));
+            return $req->fetchAll();            
+        }
+        $sql = "SELECT * FROM dc_documents WHERE id_space=? AND ((visibility=? AND id_ref=?) OR visibility=?)";
+        $req = $this->runRequest($sql, array($id_space, $visibility, $id_ref, self::$VISIBILITY_PUBLIC));
+        return $req->fetchAll();    
     }
     
     public function set($id, $id_space, $title, $id_user){
@@ -88,7 +118,9 @@ class Document extends Model {
                 "title" => "",
                 "id_user" =>  0,
                 "date_modified" => null,
-                "url" => ""
+                "url" => "",
+                "visibility" => 0,
+                "id_ref" => 0
             );
         }
         $sql = "SELECT * FROM dc_documents WHERE id=? AND id_space=?";
