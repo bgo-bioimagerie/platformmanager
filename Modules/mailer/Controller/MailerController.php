@@ -155,4 +155,30 @@ class MailerController extends CoresecureController {
         ));
     }
 
+    public function notifsAction($id_space) {
+        $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
+        if(!$this->role || $this->role < CoreSpace::$USER) {
+            return $this->render(['data' => ['notifs' => 0]]);
+        }
+        $mm = new Mailer();
+        $recent = 0;
+        if($this->role == CoreSpace::$USER) {
+            $recents = $mm->recent($id_space, Mailer::$SPACE_MEMBERS);
+            if($recents) {
+                $recent = $recents['total'];
+            }
+        } else if($this->role == Corespace::$MANAGER) {
+            $recents = $mm->recent($id_space, Mailer::$SPACE_MANAGERS);
+            if($recents) {
+                $recent = $recents['total'];
+            }
+        } else if($this->role == Corespace::$ADMIN) {
+            $recents = $mm->recent($id_space, Mailer::$SPACES_ADMINS);
+            if($recents) {
+                $recent = $recents['total'];
+            }
+        }
+        return $this->render(['data' => ['notifs' => $recent]]);
+    }
+
 }

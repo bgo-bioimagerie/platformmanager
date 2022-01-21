@@ -3,6 +3,11 @@
 require_once 'Framework/Routing.php';
 
 class MailerRouting extends Routing{
+
+    public function routes($router) {
+        $router->map('GET', '/core/tiles/[i:id_space]/module/mailer/notifs', 'mailer/mailer/notifs', 'mailer_notifs');
+
+    }
     
     public function listRoutes(){
         

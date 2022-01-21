@@ -57,8 +57,13 @@ class Mailer extends Model {
      * count number of tickets per status per space
      */
     public function count($id_space) {
-        $sql = "SELECT count(*) as FROM mailer_mails WHERE id_space=?";
+        $sql = "SELECT count(*) as total FROM mailer_mails WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
+    public function recent($id_space, $type=1) {
+        $sql = "SELECT count(*) as total FROM mailer_mails WHERE id_space=? AND type<=? AND created_at > now() - INTERVAL 7 DAY";
+        return $this->runRequest($sql, array($id_space, $type))->fetch();
     }
 
 }
