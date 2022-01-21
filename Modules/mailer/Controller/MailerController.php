@@ -7,6 +7,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/mailer/Model/MailerTranslator.php';
 require_once 'Modules/mailer/Model/MailerSend.php';
+require_once 'Modules/mailer/Model/Mailer.php';
 
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
@@ -56,21 +57,45 @@ class MailerController extends CoresecureController {
         $user = $modelUser->userAllInfo($_SESSION["id_user"]);
         $from = $user["email"];
 
+        $mails = [];
+        $mm = new Mailer();
+        if($this->role > CoreSpace::$USER) {
+            $mails = $mm->getMails($id_space);
+        } else if ($this->role == CoreSpace::$USER) {
+            $mails = $mm->getMails($id_space, Mailer::$SPACE_MEMBERS);
+        }
+
+        $userAppStatus = $modelUser->getStatus($_SESSION['id_user'] ?? 0);
+        $superAdmin = false;
+        if ($userAppStatus > CoreStatus::$USER) {
+            $superAdmin = true;
+        }
+
         $lang = $this->getLanguage();
-        $this->render(array("id_space" => $id_space, "lang" => $lang,
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
             'areasList' => $areasList,
             'resourcesList' => $resourcesList,
-            'from' => $from));
+            'from' => $from,
+            'mails' => $mails,
+            'superAdmin' => $superAdmin,
+            'role' => $this->role
+        ));
     }
 
     public function sendAction($id_space) {
         $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
+        if($this->role < CoreSpace::$MANAGER) {
+            throw new PfmAuthException('access limited to managers');
+        }
         $from = $this->request->getParameter("from");
         $to = $this->request->getParameter("to");
         $subject = $this->request->getParameter("subject");
         $content = $this->request->getParameter("content");
 
-        if (!in_array($to, array("all", "managers"))) {
+        $mailType = Mailer::$SPACE_MEMBERS;
+        if (!in_array($to, array("all", "managers", "admins"))) {
             $toEx = explode("_", $to);
             if ($toEx[0] == "a") { // area
                 // get all the adresses of users who book in this area
@@ -83,8 +108,29 @@ class MailerController extends CoresecureController {
             }
         } else {
             if ($to === "managers") {
+                $mailType = Mailer::$SPACE_MANAGERS;
                 $modelUser = new CoreUser();
                 $content = "From " . $modelUser->getUserFUllName($_SESSION["id_user"]) . " :</br>" . $content;
+            } else if($to === "admins") {
+                $mailType = Mailer::$SPACES_ADMINS;
+                $modelUser = new CoreUser();
+                $userAppStatus = $modelUser->getStatus($_SESSION['id_user'] ?? 0);
+                if ($userAppStatus < CoreStatus::$ADMIN) {
+                    throw new PfmAuthException('limited to super admins!!');
+                }
+                // get all space admins emails
+                $modelSpaceUser = new CoreSpaceUser();
+                $admins = $modelSpaceUser->admins();
+                $emails = [];
+                foreach($admins as $admin) {
+                    if($admin['email']) {
+                        $emails[] = ['email' => $admin['email']];
+                    }
+                }
+                if(empty($emails)) {
+                    throw new PfmParamException('no space admins found');
+                }
+                $to = $emails;
             }
         }
 
@@ -98,10 +144,14 @@ class MailerController extends CoresecureController {
         ];
         $message = $email->sendEmailToSpaceMembers($mailParams, $this->getLanguage(), mailing: "mailer@$id_space");
 
+        $mm = new Mailer();
+        $mm->create($id_space, $subject, $content, $mailType);
+
         $this->render(array(
             'lang' => $this->getLanguage(),
             'id_space' => $id_space,
-            'message' => $message
+            'message' => $message,
+            'role' => $this->role
         ));
     }
 

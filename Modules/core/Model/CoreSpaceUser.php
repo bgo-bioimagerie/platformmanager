@@ -34,6 +34,14 @@ class CoreSpaceUser extends Model {
         $sql = "SELECT * from core_j_spaces_user WHERE id_space=? AND status>".CoreSpace::$USER;
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+
+    public function admins() {
+        $sql = 'SELECT * from core_users
+            INNER JOIN core_j_spaces_user
+            ON core_users.id = core_j_spaces_user.id_user
+            WHERE core_j_spaces_user.status='.CoreSpace::$ADMIN;
+        return $this->runRequest($sql)->fetchAll();
+    }
     
     public function setRole($id_user, $id_space, $role){
         if ( !$this->exists($id_user, $id_space) ){

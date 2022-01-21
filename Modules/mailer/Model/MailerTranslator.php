@@ -15,6 +15,31 @@ class MailerTranslator {
         return "Mailer";
     }
 
+    public static function dest($type, $lang) {
+        if($lang == "fr") {
+            switch ($type) {
+                case 1:
+                    return "Membres";
+                case 2:
+                    return "Responsables";
+                case 3:
+                    return "Administrateurs";
+                default:
+                    return "Membres";
+            }
+        }
+        switch ($type) {
+            case 1:
+                return "Members";
+            case 2:
+                return "Managers";
+            case 3:
+                return "Administrators";
+            default:
+                return "Members";
+        }
+    }
+
     public static function mailerConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Mailer permet d'envoyer des emails";
