@@ -16,6 +16,7 @@
     } ?>
 
     <?php echo $formHtml ?>
+    <?php echo "PHP" ?>
 
 </div>
 

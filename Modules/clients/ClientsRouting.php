@@ -8,6 +8,20 @@ class ClientsRouting extends Routing{
         $router->map('GET|POST', '/clientusers/getclients/[i:id_space]/[i:id_user]', 'clients/clientsusers/getuserclients', 'clients_getuserclients');
         $router->map('GET|POST', '/clientspricings/getpricing/[i:id_space]/[i:id_client]', 'clients/clientspricings/getclientpricing', 'clients_getclientpricing');
         $router->map('GET|POST', '/clientslist/getaddress/[i:id_space]/[i:id_client]', 'clients/clientslist/getaddress', 'clients_getaddress');
+
+        // client account
+        $router->map(
+            'POST',
+            '/clientsuseraccounts/getclientsuserform/[i:id_space]/[i:id_user]',
+            'clients/clientsuseraccounts/getClientsUserForm',
+            'clients_getclientsuserform'
+        );
+        $router->map(
+            'GET|POST',
+            '/clientsuseraccounts/deleteclientsuser/[i:id_space]/[i:id_user]',
+            'clients/clientsuseraccounts/deleteClientsUser',
+            'clients_deleteclientsuser'
+        );
     }
     
     public function listRoutes(){

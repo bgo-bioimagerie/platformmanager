@@ -189,7 +189,6 @@ class CorespaceaccessController extends CoresecureController {
      * @see Controller::indexAction()
      */
     public function indexAction($id_space, $letter = "A", $active = "") {
-
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
@@ -410,7 +409,11 @@ class CorespaceaccessController extends CoresecureController {
     public function usereditAction($id_space, $id){
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
+        $origin = ["page" => json_encode($this->request->getParameterNoException("origin"))];
+        if ($origin['page'] == "") {
+            $origin = false;
+        }
+        Configuration::getLogger()->debug("[TEST]", ["origin" => $origin]);
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
 
@@ -456,6 +459,8 @@ class CorespaceaccessController extends CoresecureController {
         return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
+            'id_user' => $id,
+            'origin' => json_encode($origin),
             'formHtml' => $form->getHtml($lang),
             "space" => $space
         ));

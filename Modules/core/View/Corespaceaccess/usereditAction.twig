@@ -1,0 +1,98 @@
+{% extends "Modules/layout.twig" %}
+   
+{% block content %}
+
+<div class="row pm-table">
+    {% autoescape false %}
+        {# {{ formHtml }} #}
+    {% endautoescape %}
+    <div id="formSection" data-origin="{{origin}}">
+    <!--TODO: put that inside a foreach -->
+    {{ origin }}
+        <button id="spaceAccess-btn" type="button" v-on:click="getClientsUserForm($event)">Space access</button>
+        <button id="clientsAccounts-btn" type="button" v-on:click="getClientsUserForm($event)">Clients accounts</button>
+        <button id="bookingAccess-btn" type="button" v-on:click="getClientsUserForm($event)">Booking access</button>
+        <div id="clientAccountsForm" v-show="show.spaceAccess" v-html="forms.clientAccountsForm"></div>
+        <div id="clientAccountsForm" v-show="show.clients" v-html="forms.clientAccountsForm"></div>
+        <div id="clientAccountsTable" v-show="show.clients" v-html="forms.clientAccountsTable"></div>
+        <div id="clientAccountsForm" v-show="show.bookingAccess" v-html="forms.clientAccountsForm"></div>
+    </div>
+</div>
+
+
+<script>
+    var app = new Vue({
+        el: '#formSection',
+        data () {
+            return {
+                origin: "",
+                show: {
+                    clients: false,
+                    spaceAccess: false,
+                    bookingAccess: false
+                },
+                params: {
+                    spaceId: {{ id_space }},
+                    userId: {{ id_user }},
+                },
+                forms: {
+                    spaceAccessForm: null,
+                    clientAccountsForm: null,
+                    clientAccountsTable: null,
+                    bookingAccessForm: null
+                }
+            }
+        },
+        beforeMount: function() {
+            this.origin = JSON.parse(this.$el.attributes['data-origin'].value);
+            if (this.origin) {
+                console.log("origin.page:", this.origin.page);
+                this.updateMenu(this.origin.page);
+            }
+        },
+        mounted: function() {
+            if (!this.logged) {
+                return
+            }  
+        },
+        methods: {
+            updateMenu(originPage) {
+                console.log("in update menu / page:", originPage == "clientsuseraccounts");
+                console.log(typeof originPage);
+                if (originPage == "clientsuseraccounts") {
+                    console.log("loading clientsuseraccounts");
+                    this.getClientsUserForm();
+                }
+            },
+            getClientsUserForm() {
+                const headers = new Headers();
+                    headers.append('Content-Type','application/json');
+                    headers.append('Accept', 'application/json');
+                const cfg = {
+                    headers: headers,
+                    method: 'POST',
+                    body: null
+                };
+                let apiRoute = `clientsuseraccounts/getclientsuserform/`;
+                let validationUrl = "coreaccessuseredit/" + this.params.spaceId + "/" + this.params.userId; 
+                cfg.body = JSON.stringify({
+                    url: validationUrl
+                });
+                apiRoute += this.params.spaceId + "/";
+                apiRoute += this.params.userId;
+                fetch(apiRoute, cfg, true).
+                then((response) => response.json(), (error) => {}).
+                then(respData => {
+                    this.forms.clientAccountsForm = respData.formHtml;
+                    this.forms.clientAccountsTable = respData.tableHtml;
+                    console.log("this.show.clients:", this.show.clients);
+                    this.show.clients = !this.show.clients;
+                }).catch((error) => {
+                    console.debug('failed to get clientUsers form', error);
+                });
+            }
+        }
+    })
+</script>
+
+{% endblock %}
