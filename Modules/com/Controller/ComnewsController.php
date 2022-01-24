@@ -19,7 +19,6 @@ class ComnewsController extends ComController {
 
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
-        //$this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelComNews = new ComNews();
@@ -38,7 +37,11 @@ class ComnewsController extends ComController {
         }
         $tableHtml = $table->view($data, $headers);
 
-        return $this->render(array("id_space" => $id_space, "tableHtml" => $tableHtml));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "tableHtml" => $tableHtml,
+            "data" => ["news" => $data]
+        ));
     }
 
     public function notifsAction($id_space) {
@@ -80,10 +83,9 @@ class ComnewsController extends ComController {
             $date = $this->request->getParameter("date");
             $expire = $this->request->getParameter("expire");
             $idNew = $modelComNews->set($id, $id_space, $title, $content, $date, $expire);
-
             // upload
             $target_dir = "data/com/news/";
-            if ($_FILES["media"]["name"] != "") {
+            if (isset($_FILES) && $_FILES && $_FILES["media"]["name"] != "") {
                 $ext = pathinfo($_FILES["media"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "media", $idNew . "_" . $ext);
 
@@ -93,10 +95,14 @@ class ComnewsController extends ComController {
             // redirect
             $_SESSION["flash"] = ComTranslator::NewsHasBeenSaved($lang);
             $_SESSION["flashClass"] = "success";
-            return $this->redirect('comnews/' . $id_space);
+            return $this->redirect('comnews/' . $id_space, [], ['news' => ['id' => $idNew]]);
         }
 
-        return $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "formHtml" => $form->getHtml($lang),
+            "data" => ["news" => $data]
+        ));
     }
 
     public function deleteAction($id_space, $id) {
@@ -107,7 +113,7 @@ class ComnewsController extends ComController {
         $model = new ComNews();
         $model->delete($id_space, $id);
 
-        $this->redirect("comnews/" . $id_space);
+        return $this->redirect("comnews/" . $id_space);
     }
 
 }
