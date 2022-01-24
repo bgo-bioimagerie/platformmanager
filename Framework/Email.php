@@ -27,8 +27,10 @@ class Email extends Model {
      * @param string $sentCopyToFrom
      * @param array  list of CoreFiles to attach to email
      * @param bool   set toAddress as Bcc:, defaults to true, else just set in To:
+     * @param string mailing list name
      */
     public function sendEmail($from, $fromName, $toAddress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true, $mailing=null) {        
+
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -130,6 +132,7 @@ class Email extends Model {
      * @return string result of call to function sendMail() telling if mail was sent or not
      */
     public function sendEmailToSpaceMembers($params, $lang = "", $mailing=null) {
+
         $modelSpace = new CoreSpace();
         $spaceId = $params["id_space"];
         $space = $modelSpace->getSpace($spaceId);
