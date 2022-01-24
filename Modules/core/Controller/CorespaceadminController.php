@@ -58,7 +58,7 @@ class CorespaceadminController extends CoresecureController {
         $data = $modelSpace->getSpaces("name");
         for($i = 0 ; $i < count($data) ; $i++){
             $data[$i]["url"] = "corespace/" . $data[$i]["id"];
-            $data[$i]['plan_expire'] = date('Y-m-d', $data[$i]['plan_expire']);
+            $data[$i]['plan_expire'] = $data[$i]['plan_expire'] ? date('Y-m-d', $data[$i]['plan_expire']) : '';
             $data[$i]['plan'] = $plans[$data[$i]['plan']] ?? $data[$i]['plan'];
         }
         
