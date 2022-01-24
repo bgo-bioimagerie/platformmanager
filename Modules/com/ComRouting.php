@@ -3,6 +3,11 @@
 require_once 'Framework/Routing.php';
 
 class ComRouting extends Routing{
+
+    public function routes($router) {
+        $router->map('GET', '/core/tiles/[i:id_space]/module/com/notifs', 'com/comnews/notifs', 'comnews_notifs');
+    }
+
     
     public function listRoutes(){
         
