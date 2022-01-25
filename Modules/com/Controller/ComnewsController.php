@@ -85,7 +85,7 @@ class ComnewsController extends ComController {
             $idNew = $modelComNews->set($id, $id_space, $title, $content, $date, $expire);
             // upload
             $target_dir = "data/com/news/";
-            if (isset($_FILES) && $_FILES && $_FILES["media"]["name"] != "") {
+            if (isset($_FILES) && isset($_FILES['media']) && $_FILES["media"]["name"] != "") {
                 $ext = pathinfo($_FILES["media"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "media", $idNew . "_" . $ext);
 

@@ -5,5 +5,4 @@
     <div class="pm-table">
         <?php echo $tableHtml ?>
     </div>
-<?php
-endblock();
+<?php endblock();?>
