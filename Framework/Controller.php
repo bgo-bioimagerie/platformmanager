@@ -17,7 +17,7 @@ class Navbar{
      * Get the navbar content
      * @return string
      */
-    public function __construct(public string $lang) {
+    public function __construct(public ?string $lang) {
         $this->lang = $lang;
         if(isset($_SESSION["login"])) {
             $this->login = $_SESSION["login"];
