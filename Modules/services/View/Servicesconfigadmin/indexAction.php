@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="row" style="background-color: #e1e1e1; min-height: 2000px;">
@@ -38,4 +38,4 @@
     <?php } ?>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

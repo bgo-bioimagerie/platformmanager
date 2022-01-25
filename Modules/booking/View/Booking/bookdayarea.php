@@ -1,6 +1,6 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php 
@@ -254,5 +254,5 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 	</div>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>
 

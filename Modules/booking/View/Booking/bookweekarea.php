@@ -1,6 +1,6 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php
@@ -377,6 +377,5 @@ $dayWidth = 100 / 8;
     </div>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>
         

@@ -2,7 +2,7 @@
 
 <!-- header -->
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php
@@ -21,5 +21,4 @@
     }
 ?>
 
-<?php
-endblock();
+<?php endblock(); ?>

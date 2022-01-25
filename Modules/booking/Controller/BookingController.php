@@ -290,7 +290,7 @@ class BookingController extends BookingabstractController {
         
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
@@ -309,7 +309,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookday");
     }
 
@@ -441,7 +442,7 @@ class BookingController extends BookingabstractController {
         }
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
@@ -459,7 +460,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookdayarea");
     }
 
@@ -572,7 +574,7 @@ class BookingController extends BookingabstractController {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
         // view
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'menuData' => $menuData,
@@ -593,7 +595,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookweek");
     }
 
@@ -730,7 +733,7 @@ class BookingController extends BookingabstractController {
         }
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'menuData' => $menuData,
@@ -752,7 +755,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookweekarea");
     }
 
@@ -856,7 +860,7 @@ class BookingController extends BookingabstractController {
         }
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'menuData' => $menuData,
@@ -878,7 +882,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookmonth");
     }
 

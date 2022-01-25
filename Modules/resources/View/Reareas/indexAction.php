@@ -1,6 +1,6 @@
 <?php include 'Modules/resources/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
     <div>  
         <?php if (isset($_SESSION["message"]) && $_SESSION["message"] != "") { ?>
@@ -18,5 +18,4 @@
         <?php echo $htmlTable ?>
     </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

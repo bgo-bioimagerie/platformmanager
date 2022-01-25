@@ -1,19 +1,15 @@
 <?php include 'Modules/quote/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php
 if ($id_quote > 0) {
-    ?>
+?>
     <div class="pm-form-short">
-        <?php
-    } else {
-        ?>
+<?php } else { ?>
         <div class="pm-form">
-            <?php
-        }
-        ?>
+<?php } ?>
         <?php
         if (isset($_SESSION["message"]) && $_SESSION["message"]) {
             ?>
@@ -69,6 +65,5 @@ if ($id_quote > 0) {
 
     <?php include 'Modules/quote/View/Quotelist/editnewscript.php'; ?>
 
-    <?php
-    endblock();
+<?php endblock(); ?>
     

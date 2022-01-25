@@ -3,7 +3,7 @@ include 'Modules/core/View/spacelayout.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 <div >
     <h3>Mail subscriptions</h3>
@@ -20,4 +20,4 @@ require_once 'Modules/core/Model/CoreTranslator.php';
     </div>
 
 </div>
-<?php endblock();
+<?php endblock(); ?>

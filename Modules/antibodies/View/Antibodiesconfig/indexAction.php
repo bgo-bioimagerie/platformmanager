@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="col-md-12" style="min-height: 2000px;">
@@ -38,4 +38,4 @@
     <?php } ?>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

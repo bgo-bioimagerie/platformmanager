@@ -1,6 +1,6 @@
 <?php include 'Modules/antibodies/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 <div class=" pm-table">
 	<div class="col-md-6 col-md-offset-3">
@@ -296,4 +296,4 @@
 	</div>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

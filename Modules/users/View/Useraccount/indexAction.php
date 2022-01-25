@@ -1,7 +1,7 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php include( "Modules/core/View/Coreusers/navbar.php" ); ?>
@@ -66,5 +66,4 @@
     </div>
     
 </div> <!-- /container -->
-<?php
-endblock();
+<?php endblock(); ?>

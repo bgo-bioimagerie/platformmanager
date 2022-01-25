@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php
@@ -198,6 +198,4 @@ var app = new Vue({
 </script>
 
 
-<?php
-endblock();
-?>
+<?php endblock(); ?>

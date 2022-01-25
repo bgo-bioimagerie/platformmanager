@@ -1,6 +1,6 @@
 <?php include 'Modules/invoices/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-table">
@@ -18,4 +18,4 @@
         
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

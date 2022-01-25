@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 <div class="row">
     <div class="col-md-12 pm-nav">
@@ -27,4 +27,4 @@
         </div>
     </div>
 </div>
-<?php endblock();
+<?php endblock(); ?>

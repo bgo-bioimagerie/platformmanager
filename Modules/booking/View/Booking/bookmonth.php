@@ -1,6 +1,6 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php 
@@ -66,4 +66,4 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
     </div>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

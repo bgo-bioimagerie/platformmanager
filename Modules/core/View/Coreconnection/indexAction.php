@@ -10,7 +10,7 @@
 <!-- Custom styles for this template -->
 <link href="Modules/core/Theme/signin.css" rel="stylesheet">
 
-<?php endblock() ?>
+<?php endblock(); ?>
 
 <!-- body -->
 <?php startblock('content') ?>
@@ -95,5 +95,4 @@
         </div>
         <?php } ?>
 </div>
-    <?php
-    endblock();
+<?php endblock(); ?>

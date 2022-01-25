@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="col-md-10" id="pm-content">
@@ -43,5 +43,4 @@
 <?php include('Modules/booking/View/Bookingconfig/summaryForm.php'); ?>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

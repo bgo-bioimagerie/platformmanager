@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/Corespaceaccess/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="row pm-table"> 
@@ -18,5 +18,4 @@
     <?php } ?>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

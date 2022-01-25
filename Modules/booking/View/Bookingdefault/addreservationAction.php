@@ -1,6 +1,6 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form">
@@ -178,5 +178,4 @@ if ($packageChecked > 0) {
 
 <?php include 'Modules/booking/View/Bookingdefault/deletescript.php'; ?>
 
-<?php
-endblock();
+<?php endblock(); ?>

@@ -53,5 +53,4 @@
         </div>
 
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

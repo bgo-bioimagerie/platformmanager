@@ -1,9 +1,8 @@
 <?php include 'Modules/mailer/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
-<div >
-
+<div>
     <div class="page-header">
         <h1>
             <?php echo MailerTranslator::Send_email($lang) ?>
@@ -20,5 +19,4 @@
     </div>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

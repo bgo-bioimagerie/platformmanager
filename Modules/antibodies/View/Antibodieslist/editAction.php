@@ -1,6 +1,6 @@
 <?php include 'Modules/antibodies/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-content">
@@ -52,4 +52,4 @@
 
 <?php include 'Modules/antibodies/View/Antibodieslist/editscript.php';  ?>
 
-<?php endblock();
+<?php endblock(); ?>

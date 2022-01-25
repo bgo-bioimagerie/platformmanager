@@ -16,7 +16,7 @@
 </style>
 
 <?php endblock(); ?>
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="container" id="welcome">
@@ -281,5 +281,4 @@ var app = new Vue({
 
 
 </script>
-<?php
-endblock();
+<?php endblock(); ?>

@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="col-xs-12 col-md-10">
@@ -39,4 +39,4 @@
     
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

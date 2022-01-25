@@ -1,6 +1,6 @@
 <?php include 'Modules/bulletjournal/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="col-md-10" id="pm-table">
@@ -112,5 +112,4 @@
         </table>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

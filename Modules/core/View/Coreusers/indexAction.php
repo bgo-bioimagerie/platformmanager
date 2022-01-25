@@ -32,5 +32,4 @@
         </div>
     </div> <!-- /container -->
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

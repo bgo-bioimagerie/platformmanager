@@ -1,6 +1,6 @@
 <?php include 'Modules/mailer/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form">
@@ -41,8 +41,8 @@
                             $areaId = $this->clean($resource['id']);
                             ?>
                             <OPTION value="r_<?php echo $areaId ?>" > <?php echo ResourcesTranslator::Resource($lang) . ": " . $areaname ?> </OPTION>
-    <?php }
-} ?>
+                        <?php }
+                    } ?>
                 </select>
             </div>
         </div>
@@ -74,5 +74,4 @@
     </form>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

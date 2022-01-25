@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="row" id="pm-content">
@@ -49,5 +49,4 @@
 
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

@@ -1,6 +1,6 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php 
@@ -297,4 +297,4 @@ else if($size_bloc_resa == 3600){
 </div>
 
 
-<?php endblock();
+<?php endblock(); ?>

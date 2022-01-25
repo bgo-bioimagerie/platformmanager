@@ -218,6 +218,14 @@ class BookingBaseTest extends BaseTest {
         ]);
         $c = new BookingauthorisationsController($req, $space);
         $c->runAction('booking', 'add', ['id_space' => $space['id'], 'id' => $id_resource_category."_".$user['id']]);
+
+
+        $req = $this->request([
+            "path" => "bookingauthorizations/".$space['id']."/".$user['id'],
+        ]);
+        $c = new BookingauthorisationsController($req, $space);
+        $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id' => $user['id']]);
+        $this->assertTrue(!empty($data['bkauthorizations']));
     }
 
 
