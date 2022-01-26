@@ -1,0 +1,102 @@
+{% extends "Modules/layout.twig" %}
+   
+{% block content %}
+
+<div class="row pm-table">
+"TEST"
+    <div id="formSection" data-origin="{{origin}}">
+    {{origin}}
+            <input
+                v-for="(item, index) in sections"
+                :id="item.btnId"
+                type="button"
+                :value="item.displayName"
+                @click="showForm(item.name)">
+            </input>
+        <div id="spaceAccessSection" v-show="show.spaceAccess">
+            {% autoescape false %}
+                {{ spaceAccessForm }}
+            {% endautoescape %}
+        </div>
+        <div id="clientsUserSection" v-show="show.clientsUser">
+            {% autoescape false %}
+                {{ clientsUserForm }}
+                {{ clientsUserTable }}
+            {% endautoescape %}
+        </div>      
+        <div id="bookingAccessSection" v-show="show.bookingAccess">
+        
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: '#formSection',
+        data () {
+            return {
+                origin: false,
+                sections: [
+                    {name: "spaceAccess", btnId: "spaceAccessBtn", displayName: "Space access"},
+                    {name: "clientsUser", btnId: "clientsUserBtn", displayName: "Clients accounts"},
+                    {name: "bookingAccess", btnId: "bookingAccessBtn", displayName: "Booking access"}
+                ],
+                show: {
+                    clientsUser: false,
+                    spaceAccess: false,
+                    bookingAccess: false
+                },
+                params: {
+                    spaceId: {{ id_space }},
+                    userId: {{ id_user }},
+                }
+            }
+        },
+        beforeMount: function() {
+            this.origin = JSON.parse(this.$el.attributes['data-origin'].value);
+            this.showForm(this.getOriginPage());
+        },
+        mounted: function() {
+            console.log("mounted");
+            if (!this.logged) {
+                return
+            }
+        },
+        methods: {
+            showForm(name="spaceAccess") {
+                switch (name) {
+                    case "spaceAccess":
+                        this.show.spaceAccess = true;
+                        this.show.clientsUser = false;
+                        this.show.bookingAccess = false;
+                        break;
+                    case "clientsUser":
+                        this.show.spaceAccess = false;
+                        this.show.clientsUser = true;
+                        this.show.bookingAccess = false;
+                        break;
+                    case "bookingAccess":
+                        this.show.spaceAccess = false;
+                        this.show.clientsUser = false;
+                        this.show.bookingAccess = true;
+                        break;
+                    default:
+                        break;
+                }
+            },
+            getOriginPage() {
+                let result;
+                if (this.origin.page.match(/clientsuseraccounts/g)) {
+                    result = "clientsUser";
+                } else if (this.origin.page.match(/spaceaccess/g)) {
+                    result = "spaceAccess";
+                } else if (this.origin.page.match(/bookingaccess/g)) {
+                    result = "bookingAccess";
+                }
+                return result;
+            },
+        }
+    });
+</script>
+
+{% endblock %}

@@ -170,7 +170,7 @@ class CorespaceaccessController extends CoresecureController {
         );
 
         $table = new TableView();
-        $table->addLineButton("coreaccessuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
+        $table->addLineButton("corespaceuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
         $tableHtml = $table->view($users, $tableContent);
 
         return $this->render(array(
@@ -225,7 +225,7 @@ class CorespaceaccessController extends CoresecureController {
 
         // table view
         $table = new TableView();
-        $table->addLineButton("coreaccessuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
+        $table->addLineButton("corespaceuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
         $table->addLineButton("corespaceaccess/" . $id_space . "/impersonate" , "id", "Impersonate");
 
 
