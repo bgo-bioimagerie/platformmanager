@@ -312,15 +312,15 @@ class BookingdefaultController extends BookingabstractController {
 
         $valid = true;
         if ($start_time >= $end_time) {
-            $_SESSION["message"] = "Error: Start Time Must Be Before End Time";
+            $_SESSION["flash"] = "Error: Start Time Must Be Before End Time";
             $valid = false;
         }
         if ($start_time == 0) {
-            $_SESSION["message"] = "Error: Start Time Cannot Be Null";
+            $_SESSION["flash"] = "Error: Start Time Cannot Be Null";
             $valid = false;
         }
         if ($start_time == 0) {
-            $_SESSION["message"] = "Error: End Time Cannot Be Null";
+            $_SESSION["flash"] = "Error: End Time Cannot Be Null";
             $valid = false;
         }
 
@@ -336,7 +336,7 @@ class BookingdefaultController extends BookingabstractController {
             // test if a resa already exists on this periode
             $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
             if ($conflict) {
-                $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                 $error = 'reservationError';
                 $valid = false;
             }
@@ -348,7 +348,7 @@ class BookingdefaultController extends BookingabstractController {
                 if($bookingQuota != "" && $bookingQuota>0){
                     $userHasTooManyReservations = $modelCalEntry->hasTooManyReservations($id_space, $start_time, $_SESSION["id_user"], $id_resource, $id, $bookingQuota);
                     if ($userHasTooManyReservations){
-                        $_SESSION["message"] = BookingTranslator::quotaReservationError($bookingQuota, $lang);
+                        $_SESSION["flash"] = BookingTranslator::quotaReservationError($bookingQuota, $lang);
                         $valid = false;
                         $error = 'quotaReservationError';
                     }
@@ -357,7 +357,8 @@ class BookingdefaultController extends BookingabstractController {
             if ($valid) {
                 $id_entry = $modelCalEntry->setEntry($id_space ,$id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                 $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
-                $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
+                $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
+                $_SESSION["flashClass"] = 'success';
 
             }
         } else {
@@ -385,7 +386,7 @@ class BookingdefaultController extends BookingabstractController {
 
                     $valid = true;
                     if ($conflict) {
-                        $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
                         $error = 'reservationError';
@@ -394,7 +395,7 @@ class BookingdefaultController extends BookingabstractController {
                         $id_entry = $modelCalEntry->setEntry($id_space, 0, $btime, $end_time + $pass, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                         $modelCalEntry->setPeriod($id_space, $id_entry, $id_period);
                         $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
-                        $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
                     }
                 }
                 if ($is_one_false) {
@@ -417,7 +418,7 @@ class BookingdefaultController extends BookingabstractController {
 
                     $valid = true;
                     if ($conflict) {
-                        $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
                         $error = 'reservationError';
@@ -427,7 +428,7 @@ class BookingdefaultController extends BookingabstractController {
                         $modelCalEntry->setPeriod($id_space ,$id_entry, $id_period);
                         $modelCalEntry->setAllDayLong($id_space ,$id_entry, $all_day_long);
 
-                        $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
                     }
                 }
                 if ($is_one_false) {
@@ -503,7 +504,7 @@ class BookingdefaultController extends BookingabstractController {
 
                     $valid = true;
                     if ($conflict) {
-                        $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
                         $error = 'reservationError';
@@ -512,7 +513,8 @@ class BookingdefaultController extends BookingabstractController {
                         $id_entry = $modelCalEntry->setEntry($id_space, 0, $start_m_time, $end_m_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                         $modelCalEntry->setPeriod($id_space, $id_entry, $id_period);
                         $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
-                        $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
+                        $_SESSION["flashClass"] = 'success';
                     }
                 }
                 if ($is_one_false) {
@@ -554,7 +556,7 @@ class BookingdefaultController extends BookingabstractController {
 
                     $valid = true;
                     if ($conflict) {
-                        $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                         $valid = false;
                         $is_one_false = true;
                         $error = 'reservationError';
@@ -563,7 +565,8 @@ class BookingdefaultController extends BookingabstractController {
                         $id_entry = $modelCalEntry->setEntry($id_space, 0, $start_m_time, $end_m_time, $id_resource, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
                         $modelCalEntry->setPeriod($id_space, $id_entry, $id_period);
                         $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
-                        $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);
+                        $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
+                        $_SESSION["flashClass"] = 'success';
                     }
                 }
                 if ($is_one_false) {

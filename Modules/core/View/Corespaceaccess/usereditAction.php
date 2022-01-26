@@ -4,19 +4,7 @@
 <?php startblock('content') ?>
 
 <div class="row pm-table"> 
-
-    <?php if (isset($_SESSION["message"]) && $_SESSION["message"]) { ?>
-
-        <div class="alert alert-success">
-            <?php echo $_SESSION["message"] ?>
-        </div>
-
-    <?php 
-    unset($_SESSION["message"]);
-    } ?>
-
     <?php echo $formHtml ?>
-
 </div>
 
 <?php endblock(); ?>

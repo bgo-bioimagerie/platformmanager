@@ -133,7 +133,8 @@ class ClientspricingsController extends ClientsController {
                     $form->getParameter("txtcolor"),
                 );   
             
-            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             // after the provider is saved we redirect to the providers list page
             return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
         } else {

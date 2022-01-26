@@ -118,7 +118,8 @@ class ClientslistController extends ClientsController {
                     $form->getParameter("invoice_send_preference")
             );
 
-            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = 'success';
 
             // after the provider is saved we redirect to the providers list page
             return $this->redirect("clclienteditinvoice/" . $id_space . "/" . $idNew, [], ['client' => ['id' => $idNew]]);
@@ -157,7 +158,8 @@ class ClientslistController extends ClientsController {
         if ($formi->check()) {
             $id_adress = $formAddressInvoice->save();
             $this->clientModel->setAddressInvoice($id_space, $id, $id_adress);
-            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("clclienteditdelivery/" . $id_space . "/" . $id);
             return;
         }
@@ -198,7 +200,7 @@ class ClientslistController extends ClientsController {
             $this->clientModel->setAddressDelivery($id_space, $id, $id_adress);
             $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
             $_SESSION['flashClass'] = 'success';
-            // $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            // $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
             $this->redirect("clclients/" . $id_space);
             return;
         }

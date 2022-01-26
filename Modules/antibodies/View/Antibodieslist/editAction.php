@@ -6,15 +6,6 @@
 <div class="pm-content">
     
     <div class="col-md-12 pm-form-short">
-        <?php if(isset($_SESSION["message"])){
-        ?>
-        <div class="alert alert-success" role="alert">
-            <?php echo $_SESSION["message"] ?>
-        </div>
-        <?php
-            unset($_SESSION["message"]);
-        } ?>
-        
         <?php echo $form ?>
         <a class="btn btn-danger" href="antibodydelete/<?php echo $id_space ?>/<?php echo $id ?>"><?php echo CoreTranslator::Delete($lang) ?></a>
     </div>

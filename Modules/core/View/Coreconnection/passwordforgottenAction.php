@@ -29,28 +29,6 @@
             <p></p>
         </div>
 
-        <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
-             <?php
-        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
-            if (substr($_SESSION["message"], 0, 3) === "Err") {
-                ?>
-                <div class="alert alert-danger">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            } else {
-                ?>
-                <div class="alert alert-success">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            }
-            unset($_SESSION["message"]);
-        }
-        ?>
-        </div>
-
          <!-- Form -->
         <div class="col-sm-10 col-sm-offset-1 text-center">
             <p></p>

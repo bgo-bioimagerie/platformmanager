@@ -33,29 +33,6 @@ blockquote {
 
 <div id="helpdeskapp" style="background-color: #fff; height:100%">
     <div class="row">
-        <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
-             <?php
-        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
-            if (substr($_SESSION["message"], 0, 3) === "Err") {
-                ?>
-                <div class="alert alert-danger">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            } else {
-                ?>
-                <div class="alert alert-success">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            }
-            unset($_SESSION["message"]);
-        }
-        ?>
-        </div>
-    </div>
-    <div class="row">
         <!-- Form -->
         <div v-if="message" class="col-sm-12 text-center">
             <div class="alert alert-warning">{{message}}</div>

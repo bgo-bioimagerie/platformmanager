@@ -7,6 +7,8 @@ require_once 'Errors.php';
 require_once 'Constants.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreAdminMenu.php';
 
 // Default navbar
 class Navbar{
