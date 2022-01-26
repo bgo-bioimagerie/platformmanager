@@ -9,6 +9,7 @@ require_once 'Framework/Email.php';
 require_once 'Framework/Constants.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Controller/CorespaceaccessController.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpace.php';
@@ -25,32 +26,9 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
  * @author sprigent
  * Controller for the home page
  */
-class CorespaceuserController extends CoresecureController {
-
-    // should inherit that
-    public function sideMenu() {
-        $id_space = $this->args['id_space'];
-        $lang = $this->getLanguage();
-        $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("core", $id_space);
-        
-        $dataView = [
-            'id_space' => $id_space,
-            'title' => CoreTranslator::Users($lang),
-            'glyphicon' => $menuInfo['icon'] ?? '',
-            'bgcolor' => $menuInfo['color'] ?? Constants::COLOR_BLACK,
-            'color' => $menuInfo['txtcolor'] ?? Constants::COLOR_WHITE,
-            'PendingUsers' => CoreTranslator::PendingUsers($lang),
-            'Active_Users' => CoreTranslator::Active_Users($lang),
-            'Inactive' => CoreTranslator::Inactive($lang),
-            'Add' => CoreTranslator::Add_User($lang),
-            'Expire' => CoreTranslator::Expiring($lang)
-        ];
-        return $this->render($dataView);
-    }
+class CorespaceuserController extends CorespaceaccessController {
 
     // space access section
-
     public function editAction($id_space, $id_user) {
         Configuration::getLogger()->debug("[TEST]", ["in usereditAction"]);
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
@@ -73,8 +51,6 @@ class CorespaceuserController extends CoresecureController {
 
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
-        Configuration::getLogger()->debug("[TEST]", ["before rendering"]);
-        // TODO: solve here !!!
         $dataView = [
             'id_space' => $id_space,
             'id_user' => $id_user,
@@ -83,9 +59,9 @@ class CorespaceuserController extends CoresecureController {
             'origin' => json_encode($origin),
             'spaceAccessForm' => $spaceAccessForm->getHtml($lang),
             'clientsUserForm' => $clientsUserForm->getHtml($lang),
-            "clientsUserTable" => $tableHtml,
+            "clientsUserTable" => $tableHtml
         ];
-        return $this->render($dataView);
+        return $this->render($dataView, "editAction");
     }
 
     protected function generateSpaceAccessForm($id_space, $id_user) {
@@ -108,7 +84,7 @@ class CorespaceuserController extends CoresecureController {
         $form->addDate("date_convention", CoreTranslator::Date_convention($lang), false, $spaceUserInfo["date_convention"] ?? "");
         $form->addUpload("convention", CoreTranslator::Convention($lang), $spaceUserInfo["convention_url"] ?? "");
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreaccessuseredit/".$id_space."/".$id_user);
+        $form->setValidationButton(CoreTranslator::Save($lang), "corespaceuseredit/".$id_space."/".$id_user);
         $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id_user);
         return $form;
     }
@@ -134,7 +110,7 @@ class CorespaceuserController extends CoresecureController {
         }
 
         $_SESSION["message"] = CoreTranslator::UserAccessHasBeenSaved($lang);
-        $this->redirect("coreaccessuseredit/".$id_space."/".$id_user, ["origin" => "spaceaccess"]);
+        $this->redirect("corespaceuseredit/".$id_space."/".$id_user, ["origin" => "spaceaccess"]);
     }
 
     /**
@@ -200,7 +176,7 @@ class CorespaceuserController extends CoresecureController {
         $form = new Form($this->request, "clientsusersform");
         $form->setTitle(ClientsTranslator::addClientAccountFor($lang) . ": " . $userFullName);
         $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"]);
-        $form->setValidationButton(CoreTranslator::Add($lang), $this->pageUrl . "/" . $id_space . "/" . $id_user);
+        $form->setValidationButton(CoreTranslator::Add($lang), "corespaceuseredit" . "/" . $id_space . "/" . $id_user);
         $form->setButtonsWidth(4, 8);
         return $form;
     }
@@ -214,7 +190,7 @@ class CorespaceuserController extends CoresecureController {
         $accounts = $modelClientUser->getUserClientAccounts($id_user, $id_space);
         $table = new TableView();
         $table->setTitle(ClientsTranslator::ClientAccountsFor($lang) . $userFullName);
-        $table->addDeleteButton($this->pageUrl . "delete/" . $id_space . "/" . $id_user);
+        $table->addDeleteButton("corespaceuser" . "deleteclientsuser/" . $id_space . "/" . $id_user);
         return $table->view($accounts, array(
             "name" => ClientsTranslator::Identifier($lang)
         ));
@@ -227,18 +203,18 @@ class CorespaceuserController extends CoresecureController {
         $modelClientUser->set($id_space, $form->getParameter("id_client"), $id_user);
         $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
         $_SESSION["flashClass"] = "success";
-        $this->redirect("coreaccessuseredit" ."/" . $id_space . "/" . $id_user, ["origin" => $this->pageUrl]);
+        $this->redirect("corespaceuseredit" ."/" . $id_space . "/" . $id_user, ["origin" => "clientsuseraccounts"]);
     }
 
     /**
      * Remove a provider
      */
-    public function deleteClientsUserAction($id_space, $id_user, $id) {
+    public function deleteClientsUserAction($id_space, $id_user, $id_client) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientUser = new ClClientUser();
-        $modelClientUser->deleteClientUser($id_space, $id, $id_user);
-        $this->redirect($this->pageUrl . "/" . $id_space . "/" . $id_user);
+        $modelClientUser->deleteClientUser($id_space, $id_client, $id_user);
+        $this->redirect("corespaceuseredit" . "/" . $id_space . "/" . $id_user, ["origin" => "clientsuseraccounts"]);
     }
 
 }
