@@ -85,7 +85,7 @@ class CorespaceuserController extends CoresecureController {
             'clientsUserForm' => $clientsUserForm->getHtml($lang),
             "clientsUserTable" => $tableHtml,
         ];
-        return $this->twig->render("Modules/core/View/Corespaceuser/editAction.twig", $dataView);
+        return $this->render($dataView);
     }
 
     protected function generateSpaceAccessForm($id_space, $id_user) {
