@@ -110,7 +110,7 @@ class RecategoriesController extends ResourcesBaseController {
             $this->categoryModel->delete($id_space, $id);
         } else {
             // linked to resources, notify the user
-            $_SESSION["message"] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Category($lang), $lang);
+            $_SESSION['flash'] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Category($lang), $lang);
             $error = 'deletionnotauthorized';
         }
         return $this->redirect("recategories/".$id_space, [], ['error' => $error]);

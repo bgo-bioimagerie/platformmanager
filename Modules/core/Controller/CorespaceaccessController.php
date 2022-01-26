@@ -448,7 +448,8 @@ class CorespaceaccessController extends CoresecureController {
                 $modelUserSpace->setConventionUrl($id, $id_space, $target_dir . $url);
             }
 
-            $_SESSION["message"] = CoreTranslator::UserAccessHasBeenSaved($lang);
+            $_SESSION['flash'] = CoreTranslator::UserAccessHasBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("coreaccessuseredit/".$id_space."/".$id);
             return;
         }
@@ -473,7 +474,8 @@ class CorespaceaccessController extends CoresecureController {
         $lang = $this->getLanguage();
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
-        $_SESSION["message"] = CoreTranslator::UserAccountHasBeenDeleted($lang);
+        $_SESSION['flash'] = CoreTranslator::UserAccountHasBeenDeleted($lang);
+        $_SESSION["flashClass"] = 'success';
 
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);

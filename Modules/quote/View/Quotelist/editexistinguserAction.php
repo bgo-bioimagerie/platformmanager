@@ -10,16 +10,6 @@ if ($id_quote > 0) {
 <?php } else { ?>
         <div class="pm-form">
 <?php } ?>
-        <?php
-        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
-            ?>
-            <div class="alert alert-success">
-                <?php echo $_SESSION["message"] ?>
-            </div>
-            <?php
-            unset($_SESSION["message"]);
-        }
-        ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
         <?php echo $formHtml ?>
         <script type="module">

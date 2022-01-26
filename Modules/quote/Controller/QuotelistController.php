@@ -320,7 +320,7 @@ class QuotelistController extends QuoteController {
                     $form->getParameter('id_client'),
                     $form->getParameter('date_open')
             );
-            $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
+            $_SESSION['flash'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             if ($id > 0) {
                 return $this->redirect("quotenew/" . $id_space . "/" . $id, [], ['quote' => ['id' => $quote_id]]);
             }

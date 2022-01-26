@@ -202,7 +202,8 @@ class InvoicesconfigController extends CoresecureController {
                 unlink('data/invoices/' . $id_space . '/template.twig.save');
             }
 
-            $_SESSION["message"] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang) ;
+            $_SESSION['flash'] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect('invoicepdftemplate/' . $id_space);
             return;
         }

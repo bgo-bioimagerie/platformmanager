@@ -12,16 +12,6 @@ if ($id_quote > 0) {
 ?>
         <div class="pm-form">
 <?php } ?>
-        <?php
-        if (isset($_SESSION["message"]) && $_SESSION['message']) {
-            ?>
-            <div class="alert alert-success">
-                <?php echo $_SESSION["message"] ?>
-            </div>
-            <?php
-            unset($_SESSION["message"]);
-        }
-        ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
         <div>
             <a class="btn btn-default" href="clclientedit/<?php echo $id_space ?>">

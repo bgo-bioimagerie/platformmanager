@@ -81,34 +81,6 @@ img{
 
 </style>
 
-
-<!-- Add the table title -->
-<div class="row"  style="background-color: #ffffff; padding-top: 12px;">
-		<?php
-			$message = "";
-			if (isset($_SESSION["message"]) && $_SESSION["message"]){
-				$message = $_SESSION["message"];
-			}
-			if ($message) {
-		?>
-		<?php
-			if (strpos($message, "Err") === false){
-		?>
-				<div class="alert alert-success text-center">	
-		<?php 
-			}
-			else{
-		?>
-				<div class="alert alert-danger text-center">
-		<?php 
-			}
-		?>
-			<p><?php echo  $message ?></p>
-			</div>
-		<?php } ?>
-		<?php unset($_SESSION["message"])?>
-</div>
-
 <div class="row" style="background-color: #ffffff; padding-bottom: 12px;">
 
 	<div class="col-md-6 col-lg-6 text-left">

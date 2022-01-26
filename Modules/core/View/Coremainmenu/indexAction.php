@@ -10,18 +10,6 @@
 <div class="row">
     <div class="col-md-12">
         <div class="container pm-table">
-            <?php 
-            if (isset($_SESSION["message"]) && $_SESSION["message"] != ""){ 
-                ?>
-                <div class="col-xs-12 col-md-12" style="padding-top: 12px;" >
-                    <div class="alert alert-success" role="alert">
-                    <p><?php echo $_SESSION["message"] ?></p>
-                    </div>
-                </div>
-            <?php }
-            $_SESSION["message"] = "";
-            ?>
-
             <a class="btn btn-default" href="coremainmenuedit/0"><?php echo CoreTranslator::NewMainMenu($lang) ?></a>
             <?php echo $tableHtml ?>
         </div>

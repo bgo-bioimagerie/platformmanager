@@ -278,7 +278,7 @@ class CoreusersController extends CoresecureController {
             $modelUser = new CoreUser();
             $modelUser->delete($id);
         } else {
-            $_SESSION["message"] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
+            $_SESSION['flash'] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
         }
         $this->redirect("coreusers");
     }

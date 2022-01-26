@@ -204,7 +204,7 @@ class InvoiceslistController extends InvoicesController {
             
             if($this->request->getParameter("date_send") != "" && $this->request->getParameter("visa_send") == 0){
                 $message = InvoicesTranslator::TheFieldVisaIsMandatoryWithSend($lang);
-                $_SESSION["message"] = $message;
+                $_SESSION['flash'] = $message;
                 $this->redirect("invoiceinfo/".$id_space."/".$id);
                 return;
             }
@@ -216,7 +216,8 @@ class InvoiceslistController extends InvoicesController {
                     CoreTranslator::dateToEn($this->request->getParameter("date_send"), $lang), 
                     $this->request->getParameter("visa_send"));
             
-            $_SESSION["message"] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("invoiceinfo/" . $id_space . "/" . $id);
             return "";
         }
