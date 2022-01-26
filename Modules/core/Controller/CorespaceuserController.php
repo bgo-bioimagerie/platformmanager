@@ -30,7 +30,6 @@ class CorespaceuserController extends CorespaceaccessController {
 
     // space access section
     public function editAction($id_space, $id_user) {
-        Configuration::getLogger()->debug("[TEST]", ["in usereditAction"]);
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $origin = ["page" => json_encode($this->request->getParameterNoException("origin"))];
@@ -139,7 +138,6 @@ class CorespaceuserController extends CorespaceaccessController {
 
     // clientsUserAccounts section
 
-    private $pageUrl = "clientsuseraccounts";
     /**
      * (non-PHPdoc)
      * @see Controller::index()
