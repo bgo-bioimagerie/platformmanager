@@ -3,9 +3,7 @@
 {% block content %}
 
 <div class="row pm-table">
-"TEST"
     <div id="formSection" data-origin="{{origin}}">
-    {{origin}}
             <input
                 v-for="(item, index) in sections"
                 :id="item.btnId"
@@ -25,7 +23,24 @@
             {% endautoescape %}
         </div>      
         <div id="bookingAccessSection" v-show="show.bookingAccess">
-        
+            {% autoescape false %}
+                {{ bkAuthTable }}
+                {{ bkAuthAddForm }}
+            {% endautoescape %}
+            <script type="module">
+                import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+                let dynamicForms = new DynamicForms();
+                let spaceId = {{ id_space }};
+                let sourceId = "resource";
+                let targets = [
+                    {
+                        elementId: "visa_id",
+                        apiRoute: `revisas/getcategoryvisas/`,
+                        activateOnLoad: true
+                    }
+                ];
+                dynamicForms.dynamicFields(sourceId, targets, spaceId);
+            </script>
         </div>
     </div>
 </div>
@@ -57,7 +72,6 @@
             this.showForm(this.getOriginPage());
         },
         mounted: function() {
-            console.log("mounted");
             if (!this.logged) {
                 return
             }

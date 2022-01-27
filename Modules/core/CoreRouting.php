@@ -84,6 +84,7 @@ class CoreRouting extends Routing{
         // space user edit
         $this->addRoute("corespaceuseredit", "corespaceuseredit", "corespaceuser", "edit", array("id_space", "id_user"), array("", ""));
         $this->addRoute("corespaceuserdeleteclientsuser", "corespaceuserdeleteclientsuser", "corespaceuser", "deleteclientsuser", array("id_space", "id_user", "id_client"), array("", "", ""));
+        $this->addRoute("corespaceuserbkauthADD", "corespaceuserbkauthadd", "corespaceuser", "bkauthadd", array("id_space", "id_user"), array("", ""));
 
         // history
         $this->addRoute("corespacehistory", "corespacehistory", "corespacehistory", "index", array("id_space"), array(""));
