@@ -18,7 +18,7 @@ isPwd = [...inputs].filter(input => input.id === "pwd").length > 0;
 pwdInput = "";
 pwdConfirmInput = "";
 // check elements when submitting form
-form?.setAttribute("onsubmit", "return validateUserForm(event)");
+if(form) { form.setAttribute("onsubmit", "return validateUserForm(event)"); }
 
 
 // prepare unique elements checking
