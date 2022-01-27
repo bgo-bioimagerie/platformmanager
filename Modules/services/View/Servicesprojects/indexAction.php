@@ -18,7 +18,7 @@
                $activeYear = "active"; 
             }
             ?>
-            <a class="btn btn-default <?php echo $activeYear ?>" href="<?php echo $yearsUrl . "/" .$id_space ."/". $yea ?>"><?php echo $yea ?></a>
+            <a class="btn btn-outline-dark <?php echo $activeYear ?>" href="<?php echo $yearsUrl . "/" .$id_space ."/". $yea ?>"><?php echo $yea ?></a>
            <?php    
         }
         ?>

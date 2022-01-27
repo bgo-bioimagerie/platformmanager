@@ -117,7 +117,7 @@
         }
     }
     ?>
-    <button type="button" class="btn btn-default" onclick="location.href = 'booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
+    <button type="button" class="btn btn-outline-dark" onclick="location.href = 'booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
 </div>
 
 <?php echo $form->htmlClose() ?>

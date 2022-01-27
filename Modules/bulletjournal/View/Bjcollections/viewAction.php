@@ -89,8 +89,8 @@
                                     $cancelTxt = BulletjournalTranslator::ReOpen($lang);
                                 }
                                 ?>
-                                <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-primary"><?php echo $editTxt ?></button></td>
-                                <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo $cancelTxt ?></button></td>
+                                <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-primary"><?php echo $editTxt ?></button></td>
+                                <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo $cancelTxt ?></button></td>
                                 <?php
                             } else {
                                 ?>

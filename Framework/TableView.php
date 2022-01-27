@@ -228,20 +228,20 @@ class TableView {
         if ($this->printAction != "" && $this->exportAction != "" && !$this->isprint) {
             $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
             // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-            $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-default\">Print</button>";
-            $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-default\">Export</button>";
+            $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
+            $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
             $html .= "</div>";
         } else {
             if ($this->printAction != "" && !$this->isprint) {
                 $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
                 // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-                $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-default\">Print</button>";
+                $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
                 $html .= "</div>";
             }
             if ($this->exportAction != "" && !$this->isprint) {
                 $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
                 // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-                $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-default\">Export</button>";
+                $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
                 $html .= "</div>";
             }
         }
@@ -302,7 +302,7 @@ class TableView {
                 if (count($this->linesButtonActions) > 0 && !$this->isprint) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
                         $html .= '<td style="width: 1%; white-space: nowrap;">';
-                        $html .= "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button><span> </span>";
+                        $html .= "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-sm btn-outline-dark\">" . $this->linesButtonName[$lb] . "</button><span> </span>";
                         $html .= "</td>";
                     }
                 }
@@ -314,10 +314,10 @@ class TableView {
                     }
                     $html .= '<td style="width: 1%; white-space: nowrap;">';
                     if($this->editJS){
-                        $html .= "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button><span> </span>" ;
+                        $html .= "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-sm btn-primary\">Edit</button><span> </span>" ;
                     }
                     else{
-                         $html .= "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button><span> </span>";   
+                         $html .= "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-sm btn-primary\">Edit</button><span> </span>";   
                     }  
                     $html .= "</td>";
                 }
@@ -370,7 +370,7 @@ class TableView {
                         else if ($value["type"] == "download"){
                             $html .= '<td>';
                             if ( $val != "" ){
-                                $html .= sprintf('<a target="_blank" rel="noreferrer,noopener"  href="%s"><button type="btn btn-default">%s</button></a>', $val, $value["text"]);
+                                $html .= sprintf('<a target="_blank" rel="noreferrer,noopener"  href="%s"><button type="btn btn-outline-dark">%s</button></a>', $val, $value["text"]);
                             }
                             $html .= '</td>';
                         }
@@ -380,7 +380,7 @@ class TableView {
                             if ( $val != "" ){
                                 $html .= "<form role=\"form\" id=\"tabledownload\" class=\"form-horizontal\" action=\"".$value["action"]."\" method=\"POST\">";
                                 $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$val."\">";
-                                $html .= "<input type=\"submit\" class=\"btn btn-default\" value=\"" . $value["text"] . "\" />";
+                                $html .= "<input type=\"submit\" class=\"btn btn-outline-dark\" value=\"" . $value["text"] . "\" />";
                                 $html .= "</form>";
                             }
                             $html .= '</td>';
@@ -513,7 +513,7 @@ class TableView {
      * @return string
      */
     private function addDownloadButtonHtml($url) {
-        $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
+        $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-sm btn-outline-dark\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
 
         return $html;
     }
@@ -525,7 +525,7 @@ class TableView {
      * @return string
      */
     private function addDeleteButtonHtml($id, $name) {
-        return "<input class=\"btn btn-xs btn-danger\" type=\"button\" onclick=\"ConfirmDelete($id, '$name')\" value=\"Delete\">";
+        return "<input class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"ConfirmDelete($id, '$name')\" value=\"Delete\">";
     }
 
     /**

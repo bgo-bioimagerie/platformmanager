@@ -8,7 +8,7 @@
     </div>
     <div class="col-md-2 text-left">
         <div class="dropdown">
-            <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span style="color: #666;" class="glyphicon glyphicon-plus"></span>
 
             </button>
@@ -92,8 +92,8 @@
                             $cancelTxt = BulletjournalTranslator::ReOpen($lang);
                         }
                         ?>
-                        <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-primary"><?php echo $editTxt ?></button></td>
-                        <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo $cancelTxt ?></button></td>
+                        <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-primary"><?php echo $editTxt ?></button></td>
+                        <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo $cancelTxt ?></button></td>
                             <?php
                         } else {
                             ?>

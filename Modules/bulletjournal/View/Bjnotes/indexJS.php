@@ -356,8 +356,8 @@ for ($i = 0; $i < count($notes); $i++) {
                 if (data.status === 3) {
                     cancelTxt = "<?php echo BulletjournalTranslator::ReOpen($lang); ?>";
                 }
-                htmldata += "<td><button id=\"closetask_" + data.id + "\" class=\"btn btn-xs btn-primary\">" + editTxt + "</button></td>";
-                htmldata += "<td><button id=\"canceltask_" + data.id + "\" class=\"btn btn-xs btn-default\">" + cancelTxt + "</button></td>";
+                htmldata += "<td><button id=\"closetask_" + data.id + "\" class=\"btn btn-sm btn-primary\">" + editTxt + "</button></td>";
+                htmldata += "<td><button id=\"canceltask_" + data.id + "\" class=\"btn btn-sm btn-outline-dark\">" + cancelTxt + "</button></td>";
 
             } else {
                 htmldata += "<td></td>";

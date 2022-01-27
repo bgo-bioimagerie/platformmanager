@@ -36,7 +36,8 @@ if($isdev) {
         }
         ?>
         <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
-        
+        <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
         <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
         <script src="externals/jquery-1.11.1.js"></script>
 
@@ -66,26 +67,27 @@ if($isdev) {
         </div>
 
         <div class="container-fluid">
-        <div class="row">
-                <div id="app">
+            <div class="row" id="app">
                     <?php if (isset($flash) && $flash) { ?>
-                        <div class="container">
+                        <div class="col-12">
                             <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
                                 <?php echo $flash['msg']; ?>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         </div>
                     <?php }?>
-                    <div class="col-12">
+                    
                         <?php startblock('spacemenu') ?>
                         <?php
                         if ($context['spaceMenu']) {
+                        ?>
+                        <div class="col-12">
+                        <?php
                             echo $context['spaceMenu'];
-                        } ?>
+                        ?>
+                        </div>
+                        <?php } ?>
                         <?php endblock() ?>
-                    </div>
                     <?php
                     if ($context['sideMenu']) {
                     ?>
@@ -103,7 +105,6 @@ if($isdev) {
                     </div>
 
             </div>
-        </div>
         </div>
 
         <?php startblock('footer') ?>

@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="container pm-table">
-            <a class="btn btn-default" href="coremainmenuedit/0"><?php echo CoreTranslator::NewMainMenu($lang) ?></a>
+            <a class="btn btn-outline-dark" href="coremainmenuedit/0"><?php echo CoreTranslator::NewMainMenu($lang) ?></a>
             <?php echo $tableHtml ?>
         </div>
     </div>

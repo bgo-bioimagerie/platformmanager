@@ -75,9 +75,9 @@ $dayWidth = 100 / 8;
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 ?>
-			<a aria-label="previous week" href="bookingweekarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
-			<a aria-label="next week" href="bookingweekarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
-			<a aria-label="current week" href="bookingweekarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
+			<a aria-label="previous week" href="bookingweekarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-outline-dark"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="next week" href="bookingweekarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-outline-dark"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current week" href="bookingweekarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-outline-dark"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
         </div>            
         <?php
         $d = explode("-", $mondayDate);
@@ -105,19 +105,19 @@ $dayWidth = 100 / 8;
     <div class="col-md-6 text-right">
         <div class="btn-group" role="group" aria-label="...">
 
-            <div class="btn btn-default" type="button">
+            <div class="btn btn-outline-dark" type="button">
                 <a style="color:#333;" href="bookingday/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
             </div>
-            <div class="btn btn-default " type="button">
+            <div class="btn btn-outline-dark " type="button">
                 <a style="color:#333;" href="bookingdayarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day_Area($lang) ?></a>
             </div>
-            <div class="btn btn-default" type="button">
+            <div class="btn btn-outline-dark" type="button">
                 <a style="color:#333;" href="bookingweek/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week($lang) ?></a>
             </div>
-            <div class="btn btn-default active" type="button">
+            <div class="btn btn-outline-dark active" type="button">
                 <a style="color:#333;" href="bookingweekarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week_Area($lang) ?></a>
             </div>
-            <div class="btn btn-default" type="button">
+            <div class="btn btn-outline-dark" type="button">
                 <a style="color:#333;" href="bookingmonth/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Month($lang) ?></a>
             </div>
         </div>
@@ -184,7 +184,7 @@ $dayWidth = 100 / 8;
                                         if ($resourcesBase[$i]['last_state'] != "") {
                                             ?>
                                             <br/>                            
-                                            <a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$i]['id'] ?>" style="background-color:<?php echo $resourcesBase[$i]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+                                            <a class="btn btn-sm" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$i]['id'] ?>" style="background-color:<?php echo $resourcesBase[$i]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
                                             <?php
                                         }
                                         ?>

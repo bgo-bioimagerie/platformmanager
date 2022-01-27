@@ -290,7 +290,7 @@
 		        <?php if($protocol['id'] != ""){ ?>
 		        	<button type="button" onclick="location.href='<?php echo "protocolsdelete/".$id_space."/".$protocol['id'] ?>'" class="btn btn-danger"><?php echo  CoreTranslator::Delete($lang)?></button>
 				<?php }?>
-				<button type="button" onclick="location.href='protocols'" class="btn btn-default">Cancel</button>
+				<button type="button" onclick="location.href='protocols'" class="btn btn-outline-dark">Cancel</button>
 		</div>
       </form>
 	</div>

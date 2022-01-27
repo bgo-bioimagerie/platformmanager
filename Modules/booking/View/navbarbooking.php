@@ -21,6 +21,7 @@ if ($menucolortxt == "") {
             text-shadow: 0 0px 0 rgba(0, 0, 0, .1);
             background-color: <?php echo $menucolor ?>;
             border:0px solid <?php echo $menucolor ?>;
+            padding-bottom: 10px;
         }
 
         #navlink {
@@ -56,15 +57,15 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 ?>
 
-    <div class="bs-docs-header" id="">
+    <div class="bs-docs-header col-12" id="mainmenu">
         
             <form role="form" class="form-horizontal" action="booking/<?php echo $id_space ?>" method="post" id="navform">
-
-                <div class='col-md-2' id="well">
+            <div class="row">
+                <div class="col-12 col-md-2" id="area">
                     <fieldset>
                         <legend><?php echo ResourcesTranslator::Area($lang) ?></legend>
                         <div >
-                            <select class="form-control" name="id_area" onchange="getareaval(this);">
+                            <select class="form-select" name="id_area" onchange="getareaval(this);">
                                 <?php
                                 foreach ($menuData['areas'] as $area) {
                                     $areaID = $this->clean($area['id']);
@@ -87,11 +88,11 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                         </div>
                     </fieldset>
                 </div>
-                <div class='col-md-3' id="well">
+                <div class="col-12 col-md-3" id="res">
                     <fieldset>
                         <legend><?php echo ResourcesTranslator::Resource($lang) ?></legend>
                         <div >
-                            <select class="form-control" name="id_resource"  onchange="getresourceval(this);">
+                            <select class="form-select" name="id_resource"  onchange="getresourceval(this);">
                                 <option value="0" > ... </option>
                                 <?php
                                 foreach ($menuData['resources'] as $resource) {
@@ -123,11 +124,11 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                 ?>
 
 
-                <div class='col-md-<?php echo $dateSize; ?>' id="well">
+                <div class="col-12 col-md-<?php echo $dateSize; ?>" id="range">
                     <fieldset>
                         <legend><?php echo CoreTranslator::Date($lang) ?></legend>
                         <div >
-                            <div class='input-group date '>
+                            <div class='input-group'>
                                 <input id="date-daily" type='date' class="form-control" name="curentDate"
                                        value="<?php echo $menuData["curentDate"] ?>"
                                        />
@@ -136,7 +137,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                     </fieldset>
                 </div>
                 <?php if(isset($users) && count($users) > 1) {  ?>
-                <div class='col-md-3' id="well">
+                <div class="col-12 col-md-3" id="users">
                     <fieldset>
                         <legend><?php echo CoreTranslator::User($lang) ?></legend>
                         <div>
@@ -157,7 +158,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 
                                 <?php
                                 if($context['role']<CoreSpace::$MANAGER) { ?>
-                                    <select class="form-control" id="id_user" name="id_user" onchange="$('#navform').submit();">
+                                    <select class="form-select" id="id_user" name="id_user" onchange="$('#navform').submit();">
                                         <option value="0"><?php echo BookingTranslator::ShowAll($lang); ?></option>
                                         <option <?php if($id_user) { echo "selected";} ?> value="<?php echo $users[1]['id'] ?>"><?php echo BookingTranslator::ShowMine($lang); ?></option>
                                     </select>
@@ -195,13 +196,14 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                     </fieldset>
                 </div>
                 <?php } ?>
-                <div class='col-md-1' id="well">
+                <div class="col-12 col-md-1" id="search">
                     <fieldset>
                         <legend style="color:<?php echo $menucolor ?>;">.</legend>
                         <div >
-                            <input type="submit" class="btn btn-default" value="ok" />
+                            <input type="submit" class="btn btn-dark" value="ok" />
                         </div>
                     </fieldset>
-                </div>   
+                </div>
+            </div>
             </form>
     </div>

@@ -33,9 +33,9 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
         $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
     }
 ?>
-			<a aria-label="previous month" href="bookingmonth/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
-			<a aria-label="next month" href="bookingmonth/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
-			<a aria-label="current month" href="bookingmonth/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::This_month($lang) ?> </button></a>
+			<a aria-label="previous month" href="bookingmonth/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-outline-dark"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="next month" href="bookingmonth/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-outline-dark"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current month" href="bookingmonth/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-outline-dark"> <?php echo  BookingTranslator::This_month($lang) ?> </button></a>
 
                     </div>
                 </div>
@@ -51,19 +51,19 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 </div>
                 <div class="col-md-6" style="text-align: right;">
                     <div class="btn-group" role="group" aria-label="...">
-                        <div class="btn btn-default" type="button">
+                        <div class="btn btn-outline-dark" type="button">
                             <a style="color:#333;" href="bookingday/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
                         </div>
-                        <div class="btn btn-default " type="button">
+                        <div class="btn btn-outline-dark " type="button">
                             <a style="color:#333;" href="bookingdayarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day_Area($lang) ?></a>
                         </div>
-                        <div class="btn btn-default" type="button">
+                        <div class="btn btn-outline-dark" type="button">
                             <a style="color:#333;" href="bookingweek/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week($lang) ?></a>
                         </div>
-                        <div class="btn btn-default" type="button">
+                        <div class="btn btn-outline-dark" type="button">
                             <a style="color:#333;" href="bookingweekarea/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Week_Area($lang) ?></a>
                         </div>
-                        <div class="btn btn-default active" type="button">
+                        <div class="btn btn-outline-dark active" type="button">
                             <a style="color:#333;" href="bookingmonth/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Month($lang) ?></a>
                         </div> 
 

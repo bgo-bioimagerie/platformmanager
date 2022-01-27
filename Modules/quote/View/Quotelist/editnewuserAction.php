@@ -14,7 +14,7 @@ if ($id_quote > 0) {
 <?php } ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
         <div>
-            <a class="btn btn-default" href="clclientedit/<?php echo $id_space ?>">
+            <a class="btn btn-outline-dark" href="clclientedit/<?php echo $id_space ?>">
                 <?php echo ClientsTranslator::NewClient($lang) ?>
             </a>
         </div>

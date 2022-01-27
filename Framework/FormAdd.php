@@ -273,8 +273,8 @@ class FormAdd {
         
         if($this->buttonsVisible){
             $html .= "<div class=\"col-md-6\">";
-            $html .= "<input type=\"button\" id=\"" . $this->id . "_add" . "\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
-            $html .= "<input type=\"button\" id=\"" . $this->id . "_delete" . "\"  class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_add" . "\" class=\"btn btn-sm btn-outline-dark\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_delete" . "\"  class=\"btn btn-sm btn-outline-dark\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
             $html .= "<br>";
             $html .= "</div>";
         }

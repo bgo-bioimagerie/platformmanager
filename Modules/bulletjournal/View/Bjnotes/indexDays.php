@@ -11,7 +11,7 @@
                 <span style="text-transform: uppercase; font-weight: bold; color: #666;">
                     <?php echo date("l d F", mktime(0, 0, 0, $month, $i, $year)) ?>
                 </span>
-                <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span style="color: #666;" class="glyphicon glyphicon-plus"></span>
 
                 </button>
@@ -97,7 +97,7 @@
                             ?>
 
                             <td><a style="color:#666; cursor:pointer;" id="<?php echo $openlink ?>_<?php echo $dnote["id"] ?>"> <?php echo $dnote["name"] ?></a></td>
-                            <td><button id="collections_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo BulletjournalTranslator::Collections($lang) ?></button></td>
+                            <td><button id="collections_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo BulletjournalTranslator::Collections($lang) ?></button></td>
                                 <?php
                             if ($dnote["type"] == 2) {
                                 $editTxt = BulletjournalTranslator::MarkAsDone($lang);
@@ -109,8 +109,8 @@
                                     $cancelTxt = BulletjournalTranslator::ReOpen($lang);
                                 }
                                 ?>
-                                <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-primary"><?php echo $editTxt ?></button></td>
-                                <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo $cancelTxt ?></button></td>
+                                <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-primary"><?php echo $editTxt ?></button></td>
+                                <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo $cancelTxt ?></button></td>
                                 <?php
                             } else {
                                 ?>

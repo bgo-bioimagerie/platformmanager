@@ -92,9 +92,9 @@ img{
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 ?>
-			<a aria-label="day before" href="bookingdayarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
-			<a aria-label="day after" href="bookingdayarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
-			<a aria-label="current day" href="bookingdayarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
+			<a aria-label="day before" href="bookingdayarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-light"> <i class="bi bi-arrow-left-square" style="font-size: 1.2rem;"></i> </button></a>
+			<a aria-label="day after" href="bookingdayarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-light"> <i class="bi bi-arrow-right-square" style="font-size: 1.2rem;"></i> </button></a>
+			<a aria-label="current day" href="bookingdayarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-outline-dark"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
 		</div>
 
 		<?php 
@@ -115,19 +115,19 @@ img{
 	<div class="col-md-6 col-lg-6 text-right">
 		<div class="btn-group" role="group" aria-label="...">
 			
-			<div class="btn btn-default" type="button">
+			<div class="btn btn-outline-dark" type="button">
 				<a style="color:#333;" href="bookingday/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Day($lang) ?></a>
 			</div>
-			<div class="btn btn-default active" type="button">
+			<div class="btn btn-outline-dark active" type="button">
 				<a style="color:#333;" href="bookingdayarea/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Day_Area($lang) ?></a>
 			</div>
-			<div class="btn btn-default" type="button">
+			<div class="btn btn-outline-dark" type="button">
 				<a style="color:#333;" href="bookingweek/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Week($lang) ?></a>
 			</div>
-			<div class="btn btn-default" type="button">
+			<div class="btn btn-outline-dark" type="button">
 				<a style="color:#333;" href="bookingweekarea/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Week_Area($lang) ?></a>
 			</div>
-			<div class="btn btn-default" type="button">
+			<div class="btn btn-outline-dark" type="button">
 				<a style="color:#333;" href="bookingmonth/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Month($lang) ?></a>
 			</div>
 			
@@ -143,7 +143,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 
 <!-- hours column -->
 <div class="row">
-	<div class="col-xs-1" id="colDiv">
+	<div class="col-1" id="colDiv">
 		<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color:<?php echo $agendaStyle["header_background"]?>;">
 		</div>
 		<?php 
@@ -170,14 +170,14 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 	</div>	
 		
 	<!-- hours reservation -->	
-	<div class="col-xs-11" id="colDiv">
+	<div class="col-11" id="colDiv">
 		
 		<div class="row seven-cols" id="colDiv">
 		<?php 
 		for($r = 0 ; $r < count($resourcesBase) ; $r++){
 		?>
 		
-			<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="colDiv">
+			<div class="col-6 col-md-3 col-lg-1" id="colDiv">
 
 				<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
 				<p class="text-center"><strong><?php echo  $this->clean($resourcesBase[$r]['name']) ?></strong>
@@ -186,7 +186,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 							if($resourcesBase[$r]['last_state'] != ""){
 								?>
 									<br/>
-									<a class="btn btn-xs" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
+									<a class="btn btn-sm" href="resourcesevents/<?php echo $id_space ?>/<?php echo $resourcesBase[$r]['id'] ?>" style="background-color:<?php echo $resourcesBase[$r]['last_state'] ?> ; color: #fff; width:12px; height: 12px;"></a>
 								<?php
 							}
 						?>

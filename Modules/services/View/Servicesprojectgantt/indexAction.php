@@ -49,12 +49,12 @@
         <div class="text-center">
             <div class="btn-group btn-group-sm">
                 
-                <button class="btn btn-default <?php if ($activeGantt == "") {echo "active";} ?>" onclick="location.href = 'servicesprojectgantt/<?php echo $id_space ?>';"><?php echo ServicesTranslator::All_projects($lang) ?></button>
+                <button class="btn btn-outline-dark <?php if ($activeGantt == "") {echo "active";} ?>" onclick="location.href = 'servicesprojectgantt/<?php echo $id_space ?>';"><?php echo ServicesTranslator::All_projects($lang) ?></button>
                 
                 <?php 
                 foreach( $personInCharge as $pic ){
                     ?>
-                    <button class="btn btn-default <?php if ($activeGantt == $pic["id"]) {echo "active";} ?>" onclick="location.href = 'servicesprojectgantt/<?php echo $id_space ?>/<?php echo $allPeriod ?>/<?php echo $pic["id"] ?>';"><?php echo $pic["user_name"] ?></button>
+                    <button class="btn btn-outline-dark <?php if ($activeGantt == $pic["id"]) {echo "active";} ?>" onclick="location.href = 'servicesprojectgantt/<?php echo $id_space ?>/<?php echo $allPeriod ?>/<?php echo $pic["id"] ?>';"><?php echo $pic["user_name"] ?></button>
                 <?php
                 }
                 ?>
