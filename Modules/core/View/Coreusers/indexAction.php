@@ -14,7 +14,7 @@
                 <button type="button" onclick="location.href = 'coreusersedit/0'" class="btn btn-primary"><?php echo CoreTranslator::Add_User($lang) ?></button>
             </div>
         </div>
-        <div>À utiliser avec précautions !!! La suppression d'utilisateurs ne supprime pas les données associées. N'utiliser qu'en cas de doublon ou de cas exotiques.</div>
+        <div><?php echo CoreTranslator::DeleteUserCaution($lang)?></div>
         <div class="col-md-12">
             <?php echo $tableHtml ?>
         </div>
