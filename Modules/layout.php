@@ -35,11 +35,10 @@ if($isdev) {
             echo '<script src="externals/vuejs/vue.min.js"></script>';
         }
         ?>
-        <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
         
         <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
         <script src="externals/jquery-1.11.1.js"></script>
-        <script src="externals/bootstrap/js/bootstrap.min.js"></script>
 
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
@@ -58,7 +57,7 @@ if($isdev) {
             ?>
         <?php endblock() ?>
 
-        <div id="mainmenu">
+        <div id="mainmenu" style="margin-top: 5px; margin-bottom: 2px;">
         <?php
         if ($context['mainMenu']) {
             echo $context['mainMenu'];
@@ -66,8 +65,9 @@ if($isdev) {
         ?>
         </div>
 
+        <div class="container-fluid">
         <div class="row">
-                <div id="app" >
+                <div id="app">
                     <?php if (isset($flash) && $flash) { ?>
                         <div class="container">
                             <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
@@ -78,7 +78,7 @@ if($isdev) {
                             </div>
                         </div>
                     <?php }?>
-                    <div class="col-md-12 col-lg-12">
+                    <div class="col-12">
                         <?php startblock('spacemenu') ?>
                         <?php
                         if ($context['spaceMenu']) {
@@ -89,14 +89,14 @@ if($isdev) {
                     <?php
                     if ($context['sideMenu']) {
                     ?>
-                    <div class="col-md-2 col-lg-2" id="sidemenu">
+                    <div class="col-2" id="sidemenu">
                     <?php
                         echo $context['sideMenu'];
                     ?>
                     </div>
-                    <div class="col-md-10 col-lg-10" id="content">
+                    <div class="col-10" id="content">
                     <?php } else { ?>
-                    <div class="col-md-12 col-lg-12" id="content">
+                    <div class="col-12" id="content">
                     <?php } ?>
                     <?php startblock('content') ?>
                     <?php endblock() ?>
@@ -104,14 +104,15 @@ if($isdev) {
 
             </div>
         </div>
+        </div>
 
         <?php startblock('footer') ?>
         <footer>
         <div class="container">
             <div class="row">
-                <div class="col-sm-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <div class="col-sm-4"><a href="core/about">About</a></div>
-                <div class="col-sm-4"><a href="core/privacy">Privacy</a></div>
+                <div class="col-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
+                <div class="col-4"><a href="core/about">About</a></div>
+                <div class="col-4"><a href="core/privacy">Privacy</a></div>
             </div>
         </div>
         </footer>
@@ -122,5 +123,7 @@ if($isdev) {
            echo $debugbarRenderer->render();
         }
         ?>
+
+    <script src="externals/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
