@@ -7,6 +7,6 @@
     <?php echo $formHtml ?>
     
     <?php echo $formPwdHtml ?>
-</div> <!-- /container -->
+</div>
 <?php echo $script ?>
 <?php endblock(); ?>

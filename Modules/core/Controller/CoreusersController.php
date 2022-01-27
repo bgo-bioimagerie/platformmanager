@@ -76,7 +76,12 @@ class CoreusersController extends CoresecureController {
         }
 
         $tableHtml = $table->view($data, $header);
-        return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang, "data" => ["users" => $users]));
+        return $this->render(array(
+            "tableHtml" => $tableHtml,
+            "CoreTranslator" => new CoreTranslator(),
+            "lang" => $lang,
+            "data" => ["users" => $users])
+        );
     }
 
     public function editAction($id) {
