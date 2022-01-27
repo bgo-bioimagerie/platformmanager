@@ -50,7 +50,6 @@ export class DynamicForms {
         }
         let apiRoute = target.apiRoute;
         apiRoute += spaceId + "/" + selectedId;
-        console.log("selectedId:", selectedId);
         fetch(apiRoute, cfg, true).
             then((response) => response.json()).
             then(data => {

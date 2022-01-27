@@ -407,18 +407,39 @@ class CorespaceaccessController extends CoresecureController {
         $this->redirect("corespaceaccessuseradd/" . $id_space);
     }
 
+    /**
+     * @deprecated
+     */
     public function usereditAction($id_space, $id){
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $form = $this->generateSpaceAccessForm($id_space, $id);
+
+        if ($form->check()) {
+            $this->validateSpaceAccessForm($id_space, $id, $form);
+        }
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
+        
+        return $this->render(array(
+            'lang' => $lang,
+            'id_space' => $id_space,
+            'formHtml' => $form->getHtml($lang),
+            "space" => $space
+        ));
+    }
+
+    public function generateSpaceAccessForm($id_space, $id_user) {
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
 
         $modelUser = new CoreUser();
-        $fullname = $modelUser->getUserFUllName($id);
+        $fullname = $modelUser->getUserFUllName($id_user);
 
         $modelUserSpace = new CoreSpaceUser();
-        $spaceUserInfo = $modelUserSpace->getUserSpaceInfo2($id_space, $id);
+        $spaceUserInfo = $modelUserSpace->getUserSpaceInfo2($id_space, $id_user);
 
         $roles = $modelSpace->roles($lang);
 
@@ -429,37 +450,34 @@ class CorespaceaccessController extends CoresecureController {
         $form->addDate("date_convention", CoreTranslator::Date_convention($lang), false, $spaceUserInfo["date_convention"] ?? "");
         $form->addUpload("convention", CoreTranslator::Convention($lang), $spaceUserInfo["convention_url"] ?? "");
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "coreaccessuseredit/".$id_space."/".$id);
-        $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id);
-        if ( $form->check() ){
+        $form->setValidationButton(CoreTranslator::Save($lang), "corespaceuseredit/".$id_space."/".$id_user);
+        $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id_user);
+        return $form;
+    }
 
-            $modelUserSpace->setRole($id, $id_space, $form->getParameter("role"));
-            $modelUserSpace->setDateEndContract($id, $id_space, CoreTranslator::dateToEn($form->getParameter("date_contract_end"), $lang));
-            $modelUserSpace->setDateConvention($id, $id_space,  CoreTranslator::dateToEn($form->getParameter("date_convention"), $lang));
+    public function validateSpaceAccessForm($id_space, $id_user, $form) {
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        $modelUserSpace = new CoreSpaceUser();
 
-            // upload convention
-            $target_dir = "data/conventions/";
-            if ($_FILES["convention"]["name"] != "") {
-                $ext = pathinfo($_FILES["convention"]["name"], PATHINFO_EXTENSION);
+        $modelUserSpace->setRole($id_user, $id_space, $form->getParameter("role"));
+        $modelUserSpace->setDateEndContract($id_user, $id_space, CoreTranslator::dateToEn($form->getParameter("date_contract_end"), $lang));
+        $modelUserSpace->setDateConvention($id_user, $id_space,  CoreTranslator::dateToEn($form->getParameter("date_convention"), $lang));
 
-                $url = $id_space . "_" . $id . "." . $ext;
-                FileUpload::uploadFile($target_dir, "convention", $url);
+        // upload convention
+        $target_dir = "data/conventions/";
+        if ($_FILES["convention"]["name"] != "") {
+            $ext = pathinfo($_FILES["convention"]["name"], PATHINFO_EXTENSION);
 
-                $modelUserSpace->setConventionUrl($id, $id_space, $target_dir . $url);
-            }
+            $url = $id_space . "_" . $id_user . "." . $ext;
+            FileUpload::uploadFile($target_dir, "convention", $url);
 
-            $_SESSION['flash'] = CoreTranslator::UserAccessHasBeenSaved($lang);
-            $_SESSION["flashClass"] = 'success';
-            $this->redirect("coreaccessuseredit/".$id_space."/".$id);
-            return;
+            $modelUserSpace->setConventionUrl($id_user, $id_space, $target_dir . $url);
         }
 
-        return $this->render(array(
-            'lang' => $lang,
-            'id_space' => $id_space,
-            'formHtml' => $form->getHtml($lang),
-            "space" => $space
-        ));
+        $_SESSION["flash"] = CoreTranslator::UserAccessHasBeenSaved($lang);
+        $_SESSION["flashClass"] = "success";
+        $this->redirect("corespaceuseredit/".$id_space."/".$id_user, ["origin" => "spaceaccess"]);
     }
 
     /**
