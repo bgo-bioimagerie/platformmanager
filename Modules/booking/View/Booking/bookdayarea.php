@@ -6,6 +6,8 @@
 <?php 
 require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/bookfunction.php';
+require_once 'Modules/booking/View/Booking/agendafunction.php';
+
 ?>
 
 <?php
