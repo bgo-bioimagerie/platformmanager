@@ -15,7 +15,7 @@
 
     <script>
         $(document).ready(function () {
-            var table = $('#example').DataTable({
+            var table = $('#antobodies').DataTable({
                 scrollY: "700px",
                 scrollX: true,
                 scrollCollapse: true,
@@ -27,29 +27,29 @@
         });
     </script>
 
-<div class="pm-table">
-    <div class="col-md-12">
-
-        <div class="col-md-10">
-            <div class="dropdown">
-                <button id="dLabel" type="button" class="btn  btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <?php echo 'Menu ' . AntibodiesTranslator::antibodies($lang) ?>
-                </button>
-                <div class="dropdown-menu col-md-12" aria-labelledby="dLabel" style="background-color: transparent; border: none; box-shadow:none;">
-                    <?php
-                    //include 'Modules/antibodies/View/navbar.php';
-                    $c = new AntibodiesController(new Request([], false));
-                    echo $c->dropDownMenu($id_space);
-                    ?>
+<div class="row pm-table">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-10">
+                <div class="dropdown">
+                    <button id="antibodiesmenu" type="button" class="btn  btn-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <?php echo 'Menu ' . AntibodiesTranslator::antibodies($lang) ?>
+                    </button>
+                    <div class="dropdown-menu col-12" aria-labelledby="antibodiesmenu" style="background-color: transparent; border: none; box-shadow:none;">
+                        <?php
+                        $c = new AntibodiesController(new Request([], false));
+                        echo $c->dropDownMenu($id_space);
+                        ?>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-2">
-            <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+            <div class="col-2">
+                <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+            </div>
         </div>
     </div>
-    <div class="text-center">
+    <div class="col-12 text-center">
         <div class="btn-group btn-group-sm">
             <button class="btn btn-outline-dark <?php
             if ($letter == "All") {
@@ -189,135 +189,124 @@
         </div>
 
     </div>
-    <div class="col-md-12" style="height: 7px;">
-    </div>
 
     <br/>
-    <div class="col-md-12">
-        <div class="page-header" style="margin-top: -20px;">
-            <h1>
-                Anticorps<br> <small></small>
-            </h1>
+    <div class="col-12">
+        <div class="row">
+            <div class="page-header" style="margin-top: -20px;">
+                <h1>
+                    Anticorps<br> <small></small>
+                </h1>
+            </div>
         </div>
+        <div class="container">
+            <div class="row">
+                <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
+                    method="post">
 
-        <div class="col-md-12">
-            <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
-                  method="post">
-
-<?php
-if (!isset($searchName)) {
-    $searchName = "";
-}
-if (!isset($searchNoH2P2)) {
-    $searchNoH2P2 = "";
-}
-if (!isset($searchSource)) {
-    $searchSource = "";
-}
-if (!isset($searchCible)) {
-    $searchCible = "";
-}
-if (!isset($searchValide)) {
-    $searchValide = "";
-}
-if (!isset($searchResp)) {
-    $searchResp = "";
-}
-if (!isset($searchColumn)) {
-    $searchColumn = "";
-}
-if (!isset($searchCom)) {
-    $searchCom = "";
-}
-?>
-                <div class="col-md-12">
-                    <label class="control-label col-md-1">Recherche Avancée:</label>
-
-                    <div class="col-md-9">
-                        <label class="control-label col-md-1" style="margin:0px;">Nom:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchName" type="text" name="searchName" value="<?php echo $searchName ?>"
-                                   />
-                        </div>
-
-                        <label for="inputEmail" class="control-label col-md-1">No H2P2:</label>
-                        <div class="col-md-2">
-                            <input class="form-control" id="searchNoH2P2" type="text" name="searchNoH2P2" value="<?php echo $searchNoH2P2 ?>"
-                                   />
-                        </div>
-                        <label for="inputEmail" class="control-label col-md-2">Source:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchSource" type="text" name="searchSource" value="<?php echo $searchSource ?>"
-                                   />
-                        </div>
+                <?php
+                if (!isset($searchName)) {
+                    $searchName = "";
+                }
+                if (!isset($searchNoH2P2)) {
+                    $searchNoH2P2 = "";
+                }
+                if (!isset($searchSource)) {
+                    $searchSource = "";
+                }
+                if (!isset($searchCible)) {
+                    $searchCible = "";
+                }
+                if (!isset($searchValide)) {
+                    $searchValide = "";
+                }
+                if (!isset($searchResp)) {
+                    $searchResp = "";
+                }
+                if (!isset($searchColumn)) {
+                    $searchColumn = "";
+                }
+                if (!isset($searchCom)) {
+                    $searchCom = "";
+                }
+                ?>
+                    <div class="col-1">
+                        <label class="form-label">Recherche Avancée:</label>
                     </div>
-                    <label class="control-label col-md-2"></label>
-                </div>
 
-                <div class="col-md-12">
-                    <label class="control-label col-md-1"></label>
-                    <div class="col-md-9">	
-                        <label for="inputEmail" class="control-label col-md-1">Tissu cible:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
-                                   />
-                        </div>
-
-                        <label for="inputEmail" class="control-label col-md-1">Statut:</label>
-                        <div class="col-md-2">
-                            <select class="form-control" id="searchValide" name="searchValide">
-                                <OPTION value="0" <?php
-                                if ($searchColumn == "0") {
-                                    echo $selected;
-                                }
-?> >  </OPTION>
-                                <OPTION value="1" <?php
-                                if ($searchValide == "1") {
-                                    echo $selected;
-                                }
-?> > Validé </OPTION>
-                                <OPTION value="2" <?php
-                                if ($searchValide == "2") {
-                                    echo $selected;
-                                }
-?> > Non validé </OPTION>
-                                <OPTION value="3" <?php
-                                if ($searchValide == "3") {
-                                    echo $selected;
-                                }
-?> > Non testé </OPTION>
-                            </select>
-                        </div>
-
-                        <label for="inputEmail" class="control-label col-md-2">Propriétaire:</label>
-                        <div class="col-md-3">
-                            <input class="form-control" id="searchResp" type="text" name="searchResp" value="<?php echo $searchResp ?>"
-                                   />
-                        </div>
-                        <label class="control-label col-md-2"></label>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <label class="control-label col-md-1"></label>
-                    <div class="col-md-9">
-                        <div class="col-md-11">	
-                            <label class="control-label col-md-1">Commentaire:</label>
-                            <div class="col-md-4">
-                                <input class="form-control" id="searchCom" type="text" name="searchCom" value="<?php echo $searchCom ?>"
-                                       />
+                    <div class="col-11">
+                        <div class="row mb-2">
+                            <label class="form-label col-1" style="margin:0px;">Nom:</label>
+                            <div class="col-3">
+                                <input class="form-control" id="searchName" type="text" name="searchName" value="<?php echo $searchName ?>"
+                                        />
                             </div>
-                        </div>	
-                    </div>
+                            <label for="inputEmail" class="form-label col-1">No H2P2:</label>
+                            <div class="col-2">
+                                <input class="form-control" id="searchNoH2P2" type="text" name="searchNoH2P2" value="<?php echo $searchNoH2P2 ?>"
+                                        />
+                            </div>
+                            <label for="inputEmail" class="form-label col-1">Source:</label>
+                            <div class="col-3">
+                                <input class="form-control" id="searchSource" type="text" name="searchSource" value="<?php echo $searchSource ?>"
+                                        />
+                            </div>
+                        </div>
 
-                    <div class="col-md-2" id="button-div">
-                        <input type="submit" class="btn btn-primary" value="Rechercher" />
+                        <div class="row mb-2">	
+                            <label for="inputEmail" class="form-label col-1">Tissu cible:</label>
+                            <div class="col-3">
+                                <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
+                                        />
+                            </div>
+
+                            <label for="inputEmail" class="form-label col-1">Statut:</label>
+                            <div class="col-2">
+                                <select class="form-select" id="searchValide" name="searchValide">
+                                    <OPTION value="0" <?php
+                                    if ($searchColumn == "0") {
+                                        echo $selected;
+                                    }?> >  </OPTION>
+                                    <OPTION value="1" <?php
+                                    if ($searchValide == "1") {
+                                        echo $selected;
+                                    }?> > Validé </OPTION>
+                                    <OPTION value="2" <?php
+                                    if ($searchValide == "2") {
+                                        echo $selected;
+                                    }?> > Non validé </OPTION>
+                                    <OPTION value="3" <?php
+                                    if ($searchValide == "3") {
+                                        echo $selected;
+                                    }?> > Non testé </OPTION>
+                                </select>
+                            </div>
+
+                            <label for="inputEmail" class="form-label col-1">Propriétaire:</label>
+                            <div class="col-3">
+                                <input class="form-control" id="searchResp" type="text" name="searchResp" value="<?php echo $searchResp ?>"
+                                        />
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <label class="form-label col-2">Commentaire:</label>
+                            <div class="col-4">
+                                <input class="form-control" id="searchCom" type="text" name="searchCom" value="<?php echo $searchCom ?>"
+                                        />
+                            </div>
+                            <div class="col" id="button-div">
+                                <input type="submit" class="btn btn-primary" value="Rechercher" />
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
+                        </div>
 
-        <div class="col-xs-12">
-            <table id="example" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
+        <div class="row">
+            <div class="col-12">
+            <table id="antibodies" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
                 <thead>	 
                     <tr>
                         <th class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
@@ -624,6 +613,7 @@ if (!isset($searchCom)) {
                 </tbody>
 
             </table>
+        </div>
         </div>
     </div>
 </div>
