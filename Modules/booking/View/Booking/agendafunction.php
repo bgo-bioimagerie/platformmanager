@@ -90,7 +90,8 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                     echo "<td>";
                     ?>
                 <div style="text-align:right; font-size:12px; color:#999999;"> <?php echo $i ?> </div>
-                <a class="glyphicon glyphicon-plus" href="bookingdayarea/<?php echo $id_space .'/'.$tile_date?>"></a>
+                <?php $tileq = '?'.implode('&', ["bk_curentDate=$tile_date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]); ?>
+                <a class="glyphicon glyphicon-plus" href="bookingdayarea/<?php echo $id_space .'/'.$tile_date.$tileq ?>"></a>
                     <?php
                     $found = false;
                     $modelBookingSetting = new BkBookingSettings();
