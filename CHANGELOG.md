@@ -32,6 +32,7 @@
 * [antibodies] fix missing table creation at install
 * [booking] send emails only if user status > VISITOR in space
 * [com] check ACLs on com module and limit edition to space admins
+* [booking] fix booking emails if invalid/recuring, notify if new or update
 
 ## 2.2.2
 
