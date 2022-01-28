@@ -50,7 +50,7 @@ class CoreVirtual extends Model {
     /**
      * Set name/value in redis, value will be json_encoded
      */
-    public function set(int $id_space, string $name, mixed $value, $expire=0) {
+    public function set(int $id_space, string $name, mixed $value, $expire=null) {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
         try {
