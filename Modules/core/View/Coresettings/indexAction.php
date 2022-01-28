@@ -11,9 +11,9 @@
 <?php foreach($modulesControllers as $controller) {
 ?>
     <div class="col-xs-12 col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading"><?php echo $this->clean($controller["module"]) ?></div>
-            <div class="panel-body">
+        <div class="card">
+            <div class="card-header"><?php echo $this->clean($controller["module"]) ?></div>
+            <div class="card-body">
                 <a href="<?php echo $this->clean($controller["controller"]) ?>">
                     <button
                         type="button"
@@ -29,9 +29,9 @@
 <?php } ?>
 <!-- language settings -->
     <div class="col-xs-12 col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading"><?php echo CoreTranslator::Language($lang) ?></div>
-            <div class="panel-body">
+        <div class="card">
+            <div class="card-header"><?php echo CoreTranslator::Language($lang) ?></div>
+            <div class="card-body">
                 <a href="coreuserslanguageedit">
                     <button
                         type="button"

@@ -60,9 +60,9 @@
         }
     ?>
         <div class="col-xs-4 col-md-2">
-            <div class="panel panel-default" style="text-align: center; <?php echo $selectedStyle; ?>">
-                <div class="panel-heading"></div>
-                <div class="panel-body">
+            <div class="card" style="text-align: center; <?php echo $selectedStyle; ?>">
+                <div class="card-header"></div>
+                <div class="card-body">
                     <a style="text-align: center; <?php echo $selectedStyle; ?>" href="catalog/<?php echo $id_space . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
                 </div>
             </div>
