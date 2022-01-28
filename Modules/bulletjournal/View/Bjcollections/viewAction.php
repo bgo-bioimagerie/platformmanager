@@ -5,7 +5,7 @@
 
 <div class="col-md-10" id="pm-table">
     
-    <div class="col-xs-12 text-center" style="text-transform:uppercase; color:#666;">
+    <div class="col-12 text-center" style="text-transform:uppercase; color:#666;">
         <b>Collection: <?php echo $collection["name"] ?></b>
     </div>
     

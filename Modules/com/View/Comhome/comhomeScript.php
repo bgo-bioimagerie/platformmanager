@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
 
-<div id="hider" class="col-xs-12"></div> 
+<div id="hider" class="col-12"></div> 
 <div id="popup_box" class="pm_popup_box" style="display: none;">    
     <div class="row">
         <div id="content_section" class="col-md-12" style="text-align:center;">

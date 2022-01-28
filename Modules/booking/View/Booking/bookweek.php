@@ -24,11 +24,6 @@ if ($dayWidth != 0) {
 
 <style>
 
-a{
-	width: 100%;
-	color: <?php echo $agendaStyle["header_background"] ?>;
-}
-
 #tcell{
 	border-left: 1px solid #d1d1d1;
 	border-right: 1px solid #d1d1d1;
@@ -159,8 +154,8 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 ?>
 
 <!-- hours column -->
-<div class="col-sm-12">
-<div class="col-sm-1" id="colDiv">
+<div class="row">
+<div class="col-1" id="colDiv">
 
 <?php 
 $heightCol = "0px";
@@ -195,7 +190,7 @@ else if($size_bloc_resa == 3600){
 	if (!empty($resourceInfo)) {
 ?>
 
-	<div class="col-sm-11" id="colDiv">
+	<div class="col-11" id="colDiv">
 
 		<div id="tcelltop" style="width:100%; height: <?php echo $agendaStyle["header_height"] ?>px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
 		<p class="text-center"><strong><?php echo  $this->clean($resourcesBase['name']) ?></strong><br/><?php echo  $this->clean($resourcesBase['description']) ?>
@@ -242,7 +237,7 @@ else if($size_bloc_resa == 3600){
 				?>
 				
 				
-				<div class="col-lg-1 col-md-3 col-sm-4 col-xs-6" id="<?php echo  $idcss ?>">
+				<div class="col-lg-1 col-md-3 col-sm-4 col-6" id="<?php echo  $idcss ?>">
 				
 				<div id="tcelltop" style="height: 50px; background-color:<?php echo  $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>">
 				<p class="text-center"><strong> <?php echo  $dayTitle ?></strong> </p>

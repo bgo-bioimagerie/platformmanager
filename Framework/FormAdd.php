@@ -185,11 +185,11 @@ class FormAdd {
         $html = "";
         if ($label != "") {
             $html = "<div class=\"form-group\">";
-            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
-            $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
+            $html .= "<label class=\"control-label col-" . $labelWidth . "\">" . $label . "</label>";
+            $html .= "	<div class=\"col-" . $inputWidth . "\">";
         } else {
             $html .= "<div class=\"form-group\">";
-            $html .= "	<div class=\"col-xs-12\">";
+            $html .= "	<div class=\"col-12\">";
         }
 
         $tableID = $this->id . "table";

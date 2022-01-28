@@ -25,16 +25,16 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::Short_description($lang) ?></label>
-            <div class="col-xs-8">
+            <label for="inputEmail" class="control-label col-4"><?php echo BookingTranslator::Short_description($lang) ?></label>
+            <div class="col-8">
                 <input class="form-control" id="name" type="text" name="short_description"
                        value=""
                        />
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-xs-4"><?php echo ResourcesTranslator::Resources($lang) ?></label>
-            <div class="col-xs-8">
+            <label class="control-label col-4"><?php echo ResourcesTranslator::Resources($lang) ?></label>
+            <div class="col-8">
                 <select class="form-control" name="resources[]" size="10" multiple="multiple">
                     <?php
                     foreach ($resources as $resource) {
@@ -48,8 +48,8 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::Beginning_of_the_reservation($lang) ?>:</label>
-            <div class="col-xs-8">
+            <label for="inputEmail" class="control-label col-4"><?php echo BookingTranslator::Beginning_of_the_reservation($lang) ?>:</label>
+            <div class="col-8">
                 <div class='input-group date'>
                     <input type='date' class="form-control" name="begin_date"
                            value=""/>
@@ -57,20 +57,20 @@
             </div>
         </div>
         <div class="form-group">    
-            <div class="col-xs-8 col-xs-offset-4">
+            <div class="col-8 col-offset-4">
                 <!-- time -->
 
-                <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::time($lang) ?>:</label>
+                <label for="inputEmail" class="control-label col-4"><?php echo BookingTranslator::time($lang) ?>:</label>
 
-                <div class="col-xs-3">
+                <div class="col-3">
                     <input class="form-control" id="name" type="text" name="begin_hour"
                            value="" 
                            />
                 </div>
-                <div class="col-xs-1">
+                <div class="col-1">
                     <b>:</b>
                 </div>
-                <div class="col-xs-3">
+                <div class="col-3">
                     <input class="form-control" id="name" type="text" name="begin_min"
                            value=""
                            />
@@ -79,8 +79,8 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::End_of_the_reservation($lang) ?>:</label>
-            <div class="col-xs-8">
+            <label for="inputEmail" class="control-label col-4"><?php echo BookingTranslator::End_of_the_reservation($lang) ?>:</label>
+            <div class="col-8">
                 <div class='input-group date'>
                     <input type='date' class="form-control" name="end_date"
                            value=""/>
@@ -88,20 +88,20 @@
             </div>
         </div>
         <div class="form-group">    
-            <div class="col-xs-8 col-xs-offset-4">
+            <div class="col-8 col-offset-4">
                 <!-- time -->
 
-                <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::time($lang) ?>:</label>
+                <label for="inputEmail" class="control-label col-4"><?php echo BookingTranslator::time($lang) ?>:</label>
 
-                <div class="col-xs-3">
+                <div class="col-3">
                     <input class="form-control" id="name" type="text" name="end_hour"
                            value="" 
                            />
                 </div>
-                <div class="col-xs-1">
+                <div class="col-1">
                     <b>:</b>
                 </div>
-                <div class="col-xs-3">
+                <div class="col-3">
                     <input class="form-control" id="name" type="text" name="end_min"
                            value=""
                            />
@@ -111,8 +111,8 @@
 
         <!-- color code -->
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::Color_code($lang) ?></label>
-            <div class="col-xs-8">
+            <label for="inputEmail" class="control-label col-4"><?php echo BookingTranslator::Color_code($lang) ?></label>
+            <div class="col-8">
                 <select class="form-control" name="color_code_id" <?php echo $readOnlyGlobal ?>>
                     <?php
                     $colorID = 1;
@@ -133,7 +133,7 @@
         </div>
 
         <br></br>
-        <div class="col-xs-4 col-xs-offset-8" id="button-div">
+        <div class="col-4 col-offset-8" id="button-div">
             <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Save($lang) ?>" />
             <button type="button" onclick="location.href = 'bookingblock/<?php echo $id_space ?>'" class="btn btn-outline-dark"><?php echo CoreTranslator::Cancel($lang) ?></button>
         </div>

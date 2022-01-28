@@ -226,20 +226,20 @@ class TableView {
         }
 
         if ($this->printAction != "" && $this->exportAction != "" && !$this->isprint) {
-            $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
+            $html .= "<div class=\"col-2 col-offset-10\">";
             // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
             $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
             $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
             $html .= "</div>";
         } else {
             if ($this->printAction != "" && !$this->isprint) {
-                $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
+                $html .= "<div class=\"col-2 col-offset-10\">";
                 // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
                 $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
                 $html .= "</div>";
             }
             if ($this->exportAction != "" && !$this->isprint) {
-                $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
+                $html .= "<div class=\"col-2 col-offset-10\">";
                 // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
                 $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
                 $html .= "</div>";

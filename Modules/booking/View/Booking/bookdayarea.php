@@ -15,11 +15,6 @@ $dayWidth = !empty($resourcesBase) ? 100/count($resourcesBase) : 1;
  
 <style>
 
-a{
-	width: 100%;
-	color: <?php echo $agendaStyle["header_background"] ?>;
-}
-
 #tcell{
 	border-left: 1px solid #d1d1d1;
 	border-right: 1px solid #d1d1d1;

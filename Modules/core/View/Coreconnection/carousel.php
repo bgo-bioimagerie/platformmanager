@@ -11,21 +11,21 @@
         <div class="item active">
             <img class="first-slide" src="<?php echo $urlCarousel1 ?>" alt="First slide">
             <div class="container">
-                <div class="carousel-caption col-xs-4 col-xs-offset-4">
+                <div class="carousel-caption col-4 col-offset-4">
                 </div>
             </div>
         </div>
         <div class="item">
             <img class="second-slide" src="<?php echo $urlCarousel2 ?>" alt="Second slide">
             <div class="container">
-                <div class="carousel-caption col-xs-4 col-xs-offset-4">
+                <div class="carousel-caption col-4 col-offset-4">
                 </div>
             </div>
         </div>
         <div class="item">
             <img class="third-slide" src="<?php echo $urlCarousel3 ?>" alt="Third slide">
             <div class="container">
-                <div class="carousel-caption col-xs-4 col-xs-offset-4">
+                <div class="carousel-caption col-4 col-offset-4">
                 </div>
             </div>
         </div>

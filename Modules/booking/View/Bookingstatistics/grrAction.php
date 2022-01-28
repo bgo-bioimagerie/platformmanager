@@ -22,8 +22,8 @@
         <?php } ?>
 
         <div class="form-group ">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
-            <div class="col-xs-10">
+            <label class="control-label col-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
+            <div class="col-10">
                 <div class='input-group date'>
 
                     <?php
@@ -38,8 +38,8 @@
             </div>
         </div>
         <div class="form-group ">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
-            <div class="col-xs-10">
+            <label class="control-label col-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
+            <div class="col-10">
                 <div class='input-group date'>
                     <?php
                     $date = "";
@@ -54,8 +54,8 @@
         </div>
 
         <div class="form-group ">
-            <label for="inputEmail" class="control-label col-xs-2"> Condition </label>
-            <div class="col-xs-10">
+            <label for="inputEmail" class="control-label col-2"> Condition </label>
+            <div class="col-10">
                 <select class="form-control" name="condition_et_ou" >
                     <OPTION value="and" <?php
                     if (isset($condition_et_ou) && $condition_et_ou == 1) {
@@ -73,11 +73,11 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo BookingTranslator::query($lang) ?></label>
-            <div class="col-xs-10">
+            <label for="inputEmail" class="control-label col-2"><?php echo BookingTranslator::query($lang) ?></label>
+            <div class="col-10">
                 <?php for ($i = 0; $i < 5; $i++) {
                     ?>
-                    <div class="col-xs-4">
+                    <div class="col-4">
                         <select class="form-control" name="champ[]" >
                             <?php
                             $checkedArea = "";
@@ -109,7 +109,7 @@
                         </select>
 
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-4">
                         <select class="form-control" name="type_recherche[]" >
                             <OPTION value="1" <?php
                             if (isset($type_recherche[$i]) && $type_recherche[$i] == 1) {
@@ -123,7 +123,7 @@
                             ?>> <?php echo BookingTranslator::Does_not_contain($lang) ?> </OPTION>
                         </select>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-4">
                         <?php
                         $value = "";
                         if (isset($text[$i])) {
@@ -138,8 +138,8 @@
         </div>
         <br>
         <div class="form-group">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Output($lang) ?></label>
-            <div class="col-xs-10">
+            <label class="control-label col-2"><?php echo BookingTranslator::Output($lang) ?></label>
+            <div class="col-10">
                 <select class="form-control" name="output">
                     <?php
                     if (isset($output)) {
@@ -176,8 +176,8 @@
         </div>	
         <br>
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2">Résumé par (ne concerne que les résumés) :</label>
-            <div class="col-xs-10">
+            <label for="inputEmail" class="control-label col-2">Résumé par (ne concerne que les résumés) :</label>
+            <div class="col-10">
                 <select class="form-control" name="summary_rq">
                     <?php
                     $checkedC = "";
@@ -201,7 +201,7 @@
             </div>
         </div>
 
-        <div class="col-xs-2 col-xs-offset-10" id="button-div">
+        <div class="col-2 col-offset-10" id="button-div">
             <input class="form-control" id="name" type="hidden" name="is_request" value="y"/>
             <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Ok($lang) ?>" />
         </div>

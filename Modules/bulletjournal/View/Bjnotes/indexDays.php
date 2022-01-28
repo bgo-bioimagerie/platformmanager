@@ -1,5 +1,5 @@
 
-<div class="col-xs-12 col-md-10 text-left">
+<div class="col-12 col-md-10 text-left">
     <?php
     $firstDay = $year . "-" . $month . "-1";
     $lastDayIdx = date("t", strtotime($firstDay));
@@ -130,7 +130,7 @@
             }
             ?>
         </table>
-        <div class="col-xs-12" style="height: 12px;"></div>
+        <div class="col-12" style="height: 12px;"></div>
         <?php
     }
     ?>

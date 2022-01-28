@@ -11,10 +11,8 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
     ?>
 
 
-    <div class="col-xs-12">
-
-        <table class="tableau">
-            <caption>
+    <div class="">
+    <div class="row">
                 <div class="col-md-3" style="text-align: left;">
                     <div class="btn-group" role="group" aria-label="navigate by month">
                     <?php
@@ -39,7 +37,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-3">
                     <p ><strong> <?php echo $mois_fr[$mois] . " " . $annee ?></strong></p>
                     <?php
                         if (!empty($resourceInfo)) {
@@ -49,7 +47,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                         }
                     ?>
                 </div>
-                <div class="col-md-6" style="text-align: right;">
+                <div class="col-6" style="text-align: right;">
                     <div class="btn-group" role="group" aria-label="...">
                         <div class="btn btn-outline-dark" type="button">
                             <a style="color:#333;" href="bookingday/<?php echo $id_space.$qc ?>" ><?php echo BookingTranslator::Day($lang) ?></a>
@@ -70,6 +68,9 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                     </div>
                 </div>
                 </div>
+        <table class="tableau">
+            <caption>
+            
             </caption>
             <thead>
                 <tr><th scope="col">Lun</th><th scope="col">Mar</th><th scope="col">Mer</th><th scope="col">Jeu</th><th scope="col">Ven</th><th scope="col">Sam</th><th scope="col">Dim</th></tr>

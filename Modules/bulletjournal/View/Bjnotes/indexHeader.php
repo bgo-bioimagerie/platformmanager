@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-md-10" id="pm-form">
+<div class="col-12 col-md-10" id="pm-form">
     <div class="col-md-4 text-left">
         <div class="btn-group" role="group" aria-label="...">
             <button type="submit" class="btn btn-outline-dark" onclick="location.href = 'bjnotesmonthbefore/<?php echo $id_space ?>/<?php echo $year ?>/<?php echo $month ?>'"> &lt; </button>

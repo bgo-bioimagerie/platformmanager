@@ -11,11 +11,6 @@ require_once 'Modules/booking/View/Booking/bookfunction.php';
  
 <style>
 
-a{
-	width: 100%;
-	color: <?php echo  $agendaStyle["header_background"] ?>;
-}
-
 #tcell{
 	border-left: 1px solid #d1d1d1;
 	border-right: 1px solid #d1d1d1;
@@ -114,7 +109,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 
 <!-- hours column -->
 <div class="row">
-	<div class="col-xs-1" id="colDiv">
+	<div class="col-1" id="colDiv">
 		<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color:<?php echo $agendaStyle["header_background"]?>;">
 		</div>
 
@@ -144,7 +139,7 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 	</div>	
 	
 	<!-- hours reservation -->	
-	<div class="col-xs-11" id="colDiv">
+	<div class="col-11" id="colDiv">
 
 		<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]?>px; background-color: <?php echo $agendaStyle["header_background"]?>; color: <?php echo $agendaStyle["header_color"]?>; font-size: <?php echo  $agendaStyle["header_font_size"]?>px">
 		<p class="text-center"><strong><?php echo  $this->clean($resourceBase['name']) ?></b><br/><?php echo  $this->clean($resourceBase['description']) ?></strong>

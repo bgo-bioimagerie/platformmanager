@@ -13,16 +13,16 @@
         </div> 
         <br><br/>
         <div class="form-group">
-            <label class="control-label col-xs-2"><?php echo MailerTranslator::From($lang) ?></label>
-            <div class="col-xs-10">
+            <label class="control-label col-2"><?php echo MailerTranslator::From($lang) ?></label>
+            <div class="col-10">
                 <input class="form-control" id="from" type="text" name="from" value="<?php echo $from ?>" readonly
                        />
             </div>
         </div>
         <br><br/>
         <div class="form-group">
-            <label class="control-label col-xs-2"><?php echo MailerTranslator::To($lang) ?></label>
-            <div class="col-xs-10">
+            <label class="control-label col-2"><?php echo MailerTranslator::To($lang) ?></label>
+            <div class="col-10">
                 <select class="form-control" name="to">
                     <OPTION value="all" > all </OPTION>
                     <OPTION value="managers" > <?php echo CoreTranslator::Managers($lang) ?> </OPTION>
@@ -48,16 +48,16 @@
         </div>
         <br><br />
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
-            <div class="col-xs-10">
+            <label for="inputEmail" class="control-label col-2"><?php echo MailerTranslator::Subject($lang) ?></label>
+            <div class="col-10">
                 <input class="form-control" id="subject" type="text" name="subject"
                        />
             </div>
         </div>
         <br><br />
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
-            <div class="col-xs-10">
+            <label for="inputEmail" class="control-label col-2"><?php echo MailerTranslator::Content($lang) ?></label>
+            <div class="col-10">
                 <textarea class="form-control" id="content" name="content"
                           >
                 </textarea>
@@ -66,7 +66,7 @@
         <br><br/>
         <div class="form-group">
             <br><br/>
-            <div class="col-xs-2 col-xs-offset-10" id="button-div">
+            <div class="col-2 col-offset-10" id="button-div">
                 <input type="submit" class="btn btn-primary" value="<?php echo MailerTranslator::Send($lang) ?>" />
             </div>
         </div>

@@ -16,8 +16,8 @@
             </div>
 
             <div class="form-group">
-                <label for="inputEmail" class="control-label col-xs-4"><?php echo ResourcesTranslator::Categories($lang) ?></label>
-                <div class="col-xs-8">
+                <label for="inputEmail" class="control-label col-4"><?php echo ResourcesTranslator::Categories($lang) ?></label>
+                <div class="col-8">
                     <select class="form-control" name="resource_id" id="resource_id"
                             >
                                 <?php
@@ -31,14 +31,14 @@
                         ?>
                     </select>
                 </div>
-                <div class="checkbox col-xs-8 col-xs-offset-4">
+                <div class="checkbox col-8 col-offset-4">
                     <label>
                         <input type="checkbox" name="email"> Email
                     </label>
                 </div>
 
             </div>	
-            <div class="col-xs-3 col-xs-offset-9" id="button-div">
+            <div class="col-3 col-offset-9" id="button-div">
                 <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Ok($lang) ?>" />
                 
             </div>

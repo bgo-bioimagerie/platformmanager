@@ -244,7 +244,7 @@ class FormHtml {
         }
 
         $html = "<div class=\"mb-3 row" . $validated . "\">";
-        $html .= "<label class=\"form-label col-xs-" . $labelWidth . "\">" . $label . $star . "</label>";
+        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . $star . "</label>";
 
         $html .= "<div class='col-" . $inputWidth . "'>";
         $html .= "<div class='col-12 input-group date'>";
@@ -314,7 +314,7 @@ class FormHtml {
 
         //echo "hours values html = ";
         //print_r($value); echo "<br/>";
-        $html = "<div class=\"col-xs-12\">";
+        $html = "<div class=\"col-12\">";
         $html .= "<div class=\"mb-3 row" . $validated . "\">";
         $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class='col-" . $inputWidth . "'>";
@@ -648,7 +648,7 @@ class FormHtml {
      */
     static public function buttons($formid, $validationButtonName, $cancelURL, $cancelButtonName, $deleteURL, $deleteID, $deleteButtonName, $externalButtons = array(), $buttonsWidth = 2, $buttonsOffset = 9) {
         $html = '<div class="mb-3 row">';
-        $html .= "<div class=\"col-" . $buttonsWidth . " col-xs-offset-" . $buttonsOffset . "\">";
+        $html .= "<div class=\"col-" . $buttonsWidth . " col-offset-" . $buttonsOffset . "\">";
         if ($validationButtonName != "") {
             $html .= "<input type=\"submit\" id=\"" . $formid . "submit" . "\" class=\"m-2 btn btn-primary\" value=\"" . $validationButtonName . "\" />";
         }

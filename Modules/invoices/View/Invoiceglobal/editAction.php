@@ -31,14 +31,14 @@
         </div>
         <div class="col-md-12">
             <div class="form-group">
-                <label class="control-label col-xs-8 text-right"> <?php echo InvoicesTranslator::Discount($lang) ?> </label>
-                <div class="col-xs-4">
+                <label class="control-label col-8 text-right"> <?php echo InvoicesTranslator::Discount($lang) ?> </label>
+                <div class="col-4">
                     <input id="invoicediscount" class="form-control" type="text" name="" value="<?php echo $invoice["discount"] ?>" />
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-xs-8 text-right"> <?php echo InvoicesTranslator::Total_HT($lang) ?> </label>
-                <div class="col-xs-4">
+                <label class="control-label col-8 text-right"> <?php echo InvoicesTranslator::Total_HT($lang) ?> </label>
+                <div class="col-4">
                     <input id="invoicetotalht" class="form-control" type="text" name="" value="<?php echo $invoice["total_ht"] ?>" />
                 </div>
             </div>

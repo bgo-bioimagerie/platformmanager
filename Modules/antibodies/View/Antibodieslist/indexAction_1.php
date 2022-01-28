@@ -243,7 +243,7 @@
             <p></p><br/>
         </div>
 
-        <div class="col-xs-12"  style="margin-left:-30px;">
+        <div class="col-12"  style="margin-left:-30px;">
             <table id="example" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
                 <thead>	 
                     <tr>
@@ -563,7 +563,7 @@
 <!--  Popup windows  -->
 <!--  *************  -->
 <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
-<div id="hider" class="col-xs-12"></div> 
+<div id="hider" class="col-12"></div> 
 <div id="imagepopup_box" class="pm_popup_box_full" style="display: none;">
     <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="tissusbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
     <div id="imagedivcontent">

@@ -14,18 +14,6 @@ $dayWidth = 100 / 8;
 ?>
 
 <style>
-    .row {
-        display: table;
-        width: 100%;
-        height:100%;
-        border-collapse: collapse;
-        overflow:hidden;
-    }
-
-    .row-cell{
-        margin-bottom: -99999px;
-        padding-bottom: 99999px;
-    }
 
     #tcellResa {
         -moz-border-radius: 9px;
@@ -49,6 +37,7 @@ $dayWidth = 100 / 8;
         color: #000;
     }
 
+
     @media (min-width: 1200px) {
         .seven-cols .col-md-1,
         .seven-cols .col-sm-1,
@@ -56,25 +45,20 @@ $dayWidth = 100 / 8;
             width: <?php echo $dayWidth ?>%;
             *width: <?php echo $dayWidth ?>%;
         }
-
-        a{
-            width: 100%;
-            color: <?php echo "" . $agendaStyle["header_background"] ?>;
-        }
     }
 </style>
 
 <div class="row"  style="background-color: #ffffff; padding-bottom: 12px;">
 
-    <div class="col-md-6 text-left">
+    <div class="col-6 text-left">
         <div class="btn-group" role="group" aria-label="navigate by week">
         <?php
-	$today = date("Y-m-d", time());
-	$qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
-	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
-	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
-	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
-?>
+            $today = date("Y-m-d", time());
+            $qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+            $qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+            $qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+            $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+        ?>
 			<a aria-label="previous week" href="bookingweekarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>
 			<a aria-label="next week" href="bookingweekarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>
 			<a aria-label="current week" href="bookingweekarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-outline-dark"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
@@ -131,9 +115,9 @@ $dayWidth = 100 / 8;
 
     <!--  Area title -->
 
-    <div class="col-md-2" id="colDiv0">
+    <div class="col-2" id="colDiv0">
     </div>
-    <div class="col-md-8" id="colDiv0">
+    <div class="col-8" id="colDiv0">
         <div style="height: 50px;">
             <p class="text-center">
                 <strong><?php echo $this->clean($areaname) ?></strong>
@@ -142,9 +126,9 @@ $dayWidth = 100 / 8;
     </div>
 </div>	
 
-<div class="col-md-12">
-    <div class="row seven-cols">
-        <div class="row-same-height">
+<div class="">
+    <div class="seven-cols">
+        <div class="row row-same-height">
             <?php
             $resourceCount = - 1;
             $modelBookingSetting = new BkBookingSettings ();
@@ -167,17 +151,17 @@ $dayWidth = 100 / 8;
                 }
             ?>
 
-                <div class="row"  >
+                <div class=""  >
 
-                    <div class="col-lg-12" id="colDiv">
+                    <div class="col-12" id="colDiv">
                         <!-- Content of each day -->
-                        <div >
+                        <div class="row">
 
                             <!-- Title -->
                             <?php
                             if ($i > -1) {
                                 ?>
-                                <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?> >
+                                <div class="col-1 row-cell" <?php echo $styleLineHeader ?> >
                                     <p>
                                         <strong><?php echo $this->clean($resourcesBase[$i]['name']) ?></strong>
                                         <?php
@@ -193,7 +177,7 @@ $dayWidth = 100 / 8;
                                 <?php
                             } else {
                                 ?>
-                                <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?>>
+                                <div class="col-1 row-cell" <?php echo $styleLineHeader ?>>
                                     <p> </p>
                                 </div>
                                 <?php
@@ -215,9 +199,9 @@ $dayWidth = 100 / 8;
 
                                     $dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);
                                     ?>
-                                    <div class="col-lg-1 row-cell" <?php echo $styleLineHeader ?>>
+                                    <div class="col-1 row-cell" <?php echo $styleLineHeader ?>>
 
-                                        <div id="tcelltop" style="height: 60px;" class="text-center">
+                                        <div id="tcelltop" class="text-center">
                                             <p class="text-center">
                                                 <strong> <?php echo $dayTitle ?> </strong>
                                             </p>
@@ -226,7 +210,7 @@ $dayWidth = 100 / 8;
                                     <?php
                                 } else {
                                     ?>
-                                    <div class="col-lg-1 row-cell" <?php echo $styleLine ?>>
+                                    <div class="col-1 row-cell" <?php echo $styleLine ?>>
                                         <!-- Print the reservations for the given day -->
                                         <?php
                                         $resourceCount = $i;
@@ -333,18 +317,14 @@ $dayWidth = 100 / 8;
                         </div> <!--  seven-cols -->
                     </div> <!-- col11 days --> 
                 </div> 
-                <?php
-            }
-            ?>
+                <?php } ?>
         </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-
     <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
-
     </div>
 </div>
 

@@ -1,5 +1,5 @@
-<div class="col-xs-12" style="border-bottom: 1px solid #666;">
-    <div class="col-xs-10">
+<div class="col-12" style="border-bottom: 1px solid #666;">
+    <div class="col-10">
         <p style="text-transform: uppercase; font-weight: bold; color: #666;">
             <b>
                 <?php echo date("F Y", mktime(0, 0, 0, $month, 1, $year)) ?>
@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="col-xs-12">
+<div class="col-12">
     <table class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month ?>">
         <?php
         foreach ($notes as $dnote) {

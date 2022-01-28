@@ -44,7 +44,7 @@ class Popup {
     }
 
     protected function renderWindows() {
-        $html = "<div id=\"hider\" class=\"col-xs-12\"></div> ";
+        $html = "<div id=\"hider\" class=\"col-12\"></div> ";
         for ($i = 0; $i < count($this->windowsActionId); $i++) {
             $html .= $this->renderWindow($this->windowsActionId[$i], $this->windowshtml[$i]);
         }
