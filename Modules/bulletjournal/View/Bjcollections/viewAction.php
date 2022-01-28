@@ -24,15 +24,15 @@
                     //echo "compare to " . $year . "-" . $month . "-" . $d . "<br/>";
                     if ($dnote["date"] == $year . "-" . $month . "-" . $d) {
                         //echo "found <br/>";
-                        $typeicon = "glyphicon glyphicon-minus";
+                        $typeicon = "bi-x-square-fill";
                         if ($dnote["type"] == 2) {
-                            $typeicon = "glyphicon glyphicon-asterisk";
+                            $typeicon = "bi-asterisk";
                             if ($dnote["migrated"] == 1) {
-                                $typeicon = "glyphicon glyphicon-chevron-right";
+                                $typeicon = "bi-chevron-right";
                             }
                         }
                         if ($dnote["type"] == 3) {
-                            $typeicon = "glyphicon glyphicon-calendar";
+                            $typeicon = "bi-calendar3";
                         }
                         ?>
 

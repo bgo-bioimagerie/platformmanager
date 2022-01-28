@@ -513,7 +513,7 @@ class TableView {
      * @return string
      */
     private function addDownloadButtonHtml($url) {
-        $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-sm btn-outline-dark\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
+        $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-sm btn-outline-dark\"> <span class=\"bi-download\" aria-hidden=\"true\"></span> </button>" . "</td>";
 
         return $html;
     }

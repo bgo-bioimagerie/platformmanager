@@ -50,9 +50,9 @@ if ($space['color'] == "") {
                         ?>
                         <li style="background-color:<?php echo $item["color"]; ?>; <?php echo "; color: ".$item["txtcolor"]; ?>">
                             <a href="<?php echo $item["url"] . "/" . $id_space ?>">
-                                <span class="pm-tiles glyphicon <?php echo $item["icon"] ?>" aria-hidden="true"></span>
+                                <span class="pm-tiles <?php echo $item["icon"] ?>" aria-hidden="true"></span>
                                 <span style="<?php echo "color: ".$item["txtcolor"]; ?>" class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
-                                <span v-if="notifs?.<?php echo strtolower($item['url']); ?>" class="label label-info">{{notifs?.<?php echo strtolower($item['url']); ?>}}</span>
+                                <span v-if="notifs?.<?php echo strtolower($item['url']); ?>" class="m-1 badge bg-primary">{{notifs?.<?php echo strtolower($item['url']); ?>}}</span>
                             </a>
                         </li>
                         <?php
@@ -61,7 +61,7 @@ if ($space['color'] == "") {
                     <?php if($role > 1) { ?>
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "coremail/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-bell" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-bell-fill" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class">Notifications</span>
                             </a>
                         </li>
@@ -83,33 +83,33 @@ if ($space['color'] == "") {
                     <ul class="pm-tiles bs-glyphicons-list">
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "spaceadminedit/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-gear-fill" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Space($lang) ?></span>
                             </a>
                         </li>
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "spaceconfig/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-gear-fill" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Configuration($lang) ?></span>
                             </a>
                         </li>
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "corespaceaccess/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-user" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-person-fill" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Users($lang) ?></span>
-                                <span v-if="notifs?.spaceaccess" class="label label-info">{{notifs.spaceaccess}}</span>
+                                <span v-if="notifs?.spaceaccess" class="m-1 badge bg-primary">{{notifs.spaceaccess}}</span>
                             </a>
                         </li> 
 
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "corespacehistory/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-list" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::History($lang) ?></span>
                             </a>
                         </li>
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="grafana">
-                                <span class="pm-tiles glyphicon glyphicon-stats" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-pie-chart" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::GrafanaStats($lang) ?></span>
                             </a>
                         </li>

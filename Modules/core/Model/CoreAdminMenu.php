@@ -58,12 +58,12 @@ class CoreAdminMenu extends Model {
 
         if (!$this->isAdminMenu("Core")) {
             $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
-            $this->runRequest($sql, array("Core", "coreconfigadmin", "glyphicon glyphicon-cog"));
+            $this->runRequest($sql, array("Core", "coreconfigadmin", "bi-gear-fill"));
         }
 
         if (!$this->isAdminMenu("Users")) {
             $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
-            $this->runRequest($sql, array("Users", "coreusers", "glyphicon glyphicon-cog"));
+            $this->runRequest($sql, array("Users", "coreusers", "bi-gear-fill"));
         }
     }
 

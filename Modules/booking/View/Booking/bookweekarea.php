@@ -75,8 +75,8 @@ $dayWidth = 100 / 8;
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 ?>
-			<a aria-label="previous week" href="bookingweekarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-outline-dark"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
-			<a aria-label="next week" href="bookingweekarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-outline-dark"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="previous week" href="bookingweekarea/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>
+			<a aria-label="next week" href="bookingweekarea/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>
 			<a aria-label="current week" href="bookingweekarea/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-outline-dark"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
         </div>            
         <?php
@@ -305,7 +305,7 @@ $dayWidth = 100 / 8;
                                                 }
                                                 ?>
                                                 <div class="text-center">
-                                                    <a class="glyphicon glyphicon-plus"
+                                                    <a class="bi-plus"
                                                         href="bookingeditreservation/<?php echo $id_space ?>/t_<?php echo $dateString . "_" . "8" . "_" . $resourceID ?>">
                                                     </a>
                                                 </div>

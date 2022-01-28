@@ -13,7 +13,7 @@
         <?php
         foreach ($notes as $dnote) {
             if ($dnote["is_month_task"] == 1) {
-                $typeicon = "glyphicon glyphicon-asterisk";
+                $typeicon = "bi-asterisk";
 
                 $styleTR = "";
                 if ($dnote["type"] == 2 && $dnote["status"] == 3) {

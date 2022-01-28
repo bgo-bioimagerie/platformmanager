@@ -142,7 +142,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 								if( $user_space_role >=CoreSpace::$MANAGER  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
 									$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
 							?>
-							<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
+							<a class="bi-plus" href="<?php echo $linkAdress?>"></a>
 							<?php }
 							}
 					}
@@ -280,7 +280,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
 						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
 						?>
-						 <a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
+						 <a class="bi-plus" href="<?php echo $linkAdress?>"></a>
 				<?php }}}?>
 				  </div>
 				
@@ -417,7 +417,7 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
 							$linkAdress = "bookingeditreservation/".$id_space ."/t_" . $dateString."_".$h2."_".$resourceID;
 							?>
-						<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
+						<a class="bi-plus" href="<?php echo $linkAdress?>"></a>
 						<?php }}}?>
 						</div>
 					<?php 

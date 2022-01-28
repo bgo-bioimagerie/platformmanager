@@ -31,11 +31,11 @@
         </div>
     </div>
     <a class="left carousel-control" href="<?= $_SERVER['REQUEST_URI'] ?>#myCarousel" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="bi-chevron-left" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
     </a>
     <a class="right carousel-control" href="<?= $_SERVER['REQUEST_URI'] ?>#myCarousel" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="bi-chevron-right" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
     </a>
 </div><!-- /.carousel -->

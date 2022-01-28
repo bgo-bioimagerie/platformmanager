@@ -8,7 +8,7 @@
                 <div class="col-md-1 col-md-offset-11" style="text-align: right;">
                     <a id="close"
                         v-on:click="closePopup"
-                        class="glyphicon glyphicon-remove"
+                        class="bi-x-circle-fill"
                         style="cursor:pointer;">
                     </a>
                 </div>

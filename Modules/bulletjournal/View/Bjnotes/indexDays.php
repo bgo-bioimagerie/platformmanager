@@ -12,7 +12,7 @@
                     <?php echo date("l d F", mktime(0, 0, 0, $month, $i, $year)) ?>
                 </span>
                 <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span style="color: #666;" class="glyphicon glyphicon-plus"></span>
+                    <span style="color: #666;" class="bi-plus"></span>
 
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -43,15 +43,15 @@
                     //echo "compare to " . $year . "-" . $month . "-" . $d . "<br/>";
                     if ($dnote["date"] == $year . "-" . $month . "-" . $d) {
                         //echo "found <br/>";
-                        $typeicon = "glyphicon glyphicon-minus";
+                        $typeicon = "bi-x-square-fill";
                         if ($dnote["type"] == 2) {
-                            $typeicon = "glyphicon glyphicon-asterisk";
+                            $typeicon = "bi-asterisk";
                             if ($dnote["migrated"] == 1) {
-                                $typeicon = "glyphicon glyphicon-chevron-right";
+                                $typeicon = "bi-chevron-right";
                             }
                         }
                         if ($dnote["type"] == 3) {
-                            $typeicon = "glyphicon glyphicon-calendar";
+                            $typeicon = "bi-calendar3";
                         }
                         ?>
 

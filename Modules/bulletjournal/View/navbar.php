@@ -52,7 +52,7 @@ if ($ecmenucolortxt == "") {
     
     <div class="col-md-3 col-md-offset-9">
         <a href="bulletjournalhelp/<?php echo $id_space ?>">
-            <span class="glyphicon glyphicon-question-sign"></span>
+            <span class="bi-question-circle"></span>
         </a>
     </div>
 

@@ -70,15 +70,15 @@
                             <p>
                             </p>
                             <!-- TITLE -->
-                            <p style="color:#018181; ">
+                            <p style="color:#018181;text-align: center">
                                 <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
                                 <?php if(isset($_SESSION["login"])) { ?>
                                     <?php if(isset($star[$item["id"]])) { ?>
-                                        <a aria-label="remove from favorites" href="<?php echo "coretiles/1/".$submenu."/unstar/".$item["id"] ?>"><span class="glyphicon glyphicon-star"></span></a>
+                                        <a aria-label="remove from favorites" href="<?php echo "coretiles/1/".$submenu."/unstar/".$item["id"] ?>"><span class="bi-star-fill"></span></a>
                                     <?php } else { ?>
-                                        <a aria-label="add to favorites" href="<?php echo "coretiles/1/".$submenu."/star/".$item["id"] ?>"><span class="glyphicon glyphicon-star-empty"></span></a>
+                                        <a aria-label="add to favorites" href="<?php echo "coretiles/1/".$submenu."/star/".$item["id"] ?>"><span class="bi-star"></span></a>
                                     <?php } ?>
-                                    <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
+                                    <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
                                 <?php } ?>
                             </p>
 

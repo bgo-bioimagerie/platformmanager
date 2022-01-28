@@ -58,7 +58,7 @@ if ($id_quote > 0) {
     <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
     <div id="hider" class="col-xs-12"></div> 
     <div id="itemspopup_box" class="pm_popup_box" style="display: none;">
-        <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="itemsbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a></div>
+        <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="itemsbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
             <?php echo $formitemHtml ?>
     </div> 
 

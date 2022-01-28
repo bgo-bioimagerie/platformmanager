@@ -306,12 +306,12 @@ for ($i = 0; $i < count($notes); $i++) {
 
         function updateNoteListHtml(data) {
             //alert("start updateNoteListHtml " + JSON.stringify(data));
-            var typeicon = "glyphicon glyphicon-minus";
+            var typeicon = "bi-x-square-fill";
             if (data.type === 2) {
-                typeicon = "glyphicon glyphicon-asterisk";
+                typeicon = "bi-asterisk";
             }
             if (data.type === 3) {
-                typeicon = "glyphicon glyphicon-calendar";
+                typeicon = "bi-calendar3";
             }
 
             var styleTR = "";

@@ -366,13 +366,13 @@ class CorespaceController extends CoresecureController {
             $colorConfig = 'style="background-color:' . $spaceColor . '; color: #fff;"';
             $colorConfigUser = 'style="background-color:' . $spaceColor . '; color: #fff;"';
             $adminMenu .= '<li>';
-            $adminMenu .= '<a  ' . $colorConfig . ' href="spaceconfig/' . $space["id"] . '">' . CoreTranslator::Configuration($lang) . '<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>';
+            $adminMenu .= '<a  ' . $colorConfig . ' href="spaceconfig/' . $space["id"] . '">' . CoreTranslator::Configuration($lang) . '<span style="font-size:16px;" class="pull-right hidden-xs showopacity bi-gear-fill"></span></a>';
             $adminMenu .= "</li>";
             $adminMenu .= '<li >';
-            $adminMenu .= '<a ' . $colorConfigUser . ' href="spaceconfiguser/' . $space["id"] . '">' . CoreTranslator::Access($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>';
+            $adminMenu .= '<a ' . $colorConfigUser . ' href="spaceconfiguser/' . $space["id"] . '">' . CoreTranslator::Access($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity bi-gear-fill"></span></a>';
             $adminMenu .= "</li>";
             $adminMenu .= '<li >';
-            $adminMenu .= '<a ' . $colorConfigUser . ' href="spacedashboard/' . $space["id"] . '">' . CoreTranslator::Dashboard($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>';
+            $adminMenu .= '<a ' . $colorConfigUser . ' href="spacedashboard/' . $space["id"] . '">' . CoreTranslator::Dashboard($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity bi-gear-fill"></span></a>';
             $adminMenu .= "</li>";
         }
         $html = str_replace("{{adminitems}}", $adminMenu, $html);

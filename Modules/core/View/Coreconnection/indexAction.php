@@ -15,70 +15,71 @@
 <!-- body -->
 <?php startblock('content') ?>
 
-<div class="row" style="background-color: #fff; height:100%">
+<div class="container">
+
+    <div class="row">
         <!-- Title -->
-        <div class="col-sm-12">
+        <div class="col-12">
             <h1 class="text-center login-title"><?php echo $home_title ?></h1>
         </div>
 
         <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
+        <div class="col-12">
             <p></p>
             <h3 style="text-align:center;"><?php echo $home_message ?></h3>
             <p></p>
         </div>
 
         <!-- Login -->
-        <div class="col-sm-12">
+        <div class="col-12 col-lg-8">
+            <div class="row">
+                <div class="col-12">
+                    <?php if (isset($msgError) && $msgError != "") { ?>
+                        <div role="alert" class="alert alert-danger">
+                            <p><?php echo $msgError ?></p>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-12 col-md-6">
+                    <form class="form form-signin mb-3" action="corelogin" method="post">
+                        <input class="form-control" name="redirection" type="hidden" value="<?php echo $redirection ?>">
+                        <input class="form-control" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
+                        <input class="form-control" name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
+                        <div class="checkbox">
+                            <label class="form-check-label" for="remember"><?php echo CoreTranslator::RememberMe($language) ?></label>
+                            <input class="form-check-input" type="checkbox" id="remember" name="remember" value="">
+                        </div>
+
+                        <button class="btn btn-primary" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
+                    </form>
+
+                </div>
+                <div class="col-12 col-md-6">
                     <div class="row">
-                        <div class="account-wall">
-                            <?php if (isset($msgError) && $msgError != "") { ?>
-                                <div class="alert alert-danger">
-                                    <p><?php echo $msgError ?></p>
-                                </div>
-                            <?php } ?>
-                        </div>
-                        <div class="col-xs-12  col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
-                            <br></br>
-
-                            <form class="form-signin" action="corelogin" method="post">
-                                <input name="redirection" type="hidden" value="<?php echo $redirection ?>">
-                                <input name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
-                                <input name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="remember" value=""><?php echo CoreTranslator::RememberMe($language) ?></label>
-                                </div>
-
-                                <button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
-                            </form>
-
-                        </div>
-                        <br/>
-                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
+                        <div class="col-12">
                             <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>
                         </div>
 
-                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
+                        <div class="col-12">
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
-
-                        <?php if(Configuration::get('allow_registration', false)) { ?>
-                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
-                            <br/>
-                            <p class="text-center">
-                                <strong><?php echo CoreTranslator::or_($language) ?></strong>
-                            </p>
-                        </div>
-                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
-                            <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
-                        </div>
-                        <?php }  ?>
-
                     </div>
+                </div>
+
+            </div>
         </div>
+        <?php if(Configuration::get('allow_registration', false)) { ?>
+            <div class="col-12 col-lg-4">
+                <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
+            </div>
+        <?php }  ?>
+    </div>
+    <div class="row justify-content-md-center">
 
         <?php if (!empty($providers)) { ?>
-        <div class="col-sm-12" style="text-align:center;">
+        <div class="col-12" style="text-align:center;">
             <h2>Log with external connection providers</h2>
             <p><small>You must have link provider with your account before in account settings.</small></p>
         <?php
@@ -92,5 +93,7 @@
         ?>
         </div>
         <?php } ?>
+    </div>
+
 </div>
 <?php endblock(); ?>

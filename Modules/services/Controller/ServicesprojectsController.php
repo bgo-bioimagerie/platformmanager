@@ -189,7 +189,7 @@ class ServicesprojectsController extends ServicesController {
                 $today = time();
                 $delay = $limitD - $today;
                 if ($delay < 0 || $delay < $warning * 24 * 3600) {
-                    $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
+                    $entriesArray[$i]["close_icon"] = "bi-exclamation-triangle-fill";
                 }
             }
 

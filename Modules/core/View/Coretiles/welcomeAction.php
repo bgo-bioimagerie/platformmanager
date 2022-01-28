@@ -48,7 +48,7 @@
                     </a>
                     <p></p>
                     <p style="color:#018181; ">
-                        <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="glyphicon glyphicon-lock"></span></a>
+                        <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="bi-lock-fill"></span></a>
                     </p>
                     <p style="color:#a1a1a1; font-size:12px;">{{space.description}}</p>
                     <div>
@@ -76,9 +76,9 @@
                     <p style="color:#018181; ">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
                         <?php if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
-                                <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="glyphicon glyphicon-star"></span></a>
+                                <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="bi-star-fill"></span></a>
                         <?php } ?>
-                        <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
+                        <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
                     </p>
                     <p style="color:#a1a1a1; font-size:12px;">
                         <?php echo $item["description"] ?>
@@ -102,7 +102,7 @@
                     <p></p>
                     <p style="color:#018181; ">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
-                        <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
+                        <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
                     </p>
                     <p style="color:#a1a1a1; font-size:12px;">
                         <?php echo $item["description"] ?>
@@ -140,7 +140,7 @@
                         <div class="panel-body">
                             <div class="row" v-for="b in bookings">
                                 <div class="col-xs-12">
-                                    {{b.date}}: {{b.resource}} [{{b.space}}] <a :href="`/bookingeditreservation/${b.id_space}/r_${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                                    {{b.date}}: {{b.resource}} [{{b.space}}] <a :href="`/bookingeditreservation/${b.id_space}/r_${b.id}`"><span class="bi-zoom-in"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +153,7 @@
                         <div class="panel-body">
                             <div class="row" v-for="b in projects">
                                 <div class="col-xs-12">
-                                    {{b.date}}: {{b.name}} [{{b.space}}] <a :href="`/servicesprojectsheet/${b.id_space}/${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                                    {{b.date}}: {{b.name}} [{{b.space}}] <a :href="`/servicesprojectsheet/${b.id_space}/${b.id}`"><span class="bi-zoom-in"></span></a>
                                 </div>
                             </div>
                         </div>
