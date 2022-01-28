@@ -4,6 +4,7 @@
 
 <div class="row pm-table">
     <div id="formSection" data-origin="{{origin}}">
+    {{origin}}
             <input
                 v-for="(item, index) in sections"
                 :id="item.btnId"
@@ -21,7 +22,13 @@
                 {{ clientsUserForm }}
                 {{ clientsUserTable }}
             {% endautoescape %}
-        </div>      
+        </div>
+        <div id="bkAuthHistorySection" v-show="show.bkAuthHistory">
+            {% autoescape false %}
+                {# {{ bkHistoryForm }} #}
+                {{ bkHistoryTable }}
+            {% endautoescape %}
+        </div>  
         <div id="bookingAccessSection" v-show="show.bookingAccess">
             {% autoescape false %}
                 {{ bkAuthTable }}
@@ -54,12 +61,14 @@
                 sections: [
                     {name: "spaceAccess", btnId: "spaceAccessBtn", displayName: "Space access"},
                     {name: "clientsUser", btnId: "clientsUserBtn", displayName: "Clients accounts"},
-                    {name: "bookingAccess", btnId: "bookingAccessBtn", displayName: "Booking access"}
+                    {name: "bookingAccess", btnId: "bookingAccessBtn", displayName: "Booking access"},
+                    {name: "bookingAuthorisationsHistory", btnId: "bookingAuthorisationsHistoryBtn", displayName: "Booking authorisations history"}
                 ],
                 show: {
                     clientsUser: false,
                     spaceAccess: false,
-                    bookingAccess: false
+                    bookingAccess: false,
+                    bkAuthHistory: false
                 },
                 params: {
                     spaceId: {{ id_space }},
@@ -78,21 +87,31 @@
         },
         methods: {
             showForm(name="spaceAccess") {
+                // TODO: write that more efficiently
                 switch (name) {
                     case "spaceAccess":
                         this.show.spaceAccess = true;
                         this.show.clientsUser = false;
                         this.show.bookingAccess = false;
+                        this.show.bkAuthHistory = false;
                         break;
                     case "clientsUser":
                         this.show.spaceAccess = false;
                         this.show.clientsUser = true;
                         this.show.bookingAccess = false;
+                        this.show.bkAuthHistory = false;
                         break;
                     case "bookingAccess":
                         this.show.spaceAccess = false;
                         this.show.clientsUser = false;
                         this.show.bookingAccess = true;
+                        this.show.bkAuthHistory = false;
+                        break;
+                    case "bkAuthHistory":
+                        this.show.spaceAccess = false;
+                        this.show.clientsUser = false;
+                        this.show.bookingAccess = false;
+                        this.show.bkAuthHistory = true;
                         break;
                     default:
                         break;
@@ -106,6 +125,8 @@
                     result = "spaceAccess";
                 } else if (this.origin.page.match(/bookingaccess/g)) {
                     result = "bookingAccess";
+                } else if (this.origin.page.match(/bkauthhistory/g)) {
+                    result = "bkAuthHistory";
                 }
                 return result;
             },
