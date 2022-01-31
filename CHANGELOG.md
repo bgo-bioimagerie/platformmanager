@@ -3,6 +3,7 @@
 ## 2.3.1
 
 * [core] in corespaceaccess show convention download button only if present
+* [invoices] show message if no template defined
 
 ## 2.3.0
 
