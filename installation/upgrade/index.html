@@ -10,10 +10,11 @@
 
 
 
-    <meta name="description" content="For first installation, and for any later upgrade, at code root location:
+    <meta name="description" content="Installation/upgrade    For first installation, and for any later upgrade, at code root location:
 php cli/pfm-cli.php install  This will setup database i.e create tables, migrate/update schemas etc..
 To know current version:
-php cli/pfm-cli.php version --db ">
+php cli/pfm-cli.php version --db  Developpers    To add an upgrade (not an install from scratch) script:
+php cli/pfm-cli.php upgrade --desc &quot;fix this for that&quot;  this will create a unique script in db/upgrade with a timestamp prefix.">
 
 
 
@@ -914,12 +915,35 @@ php cli/pfm-cli.php version --db ">
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Upgrade</h1>
-        <p>For first installation, and for any later upgrade, at code root location:</p>
+        <div class="gdoc-page__anchorwrap">
+    <h2 id="installationupgrade">
+        Installation/upgrade
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/#installationupgrade" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Installation/upgrade" href="#installationupgrade">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>For first installation, and for any later upgrade, at code root location:</p>
 <pre><code>php cli/pfm-cli.php install
 </code></pre>
 <p>This will setup database i.e create tables, migrate/update schemas etc..</p>
 <p>To know current version:</p>
-<pre><code>php cli/pfm-cli.php version --db</code></pre>
+<pre><code>php cli/pfm-cli.php version --db
+</code></pre>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="developpers">
+        Developpers
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/#developpers" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Developpers" href="#developpers">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>To add an upgrade (not an install from scratch) script:</p>
+<pre><code>php cli/pfm-cli.php upgrade --desc &quot;fix this for that&quot;
+</code></pre>
+<p>this will create a unique script in db/upgrade with a timestamp prefix.</p>
+<p>You can then edit script to add whatever is needed for upgrade.</p>
+<p>At <em>install</em> script will look for all scripts in db/upgrade (sorted by timestamp),
+and apply them one by one (and record its id in db).</p>
+<p>If script has already been applied, it is skipped.</p>
 
     </article>
 

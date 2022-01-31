@@ -110,10 +110,11 @@ Exemple docker-compose.yml use local docker volumes to save database etc.</descr
       <pubDate>Wed, 23 Jun 2021 16:05:10 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/</guid>
-      <description>For first installation, and for any later upgrade, at code root location:
+      <description>Installation/upgrade    For first installation, and for any later upgrade, at code root location:
 php cli/pfm-cli.php install  This will setup database i.e create tables, migrate/update schemas etc..
 To know current version:
-php cli/pfm-cli.php version --db </description>
+php cli/pfm-cli.php version --db  Developpers    To add an upgrade (not an install from scratch) script:
+php cli/pfm-cli.php upgrade --desc &amp;quot;fix this for that&amp;quot;  this will create a unique script in db/upgrade with a timestamp prefix.</description>
     </item>
     
     <item>
