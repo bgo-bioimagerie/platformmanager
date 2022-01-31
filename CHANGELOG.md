@@ -1,5 +1,39 @@
 # Changes
 
+## 2.3.0
+
+* [invoices] fix non-numeric quantity and/or price cases in invoice edition
+* [services] dynamize client selection in project edition
+* [services] services quantity types differenciation in projects, orders and invoices
+* [coreconfig] remove module color edition from core config
+* [booking] fix all_day reservation end date
+* [core] remove most references to CoreTranslator::dateFromEn()
+* [spaces] remove request access button from private spaces
+* [booking] clicking on blank days in month view gives access to day area view
+* [projects] fix closed projects listing change of year
+* [resources] fix re_visa is_active default value
+* [core] add possibility for a space manager to add an existing account #479
+* [core] allow space plan modification #429
+* [invoice] get invoice number per space, and not global
+* [core] fix prometheus redis port
+* [coreconfig] fix maintenance mode authorizations
+* [coreconfig] remove carousel
+* [invoices] remove hidden characters in template
+* [docker] fix mysql db name in docker-compose
+* [booking] add journal page to show future and last 30 days bookings
+* [core] manage http error codes #184
+* [layout] display enhancements
+* [core] add index on id_space
+* [services] fix services orders errors with client not registered
+* [core] set user deactivation settings per space
+* [booking] check booking start/end time and day at reservation
+* [core] add button to user spaces
+* [statistics] various fixes
+* [antibodies] fix missing table creation at install
+* [booking] send emails only if user status > VISITOR in space
+* [com] check ACLs on com module and limit edition to space admins
+* [booking] fix booking emails if invalid/recuring, notify if new or update
+
 ## 2.2.2
 
 * [booking] fix scheduling creation for new resource areas
@@ -18,7 +52,7 @@
 * [booking] fix authorizations when related to user's roles
 * [helpdesk] sort tickets and fix refresh
 * [helpdesk] ignore auto replies
-* [core] check id_user to see if user is logged
+* [core] check id_user to see if user is logged
 * [core] on register after email validation validate the account #472
 * [statistics] require env var MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD} in pfm/pfm-events containers
 * [core] use module url and not name for notifications #476
@@ -27,7 +61,7 @@
 
 ## 2.2.0
 
-**Warning**: [admin] Ldap configuration modification from ini or env variables
+**Warning**: [admin] Ldap configuration modification from ini or env variables
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 

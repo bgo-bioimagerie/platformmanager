@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClPricing.php';
@@ -23,10 +24,10 @@ class ClientspricingsController extends ClientsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->pricingModel = new ClPricing ();
-        $_SESSION["openedNav"] = "clients";
+
     }
 
     /**
@@ -44,6 +45,7 @@ class ClientspricingsController extends ClientsController {
 
         // Query to the database
         $belongingsArray = $this->pricingModel->getAll($id_space);
+        $pricings = $belongingsArray;
         for ($i = 0; $i < count($belongingsArray); $i++) {
             if ($belongingsArray[$i]["type"] == 1) {
                 $belongingsArray[$i]["type"] = CoreTranslator::Academic($lang);
@@ -66,10 +68,11 @@ class ClientspricingsController extends ClientsController {
         ));
 
         // render the View
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
-            'tableHtml' => $tableHtml
+            'tableHtml' => $tableHtml,
+            'data' => ['pricings' => $pricings]
         ));
     }
 
@@ -87,8 +90,8 @@ class ClientspricingsController extends ClientsController {
             $pricing = array(
                 "id" => 0,
                 "name" => "",
-                "color" => "#ffffff",
-                "txtcolor" => "#000000",
+                "color" => Constants::COLOR_WHITE,
+                "txtcolor" => Constants::COLOR_BLACK,
                 "display_order" => 0,
                 "type" => 0
             );
@@ -130,17 +133,19 @@ class ClientspricingsController extends ClientsController {
                     $form->getParameter("txtcolor"),
                 );   
             
-            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             // after the provider is saved we redirect to the providers list page
-            $this->redirect("clpricingedit/" . $id_space . "/" . $newId);
+            return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // render the view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['pricing' => $pricing]
             ));
         }
     }
@@ -163,7 +168,7 @@ class ClientspricingsController extends ClientsController {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientPricing = new ClPricing();
         $pricingName = $modelClientPricing->getPricingByClient($id_space, $id_client)[0]['name'];
-        $this->render(['data' => ['elements' => $pricingName]]);
+        return $this->render(['data' => ['elements' => $pricingName]]);
     }
 
 }

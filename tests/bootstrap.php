@@ -1,14 +1,31 @@
 <?php
 require_once 'Framework/Configuration.php';
+require_once 'Framework/FCache.php';
 require_once 'Modules/core/Model/CoreInstall.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 session_start();
 $logger = Configuration::getLogger();
 $logger->info("Installing database from ". Configuration::getConfigFile());
 
+$doInstall = getenv("INSTALL");
+
 // drop all content if exists
 $cdb = new CoreDB();
-$cdb->dropAll();
+$cdb->dropAll(drop: $doInstall !== "0");
+
+
+if($doInstall !== false && $doInstall === "0") {
+    $m = new CoreUser();
+    $m->installDefault();
+
+    $modelCache = new FCache();
+    $modelCache->freeTableURL();
+    $modelCache->load();
+
+    return;
+    // Just add admin user
+}
 
 
 // Create db release table if not exists
@@ -55,6 +72,8 @@ try {
 
 // update db release and launch upgrade
 $cdb->upgrade();
+$cdb->scanUpgrades();
+$cdb->base();
 
 $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 

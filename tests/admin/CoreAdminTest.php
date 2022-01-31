@@ -1,4 +1,5 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 require './vendor/autoload.php';
 require_once 'Modules/core/Controller/CoreconnectionController.php';
@@ -8,6 +9,8 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Controller/CorespaceadminController.php';
 require_once 'Modules/core/Controller/CorespaceaccessController.php';
 require_once 'Modules/core/Controller/CoremainmenuController.php';
+require_once 'Modules/core/Controller/CoreusersController.php';
+
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreInstall.php';
@@ -16,114 +19,105 @@ require_once 'Modules/core/Model/CoreMainSubMenu.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 
+require_once 'tests/BaseTest.php';
 
-class CoreTest extends TestCase
-{
-    private static $allSpaces = [];
-    private static $allUsers = [];
 
-    private function asAdmin($id_space=0) {
-        return $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
-    }
-
-    private function asUser($name, $id_space) {
-        for($i=0;$i<count(self::$allUsers);$i++) {
-            if(self::$allUsers[$i]['name'] == $name) {
-                $_SESSION['id_user'] = self::$allUsers[$i]['id'];
-                $_SESSION['id_space'] = $id_space;
-                $_SESSION["user_settings"] = ["language" => "en"];                
-                return self::$allUsers[$i];
-            }
-        }
-        return null;
-    }
+class CoreTest extends BaseTest {
 
     public function testInstallAndCoreAccess()
     {
-        $req = new Request(["path" => ""], true);
+        $this->asAdmin();
+        $req = $this->request(["path" => ""]);
         $c = new CoreconnectionController($req);
-        $res = $c->indexAction();
-        $this->assertTrue(isset($res['metadesc']));
-
+        $c->runAction('core', 'index');
         $m = new CoreUser();
         $users = $m->getAll();
-        foreach($users as $user){
-            self::$allUsers[] = ["name" => $user['login'], "id" => intval($user['id'])];
-        }
-
-
+        Configuration::getLogger()->debug('[core] users', ['users' => $users]);
+        $this->assertTrue($users && !empty($users));
     }
 
     public function testCreateSpace() {
-        $spaceName = uniqid();
-        $this->asAdmin();
-        $req = new Request([
-            "path" => "spaceadminedit/0",
-            "formid" => "corespaceadminedit",
-            "name" => $spaceName,
-            "contact" => "admin",
-            "status" => 1,
-            "color" => "#154186",
-            "support" => "",
-            "description" => "",
-            "admins" => []
-        ], true);
-        $c = new CorespaceadminController($req);
-        $c->editAction(0);
-        $m = new CoreSpace();
-        $spaces = $m->getSpaces('id');
-        $spaceId = 0;
-        foreach($spaces as $space){
-            if ($space['name'] == $spaceName) {
-                $spaceId = $space['id'];
-            }
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        foreach($spaces as $spaceName => $data) {
+            $this->asAdmin();
+            $req = $this->request([
+                "path" => "spaceadminedit/0",
+                "formid" => "corespaceadminedit",
+                "name" => $spaceName,
+                "contact" => "admin",
+                "status" => 1,
+                "color" => "#000000",
+                "txtcolor" => "#ffffff",
+                "support" => "",
+                "description" => "",
+                "user_desactivate" => 1,
+                "admins" => []
+            ]);
+            $c = new CorespaceadminController($req);
+            $data = $c->runAction('core', 'edit', ['id_space' => 0]);
+            $newSpace = $data['space'];
+            $this->assertTrue($newSpace['id'] > 0);
+            $this->assertNotFalse($this->space($spaceName));
+            $req = $this->request([
+                "path" => "spaceadminedit/".$newSpace['id'],
+            ]);
+            $c = new CorespaceadminController($req);
+            $data = $c->runAction('core', 'edit', ['id_space' => $newSpace['id']]);
+            $this->assertTrue($data['space']['name'] == $spaceName);
         }
-        $this->assertTrue($spaceId > 0);
-        self::$allSpaces[] = ["name" => $spaceName, "id" => $spaceId];
+        // list spaces
+        $req = $this->request([
+            "path" => "spaceadmin",
+        ]);
+        $c = new CorespaceadminController($req);
+        $data = $c->runAction('core', 'index');
+        $this->assertTrue(!empty($data['spaces']));
     }
 
     public function testCreateMenus() {
         $this->asAdmin();
 
-        $menuName = uniqid();
-        $req = new Request([
+        $menuName = 'menu1';
+        $req = $this->request([
             "path" => "coremainmenuedit/0",
             "formid" => "editmainmenuform",
             "name" => $menuName,
             "display_order" => 0
-        ], true);
+        ]);
         $c = new CoremainmenuController($req);
-        $c->editAction(0);
+        $c->runAction('core', 'edit', ['id' => 0]);
 
         $menuModel = new CoreMainMenu();
         $menus = $menuModel->getAll();
 
-        $subMenuName = uniqid();
-        $req = new Request([
+        $subMenuName = 'submenu1';
+        $req = $this->request([
             "path" => "coresubmenuedit/0",
             "formid" => "editmainsubmenuform",
             "name" => $subMenuName,
             "id_main_menu" => $menus[0]['id'],
             "display_order" => 0
-        ], true);
+        ]);
         $c = new CoremainmenuController($req);
-        $c->submenueditAction(0);
+        $c->runAction('core', 'submenuedit', ['id' => 0]);
 
         $subMenuModel = new CoreMainSubMenu();
         $subMenus = $subMenuModel->getAll();
 
-        foreach (self::$allSpaces as $space) {
-            $itemMenuName = uniqid();
-            $req = new Request([
+        $spaces = $this->spaces();
+        foreach ($spaces as $space) {
+            $itemMenuName = $space['name'];
+            $req = $this->request([
                 "path" => "coremainmenuitemedit/0",
                 "formid" => "editmenuitemform",
                 "name" => $itemMenuName,
                 "id_sub_menu" => $subMenus[0]['id'],
                 "id_space" => $space['id'],
                 "display_order" => 0
-            ], true);
+            ]);
             $c = new CoremainmenuController($req);
-            $c->itemeditAction(0);
+            $c->runAction('core', 'itemedit', ['id' => 0]);
         }
         $itemMenuModel = new CoreMainMenuItem();
         $itemMenus = $itemMenuModel->getAll();
@@ -131,61 +125,127 @@ class CoreTest extends TestCase
     }
 
     public function testCreateUser() {
-        $space = self::$allSpaces[0];
-        $userName = uniqid();
         $this->asAdmin();
-        $req = new Request([
-            "path" => "corespaceaccessuseradd/".$space['id'],
-            "formid" => "createuseraccountform",
-            "name" => $userName,
-            "firstname" => $userName,
-            "login" =>  $userName,
-            "email" => "",
-            "phone" => ""
-        ], true);
-        $c = new CorespaceaccessController($req);
-        $c->useraddAction($space['id']);
-        $userId = 0;
-        $m = new CoreUser();
-        $users = $m->getAll();
-        $userId = 0;
-        foreach($users as $user){
-            if ($user['name'] == $userName) {
-                $userId = $user['id'];
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+
+        foreach($spaces as $spaceName => $spaceMembers) {
+            $usersToAdd = [];
+            $space = $this->space($spaceName);
+            foreach($spaceMembers['admins'] as $u) {
+                $usersToAdd[] = $u;
+            }
+            foreach($spaceMembers['managers'] as $u) {
+                $usersToAdd[] = $u;
+            }
+            foreach($spaceMembers['users'] as $u) {
+                $usersToAdd[] = $u;
+            }
+            foreach($usersToAdd as $userName) {
+                $req = $this->request([
+                    "path" => "corespaceaccessuseradd/".$space['id'],
+                    "formid" => "createuseraccountform",
+                    "name" => $userName,
+                    "firstname" => $userName,
+                    "login" =>  $userName,
+                    "email" => $userName."@pfm.org",
+                    "phone" => ""
+                ]);
+                $c = new CorespaceaccessController($req);
+                $data = $c->runAction('core', 'useradd', ['id_space' => $space['id']]);
+                $newUser = $data['user'];
+                $this->assertTrue($newUser && $newUser['id'] > 0);
+    
+                $sm = new CoreSpace();
+                $role = $sm->getUserSpaceRole($space['id'], $newUser['id']);
+                $this->assertEquals(-1, $role);
+                $pm = new CorePendingAccount();
+                $this->assertTrue($pm->isActuallyPending($space['id'], $newUser['id']));
+
             }
         }
-        $this->assertTrue($userId > 0);
-        self::$allUsers[] = ["name" => $userName, "id" => intval($userId)];
 
-        $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($space['id'], $userId);
-        $this->assertEquals(-1, $role);
+        // list users
+        $req = $this->request([
+            "path" => "coreusers",
+        ]);
+        $c = new CoreusersController($req);
+        $data = $c->runAction('core', 'index');
+        $this->assertTrue(!empty($data['users']));
+        foreach($data['users'] as $user){
+            if($user['name'] == 'user1') {
+                $req = $this->request([
+                    "path" => "coreusersedit/".$user['id'],
+                ]);
+                $c = new CoreusersController($req);
+                $data = $c->runAction('core', 'edit', ['id' => $user['id']]);
+                $this->assertTrue($data['user']['name'] == 'user1');
+                break;
+            }
+        }
+    }
+
+
+    public function activatePendingAs($space_id, $user_id, $role) {
         $pm = new CorePendingAccount();
-        $this->assertTrue($pm->isActuallyPending($space['id'], $userId));
+        $pendings = $pm->getBySpaceIdAndUserId($space_id, $user_id);
+
+        $req = $this->request([
+            "path" => "corespacependinguseredit/".$space_id."/".$pendings['id'],
+            "formid" => "pendingusereditactionform",
+            "role" => $role
+        ]);
+
+        $c = new CorespaceaccessController($req);
+        $c->runAction('core', 'pendinguseredit', ['id_space' => $space_id, 'id' => $pendings['id']]);
+        $sm = new CoreSpace();
+        $urole = $sm->getUserSpaceRole($space_id, $user_id);
+        $this->assertEquals($role, $urole);
+        $pm = new CorePendingAccount();
+        $this->assertFalse($pm->isActuallyPending($space_id, $user_id));
     }
 
     public function testActivatePendingUserAsUser() {
         $this->asAdmin();
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
 
-        $space = self::$allSpaces[0];
-        $user = self::$allUsers[1];
-        $pm = new CorePendingAccount();
-        $pendings = $pm->getBySpaceIdAndUserId($space['id'], $user['id']);
-
-        $req = new Request([
-            "path" => "corespacependinguseredit/".$space['id']."/".$pendings['id'],
-            "formid" => "pendingusereditactionform",
-            "role" => CoreSpace::$USER
-        ], true);
-
-
-        $c = new CorespaceaccessController($req);
-        $c->pendingusereditAction($space['id'], $pendings['id']);
-        $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($space['id'], $user['id']);
-        $this->assertEquals(CoreSpace::$USER, $role);
-        $pm = new CorePendingAccount();
-        $this->assertFalse($pm->isActuallyPending($space['id'], $user['id']));
+        foreach($spaces as $spaceName => $spaceMembers) {
+            $space = $this->space($spaceName);
+            foreach($spaceMembers['users'] as $u) {
+               $user = $this->user($u);
+               $this->activatePendingAs($space['id'], $user['id'], CoreSpace::$USER);
+            }
+        }
     }
+
+    public function testActivatePendingUserAsSpaceManager() {
+        $this->asAdmin();
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+
+        foreach($spaces as $spaceName => $spaceMembers) {
+            $space = $this->space($spaceName);
+            foreach($spaceMembers['managers'] as $u) {
+               $user = $this->user($u);
+               $this->activatePendingAs($space['id'], $user['id'], CoreSpace::$MANAGER);
+            }
+        }
+    }
+
+    public function testActivatePendingUserAsSpaceAdmin() {
+        $this->asAdmin();
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+
+        foreach($spaces as $spaceName => $spaceMembers) {
+            $space = $this->space($spaceName);
+            foreach($spaceMembers['admins'] as $u) {
+               $user = $this->user($u);
+               $this->activatePendingAs($space['id'], $user['id'], CoreSpace::$ADMIN);
+            }
+        }
+    }
+
 }
 

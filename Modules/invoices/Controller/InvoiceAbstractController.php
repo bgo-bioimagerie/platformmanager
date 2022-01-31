@@ -12,14 +12,6 @@ require_once 'Modules/invoices/Controller/InvoicesController.php';
  * Controller for the home page
  */
 abstract class InvoiceAbstractController extends InvoicesController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("invoices");
-    }
     
     /**
      * To desplay the form that allows to edit an order and xport as pdf
@@ -32,7 +24,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null) {
+    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false) {
         $address = nl2br($address);
         $adress = $address; // backwark compat
         $date = CoreTranslator::dateFromEn($date, 'fr');
@@ -75,11 +67,15 @@ abstract class InvoiceAbstractController extends InvoicesController {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content);
-            $html2pdf->Output($unit . "_" . $resp . " " . $number . '.pdf');
-            return;
+            if($toFile || getenv("PFM_MODE") == "test") {
+                $html2pdf->Output(__DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf", 'F');
+            } else {
+                $html2pdf->Output($unit . "_" . $resp . "_" . $number . '.pdf');
+            }
         } catch (Exception $e) {
-            throw new PfmException("Pdf generation error: " . $e. "\n$content", 500);
+            throw new PfmException("Pdf generation error: " . $e, 500);
         }
+        return __DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf";
     }
 
 }

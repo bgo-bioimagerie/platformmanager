@@ -25,10 +25,10 @@ class ClientsusersController extends ClientsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->pricingModel = new ClPricing ();
-        $_SESSION["openedNav"] = "clients";
+
     }
 
     /**
@@ -78,13 +78,13 @@ class ClientsusersController extends ClientsController {
         );
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang),
-            "tableHtml" => $tableHtml
-                )
-        );
+            "tableHtml" => $tableHtml,
+            "data" => ["clientsusers" => $data]
+        ));
     }
 
     /**

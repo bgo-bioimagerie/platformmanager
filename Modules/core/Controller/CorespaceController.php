@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Constants.php';
 
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -27,9 +28,8 @@ class CorespaceController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->spaceModel = new CoreSpace ();
     }
 
@@ -124,7 +124,7 @@ class CorespaceController extends CoresecureController {
                 $menuColor = '#428bca';
             }
             $spaceMenuItems[$i]['color'] = $menuColor;
-            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: "#ffffff";
+            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: Constants::COLOR_WHITE;
         }
         return $this->render(array(
             "role" => $role,
@@ -134,7 +134,7 @@ class CorespaceController extends CoresecureController {
             "spaceMenuItems" => $spaceMenuItems,
             "showAdmMenu" => $showAdmMenu,
             "showCom" => $showCom,
-            "data" => ["space" => $space]
+            "data" => ["space" => $space, "spaceMenuItems" => $spaceMenuItems]
         ));
     }
 
@@ -144,7 +144,7 @@ class CorespaceController extends CoresecureController {
      */
     public function configAction($id_space) {
 
-        $_SESSION["openedNav"] = "config";
+
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $space = $this->spaceModel->getSpace($id_space);
@@ -158,7 +158,7 @@ class CorespaceController extends CoresecureController {
      */
     public function configusersAction($id_space) {
 
-        $_SESSION["openedNav"] = "configusers";
+
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -273,7 +273,7 @@ class CorespaceController extends CoresecureController {
      * @return \Form
      */
     protected function configUsersForm($lang, $id_space) {
-        $_SESSION["openedNav"] = "configusers";
+
         $modeluser = new CoreUser();
         $users = $modeluser->getActiveUsers("name");
         $usersNames = array();
@@ -320,11 +320,11 @@ class CorespaceController extends CoresecureController {
         $space = $this->spaceModel->getSpace($id_space);
 
 
-        $spaceColor = "#ffffff";
+        $spaceColor = Constants::COLOR_WHITE;
         if ($space["color"] != "") {
             $spaceColor = $space["color"];
         }
-        $spaceTxtColor = "#000000";
+        $spaceTxtColor = Constants::COLOR_BLACK;
         if ($space['txtcolor'] != "") {
             $spaceTxtColor = $space["txtcolor"];
         }

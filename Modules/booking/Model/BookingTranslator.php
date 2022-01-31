@@ -12,7 +12,14 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Calendrier";
         }
-        return "booking";
+        return "Bookings";
+    }
+
+    public static function journal($lang) {
+        if ($lang == "fr") {
+            return "Journal";
+        }
+        return "Journal";
     }
 
     public static function MAD($lang) {
@@ -1504,7 +1511,7 @@ class BookingTranslator {
 
     public static function DeletePeriod($lang) {
         if ($lang == "fr") {
-            return "Suprimé périodicité";
+            return "Supprimer périodicité";
         }
         return "Delete periodicity";
     }
@@ -1677,5 +1684,19 @@ class BookingTranslator {
             return "Vous devez d'abord créer au moins un code couleur dans le module  Calendrier config > Codes couleur";
         }
         return "You need first to create at leat one color code in Bokking settings module > Color codes";
+    }
+
+    public static function ShowAll($lang = "") {
+        if($lang == "fr") {
+            return "Toutes";
+        }
+        return "Show all";
+    }
+
+    public static function ShowMine($lang = "") {
+        if($lang == "fr") {
+            return "Mes réservations";
+        }
+        return "My bookings";
     }
 }

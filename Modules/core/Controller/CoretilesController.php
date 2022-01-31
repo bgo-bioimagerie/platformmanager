@@ -30,8 +30,8 @@ class CoretilesController extends CorecookiesecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->user = new CoreUser();
         //$this->checkAuthorization(CoreStatus::$USER);
     }
@@ -130,7 +130,19 @@ class CoretilesController extends CorecookiesecureController {
 
             $allSpaces = $spaceModel->getSpaces('id');
             $spaceMap = [];
+            $userSpacesOnly = $this->request->getParameterNoException('mine') === '1' ? true: false;
+            if($userSpacesOnly) {
+                $spaces= [];
+            }
+            $userSpacesList = [];
+
             foreach($allSpaces as $space) {
+                if($logged && isset($_SESSION['login']) && $userSpacesOnly) {
+                    $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
+                    if($isMemberOfSpace) {
+                        $userSpacesList[] = $space;
+                    }
+                }
                 if ($logged && !in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
                     if (!in_array($space["id"], $userSpaces['userPendingSpaceIds'])) {
                         $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
@@ -154,15 +166,24 @@ class CoretilesController extends CorecookiesecureController {
                 return $item1['name'] <=> $item2['name'];
             });
 
+            $menuItemsModel = new CoreMainMenuItem();
+            $itemsMenusList = $menuItemsModel->getMainMenus();
+            $itemsMenus = [];
+            foreach($itemsMenusList as $item) {
+                $itemsMenus[$item['id']] = $item['name']; 
+            }
+
             return $this->render(array(
                 'lang' => $lang,
                 'content' => $content,
                 'spaces' => $spaces,
                 'spaceMap' => $spaceMap,
+                'userSpaces' => $userSpacesList,
                 'catalog' => $catalog,
                 'resources' => $resources,
                 'mainSubMenus' => [],
                 'mainMenus' => $mainMenus,
+                'itemsMenus' => $itemsMenus,
                 'iconType' => $modelCoreConfig->getParam("space_icon_type"),
                 'showSubBar' => false
                 ), "welcomeAction");

@@ -6,6 +6,7 @@ require_once 'Framework/FCache.php';
 require_once 'Framework/Errors.php';
 require_once 'Framework/Statistics.php';
 require_once 'Framework/Events.php';
+require_once 'Framework/Constants.php';
 
 
 require_once 'Modules/core/Model/CoreStatus.php';
@@ -37,7 +38,7 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/core/Model/CoreMail.php';
 
 
-define("DB_VERSION", 4);
+define("DB_VERSION", 5);
 /**
  * Class defining the database version installed
  */
@@ -45,20 +46,28 @@ class CoreDB extends Model {
 
     /**
      * Drops all tables content
+     * 
+     * @param bool $drop delete tables and not just content
      */
-    public function dropAll() {
-        $sql = "show tables";
+    public function dropAll($drop=false) {
+        $sql = "SHOW tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach ($tables as $tb) {
             $table = $tb[0];
-            Configuration::getLogger()->warning('Drop', ["table" => $table]);
-            $sql = "delete from ".$table;
-            $this->runRequest($sql);
+            if($drop) {
+                Configuration::getLogger()->warning('Drop table', ["table" => $table]);
+                $sql = "DROP TABLE ".$table;
+                $this->runRequest($sql);
+            } else {
+                Configuration::getLogger()->warning('Delete table content', ["table" => $table]);
+                $sql = "DELETE FROM ".$table;
+                $this->runRequest($sql);
+            }
         }
     }
 
     public function isFreshInstall() {
-        $sql = "show tables";
+        $sql = "SHOW tables";
         $nbTables = $this->runRequest($sql)->rowCount();
         $freshInstall = true;
         if($nbTables > 0) {
@@ -614,8 +623,8 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name, done!');
 
         Configuration::getLogger()->debug('[core] add txtcolor');
-        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
-        $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", "#ffffff");
+        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", Constants::COLOR_WHITE);
+        $this->addColumn('cl_pricings', 'txtcolor', "varchar(7)", Constants::COLOR_WHITE);
         Configuration::getLogger()->debug('[core] add txtcolor, done');
 
         Configuration::getLogger()->debug('[core] add space plan');
@@ -684,7 +693,6 @@ class CoreDB extends Model {
             $statHandler = new EventHandler();
             foreach($spaces as $space) {
                 $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
-
             }
             Configuration::getLogger()->debug('[db] update grafana dashboards and sql views, done!');
         }
@@ -743,22 +751,111 @@ class CoreDB extends Model {
         $this->runRequest($sql);
     }
 
-    public function upgrade($from=-1) {
-        $sqlRelease = "SELECT * FROM `pfm_db`;";
-        $reqRelease = $this->runRequest($sqlRelease);
+    public function needUpgrade() : array {
+        $need = [];
+        $upgradeFiles = scandir('db/upgrade');
+        sort($upgradeFiles);
 
+        foreach ($upgradeFiles as $f) {
+            if(!str_ends_with($f, '.php')) {
+                continue;
+            }
+            $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+            $record = str_replace('.php', '', $f);
+            $res = $this->runRequest($sql, [$record]);
+
+            if(!$res) {
+                Configuration::getLogger()->error('request failed');
+                $need[] = $f;
+                continue;
+            }
+            if($res->rowCount() > 0) {
+                Configuration::getLogger()->debug('[db][upgrade] already applied', ['file' => $f]);
+                continue;
+            }
+            $need[] = $f;
+        }
+        return $need;
+    }
+
+    public function scanUpgrades() {
+        if(file_exists('db/upgrade')) {
+            $sql = "CREATE TABLE IF NOT EXISTS `pfm_upgrade` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `record` varchar(255) NOT NULL,
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            );";
+            $this->runRequest($sql);
+
+            $upgradeFiles = scandir('db/upgrade');
+            sort($upgradeFiles);
+            foreach ($upgradeFiles as $f) {
+                if(!str_ends_with($f, '.php')) {
+                    continue;
+                }
+                $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+                $record = str_replace('.php', '', $f);
+                $res = $this->runRequest($sql, [$record]);
+                if(!$res) {
+                    Configuration::getLogger()->error('request failed');
+                    break;
+                }
+                if($res->rowCount() > 0) {
+                    Configuration::getLogger()->info('[db][upgrade] already applied', ['file' => $f]);
+                    continue;
+                }
+                Configuration::getLogger()->info('[db][upgrade] applying', ['file' => $f]);
+                try {
+                    include "db/upgrade/$f";
+                    $sql = 'INSERT INTO pfm_upgrade (record) VALUES (?)';
+                    $this->runRequest($sql, [$record]);
+                } catch(Throwable $e) {
+                    Configuration::getLogger()->error("[db][upgrade] an error occured", ["error" => $e]);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets base columns
+     */
+    public function base() {
         Configuration::getLogger()->info("[db] set base columns if not present");
         $sql = "show tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach($tables as $t) {
             $table = $t[0];
+            $sql = "show index from `$table`";
+            $indexes = $this->runRequest($sql)->fetchAll();
             $this->addColumn($table, "deleted", "int(1)", 0);
             $this->addColumn($table, "deleted_at", "DATETIME", "", true);
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
             $this->addColumn($table, "id_space", "int(11)", 0);
+
+            $indexExists = false;
+            foreach($indexes as $index) {
+                if($index['Key_name'] == "idx_${table}_space") {
+                    $indexExists = true;
+                    Configuration::getLogger()->debug('[db] id_space index already exists');
+                    break;
+                }
+            }
+            if(!$indexExists) {
+                Configuration::getLogger()->debug('[db] create id_space index');
+                $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
+                $this->runRequest($space_index);
+            }
         }
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
+    }
+
+    public function upgrade($from=-1) {
+        $sqlRelease = "SELECT * FROM `pfm_db`;";
+        $reqRelease = $this->runRequest($sqlRelease);
+
 
         $isNewRelease = false;
         $oldRelease = 0;
@@ -788,6 +885,7 @@ class CoreDB extends Model {
         }
         
 
+        // old migration stuff, now using db/upgrade files, keep for backward compatiblity
         if($isNewRelease) {
             Configuration::getLogger()->info("[db] Need to migrate", ["oldrelease" => $oldRelease, "release" => DB_VERSION]);
             $updateFromRelease = $oldRelease;
@@ -828,7 +926,6 @@ class CoreDB extends Model {
         } else {
             Configuration::getLogger()->info("[db] no migration needed");
         }
-
     }
 }
 
@@ -859,7 +956,7 @@ class CoreInstall extends Model {
         $modelConfig->setParam("navbar_bg_color", "#404040");
         $modelConfig->setParam("navbar_bg_highlight", "#333333");
         $modelConfig->setParam("navbar_text_color", "#e3e2e4");
-        $modelConfig->setParam("navbar_text_highlight", "#ffffff");
+        $modelConfig->setParam("navbar_text_highlight", Constants::COLOR_WHITE);
 
         $modelUser = new CoreUser();
         $modelUser->createTable();

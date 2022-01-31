@@ -7,7 +7,7 @@ class QuoteRouting extends Routing{
     public function listRoutes(){
         
         // config
-        $this->addRoute("quoteconfigadmin", "quoteconfigadmin", "quoteconfigadmin", "index");
+        // $this->addRoute("quoteconfigadmin", "quoteconfigadmin", "quoteconfigadmin", "index");
         $this->addRoute("quoteconfig", "quoteconfig", "quoteconfig", "index", array("id_space"), array(""));
 
         

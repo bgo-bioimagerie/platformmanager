@@ -8,7 +8,7 @@ require_once 'Modules/core/Model/CoreMainSubMenu.php';
 
 /**
  * Mather class for controller using secure connection
- * 
+ * @deprecated replaced by framework Controller/Navbar
  * @author Sylvain Prigent
  */
 class CorenavbarController extends CoresecureController {
@@ -16,16 +16,7 @@ class CorenavbarController extends CoresecureController {
     /**
      * 
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorization(CoreStatus::$USER);
-    }
-    
-    /**
-     * 
-     */
     public function indexAction() {
-        
     }
 
     /**
@@ -93,7 +84,6 @@ class CorenavbarController extends CoresecureController {
         $lang = $this->getLanguage();
         $toolMenu = $this->getMenu();
         $toolAdmin = $this->getAdminMenu();
-        
         //print_r($toolMenu);
 
         // get the view menu,fill it, and return the content

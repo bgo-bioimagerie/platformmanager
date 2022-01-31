@@ -19,14 +19,6 @@ require_once 'Modules/antibodies/Model/Anticorps.php';
 class CatalogpublicController extends Controller {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */

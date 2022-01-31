@@ -1,6 +1,6 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form">
@@ -56,14 +56,14 @@
             </label>
             <div class="col-xs-6">
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
+                    <label><input  type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
+                    <label><input  type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
-                    <select name="periodic_week">
+                    <label><input  type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
+                    <select class="form-control" name="periodic_week">
                         <option value="1"><?php echo BookingTranslator::EveryWeek($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::Every2Week($lang) ?></option>
                         <option value="3"><?php echo BookingTranslator::Every3Week($lang) ?></option>
@@ -72,8 +72,8 @@
                     </select>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="4"></label>
-                    <select name="periodic_month">
+                    <label ><input type="radio" name="periodic_radio" value="4"></label>
+                    <select class="form-control" name="periodic_month">
                         <option value="1"><?php echo BookingTranslator::EveryMonthSameDate($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::EveryMonthSameDay($lang) ?></option>
                     </select>
@@ -88,41 +88,14 @@
                 <?php echo BookingTranslator::DateEndPeriodicity($lang) ?> 
             </label>
             <div class="col-xs-6">
-                <div class='col-xs-12 input-group date form_date_fr'>
-                    <input type='text' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo CoreTranslator::dateFromEn($periodInfo['enddate'], $lang) ?>"/>          
+                <div class='col-xs-12 input-group date'>
+                    <input type='date' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo $periodInfo['enddate'] ?>"/>          
                     <span class="input-group-addon">          
                         <span class="glyphicon glyphicon-calendar"></span>          
                     </span>
                 </div>
 
             </div>
-
-            <script type="text/javascript">
-
-                $('.form_date_fr').datetimepicker({
-                    language: 'fr',
-                    weekStart: 1,
-                    todayBtn: 1,
-                    autoclose: 1,
-                    todayHighlight: 1,
-                    startView: 2,
-                    minView: 2,
-                    forceParse: 0,
-                    format: 'dd/mm/yyyy'
-                });
-                $('.form_date_en').datetimepicker({
-                    language: 'us',
-                    weekStart: 1,
-                    todayBtn: 1,
-                    autoclose: 1,
-                    todayHighlight: 1,
-                    startView: 2,
-                    minView: 2,
-                    forceParse: 0,
-                    format: 'yyyy-mm-dd'
-                });
-            </script>
-
         </div>
     </div>    
 
@@ -205,5 +178,4 @@ if ($packageChecked > 0) {
 
 <?php include 'Modules/booking/View/Bookingdefault/deletescript.php'; ?>
 
-<?php
-endblock();
+<?php endblock(); ?>

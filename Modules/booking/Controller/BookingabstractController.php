@@ -23,15 +23,13 @@ require_once 'Modules/core/Model/CoreUser.php';
  */
 class BookingabstractController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("booking");
+    public function spaceExtraMenus(){
+        $lang = $this->getLanguage();
+        return [
+            ['name' => BookingTranslator::booking($lang), 'url' => 'bookingdayarea/'.$this->currentSpace['id'].'/'],
+            ['name' => BookingTranslator::journal($lang), 'url' => 'booking/'.$this->currentSpace['id'].'/journal']
+        ];
     }
-
-    
 
     /**
      * Get the content of of the booking menu for the calendar pages
@@ -73,10 +71,12 @@ class BookingabstractController extends CoresecureController {
         $modelResource = new ResourceInfo();
         $resources = $modelResource->resourceIDNameForArea($curentSiteId, $curentAreaId);
 
+        /*
         $_SESSION['bk_id_resource'] = $curentResourceId;
         $_SESSION['bk_id_area'] = $curentAreaId;
         $_SESSION['bk_id_site'] = $curentSiteId;
         $_SESSION['bk_curentDate'] = $curentDate;
+        */
 
         return array(
             'areas' => $areas,
@@ -84,7 +84,7 @@ class BookingabstractController extends CoresecureController {
             'curentSiteId' => $curentSiteId,
             'curentAreaId' => $curentAreaId,
             'curentResourceId' => $curentResourceId,
-            'curentDate' => $curentDate
+            'curentDate' => $curentDate,
         );
     }
     

@@ -50,10 +50,12 @@ class SeOrigin extends Model {
         if (!$id) {
             $sql = "INSERT INTO se_origin (id, name, display_order, id_space) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id, $name, $display_order, $id_space));
+            $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE se_origin SET name=?, display_order=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($name, $display_order, $id, $id_space));
         }
+        return $id;
     }
 
     public function getAll($id_space) {

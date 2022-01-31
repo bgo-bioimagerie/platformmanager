@@ -1,6 +1,6 @@
 <?php include 'Modules/services/View/layout.php' ?>
 
-<!-- body -->     
+    
 
 
 <?php startblock('stylesheet') ?>
@@ -101,5 +101,4 @@
     
 </script>
 
-<?php
-endblock();
+<?php endblock(); ?>

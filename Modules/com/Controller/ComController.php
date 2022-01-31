@@ -5,6 +5,7 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/com/Model/ComTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * 
@@ -12,16 +13,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  * Controller for the home page
  */
 class ComController extends CoresecureController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("com");
-        $_SESSION["openedNav"] = "com";
-    }
-
 
     public function sideMenu() {
         $id_space = $this->args['id_space'];
@@ -36,14 +27,17 @@ class ComController extends CoresecureController {
             'bgcolor' => $menuInfo['color'],
             'color' => $menuInfo['txtcolor'] ?? '',
             'Tilemessage' => ComTranslator::Tilemessage($lang),
-            'News' => ComTranslator::News($lang)
-
+            'News' => ComTranslator::News($lang),
+            'isAdmin' => $this->role == CoreSpace::$ADMIN
         ];
         return $this->twig->render("Modules/com/View/Com/navbar.twig", $dataView);
     }
 
     public function indexAction($id_space) {
-        $this->redirect('comtileedit/' . $id_space);
+        if($this->role  && $this->role == CoreSpace::$ADMIN) {
+            return $this->redirect('comtileedit/' . $id_space);
+        }
+        return $this->redirect('comnews/'.$id_space);
     }
 
     public function navbar($id_space) {

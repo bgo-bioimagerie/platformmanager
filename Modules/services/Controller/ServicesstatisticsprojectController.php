@@ -34,11 +34,11 @@ class ServicesstatisticsprojectController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
-        $_SESSION["openedNav"] = "statistics";
+
     }
 
     /**
@@ -59,7 +59,7 @@ class ServicesstatisticsprojectController extends ServicesController {
                 $y = date("Y") - 1;
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_begin = $y . "-" . $m . "-" . $d;
             } else {
                 $date_begin = date("Y", time()) . "-01-01";
             }
@@ -72,7 +72,7 @@ class ServicesstatisticsprojectController extends ServicesController {
                 $y = date("Y");
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_end = $y . "-" . $m . "-" . $d;
             } else {
                 $date_end = date("Y", time()) . "-12-31";
             }
@@ -90,8 +90,8 @@ class ServicesstatisticsprojectController extends ServicesController {
         if ($form->check()) {
             $date_start = CoreTranslator::dateToEn($form->getParameter("begining_period"), $lang);
             $date_end = CoreTranslator::dateToEn($form->getParameter("end_period"), $lang);
-            $this->generateBalance($id_space, $date_start, $date_end);
-            return;
+            $f = $this->generateBalance($id_space, $date_start, $date_end);
+            return ['data' => ['file' => $f]];
         }
 
         // set the view
@@ -457,8 +457,15 @@ class ServicesstatisticsprojectController extends ServicesController {
             $curentLine++;
 
             $unitName = $modelClient->getInstitution($id_space ,$invoice["id_responsible"]);
-            $visa = $modelVisa->get($id_space, $proj["in_charge"]); 
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($visa["id_user"]));
+            $proj = null;
+            $responsibleName = '';
+            if ($invoice["controller"] == "servicesinvoiceproject") {
+                $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
+                $visa = $modelVisa->get($id_space, $proj["in_charge"]);
+                $responsibleName = $modelUser->getUserFUllName($visa["id_user"]);
+            }
+
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $responsibleName);
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
 
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
@@ -467,9 +474,7 @@ class ServicesstatisticsprojectController extends ServicesController {
             $spreadsheet->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
             $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($id_space, $invoice["visa_send"]));
 
-            if ($invoice["controller"] == "servicesinvoiceproject") {
-                $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
-
+            if ($invoice["controller"] == "servicesinvoiceproject" && $proj) {
                 if (isset($proj["new_team"])) {
 
                     if ($proj["new_team"] == 2) {
@@ -914,6 +919,11 @@ class ServicesstatisticsprojectController extends ServicesController {
             //$objWriter = new PHPExcel_Writer_Excel2007($spreadsheet);
             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
+            if(getenv('PFM_MODE') == 'test') {
+                $f = tempnam('/tmp', 'statistics').'.xlsx';
+                $objWriter->save($f);
+                return $f;
+            }
             //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="platorm-manager-projet-bilan.xlsx"');
@@ -1091,6 +1101,11 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
+        if(getenv('PFM_MODE') == 'test'){
+            $f = tempnam('/tmp', 'statistics').'.xlsx';
+            $objWriter->save($f);
+            return ['data' => ['file' => $f]];
+        }
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-samples-return.xlsx"');
@@ -1104,23 +1119,23 @@ class ServicesstatisticsprojectController extends ServicesController {
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
-        $date_begin = $this->request->getParameterNoException("date_begin");
+        $date_begin = $this->request->getParameterNoException("begining_period");
         if ($date_begin == "") {
             $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
             $dateArray = explode("-", $date_begin);
             $y = date("Y") - 1;
-            $m = $dateArray[1];
-            $d = $dateArray[2];
-            $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            $m = $dateArray[1] ?? 1;
+            $d = $dateArray[2] ?? 1;
+            $date_begin = $y . "-" . $m . "-" . $d;
         }
-        $date_end = $this->request->getParameterNoException("date_end");
+        $date_end = $this->request->getParameterNoException("end_period");
         if ($date_end == "") {
             $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
             $dateArray = explode("-", $date_end);
             $y = date("Y");
-            $m = $dateArray[1];
-            $d = $dateArray[2];
-            $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+            $m = $dateArray[1] ?? 12;
+            $d = $dateArray[2] ?? 31;
+            $date_end = $y . "-" . $m . "-" . $d;
         }
 
         // build the form
@@ -1140,9 +1155,6 @@ class ServicesstatisticsprojectController extends ServicesController {
                     CoreTranslator::dateToEn($this->request->getParameter('end_period'), $lang)
             );
 
-            // export csv
-            header("Content-Type: application/csv-tab-delimited-table");
-            header("Content-disposition: filename=bookingusers.csv");
 
             $content = "name ; email \r\n";
 
@@ -1150,6 +1162,14 @@ class ServicesstatisticsprojectController extends ServicesController {
                 $content.= $user["name"] . ";";
                 $content.= $user["email"] . "\r\n";
             }
+
+            if(getenv('PFM_MODE') == 'test') {
+                return ['data' => ['stats' => $content]];
+            }
+
+            // export csv
+            header("Content-Type: application/csv-tab-delimited-table");
+            header("Content-disposition: filename=bookingusers.csv");
             echo $content;
             return;
         }

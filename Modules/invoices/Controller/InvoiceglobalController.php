@@ -29,14 +29,6 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 class InvoiceglobalController extends InvoiceAbstractController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $_SESSION["openedNav"] = "invoices";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
@@ -294,7 +286,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         // create invoice in the database
         $modelInvoice = new InInvoice();
-        $invoiceNumber = $modelInvoice->getNextNumber();
+        $invoiceNumber = $modelInvoice->getNextNumber($id_space);
         $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, $invoiceNumber, date("Y-m-d", time()), $id_resp, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         $modelInvoice->setTitle($id_space, $id_invoice, "Facturation: période du " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " au " . CoreTranslator::dateFromEn($endPeriod, $lang));

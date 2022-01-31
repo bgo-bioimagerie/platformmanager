@@ -25,8 +25,8 @@ class CoremainmenuController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
@@ -81,7 +81,8 @@ class CoremainmenuController extends CoresecureController {
         if ($form->check()) {
 
             $menuid = $modelMenu->set($id, $form->getParameter("name"), $form->getParameter("display_order"));
-            $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
+            $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("coremainmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name")]]);
         }
 
@@ -155,7 +156,8 @@ class CoremainmenuController extends CoresecureController {
                     $form->getParameter("name"),
                     $form->getParameter("id_main_menu"),
                     $form->getParameter("display_order"));
-            $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
+            $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("coremainsubmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name"), 'id_main_menu' => $form->getParameter("id_main_menu")]]);
 
             return;
@@ -247,7 +249,8 @@ class CoremainmenuController extends CoresecureController {
                     $form->getParameter("id_space"),
                     $form->getParameter("display_order")
             );
-            $_SESSION["message"] = CoreTranslator::MenuSaved($lang);
+            $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("coremainmenuitems", array(), ['menu' => ['id' => $itemid, 'name' => $form->getParameter("name"), 'id_space' => $form->getParameter("id_space"), 'id_sub_menu' => $form->getParameter("id_sub_menu")]]);
         }
 

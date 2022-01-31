@@ -17,15 +17,6 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
 class BookingsupsinfoController extends BookingsettingsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bookingsettings");
-        $_SESSION["openedNav"] = "bookingsettings";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
@@ -136,7 +127,8 @@ class BookingsupsinfoController extends BookingsettingsController {
             }
             */
             $modelSups->removeUnlistedSupInfos($id_space, $supID);
-            $_SESSION["message"] = BookingTranslator::Supplementaries_saved($lang);
+            $_SESSION['flash'] = BookingTranslator::Supplementaries_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("bookingsupsinfo/".$id_space);
             return;
         }

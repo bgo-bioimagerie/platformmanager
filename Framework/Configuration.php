@@ -34,12 +34,12 @@ class Configuration {
             self::$logger->pushHandler($streamHandler);
             self::$logger->pushProcessor(function ($entry) {
                 $user = 'anonymous';
-                if(isset($_SESSION["id_user"])) {
-                    $user = $_SESSION["id_user"];
+                if(isset($_SESSION['id_user'])) {
+                    $user = $_SESSION['id_user'];
                 }
                 $entry['extra']['user'] = $user;
-                if(isset($_SESSION["id_space"])) {
-                    $entry['extra']['space'] = $_SESSION["id_space"];
+                if(isset($_SESSION['id_space'])) {
+                    $entry['extra']['space'] = $_SESSION['id_space'];
                 }
                 return $entry;
             });

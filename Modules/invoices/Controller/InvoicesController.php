@@ -16,15 +16,6 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class InvoicesController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("invoices");
-    }
-
-
     public function sideMenu() {
         $id_space = $this->args['id_space'];
         return $this->navbar($id_space);

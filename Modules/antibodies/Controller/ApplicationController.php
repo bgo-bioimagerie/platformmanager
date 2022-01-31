@@ -15,10 +15,10 @@ class ApplicationController extends AntibodiesController {
      */
     private $acapplicationModel;
 
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->acapplicationModel = new AcApplication();
-        $_SESSION["openedNav"] = "antibodies";
+
     }
 
     // affiche la liste des Prelevements

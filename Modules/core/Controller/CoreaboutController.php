@@ -11,12 +11,6 @@ require_once 'Modules/core/Model/CoreInstall.php';
  */
 class CoreaboutController extends CorecookiesecureController {
 
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        $this->user = new CoreUser();
-        $this->logger = Configuration::getLogger();
-    }
-
     /**
      * (non-PHPdoc)
      * @see Controller::index()
@@ -26,15 +20,20 @@ class CoreaboutController extends CorecookiesecureController {
 
         $cdb = new CoreDB();
         $crel = $cdb->getRelease();
+        $need = [];
+        if(isset($_SESSION['user_status']) && $_SESSION['user_status'] == CoreStatus::$ADMIN) {
+            $need = $cdb->needUpgrade();
+        }
 
-            return $this->render(array(
-                'metadesc' => 'pfm about page',
-                'data' => [
-                    'tag' => $tag,
-                    'edb' => $cdb->getVersion(),
-                    'cdb' => $crel
-                ]
-            ));
+        return $this->render(array(
+            'metadesc' => 'pfm about page',
+            'data' => [
+                'tag' => $tag,
+                'edb' => $cdb->getVersion(),
+                'cdb' => $crel,
+                'need' => $need
+            ]
+        ));
         
     }
 

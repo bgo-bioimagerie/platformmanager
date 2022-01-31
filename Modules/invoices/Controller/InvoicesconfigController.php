@@ -12,7 +12,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/invoices/Model/InvoicesInstall.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
-
+require_once 'Modules/invoices/Controller/InvoiceglobalController.php';
 /**
  *
  * @author sprigent
@@ -23,8 +23,8 @@ class InvoicesconfigController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
@@ -45,24 +45,10 @@ class InvoicesconfigController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'invoices', $lang);
         if ($formMenusactivation->check()) {
-
-            $modelSpace->setSpaceMenu(
-                $id_space,
-                "invoices",
-                "invoices",
-                "glyphicon glyphicon-euro",
-                $this->request->getParameter("invoicesmenustatus"),
-                $this->request->getParameter("invoicesmenudisplay"),
-                1,
-                $this->request->getParameter("invoicesmenucolor"),
-                $this->request->getParameter("invoicesmenucolorTxt")
-            );
-
-            $this->redirect("invoicesconfig/" . $id_space);
-
-            return;
+            $this->menusactivation($id_space, 'invoices', 'euro');
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // period invoices
@@ -90,6 +76,32 @@ class InvoicesconfigController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
+    function checkTemplate($id_space) {
+        $client = (new ClClient())->get($id_space, 0);
+        $client["name"] = "my client";
+        $client["address_delivery"] = "in britany of course";
+        $client["address_invoice"] = "somewhere in France";
+        $client["phone"] = "112";
+        $client["email"] = "do-not-reply@pfm.org";
+
+        $date = date('Y-m-d');
+        $address = "Somewhere\nover the\nrainbow";
+        $total = 100;
+        $resp = "A pfm user";
+        $unit = "My prefered customer";
+        $number = 'fake';
+        $table = '<table class="table"><thead><tr><th>invoice details</th></tr></thead><tbody><tr><td>some details</td></tr></tbody></table>';
+
+        $dest = null;
+        try {
+            $c = new InvoiceglobalController($this->request, $this->currentSpace);
+            $dest = $c->generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, true, "", $client, true);
+        } catch(Exception $e) {
+            throw new PfmParamException('Invalid template: '.$e->getMessage());
+        }
+        return $dest;
+    }
+
     public function pdftemplateAction($id_space) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -104,16 +116,22 @@ class InvoicesconfigController extends CoresecureController {
 
         $formDownload = new Form($this->request, "formDownloadTemplate");
         $formDownload->setTitle(InvoicesTranslator::currentTemplate($lang));
+        $hasTemplate = false;
         if(file_exists('data/invoices/' . $id_space . '/template.twig')) {
-            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'data/invoices/' . $id_space . '/template.twig', true);
+            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'template.twig', true);
+            $hasTemplate = true;
         } else if (file_exists('data/invoices/' . $id_space . '/template.php')) {
-            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'data/invoices/' . $id_space . '/template.php', true);
+            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'template.php', true);
+            $hasTemplate = true;
         } else {
             $formDownload->addDownloadButton("url", InvoicesTranslator::DownloadTemplate($lang), 'externals/pfm/templates/invoice_template.twig', true);
         }
         if ($formDownload->check()) {
 
             $file = $this->request->getParameter('url');
+            if(!str_starts_with($file, 'externals')) {
+                $file = 'data/invoices/' . $id_space . '/'.$file;
+            }
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
             header("Content-Disposition: attachment; filename=$file");
@@ -125,6 +143,30 @@ class InvoicesconfigController extends CoresecureController {
             return;
         }
 
+        $formPreview = new Form($this->request, "formPreviewTemplate");
+        $formPreview->setTitle('Preview');
+        if($hasTemplate) {
+            $formPreview->addDownloadButton("url", "Preview", "template");
+        }
+        if($formPreview->check()) {
+            Configuration::getLogger()->debug('[invoice][template] preview');
+            if(!file_exists('data/invoices/' . $id_space . '/template.twig') && !file_exists('data/invoices/' . $id_space . '/template.php')) {
+               throw new PfmParamException('no template available');
+            }
+            $f = $this->checkTemplate($id_space);
+            Configuration::getLogger()->debug('[invoice][template] shoud show', ['f' => $f]);
+            $mime = mime_content_type($f);
+            header('Content-Description: File Transfer');
+            header('Content-Type: '.$mime);
+            header('Content-Disposition: attachment; filename="invoice.pdf"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($f));
+            readfile($f);
+            return;
+        }   
+
         $formUpload = new Form($this->request, "formUploadTemplate");
         $formUpload->setTitle(InvoicesTranslator::uploadTemplate($lang));
         $formUpload->addUpload("template", "");
@@ -135,9 +177,33 @@ class InvoicesconfigController extends CoresecureController {
             if (!file_exists('data/invoices/' . $id_space)) {
                 mkdir('data/invoices/' . $id_space, 0777, true);
             }
+
+            if(file_exists('data/invoices/' . $id_space . '/template.twig')) {
+                // backup
+                Configuration::getLogger()->debug('[invoices][template] backup existing template');
+                copy('data/invoices/' . $id_space . '/template.twig', 'data/invoices/' . $id_space . '/template.twig.save');
+            }
             FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'template', 'template.twig');
 
-            $_SESSION["message"] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang) ;
+            try {
+                $this->checkTemplate($id_space);
+            } catch(Exception $e) {
+                if(file_exists('data/invoices/' . $id_space . '/template.twig.save')) {
+                    // backup
+                    Configuration::getLogger()->debug('[invoices][template] revert existing template');
+                    copy('data/invoices/' . $id_space . '/template.twig.save', 'data/invoices/' . $id_space . '/template.twig');
+                    unlink('data/invoices/' . $id_space . '/template.twig.save');
+                }
+                Configuration::getLogger()->debug('[invoices][template] invalid template', ['error' => $e->getMessage()]);
+                throw $e;
+            }
+
+            if(file_exists('data/invoices/' . $id_space . '/template.twig.save')) {
+                unlink('data/invoices/' . $id_space . '/template.twig.save');
+            }
+
+            $_SESSION['flash'] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect('invoicepdftemplate/' . $id_space);
             return;
         }
@@ -167,7 +233,7 @@ class InvoicesconfigController extends CoresecureController {
             $files = scandir('data/invoices/' . $id_space);
 
             foreach ($files as $file) {
-                if (strpos($file, ".") > 0 && $file != "template.twig") {
+                if (strpos($file, ".") > 0 && $file != "template.twig" && !str_ends_with($file, '.pdf')) {
                     $data[] = array('name' => $file, 'id' => str_replace('.', "__pm__", $file));
                 }
             }
@@ -181,6 +247,7 @@ class InvoicesconfigController extends CoresecureController {
 
         $this->render(array("id_space" => $id_space,
             "formDownload" => $currentTemplate ? $formDownload->getHtml($lang): '',
+            "formPreview" => $formPreview->getHtml($lang),
             "formUpload" => $formUpload->getHtml($lang), "tableHtml" => $tableHtml,
             "formUploadImages" => $formUploadImages->getHtml($lang),
             "lang" => $lang));
@@ -209,33 +276,9 @@ class InvoicesconfigController extends CoresecureController {
         return $form;
     }
 
-    protected function menusactivationForm($id_space, $lang) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "invoices");
-        $displayUserMenu = $modelSpace->getSpaceMenusDisplay($id_space, "invoices");
-        $invoicesmenucolor = $modelSpace->getSpaceMenusColor($id_space, "invoices");
-        $invoicesmenucolorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "invoices");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("invoicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("invoicesmenudisplay", CoreTranslator::Display_order($lang), false, $displayUserMenu);
-        $form->addColor("invoicesmenucolor", CoreTranslator::color($lang), false, $invoicesmenucolor);
-        $form->addColor("invoicesmenucolorTxt", CoreTranslator::text_color($lang), false, $invoicesmenucolorTxt);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
     public function periodForm($modelCoreConfig, $id_space, $lang) {
-        $invoiceperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space), $lang);
-        $invoiceperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("invoiceperiodend", $id_space), $lang);
+        $invoiceperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space);
+        $invoiceperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $id_space);
 
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));

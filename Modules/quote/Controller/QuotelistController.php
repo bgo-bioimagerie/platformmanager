@@ -32,15 +32,6 @@ require_once 'Modules/quote/Controller/QuoteController.php';
 class QuotelistController extends QuoteController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("quote");
-        $_SESSION["openedNav"] = "quote";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
@@ -88,22 +79,27 @@ class QuotelistController extends QuoteController {
             "date_last_modified" => QuoteTranslator::DateLastModified($lang)
         ));
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml,
+            "data" => ['quotes' => $data]
+        ));
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id): ?array {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
         $modelQuote = new Quote();
         $info = $modelQuote->get($id_space, $id);
 
         if ($info["id_user"] > 0) {
-            $this->editexistinguserAction($id_space, $id);
+            return $this->editexistinguserAction($id_space, $id);
         } else {
-            $this->editnewuserAction($id_space, $id);
+            return $this->editnewuserAction($id_space, $id);
         }
     }
 
-    public function editexistinguserAction($id_space, $id) {
+    public function editexistinguserAction($id_space, $id): ?array {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -160,8 +156,7 @@ class QuotelistController extends QuoteController {
             if (!$pricing || $pricing === null) {
                 $_SESSION['flash'] = QuoteTranslator::pricingNeeded($lang);
                 $_SESSION['flashClass'] = "danger";
-                $this->redirect("quoteuser/" . $id_space . "/" . $id);
-                return;
+                return $this->redirect("quoteuser/" . $id_space . "/" . $id, [], ['error' => 'pricingNeeded']);
             }
             $id = $modelQuote->set(
                 $id,
@@ -169,22 +164,28 @@ class QuotelistController extends QuoteController {
                 "",
                 "",
                 "",
-                "",
+                0,
                 $form->getParameter('id_user'),
                 $form->getParameter('id_client'),
                 $this->request->getParameterNoException('date_open')
             );
             $_SESSION["flash"] = QuoteTranslator::QuoteHasBeenSaved($lang);
             $_SESSION["flashClass"] = "success";
-            $this->redirect("quoteuser/" . $id_space . "/" . $id);
-            return;
+            return $this->redirect("quoteuser/" . $id_space . "/" . $id, [], ['quote' => ['id' => $id]]);
         }
 
         $formitemHtml = $this->createItemForm($id_space);
 
-        $this->render(array("id_space" => $id_space, 'id_quote' => $id, "lang" => $lang,
-            "formHtml" => $form->getHtml($lang), "tableHtml" => $tableHtml,
-            'items' => $items, 'formitemHtml' => $formitemHtml), 'editexistinguserAction');
+        return $this->render(array(
+            "id_space" => $id_space,
+            'id_quote' => $id,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang),
+            "tableHtml" => $tableHtml,
+            'items' => $items,
+            'formitemHtml' => $formitemHtml,
+            'data' => ['quote' => $info, 'items' => $items]
+        ), 'editexistinguserAction');
     }
 
     protected function createItemForm($id_space) {
@@ -236,7 +237,7 @@ class QuotelistController extends QuoteController {
         return $table->view($items, $headers);
     }
 
-    public function editnewuserAction($id_space, $id) {
+    public function editnewuserAction($id_space, $id): ?array {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -306,10 +307,9 @@ class QuotelistController extends QuoteController {
             if (!$pricing || $pricing === null) {
                 $_SESSION['flash'] = QuoteTranslator::pricingNeeded($lang);
                 $_SESSION['flashClass'] = "danger";
-                $this->redirect("quotenew/" . $id_space . "/" . $id);
-                return;
+                return $this->redirect("quotenew/" . $id_space . "/" . $id, [], ['error' => 'pricingNeeded']);
             }
-            $id = $modelQuote->set(
+            $quote_id = $modelQuote->set(
                     $id,
                     $id_space,
                     $form->getParameter('recipient'),
@@ -320,21 +320,24 @@ class QuotelistController extends QuoteController {
                     $form->getParameter('id_client'),
                     $form->getParameter('date_open')
             );
-            $_SESSION['message'] = QuoteTranslator::QuoteHasBeenSaved($lang);
+            $_SESSION['flash'] = QuoteTranslator::QuoteHasBeenSaved($lang);
             if ($id > 0) {
-                $this->redirect("quotenew/" . $id_space . "/" . $id);
-            } else {
-                $this->redirect("quote/" . $id_space);
+                return $this->redirect("quotenew/" . $id_space . "/" . $id, [], ['quote' => ['id' => $quote_id]]);
             }
-            return;
+            return $this->redirect("quote/" . $id_space, [], ['quote' => ['id' => $quote_id]]);
         }
 
         $formitemHtml = $this->createItemForm($id_space);
 
-        $this->render(array("id_space" => $id_space, 'id_quote' => $id, "lang" => $lang,
+        return $this->render(array(
+            "id_space" => $id_space,
+            'id_quote' => $id,
+            "lang" => $lang,
             "formHtml" => $form->getHtml($lang), "tableHtml" => $tableHtml,
             "formitemHtml" => $formitemHtml,
-            "items" => $items), 'editnewuserAction');
+            "items" => $items,
+            "data" => ['quote' => $info, 'items' => $items]
+        ), 'editnewuserAction');
     }
 
     public function edititemAction($id_space) {
@@ -352,14 +355,14 @@ class QuotelistController extends QuoteController {
 
 
         $modelItem = new QuoteItem();
-        $modelItem->setItem($id_space, $id, $id_quote, $id_content, $module, $quantity, $comment);
+        $id_item = $modelItem->setItem($id_space, $id, $id_quote, $id_content, $module, $quantity, $comment);
 
         $modelQuote = new Quote();
         $quote = $modelQuote->get($id_space, $id_quote);
         if ($quote["id_user"] == 0) {
-            $this->redirect("quotenew/" . $quote["id_space"] . '/' . $quote["id"]);
+            return $this->redirect("quotenew/" . $quote["id_space"] . '/' . $quote["id"], [], ['quote' => ['id' => $id_quote], 'item' => ['id' => $id_item]]);
         } else {
-            $this->redirect("quoteuser/" . $quote["id_space"] . '/' . $quote["id"]);
+            return $this->redirect("quoteuser/" . $quote["id_space"] . '/' . $quote["id"], [], ['quote' => ['id' => $id_quote], 'item' => ['id' => $id_item]]);
         }
     }
 

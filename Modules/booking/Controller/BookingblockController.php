@@ -19,15 +19,6 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
 class BookingblockController extends BookingsettingsController {
 
     /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bookingsettings");
-        $_SESSION["openedNav"] = "bookingsettings";
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
@@ -70,6 +61,13 @@ class BookingblockController extends BookingsettingsController {
         $end_hour = $this->request->getParameter("end_hour");
         $end_min = $this->request->getParameter("end_min");
         $color_type_id = $this->request->getParameter("color_code_id");
+
+        if($begin_date == "") {
+            throw new PfmParamException("invalid begin date");
+        }
+        if($end_date == "") {
+            throw new PfmParamException("invalid end date");
+        }
 
         $beginDate = CoreTranslator::dateToEn($begin_date, $lang);
         $beginDate = explode("-", $beginDate);

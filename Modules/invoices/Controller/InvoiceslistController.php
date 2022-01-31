@@ -22,15 +22,6 @@ require_once 'Modules/invoices/Controller/InvoicesController.php';
  * Controller for the home page
  */
 class InvoiceslistController extends InvoicesController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("invoices");
-        $_SESSION["openedNav"] = "invoices";
-    }
     
     protected function getInvoicePeriod($id_space, $year) {
         $modelCoreConfig = new CoreConfig();
@@ -86,7 +77,8 @@ class InvoiceslistController extends InvoicesController {
             }
         }
         $dates = $this->getInvoicePeriod($id_space, $year);
-        $invoices = $modelInvoices->getSentByPeriod($id_space, $sent, $dates["yearBegin"], $dates["yearEnd"], "number");
+        $data = $modelInvoices->getSentByPeriod($id_space, $sent, $dates["yearBegin"], $dates["yearEnd"], "number");
+        $invoices = $data;
         for ($i = 0; $i < count($invoices); $i++) {
             $invoices[$i]["date_generated"] = CoreTranslator::dateFromEn($invoices[$i]["date_generated"], $lang);
             $invoices[$i]["date_paid"] = CoreTranslator::dateFromEn($invoices[$i]["date_paid"], $lang);
@@ -123,8 +115,14 @@ class InvoiceslistController extends InvoicesController {
         }
         $tableView = $table->view($invoices, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableView,
-            "year" => $year, "years" => $years, "sent" => $sent
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableView,
+            "year" => $year,
+            "years" => $years,
+            "sent" => $sent,
+            "data" => ['invoices' => $data]
         ));
     }
     
@@ -153,9 +151,10 @@ class InvoiceslistController extends InvoicesController {
         //echo '<br/> Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         //return;
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
-        $object = new $controllerName(new Request(array(), false));
-        $object->setRequest($this->request);
-        $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
+        $object = new $controllerName($this->request, $this->currentSpace);
+        //$object->setRequest($this->request);
+        Configuration::getLogger()->debug('[invoices][edit]', ['controller' => $service['controller'], 'module' => $service['module'], 'id' => $id]);
+        return $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
     }
 
     public function createPurcentageDiscountForm($discountValue) {
@@ -183,8 +182,8 @@ class InvoiceslistController extends InvoicesController {
         $form->setTitle(InvoicesTranslator::InvoiceInfo($lang));
         $form->addText("number", InvoicesTranslator::Number($lang), false, $invoice["number"], false);
         $form->addText("resp", ClientsTranslator::ClientAccount($lang), false, $modelClient->getName($id_space, $invoice["id_responsible"]), false);
-        $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, CoreTranslator::dateFromEn($invoice["date_generated"], $lang));
-        $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
+        $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, $invoice["date_generated"]);
+        $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, $invoice["date_send"]);
         
         $modelVisa = new InVisa();
         $visasList = $modelVisa->getForList($id_space);
@@ -192,7 +191,7 @@ class InvoiceslistController extends InvoicesController {
         
         $modelConfig = new CoreConfig();
         if($modelConfig->getParamSpace("useInvoiceDatePaid", $id_space) == 1){
-            $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, CoreTranslator::dateFromEn($invoice["date_paid"], $lang));
+            $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, $invoice["date_paid"]);
         }
         else{
             $form->addHidden("date_paid", "");
@@ -205,7 +204,7 @@ class InvoiceslistController extends InvoicesController {
             
             if($this->request->getParameter("date_send") != "" && $this->request->getParameter("visa_send") == 0){
                 $message = InvoicesTranslator::TheFieldVisaIsMandatoryWithSend($lang);
-                $_SESSION["message"] = $message;
+                $_SESSION['flash'] = $message;
                 $this->redirect("invoiceinfo/".$id_space."/".$id);
                 return;
             }
@@ -217,7 +216,8 @@ class InvoiceslistController extends InvoicesController {
                     CoreTranslator::dateToEn($this->request->getParameter("date_send"), $lang), 
                     $this->request->getParameter("visa_send"));
             
-            $_SESSION["message"] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("invoiceinfo/" . $id_space . "/" . $id);
             return "";
         }
@@ -247,8 +247,9 @@ class InvoiceslistController extends InvoicesController {
 
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
-        $object = new $controllerName(new Request(array(), false));
-        $object->setRequest($this->request);
+        $object = new $controllerName($this->request, $this->currentSpace);
+        // $object->setRequest($this->request);
+        Configuration::getLogger()->debug('[invoices][delete]', ['controller' => $service['controller'], 'module' => $service['module'], 'id' => $id]);
         $object->runAction($service["module"], "delete", array($id_space, $id));
         
         // delete invoice
@@ -258,7 +259,7 @@ class InvoiceslistController extends InvoicesController {
         $modelInvoice->delete($id_space, $id);
 
         // redirect
-        $this->redirect("invoices/" . $id_space);
+        return $this->redirect("invoices/" . $id_space, [], ['invoice' => $service]);
     }
 
 }

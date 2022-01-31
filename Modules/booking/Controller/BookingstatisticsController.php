@@ -36,14 +36,8 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
 class BookingstatisticsController extends StatisticsController {
 
     /**
-     * Constructor
+     * @bug sends back stats as print_r, not a report
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("booking");
-        $_SESSION["openedNav"] = "statistics";
-    }
-    
     public function statquantitiesAction($id_space){
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -66,7 +60,7 @@ class BookingstatisticsController extends StatisticsController {
             $stats = !empty($stats) ?: "No data found for this period";
             // TODO: link that to a report generation
             print_r($stats);
-            return;
+            return ['data' => ['stats' => $stats]];
         }
         
         $this->render(array(
@@ -111,7 +105,11 @@ class BookingstatisticsController extends StatisticsController {
                 $csv .= "\n";
             }
             
-            header('Content-Disposition: attachment; filename="filename.csv";');
+            if(getenv('PFM_MODE') == 'test') {
+               return ['data' => ['stats' => $csv]];
+            }
+            $filename = "booking_stats_resps_".date('Y-m-d').".csv";
+            header('Content-Disposition: attachment; filename="'.$filename.'";');
             echo $csv;
             return;
         }
@@ -184,6 +182,13 @@ class BookingstatisticsController extends StatisticsController {
             // write excel file
             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
+
+            if(getenv('PFM_MODE') == 'test') {
+                $tmpName = tempnam('/tmp', 'statistics').'.xlsx';
+                $objWriter->save($tmpName);
+                return ['data' => ['file' => $tmpName]];
+            }
+
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
             header('Cache-Control: max-age=0');
@@ -214,19 +219,16 @@ class BookingstatisticsController extends StatisticsController {
         $graphArray = $modelGraph->getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
         $graphTimeArray = $modelGraph->getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
 
-        $modelResource = new ResourceInfo();
-        $resources = $modelResource->getForSpace($id_space);
-        $resourcesNumber = count($resources);
+        // $modelResource = new ResourceInfo();
+        // $resources = $modelResource->getForSpace($id_space);
+        // $resourcesNumber = count($resources);
 
-        $modelResourceC = new ReCategory();
-        $resourcesCategory = $modelResourceC->getBySpace($id_space);
-        $resourcesCategoryNumber = count($resourcesCategory);
+        // $modelResourceC = new ReCategory();
+        // $resourcesCategory = $modelResourceC->getBySpace($id_space);
+        // $resourcesCategoryNumber = count($resourcesCategory);
         // render data
         $camembertCount = $modelGraph->getCamembertArray($id_space, $month_start, $year_start, $month_end, $year_end);
         $camembertTimeCount = $modelGraph->getCamembertTimeArray($id_space, $month_start, $year_start, $month_end, $year_end);
-
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=booking_stats.csv");
 
         $content = "";
         // annual number
@@ -259,8 +261,14 @@ class BookingstatisticsController extends StatisticsController {
         foreach ($camembertTimeCount as $g) {
             $content .= $g[0] . " ; " . $g[1] . "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return ['data' => ['stats' => $content]];
+        }
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=booking_stats.csv");
         echo $content;
-        return;
+        
     }
 
     public function statbookingusersAction($id_space) {
@@ -311,7 +319,7 @@ class BookingstatisticsController extends StatisticsController {
             $model = new BkStatsUser();
             $users = $model->bookingUsers($id_space, CoreTranslator::dateToEn($form->getParameter("startdate"), $lang), CoreTranslator::dateToEn($form->getParameter("enddate"), $lang));
 
-            $this->exportstatbookingusersCSV($users);
+            return $this->exportstatbookingusersCSV($users);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -331,15 +339,19 @@ class BookingstatisticsController extends StatisticsController {
      */
     private function exportstatbookingusersCSV($users) {
 
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=bookingusers.csv");
-
         $content = "name ; email \r\n";
 
         foreach ($users as $user) {
             $content.= $user["name"] . ";";
             $content.= $user["email"] . "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=bookingusers.csv");
         echo $content;
     }
 
@@ -373,12 +385,10 @@ class BookingstatisticsController extends StatisticsController {
 
             // convert start date to unix date
             $tabDate = explode("-", $searchDate_start);
-            $date_debut = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
             $searchDate_s = mktime(0, 0, 0, $tabDate[1], $tabDate[2], $tabDate[0]);
 
             // convert end date to unix date
             $tabDate = explode("-", $searchDate_end);
-            $date_fin = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
             $searchDate_e = mktime(0, 0, 0, $tabDate[1], $tabDate[2] + 1, $tabDate[0]);
 
             if ($searchDate_e <= $searchDate_s) {
@@ -399,14 +409,8 @@ class BookingstatisticsController extends StatisticsController {
             $contition_et_ou = $this->request->getParameterNoException('condition_et_ou');
             $entrySummary = $this->request->getParameterNoException('summary_rq');
 
-            //print_r($champ);
-            //print_r($type_recherche);
-            //print_r($text);
-
             $reportModel = new BkReport();
             $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
-
-            //print_r($table);
 
             $outputType = $this->request->getParameterNoException('output');
 
@@ -456,12 +460,10 @@ class BookingstatisticsController extends StatisticsController {
                 ));
                 return;
             } else if ($outputType == 4) { // details csv
-                $this->exportDetailsCSV($table, $lang);
-                return;
+                return $this->exportDetailsCSV($table, $lang);
             } else if ($outputType == 5) { // summary csv
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
-                $this->exportSummaryCSV($summaryTable, $lang);
-                return;
+                return $this->exportSummaryCSV($summaryTable);
             }
         }
 
@@ -477,9 +479,6 @@ class BookingstatisticsController extends StatisticsController {
      * @param string $lang
      */
     private function exportDetailsCSV($table, $lang) {
-
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=rapport.csv");
 
         $content = "";
         $content.= ResourcesTranslator::Area($lang) . " ; "
@@ -505,17 +504,21 @@ class BookingstatisticsController extends StatisticsController {
             $content.= $t["login"] . " ";
             $content.= "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=rapport.csv");
         echo $content;
     }
 
     /**
      * Internal method for GRR stats
      * @param array $table
-     * @param string $lang
      */
-    private function exportSummaryCSV($summaryTable, $lang) {
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=rapport.csv");
+    private function exportSummaryCSV($summaryTable) {
 
         $countTable = $summaryTable['countTable'];
         $timeTable = $summaryTable['timeTable'];
@@ -567,11 +570,23 @@ class BookingstatisticsController extends StatisticsController {
         }
         $content .= "(" . $totalCG . ")" . $totalHG / 3600;
         $content .= " \r\n ";
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=rapport.csv");
         echo $content;
     }
 
     public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
         $year_start = $dateBeginArray[0];
@@ -616,7 +631,12 @@ class BookingstatisticsController extends StatisticsController {
     }
 
     public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $month_start = $dateBeginArray[1];
         $year_start = $dateBeginArray[0];

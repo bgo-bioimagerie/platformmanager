@@ -15,7 +15,7 @@
 </style>
 
 <?php endblock(); ?>
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php if ($showSubBar){ ?> 
@@ -25,7 +25,6 @@
 </div>
 </div>
 <?php } ?>
-
 
 <div class="row" style="background-color: #fff">
     <div class="container"<?php if ($showSubBar){echo 'style="margin-top: 50px;"';} ?> >
@@ -93,7 +92,7 @@
 
                             <!-- JOIN BUTTON -->
                             <?php
-                                if (!in_array($item["id"], $spacesUserIsAdminOf) && (isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0)) {
+                                if ($item['status'] == 1 && !in_array($item["id"], $spacesUserIsAdminOf) && (isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0)) {
                                     if (!in_array($item["id"], $userPendingSpaces)) {
                                         $isMemberOfSpace = (in_array($item["id"], $userSpaces)) ? true : false;
                                         if(!$isMemberOfSpace) {
@@ -127,5 +126,4 @@
         </div>
     </div>
 </div> <!-- /container -->
-<?php
-endblock();
+<?php endblock(); ?>

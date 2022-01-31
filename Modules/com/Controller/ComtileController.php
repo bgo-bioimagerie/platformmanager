@@ -13,16 +13,11 @@ require_once 'Modules/com/Controller/ComController.php';
  */
 class ComtileController extends ComController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("com");
-    }
-
     public function editAction($id_space){
-        
+        $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
+        if($this->role < CoreSpace::$ADMIN) {
+            throw new PfmAuthException('admins only');
+        }
         $modelParam = new CoreConfig();
         $message = $modelParam->getParamSpace("tilemessage", $id_space);
         

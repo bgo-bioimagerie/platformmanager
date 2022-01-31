@@ -1,6 +1,6 @@
 <?php include 'Modules/booking/View/layoutsettings.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
     <div class="pm-form">
@@ -197,5 +197,4 @@ if (count($list) < 7) {
             </form>
         </div>
     </div>
-<?php
-endblock();
+<?php endblock(); ?>

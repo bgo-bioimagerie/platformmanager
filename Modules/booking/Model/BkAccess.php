@@ -9,6 +9,11 @@ require_once 'Framework/Model.php';
  */
 class BkAccess extends Model {
 
+    public static int $AccessUser = 1;
+    public static int $AccessAuthorizedUser = 2;
+    public static int $AccessManager = 3;
+    public static int $AccessAdmin = 4;
+
     /**
      * Create the BkAccess table
      * 
@@ -50,6 +55,13 @@ class BkAccess extends Model {
         $user = $this->runRequest($sql, array($id, $id_space));
         $tmp = $user->fetch();
         return  $tmp ? $tmp[0] : null;
+    }
+
+    public function getAccessIds($id_space, array $ids) {
+
+        $sql = "SELECT id_resource, id_access FROM bk_access WHERE id_resource IN (".implode(',', $ids).") AND id_space=? AND deleted=0";
+        $user = $this->runRequest($sql, array($id_space));
+        return $user->fetchAll();
     }
     
     

@@ -500,6 +500,29 @@ class Form {
     }
 
     /**
+     * Add float input to the form
+     * @param string $name Input name
+     * @param string $label Input label
+     * @param string $isMandatory True if mandatory input
+     * @param string $value Input default value
+     */
+    public function addFloat($name, $label, $isMandatory = false, $value = "") {
+        $this->types[] = "float";
+        $this->names[] = $name;
+        $this->labels[] = $label;
+        $this->setValue($value);
+        $this->isMandatory[] = $isMandatory;
+        $this->choices[] = array();
+        $this->choicesid[] = array();
+        $this->validated[] = true;
+        $this->enabled[] = "";
+        $this->useJavascript[] = false;
+        $this->submitOnChange[] = false;
+        $this->readonly[] = false;
+        $this->checkUnicity[] = false;
+    }
+
+    /**
      * Add select input to the form
      * @param string $name Input name
      * @param string $label Input label
@@ -618,6 +641,14 @@ class Form {
     }
 
     /**
+     * If formAdd, gets its Id
+     * @return String
+     */
+    public function getFormAddId() {
+        return $this->isFormAdd ? $this->formAdd->getId() : false;
+    }
+
+    /**
      * Internal function to add the form header
      * @return type HTML content
      */
@@ -709,6 +740,9 @@ class Form {
             if ($this->types[$i] == "number") {
                 $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
+            if ($this->types[$i] == "float") {
+                $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, true);
+            }
             if ($this->types[$i] == "textarea") {
                 $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
             }
@@ -741,7 +775,7 @@ class Form {
         }
 
         if ($this->isDate === true) {
-            $html .= $formHtml->timePickerScript();
+            // $html .= $formHtml->timePickerScript();
         }
         if ($this->isTextArea === true) {
             $html .= $formHtml->textAreaScript();
@@ -772,9 +806,9 @@ class Form {
     public function check() {
         $formID = $this->request->getParameterNoException("formid");
         if ($formID == $this->id) {
+            Configuration::getLogger()->debug('[form=check] form submit', ['form' => $this->id, 'data' => $this->request->params()]);
             return 1;
         }
-        Configuration::getLogger()->debug('[form=check] failed', ['form' => $this->id, 'data' => $this->request->params()]);
         return 0;
     }
 

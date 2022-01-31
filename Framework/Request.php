@@ -33,6 +33,10 @@ class Request {
         }
     }
 
+    public function setParams(array $params) {
+        $this->parameters = $params;
+    }
+
     public function params() {
         return $this->parameters;
     }

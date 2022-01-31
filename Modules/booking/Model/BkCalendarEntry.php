@@ -5,6 +5,7 @@ require_once 'Framework/Events.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * Class defining the GRR area model
@@ -64,7 +65,12 @@ class BkCalendarEntry extends Model {
     }
 
     public function getStatsQuantities($id_space, $dateBegin, $dateEnd) {
-
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $dateBeginArray = explode("-", $dateBegin);
         $beginTime = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]);
         $dateEndArray = explode("-", $dateEnd);
@@ -95,7 +101,12 @@ class BkCalendarEntry extends Model {
     }
     
     public function getStatTimeResps($id_space, $dateBegin, $dateEnd){
-        
+        if($dateBegin == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($dateEnd == "") {
+            throw new PfmParamException("invalid end date");
+        }
         //dates to time
         $dateBeginArray = explode("-", $dateBegin);
         $dateBeginTime = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]);
@@ -315,7 +326,12 @@ class BkCalendarEntry extends Model {
     }
 
     public function getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $id_resource, $id_resp) {
-
+        if($beginPeriod == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($endPeriod == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $beginPeriodArray = explode("-", $beginPeriod);
         $searchDate_start = mktime(0, 0, 0, $beginPeriodArray[1], $beginPeriodArray[2], $beginPeriodArray[0]);
         $endPeriodArray = explode("-", $endPeriod);
@@ -409,6 +425,9 @@ class BkCalendarEntry extends Model {
      * @return multitype:
      */
     public function getEntriesForDay($id_space, $curentDate) {
+        if($curentDate == "") {
+            throw new PfmParamException("invalid date");
+        }
         $dateArray = explode("-", $curentDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
@@ -429,37 +448,87 @@ class BkCalendarEntry extends Model {
      * @param $dateEnd End of the periode in linux time
      * 
      */
-    public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id) {
+    public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id, $id_user='') {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
-        $sql = 'SELECT * FROM bk_calendar_entry WHERE
-				(start_time <=:end AND end_time >= :start)
-                AND resource_id = :res
-                AND deleted=0
-                AND id_space=:id_space
-				ORDER BY start_time';
+        $sql = 'SELECT bk_calendar_entry.* , bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+                LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
+                INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+                WHERE
+				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
+                AND bk_calendar_entry.resource_id = :res
+                AND bk_calendar_entry.deleted=0
+                AND bk_calendar_entry.id_space=:id_space';
+        if($id_user) {
+            $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
+            $q['id_user'] = $id_user;
+        }
+		$sql .=	 ' ORDER BY bk_calendar_entry.start_time';
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
 
-        $modelUser = new CoreUser();
-        $modelColor = new BkColorCode();
+        //$modelUser = new CoreUser();
+        //$modelColor = new BkColorCode();
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                $userInfo = $modelUser->userAllInfo($rid);
-                $data[$i]["recipient_fullname"] = $userInfo["name"] . " " . $userInfo["firstname"];
-                $data[$i]["phone"] = "";
-                if (isset($userInfo["phone"])) {
-                    $data[$i]["phone"] = $userInfo["phone"];
-                }
-                $data[$i]["color_bg"] = $modelColor->getColorCodeValue($id_space, $data[$i]["color_type_id"]);
-                $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space ,$data[$i]["color_type_id"]);
+                //$userInfo = $modelUser->userAllInfo($rid);
+                $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
             } else {
                 $data[$i]["recipient_fullname"] = "";
                 $data[$i]["phone"] = "";
-                $data[$i]["color_bg"] = $modelColor->getColorCodeValue($id_space, $data[$i]["color_type_id"]);
-                $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space, $data[$i]["color_type_id"]);
+            }
+            if(!$data[$i]["color_bg"]) {
+                $data[$i]["color_bg"] = "aaaaaa";
+            }
+            if(!$data[$i]["color_text"]) {
+                $data[$i]["color_text"] = "000000";
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get all the entries for a given period and a given list of resource
+     * @param $dateBegin Beginning of the periode in linux time
+     * @param $dateEnd End of the periode in linux time
+     * 
+     */
+    public function getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, array $resource_ids, $id_user='') {
+        $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
+
+        $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+            LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
+            INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+            WHERE
+				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
+                AND bk_calendar_entry.resource_id IN ('.implode(',', $resource_ids).')
+                AND bk_calendar_entry.deleted=0
+                AND bk_calendar_entry.id_space=:id_space';
+        if ($id_user) {
+            $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
+            $q['id_user'] = $id_user;
+        }
+		$sql .= ' ORDER BY bk_calendar_entry.start_time';
+
+        $req = $this->runRequest($sql, $q);
+        $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
+        for ($i = 0; $i < count($data); $i++) {
+            $rid = $data[$i]["recipient_id"];
+            if ($rid > 0) {
+                //$userInfo = $modelUser->userAllInfo($rid);
+                $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
+            } else {
+                $data[$i]["recipient_fullname"] = "";
+                $data[$i]["phone"] = "";
+            }
+            if(!$data[$i]["color_bg"]) {
+                $data[$i]["color_bg"] = "aaaaaa";
+            }
+            if(!$data[$i]["color_text"]) {
+                $data[$i]["color_text"] = "000000";
             }
         }
 
@@ -473,19 +542,25 @@ class BkCalendarEntry extends Model {
      * @param unknown $areaId
      * @return multitype:
      */
-    public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId) {
+    public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId, $id_user='') {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->resourceIDNameForArea($id_space, $areaId);
 
+        /*
         $data = array();
         foreach ($resources as $resource) {
             $id = $resource["id"];
             $dataInter = $this->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $id);
             $data = array_merge($data, $dataInter);
         }
+        */
 
-        return $data;
+        $rids = [];
+        foreach($resources as $r) {
+            $rids[] = $r['id'];
+        }
+       return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids, $id_user);
     }
 
     public function isConflictP($id_space, $start_time, $end_time, $resource_id, $id_period) {
@@ -648,7 +723,12 @@ class BkCalendarEntry extends Model {
      * @return boolean
      */
     public function hasResponsibleEntry($id_space, $resp_id, $startdate, $enddate) {
-
+        if($startdate == "") {
+            throw new PfmParamException("invalid start date");
+        }
+        if($enddate == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $beginPeriodArray = explode("-", $startdate);
         $searchDate_start = mktime(0, 0, 0, $beginPeriodArray[1], $beginPeriodArray[2], $beginPeriodArray[0]);
         $endPeriodArray = explode("-", $enddate);
@@ -740,9 +820,10 @@ class BkCalendarEntry extends Model {
                 AND core_j_spaces_user.id_space=?
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
-                AND user.is_active = 1 
+                AND user.is_active = 1
+                AND core_j_spaces_user.status>?
                 ;";
-        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space));
+        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space, CoreSpace::$VISITOR));
         return $req->fetchAll();
     }
 
@@ -762,8 +843,9 @@ class BkCalendarEntry extends Model {
                 AND user.is_active = 1  
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
+                AND core_j_spaces_user.status>?
                 ;";
-        $req = $this->runRequest($sql, array($area_id, $id_space, $id_space));
+        $req = $this->runRequest($sql, array($area_id, $id_space, $id_space, CoreSpace::$VISITOR));
         return $req->fetchAll();
     }
 
@@ -771,7 +853,7 @@ class BkCalendarEntry extends Model {
     /**
      * Get user future bookings
      */
-    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): array{
+    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): ?array{
         $now = time();
         $q = array('today' => $now, 'id_user' => $id_user);
         $sql = 'SELECT bk_calendar_entry.*, spaces.name as space, resources.name as resource FROM bk_calendar_entry';
@@ -792,6 +874,18 @@ class BkCalendarEntry extends Model {
             return $req->fetchAll();
         }
         return [];
+    }
+
+    public function journal(int $id_space, int $id_user, int $max=100) {
+        $now = time() - 30*24*3600; // from last 30 days to future
+        $sql = 'SELECT bk_calendar_entry.*, resources.name as resource FROM bk_calendar_entry';
+        $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
+        $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
+        $sql .= ' WHERE bk_calendar_entry.id_space=:id_space AND bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user';
+        $sql .= ' ORDER BY bk_calendar_entry.start_time DESC LIMIT '.$max;
+        $q = array('today' => $now, 'id_user' => $id_user, 'id_space' => $id_space);
+        $res = $this->runRequest($sql, $q);
+        return $res->fetchAll();
     }
 
 }

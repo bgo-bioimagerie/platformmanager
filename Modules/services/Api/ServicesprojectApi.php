@@ -21,13 +21,16 @@ class ServicesprojectApi extends CoresecureController {
     }
 
     /**
+     * @deprecated
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
     public function editentryqueryAction($id_space) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
+        throw new PfmException("not supported", 500);
 
+        /*
+        $lang = $this->getLanguage();
         $modelProject = new SeProject();
         $id = $this->request->getParameter("formnoteid");
         $isedit = 1;
@@ -49,6 +52,7 @@ class ServicesprojectApi extends CoresecureController {
             "year" => $datearray[0], "month" => $datearray[1], "day" => $datearray[2],
             "isedit" => $isedit, "ismonth" => $ismonth);
         echo json_encode($data);
+        */
     }
 
     public function getprojectentryAction($id_space, $id) {

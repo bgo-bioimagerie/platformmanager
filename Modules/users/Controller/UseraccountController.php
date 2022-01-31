@@ -21,13 +21,6 @@ require_once 'Modules/core/Model/CoreOpenId.php';
  * Controller for the provider example of users module
  */
 class UseraccountController extends CoresecureController {
-    
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-    }
 
 
     /**
@@ -126,7 +119,8 @@ class UseraccountController extends CoresecureController {
                 $modelUsersInfo->setAvatar($id_user, $target_dir . $url);
             }
             
-            $_SESSION["message"] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
+            $_SESSION['flash'] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("usersmyaccount");
             return;
             

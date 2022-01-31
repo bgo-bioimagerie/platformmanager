@@ -2,6 +2,7 @@
 
 require_once 'Framework/Model.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Constants.php';
 
 /**
  * Class defining the ColorCode model
@@ -34,7 +35,7 @@ class BkColorCode extends Model {
     }
 
     public function getDefault() {
-        return array("id" => 0, "name" => "", "color" => "#ffffff", "text" => "#000000",
+        return array("id" => 0, "name" => "", "color" => Constants::COLOR_WHITE, "text" => Constants::COLOR_BLACK,
             "display_order" => 0, "id_space" => 0, "who_can_use" => 1);
     }
     

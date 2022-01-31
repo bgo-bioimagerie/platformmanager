@@ -25,11 +25,11 @@ class StockcabinetController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         
         $this->model = new StockCabinet ();
-        $_SESSION["openedNav"] = "services";
+
     }
 
     /**
@@ -89,16 +89,17 @@ class StockcabinetController extends ServicesController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($id_space, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("room_number")); 
-            $this->redirect("stockcabinets/" . $id_space);
+            $cab_id = $this->model->set($id_space, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("room_number")); 
+            return $this->redirect("stockcabinets/" . $id_space, [], ['cabinet' => ['id' => $cab_id]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['cabinet' => $unit]
             ));
         }
     }

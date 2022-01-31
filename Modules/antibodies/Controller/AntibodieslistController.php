@@ -29,11 +29,11 @@ class AntibodieslistController extends AntibodiesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->antibody = new Anticorps();
         $this->noSideMenu = true;
-        $_SESSION["openedNav"] = "antibodies";
+
         //$this->checkAuthorizationMenu("antibodies");
         
     }
@@ -280,7 +280,8 @@ class AntibodieslistController extends AntibodiesController {
             $this->antibody->setApplicationStaining($id_space, $idNew, $form->getParameter("id_staining"), $form->getParameter("id_application")
             );
 
-            $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+            $_SESSION["flash"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
 
             $this->redirect('anticorpsedit/' . $id_space . '/' . $idNew);
             return;
@@ -304,7 +305,8 @@ class AntibodieslistController extends AntibodiesController {
             if ($catalogForm->check()) {
                 $this->antibody->setExportCatalog($id_space, $id, $form->getParameter("export_catalog"));
             
-                $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+                $_SESSION["flash"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+                $_SESSION["flashClass"] = 'success';
 
                 $this->redirect('anticorpsedit/' . $id_space . '/' . $id);
                 return;

@@ -7,6 +7,9 @@ require_once 'FCache.php';
 require_once 'Configuration.php';
 require_once 'Errors.php';
 
+require_once 'Modules/core/Model/CoreSpace.php';
+
+
 /**
  * Class that routes the input requests
  * 
@@ -48,6 +51,8 @@ class Router {
     private function call($target, $args, $request) {
         if(isset($args['id_space'])){
             $_SESSION['id_space'] = $args['id_space'];
+        } else {
+            unset($_SESSION['id_space']);
         }
         $route_info = explode("/", $target);
         $module = $route_info[0];
@@ -55,14 +60,14 @@ class Router {
         $controller = null;
         $action = $route_info[2];
         try {
-            $controller = $this->createControllerImp($module, $controller_name, false, $request);
+            $controller = $this->createControllerImp($module, $controller_name, false, $request, $args);
         } catch (PfmRoutingException $e) {
             $this->logger->warning('no controller found, redirect to homepage', [
                 'url' => $request->getParameter('path'),
                 'controller' => $controller_name,
                 'module' => $module
             ]);
-            $controller = $this->createControllerImp('core', 'coretiles', false, $request);
+            $controller = $this->createControllerImp('core', 'coretiles', false, $request, $args);
             $action = 'index';
         }
 
@@ -160,10 +165,10 @@ class Router {
                 $this->call('core/coretiles/index', [], $request);
                 return;
             }
-            $controller = $this->createController($urlInfo, $request);
+            $args = $this->getArgs($urlInfo);
+            $controller = $this->createController($urlInfo, $request, $args);
             $action = $urlInfo["pathInfo"]["action"];
             $reqRoute = $urlInfo["pathInfo"]["module"]."_".$urlInfo["pathInfo"]["controller"]."_".$action;
-            $args = $this->getArgs($urlInfo);
             if(isset($args['id_space'])){
                 $_SESSION['id_space'] = $args['id_space'];
             }
@@ -199,7 +204,7 @@ class Router {
             $registry = \Prometheus\CollectorRegistry::getDefault();
             $counter = $registry->getOrRegisterCounter('pfm', 'request_nb', 'quantity', ['url', 'code']);
             $counter->incBy(1, [$reqRoute, http_response_code()]);
-            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [10, 20, 50, 100, 1000]);
+            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [20, 50, 100, 1000, 5000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
         } catch(Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
@@ -235,37 +240,13 @@ class Router {
      * @throws Exception
      */
     private function install($request) {
-        throw new PfmDbException("Install not supported anymore");
-        /*
-        $path = "";
-        if ($request->isParameterNotEmpty('path')) {
-            $path = $request->getParameter('path');
-        }
-
-        if ($path == "install") {
-
-            $dsn = Configuration::get('dsn', '');
-            if ($dsn != '') {
-                throw new PfmDbException("The database is already installed");
-            }
-
-            $controller = $this->createControllerImp("core", "coreinstall", 0, $request);
-            $controller->runAction("core", "index");
-            return true;
-        } else if ($path == "caches") {
-            $install_modelCache = new FCache();
-            $install_modelCache->load();
-            echo "Caches are up to date";
-            return true;
-        }
-        return false;
-        */
+        throw new PfmDbException("Install not supported anymore", 403);
     }
 
     /**
      * 
      * @param Request $request
-     * @return type
+     * @return array
      */
     private function getUrlData(Request $request) {
 
@@ -275,7 +256,6 @@ class Router {
             $path = $request->getParameter('path');
         } else {
             $path = "coretiles";
-            // throw new Exception("The URL is not valid: unable to find the path");
         }
 
         $pathData = explode("/", $path);
@@ -286,7 +266,7 @@ class Router {
     /**
      * 
      * @param type $urlInfo
-     * @return string
+     * @return array
      */
     private function getArgs($urlInfo) {
 
@@ -312,7 +292,15 @@ class Router {
      * @return Instance of a controller
      * @throws Exception If the controller cannot be instanciate
      */
-    private function createControllerImp($moduleName, $controllerName, $isApi, Request $request) {
+    private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[]) {
+
+        $id_space = isset($args['id_space']) ? $args['id_space'] : null;
+        $space = null;
+        if ($id_space) {
+            $m = new CoreSpace();
+            $space = $m->getSpace($id_space);
+        }
+
 
         if ($isApi) {
             $classController = ucfirst(strtolower($controllerName)) . "Api";
@@ -327,7 +315,7 @@ class Router {
         if (file_exists($fileController)) {
             // Instantiate controler
             require ($fileController);
-            $controller = new $classController ($request);
+            $controller = new $classController ($request, $space);
             $this->useRouterController = false;
             return $controller;
         } else {
@@ -340,17 +328,17 @@ class Router {
                     if(file_exists($fileController)){
                         
                         require ($fileController);
-                        $controller = new $classController ($request);
+                        $controller = new $classController ($request, $space);
                         $this->useRouterController = true;
                         return $controller;
                     }
                 }
                 else{
-                    throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
+                    throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName", 500);
                 }
             }
             else{
-                throw new PfmRoutingException("Unable to find the controller file '$fileController' ");
+                throw new PfmRoutingException("Unable to find the controller file '$fileController' ", 500);
             }
         }
     }
@@ -361,8 +349,8 @@ class Router {
      * @param Request $request
      * @return type
      */
-    private function createController($urlInfo, Request $request) {
-        return $this->createControllerImp($urlInfo["pathInfo"]["module"], $urlInfo["pathInfo"]["controller"], $urlInfo["pathInfo"]["isapi"], $request);
+    private function createController($urlInfo, Request $request, ?array $args=[]) {
+        return $this->createControllerImp($urlInfo["pathInfo"]["module"], $urlInfo["pathInfo"]["controller"], $urlInfo["pathInfo"]["isapi"], $request, $args);
     }
 
     /**
@@ -391,7 +379,7 @@ class Router {
 
             
             if($exception instanceof PfmAuthException && $errCode == 401) {
-                header("Location:" . '/coreconnection?redirect_url='.$_SERVER['REQUEST_URI']);
+                header("Location:" . '/coreconnection?redirect_url='.urlencode($_SERVER['REQUEST_URI']));
                 return;
             }
         }
@@ -409,8 +397,15 @@ class Router {
         $view = new View('error');
         $view->setFile('Modules/error.php');
         $view->generate(array(
-            'mainMenu' => null,
-            'sideMenu' => null,
+            'context' => [
+                    "mainMenu" =>null,
+                    "sideMenu" => null,
+                    "spaceMenu" => null,
+                    "rootWeb" => Configuration::get("rootWeb", "/"),
+                    "lang" => 'en',
+                    "currentSpace" => null,  // current space if any
+                    "role" => -1   // user role in space if any
+            ],
             'type' => $type,
             'message' => $exception->getMessage()
         ));

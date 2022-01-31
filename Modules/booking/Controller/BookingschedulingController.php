@@ -18,15 +18,6 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
  * Controller for the home page
  */
 class BookingschedulingController extends BookingsettingsController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("bookingsettings");
-        $_SESSION["openedNav"] = "bookingsettings";
-    }
     
     /**
      * (non-PHPdoc)
@@ -114,7 +105,7 @@ class BookingschedulingController extends BookingsettingsController {
         $form->setButtonsWidth(3, 9);
 
         if ($form->check()) {
-            $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],
+            $id_bkScheduling = $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 
@@ -129,11 +120,15 @@ class BookingschedulingController extends BookingsettingsController {
                     $this->request->getParameter("resa_time_setting"), 
                     $this->request->getParameter("default_color_id"));
                
-            $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea);
-            return;
+            return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
         }
          
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang) ));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "htmlForm" => $form->getHtml($lang),
+            "data" => ["bkScheduling" => $bkScheduling]
+        ));
         
     }
 }

@@ -185,11 +185,17 @@ while(true) {
     $mbox = imap_open('{'.$inbox.':'.$port.'/pop3'.$tls.'}', $login, $password);
     } catch(Throwable $err) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
+        if(Configuration::get('sentry_dsn', '')) {
+            \Sentry\captureException($err);
+        }
         exit(1);
     }
     $mails = FALSE;
     if (FALSE === $mbox) {
         Configuration::getLogger()->error('Connexion failed, check parameters!');
+        if(Configuration::get('sentry_dsn', '')) {
+            \Sentry\captureException(new PfmException('helpdesk email connection failed, exiting', 500));
+        }
         exit(1);
     } else {
         $info = imap_check($mbox);

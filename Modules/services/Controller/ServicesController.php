@@ -27,8 +27,8 @@ class ServicesController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
         $this->typeModel = new SeServiceType();
@@ -43,16 +43,14 @@ class ServicesController extends CoresecureController {
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
         if ($servicesuseproject == 1) {
-            $this->redirect('servicesprojectsopened/' . $id_space);
-            return;
+            return $this->redirect('servicesprojectsopened/' . $id_space);
         }
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
         if ($servicesusecommand == 1) {
-            $this->redirect('servicesorders/' . $id_space);
-            return;
+            return $this->redirect('servicesorders/' . $id_space);
         }
 
-        $this->redirect('serviceslisting/' . $id_space);
+        return $this->redirect('serviceslisting/' . $id_space);
     }
 
     public function navbar($id_space) {
@@ -138,4 +136,14 @@ class ServicesController extends CoresecureController {
 
         return $html;
     }
+
+    public function getServiceTypeAction($id_space, $id_service) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        $modelService = new SeService();
+        $modelType = new SeServiceType();
+        $serviceTypeName = $modelType->getType($modelService->getItemType($id_space, $id_service));
+        $this->render(['data' => ['elements' => ServicesTranslator::ServicesTypes($serviceTypeName, $lang)]]);
+    }
+
 }

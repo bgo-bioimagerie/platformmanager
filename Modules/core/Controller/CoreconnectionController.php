@@ -27,8 +27,8 @@ class CoreconnectionController extends CorecookiesecureController {
     /**
      * Connstructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->user = new CoreUser();
         $this->logger = Configuration::getLogger();
     }
@@ -46,15 +46,6 @@ class CoreconnectionController extends CorecookiesecureController {
         $logo = $modelConfig->getParam("logo");
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
-        $urlCarousel1 = $modelConfig->getParam("connection_carousel1");
-        $urlCarousel2 = $modelConfig->getParam("connection_carousel2");
-        $urlCarousel3 = $modelConfig->getParam("connection_carousel3");
-        $viewCarousel = $modelConfig->getParam("home_view_carousel");
-
-        if(isset($_SESSION['message'])) {
-            $message =  $_SESSION['message'];
-        }
-        unset($_SESSION['message']);
 
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
@@ -77,20 +68,16 @@ class CoreconnectionController extends CorecookiesecureController {
         $_SESSION["redirect"] = "coretiles";
 
         if(isset($_GET['redirect_url'])) {
-            $redirection = $_GET['redirect_url'];
+            $redirection = urldecode($_GET['redirect_url']);
         }
 
 
         return $this->render(array("msgError" => $message, "admin_email" => $admin_email, "logo" => $logo,
             "home_title" => $home_title, "home_message" => $home_message,
             "redirection" => $redirection,
-            "urlCarousel1" => $urlCarousel1,
-            "urlCarousel2" => $urlCarousel2,
-            "urlCarousel3" => $urlCarousel3,
             "language" => $language,
             "metadesc" => 'platform manager login page',
-            "providers" => $providers,
-            "viewCarousel" => $viewCarousel), "indexAction");
+            "providers" => $providers), "indexAction");
     }
 
     /**
@@ -116,7 +103,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     $key = sha1($this->generateRandomKey());
                     $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
-                        throw new PfmException("failed to set cookie with key " . $key);
+                        throw new PfmException("failed to set cookie with key " . $key, 500);
                     }
                     $modelUser = new CoreUser();
                     $modelUser->setRememberKey($loggedUser['idUser'], $key);
@@ -129,6 +116,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $redirectPath = $this->getRedirectPath();
                 $this->redirectNoRemoveHeader($redirectPath);
             } else {
+                Configuration::getLogger()->info('[login] invalid', ['error' => $connect, 'login' => $login]);
                 $this->loginError($redirection, $connect);
             }
         } else {
@@ -245,7 +233,8 @@ class CoreconnectionController extends CorecookiesecureController {
         $form->addEmail("email", CoreTranslator::Email($lang), true);
         $form->setValidationButton(CoreTranslator::Ok($lang), "corepasswordforgotten");
 
-        $_SESSION["message"] = CoreTranslator::PasswordForgotten($lang);
+        $_SESSION['flash'] = CoreTranslator::PasswordForgotten($lang);
+        $_SESSION["flashClass"] = 'info';
         if ($form->check()) {
             $email = $this->request->getParameter("email");
             $model = new CoreUser();
@@ -253,7 +242,7 @@ class CoreconnectionController extends CorecookiesecureController {
             if ($userByEmail) {
 
                 if ($userByEmail["source"] == "ext") {
-                    $_SESSION["message"] = CoreTranslator::ExtAccountMessage($lang);
+                    $_SESSION['flash'] = CoreTranslator::ExtAccountMessage($lang);
                 } else {
 
                     $newPassWord = $this->randomPassword();
@@ -266,12 +255,14 @@ class CoreconnectionController extends CorecookiesecureController {
                     $subject = CoreTranslator::AccountPasswordReset($lang);
                     $content = CoreTranslator::AccountPasswordResetMessage($lang) . "'" . $newPassWord . "'";
                     $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
-                    $_SESSION["message"] = CoreTranslator::ResetPasswordMessageSend($lang);
+                    $_SESSION['flash'] = CoreTranslator::ResetPasswordMessageSend($lang);
+                    $_SESSION["flashClass"] = 'success';
                 }
 
             }
             else{
-                $_SESSION["message"] = CoreTranslator::UserNotFoundWithEmail($lang);
+                $_SESSION['flash'] = CoreTranslator::UserNotFoundWithEmail($lang);
+                $_SESSION["flashClass"] = 'danger';
             }
         }
 

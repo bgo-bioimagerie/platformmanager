@@ -4,6 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
@@ -19,23 +20,14 @@ require_once 'Modules/core/Model/CoreTranslator.php';
  */
 class CoreusersController extends CoresecureController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        // $this->checkAuthorization(CoreStatus::$ADMIN);
-        //$this->checkAuthorizationMenu("users");
-    }
-
     public function mainMenu() {
         if (!str_contains($_SERVER['REQUEST_URI'], "coremyaccount")) {
             return null;
         }
         $lang = $this->getLanguage();
         $dataView = [
-            'bgcolor' => '#ffffff',
-            'color' => '#000000',
+            'bgcolor' => Constants::COLOR_WHITE,
+            'color' => Constants::COLOR_BLACK,
             'My_Account' => CoreTranslator::My_Account($lang),
             'Informations' => CoreTranslator::Informations($lang),
             'Password' => CoreTranslator::Password($lang),
@@ -62,14 +54,17 @@ class CoreusersController extends CoresecureController {
             "status" => CoreTranslator::Status($lang),
             "source" => CoreTranslator::Source($lang),
             "is_active" => CoreTranslator::Is_user_active($lang),
-            "date_last_login" => CoreTranslator::Last_connection($lang));
+            "date_last_login" => CoreTranslator::Last_connection($lang),
+            "created_at" => CoreTranslator::DateCreated($lang)
+        );
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll() ?? [];
-        $modelStatus = new CoreStatus();
+
+        $smap = [ 1 => CoreStatus::$USER, 2 => CoreStatus::$ADMIN];
         $users = [];
         for ($i = 0; $i < count($data); $i++) {
             $users[] = $data[$i];
-            $data[$i]["status"] = CoreTranslator::Translate_status($lang, $modelStatus->getStatusName($data[$i]["status_id"]));
+            $data[$i]["status"] = CoreTranslator::Translate_status($lang, $smap[$data[$i]["status_id"]]);
             if ($data[$i]["is_active"] == 1) {
                 $data[$i]["is_active"] = CoreTranslator::yes($lang);
             } else {
@@ -127,7 +122,7 @@ class CoreusersController extends CoresecureController {
             $statusId[] = $statu["id"];
         }
         $form->addSelect("status_id", CoreTranslator::Status($lang), $statusNames, $statusId, $user["status_id"]);
-        $form->addDate("date_end_contract", CoreTranslator::Date_end_contract($lang), false, CoreTranslator::dateFromEn($user["date_end_contract"], $lang));
+        $form->addDate("date_end_contract", CoreTranslator::Date_end_contract($lang), false, $user["date_end_contract"]);
         $form->addSelect("is_active", CoreTranslator::Is_user_active($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $user["is_active"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
@@ -183,8 +178,7 @@ class CoreusersController extends CoresecureController {
                 $_SESSION["flashClass"] = "success";
                 $id_user = $this->editQuery($form, $lang);
                 $user = $modelUser->getInfo($id_user);
-                $this->redirect("coreusers", [], ['user' => $user]);
-                return;
+                return $this->redirect("coreusers", [], ['user' => $user]);
             }
         }
         
@@ -199,7 +193,12 @@ class CoreusersController extends CoresecureController {
             $formPwdHtml = $formPwd->getHtml($lang);
         }
 
-        $this->render(array("formHtml" => $form->getHtml($lang), "formPwdHtml" => $formPwdHtml, "script" => $script));
+        return $this->render(array(
+            "formHtml" => $form->getHtml($lang),
+            "formPwdHtml" => $formPwdHtml,
+            "script" => $script,
+            "data" => ['user' => $user]
+        ));
     }
 
     protected function displayFormWarnings($cause, $id, $lang) {
@@ -281,7 +280,7 @@ class CoreusersController extends CoresecureController {
             $modelUser = new CoreUser();
             $modelUser->delete($id);
         } else {
-            $_SESSION["message"] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
+            $_SESSION['flash'] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
         }
         $this->redirect("coreusers");
     }

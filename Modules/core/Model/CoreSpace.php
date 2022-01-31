@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
@@ -51,8 +52,11 @@ class CorePlan {
         }
     }
 
-    public function Flags() {
-        return $this?->plan['flags'];
+    public function Flags(): array {
+        if($this->plan === null || !array_key_exists('flags', $this->plan)) {
+            return [];
+        }
+        return $this->plan['flags'];
     }
 
     public function hasFlag(string $flag) : bool {
@@ -65,6 +69,10 @@ class CorePlan {
             }
         }
         return false;
+    }
+
+    public function plan(): ?array {
+        return $this->plan;
     }
 }
 
@@ -82,7 +90,21 @@ class CoreSpace extends Model {
     public static $MANAGER = 3;
     public static $ADMIN = 4;
 
-    public function __construct() {
+
+    public function __construct(
+        public int $id=0,
+        public string $name='',
+        public int $status = 0,
+        public string $color = '#000000',
+        public string $txtcolor ='#ffffff',
+        public ?string $description = null,
+        public ?string $image = '',
+        public string $shortname = '',
+        public string $contact = '',
+        public string $support = '',
+        public int $plan = 0,
+        public int $plan_expire = 0
+    ) {
         $this->tableName = 'core_spaces';
     }
 
@@ -128,6 +150,7 @@ class CoreSpace extends Model {
         `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
         `plan` int NOT NULL DEFAULT 0,
         `plan_expire` int NOT NULL DEFAULT 0,
+        `user_desactivate` int(1) NOT NULL DEFAULT 1,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -137,6 +160,7 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
         $this->addColumn('core_spaces', 'plan', "int", '0');
         $this->addColumn('core_spaces', 'plan_expire', "int", '0');
+        $this->addColumn('core_spaces', 'user_desactivate', "int(1)", '1');
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
@@ -179,12 +203,14 @@ class CoreSpace extends Model {
             "shortname" => "",
             "contact" => "",
             "status" => 0,
-            "color" => "",
-            "txtcolor" => "",
+            "color" => Constants::COLOR_BLACK,
+            "txtcolor" => Constants::COLOR_WHITE,
             "support" => "",
             "description" => "",
             "admins" => [],
-            "txtcolor" => "#ffffff"
+            "plan" => 0,
+            "plan_expire" => 0,
+            "user_desactivate" => 1
         ];
     }
     
@@ -280,6 +306,9 @@ class CoreSpace extends Model {
     }
 
     public function setSpaceMenu($id_space, $module, $url, $icon, $user_role, $display_order, $has_sub_menu = 1, $color = "", $txtcolor= "") {
+        if($display_order === '') {
+            $display_order = 0;
+        }
         if ($this->isSpaceMenu($id_space, $url)) {
             $sql = "UPDATE core_space_menus SET module=?, icon=?, user_role=?, display_order=?, has_sub_menu=?, color=?, txtcolor=? WHERE id_space=? AND url=?";
             $this->runRequest($sql, array($module, $icon, $user_role, $display_order, $has_sub_menu, $color, $txtcolor, $id_space, $url));
@@ -317,7 +346,7 @@ class CoreSpace extends Model {
         $sql = "SELECT color FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return "#000000";
+            return Constants::COLOR_BLACK;
         }
         return $req[0];
     }
@@ -326,7 +355,7 @@ class CoreSpace extends Model {
         $sql = "SELECT txtcolor FROM core_space_menus WHERE id_space=? AND url=?";
         $req = $this->runRequest($sql, array($id_space, $url))->fetch();
         if(!$req) {
-            return "#ffffff";
+            return Constants::COLOR_WHITE;
         }
         return $req[0];
     }
@@ -346,7 +375,7 @@ class CoreSpace extends Model {
     }
 
     public function getDistinctSpaceMenusModules($id_space) {
-        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
+        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
@@ -404,7 +433,7 @@ class CoreSpace extends Model {
         return $roles;
     }
 
-    public function getUserSpaceRole($id_space, $id_user) {
+    public function getUserSpaceRole($id_space, $id_user):int {
         // is super admin?
         $um = new CoreUser();
         if($um->getStatus($id_user) >= CoreStatus::$ADMIN) {
@@ -430,8 +459,8 @@ class CoreSpace extends Model {
 
         // is menu public
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
-        $roleArrray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
-        $menuRole = $roleArrray[0];
+        $roleArray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
+        $menuRole = $roleArray ? $roleArray[0] : CoreSpace::$MANAGER;
         $userRole = $this->getUserSpaceRole($id_space, $id_user);
 
         if ($this->isSpacePublic($id_space) && $userRole == -1) {    
@@ -449,9 +478,13 @@ class CoreSpace extends Model {
         return $req[0];
     }
 
-    public function getSpace($id) {
+    public function getSpace($id): ?array {
         $sql = "SELECT * FROM core_spaces WHERE id=?";
-        return $this->runRequest($sql, array($id))->fetch();
+        $req = $this->runRequest($sql, array($id));
+        if ($req->rowCount() == 1) {
+            return $req->fetch();
+        }
+        return null;
     }
 
     public function getSpaces($sort) {
@@ -465,22 +498,26 @@ class CoreSpace extends Model {
         return intval($res[0]);
     }
 
-    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor='#ffffff') {
+    public function setSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor=Constants::COLOR_WHITE) {
         if ($this->isSpace($id)) {
             $this->editSpace($id, $name, $status, $color, $shortname, $support, $contact, $txtcolor);
             return $id;
         } else {
             if ($this->alreadyExists('name', $name)) {
-                throw new PfmDbException("Space name already exists", 1);
+                throw new PfmParamException("Space name already exists");
             }
-            $this->addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor);
-            return $this->getDatabase()->lastInsertId();
+            return $this->addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor);
         }
     }
     
     public function setDescription($id, $description){
         $sql = "UPDATE core_spaces SET description=? WHERE id=?";
         $this->runRequest($sql, array($description, $id));
+    }
+
+    public function setDeactivate($id, $deactivate){
+        $sql = "UPDATE core_spaces SET user_desactivate=? WHERE id=?";
+        $this->runRequest($sql, array($deactivate, $id));        
     }
 
     public function setShortname($id, $shortname){
@@ -513,7 +550,7 @@ class CoreSpace extends Model {
     }
 
     public function addSpace($name, $status, $color, $shortname, $support, $contact, $txtcolor) {
-        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support, txtcolor) VALUES (?,?,?,?,?,?, ?)";
+        $sql = "INSERT INTO core_spaces (name, status, color, shortname, contact, support, txtcolor, description) VALUES (?,?,?,?,?,?, ?,'')";
         $this->runRequest($sql, array($name, $status, $color, $shortname, $support, $contact, $txtcolor));
         $id = $this->getDatabase()->lastInsertId();
         Events::send(["action" => Events::ACTION_SPACE_CREATE, "space" => ["id" => intval($id)]]);
@@ -649,4 +686,12 @@ class CoreSpace extends Model {
         ]);
     }
 
+
+    /**
+     * Update space plan (id) and plan expiration (timestamp)
+     */
+    public function setPlan($id_space, int $plan=0, int $plan_expire=0) {
+        $sql = "UPDATE core_spaces SET plan=?,plan_expire=? WHERE id=?";
+        $this->runRequest($sql, array($plan, $plan_expire, $id_space));
+    }
 }

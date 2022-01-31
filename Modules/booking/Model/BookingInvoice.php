@@ -17,7 +17,12 @@ class BookingInvoice extends InvoiceModel {
 
 
     public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
-
+        if($beginPeriod == "") {
+            throw new PfmParamException("invalid begin period");
+        }
+        if($endPeriod == "") {
+            throw new PfmParamException("invalid end period");
+        }
         $beginArray = explode("-", $beginPeriod);
         $startPeriodeTime = mktime(0, 0, 0, $beginArray[1], $beginArray[2], $beginArray[0]);
 
@@ -76,7 +81,7 @@ class BookingInvoice extends InvoiceModel {
                 } else {
                     if(!$timePrices || !array_key_exists($res['id'], $timePrices)) {
                         Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
-                        throw new PfmParamException("No time pricing defined!", 500);
+                        throw new PfmParamException("No time pricing defined!");
                     }
                     $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
@@ -123,7 +128,7 @@ class BookingInvoice extends InvoiceModel {
                 foreach ($packagesPrices[$res["id"]] as $p) {
                     if ($userPackages[$p["id"]] > 0) {
 
-                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName( $p["id"] );
+                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName($id_space, $p["id"] );
                         $resourceCount["quantity"] = $userPackages[$p["id"]];
                         $resourceCount["unitprice"] = $p["price"];
 
@@ -215,6 +220,7 @@ class BookingInvoice extends InvoiceModel {
         // get the pricing informations
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
+
         if(! array_key_exists('tarif_unique', $pricingInfo)){return Array();}
         $tarif_unique = $pricingInfo['tarif_unique'];
         $tarif_nuit = $pricingInfo['tarif_night'];
@@ -305,7 +311,7 @@ class BookingInvoice extends InvoiceModel {
         // extract some variables
         if(!$timePrices) {
             Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
-            throw new PfmParamException("No time pricing defined!", 500);
+            throw new PfmParamException("No time pricing defined!");
         }
         $we_array = $timePrices["we_array"];
         $night_start = $timePrices['night_start'];

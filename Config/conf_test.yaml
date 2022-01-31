@@ -1,0 +1,37 @@
+plans:
+  - name: free
+    color: "lavender"
+    id: 0
+    price: '0 euros'
+    features:
+      - customer management
+      - resource management
+      - resource booking
+      - services management
+      - quotes
+      - invoices
+      - public catalog
+      - user communication
+      - basic documentation
+      - basic helpdesk
+      - statistic reports (excel)
+  - name: bronze
+    price: 'tbd...'
+    color: sienna
+    id: 1
+    features:
+      - Grafana statistics interactive dashboards
+      - User satisfaction/rating
+    flags:
+      - grafana
+      - satisfaction
+  - name: silver
+    color: silver
+    id: 2
+    features: []
+    flags: []
+  - name: gold
+    color: gold
+    id: 3
+    features: []
+    flags: []

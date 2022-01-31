@@ -3,6 +3,7 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReState.php';
@@ -19,11 +20,11 @@ class RestatesController extends ResourcesBaseController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $this->model = new ReState();
         //$this->checkAuthorizationMenu("resources");
-        $_SESSION["openedNav"] = "resources";
+
     }
 
     /**
@@ -52,7 +53,12 @@ class RestatesController extends ResourcesBaseController {
         
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlTable" => $tableHtml));
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "htmlTable" => $tableHtml,
+            "data" => ['restates' => $data]
+        ));
     }
 
     /**
@@ -62,7 +68,7 @@ class RestatesController extends ResourcesBaseController {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         // get belonging info
-        $data = array("id" => 0, "name" => "", "color" => "#ffffff", "id_space" => $id_space);
+        $data = array("id" => 0, "name" => "", "color" => Constants::COLOR_WHITE, "id_space" => $id_space);
         if ($id > 0) {
             $data = $this->model->get($id_space, $id);
         }
@@ -83,16 +89,17 @@ class RestatesController extends ResourcesBaseController {
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"), $id_space);
-            $this->redirect("restates/" . $id_space);
+            $id_state = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"), $id_space);
+            return $this->redirect("restates/" . $id_space, [], ['restate' => ['id' => $id_state]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['restate'  => $data]
             ));
         }
     }

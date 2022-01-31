@@ -1,11 +1,13 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php 
 require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/bookfunction.php';
+require_once 'Modules/booking/View/Booking/agendafunction.php';
+
 		
 $available_days = $scheduling["is_monday"] . "," . $scheduling["is_tuesday"]. "," . $scheduling["is_wednesday"]. "," . $scheduling["is_thursday"]. "," . $scheduling["is_friday"]. "," . $scheduling["is_saturday"]. "," . $scheduling["is_sunday"];
 $available_days = explode(",", $available_days);
@@ -37,6 +39,7 @@ a{
 
 #tcelltop{
 	border: 1px solid #d1d1d1;
+	overflow: hidden;
 }
 
 #colDiv{
@@ -60,6 +63,7 @@ a{
 
 #tcellResa{
 	border: 1px solid #d1d1d1;
+	overflow: hidden;
 }
 
 #resa_link{
@@ -87,39 +91,21 @@ img{
 
 </style>
 
-<!-- Add the table title -->
-<div class="row" style="background-color: #ffffff; padding-top: 12px;">
-	<div class="col-sm-10 col-sm-offset-1">
-	<?php
-			$message = "";
-			if (isset($_SESSION["message"])){
-				$message = $_SESSION["message"];
-			} ?>
-			<?php if ($message != ""): 
-			if (strpos($message, "Err") === false){?>
-				<div class="alert alert-success text-center">	
-			<?php 
-			}
-			else{
-			?>
-				<div class="alert alert-danger text-center">
-			<?php 
-			}
-		?>
-			<p><?php echo  $message ?></p>
-			</div>
-		<?php endif; unset($_SESSION["message"])?>
-
-	</div>
-</div>
 
 <div class="row"  style="background-color: #ffffff; padding-bottom: 12px;">
 
 	<div class="col-md-6 text-left">
-		<div class="btn-group" role="group" aria-label="...">
-	<button type="submit" class="btn btn-default" onclick="location.href='bookingweek/<?php echo $id_space ?>/dayweekbefore'">&lt;</button>
-	<button type="submit" class="btn btn-default" onclick="location.href='bookingweek/<?php echo $id_space ?>/dayweekafter'">></button>
-	<button type="submit" class="btn btn-default" onclick="location.href='bookingweek/<?php echo $id_space ?>/thisWeek'"><?php echo  BookingTranslator::This_week($lang) ?></button>
+		<div class="btn-group" role="group" aria-label="navigate by week">
+		<?php
+	$today = date("Y-m-d", time());
+	$qc = '?'.implode('&', ["bk_curentDate=$date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+?>
+			<a aria-label="previous week" href="bookingweek/<?php echo "$id_space/$qb" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>
+			<a aria-label="next week" href="bookingweek/<?php echo "$id_space/$qa" ?>"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>
+			<a aria-label="current week" href="bookingweek/<?php echo "$id_space/$qt" ?>"><button type="button" class="btn btn-default"> <?php echo  BookingTranslator::Today($lang) ?> </button></a>
 		</div>
 		<?php 
 	$d = explode("-", $mondayDate);
@@ -131,7 +117,7 @@ img{
 	$sufixStream = date("S", $time);
 
 	?>
-	<b> <?php echo  BookingTranslator::DateFromTime($time, $lang) ?> -  </b>
+	<strong> <?php echo  BookingTranslator::DateFromTime($time, $lang) ?> -  </strong>
 	<?php 
 	$d = explode("-", $sundayDate);
 	$time = mktime(0,0,0,$d[1],$d[2],$d[0]);
@@ -149,19 +135,19 @@ img{
 	<div class="col-md-6 text-right">
 		<div class="btn-group" role="group" aria-label="...">
 			<div class="btn btn-default" type="button">
-				<a style="color:#333;" href="bookingday/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day($lang) ?></a>
+				<a style="color:#333;" href="bookingday/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Day($lang) ?></a>
 			</div>
 			<div class="btn btn-default " type="button">
-				<a style="color:#333;" href="bookingdayarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Day_Area($lang) ?></a>
+				<a style="color:#333;" href="bookingdayarea/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Day_Area($lang) ?></a>
 			</div>
 			<div class="btn btn-default active" type="button">
-				<a style="color:#333;" href="bookingweek/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week($lang) ?></a>
+				<a style="color:#333;" href="bookingweek/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Week($lang) ?></a>
 			</div>
 			<div class="btn btn-default" type="button">
-				<a style="color:#333;" href="bookingweekarea/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Week_Area($lang) ?></a>
+				<a style="color:#333;" href="bookingweekarea/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Week_Area($lang) ?></a>
 			</div>
 			<div class="btn btn-default" type="button">
-				<a style="color:#333;" href="bookingmonth/<?php echo $id_space ?>" ><?php echo  BookingTranslator::Month($lang) ?></a>
+				<a style="color:#333;" href="bookingmonth/<?php echo $id_space.$qc ?>" ><?php echo  BookingTranslator::Month($lang) ?></a>
 			</div>
 		
 		</div>
@@ -184,10 +170,10 @@ if ($size_bloc_resa == 900){
 	$heightCol = 4*$agendaStyle["line_height"] . "px";
 }
 else if($size_bloc_resa == 1800){
-	$heightCol = 2*$agendaStyle["line_height"] . "px";;
+	$heightCol = 2*$agendaStyle["line_height"] . "px";
 }
 else if($size_bloc_resa == 3600){
-	$heightCol = $agendaStyle["line_height"] . "px";;
+	$heightCol = $agendaStyle["line_height"] . "px";
 }
 ?>
 	<div id="tcelltop" style="height: <?php echo $agendaStyle["header_height"]+50 ?>px; background-color:<?php echo $agendaStyle["header_background"]?>; color: <?php echo  $agendaStyle["header_color"]?>"></div> <!-- For the resource title space -->
@@ -254,9 +240,7 @@ else if($size_bloc_resa == 3600){
 				$dayNumStream = date("d", $date_unix);
 				$sufixStream = date("S", $date_unix);
 				
-				$dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);
-				//$dayTitle = $dayStream . " " . $monthStream . ". " . $dayNumStream . $sufixStream;
-				
+				$dayTitle = BookingTranslator::DateFromTime($date_unix, $lang);				
 				?>
 				
 				
@@ -267,7 +251,7 @@ else if($size_bloc_resa == 3600){
 				</div>
 				
 				<?php 
-				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle);
+				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $bk_id_resource);
 				?>
 				
 				</div>
@@ -290,4 +274,4 @@ else if($size_bloc_resa == 3600){
 </div>
 
 
-<?php endblock();
+<?php endblock(); ?>

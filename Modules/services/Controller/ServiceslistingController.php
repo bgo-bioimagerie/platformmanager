@@ -22,12 +22,12 @@ class ServiceslistingController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
         $this->typeModel = new SeServiceType();
-        $_SESSION["openedNav"] = "services";
+
     }
 
     public function listingAction($id_space) {
@@ -56,7 +56,12 @@ class ServiceslistingController extends ServicesController {
         $table->addDeleteButton("servicesdelete/" . $id_space);
 
         $tableHtml = $table->view($data, $headers);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml,
+            "data" => ['services' => $data]
+        ));
     }
 
     public function editAction($id_space, $id) {
@@ -84,7 +89,7 @@ class ServiceslistingController extends ServicesController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "serviceslisting/" . $id_space);
 
         if ($form->check()) {
-            $this->serviceModel->setService(
+            $service_id = $this->serviceModel->setService(
                 $id, $id_space,
                 $this->request->getParameter("name"),
                 $this->request->getParameter("description"),
@@ -92,8 +97,7 @@ class ServiceslistingController extends ServicesController {
                 $this->request->getParameter("type_id")
             );
 
-            $this->redirect("serviceslisting/" . $id_space);
-            return;
+            return $this->redirect("serviceslisting/" . $id_space, [], ['service' => ['id' => $service_id]]);
         }
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));

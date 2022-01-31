@@ -6,13 +6,14 @@ class ServicesRouting extends Routing {
 
     public function routes($router) {
         $router->map('GET', '/user/services/projects/[i:id_space]', 'services/servicesprojects/user', 'services_user_projects');
+        $router->map('GET|POST', '/services/getServiceType/[i:id_space]/[i:id_service]', 'services/services/getServiceType', 'services_getservicetype');
     }
 
     public function listRoutes() {
 
         // config
         $this->addRoute("servicesconfig", "servicesconfig", "servicesconfig", "index", array("id_space"), array(""));
-        $this->addRoute("servicesconfigadmin", "servicesconfigadmin", "servicesconfigadmin", "index");
+        // $this->addRoute("servicesconfigadmin", "servicesconfigadmin", "servicesconfigadmin", "index");
 
         // add here the module routes
         $this->addRoute("services", "services", "services", "index", array("id_space"), array(""));
@@ -29,7 +30,7 @@ class ServicesRouting extends Routing {
         // purchase
         $this->addRoute("servicespurchase", "servicespurchase", "servicespurchase", "index", array("id_space"), array(""));
         $this->addRoute("servicespurchaseedit", "servicespurchaseedit", "servicespurchase", "edit", array("id_space", "id"), array("", ""));
-
+        $this->addRoute("servicespurchasedelete", "servicespurchasedelete", "servicespurchase", "delete", array("id_space", "id"), array("", ""));
 
         // orders
         $this->addRoute("servicesorders", "servicesorders", "servicesorders", "index", array("id_space"), array(""));

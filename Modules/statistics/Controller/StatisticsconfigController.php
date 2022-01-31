@@ -18,8 +18,8 @@ class StatisticsconfigController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
@@ -38,23 +38,10 @@ class StatisticsconfigController extends CoresecureController {
         $modelSpace = new CoreSpace();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'statistics', $lang);
         if ($formMenusactivation->check()) {
-
-            $modelSpace->setSpaceMenu(
-                $id_space,
-                "statistics",
-                "statistics",
-                "glyphicon-signal",
-                $this->request->getParameter("statisticsmenustatus"),
-                $this->request->getParameter("displayMenu"),
-                1,
-                $this->request->getParameter("displayColor"),
-                $this->request->getParameter("displayColorTxt")
-            );
-
-            $this->redirect("statisticsconfig/" . $id_space);
-            return;
+            $this->menusactivation($id_space, 'statistics', 'signal');
+            return $this->redirect("statisticsconfig/" . $id_space);
         }
 
         // period projects
@@ -75,34 +62,10 @@ class StatisticsconfigController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function menusactivationForm($lang, $id_space) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "statistics");
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "statistics");
-        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "statistics");
-        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "statistics");
-
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("statisticsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
-        $form->addColor('displayColor', CoreTranslator::color($lang), false, $displayColor);
-        $form->addColor('displayColorTxt', CoreTranslator::text_color($lang), false, $displayColorTxt);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
 
     public function periodProjectForm($modelCoreConfig, $id_space, $lang) {
-        $projectperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space), $lang);
-        $projectperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("statisticsperiodend", $id_space), $lang);
+        $projectperiodbegin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+        $projectperiodend = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
 
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(StatisticsTranslator::Statisticsperiod($lang));

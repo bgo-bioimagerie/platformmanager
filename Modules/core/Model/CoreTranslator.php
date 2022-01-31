@@ -12,18 +12,18 @@ class CoreTranslator {
         if($date == null) {
             return "";
         }
-        //echo "to translate = " . $date . "<br/>";
         if ($lang == "fr" || str_contains($date, "/")) {
             $dateArray = explode("/", $date);
             if (count($dateArray) == 3) {
-                //print_r($dateArray);
+                if(strlen($dateArray[2]) != 4) {
+                    return false;
+                }
                 $day = $dateArray[0];
                 $month = $dateArray[1];
                 $year = $dateArray[2];
-                //echo "translated = " . $year . "-" . $month . "-" . $day . "<br/>";
                 return $year . "-" . $month . "-" . $day;
             }
-            return "";
+            return $date;
         }
         // En
         return $date;
@@ -89,6 +89,13 @@ class CoreTranslator {
             return "Accueil";
         }
         return "Home";
+    }
+
+    public static function Welcome($lang = "") {
+        if ($lang == "fr") {
+            return "Bienvenue!";
+        }
+        return "Welcome!";
     }
 
     public static function Tools($lang = "") {
@@ -822,6 +829,13 @@ class CoreTranslator {
         return "Inactive";
     }
 
+    public static function Expiring($lang) {
+        if ($lang == "fr") {
+            return "Expiration";
+        }
+        return "Expiring";
+    }
+
     public static function Search($lang) {
         if ($lang == "fr") {
             return "Rechercher";
@@ -1142,6 +1156,13 @@ class CoreTranslator {
             return "Le login est déjà pris";
         }
         return "Login already exists";
+    }
+
+    public static function LoginDoesNotExists($lang) {
+        if ($lang == "fr") {
+            return "Le login est inconnu";
+        }
+        return "Login does not exists";
     }
 
     public static function EmailAlreadyExists($lang) {
@@ -1756,6 +1777,13 @@ class CoreTranslator {
         return "Create an account";
     }
 
+    public static function JoinAccount($lang) {
+        if ($lang == "fr") {
+            return "Ajouter un compte existant";
+        }
+        return "Add existing account";
+    }
+
     public static function AccessTo($lang){
         if ($lang == "fr") {
             return "Demande accès à";
@@ -1782,6 +1810,13 @@ class CoreTranslator {
             return "Comptes en attente d'activation";
         }
         return "Pending users accounts";
+    }
+
+    public static function PendingUserAccount($lang){
+        if ($lang == "fr") {
+            return "Compte en attente d'activation";
+        }
+        return "Pending user account";
     }
     
     public static function DateCreated($lang){
@@ -2023,6 +2058,34 @@ class CoreTranslator {
             return "Une erreur est survenue durant la connexion.";
         }
         return "An error occured during connection.";
+    }
+
+    public static function spaceUserUnjoin($lang = "") {
+        if ($lang == "fr") {
+            return "Accès supprimé";
+        }
+        return "Access removal";
+    }
+
+    public static function spaceUserUnjoinTxt($space, $lang = "") {
+        if ($lang == "fr") {
+            return "Vos accès à l'espace $space ont été supprimés";
+        }
+        return "Your access to $space has been removed";
+    }
+
+    public static function MySpaces($lang = "") {
+        if($lang == "fr") {
+            return "Mes espaces";
+        }
+        return "My spaces";
+    }
+
+    public static function DeleteUserCaution($lang) {
+        if($lang == "fr") {
+            return "À utiliser avec précautions !!! La suppression d'utilisateurs ne supprime pas les données associées. N'utiliser qu'en cas de doublon ou de cas exotiques.";
+        }
+        return "Use with caution!! User removal will not delete user related data. Use only for duplicate accounts or special cases";
     }
     
 }

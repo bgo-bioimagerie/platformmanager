@@ -1,0 +1,44 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  testing:
+    runs-on: ubuntu-20.04
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql database: 'platform_manager'
+          mysql user: 'platform_manager'
+          mysql password: 'platform_manager'
+
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          tools: phpunit
+          extensions: redis, gd, pdo, pdo_mysql, mysqli, zip, ldap, imap, sockets
+
+      - name: tests 
+        run: |
+          composer install --ignore-platform-reqs
+          ./tests/wait-for-it.sh localhost:3306
+          DEBUG=1 PFM_CONFIG=Config/conf_test.ini PFM_MODE=test ./vendor/phpunit/phpunit/phpunit --stderr

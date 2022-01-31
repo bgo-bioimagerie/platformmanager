@@ -20,8 +20,8 @@ class ServicesconfigController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
@@ -36,28 +36,13 @@ class ServicesconfigController extends CoresecureController {
 
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        $modelSpace = new CoreSpace();
         $modelCoreConfig = new CoreConfig();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'services', $lang);
         if ($formMenusactivation->check()) {
-
-            $modelSpace->setSpaceMenu(
-                $id_space,
-                "services",
-                "services",
-                "glyphicon glyphicon-plus",
-                $this->request->getParameter("servicesmenustatus"),
-                $this->request->getParameter("displayMenu"),
-                1,
-                $this->request->getParameter("displayColor"),
-                $this->request->getParameter("displayColorTxt")
-            );
-
-            $this->redirect("servicesconfig/" . $id_space);
-
-            return;
+            $this->menusactivation($id_space, 'services', 'plus');
+            return $this->redirect("servicesconfig/" . $id_space);
         }
 
         $formWarning = $this->warningForm($id_space, $lang);
@@ -70,13 +55,10 @@ class ServicesconfigController extends CoresecureController {
         }
         
         
-        $formMenuName = $this->menuNameForm($id_space, $lang);
+        $formMenuName = $this->menuNameForm($id_space, 'services', $lang);
         if ($formMenuName->check()) {
-            $modelConfig = new CoreConfig();
-            $modelConfig->setParam("servicesmenuname", $this->request->getParameter("servicesmenuname"), $id_space);
-
-            $this->redirect("servicesconfig/" . $id_space);
-            return;
+            $this->setMenuName($id_space, 'services');
+            return $this->redirect("servicesconfig/" . $id_space);
         }
 
         // period projects
@@ -109,37 +91,14 @@ class ServicesconfigController extends CoresecureController {
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang),
+        $forms = array(
+            $formMenusactivation->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formWarning->getHtml($lang),
             $formPerodProject->getHtml($lang), $formProjectCommand->getHtml($lang),
             $formStock->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
-    }
-
-    protected function menusactivationForm($id_space, $lang) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "services");
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "services");
-        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "services");
-        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, "services");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("servicesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
-        $form->addColor("displayColor", CoreTranslator::color($lang), false, $displayColor);
-        $form->addColor("displayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
     }
 
     public function warningForm($id_space, $lang) {
@@ -159,8 +118,8 @@ class ServicesconfigController extends CoresecureController {
     }
 
     public function periodProjectForm($modelCoreConfig, $id_space, $lang) {
-        $projectperiodbegin = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("projectperiodbegin", $id_space), $lang);
-        $projectperiodend = CoreTranslator::dateFromEn($modelCoreConfig->getParamSpace("projectperiodend", $id_space), $lang);
+        $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
+        $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(ServicesTranslator::projectperiod($lang));
@@ -201,21 +160,6 @@ class ServicesconfigController extends CoresecureController {
         $form = new Form($this->request, "stockForm");
         $form->addSeparator(ServicesTranslator::Stock($lang));
         $form->addSelect("servicesusestock", ServicesTranslator::UseStock($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusestock);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    protected function menuNameForm($id_space, $lang) {
-        $modelCoreConfig = new CoreConfig();
-        $bookingmenuname = $modelCoreConfig->getParam("servicesmenuname", $id_space);
-
-        $form = new Form($this->request, "servicesmenunameForm");
-        $form->addSeparator(CoreTranslator::MenuName($lang));
-
-        $form->addText("servicesmenuname", CoreTranslator::Name($lang), false, $bookingmenuname);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
         $form->setButtonsWidth(2, 9);

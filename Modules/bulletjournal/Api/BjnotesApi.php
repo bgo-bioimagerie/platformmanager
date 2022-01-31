@@ -46,6 +46,9 @@ class BjnotesApi extends CoresecureController {
         $content = $this->request->getParameter("formnotecontent");
         $date = CoreTranslator::dateToEn($this->request->getParameter("formnotedate"), $lang);
         $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
+        if($date == "") {
+            throw new PfmParamException("invalid date");
+        }
 
         $datearray = explode("-", $date);
 
@@ -91,6 +94,9 @@ class BjnotesApi extends CoresecureController {
         $deadline = CoreTranslator::dateToEn($this->request->getParameter("formtaskdeadline"), $lang);
         $modelTask->set($id_space, $id_note, $priority, $deadline);
 
+        if($date == "") {
+            throw new PfmParamException("invalid date");
+        }
         $datearray = explode("-", $date);
 
         $data = array("id" => $id, "name" => $name, "type" => $type,
@@ -183,6 +189,9 @@ class BjnotesApi extends CoresecureController {
         $type = 3;
         $content = $this->request->getParameter("formeventcontent");
         $date = CoreTranslator::dateToEn($this->request->getParameter("formeventdatestart"), $lang);
+        if($date == "") {
+            throw new PfmParamException("invalid start date");
+        }
         $id_note = $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
 
         $modelEvent = new BjEvent();
@@ -192,6 +201,9 @@ class BjnotesApi extends CoresecureController {
         $end_min = $this->request->getParameter("formeventdateendm");
         $datearray = explode("-", $date);
         $enddate = CoreTranslator::dateToEn($this->request->getParameter("formeventdateend"), $lang);
+        if($enddate == "") {
+            throw new PfmParamException("invalid end date");
+        }
         $enddatearray = explode("-", $enddate);
         
         $start_time = mktime($start_hour, $start_min, 0, $datearray[1], $datearray[2], $datearray[0]);

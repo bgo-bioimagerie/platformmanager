@@ -12,14 +12,6 @@ require_once 'Modules/services/Controller/ServicesController.php';
  * Controller for the home page
  */
 class ServicesbalanceController extends ServicesController {
-
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("statistics");
-    }
     
     /**
      * (non-PHPdoc)

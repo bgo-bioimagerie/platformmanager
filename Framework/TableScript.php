@@ -11,15 +11,9 @@
 
     <script>
         $(document).ready(function () {
-            var tableHeight = window.innerHeight - 200;
-            var table = $('#tableID').DataTable({
-                scrollY: tableHeight,
-                scrollX: true,
-                scrollCollapse: true,
-                paging: false,
-                fixedColumns: {
-                    leftColumns: numFixedCol
-                }
+            //var tableHeight = window.innerHeight - 200;
+            $('#tableID').DataTable({
+                columnDefs: [{targets: 'no-sort', orderable: false, searchable: false}],
             });
         });
     </script>

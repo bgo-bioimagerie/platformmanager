@@ -22,14 +22,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  */
 class StatisticsglobalController extends StatisticsController {
 
-    /**
-     * Constructor
-     */
-    public function __construct(Request $request) {
-        parent::__construct($request);
-        //$this->checkAuthorizationMenu("statistics");
-    }
-
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
@@ -44,7 +36,7 @@ class StatisticsglobalController extends StatisticsController {
                 $y = date("Y") - 1;
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_begin = $y . "-" . $m . "-" . $d;
             } else {
                 $date_begin = date("Y", time()) . "-01-01";
             }
@@ -57,7 +49,7 @@ class StatisticsglobalController extends StatisticsController {
                 $y = date("Y");
                 $m = $dateArray[1];
                 $d = $dateArray[2];
-                $date_end = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
+                $date_end = $y . "-" . $m . "-" . $d;
             } else {
                 $date_end = date("Y", time()) . "-12-31";
             }
@@ -66,10 +58,9 @@ class StatisticsglobalController extends StatisticsController {
 
         $form = new Form($this->request, "generateGlobalStatForm");
         $form->setTitle(StatisticsTranslator::StatisticsGlobal($lang));
-        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, CoreTranslator::dateFromEn($date_begin, $lang) );
-        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, CoreTranslator::dateFromEn($date_end, $lang) );
+        $form->addDate("date_begin", StatisticsTranslator::Period_begining($lang), true, $date_begin);
+        $form->addDate("date_end", StatisticsTranslator::Period_end($lang), true, $date_end, $lang);
 
-        // TODO: replace by clients stats ?
         $form->addSelect("generateclientstats", BookingTranslator::GenerateStatsPerClient($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateclientstats"));
 
         $modelColorCode = new BkColorCode();
@@ -99,8 +90,8 @@ class StatisticsglobalController extends StatisticsController {
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
 
-            $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
-            return;
+            $f  = $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
+            return ['data' => ['file' => $f]];
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
@@ -108,10 +99,10 @@ class StatisticsglobalController extends StatisticsController {
 
     protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space) {
 
-        $controllerServices = new ServicesstatisticsprojectController($this->request);
+        $controllerServices = new ServicesstatisticsprojectController($this->request, $this->currentSpace);
         $spreadsheet = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
 
-        $controllerBooking = new BookingstatisticsController($this->request);
+        $controllerBooking = new BookingstatisticsController($this->request, $this->currentSpace);
         $spreadsheet = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet);
         $spreadsheet->setActiveSheetIndex(1);
 
@@ -119,10 +110,18 @@ class StatisticsglobalController extends StatisticsController {
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         // record modifications and download file
+
+        if(getenv('PFM_MODE') == 'test') {
+            $tempName = tempnam('/tmp', 'statistics').'.xlsx';
+            Configuration::getLogger()->debug('[statistics] generate stats file', ['file' => $tempName]);
+            $objWriter->save($tempName);
+            return $tempName;
+        }
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
+        return null;
     }
 
 }

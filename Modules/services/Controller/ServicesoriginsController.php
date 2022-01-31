@@ -20,8 +20,8 @@ class ServicesoriginsController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->originModel = new SeOrigin();
     }
@@ -67,12 +67,11 @@ class ServicesoriginsController extends ServicesController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "servicesorigins/" . $id_space);
 
         if ($form->check()) {
-            $this->originModel->set($id, 
+            $origin_id = $this->originModel->set($id, 
                     $this->request->getParameter("name"), 
                     $this->request->getParameter("display_order"), $id_space);
             
-            $this->redirect("servicesorigins/" . $id_space);
-            return;
+            return $this->redirect("servicesorigins/" . $id_space, [], ['origin' => ['id' => $origin_id]]);
         }
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));

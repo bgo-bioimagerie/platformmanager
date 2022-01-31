@@ -20,8 +20,8 @@ if($isdev) {
         <?php
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
-        <meta name="mode" description="{{$isdev}}">
-        <base href="<?php echo  $rootWeb ?>" >
+        <meta name="mode" description="<?php echo $isdev ?>">
+        <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
             Platform-Manager
@@ -38,11 +38,8 @@ if($isdev) {
         <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
         
         <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-        <link href="externals/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
         <script src="externals/jquery-1.11.1.js"></script>
         <script src="externals/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="externals/datepicker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="externals/datepicker/js/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
@@ -56,16 +53,15 @@ if($isdev) {
 
         <?php startblock('navbar') ?>
             <?php
-                require_once 'Modules/core/Controller/CorenavbarController.php';
-                $navController = new CorenavbarController(new Request(array(), false));
-                echo $navController->navbar();
+            $nav = new Navbar($context['lang']);
+            echo $nav->get();
             ?>
         <?php endblock() ?>
 
         <div id="mainmenu">
         <?php
-        if ($mainMenu) {
-            echo $mainMenu;
+        if ($context['mainMenu']) {
+            echo $context['mainMenu'];
         }
         ?>
         </div>
@@ -84,14 +80,18 @@ if($isdev) {
                     <?php }?>
                     <div class="col-md-12 col-lg-12">
                         <?php startblock('spacemenu') ?>
+                        <?php
+                        if ($context['spaceMenu']) {
+                            echo $context['spaceMenu'];
+                        } ?>
                         <?php endblock() ?>
                     </div>
                     <?php
-                    if ($sideMenu) {
+                    if ($context['sideMenu']) {
                     ?>
                     <div class="col-md-2 col-lg-2" id="sidemenu">
                     <?php
-                        echo $sideMenu;
+                        echo $context['sideMenu'];
                     ?>
                     </div>
                     <div class="col-md-10 col-lg-10" id="content">
@@ -119,7 +119,7 @@ if($isdev) {
 
         <?php
         if($isdev) {
-            echo $debugbarRenderer->render();
+           echo $debugbarRenderer->render();
         }
         ?>
     </body>
