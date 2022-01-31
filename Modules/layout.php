@@ -20,7 +20,7 @@ if($isdev) {
         <?php
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
-        <meta name="mode" description="{{$isdev}}">
+        <meta name="mode" description="<?php echo $isdev ?>">
         <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
@@ -53,9 +53,8 @@ if($isdev) {
 
         <?php startblock('navbar') ?>
             <?php
-                require_once 'Modules/core/Controller/CorenavbarController.php';
-                $navController = new CorenavbarController(new Request(array(), false));
-                echo $navController->navbar();
+            $nav = new Navbar($context['lang']);
+            echo $nav->get();
             ?>
         <?php endblock() ?>
 
@@ -120,7 +119,7 @@ if($isdev) {
 
         <?php
         if($isdev) {
-            echo $debugbarRenderer->render();
+           echo $debugbarRenderer->render();
         }
         ?>
     </body>

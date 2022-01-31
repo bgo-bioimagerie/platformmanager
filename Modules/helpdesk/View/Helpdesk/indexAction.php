@@ -33,29 +33,6 @@ blockquote {
 
 <div id="helpdeskapp" style="background-color: #fff; height:100%">
     <div class="row">
-        <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
-             <?php
-        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
-            if (substr($_SESSION["message"], 0, 3) === "Err") {
-                ?>
-                <div class="alert alert-danger">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            } else {
-                ?>
-                <div class="alert alert-success">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            }
-            unset($_SESSION["message"]);
-        }
-        ?>
-        </div>
-    </div>
-    <div class="row">
         <!-- Form -->
         <div v-if="message" class="col-sm-12 text-center">
             <div class="alert alert-warning">{{message}}</div>
@@ -207,7 +184,7 @@ blockquote {
                 <tbody>
                 <tr><td><input type="checkbox" v-bind:checked="selectAll" @click="selectTicket(null)"/></td><td></td><td><button @click="spamSelected()" class="btn btn-warning">Spam selected</button></td></tr>
                 <tr v-for="ticket in tickets" :key="ticket.id" v-bind:class="ticket.unread=='1' ? 'alert alert-warning':''">
-                <td><input @click="selectTicket(ticket.id)" v-bind:checked="ticket?.selected" type="checkbox"/></td>
+                <td><input @click="selectTicket(ticket.id)" v-bind:checked="ticket && ticket.selected" type="checkbox"/></td>
                 <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
                 <td>{{ticket.created_at}}</td>
                 <td>{{ticket.subject}}</td>
@@ -278,7 +255,7 @@ var app = new Vue({
         },
         spamSelected() {
             this.tickets.forEach(async (ticket) => {
-                if (ticket?.selected) {
+                if (ticket && ticket.selected) {
                     console.debug('should spam ', ticket.id)
                     try {
                         await this.spam(ticket.id)
@@ -600,6 +577,5 @@ var app = new Vue({
     }
 })
 </script>
-<?php
-endblock();
+<?php endblock(); ?>
 

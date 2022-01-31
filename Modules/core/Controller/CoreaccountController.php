@@ -171,7 +171,7 @@ class CoreaccountController extends Controller {
             $modelCoreUser = new CoreUser();
 
             if ($modelCoreUser->isLogin($form->getParameter("login"))) {
-                $_SESSION["message"] = CoreTranslator::Error($lang) . ":" . CoreTranslator::LoginAlreadyExists($lang);
+                $_SESSION['flash'] = CoreTranslator::Error($lang) . ":" . CoreTranslator::LoginAlreadyExists($lang);
                 $this->redirect("corecreateaccount");
                 return;
             }

@@ -62,7 +62,7 @@ class MailerconfigController extends CoresecureController {
     
     protected function MailerSetCopyToFromForm($lang, $id_space){
         $modelConfig = new CoreConfig();
-        $MailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space);
+        $MailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space, 1);
         
         $form = new Form($this->request, "MailerSetCopyToFromForm");
         $form->addSeparator(MailerTranslator::SendCopyToSender($lang));

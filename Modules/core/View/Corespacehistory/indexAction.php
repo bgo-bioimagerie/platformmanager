@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 <div id="logs" class="row container">
     <div class="col-sm-12">
@@ -67,4 +67,4 @@ var app = new Vue({
   }
 })
 </script>
-<?php endblock();
+<?php endblock(); ?>

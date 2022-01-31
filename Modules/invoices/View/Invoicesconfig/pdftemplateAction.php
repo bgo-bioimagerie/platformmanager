@@ -1,20 +1,7 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
-
-<div class="col-md-12" style="margin-top: 7px; margin-bottom: -14px;">
-    <?php
-    if (isset($_SESSION["message"]) && $_SESSION["message"]) {
-        ?>
-        <div class="alert alert-info">
-            <?php echo $_SESSION["message"] ?>
-        </div>
-        <?php
-        unset($_SESSION["message"]);
-    }
-    ?>
-</div>
 
 <div class="col-md-12">
 
@@ -45,5 +32,4 @@
 
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

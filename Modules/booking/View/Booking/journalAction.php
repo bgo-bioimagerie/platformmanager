@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="container">
@@ -19,4 +19,4 @@
     </table>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

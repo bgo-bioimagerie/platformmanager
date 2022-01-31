@@ -78,11 +78,12 @@ class BookingauthorisationsController extends CoresecureController {
 
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array(
+        return $this->render(array(
             "lang" => $lang,
             "id_space" => $id_space,
             'tableHtml' => $tableHtml,
-            'space' => $space
+            'space' => $space,
+            'data' => ['bkauthorizations' => $data]
         ));
     }
 

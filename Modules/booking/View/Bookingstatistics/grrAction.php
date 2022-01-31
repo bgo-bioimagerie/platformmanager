@@ -1,6 +1,6 @@
 <?php include 'Modules/statistics/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form-short">
@@ -353,5 +353,4 @@
 
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

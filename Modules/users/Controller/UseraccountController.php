@@ -119,7 +119,8 @@ class UseraccountController extends CoresecureController {
                 $modelUsersInfo->setAvatar($id_user, $target_dir . $url);
             }
             
-            $_SESSION["message"] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
+            $_SESSION['flash'] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("usersmyaccount");
             return;
             

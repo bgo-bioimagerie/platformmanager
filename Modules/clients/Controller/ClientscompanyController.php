@@ -67,7 +67,8 @@ class ClientscompanyController extends ClientsController {
             $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $form->getParameter("county"), $form->getParameter("country"), $form->getParameter("tel"), $form->getParameter("fax"), $form->getParameter("email"), $form->getParameter("approval_number")
             );
 
-            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             // after the provider is saved we redirect to the providers list page
             $this->redirect("clcompany/" . $id_space);
         } else {
