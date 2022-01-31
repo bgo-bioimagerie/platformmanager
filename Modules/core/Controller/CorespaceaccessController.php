@@ -224,7 +224,7 @@ class CorespaceaccessController extends CoresecureController {
         foreach ($users as $user) {
             $user["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
             $user["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
-            $user["convention_url"] = sprintf('/core/spaceaccess/%s/users/%s/convention', $id_space, $user['id']);
+            $user["convention_url"] = $user['convention_url'] ? sprintf('/core/spaceaccess/%s/users/%s/convention', $id_space, $user['id']) : '';
             array_push($usersArray, $user);
         }
 

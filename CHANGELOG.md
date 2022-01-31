@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3.1
+
+* [core] in corespaceaccess show convention download button only if present
+
 ## 2.3.0
 
 * [invoices] fix non-numeric quantity and/or price cases in invoice edition
