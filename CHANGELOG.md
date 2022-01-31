@@ -32,6 +32,7 @@
 * [antibodies] fix missing table creation at install
 * [booking] send emails only if user status > VISITOR in space
 * [com] check ACLs on com module and limit edition to space admins
+* [booking] fix booking emails if invalid/recuring, notify if new or update
 
 ## 2.2.2
 
@@ -51,7 +52,7 @@
 * [booking] fix authorizations when related to user's roles
 * [helpdesk] sort tickets and fix refresh
 * [helpdesk] ignore auto replies
-* [core] check id_user to see if user is logged
+* [core] check id_user to see if user is logged
 * [core] on register after email validation validate the account #472
 * [statistics] require env var MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD} in pfm/pfm-events containers
 * [core] use module url and not name for notifications #476
@@ -60,7 +61,7 @@
 
 ## 2.2.0
 
-**Warning**: [admin] Ldap configuration modification from ini or env variables
+**Warning**: [admin] Ldap configuration modification from ini or env variables
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 

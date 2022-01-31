@@ -236,10 +236,11 @@ class ServicesordersController extends ServicesController {
                     $modelOrder->deleteOrderService($id_space, $deletedServiceId, $id);
                 }
             }
-
+            Configuration::getLogger()->error('??????????', ['quantities' => $servicesQuantities]);
             for ($i = 0; $i < count($servicesQuantities); $i++) {
                 $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
                 $qDelta = $servicesQuantities[$i] - $qOld;
+                Configuration::getLogger()->error('??????????', ['delta' => $qDelta, 'service' => $servicesIds[$i], 'q' => $servicesQuantities[$i]]);
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
                 $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
             }

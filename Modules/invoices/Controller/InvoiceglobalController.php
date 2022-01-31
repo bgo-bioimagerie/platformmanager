@@ -7,6 +7,7 @@ require_once 'Framework/TableView.php';
 require_once 'Modules/invoices/Controller/InvoiceAbstractController.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
+require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
@@ -289,7 +290,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $invoiceNumber = $modelInvoice->getNextNumber($id_space);
         $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, $invoiceNumber, date("Y-m-d", time()), $id_resp, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
-        $modelInvoice->setTitle($id_space, $id_invoice, "Facturation: période du " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " au " . CoreTranslator::dateFromEn($endPeriod, $lang));
+        $modelInvoice->setTitle($id_space, $id_invoice, InvoicesTranslator::Invoice($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
         // get invoice content
         $modules = Configuration::get("modules");
@@ -300,7 +301,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
             $invoiceModelFile = "Modules/" . strtolower($module) . "/Model/" . ucfirst(strtolower($module)) . "Invoice.php";
             if (file_exists($invoiceModelFile)) {
 
-                //echo "invoice module " . $invoiceModelFile . "<br/>";
                 require_once $invoiceModelFile;
                 $modelName = ucfirst(strtolower($module)) . "Invoice";
                 $model = new $modelName();
@@ -309,9 +309,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 $moduleArray["module"] = $module;
                 $moduleArray["data"] = $model->invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $id_invoice, $lang);
                 $invoiceDataArray[] = $moduleArray;
-                //echo 'total HT ' . $module . " = " . $moduleArray["data"]["total_ht"] . "<br/>";
-                //print_r($moduleArray);
-                //echo "<br/>";
+
                 $total_ht += floatval($moduleArray["data"]["total_ht"]);
             }
         }
@@ -339,7 +337,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
             $invoiceModelFile = "Modules/" . strtolower($module) . "/Model/" . ucfirst(strtolower($module)) . "Invoice.php";
             if (file_exists($invoiceModelFile)) {
 
-                //echo "invoice module " . $invoiceModelFile . "<br/>";
                 require_once $invoiceModelFile;
                 $modelName = ucfirst(strtolower($module)) . "Invoice";
                 $model = new $modelName();

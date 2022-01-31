@@ -56,14 +56,14 @@
             </label>
             <div class="col-xs-6">
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
+                    <label><input  type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
+                    <label><input  type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
-                    <select name="periodic_week">
+                    <label><input  type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
+                    <select class="form-control" name="periodic_week">
                         <option value="1"><?php echo BookingTranslator::EveryWeek($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::Every2Week($lang) ?></option>
                         <option value="3"><?php echo BookingTranslator::Every3Week($lang) ?></option>
@@ -72,8 +72,8 @@
                     </select>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="4"></label>
-                    <select name="periodic_month">
+                    <label ><input type="radio" name="periodic_radio" value="4"></label>
+                    <select class="form-control" name="periodic_month">
                         <option value="1"><?php echo BookingTranslator::EveryMonthSameDate($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::EveryMonthSameDay($lang) ?></option>
                     </select>

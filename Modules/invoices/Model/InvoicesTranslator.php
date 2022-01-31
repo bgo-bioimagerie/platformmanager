@@ -15,6 +15,13 @@ class InvoicesTranslator {
         return "Invoices";
     }
 
+    public static function Invoice($lang) {
+        if ($lang == "fr") {
+            return "Facture";
+        }
+        return "Invoice";
+    }
+
     public static function All_invoices($lang) {
         if ($lang == "fr") {
             return "Tous les relevés";

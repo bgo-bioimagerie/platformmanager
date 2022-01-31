@@ -30,9 +30,7 @@
 
         <!-- Login -->
         <div class="col-sm-12">
-
-
-                    <div class="col-xs-12 col-md-4 col-md-offset-4 col-lg-8 col-lg-offset-2">
+                    <div class="row">
                         <div class="account-wall">
                             <?php if (isset($msgError) && $msgError != "") { ?>
                                 <div class="alert alert-danger">
@@ -40,7 +38,7 @@
                                 </div>
                             <?php } ?>
                         </div>
-                        <div class="col-xs-12  col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
+                        <div class="col-xs-12  col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
                             <br></br>
 
                             <form class="form-signin" action="corelogin" method="post">
@@ -56,22 +54,22 @@
 
                         </div>
                         <br/>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
                             <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>
                         </div>
 
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
                             <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
                         </div>
 
                         <?php if(Configuration::get('allow_registration', false)) { ?>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
                             <br/>
                             <p class="text-center">
                                 <strong><?php echo CoreTranslator::or_($language) ?></strong>
                             </p>
                         </div>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+                        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
                             <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
                         </div>
                         <?php }  ?>

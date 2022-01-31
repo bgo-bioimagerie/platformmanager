@@ -89,9 +89,11 @@ class BookingdefaultController extends BookingabstractController {
         $id_user = $_SESSION["id_user"];
 
         $modelResource = new ResourceInfo();
+        /*
         $_SESSION['bk_id_resource'] = $id_resource;
         $_SESSION['bk_id_area'] = $modelResource->getAreaID($id_space, $id_resource);
         $_SESSION['bk_curentDate'] = date("Y-m-d", $start_time);
+        */
 
         return $modelResa->getDefault($id_space ,$start_time, $end_time, $id_resource, $id_user);
     }
@@ -327,10 +329,15 @@ class BookingdefaultController extends BookingabstractController {
         // set the reservation
         $modelCoreConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
-        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
         $periodic_option = intval($this->request->getParameterNoException("periodic_radio"));
 
         $error = null;
+
+        $oldEntry = null;
+        if($id > 0) {
+            $oldEntry = $modelCalEntry->getEntry($id_space, $id);
+        }
 
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
             // test if a resa already exists on this periode
@@ -575,30 +582,36 @@ class BookingdefaultController extends BookingabstractController {
             }
         }
 
-        $emailSpaceAdmins = intval($modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
-        if($emailSpaceAdmins == 2){
-            // get resource name
-            $modelResource = new ResourceInfo();
-            $resourceName = $modelResource->getName($id_space, $id_resource);
-            $modelUser = new CoreUser();
-            $userName = $modelUser->getUserFUllName($_SESSION['id_user']);
+        if($valid) {
+            // do not send email if not valid
+            $emailSpaceAdmins = intval($modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
+            if($emailSpaceAdmins == 2){
+                // get resource name
+                $modelResource = new ResourceInfo();
+                $resourceName = $modelResource->getName($id_space, $id_resource);
+                $modelUser = new CoreUser();
+                $userName = $modelUser->getUserFUllName($_SESSION['id_user']);
 
-            $modelResoucesResp = new ReResps();
-            $toAdress = $modelResoucesResp->getResourcesManagersEmails($id_space, $id_resource);
-            $subject = $resourceName . " has been booked";
-            $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time) . " by " . $userName;
-            if( !$BkUseRecurentBooking || $periodic_option == 1 ){
-                $content .= " with periodicity";
+                $modelResoucesResp = new ReResps();
+                $toAdress = $modelResoucesResp->getResourcesManagersEmails($id_space, $id_resource);
+                $subject = $resourceName . " has been booked";
+                $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time) . " by " . $userName;
+                if($id > 0 && $oldEntry) {
+                    $subject = "[$id] $resourceName booking has been modified";
+                    $content = "The " . $resourceName . " booking $i  has been moved from " . date("Y-m-d H:i", $oldEntry['start_time'])." / ".date("Y-m-d H:i", $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time) . " by " . $userName;
+                }
+                if( $BkUseRecurentBooking && $periodic_option > 1 ){
+                    $content .= " with periodicity";
+                }
+                $params = [
+                    "id_space" => $id_space,
+                    "subject" => $subject,
+                    "to" => $toAdress,
+                    "content" => $content
+                ];
+                $email = new Email();
+                $email->sendEmailToSpaceMembers($params, $lang);
             }
-            // NEW MAIL SENDER
-            $params = [
-                "id_space" => $id_space,
-                "subject" => $subject,
-                "to" => $toAdress,
-                "content" => $content
-            ];
-            $email = new Email();
-            $email->sendEmailToSpaceMembers($params, $lang);
         }
 
         $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
@@ -801,7 +814,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->setButtonsWidth(2, 10);
 
 
-        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
         // periodicity information
         $modelCalEntry = new BkCalendarEntry();
         $id_period = $modelCalEntry->getPeriod($id_space, $resaInfo["id"]);
