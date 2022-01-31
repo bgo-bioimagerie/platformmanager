@@ -12,6 +12,7 @@ require_once 'Modules/clients/Model/ClClientUser.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 
 /**
  * 
@@ -33,8 +34,10 @@ class DocumentslistController extends DocumentsController {
         $table = new TableView();
 
         $modelDoc = new Document();
+        $modelCoreConfig = new CoreConfig();
+        $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
         $data = [];
-        if($this->role >= CoreSpace::$MANAGER) {
+        if($this->role >= $editRole) {
             $data = $modelDoc->getForSpace($id_space);
         } else if($this->role == CoreSpace::$USER) {
             $docids = [];
@@ -106,7 +109,7 @@ class DocumentslistController extends DocumentsController {
             "user" => DocumentsTranslator::Owner($lang),
             "lastmodified" => DocumentsTranslator::LastModified($lang),
         );
-        if($this->role >= CoreSpace::$MANAGER) {
+        if($this->role >= $editRole) {
             $headers['visibility'] = 'Visibility';
         }
 
@@ -126,8 +129,11 @@ class DocumentslistController extends DocumentsController {
 
     public function editAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
-        if($this->role < CoreSpace::$MANAGER) {
-            throw new PfmAuthException('managers only!');
+        $modelCoreConfig = new CoreConfig();
+        $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
+
+        if($this->role < $editRole) {
+            throw new PfmAuthException('not enough priviledges');
         }
         $lang = $this->getLanguage();
         $model = new Document();
@@ -254,8 +260,10 @@ class DocumentslistController extends DocumentsController {
 
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
-        if($this->role < CoreSpace::$MANAGER) {
-            throw new PfmAuthException('managers only');
+        $modelCoreConfig = new CoreConfig();
+        $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
+        if($this->role < $editRole) {
+            throw new PfmAuthException('not enough priviledges');
         }
         $model = new Document();
         $model->delete($id_space, $id);
