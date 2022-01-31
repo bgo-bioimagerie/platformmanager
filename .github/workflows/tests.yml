@@ -45,5 +45,5 @@ jobs:
           MYSQLCONFIG: mysql:host=127.0.0.1;port=${{ job.services.mariadb.ports[3306] }};dbname=platform_manager;charset=utf8
         run: |
           composer install --ignore-platform-reqs
-          ./tests/wait-for-it.sh localhost:3306
+          ./tests/wait-for-it.sh localhost:${{ job.services.mariadb.ports[3306] }}
           MYSQL_DSN=$MYSQCONFIG DEBUG=1 PFM_CONFIG=Config/conf_test.ini PFM_MODE=test ./vendor/phpunit/phpunit/phpunit --stderr
