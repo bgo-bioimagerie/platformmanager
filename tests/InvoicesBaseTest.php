@@ -106,7 +106,7 @@ class InvoicesBaseTest extends BaseTest {
         Configuration::getLogger()->debug('generate invoices', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
         $dateStart = new DateTime('first day of this month');
-        $dateEnd = new DateTime('last day of this month');
+        $dateEnd = new DateTime('last day of next month');
         $req = $this->request([
             "path" => "bookinginvoice/".$space['id'],
             "formid" => "ByPeriodForm",
@@ -121,7 +121,6 @@ class InvoicesBaseTest extends BaseTest {
 
 
         // invoice order
-        /* FAILING in parseOrdersToDetails, a PR is in progress to fix orders
         $req = $this->request([
             "path" => "servicesinvoiceorder/".$space['id'],
             "formid" => "invoicebyunitform",
@@ -133,7 +132,6 @@ class InvoicesBaseTest extends BaseTest {
         $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
         $service_invoice_id = $data['invoice']["id"];
         $this->assertTrue($service_invoice_id > 0);
-        */
 
 
         // invoice service

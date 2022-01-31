@@ -163,9 +163,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $contentArray = explode(";", $item["content"]);
         $contentList = array();
         foreach ($contentArray as $content) {
-            //echo "content = " . $content . "<br/>";
             $data = explode("=", $content);
-            //echo "size = " . count($data) . "<br/>";
             if (count($data) == 3) {
                 $contentList[] = array($modelServices->getItemName($id_space, $data[0]), $data[1], $data[2]);
             }
@@ -291,12 +289,8 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
     }
 
     public function invoiceprojectAction($id_space, $id_project) {
-
-        //echo "id_proj = " . $id_project . "<br/>";
-
         $modelProject = new SeProject();
         $id_resp = $modelProject->getResp($id_space, $id_project);
-        //echo "$id_resp = " . $id_resp . "<br/>";
         
         $id_projects = array();
         $id_projects[] = $id_project;
@@ -317,12 +311,9 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
         
         // parse content
-        //echo "parse content <br/>";
         $modelClient = new ClClient();
         $id_belonging = $modelClient->getPricingID($id_space ,$id_resp);
         
-        //echo 'resp = ' . $id_resp . '<br/>';
-        //echo 'belonging = ' . $id_belonging . "<br/>";
         $total_ht = 0;
         $modelProject = new SeProject();
         $addedServices = array();
@@ -353,10 +344,6 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 }
             }
 
-            //echo "services = ";
-            //print_r($services); echo "<br/>";
-            //echo "servicesMerged = ";
-            //print_r($servicesMerged); echo "<br/>";
             for ($i = 0; $i < count($servicesMerged); $i++) {
                 $addedServices[] = $servicesMerged[$i]["id_service"];
                 $quantity = floatval($servicesMerged[$i]["quantity"]);
@@ -375,12 +362,14 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         // get details
         //echo "get details <br/>";
         $details = "";
-        $title = "";
+        $lang = $this->getLanguage();
+        $title = ServicesTranslator::Projects($lang).":";
         foreach ($id_projects as $id_proj) {
             $name = $modelProject->getName($id_space, $id_proj);
             $details .= $name . "=" . "servicesprojectfollowup/" . $id_space . "/" . $id_proj . ";";
-            $title .= $name . " ";
+            $title .= " ".$name;
         }
+        $title = substr($title, 0, 255);
         //echo "set item <br/>";
         // set invoice itmems
         $modelInvoiceItem->setItem($id_space ,0, $id_invoice, $module, $controller, $content, $details, $total_ht);

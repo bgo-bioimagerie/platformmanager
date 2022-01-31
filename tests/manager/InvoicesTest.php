@@ -70,6 +70,7 @@ class InvoicesTest extends InvoicesBaseTest {
                 $canEdit = false;
             }
             $this->assertFalse($canEdit);
+
             $canDelete = true;
             try {
                 $user = $this->user($data['users'][0]);
