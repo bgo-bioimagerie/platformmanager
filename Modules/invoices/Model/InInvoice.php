@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
- * Class defining the Area model
+ * Class defining the invoice model
  *
  * @author Sylvain Prigent
  */

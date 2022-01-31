@@ -29,6 +29,18 @@
     }
     ?>
     
+    <?php if(!empty($requests)) {
+    ?>
+    <table aria-label="list of invoice generation requests" class="table">
+        <thead><tr><th scope="col">Invoice requests</th><th scope="col">Status</th></tr></thead>
+        <tbody>
+        <?php foreach ($requests as $req => $value) { ?>
+            <tr><td><?php echo $req ?></td><td <?php if (str_starts_with($value, 'error')) { echo 'class="label label-danger"';}  ?>><?php echo $value?></td></tr>
+        <?php } ?>
+        </tbody>
+    </table>
+    <?php } ?>
+    
     <?php echo $tableHtml ?>
 </div>
 

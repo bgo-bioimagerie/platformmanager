@@ -10,6 +10,7 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
@@ -24,10 +25,13 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/quote/Model/Quote.php';
 require_once 'Modules/services/Model/SeService.php';
 
+require_once 'Modules/invoices/Model/GlobalInvoice.php';
+
 
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use Sentry\Event;
 
 class EventModel extends Model {
 
@@ -462,6 +466,42 @@ class EventHandler {
         $this->logger->debug('[invoiceDelete][nothing to do', ['id_invoice' => $msg['invoice']['id']]);
     }
 
+    public function invoiceRequest($msg) {
+        $id_space = $msg['space']['id'];
+        $id_user = $msg['user']['id'];
+        $cus = new CoreUserSettings();
+        $lang = $cus->getUserSetting($id_user, "language") ?? 'en';
+        $type = $msg['type'];
+        $rid = $msg["request"]["id"];
+        try {
+            switch ($type) {
+                case 'invoices_global_all':
+                    $beginPeriod = $msg['period_begin'];
+                    $endPeriod = $msg['period_begin'];
+                    $cv = new CoreVirtual();
+                    $gi = new GlobalInvoice();
+                    $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
+                    $cv->deleteRequest($id_space, 'invoices', $rid);
+                    break;
+                case 'invoices_global_client':
+                    $beginPeriod = $msg['period_begin'];
+                    $endPeriod = $msg['period_begin'];
+                    $id_client = $msg['id_client'];
+                    $cv = new CoreVirtual();
+                    $gi = new GlobalInvoice();
+                    $gi->invoice($id_space, $beginPeriod, $id_client, $endPeriod, $id_user, $lang);
+                    $cv->deleteRequest($id_space, 'invoices', $rid);
+                default:
+                    Configuration::getLogger()->error('[invoiceRequest] unknown request type', ['type' => $type]);
+                    break;
+            }
+        } catch(Throwable $e) {
+            $cv = new CoreVirtual();
+            $cv->updateRequest($id_space, 'invoices', $rid, 'error: '.$e->getMessage());
+            throw $e;
+        }
+    }
+
     /**
      * Handle message from rabbitmq
      * 
@@ -508,6 +548,9 @@ class EventHandler {
                     break;
                 case Events::ACTION_INVOICE_DELETE:
                     $this->invoiceDelete($data);
+                    break;
+                case Events::ACTION_INVOICE_REQUEST:
+                    $this->invoiceRequest($data);
                     break;
                 case Events::ACTION_CUSTOMER_EDIT:
                 case Events::ACTION_CUSTOMER_DELETE:
@@ -561,6 +604,7 @@ class Events {
 
     public const ACTION_INVOICE_EDIT = 300;
     public const ACTION_INVOICE_DELETE = 301;
+    public const ACTION_INVOICE_REQUEST = 302;
 
     public const ACTION_CUSTOMER_EDIT = 400;
     public const ACTION_CUSTOMER_DELETE = 401;

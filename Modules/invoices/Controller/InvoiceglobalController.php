@@ -21,6 +21,8 @@ require_once 'Modules/booking/Model/BookinginvoiceTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
+require_once 'Modules/core/Model/CoreVirtual.php';
+
 
 /**
  * 
@@ -40,11 +42,23 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $formAll = $this->createAllForm($id_space, $lang);
         if ($formAll->check()) {
-
+            
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
 
-            $this->invoiceAll($id_space, $beginPeriod, $endPeriod);
+            $cv = new CoreVirtual();
+            $rid = $cv->newRequest($id_space, "invoices", "global:$beginPeriod => $endPeriod");
+            Events::send([
+                "action" => Events::ACTION_INVOICE_REQUEST,
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => $_SESSION['id_user']],
+                "type" => "invoices_global_all",
+                "period_begin" => $beginPeriod,
+                "period_end" => $endPeriod,
+                "request" => ["id" => $rid]
+            ]);
+
+            //$this->invoiceAll($id_space, $beginPeriod, $endPeriod);
             $this->redirect("invoices/" . $id_space);
             return;
         }
@@ -57,7 +71,20 @@ class InvoiceglobalController extends InvoiceAbstractController {
             $id_resp = $this->request->getParameter("id_resp");
             if ($id_resp != 0) {
 
-                $this->invoice($id_space, $beginPeriod, $endPeriod, $id_resp);
+                $cv = new CoreVirtual();
+                $rid = $cv->newRequest($id_space, "invoices", "global[$id_resp]:$beginPeriod => $endPeriod");
+                Events::send([
+                    "action" => Events::ACTION_INVOICE_REQUEST,
+                    "space" => ["id" => intval($id_space)],
+                    "user" => ["id" => $_SESSION['id_user']],
+                    "type" => "invoices_global_client",
+                    "period_begin" => $beginPeriod,
+                    "period_end" => $endPeriod,
+                    "id_client" => $id_resp,
+                    "request" => ["id" => $rid]
+                ]);
+
+                //$this->invoice($id_space, $beginPeriod, $endPeriod, $id_resp);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
