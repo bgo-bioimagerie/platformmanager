@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <head>
@@ -585,5 +585,4 @@
     });
 </script>
 
-<?php
-endblock();
+<?php endblock(); ?>

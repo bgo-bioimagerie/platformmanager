@@ -116,7 +116,7 @@ class ReareasController extends ResourcesBaseController {
             $this->model->delete($id_space, $id);
         } else {
             // linked to resources, notify the user
-            $_SESSION["message"] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Area($lang), $lang);
+            $_SESSION['flash'] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Area($lang), $lang);
             $error = 'deletionnotauthorized';
         }
         return $this->redirect("reareas/".$id_space, [], ['error' => $error]);

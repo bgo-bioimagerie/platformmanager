@@ -1,6 +1,6 @@
 <?php include 'Modules/com/View/layout.php' ?>
 
-<!-- body --> 
+
 <?php startblock('content') ?>
 <div class="row">
 
@@ -28,5 +28,4 @@
     </div>
     
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

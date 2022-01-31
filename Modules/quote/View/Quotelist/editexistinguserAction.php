@@ -1,29 +1,15 @@
 <?php include 'Modules/quote/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php
 if ($id_quote > 0) {
-    ?>
+?>
     <div class="pm-form-short">
-        <?php
-    } else {
-        ?>
+<?php } else { ?>
         <div class="pm-form">
-            <?php
-        }
-        ?>
-        <?php
-        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
-            ?>
-            <div class="alert alert-success">
-                <?php echo $_SESSION["message"] ?>
-            </div>
-            <?php
-            unset($_SESSION["message"]);
-        }
-        ?>
+<?php } ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
         <?php echo $formHtml ?>
         <script type="module">
@@ -69,6 +55,5 @@ if ($id_quote > 0) {
 
     <?php include 'Modules/quote/View/Quotelist/editnewscript.php'; ?>
 
-    <?php
-    endblock();
+<?php endblock(); ?>
     

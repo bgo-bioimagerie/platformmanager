@@ -15,6 +15,13 @@ class InvoicesTranslator {
         return "Invoices";
     }
 
+    public static function Invoice($lang) {
+        if ($lang == "fr") {
+            return "Facture";
+        }
+        return "Invoice";
+    }
+
     public static function All_invoices($lang) {
         if ($lang == "fr") {
             return "Tous les relevés";
@@ -409,5 +416,11 @@ class InvoicesTranslator {
         return "User";
     }
     
+    public static function NonNumericValue($lang) {
+        if ($lang == "fr") {
+            return "Certaines de vos valeurs ne sont pas numériques. Merci de les éditer avant validation.";
+        }
+        return "Some of your values are non numeric and won't display. PLease edit them before saving.";
+    }
 
 }

@@ -182,7 +182,6 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                                 </datalist>
                                 <script type="text/javascript">
                                 function getuserval(sel) {
-                                    console.log('??', sel)
                                     let user = sel.split(':')
                                     let id_user = document.getElementById('id_user');
                                     id_user.value = user[1];

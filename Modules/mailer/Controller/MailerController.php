@@ -16,6 +16,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
@@ -59,9 +60,13 @@ class MailerController extends CoresecureController {
 
         $mails = [];
         $mm = new Mailer();
-        if($this->role > CoreSpace::$USER) {
+
+        $modelConfig = new CoreConfig();
+        $editRole = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
+
+        if($this->role >= $editRole) {
             $mails = $mm->getMails($id_space);
-        } else if ($this->role == CoreSpace::$USER) {
+        } else if ($this->role >= CoreSpace::$USER) {
             $mails = $mm->getMails($id_space, Mailer::$SPACE_MEMBERS);
         }
 
@@ -80,14 +85,19 @@ class MailerController extends CoresecureController {
             'from' => $from,
             'mails' => $mails,
             'superAdmin' => $superAdmin,
-            'role' => $this->role
+            'role' => $this->role,
+            'editRole' => $editRole
         ));
     }
 
     public function sendAction($id_space) {
         $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
-        if($this->role < CoreSpace::$MANAGER) {
-            throw new PfmAuthException('access limited to managers');
+
+        $modelConfig = new CoreConfig();
+        $editRole = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
+        
+        if($this->role < $editRole) {
+            throw new PfmAuthException('not enough priviledges');
         }
         $from = $this->request->getParameter("from");
         $to = $this->request->getParameter("to");

@@ -40,8 +40,7 @@ class HelpdeskController extends CoresecureController {
         $sm = new CoreSpace();
         $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
         if(!$role || $role < CoreSpace::$MANAGER) {
-            $this->render(['data' => ['notifs' => 0]]);
-            return;
+            return $this->render(['data' => ['notifs' => 0]]);
         }
 
         $hm = new Helpdesk();
@@ -56,7 +55,7 @@ class HelpdeskController extends CoresecureController {
                 $total += intval($u['total']);
             }
         }
-        $this->render(['data' => ['notifs' => $total]]);
+        return $this->render(['data' => ['notifs' => $total]]);
     }
 
     public function setSettingsAction($id_space) {

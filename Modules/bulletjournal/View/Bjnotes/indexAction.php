@@ -1,6 +1,6 @@
 <?php include 'Modules/bulletjournal/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 <div class="row">
 <div class="col-md-10" id="pm-content">
@@ -45,5 +45,4 @@
 <!--  ************  -->
 <?php include "Modules/bulletjournal/View/Bjnotes/indexJS.php"; ?>
 
-<?php
-endblock();
+<?php endblock(); ?>

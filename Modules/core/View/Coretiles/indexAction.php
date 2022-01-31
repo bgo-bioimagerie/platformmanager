@@ -15,7 +15,7 @@
 </style>
 
 <?php endblock(); ?>
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php if ($showSubBar){ ?> 
@@ -126,5 +126,4 @@
         </div>
     </div>
 </div> <!-- /container -->
-<?php
-endblock();
+<?php endblock(); ?>

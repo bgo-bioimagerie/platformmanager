@@ -1,6 +1,6 @@
 <?php include 'Modules/invoices/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form">
@@ -20,4 +20,4 @@
 
 <?php include 'Modules/services/View/Servicesprices/editscript.php';  ?>
 
-<?php endblock();
+<?php endblock(); ?>

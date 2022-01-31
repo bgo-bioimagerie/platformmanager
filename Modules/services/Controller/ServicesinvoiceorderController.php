@@ -95,6 +95,10 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
             $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
             $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
+
+            $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION['flashClass'] = 'success';
+            
             Events::send([
                 "action" => Events::ACTION_INVOICE_EDIT,
                 "space" => ["id" => intval($id_space)],
@@ -173,14 +177,14 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $controller = "servicesinvoiceorder";
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
-        $modelInvoice->setTitle($id_space, $id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
+        $modelInvoice->setTitle($id_space, $id_invoice, ServicesTranslator::services($lang).": " . CoreTranslator::dateFromEn($dateBegin, $lang) . " => " . CoreTranslator::dateFromEn($dateEnd, $lang));
 
         // add the counts to the Invoice
         $services = $modelOrder->openedItemsForClient($id_space, $id_client);
         $modelClPricing = new ClPricing();
         $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0]; // why an array ???
         $content = $this->parseServicesToContent($id_space, $services, $pricing['id']);
-        $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
+        $details = $this->parseOrdersToDetails($id_space, $orders);
         $total_ht = $this->calculateTotal($id_space, $services, $pricing['id']);
 
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
@@ -200,7 +204,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $id_invoice;
     }
 
-    protected function parseOrdersToDetails($orders, $id_space) {
+    protected function parseOrdersToDetails($id_space, $orders) {
         $details = "";
         foreach ($orders as $order) {
             $details .= $order["no_identification"] . "=servicesorderedit/" . $id_space . "/" . $order["id"] . ";";
@@ -276,7 +280,12 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
                 $itemQuantities[] = $data[1];
                 $itemQuantityTypes[] = $modelSeTypes->getType($modelServices->getItemType($id_space, $data[0]));
                 $itemPrices[] = $data[2];
-                $total += $data[1] * $data[2];
+                if (is_numeric($data[1]) && is_numeric($data[2])) {
+                    $total += $data[1] * $data[2];
+                } else {
+                    $_SESSION['flash'] = InvoicesTranslator::NonNumericValue($lang);
+                    $_SESSION['flashClass'] = 'danger';
+                }
             }
         }
         $modelServices = new SeService();

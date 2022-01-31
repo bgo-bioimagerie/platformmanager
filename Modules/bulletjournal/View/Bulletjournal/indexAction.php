@@ -1,6 +1,6 @@
 <?php include 'Modules/bulletjournal/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="container">
@@ -10,4 +10,4 @@
     
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

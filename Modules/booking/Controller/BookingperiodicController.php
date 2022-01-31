@@ -209,17 +209,17 @@ class BookingdefaultController extends BookingabstractController {
         
         $valid = true;
         if($start_time >= $end_time){
-            $_SESSION["message"] = "Error: Start Time Must Be Before End Time";
+            $_SESSION['flash'] = "Error: Start Time Must Be Before End Time";
             $valid = false;
             $error = 'start time before end time';
         }
         if($start_time==0){
-            $_SESSION["message"] = "Error: Start Time Cannot Be Null";
+            $_SESSION['flash'] = "Error: Start Time Cannot Be Null";
             $valid = false;
             $error = 'start time null';
         }
         if($start_time==0){
-            $_SESSION["message"] = "Error: End Time Cannot Be Null";
+            $_SESSION['flash'] = "Error: End Time Cannot Be Null";
             $valid = false;
             $error = 'end time null';
         }
@@ -228,7 +228,7 @@ class BookingdefaultController extends BookingabstractController {
         $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
                 
         if ($conflict){
-                $_SESSION["message"] = BookingTranslator::reservationError($lang);
+                $_SESSION['flash'] = BookingTranslator::reservationError($lang);
                 $valid = false;
                 $error = 'reservationError';
         }
@@ -236,7 +236,8 @@ class BookingdefaultController extends BookingabstractController {
         if($valid){
             $id_entry = $modelCalEntry->setEntry($id_space, $id, $start_time, $end_time, $id_resource, $booked_by_id, $recipient_id, $last_update, 
                 $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id);
-            $_SESSION["message"] = BookingTranslator::reservationSuccess($lang);    
+            $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
+            $_SESSION["flashClass"] = 'success';
         }
         
         //$this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"]);
@@ -379,11 +380,19 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         // booking nav bar
+        /*
         $curentResource = $_SESSION['bk_id_resource'];
         $curentAreaId = $_SESSION['bk_id_area'];
         $curentDate = date("Y-m-d", $resaInfo["start_time"]);
         $_SESSION['bk_curentDate'] = $curentDate;
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        */
+
+        $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
+        $curentDate = date("Y-m-d", $resaInfo["start_time"]);
+        $_SESSION['bk_curentDate'] = $curentDate;
+        $menuData = $this->calendarMenuData($id_space, $bk_id_area, $id_resource, $curentDate);
+
 
         // date time
         $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["start_time"]));
@@ -429,7 +438,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationdefaultdelete/' . $id_space ."/". $resaInfo["id"]);
         $formDelete->setButtonsWidth(2, 10);
         
-        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
         
         
         $this->render(array("id_space" => $id_space, "lang" => $lang, "menuData" => $menuData,

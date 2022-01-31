@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="container pm-form">
@@ -16,5 +16,4 @@
     </div>
     </div>
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

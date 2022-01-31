@@ -54,7 +54,9 @@ class CoreusersController extends CoresecureController {
             "status" => CoreTranslator::Status($lang),
             "source" => CoreTranslator::Source($lang),
             "is_active" => CoreTranslator::Is_user_active($lang),
-            "date_last_login" => CoreTranslator::Last_connection($lang));
+            "date_last_login" => CoreTranslator::Last_connection($lang),
+            "created_at" => CoreTranslator::DateCreated($lang)
+        );
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll() ?? [];
 
@@ -278,7 +280,7 @@ class CoreusersController extends CoresecureController {
             $modelUser = new CoreUser();
             $modelUser->delete($id);
         } else {
-            $_SESSION["message"] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
+            $_SESSION['flash'] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
         }
         $this->redirect("coreusers");
     }

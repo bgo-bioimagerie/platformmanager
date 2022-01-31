@@ -32,7 +32,6 @@ abstract class BaseTest extends TestCase {
 
     public function request(array $params){
         $req = new Request($params, true);
-
         $req->getSession()->setAttribut("id_user", $_SESSION['id_user']);
         $req->getSession()->setAttribut("login", $_SESSION['login']);
         $req->getSession()->setAttribut("email", 'fake@pfm.org');
@@ -49,6 +48,12 @@ abstract class BaseTest extends TestCase {
         $u = $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
         $_SESSION['user_status'] = CoreStatus::$ADMIN;
         return $u;
+    }
+
+    protected function asAnon(): void {
+        $_SESSION['user_status'] = CoreStatus::$USER;
+        $_SESSION['id_user'] = -1;
+        $_SESSION['login'] = 'anonymous';
     }
 
     protected function asUser(string $name, int $id_space=0): mixed {

@@ -12,7 +12,7 @@
 <?php startblock('content') ?>
 
 <div class="container">
-    <?php if($role >= CoreSpace::$MANAGER) { ?>
+    <?php if($role >= $editRole) { ?>
     <div class="row"><div class="col-sm-12">
     <div >
         <form role="form" action="mailersend/<?php echo $id_space ?>" method="post">

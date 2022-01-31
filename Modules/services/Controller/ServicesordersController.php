@@ -236,7 +236,6 @@ class ServicesordersController extends ServicesController {
                     $modelOrder->deleteOrderService($id_space, $deletedServiceId, $id);
                 }
             }
-
             for ($i = 0; $i < count($servicesQuantities); $i++) {
                 $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
                 $qDelta = $servicesQuantities[$i] - $qOld;

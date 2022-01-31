@@ -2087,5 +2087,19 @@ class CoreTranslator {
         }
         return "My spaces";
     }
-    
+
+    public static function DeleteUserCaution($lang) {
+        if($lang == "fr") {
+            return "À utiliser avec précautions !!! La suppression d'utilisateurs ne supprime pas les données associées. N'utiliser qu'en cas de doublon ou de cas exotiques.";
+        }
+        return "Use with caution!! User removal will not delete user related data. Use only for duplicate accounts or special cases";
+    }
+
+    public static function EditionAccess($lang){
+        if($lang == "fr") {
+            return "Droits d'édition";
+        }
+        return "Edition access";
+    }
+
 }

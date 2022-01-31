@@ -80,10 +80,10 @@ class SeOrder extends Model {
     }
 
     public function getOrderServices($id_space, $id_order) {
-        $sql = "SELECT orders.*, types.name as quantity_type "
+        $sql = "SELECT orders.*, services.type_id as quantity_type "
                 . "FROM se_order_service as orders "
                 . "INNER JOIN se_services as services ON orders.id_service = services.id "
-                . "INNER JOIN se_service_types as types ON services.type_id = types.id "
+                //. "INNER JOIN se_service_types as types ON services.type_id = types.id "
                 . "WHERE orders.id_order=? AND orders.id_space=? AND orders.deleted=0";
         $data = $this->runRequest($sql, array($id_order, $id_space))->fetchAll();
         $services = array();

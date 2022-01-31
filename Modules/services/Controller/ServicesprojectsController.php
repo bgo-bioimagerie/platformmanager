@@ -299,7 +299,8 @@ class ServicesprojectsController extends ServicesController {
                     CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang)
             );
             
-            $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
+            $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
+            $_SESSION["flashClass"] = 'success';
             return $this->redirect("servicesprojectclosing/" . $id_space . "/" . $id, [], ['project' => $project]);
         }
 
@@ -345,7 +346,8 @@ class ServicesprojectsController extends ServicesController {
                     $this->request->getParameter("samplescomment")
             );
 
-            $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
+            $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("servicesprojectsample/" . $id_space . "/" . $id);
             return;
         }
@@ -415,7 +417,8 @@ class ServicesprojectsController extends ServicesController {
             $modelProject->setInCharge($id_space ,$id, $this->request->getParameter("in_charge"));
 
 
-            $_SESSION["message"] = ServicesTranslator::projectEdited($lang);
+            $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);
             return;
         }

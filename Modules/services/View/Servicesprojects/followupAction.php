@@ -1,6 +1,6 @@
 <?php include 'Modules/services/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form">
@@ -51,5 +51,4 @@
 
 <?php include 'Modules/services/View/Servicesprojects/editscript.php';  ?>
 
-<?php
-endblock();
+<?php endblock(); ?>

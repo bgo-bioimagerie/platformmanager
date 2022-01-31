@@ -1,6 +1,6 @@
 <?php include 'Modules/clients/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 <div class="pm-table">
 <div class="page-header">
@@ -9,5 +9,4 @@
 <a class="btn btn-default" href="clclientedit/<?php echo $id_space ?>"><?php echo ClientsTranslator::NewClient($lang) ?></a>
     <?php echo $tableHtml ?>
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

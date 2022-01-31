@@ -5,7 +5,7 @@
 Install - Platform-Manager
 <?php endblock() ?> 
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <?php if ($message != ""){?>
@@ -20,4 +20,4 @@ Install - Platform-Manager
 <div class="container pm-form-short">
     <?php echo $formHtml ?> 
 </div>
-<?php endblock();
+<?php endblock(); ?>

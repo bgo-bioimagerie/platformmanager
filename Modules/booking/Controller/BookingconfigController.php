@@ -191,7 +191,7 @@ class BookingconfigController extends CoresecureController {
     
     protected function bookingUseRecurentBooking($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
-        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
         
         $form = new Form($this->request, "BkUseRecurentBookingForm");
         $form->addSeparator(BookingTranslator::Use_recurent_booking($lang));
