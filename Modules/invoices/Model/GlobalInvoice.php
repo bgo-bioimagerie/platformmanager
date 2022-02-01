@@ -15,8 +15,6 @@ class GlobalInvoice extends Model {
 
     public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en') {
 
-        // $modelUser = new CoreUser();
-        // $resps = $modelUser->getResponsibles(); 
         $clm = new ClClient();
         $resps = $clm->getAll($id_space);
 

@@ -83,7 +83,6 @@ class CoreVirtual extends Model {
         return $val;
     }
 
-
     public function newRequest($id_space, $module, $name) {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));

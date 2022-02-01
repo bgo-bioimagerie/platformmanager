@@ -59,7 +59,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 "request" => ["id" => $rid]
             ]);
 
-            //$this->invoiceAll($id_space, $beginPeriod, $endPeriod);
             $this->redirect("invoices/" . $id_space);
             return;
         }
@@ -85,7 +84,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
                     "request" => ["id" => $rid]
                 ]);
 
-                //$this->invoice($id_space, $beginPeriod, $endPeriod, $id_resp);
                 $this->redirect("invoices/" . $id_space);
                 return;
             }
@@ -154,8 +152,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $discount = $_POST["discount"];
         $total_ht = $_POST["total_ht"];
         $content = $_POST["content"];
-        
-        //print_r($content);
 
         $modelInvoice = new InInvoice();
         $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
@@ -172,7 +168,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $modelItem->setItemContent($id_space, $id_invoice, $content);
 
         echo json_encode(array("status" => "success", "message" => InvoicesTranslator::InvoiceHasBeenSaved($lang)));
-        //echo json_encode(array("status" => "success", "message" => $content ));
     }
 
     public function deleteAction($id_space, $id_invoice) {
