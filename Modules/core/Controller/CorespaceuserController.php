@@ -35,11 +35,12 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 class CorespaceuserController extends CorespaceaccessController {
 
     
-    // TODO: call bkauth history from this controller 
     // TODO: filter settings with activated modules
     // TODO: design interface
     // TODO: remove corespaceaccessusers user's buttons
     // TODO: display flash messages ?
+    // TODO: deal with pending accounts validation process
+    // TODO: make it clean (remove debug logs and non necessay comments)
 
 
     // space access section
@@ -47,33 +48,9 @@ class CorespaceuserController extends CorespaceaccessController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $origin = ["page" => json_encode($this->request->getParameterNoException("origin"))];
-        if ($origin['page'] === "bkauthhistory") {
-            $idArray = explode("_", $id_user);
-            $id_category = intval($idArray[0]);
-            if (!is_int($id_category)) {
-                throw new PfmParamException("id resource category is not an int");
-            }
-            $id_user = intval($idArray[1]);
-            if (!is_int($id_user)) {
-                throw new PfmParamException("id user is not an int");
-            }
-        } else if ($origin['page'] == "") {
-            $origin = false;
-        }
-
-        $spaceAccessForm = $this->generateSpaceAccessForm($id_space, $id_user);
-
-        $clientsUsersCTRL = new ClientsuseraccountsController($this->request);
-        $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user);
-        $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user);
-
-        $bookingAuthCTRL = new BookingauthorisationsController($this->request);
-        $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit");
-        $generatedBkAuth = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit");
-        $bkAuthTableHtml = $generatedBkAuth['bkTableHtml'];
-        $bkAuthData = $generatedBkAuth['data'];
 
         $bkHistoryTableHtml = "";
+        $bookingAuthCTRL = new BookingauthorisationsController($this->request);
         if (strpos($id_user, "_") !== false) {
             $origin['page'] = "bkauthhistory";
             $idArray = explode("_", $id_user);
@@ -88,6 +65,23 @@ class CorespaceuserController extends CorespaceaccessController {
             $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, $id_category, "corespaceuseredit");
             $bkHistoryForm = $bookingAuthCTRL->generateEditForm($id_space, $id_user, $id_category, "corespaceuseredit");
         }
+
+        Configuration::getLogger()->debug("[TEST]", ["id_user" => $id_user]);
+
+        $spaceAccessForm = $this->generateSpaceAccessForm($id_space, $id_user);
+        
+
+
+        $clientsUsersCTRL = new ClientsuseraccountsController($this->request);
+        $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user);
+        $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user);
+
+        
+        $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit");
+        $generatedBkAuth = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit");
+        $bkAuthTableHtml = $generatedBkAuth['bkTableHtml'];
+        $bkAuthData = $generatedBkAuth['data'];
+        
         $bkHistoryFormHtml = isset($bkHistoryForm) ? $bkHistoryForm->getHtml($lang) : "no bkHistoryForm";
         
         if ($spaceAccessForm->check()) {
@@ -100,10 +94,6 @@ class CorespaceuserController extends CorespaceaccessController {
         if ($bkAuthAddForm->check()) {
             $bookingAuthCTRL->validateBkAuthAddForm($id_space, $id_user, $bkAuthAddForm, "corespaceuseredit");
         }
-
-        /* if ($bkHistoryForm->check()) {
-            $bookingAuthCTRL->validateEditForm($id_space, $id_user, $bkHistoryForm);
-        } */
 
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
@@ -123,40 +113,6 @@ class CorespaceuserController extends CorespaceaccessController {
             "bkHistoryForm" => $bkHistoryFormHtml
         ];
         return $this->render($dataView, "editAction");
-    }
-
-
-    /////////////////////////////////////////
-    ///// BOOKINGAUTHORIZATIONS SECTION /////
-    /////////////////////////////////////////
-
-    public function bkAuthHistoryAction($id_space, $id) {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
-
-        $idArray = explode("_", $id);
-        $id_category = intval($idArray[0]);
-        if (!is_int($id_category)) {
-            throw new PfmParamException("id resource category is not an int");
-        }
-        $id_user = intval($idArray[1]);
-        if (!is_int($id_user)) {
-            throw new PfmParamException("id user is not an int");
-        }
-        $bookingAuthCTRL = new BookingauthorisationsController($this->request);
-        $tableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, $id_category, "corespaceuseredit");
-        $form = $bookingAuthCTRL->generateEditForm($id_space, $id_user, $id_category, "corespaceuseredit");
-
-        $modelSpace = new CoreSpace();
-        $space = $modelSpace->getSpace($id_space);
-
-        $this->render(array(
-            "lang" => $lang,
-            "id_space" => $id_space,
-            'formHtml' => $form->getHtml($lang),
-            'tableHtml' => $tableHtml,
-            'space' => $space
-        ));
     }
 
 }

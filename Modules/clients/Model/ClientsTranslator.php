@@ -336,7 +336,7 @@ class ClientsTranslator {
         if ($lang == "fr") {
             return "Ajouter un compte clients pour ";
         }
-        return "add a client account for ";
+        return "Add a client account for";
     }
 
 

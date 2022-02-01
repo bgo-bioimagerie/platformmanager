@@ -220,7 +220,7 @@ class BookingauthorisationsController extends CoresecureController {
         return $table->view($data, $headers);
     }
 
-    public function generateEditForm($id_space, $id_user, $id_category, $controller) {
+    public function generateEditForm($id_space, $id_user, $id_category/* , $controller */) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -256,22 +256,21 @@ class BookingauthorisationsController extends CoresecureController {
 
     public function validateEditForm($id_space, $id, $form) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
-        Configuration::getLogger()->debug("[TEST]", ["in validate editform"]);
         $lang = $this->getLanguage();
         $modelAuth = new BkAuthorization();
+        // We keep initial user and resource ids since it can't and shouldn't be modified in the edit action
+        $bkAuth = $modelAuth->get($id_space, $id);
         $modelAuth->set(
             $id_space,
             $id,
-            $form->getParameter("user_id"),
-            $form->getParameter("resource_id"),
+            $bkAuth['user_id'],
+            $bkAuth['resource_id'],
             $form->getParameter("visa_id"),
             CoreTranslator::dateToEn($form->getParameter("date"), $lang),
             CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang),
             $form->getParameter("is_active")
         );
-
-        $redirectionUrl = "corespaceuseredit/" . $id_space . "/" . $form->getParameter("resource_id") . "_" . $form->getParameter("user_id");
-        Configuration::getLogger()->debug("[TEST]", ["redirectionUl" => $redirectionUrl]);
+        $redirectionUrl = "corespaceuseredit/" . $id_space . "/" . $bkAuth['resource_id'] . "_" . $bkAuth['user_id'];
         $this->redirect($redirectionUrl);    
     }
 
@@ -279,8 +278,12 @@ class BookingauthorisationsController extends CoresecureController {
     public function editAction($id_space, $id) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
         $modelAuth = new BkAuthorization();
+        $data = $modelAuth->get($id_space, $id);
+
+        $form = $this->generateEditForm($id_space, $data["user_id"], $data['resource_id'] /*, $controller */);
+
+        /* $modelAuth = new BkAuthorization();
         $data = $modelAuth->get($id_space, $id);
 
         $modelUser = new CoreUser();
@@ -300,7 +303,7 @@ class BookingauthorisationsController extends CoresecureController {
 
         $form = new Form($this->request, "authorisationAddForm");
         $form->setTitle(BookingTranslator::Authorisations_for($lang) . ": " . $userName);
-        $form->addText("user", CoreTranslator::User(), false, $userName, "disabled");
+        $form->addText("user_id", CoreTranslator::User(), false, $userName, "disabled");
         $form->addText("resource", BookingTranslator::Resource(), false, $categoryName, "disabled");
 
 
@@ -310,16 +313,17 @@ class BookingauthorisationsController extends CoresecureController {
         $form->addDate("date_desactivation", BookingTranslator::DateDesactivation($lang), false, $data["date_desactivation"]);
         $form->addSelect("is_active", ResourcesTranslator::IsActive($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $data["is_active"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsedit/" . $id_space . "/" . $id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsedit/" . $id_space . "/" . $id); */
 
         if ($form->check()) {
 
-            $modelAuth = new BkAuthorization();
+            $this->validateEditForm($id_space, $id, $form);
+            /* $modelAuth = new BkAuthorization();
             $modelAuth->set($id_space, $id, $data["user_id"], $data["resource_id"], $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang), CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang), $form->getParameter("is_active"));
 
 
             $this->redirect("bookingauthorisations/" . $id_space . "/" . $data["user_id"]);
-            return;
+            return; */
         }
 
         $modelSpace = new CoreSpace();

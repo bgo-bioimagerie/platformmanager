@@ -4,50 +4,60 @@
 
 <div class="row pm-table">
     <div id="formSection" data-origin="{{origin}}">
-    {{origin}}
-            <input
-                v-for="(item, index) in sections"
-                :id="item.btnId"
-                type="button"
-                :value="item.displayName"
-                @click="showForm(item.name)">
-            </input>
-        <div id="spaceAccessSection" v-show="show.spaceAccess">
-            {% autoescape false %}
-                {{ spaceAccessForm }}
-            {% endautoescape %}
-        </div>
-        <div id="clientsUserSection" v-show="show.clientsUser">
-            {% autoescape false %}
-                {{ clientsUserForm }}
-                {{ clientsUserTable }}
-            {% endautoescape %}
-        </div>
-        <div id="bkAuthHistorySection" v-show="show.bkAuthHistory">
-            {% autoescape false %}
-                {# {{ bkHistoryForm }} #}
-                {{ bkHistoryTable }}
-            {% endautoescape %}
-        </div>  
-        <div id="bookingAccessSection" v-show="show.bookingAccess">
-            {% autoescape false %}
-                {{ bkAuthTable }}
-                {{ bkAuthAddForm }}
-            {% endautoescape %}
-            <script type="module">
-                import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
-                let dynamicForms = new DynamicForms();
-                let spaceId = {{ id_space }};
-                let sourceId = "resource";
-                let targets = [
-                    {
-                        elementId: "visa_id",
-                        apiRoute: `revisas/getcategoryvisas/`,
-                        activateOnLoad: true
-                    }
-                ];
-                dynamicForms.dynamicFields(sourceId, targets, spaceId);
-            </script>
+        <input
+            v-for="(item, index) in sections"
+            :id="item.btnId"
+            type="button"
+            :class="sections[item.name].show ? 'btn btn-primary' : 'btn btn-secondary'"
+            :value="item.displayName"
+            style="margin:5px;"
+            @click="showForm(item.name)">
+        </input>
+        <div id="sections" style="margin:5px;">
+            <div id="spaceAccessSection" v-show="sections.spaceAccess.show">
+                {% autoescape false %}
+                    {{ spaceAccessForm }}
+                {% endautoescape %}
+            </div>
+            <div id="clientsUserSection" v-show="sections.clientsUser.show">
+                {% autoescape false %}
+                    {{ clientsUserTable }}
+                    {{ clientsUserForm }}
+                {% endautoescape %}
+            </div>
+            <div id="bookingAccessSection" v-show="sections.bookingAccess.show">
+                {% autoescape false %}
+                    {{ bkAuthTable }}
+                    {{ bkAuthAddForm }}
+                {% endautoescape %}
+                <input
+                    :id="sections.bookingAccess.subSection.btnId"
+                    type="button"
+                    :class="sections.bookingAccess.subSection.show ? 'btn btn-primary' : 'btn btn-secondary'"
+                    :value="sections.bookingAccess.subSection.displayName"
+                    style="margin:5px;"
+                    @click="showForm(sections.bookingAccess.subSection.name)">
+                </input>
+                <div id="bkAuthHistorySection" v-show="sections.bookingAccess.subSection.show">
+                {% autoescape false %}
+                    {{ bkHistoryTable }}
+                {% endautoescape %}
+                </div>  
+                <script type="module">
+                    import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+                    let dynamicForms = new DynamicForms();
+                    let spaceId = {{ id_space }};
+                    let sourceId = "resource";
+                    let targets = [
+                        {
+                            elementId: "visa_id",
+                            apiRoute: `revisas/getcategoryvisas/`,
+                            activateOnLoad: true
+                        }
+                    ];
+                    dynamicForms.dynamicFields(sourceId, targets, spaceId);
+                </script>
+            </div>
         </div>
     </div>
 </div>
@@ -58,67 +68,65 @@
         data () {
             return {
                 origin: false,
-                sections: [
-                    {name: "spaceAccess", btnId: "spaceAccessBtn", displayName: "Space access"},
-                    {name: "clientsUser", btnId: "clientsUserBtn", displayName: "Clients accounts"},
-                    {name: "bookingAccess", btnId: "bookingAccessBtn", displayName: "Booking access"},
-                    {name: "bookingAuthorisationsHistory", btnId: "bookingAuthorisationsHistoryBtn", displayName: "Booking authorisations history"}
-                ],
-                show: {
-                    clientsUser: false,
-                    spaceAccess: false,
-                    bookingAccess: false,
-                    bkAuthHistory: false
+                sections: {
+                    spaceAccess: {
+                        name: "spaceAccess",
+                        btnId: "spaceAccessBtn",
+                        displayName: "Space access",
+                        show: false
+                    },
+                    clientsUser: {
+                        name: "clientsUser",
+                        btnId: "clientsUserBtn",
+                        displayName: "Clients accounts",
+                        show: false
+                    },
+                    bookingAccess: {
+                        name: "bookingAccess",
+                        btnId: "bookingAccessBtn",
+                        displayName: "Booking access",
+                        show: false,
+                        subSection: {
+                            name: "bkAuthHistory",
+                            btnId: "bkauthhistoryBtn",
+                            displayName: "Booking authorisations history",
+                            show: false
+                        }
+                    },
                 },
                 params: {
                     spaceId: {{ id_space }},
                     userId: {{ id_user }},
                 }
             }
+
         },
-        beforeMount: function() {
+        mounted: function() {
             this.origin = JSON.parse(this.$el.attributes['data-origin'].value);
             this.showForm(this.getOriginPage());
         },
-        mounted: function() {
-            if (!this.logged) {
-                return
-            }
-        },
         methods: {
-            showForm(name="spaceAccess") {
-                // TODO: write that more efficiently
-                switch (name) {
-                    case "spaceAccess":
-                        this.show.spaceAccess = true;
-                        this.show.clientsUser = false;
-                        this.show.bookingAccess = false;
-                        this.show.bkAuthHistory = false;
-                        break;
-                    case "clientsUser":
-                        this.show.spaceAccess = false;
-                        this.show.clientsUser = true;
-                        this.show.bookingAccess = false;
-                        this.show.bkAuthHistory = false;
-                        break;
-                    case "bookingAccess":
-                        this.show.spaceAccess = false;
-                        this.show.clientsUser = false;
-                        this.show.bookingAccess = true;
-                        this.show.bkAuthHistory = false;
-                        break;
-                    case "bkAuthHistory":
-                        this.show.spaceAccess = false;
-                        this.show.clientsUser = false;
-                        this.show.bookingAccess = false;
-                        this.show.bkAuthHistory = true;
-                        break;
-                    default:
-                        break;
-                }
+            showForm(itemName) {
+                let found = false;
+                Object.getOwnPropertyNames(this.sections).forEach((sectionName, index, array) => {
+                    let section = this.sections[sectionName];
+                    if (sectionName === itemName) {
+                        section.show = true;
+                        found = true;
+                    } else {
+                        if (section.subSection && section.subSection.name === itemName) {
+                            section.show = true;
+                            section.subSection.show = !section.subSection.show;
+                        } else {
+                            section.show = false;
+                            section.subSection ? section.subSection.show = false : null;
+                        }
+                    } 
+                });
+                // console.log(this.show.bkAuthHistory);
             },
             getOriginPage() {
-                let result;
+                let result = "spaceAccess";
                 if (this.origin.page.match(/clientsuser/g)) {
                     result = "clientsUser";
                 } else if (this.origin.page.match(/spaceaccess/g)) {
@@ -126,7 +134,7 @@
                 } else if (this.origin.page.match(/bookingaccess/g)) {
                     result = "bookingAccess";
                 } else if (this.origin.page.match(/bkauthhistory/g)) {
-                    result = "bkAuthHistory";
+                    result = "bkAuthHistory"; // TODO: check if ok
                 }
                 return result;
             },
