@@ -31,7 +31,6 @@ class ServicesInvoice extends InvoiceModel {
             $sqlpd = "SELECT * FROM se_project_service WHERE id_project=? AND id_invoice=0 AND id_space=?";
             $req = $this->runRequest($sqlpd, array($p["id"], $id_space));
             if ($req->rowCount() > 0){
-                echo "found a project service for " . $id_resp . "<br/>";
                 return true;
             }
         }
@@ -54,7 +53,7 @@ class ServicesInvoice extends InvoiceModel {
         $contentAll = $sim->getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client);
 
         if (empty($contentAll)) {
-            throw new PfmParamException("there are no orders open for this responsible");
+            return false;
         }
 
         // get the bill number
@@ -76,6 +75,7 @@ class ServicesInvoice extends InvoiceModel {
             $modelOrder->setEntryCloded($id_space, $order["id"]);
             $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
         }
+        return true;
     }
 
     public function getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client) {
@@ -153,10 +153,16 @@ class ServicesInvoice extends InvoiceModel {
         $modelInvoice = new InInvoice();
         $module = "services";
         $controller = "servicesinvoiceproject";
+
+
+        $contentAll = $this->getInvoiceProjects($id_space, $id_client, $id_projects);
+        if(empty($contentAll['services'])) {
+            return false;
+        }
+
         $number = $modelInvoice->getNextNumber($id_space);
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
-        $contentAll = $this->getInvoiceProjects($id_space, $id_client, $id_projects);
         foreach($contentAll['services'] as $s){
             $modelProject->setServiceInvoice($id_space, $s['id'], $id_invoice);
         }
@@ -172,11 +178,10 @@ class ServicesInvoice extends InvoiceModel {
             $title .= " ".$name;
         }
         $title = substr($title, 0, 255);
-        //echo "set item <br/>";
-        // set invoice itmems
         $modelInvoiceItem->setItem($id_space ,0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
         $modelInvoice->setTitle($id_space, $id_invoice, $title);
+        return true;
     }
 
     public function getInvoiceProjects($id_space, $id_client, $id_projects) {

@@ -485,40 +485,59 @@ class EventHandler {
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end']; 
                     $gi = new GlobalInvoice();
-                    $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
-                    $cv->deleteRequest($id_space, 'invoices', $rid);
+                    $found = $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
+                    if(!$found) {
+                        $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
+                    } else {
+                        $cv->deleteRequest($id_space, 'invoices', $rid);
+                    }
                     break;
                 case GlobalInvoice::$INVOICES_GLOBAL_CLIENT:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $id_client = $msg['id_client'];
                     $gi = new GlobalInvoice();
-                    $gi->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
-                    sleep(10);
-                    $cv->deleteRequest($id_space, 'invoices', $rid);
+                    $found = $gi->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
+                    if(!$found) {
+                        $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
+                    } else {
+                        $cv->deleteRequest($id_space, 'invoices', $rid);
+                    }
                     break;
                 case BookingInvoice::$INVOICES_BOOKING_ALL:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end']; 
                     $gi = new BookingInvoice();
-                    $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
-                    $cv->deleteRequest($id_space, 'invoices', $rid);
+                    $found = $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
+                    if(!$found) {
+                        $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
+                    } else {
+                        $cv->deleteRequest($id_space, 'invoices', $rid);
+                    }
                     break;
                 case BookingInvoice::$INVOICES_BOOKING_CLIENT:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $id_client = $msg['id_client'];
                     $gi = new BookingInvoice();
-                    $gi->invoiceClient($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
-                    $cv->deleteRequest($id_space, 'invoices', $rid);
+                    $found = $gi->invoiceClient($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
+                    if(!$found) {
+                        $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
+                    } else {
+                        $cv->deleteRequest($id_space, 'invoices', $rid);
+                    }
                     break;
                 case ServicesInvoice::$INVOICES_SERVICES_ORDERS_CLIENT:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $id_client = $msg['id_client'];
                     $gi = new ServicesInvoice();
-                    $gi->invoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
-                    $cv->deleteRequest($id_space, 'invoices', $rid);
+                    $found = $gi->invoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
+                    if(!$found) {
+                        $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
+                    } else {
+                        $cv->deleteRequest($id_space, 'invoices', $rid);
+                    }
                     break;
                 case ServicesInvoice::$INVOICES_SERVICES_PROJECTS_CLIENT:
                     $beginPeriod = $msg['period_begin'];
@@ -526,9 +545,12 @@ class EventHandler {
                     $id_client = $msg['id_client'];
                     $id_projects = $msg['id_projects'];
                     $gi = new ServicesInvoice();
-                    $gi->invoiceProjects($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $id_projects, $lang);
-                    $cv->deleteRequest($id_space, 'invoices', $rid);
-                    break;
+                    $found = $gi->invoiceProjects($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $id_projects, $lang);
+                    if(!$found) {
+                        $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
+                    } else {
+                        $cv->deleteRequest($id_space, 'invoices', $rid);
+                    }                    break;
                 default:
                     $cv->updateRequest($id_space, 'invoices', $rid, 'error: unknown request '.$type);
                     Configuration::getLogger()->error('[invoiceRequest] unknown request type', ['type' => $type]);

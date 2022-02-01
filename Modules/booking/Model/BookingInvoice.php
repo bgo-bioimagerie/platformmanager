@@ -43,7 +43,7 @@ class BookingInvoice extends InvoiceModel {
         $endArray = explode("-", $endPeriod);
         $endPeriodeTime = mktime(0, 0, 0, $endArray[1], $endArray[2], $endArray[0]);
 
-        $sql = "SELECT id FROM bk_calendar_entry WHERE responsible_id=? AND start_time>=? AND start_time<=? AND deleted=0 AND id_space=?";
+        $sql = "SELECT id FROM bk_calendar_entry WHERE responsible_id=? AND start_time>=? AND start_time<=? AND deleted=0 AND id_space=? AND invoice_id=0";
         $req = $this->runRequest($sql, array($id_resp, $startPeriodeTime, $endPeriodeTime, $id_space));
         if ( $req->rowCount() > 0){
             return true;
@@ -52,27 +52,32 @@ class BookingInvoice extends InvoiceModel {
     }
 
     public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en') {
-
-        $modelCal = new BkCalendarEntry();
         $modelClient = new ClClient();
         $resps = $modelClient->getAll($id_space);
         
         $doBill = false;
         foreach ($resps as $resp) {
-            $billIt = $modelCal->hasResponsibleEntry($id_space, $resp["id"], $beginPeriod, $endPeriod);
-            if ($billIt) {
+            
+            $found = $this->invoiceClient($id_space, $beginPeriod, $endPeriod, intval($resp['id']), $id_user, $lang);
+            if($found) {
                 $doBill = true;
-                Configuration::getLogger()->debug('[invoice][booking][all] create invoice', ['client' => $resp, 'space' => $id_space]);
-                $this->invoiceClient($id_space, $beginPeriod, $endPeriod, intval($resp['id']), $id_user, $lang);
             }
         }
         if(!$doBill) {
             Configuration::getLogger()->debug('[invoice][booking][all] nothing to do');
+            return false;
         }
+        return true;
     }
 
     public function invoiceClient($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang='en') {
         Configuration::getLogger()->debug('[invoice][booking][all] create invoice', ['client' => $id_client, 'space' => $id_space]);
+        $modelCal = new BkCalendarEntry();
+        $found = $modelCal->hasResponsibleEntry($id_space, $id_client, $beginPeriod, $endPeriod);
+        if(!$found) {
+            return false;
+        }
+
         $modelInvoice = new InInvoice();
         $number = $modelInvoice->getNextNumber($id_space);
         $module = "booking";
@@ -91,6 +96,7 @@ class BookingInvoice extends InvoiceModel {
         $details = BookinginvoiceTranslator::Details($lang) . "=" . "bookinginvoicedetail/" . $id_space . "/" . $invoice_id;
         $modelInvoiceItem->setItem($id_space, 0, $invoice_id, $module, $controller, $content, $details, $contentAll['total_ht']);
         $modelInvoice->setTotal($id_space, $invoice_id, $contentAll['total_ht']);
+        return true;
     }
 
     /**
