@@ -5,8 +5,13 @@ require_once 'Framework/Configuration.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
+require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+
 
 class GlobalInvoice extends Model {
+
+    public static string $INVOICES_GLOBAL_ALL = 'invoices_global_all';
+    public static string $INVOICES_GLOBAL_CLIENT = 'invoices_global_client';
 
     public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en') {
 

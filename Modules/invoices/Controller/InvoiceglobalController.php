@@ -8,6 +8,7 @@ require_once 'Modules/invoices/Controller/InvoiceAbstractController.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
+require_once 'Modules/invoices/Model/GlobalInvoice.php';
 
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
@@ -52,7 +53,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 "action" => Events::ACTION_INVOICE_REQUEST,
                 "space" => ["id" => intval($id_space)],
                 "user" => ["id" => $_SESSION['id_user']],
-                "type" => "invoices_global_all",
+                "type" => GlobalInvoice::$INVOICES_GLOBAL_ALL,
                 "period_begin" => $beginPeriod,
                 "period_end" => $endPeriod,
                 "request" => ["id" => $rid]
@@ -77,7 +78,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
                     "action" => Events::ACTION_INVOICE_REQUEST,
                     "space" => ["id" => intval($id_space)],
                     "user" => ["id" => $_SESSION['id_user']],
-                    "type" => "invoices_global_client",
+                    "type" => GlobalInvoice::$INVOICES_GLOBAL_CLIENT,
                     "period_begin" => $beginPeriod,
                     "period_end" => $endPeriod,
                     "id_client" => $id_resp,
@@ -276,81 +277,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $id_space);
         return $form;
-    }
-
-    protected function invoiceAll($id_space, $beginPeriod, $endPeriod) {
-
-        $modules = Configuration::get("modules");
-
-        $modelUser = new CoreUser();
-        $resps = $modelUser->getResponsibles(); 
-        
-       
-        foreach( $resps as $resp ){
-        
-            $found = false;
-            foreach ($modules as $module) {
-                $invoiceModelFile = "Modules/" . strtolower($module) . "/Model/" . ucfirst(strtolower($module)) . "Invoice.php";
-                if (file_exists($invoiceModelFile)) {
-                    require_once $invoiceModelFile;
-                    $modelName = ucfirst(strtolower($module)) . "Invoice";
-                    $model = new $modelName();
-
-                    if ($model->hasActivity($id_space, $beginPeriod, $endPeriod, $resp["id"])) {
-                        $found = true;
-                        break;
-                    }
-                }
-            }
-            if ($found){
-                $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"]);
-            }
-        }
-    }
-
-    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp) {
-
-        $lang = $this->getLanguage();
-
-        // create invoice in the database
-        $modelInvoice = new InInvoice();
-        $invoiceNumber = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, $invoiceNumber, date("Y-m-d", time()), $id_resp, 0, $beginPeriod, $endPeriod);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
-        $modelInvoice->setTitle($id_space, $id_invoice, InvoicesTranslator::Invoice($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
-
-        // get invoice content
-        $modules = Configuration::get("modules");
-        $invoiceDataArray = array();
-        $total_ht = 0;
-        foreach ($modules as $module) {
-
-            $invoiceModelFile = "Modules/" . strtolower($module) . "/Model/" . ucfirst(strtolower($module)) . "Invoice.php";
-            if (file_exists($invoiceModelFile)) {
-
-                require_once $invoiceModelFile;
-                $modelName = ucfirst(strtolower($module)) . "Invoice";
-                $model = new $modelName();
-
-                $moduleArray = array();
-                $moduleArray["module"] = $module;
-                $moduleArray["data"] = $model->invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $id_invoice, $lang);
-                $invoiceDataArray[] = $moduleArray;
-
-                $total_ht += floatval($moduleArray["data"]["total_ht"]);
-            }
-        }
-
-        // set invoice content to the database
-        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
-        $modelInvoiceItem = new InInvoiceItem();
-        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
-
-        Events::send([
-            "action" => Events::ACTION_INVOICE_EDIT,
-            "space" => ["id" => intval($id_space)],
-            "invoice" => ["id" => intval($id_invoice)]
-        ]);
     }
 
     protected function generateDetailsTable($id_space, $invoice_id) {

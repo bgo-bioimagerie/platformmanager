@@ -87,9 +87,9 @@ class CoreVirtual extends Model {
     public function newRequest($id_space, $module, $name) {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
-        $rid = $name.':'.time();
+        $rid = time().':'.$name;
         try {
-        $redis->hSet('pfm:'.$id_space.':'.$module.':request', $rid, 'generating');
+        $redis->hSet('pfm:'.$id_space.':'.$module.':request', $rid, 'waiting');
         $redis->expire('pfm:'.$id_space.':'.$module.':request', 3600 * 5); // expire in 5h
         } catch(Exception $e) {
             $redis->close();
@@ -132,6 +132,7 @@ class CoreVirtual extends Model {
         $requests = [];
         try {
             $requests = $redis->hGetAll('pfm:'.$id_space.':'.$module.':request');
+            krsort($requests);
         } catch(Exception $e) {
             $redis->close();
             throw $e;
