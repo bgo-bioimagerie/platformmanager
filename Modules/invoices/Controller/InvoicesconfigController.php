@@ -92,10 +92,11 @@ class InvoicesconfigController extends CoresecureController {
         $number = 'fake';
         $table = '<table class="table"><thead><tr><th>invoice details</th></tr></thead><tbody><tr><td>some details</td></tr></tbody></table>';
 
+        $lang = $this->getLanguage();
         $dest = null;
         try {
             $c = new InvoiceglobalController($this->request, $this->currentSpace);
-            $dest = $c->generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, true, "", $client, true);
+            $dest = $c->generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, true, "", $client, true, $lang);
         } catch(Exception $e) {
             throw new PfmParamException('Invalid template: '.$e->getMessage());
         }
@@ -112,34 +113,41 @@ class InvoicesconfigController extends CoresecureController {
             if (! file_exists($currentTemplate)) {
                 $currentTemplate = null;
             }
+
+            if(!$currentTemplate) {
+                $_SESSION['flash'] = 'Using default template';
+                $_SESSION['flashClass'] = 'warning';
+            }
         }
 
         $formDownload = new Form($this->request, "formDownloadTemplate");
         $formDownload->setTitle(InvoicesTranslator::currentTemplate($lang));
         $hasTemplate = false;
+        $template = 'data/invoices/' . $id_space . '/template.twig';
         if(file_exists('data/invoices/' . $id_space . '/template.twig')) {
-            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'template.twig', true);
             $hasTemplate = true;
         } else if (file_exists('data/invoices/' . $id_space . '/template.php')) {
-            $formDownload->addDownloadButton("url", InvoicesTranslator::Download($lang), 'template.php', true);
             $hasTemplate = true;
+            $template = 'data/invoices/' . $id_space . '/template.php';
         } else {
-            $formDownload->addDownloadButton("url", InvoicesTranslator::DownloadTemplate($lang), 'externals/pfm/templates/invoice_template.twig', true);
+            $template = 'externals/pfm/templates/invoice_template.twig';
         }
+        $templateName = basename($template);
+        $formDownload->addDownloadButton("url", QuoteTranslator::Download($lang), $templateName);
+
         if ($formDownload->check()) {
 
-            $file = $this->request->getParameter('url');
-            if(!str_starts_with($file, 'externals')) {
-                $file = 'data/invoices/' . $id_space . '/'.$file;
+            if(!file_exists($template)) {
+                throw new PfmFileException('File not found', 404);
             }
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
-            header("Content-Disposition: attachment; filename=$file");
+            header("Content-Disposition: attachment; filename=$templateName");
             header("Content-Type: application/zip");
             header("Content-Transfer-Encoding: binary");
 
             // read the file from disk
-            readfile($file);
+            readfile($template);
             return;
         }
 
@@ -256,7 +264,7 @@ class InvoicesconfigController extends CoresecureController {
     public function pdftemplatedeleteAction($id_space, $name) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $namefile = str_replace("__pm__", '.', $name);
-        unlink('data/invoices/' . $id_space . '/' . $namefile);
+        unlink('data/invoices/' . intval($id_space) . '/' . $namefile);
         $this->redirect('invoicepdftemplate/' . $id_space);
     }
 

@@ -1,6 +1,9 @@
 <?php
 require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
+require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
+
 # Upgrade: Update invoice numbers in redis
 class CoreUpgradeDB1641387865 extends Model {
   public function run(){

@@ -3,6 +3,11 @@
 require_once 'Framework/Routing.php';
 
 class QuoteRouting extends Routing{
+
+    public function routes($router) {
+        $router->map('GET|POST', '/quote/[i:id_space]/pdftemplate', 'quote/quoteconfig/pdftemplate', 'quote_pdftemplate');
+        $router->map('GET|POST', '/quote/[i:id_space]/pdftemplatedelete/[:name]', 'quote/quoteconfig/pdftemplatedelete', 'quote_pdftemplate_delete');
+    }
     
     public function listRoutes(){
         

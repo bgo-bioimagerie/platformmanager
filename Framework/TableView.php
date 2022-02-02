@@ -525,7 +525,7 @@ class TableView {
      * @return string
      */
     private function addDeleteButtonHtml($id, $name) {
-        return "<input class=\"btn btn-xs btn-danger\" type=\"button\" onclick=\"ConfirmDelete($id, '$name')\" value=\"Delete\">";
+        return "<input class=\"btn btn-xs btn-danger\" type=\"button\" onclick=\"ConfirmDelete('$id', '$name')\" value=\"Delete\">";
     }
 
     /**
