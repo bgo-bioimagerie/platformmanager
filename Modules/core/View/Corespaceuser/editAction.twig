@@ -70,6 +70,10 @@
             return {
                 origin: false,
                 options: false,
+                params: {
+                    spaceId: {{ id_space }},
+                    userId: {{ id_user }},
+                },
                 sections: {
                     spaceAccess: {
                         name: "spaceAccess",
@@ -94,14 +98,9 @@
                             displayName: "Booking authorisations history",
                             show: false
                         }
-                    },
-                },
-                params: {
-                    spaceId: {{ id_space }},
-                    userId: {{ id_user }},
+                    }
                 }
             }
-
         },
         mounted: function() {
             this.origin = JSON.parse(this.$el.attributes['data-origin'].value);

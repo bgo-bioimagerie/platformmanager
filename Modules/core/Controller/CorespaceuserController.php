@@ -38,6 +38,7 @@ class CorespaceuserController extends CorespaceaccessController {
     // TODO: filter settings with activated modules
     // TODO: design interface
     // TODO: remove corespaceaccessusers user's buttons
+    // TODO: Show all history (not only for one resource)
     // TODO: display flash messages ?
     // TODO: deal with pending accounts validation process
     // TODO: make it clean (remove debug logs and non necessay comments)
@@ -62,7 +63,8 @@ class CorespaceuserController extends CorespaceaccessController {
             if (!is_int($id_user)) {
                 throw new PfmParamException("id user is not an int");
             }
-            $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, $id_category, "corespaceuseredit");
+            // TODO: load that even if no category_id => deal with it in bookingauthorisationsController
+            $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, $id_category, true);
             $bkHistoryForm = $bookingAuthCTRL->generateEditForm($id_space, $id_user, $id_category, "corespaceuseredit");
         }
 

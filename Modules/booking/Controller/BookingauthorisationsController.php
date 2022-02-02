@@ -154,7 +154,7 @@ class BookingauthorisationsController extends CoresecureController {
             throw new PfmParamException("id user is not an int");
         }
 
-        $tableHtml = $this->generateHistoryTable($id_space, $id_user, $id_category, "bookingauthorisations");
+        $tableHtml = $this->generateHistoryTable($id_space, $id_user, $id_category);
         $form = $this->generateEditForm($id_space, $id_user, $id_category, "bookingauthorisations");
 
         if ($form->check()) {
@@ -173,7 +173,7 @@ class BookingauthorisationsController extends CoresecureController {
         ));
     }
 
-    public function generateHistoryTable($id_space, $id_user, $id_category, $controller) {
+    public function generateHistoryTable($id_space, $id_user, $id_category, $allCategories = false) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -181,22 +181,32 @@ class BookingauthorisationsController extends CoresecureController {
         $userName = $modelUser->getUserFUllName($id_user);
 
         $modelCategory = new ReCategory();
-        $categoryName = $modelCategory->getName($id_space, $id_category);
+        
+
+        if ($allCategories) {
+            $categories = $modelCategory->getBySpace($id_space);
+            $categoryName = "";
+        } else {
+            $categoryName = " / " . $modelCategory->getName($id_space, $id_category);
+        }
 
         $table = new TableView();
-        $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName . " / " . $categoryName);
+        $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName . $categoryName);
         $table->setColorIndexes(array("active" => "authorised_color"));
-
         $table->addLineEditButton("bookingauthorisationsedit/" . $id_space, "id");
 
-        /* if ($controller === "corespaceuseredit") {
-            $table->addLineEditButton("corespaceuseredit/" . $id_space, "id");
-        } else {
-            $table->addLineEditButton("bookingauthorisationsedit/" . $id_space, "id");
-        } */
-
         $modelVisa = new BkAuthorization();
-        $data = $modelVisa->getForResourceAndUser($id_space, $id_category, $id_user);
+        
+        if ($allCategories) {
+            $visas_array = array();
+            for ($i = 0; $i < count($categories); $i++) {
+                array_push($visas_array, $modelVisa->getForResourceAndUser($id_space, $categories[$i]['id'], $id_user));  
+            }
+            $data = array_merge(...$visas_array);
+            Configuration::getLogger()->debug("[TEST]", ["data" => $data]);
+        } else {
+            $data = $modelVisa->getForResourceAndUser($id_space, $id_category, $id_user);
+        }
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["user_id"]);
             $data[$i]["resource_category"] = $modelCategory->getName($id_space, $data[$i]["resource_id"]);
