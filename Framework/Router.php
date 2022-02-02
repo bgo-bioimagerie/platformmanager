@@ -314,7 +314,7 @@ class Router {
 
         if (file_exists($fileController)) {
             // Instantiate controler
-            require ($fileController);
+            require_once ($fileController);
             $controller = new $classController ($request, $space);
             $this->useRouterController = false;
             return $controller;
