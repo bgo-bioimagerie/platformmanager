@@ -16,6 +16,9 @@ require_once 'Modules/core/Model/CoreFiles.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
+require_once 'Modules/booking/Model/BkStats.php';
+require_once 'Modules/booking/Model/BkStatsUser.php';
+
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -468,26 +471,52 @@ class EventHandler {
     }
 
     public function statRequest($msg) {
-        switch ($msg["stat"]) {
-            case GlobalStats::STATS_GLOBAL:
-                Configuration::getLogger()->debug('[statRequest] global statistics');
-                $gs = new GlobalStats();
-                $c = new CoreFiles();
-                try {
-                    $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$IN_PROGRESS, '');
-                    $f = $c->get($msg['file']['id']);
-                    $file = $c->path($f);
-                    $gs->generateStats($file, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], $msg['space']['id']);
-                    $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$READY, '');
-                } catch(Throwable $e) {
-                    $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$ERROR, $e->getMessage());
-                    throw $e;
-                }
-                break;
-            default:
-                Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);
-                break;
+        Configuration::getLogger()->debug('[statRequest] '.$msg['stat'].' statistics');
+        $c = new CoreFiles();
+        $f = $c->get($msg['file']['id']);
+        $file = $c->path($f);
+        $id_space = $msg['space']['id'];
+        $lang = $msg['lang'] ?? 'en';
+        $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$IN_PROGRESS, '');
+        try {
+            switch ($msg["stat"]) {
+                case GlobalStats::STATS_GLOBAL:
+                    $gs = new GlobalStats();
+                    $gs->generateStats($file, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], $msg['space']['id'], $lang);
+                    break;
+                case BkStats::STATS_AUTH_STAT:
+                    $bs = new BkStats();
+                    $bs->generateStats($file, $msg['space']['id'],  $msg['dateBegin'], $msg['dateEnd']);
+                case BkStats::STATS_AUTH_LIST:
+                    $statUserModel = new BkStatsUser();
+                    $resource_id = $msg['resource_id'];
+                    if ($msg['email'] != "") {
+                        $f = $statUserModel->authorizedUsersMail($file, $resource_id, $id_space);
+                    } else {
+                        $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang);
+                    }
+                case BkStats::STATS_BK_USERS:
+                    $model = new BkStatsUser();
+                    $users = $model->bookingUsers($id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    $bs = new BkStats();
+                    $bs->exportstatbookingusersCSV($file, $users);
+                case BkStats::STATS_BK:
+                    $bs = new BkStats();
+                    $bs->getBalanceReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], null, $lang);
+                    break;
+                default:
+                    Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);
+                    break;
+            }
+        } catch(Throwable $e) {
+            Configuration::getLogger()->debug('[statRequest][error] '.$msg['stat'].' statistics', ['error' => $e->getMessage()]);
+            $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$ERROR, $e->getMessage());
+            throw $e;
         }
+        $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$READY, '');
+        Configuration::getLogger()->debug('[statRequest] '.$msg['stat'].' statistics done!');
+
+
     }
 
     /**

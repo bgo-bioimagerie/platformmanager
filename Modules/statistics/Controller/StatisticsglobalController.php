@@ -95,7 +95,7 @@ class StatisticsglobalController extends StatisticsController {
             $c = new CoreFiles();
             $cs = new CoreSpace();
             $role = $cs->getSpaceMenusRole($id_space, 'statistics');
-            $name = 'stats_global_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
+            $name = 'stats_'.GlobalStats::STATS_GLOBAL.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
             
             $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
             $c->status($id_space, $fid, CoreFiles::$PENDING, '');
@@ -108,6 +108,7 @@ class StatisticsglobalController extends StatisticsController {
                 "dateEnd" => $dateEnd,
                 "generateclientstats" => $generateclientstats,
                 "user" => ["id" => $_SESSION['id_user']],
+                "lang" => $lang,
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
             ]);
@@ -118,33 +119,6 @@ class StatisticsglobalController extends StatisticsController {
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
-    }
-
-    protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space) {
-
-        $controllerServices = new ServicesstatisticsprojectController($this->request, $this->currentSpace);
-        $spreadsheet = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
-
-        $controllerBooking = new BookingstatisticsController($this->request, $this->currentSpace);
-        $spreadsheet = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet);
-        $spreadsheet->setActiveSheetIndex(1);
-
-        // write excel file
-        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
-
-        // record modifications and download file
-
-        if(getenv('PFM_MODE') == 'test') {
-            $tempName = tempnam('/tmp', 'statistics').'.xlsx';
-            Configuration::getLogger()->debug('[statistics] generate stats file', ['file' => $tempName]);
-            $objWriter->save($tempName);
-            return $tempName;
-        }
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
-        header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
-        return null;
     }
 
 }
