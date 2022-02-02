@@ -12,7 +12,7 @@ class CoreUpgradeDB1643789864 extends Model {
         foreach($spaces as $space) {
             $id_space = $space['id'];
             if(!file_exists("data/quote/$id_space")) {
-                mkdir("data/invoices/$id_space", 0755, true);
+                mkdir("data/quote/$id_space", 0755, true);
             }
             if(file_exists("data/invoices/$id_space/template.twig") && !file_exists("data/quote/$id_space/template.twig")) {
                 copy("data/invoices/$id_space/template.twig", "data/quote/$id_space/template.twig");
