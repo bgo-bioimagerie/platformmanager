@@ -3,7 +3,8 @@
 {% block content %}
 
 <div class="row pm-table">
-    <div id="formSection" data-origin="{{origin}}">
+    <div id="formSection" data-origin="{{origin}}" data-options="{{options}}">
+    {{ options }}
         <input
             v-for="(item, index) in sections"
             :id="item.btnId"
@@ -68,6 +69,7 @@
         data () {
             return {
                 origin: false,
+                options: false,
                 sections: {
                     spaceAccess: {
                         name: "spaceAccess",
@@ -103,6 +105,8 @@
         },
         mounted: function() {
             this.origin = JSON.parse(this.$el.attributes['data-origin'].value);
+            this.options = JSON.parse(this.$el.attributes['data-options'].value);
+            this.updateSections();
             this.showForm(this.getOriginPage());
         },
         methods: {
@@ -122,8 +126,7 @@
                             section.subSection ? section.subSection.show = false : null;
                         }
                     } 
-                });
-                // console.log(this.show.bkAuthHistory);
+                });                
             },
             getOriginPage() {
                 let result = "spaceAccess";
@@ -134,10 +137,20 @@
                 } else if (this.origin.page.match(/bookingaccess/g)) {
                     result = "bookingAccess";
                 } else if (this.origin.page.match(/bkauthhistory/g)) {
-                    result = "bkAuthHistory"; // TODO: check if ok
+                    result = "bkAuthHistory";
                 }
                 return result;
             },
+            updateSections() {
+                [...this.sections].filter(section => {
+                    return section[index].name === "clientsUser";
+                });
+                console.log("filtered:", this.sections);
+                this.options.forEach(option => {
+                    console.log("option module:", option.module)
+                });
+                
+            }
         }
     });
 </script>

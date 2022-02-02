@@ -66,12 +66,20 @@ class CorespaceuserController extends CorespaceaccessController {
             $bkHistoryForm = $bookingAuthCTRL->generateEditForm($id_space, $id_user, $id_category, "corespaceuseredit");
         }
 
-        Configuration::getLogger()->debug("[TEST]", ["id_user" => $id_user]);
+        $modelOptions = new CoreSpaceAccessOptions();
+        $options = $modelOptions->getAll($id_space);
+        Configuration::getLogger()->debug("[TEST]", ["options" => $options]);
+        foreach($options as $option){
+            try {
+                $translatorName = ucfirst($option["module"]).'Translator';
+                require_once 'Modules/'.$option["module"].'/Model/'.$translatorName.'.php';
+                $option["toolname"] = $translatorName::$option["toolname"]($lang);
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error('Option not found', ['option' => $option, 'error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
+            }
+        }
 
         $spaceAccessForm = $this->generateSpaceAccessForm($id_space, $id_user);
-        
-
-
         $clientsUsersCTRL = new ClientsuseraccountsController($this->request);
         $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user);
         $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user);
@@ -103,6 +111,7 @@ class CorespaceuserController extends CorespaceaccessController {
             'lang' => $lang,
             "space" => $space,
             'origin' => json_encode($origin),
+            'options' => json_encode($options),
             'spaceAccessForm' => $spaceAccessForm->getHtml($lang),
             'clientsUserForm' => $clientsUserForm->getHtml($lang),
             "clientsUserTable" => $clientsUsertableHtml,
