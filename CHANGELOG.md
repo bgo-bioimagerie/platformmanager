@@ -1,11 +1,15 @@
 # Changes
 
-## 2.3.1
+## 2.4.0
 
 * [core] in corespaceaccess show convention download button only if present
 * [invoices] show message if no template defined
 * [core] add status and msg to core files
 * [helpdesk] on file upload (manual), create dir if not exists
+
+## 2.3.1
+
+* [core] fix upgrade for redis invoice numbers
 
 ## 2.3.0
 
