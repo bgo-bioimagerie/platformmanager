@@ -3,48 +3,21 @@
 {% block content %}
 
 <div class="row pm-table">
-    <div id="formSection" data-origin="{{origin}}" data-options="{{options}}">
-    {{ options }}
+    <div id="formSection" data-origin="{{origin}}" data-options="{{options}}" data-forms="{{forms}}">
         <input
-            v-for="(item, index) in sections"
+            v-for="item in sections"
             :id="item.btnId"
             type="button"
-            :class="sections[item.name].show ? 'btn btn-primary' : 'btn btn-secondary'"
+            :class="item.show ? 'btn btn-primary' : 'btn btn-secondary'"
             :value="item.displayName"
             style="margin:5px;"
-            @click="showForm(item.name)">
+            @click="showForm(item.module)">
         </input>
         <div id="sections" style="margin:5px;">
-            <div id="spaceAccessSection" v-show="sections.spaceAccess.show">
-                {% autoescape false %}
-                    {{ spaceAccessForm }}
-                {% endautoescape %}
-            </div>
-            <div id="clientsUserSection" v-show="sections.clientsUser.show">
-                {% autoescape false %}
-                    {{ clientsUserTable }}
-                    {{ clientsUserForm }}
-                {% endautoescape %}
-            </div>
-            <div id="bookingAccessSection" v-show="sections.bookingAccess.show">
-                {% autoescape false %}
-                    {{ bkAuthTable }}
-                    {{ bkAuthAddForm }}
-                {% endautoescape %}
-                <input
-                    :id="sections.bookingAccess.subSection.btnId"
-                    type="button"
-                    :class="sections.bookingAccess.subSection.show ? 'btn btn-primary' : 'btn btn-secondary'"
-                    :value="sections.bookingAccess.subSection.displayName"
-                    style="margin:5px;"
-                    @click="showForm(sections.bookingAccess.subSection.name)">
-                </input>
-                <div id="bkAuthHistorySection" v-show="sections.bookingAccess.subSection.show">
-                {% autoescape false %}
-                    {{ bkHistoryTable }}
-                {% endautoescape %}
-                </div>  
-                <script type="module">
+            <div :id="item.name + 'Section'" v-for="item in sections" v-show="item.show">
+                <div name="formDiv" v-html="item.formHtml"></div>
+                <div name="tableDiv" v-html="item.tableHtml"></div>
+                <script v-if="item.module==='booking'" type="module">
                     import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
                     let dynamicForms = new DynamicForms();
                     let spaceId = {{ id_space }};
@@ -64,60 +37,49 @@
 </div>
 
 <script>
+    class Section {
+        constructor(name, module, btnId, displayName, formHtml = null, tableHtml = null, show = false, subSection = null) {
+            this.module = module;
+            this.name = name;
+            this.btnId = btnId;
+            this.displayName = displayName;
+            this.formHtml = formHtml;
+            this.tableHtml = tableHtml;
+            this.subSection = subSection;
+            this.show = show;
+        }
+    }
     var app = new Vue({
+        // delimiters: ['µ{', '}'],
         el: '#formSection',
         data () {
             return {
                 origin: false,
-                options: false,
+                options: [],
+                forms: [],
+                sections: [],
                 params: {
                     spaceId: {{ id_space }},
                     userId: {{ id_user }},
                 },
-                sections: {
-                    spaceAccess: {
-                        name: "spaceAccess",
-                        btnId: "spaceAccessBtn",
-                        displayName: "Space access",
-                        show: false
-                    },
-                    clientsUser: {
-                        name: "clientsUser",
-                        btnId: "clientsUserBtn",
-                        displayName: "Clients accounts",
-                        show: false
-                    },
-                    bookingAccess: {
-                        name: "bookingAccess",
-                        btnId: "bookingAccessBtn",
-                        displayName: "Booking access",
-                        show: false,
-                        subSection: {
-                            name: "bkAuthHistory",
-                            btnId: "bkauthhistoryBtn",
-                            displayName: "Booking authorisations history",
-                            show: false
-                        }
-                    }
-                }
             }
         },
         mounted: function() {
             this.origin = JSON.parse(this.$el.attributes['data-origin'].value);
             this.options = JSON.parse(this.$el.attributes['data-options'].value);
-            this.updateSections();
+            this.forms = JSON.parse(this.$el.attributes['data-forms'].value);
+            this.generateSections();
             this.showForm(this.getOriginPage());
         },
         methods: {
-            showForm(itemName) {
+            showForm(itemModule) {
                 let found = false;
-                Object.getOwnPropertyNames(this.sections).forEach((sectionName, index, array) => {
-                    let section = this.sections[sectionName];
-                    if (sectionName === itemName) {
+                this.sections.forEach((section, index, array) => {
+                    if (section.module === itemModule) {
                         section.show = true;
                         found = true;
                     } else {
-                        if (section.subSection && section.subSection.name === itemName) {
+                        if (section.subSection && section.subSection.module === itemModule) {
                             section.show = true;
                             section.subSection.show = !section.subSection.show;
                         } else {
@@ -125,7 +87,7 @@
                             section.subSection ? section.subSection.show = false : null;
                         }
                     } 
-                });                
+                });   
             },
             getOriginPage() {
                 let result = "spaceAccess";
@@ -140,15 +102,27 @@
                 }
                 return result;
             },
-            updateSections() {
-                [...this.sections].filter(section => {
-                    return section[index].name === "clientsUser";
-                });
-                console.log("filtered:", this.sections);
+            generateSections() {
+                let spaceModuleName = "space";
+                let spaceSection = new Section(
+                    "spaceaccess",
+                    spaceModuleName,
+                    spaceModuleName + "Btn",
+                    "Space access",
+                    this.forms.spaceaccess
+                );
+                this.sections.push(spaceSection);
                 this.options.forEach(option => {
-                    console.log("option module:", option.module)
+                    let section = new Section(
+                        option.toolname,
+                        option.module,
+                        option.module + "Btn",
+                        option.toolname,
+                        this.forms[option.toolname],
+                        this.forms[option.toolname + "Table"]
+                    );
+                    this.sections.push(section);
                 });
-                
             }
         }
     });

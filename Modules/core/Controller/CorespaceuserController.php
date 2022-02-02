@@ -121,7 +121,14 @@ class CorespaceuserController extends CorespaceaccessController {
             "bkAuthData" => $bkAuthData,
             "bkAuthAddForm" => $bkAuthAddForm->getHtml($lang),
             "bkHistoryTable" => $bkHistoryTableHtml,
-            "bkHistoryForm" => $bkHistoryFormHtml
+            "bkHistoryForm" => $bkHistoryFormHtml,
+            "forms" => json_encode([
+                'spaceaccess' => $spaceAccessForm->getHtml($lang),
+                'bookingauthorisations' => $bkAuthAddForm->getHtml($lang),
+                'bookingauthorisationsTable' => $bkAuthTableHtml,
+                'clientsuseraccounts' => $clientsUserForm->getHtml($lang),
+                'clientsuseraccountsTable' => $clientsUsertableHtml
+            ])
         ];
         return $this->render($dataView, "editAction");
     }
