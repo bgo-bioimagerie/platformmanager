@@ -70,7 +70,6 @@ class CorespaceuserController extends CorespaceaccessController {
 
         $modelOptions = new CoreSpaceAccessOptions();
         $options = $modelOptions->getAll($id_space);
-        Configuration::getLogger()->debug("[TEST]", ["options" => $options]);
         foreach($options as $option){
             try {
                 $translatorName = ucfirst($option["module"]).'Translator';
@@ -114,20 +113,22 @@ class CorespaceuserController extends CorespaceaccessController {
             "space" => $space,
             'origin' => json_encode($origin),
             'options' => json_encode($options),
-            'spaceAccessForm' => $spaceAccessForm->getHtml($lang),
+            /* 'spaceAccessForm' => $spaceAccessForm->getHtml($lang),
             'clientsUserForm' => $clientsUserForm->getHtml($lang),
             "clientsUserTable" => $clientsUsertableHtml,
-            "bkAuthTable" => $bkAuthTableHtml,
-            "bkAuthData" => $bkAuthData,
-            "bkAuthAddForm" => $bkAuthAddForm->getHtml($lang),
+            "bkAuthTable" => $bkAuthTableHtml, */
+            "bkAuthData" => $bkAuthData, // ??
+            /* "bkAuthAddForm" => $bkAuthAddForm->getHtml($lang),
             "bkHistoryTable" => $bkHistoryTableHtml,
-            "bkHistoryForm" => $bkHistoryFormHtml,
+            "bkHistoryForm" => $bkHistoryFormHtml, */
             "forms" => json_encode([
                 'spaceaccess' => $spaceAccessForm->getHtml($lang),
                 'bookingauthorisations' => $bkAuthAddForm->getHtml($lang),
                 'bookingauthorisationsTable' => $bkAuthTableHtml,
                 'clientsuseraccounts' => $clientsUserForm->getHtml($lang),
-                'clientsuseraccountsTable' => $clientsUsertableHtml
+                'clientsuseraccountsTable' => $clientsUsertableHtml,
+                "bookinghistory" => $bkHistoryFormHtml,
+                "bookinghistoryTable" => $bkHistoryTableHtml
             ])
         ];
         return $this->render($dataView, "editAction");

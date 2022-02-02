@@ -13,10 +13,25 @@
             style="margin:5px;"
             @click="showForm(item.module)">
         </input>
+
         <div id="sections" style="margin:5px;">
             <div :id="item.name + 'Section'" v-for="item in sections" v-show="item.show">
                 <div name="formDiv" v-html="item.formHtml"></div>
                 <div name="tableDiv" v-html="item.tableHtml"></div>
+                <div name="subsection" v-if="!!item.subSection">
+                    <input
+                        :id="item.subSection.btnId"
+                        type="button"
+                        :class="item.subSection.show ? 'btn btn-primary' : 'btn btn-secondary'"
+                        :value="item.subSection.displayName"
+                        style="margin:5px;"
+                        @click="item.subSection.show = !item.subSection.show">
+                    </input>
+                    <div :id="item.subSection.name + 'Section'" v-show="item.subSection.show">
+                        <div name="formDiv" v-html="item.subSection.formHtml"></div>
+                        <div name="tableDiv" v-html="item.subSection.tableHtml"></div>
+                    </div>
+                </div>
                 <script v-if="item.module==='booking'" type="module">
                     import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
                     let dynamicForms = new DynamicForms();
@@ -33,14 +48,15 @@
                 </script>
             </div>
         </div>
+
     </div>
 </div>
 
 <script>
     class Section {
         constructor(name, module, btnId, displayName, formHtml = null, tableHtml = null, show = false, subSection = null) {
-            this.module = module;
             this.name = name;
+            this.module = module;
             this.btnId = btnId;
             this.displayName = displayName;
             this.formHtml = formHtml;
@@ -50,7 +66,6 @@
         }
     }
     var app = new Vue({
-        // delimiters: ['µ{', '}'],
         el: '#formSection',
         data () {
             return {
@@ -90,17 +105,17 @@
                 });   
             },
             getOriginPage() {
-                let result = "spaceAccess";
+                let originPage = "space";
                 if (this.origin.page.match(/clientsuser/g)) {
-                    result = "clientsUser";
+                    originPage = "clients";
                 } else if (this.origin.page.match(/spaceaccess/g)) {
-                    result = "spaceAccess";
+                    originPage = "space";
                 } else if (this.origin.page.match(/bookingaccess/g)) {
-                    result = "bookingAccess";
+                    originPage = "booking";
                 } else if (this.origin.page.match(/bkauthhistory/g)) {
-                    result = "bkAuthHistory";
+                    originPage = "bookinghistory";
                 }
-                return result;
+                return originPage;
             },
             generateSections() {
                 let spaceModuleName = "space";
@@ -117,10 +132,21 @@
                         option.toolname,
                         option.module,
                         option.module + "Btn",
-                        option.toolname,
+                        option.module,
                         this.forms[option.toolname],
                         this.forms[option.toolname + "Table"]
                     );
+                    if(option.module === "booking") {
+                        let subSectionModule = "bookinghistory";
+                        section.subSection = new Section(
+                            subSectionModule,
+                            subSectionModule,
+                            subSectionModule + "Btn",
+                            "Booking authorisations history",
+                            this.forms[subSectionModule],
+                            this.forms[subSectionModule + "Table"]
+                        );
+                    }
                     this.sections.push(section);
                 });
             }
