@@ -2,7 +2,8 @@
 
 ## 2.3.1
 
-* [core] fix upgrade for redis invoice numbers
+* [core] fix upgrade for redis invoice numbers (1641387865_update_invoice_numbers_redis.php)
+  If already applied with 2.3.0, need to remove it from pfm_upgrades table and re-apply install
 
 ## 2.3.0
 
