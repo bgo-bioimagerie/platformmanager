@@ -10,6 +10,8 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreFiles.php';
+
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
@@ -24,10 +26,13 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/quote/Model/Quote.php';
 require_once 'Modules/services/Model/SeService.php';
 
+require_once 'Modules/statistics/Model/GlobalStats.php';
+
 
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use Sentry\Event;
 
 class EventModel extends Model {
 
@@ -462,6 +467,29 @@ class EventHandler {
         $this->logger->debug('[invoiceDelete][nothing to do', ['id_invoice' => $msg['invoice']['id']]);
     }
 
+    public function statRequest($msg) {
+        switch ($msg["stat"]) {
+            case GlobalStats::STATS_GLOBAL:
+                Configuration::getLogger()->debug('[statRequest] global statistics');
+                $gs = new GlobalStats();
+                $c = new CoreFiles();
+                try {
+                    $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$IN_PROGRESS, '');
+                    $f = $c->get($msg['file']['id']);
+                    $file = $c->path($f);
+                    $gs->generateStats($file, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], $msg['space']['id']);
+                    $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$READY, '');
+                } catch(Throwable $e) {
+                    $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$ERROR, $e->getMessage());
+                    throw $e;
+                }
+                break;
+            default:
+                Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);
+                break;
+        }
+    }
+
     /**
      * Handle message from rabbitmq
      * 
@@ -531,6 +559,9 @@ class EventHandler {
                 case Events::ACTION_PLAN_EDIT:
                     $this->spacePlanEdit($data);
                     break;
+                case Events::ACTION_STATISTICS_REQUEST:
+                    $this->statRequest($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     $ok = false;
@@ -575,6 +606,8 @@ class Events {
     public const ACTION_SERVICE_DELETE = 701;
     public const ACTION_SERVICE_PROJECT_EDIT = 710;
     public const ACTION_SERVICE_PROJECT_DELETE = 711;
+
+    public const ACTION_STATISTICS_REQUEST = 800;
 
     private static $connection;
     private static $channel;

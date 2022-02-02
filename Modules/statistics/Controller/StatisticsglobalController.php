@@ -3,6 +3,8 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreFiles.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
 require_once 'Modules/services/Controller/ServicesstatisticsprojectController.php';
@@ -90,8 +92,29 @@ class StatisticsglobalController extends StatisticsController {
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
 
-            $f  = $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
-            return ['data' => ['file' => $f]];
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $name = 'stats_global_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
+            
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => GlobalStats::STATS_GLOBAL,
+                "excludeColorCode" => $excludeColorCode,
+                "dateBegin" => $dateBegin,
+                "dateEnd" => $dateEnd,
+                "generateclientstats" => $generateclientstats,
+                "user" => ["id" => $_SESSION['user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
+
+
+            //$f  = $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
+            return $this->redirect('statistics/'.$id_space);
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));

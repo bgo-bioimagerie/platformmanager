@@ -148,10 +148,20 @@ class CoreFiles extends Model {
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=?, WHERE id=?';
+            $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=? WHERE id=?';
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user, $id));
             return $id;
         }
+    }
+
+    public function status(int $id_space, int $id, int $status, string $msg) {
+        $sql = 'UPDATE core_files SET status=?,msg=? WHERE id=? AND id_space=? AND deleted=0';
+        $this->runRequest($sql, array($status, $msg, $id, $id_space));  
+    }
+
+    public function getByModule(int $id_space, string $module, int $role) {
+        $sql = "SELECT * FROM core_files WHERE id_space=? AND module=? and role>=?";
+        return $this->runRequest($sql, array($id_space, $module, $role))->fetchAll();
     }
 
 }
