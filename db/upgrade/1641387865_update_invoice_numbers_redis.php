@@ -22,7 +22,7 @@ class CoreUpgradeDB1641387865 extends Model {
             $spaces = $s->getSpaces('id');
             $cv = new CoreVirtual();
             foreach($spaces as $space) {
-                Configuration::getLogger()->debug('[invoice][set]', ['space' => $space['id'], 'number' => $lastNumberN]);
+                Configuration::getLogger()->debug('[invoice][set]', ['space' => $space['id'], 'number' => intval($lastNumberN)]);
                 $cv->set($space['id'], "invoices:$lastNumberY", $lastNumberN);
             }
         }
