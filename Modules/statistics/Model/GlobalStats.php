@@ -26,19 +26,13 @@ class GlobalStats {
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         // record modifications and download file
-
-        if(getenv('PFM_MODE') == 'test') {
-            $tempName = tempnam('/tmp', 'statistics').'.xlsx';
-            Configuration::getLogger()->debug('[statistics] generate stats file', ['file' => $tempName]);
-            $objWriter->save($tempName);
-            return $tempName;
-        }
         $dir = dirname($filepath);
         if(!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
-        Configuration::getLogger()->debug('[stats] generated', ['file' => $filepath]);
         $objWriter->save($filepath);
+
+        Configuration::getLogger()->debug('[stats] generated', ['file' => $filepath]);
 
     }
 

@@ -107,7 +107,7 @@ class StatisticsglobalController extends StatisticsController {
                 "dateBegin" => $dateBegin,
                 "dateEnd" => $dateEnd,
                 "generateclientstats" => $generateclientstats,
-                "user" => ["id" => $_SESSION['user']],
+                "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
             ]);

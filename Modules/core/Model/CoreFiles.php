@@ -160,7 +160,7 @@ class CoreFiles extends Model {
     }
 
     public function getByModule(int $id_space, string $module, int $role) {
-        $sql = "SELECT * FROM core_files WHERE id_space=? AND module=? and role>=?";
+        $sql = "SELECT core_files.*, core_users.login as login FROM core_files INNER JOIN core_users ON core_users.id=core_files.id_user WHERE core_files.id_space=? AND core_files.module=? and core_files.role>=? ORDER BY core_files.id DESC";
         return $this->runRequest($sql, array($id_space, $module, $role))->fetchAll();
     }
 

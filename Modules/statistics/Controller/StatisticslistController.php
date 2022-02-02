@@ -34,7 +34,7 @@ class StatisticslistController extends StatisticsController {
         $headers = array(
             "created_at" => CoreTranslator::Date($lang),
             "name" => CoreTranslator::Name($lang),
-            "id_user" => CoreTranslator::User($lang),
+            "login" => CoreTranslator::User($lang),
             "status" => CoreTranslator::Status($lang),
             "msg" => ""
         );
