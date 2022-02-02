@@ -89,8 +89,9 @@ class BookingauthorisationsController extends CoresecureController {
         $table = new TableView("bkAuth");
         $table->setTitle(BookingTranslator::Authorisations_for($lang) . " " . $userName, 3);
         $table->setColorIndexes(array("authorised" => "authorised_color"));
-        $table->addLineButton($route . "/" . $id_space, "id", BookingTranslator::History($lang));
-
+        if ($controller === "bookingauthorisations") {
+            $table->addLineButton($route . "/" . $id_space, "id", BookingTranslator::History($lang));    
+        }
         return ["bkTableHtml" => $table->view($data, $headers), "data" => $data];
     }
 
@@ -181,8 +182,7 @@ class BookingauthorisationsController extends CoresecureController {
         $userName = $modelUser->getUserFUllName($id_user);
 
         $modelCategory = new ReCategory();
-        
-
+    
         if ($allCategories) {
             $categories = $modelCategory->getBySpace($id_space);
             $categoryName = "";
@@ -280,8 +280,8 @@ class BookingauthorisationsController extends CoresecureController {
             CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang),
             $form->getParameter("is_active")
         );
-        $redirectionUrl = "corespaceuseredit/" . $id_space . "/" . $bkAuth['resource_id'] . "_" . $bkAuth['user_id'];
-        $this->redirect($redirectionUrl);    
+        $redirectionUrl = "corespaceuseredit/" . $id_space . "/" . /* $bkAuth['resource_id'] . "_" .  */$bkAuth['user_id'];
+        $this->redirect($redirectionUrl, ["origin" => "bookingaccess"]); 
     }
 
     

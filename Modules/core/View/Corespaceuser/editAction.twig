@@ -28,7 +28,7 @@
                         @click="item.subSection.show = !item.subSection.show">
                     </input>
                     <div :id="item.subSection.name + 'Section'" v-show="item.subSection.show">
-                        <div name="formDiv" v-html="item.subSection.formHtml"></div>
+                        {# <div name="formDiv" v-html="item.subSection.formHtml"></div> #}
                         <div name="tableDiv" v-html="item.subSection.tableHtml"></div>
                     </div>
                 </div>
@@ -45,6 +45,12 @@
                         }
                     ];
                     dynamicForms.dynamicFields(sourceId, targets, spaceId);
+                </script>
+                {# TODO: find another way to load that script ? #}
+                <script v-if="item.module==='clients'">
+                    function ConfirmDelete(id, name) {
+                        if (confirm(`Delete ${name} ?`)) location.href=`clientsuseraccountsdelete/26/1385/${id}`;
+                    }
                 </script>
             </div>
         </div>

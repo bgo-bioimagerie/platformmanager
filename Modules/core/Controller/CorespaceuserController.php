@@ -50,8 +50,6 @@ class CorespaceuserController extends CorespaceaccessController {
         $lang = $this->getLanguage();
         $origin = ["page" => json_encode($this->request->getParameterNoException("origin"))];
 
-        $bkHistoryTableHtml = "";
-        $bookingAuthCTRL = new BookingauthorisationsController($this->request);
         if (strpos($id_user, "_") !== false) {
             $origin['page'] = "bkauthhistory";
             $idArray = explode("_", $id_user);
@@ -63,10 +61,11 @@ class CorespaceuserController extends CorespaceaccessController {
             if (!is_int($id_user)) {
                 throw new PfmParamException("id user is not an int");
             }
-            // TODO: load that even if no category_id => deal with it in bookingauthorisationsController
-            $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, $id_category, true);
-            $bkHistoryForm = $bookingAuthCTRL->generateEditForm($id_space, $id_user, $id_category, "corespaceuseredit");
         }
+
+        $bkHistoryTableHtml = "";
+        $bookingAuthCTRL = new BookingauthorisationsController($this->request);
+        $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, null, true);
 
         $modelOptions = new CoreSpaceAccessOptions();
         $options = $modelOptions->getAll($id_space);
@@ -113,14 +112,7 @@ class CorespaceuserController extends CorespaceaccessController {
             "space" => $space,
             'origin' => json_encode($origin),
             'options' => json_encode($options),
-            /* 'spaceAccessForm' => $spaceAccessForm->getHtml($lang),
-            'clientsUserForm' => $clientsUserForm->getHtml($lang),
-            "clientsUserTable" => $clientsUsertableHtml,
-            "bkAuthTable" => $bkAuthTableHtml, */
             "bkAuthData" => $bkAuthData, // ??
-            /* "bkAuthAddForm" => $bkAuthAddForm->getHtml($lang),
-            "bkHistoryTable" => $bkHistoryTableHtml,
-            "bkHistoryForm" => $bkHistoryFormHtml, */
             "forms" => json_encode([
                 'spaceaccess' => $spaceAccessForm->getHtml($lang),
                 'bookingauthorisations' => $bkAuthAddForm->getHtml($lang),
