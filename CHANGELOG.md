@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3.1
+
+* [core] fix upgrade for redis invoice numbers
+
 ## 2.3.0
 
 * [invoices] fix non-numeric quantity and/or price cases in invoice edition
