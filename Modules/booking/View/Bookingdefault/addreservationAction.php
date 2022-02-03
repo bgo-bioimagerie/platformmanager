@@ -117,7 +117,17 @@
         }
     }
     ?>
-    <button type="button" class="btn btn-default" onclick="location.href = 'booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
+    <?php
+        $q = '?';
+        $redirPage = '';
+        if($from) {
+            $redirInfo = explode(':', $from);
+            $redirPage = $redirInfo[0];
+            $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]";
+        }
+        $url = "booking$redirPage/$id_space?$q"
+    ?>
+    <button type="button" class="btn btn-default" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
 </div>
 
 <?php echo $form->htmlClose() ?>

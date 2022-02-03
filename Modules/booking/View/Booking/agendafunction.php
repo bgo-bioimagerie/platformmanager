@@ -60,8 +60,12 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 }
 
 
-function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo, $nav=null) {
-
+function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo, $nav=null, $from=[]) {
+	$q = '?';
+	if(!empty($from)) {
+		$elts = implode(':', $from);
+		$q .= "from=$elts";
+	}
     $mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
 
 
@@ -161,7 +165,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                             $found = true;
                             $shortDescription = $entry['short_description'];
                             ?>
-                        <a href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry["id"] ?>">
+                        <a href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry["id"].$q ?>">
 
                             <div style="background-color: <?php echo $entry['color_bg'] ?>; max-width:200px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;" >
                                 <p style="border-bottom: thin solid #e1e1e1; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px; color:<?php echo $entry['color_text'] ?>;" >
