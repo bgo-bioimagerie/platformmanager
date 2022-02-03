@@ -695,7 +695,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         //                Services billed details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(4);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -790,7 +790,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         //                Services details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_details($lang));
         $spreadsheet->setActiveSheetIndex(5);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 

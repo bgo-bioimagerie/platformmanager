@@ -498,7 +498,7 @@ class QuotelistController extends QuoteController {
                 'total' => $total,
                 'useTTC' => $useTTC,
                 'details' => $details,
-                'clientsInfos' => $clientInfos,
+                'clientInfos' => $clientInfos,
                 'invoiceInfo' => $quoteInfos,
                 'isquote' => $isQuote,
                 'translator' => $translator,
