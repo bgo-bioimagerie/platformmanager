@@ -68,6 +68,16 @@ if($isdev) {
 
         <div class="row">
                 <div id="app" >
+                    <?php if(isset($context['maintenance']) && $context['maintenance']) { ?>
+                        <div class="container">
+                            <div class="alert alert-warning alert-dismissible  show" role="alert">
+                                <?php echo $context['maintenance']; ?>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>                        
+                    <?php } ?>
                     <?php if (isset($flash) && $flash) { ?>
                         <div class="container">
                             <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">

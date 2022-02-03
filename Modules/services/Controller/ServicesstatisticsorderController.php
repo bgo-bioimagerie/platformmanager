@@ -259,7 +259,7 @@ class ServicesstatisticsorderController extends ServicesController {
         // ////////////////////////////////////////////////////
        
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(1);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -296,7 +296,7 @@ class ServicesstatisticsorderController extends ServicesController {
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
-            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["no_identification"]);
             $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
 
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -401,7 +401,7 @@ class ServicesstatisticsorderController extends ServicesController {
         //                Services details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_details($lang));
         $spreadsheet->setActiveSheetIndex(3);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 

@@ -1,5 +1,19 @@
 # Changes
 
+## 2.4.0
+
+* [core] in corespaceaccess show convention download button only if present
+* [invoices] show message if no template defined
+* [core] add status and msg to core files
+* [helpdesk] on file upload (manual), create dir if not exists
+* [core] fix default sort order in tables and remove download button if no url
+* [core] fix typos/spelling
+* [booking][services] fix popup when editing with pagination
+
+## 2.3.1
+
+* [core] fix upgrade for redis invoice numbers
+
 ## 2.3.0
 
 * [invoices] fix non-numeric quantity and/or price cases in invoice edition

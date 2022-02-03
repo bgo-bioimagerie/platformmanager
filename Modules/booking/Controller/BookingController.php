@@ -283,7 +283,7 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
@@ -436,7 +436,7 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
@@ -569,7 +569,7 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
@@ -727,7 +727,7 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
@@ -854,7 +854,7 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }

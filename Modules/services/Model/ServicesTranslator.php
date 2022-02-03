@@ -501,7 +501,7 @@ class ServicesTranslator {
         return " to ";
     }
 
-    public static function Sevices_billed_details($lang) {
+    public static function Services_billed_details($lang) {
         if ($lang == "fr") {
             return "PRESTATIONS FACTUREES";
         }
@@ -599,11 +599,11 @@ class ServicesTranslator {
         return "Total number of projects";
     }
 
-    public static function Sevices_details($lang) {
+    public static function Services_details($lang) {
         if ($lang == "fr") {
             return "PRESTATIONS";
         }
-        return "Sevices details";
+        return "Services details";
     }
 
     public static function Sheet($lang) {
