@@ -139,9 +139,6 @@ class BookingdefaultController extends BookingabstractController {
         $modelBkAccess = new BkAccess();
         $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
 
-        $bk_id_area = $modelResource->getAreaID($id_space ,$resource['id']);
-
-
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
         $id = $this->request->getParameter("id");
