@@ -8,7 +8,11 @@
 * [helpdesk] on file upload (manual), create dir if not exists
 * [core] fix default sort order in tables and remove download button if no url
 * [core] fix typos/spelling
-* [booking][services] fix popup when editing with pagination
+
+## 2.3.2
+
+* [booking][services] fix popup when editing with pagination #553
+* [services] fix date on followup when in french #555
 
 ## 2.3.1
 
