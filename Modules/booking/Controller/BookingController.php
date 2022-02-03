@@ -370,7 +370,9 @@ class BookingController extends BookingabstractController {
         $colors =$modelEvent->getLastStateColors($id_space, $resIds);
         $cmap = [];
         foreach($colors as $c) {
-            $cmap[$c['id_resource']] = $c['color'];
+            if(!key_exists($c['id_resource'], $cmap)) {
+                $cmap[$c['id_resource']] = $c['color'];
+            }
         }
 
         $modelAccess = new BkAccess();
@@ -663,7 +665,9 @@ class BookingController extends BookingabstractController {
         $colors =$modelEvent->getLastStateColors($id_space, $resIds);
         $cmap = [];
         foreach($colors as $c) {
-            $cmap[$c['id_resource']] = $c['color'];
+            if(!key_exists($c['id_resource'], $cmap)) {
+                $cmap[$c['id_resource']] = $c['color'];
+            }
         }
 
         $modelRescal = new ResourceInfo();
