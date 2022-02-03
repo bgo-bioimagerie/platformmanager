@@ -172,7 +172,7 @@ class SeOrderStats {
         // ////////////////////////////////////////////////////
        
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(1);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -314,7 +314,7 @@ class SeOrderStats {
         //                Services details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_details($lang));
         $spreadsheet->setActiveSheetIndex(3);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -498,7 +498,7 @@ class SeStats extends Model {
     public const STATS_ORDERS = 'se_orders';
 
     public function generateBalanceReport($filepath, $id_space, $dateBegin, $dateEnd, $lang) {
-        $spreadsheet = $this->getBalance($id_space, $dateBegin, $dateEnd);
+        $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space);
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         $dir = dirname($filepath);
         if(!file_exists($dir)) {
@@ -1504,7 +1504,7 @@ class SeStats extends Model {
         //                Services billed details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(4);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -1598,7 +1598,7 @@ class SeStats extends Model {
         //                Services details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_details($lang));
         $spreadsheet->setActiveSheetIndex(5);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 

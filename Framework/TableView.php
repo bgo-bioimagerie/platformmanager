@@ -270,7 +270,7 @@ class TableView {
         
         
         if ($this->downloadButton != "") {
-            $html .= "<th></th>";
+            $html .= "<th aria-label=\"download\"></th>";
         }
         foreach ($headers as $key => $value) {
             $title = "";
@@ -423,6 +423,14 @@ class TableView {
     private function addHeader(){
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
+        $col = 0;
+        if ($this->downloadButton != "") {
+            $col++;
+        }
+        if(count($this->linesButtonActions) > 0 && !$this->isprint) {
+            $col+=count($this->linesButtonActions);
+        }
+        $str1 = str_replace('let defaultCol = 0;','let defaultCol = '.$col.';', $str1);
         return str_replace("tableID", $this->tableID, $str1);
     }
     
@@ -474,6 +482,7 @@ class TableView {
         $html .= "<script>";
         $html .= "$(document).ready( function() {";
         $html .= "$('#" . $this->tableID . "').dataTable( {";
+        
         $html .= "\"aoColumns\": [";
 
         for ($c = 0; $c < $headerscount; $c++) {
@@ -513,6 +522,9 @@ class TableView {
      * @return string
      */
     private function addDownloadButtonHtml($url) {
+        if(!$url) {
+            return '<td></td>';
+        }
         $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
 
         return $html;
