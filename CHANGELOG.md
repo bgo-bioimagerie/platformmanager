@@ -8,6 +8,7 @@
 * [helpdesk] on file upload (manual), create dir if not exists
 * [core] fix default sort order in tables and remove download button if no url
 * [core] fix typos/spelling
+* [booking] on calendar, showuser infos (name, phone,...) options: Hidden/Visible/Managers only Closes #509
 
 ## 2.3.2
 

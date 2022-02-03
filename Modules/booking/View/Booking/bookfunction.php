@@ -2,7 +2,7 @@
 
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 
-function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1){
+function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $role=0){
 	
         $modelSpace = new CoreSpace();
         $user_space_role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
@@ -51,12 +51,12 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						
 						$text = "";
 						if ($blocNumber <= 2){
-							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
+							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true, $role);
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", <b>Phone:</b>".$calEntry['phone']. ", <b>Desc:</b> " .$calEntry['short_description']."";
 						}
 						else{
-							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
+							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false, $role);
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
@@ -92,12 +92,12 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					
 					$text = "";
 					if ($blocNumber <= 2){
-						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
+						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true, $role);
 						$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 						//$text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", <b>Phone:</b>".$calEntry['phone']. ", <b>Desc:</b> " .$calEntry['short_description']."";
 					}
 					else{
-						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
+						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false, $role);
 						$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 					}
@@ -192,12 +192,12 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						
 						$text = "";
 						if ($blocNumber <= 2){
-							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
+							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true, $role);
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", <b>Phone:</b>".$calEntry['phone']. ", <b>Desc:</b> " .$calEntry['short_description']."";
 						}
 						else{
-							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
+							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false, $role);
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
@@ -233,12 +233,12 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					
 					$text = "";
 					if ($blocNumber <= 2){
-						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
+						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true, $role);
 						$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 						//$text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", <b>Phone:</b>".$calEntry['phone']. ", <b>Desc:</b> " .$calEntry['short_description']."";
 					}
 					else{
-						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
+						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false, $role);
 						$text .= $modelBookingSupplemetary->getSummary($id_space, $calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 					}
@@ -325,12 +325,12 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 
 						$text = "";
 						if ($blocNumber <= 2){
-							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
+							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true, $role);
 							$text .= $modelBookingSupplemetary->getSummary($id_space, $calEntry["id"]);
 							//$text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", <b>Phone:</b>".$calEntry['phone']. ", <b>Desc:</b> " .$calEntry['short_description']."";
 						}
 						else{
-							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
+							$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false, $role);
 							$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 							//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 						}
@@ -366,12 +366,12 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 
 					$text = "";
 					if ($blocNumber <= 2){
-						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
+						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true, $role);
 						$text .= $modelBookingSupplemetary->getSummary($id_space, $calEntry["id"]);
 						//$text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", <b>Phone:</b>".$calEntry['phone']. ", <b>Desc:</b> " .$calEntry['short_description']."";
 					}
 					else{
-						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
+						$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false, $role);
 						$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 						//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
 					}

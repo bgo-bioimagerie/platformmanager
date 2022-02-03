@@ -251,7 +251,7 @@ else if($size_bloc_resa == 3600){
 				</div>
 				
 				<?php 
-				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $bk_id_resource);
+				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $bk_id_resource, $context['role']);
 				?>
 				
 				</div>
