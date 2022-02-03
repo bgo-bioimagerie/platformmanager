@@ -2,7 +2,8 @@
 
 ## 2.3.2
 
-* [booking][services] fix popup when editing with pagination
+* [booking][services] fix popup when editing with pagination #553
+* [services] fix date on followup when in french #555
 
 ## 2.3.1
 

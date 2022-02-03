@@ -12,6 +12,7 @@
             'servicesgetprojectentry/' + id_space + '/' + id,
             {},
             function (data) {
+                console.log('????', data);
                 $('#formprojectentryprojectid').val(data.id_project);
                 $('#formprojectentrydate').val(data.date);
                 $('#formprojectentryid').val(data.id);
