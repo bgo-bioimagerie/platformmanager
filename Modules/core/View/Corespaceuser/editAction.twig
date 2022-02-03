@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="row pm-table">
-    <div id="formSection" data-origin="{{origin}}" data-options="{{options}}" data-forms="{{forms}}">
+    <div id="formSection" data-origin="{{origin}}" data-options="{{options}}" data-forms="{{forms}}" data-lang="{{lang}}">
         <input
             v-for="item in sections"
             :id="item.btnId"
@@ -28,30 +28,38 @@
                         @click="item.subSection.show = !item.subSection.show">
                     </input>
                     <div :id="item.subSection.name + 'Section'" v-show="item.subSection.show">
-                        {# <div name="formDiv" v-html="item.subSection.formHtml"></div> #}
                         <div name="tableDiv" v-html="item.subSection.tableHtml"></div>
                     </div>
                 </div>
+
                 <script v-if="item.module==='booking'" type="module">
                     import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
-                    let dynamicForms = new DynamicForms();
-                    let spaceId = {{ id_space }};
-                    let sourceId = "resource";
-                    let targets = [
-                        {
-                            elementId: "visa_id",
-                            apiRoute: `revisas/getcategoryvisas/`,
-                            activateOnLoad: true
-                        }
-                    ];
-                    dynamicForms.dynamicFields(sourceId, targets, spaceId);
-                </script>
-                {# TODO: find another way to load that script ? #}
-                <script v-if="item.module==='clients'">
-                    function ConfirmDelete(id, name) {
-                        if (confirm(`Delete ${name} ?`)) location.href=`clientsuseraccountsdelete/26/1385/${id}`;
+                    if (!app.$data.dynamicsLoaded) {
+                        let dynamicForms = new DynamicForms();
+                        let spaceId = {{ id_space }};
+                        let sourceId = "resource";
+                        let targets = [
+                            {
+                                elementId: "visa_id",
+                                apiRoute: `revisas/getcategoryvisas/`,
+                                activateOnLoad: true
+                            }
+                        ];
+                        dynamicForms.dynamicFields(sourceId, targets, spaceId);
+                        app.$data.dynamicsLoaded = true;
                     }
                 </script>
+
+                <script>
+                    function ConfirmDelete(id, name) {
+                        let spaceId = {{ id_space }}
+                        let userId = {{ id_user }}
+                        if (confirm(`Delete ${name} ?`)) {
+                            location.href=`clientsuseraccountsdelete/${spaceId}/${userId}/${id}`;
+                        }
+                    }
+                </script>
+
             </div>
         </div>
 
@@ -82,13 +90,16 @@
                 params: {
                     spaceId: {{ id_space }},
                     userId: {{ id_user }},
+                    lang: 'en'
                 },
+                dynamicsLoaded: false
             }
         },
         mounted: function() {
             this.origin = JSON.parse(this.$el.attributes['data-origin'].value);
             this.options = JSON.parse(this.$el.attributes['data-options'].value);
             this.forms = JSON.parse(this.$el.attributes['data-forms'].value);
+            this.lang = JSON.parse(this.$el.attributes['data-lang'].value);
             this.generateSections();
             this.showForm(this.getOriginPage());
         },
@@ -129,7 +140,7 @@
                     "spaceaccess",
                     spaceModuleName,
                     spaceModuleName + "Btn",
-                    "Space access",
+                    this.getDisplayName(spaceModuleName),
                     this.forms.spaceaccess
                 );
                 this.sections.push(spaceSection);
@@ -138,7 +149,7 @@
                         option.toolname,
                         option.module,
                         option.module + "Btn",
-                        option.module,
+                        this.getDisplayName(option.module),
                         this.forms[option.toolname],
                         this.forms[option.toolname + "Table"]
                     );
@@ -148,13 +159,34 @@
                             subSectionModule,
                             subSectionModule,
                             subSectionModule + "Btn",
-                            "Booking authorisations history",
+                            this.getDisplayName(subSectionModule),
                             this.forms[subSectionModule],
                             this.forms[subSectionModule + "Table"]
                         );
                     }
                     this.sections.push(section);
                 });
+            },
+            getDisplayName(module) {
+                let result = "";
+                let french = (this.lang === 'fr');
+                switch (module) {
+                    case "space":
+                        result = french ? "Accès à l'espace" : "Space Access";
+                        break;
+                    case "booking":
+                        result = french ? "Habilitations" : "Authorisations";
+                        break;
+                    case "clients":
+                        result = french ? "Comptes clients" : "Clients accounts";
+                        break;
+                    case "bookinghistory":
+                        result = french ? "Historique des habilitations" : "Authiorisations history";
+                        break;
+                    default:
+                        break;
+                }
+                return result;
             }
         }
     });

@@ -234,7 +234,7 @@ class CorespaceaccessController extends CoresecureController {
         $table->addLineButton("corespaceaccess/" . $id_space . "/impersonate" , "id", "Impersonate");
 
 
-        $modelOptions = new CoreSpaceAccessOptions();
+        /* $modelOptions = new CoreSpaceAccessOptions();
         $options = $modelOptions->getAll($id_space);
         foreach($options as $option){
             try {
@@ -245,7 +245,7 @@ class CorespaceaccessController extends CoresecureController {
             } catch(Throwable $e) {
                 Configuration::getLogger()->error('Option not found', ['option' => $option, 'error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
             }
-        }
+        } */
 
         $tableContent = array(
             "name" => CoreTranslator::Name($lang),
@@ -593,7 +593,7 @@ class CorespaceaccessController extends CoresecureController {
 
             $_SESSION["flash"] = CoreTranslator::UserAccountHasBeenActivated($lang);
             $_SESSION["flashClass"] = "success";
-            $this->redirect("corespaceaccess/".$id_space."/All/active", [], ['message' => 'user activated']);
+            $this->redirect("corespaceuseredit/".$id_space."/" . $userId, ["origin" => "spaceaccess"], ['message' => 'user activated']);
             return;
         }
 

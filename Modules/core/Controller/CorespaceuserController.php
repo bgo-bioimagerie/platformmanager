@@ -35,13 +35,16 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 class CorespaceuserController extends CorespaceaccessController {
 
     
-    // TODO: filter settings with activated modules
-    // TODO: design interface
-    // TODO: remove corespaceaccessusers user's buttons
-    // TODO: Show all history (not only for one resource)
+    // TODO: filter settings with activated modules => OK
+    // TODO: design interface => OK
+    // TODO: remove corespaceaccessusers user's buttons => OK
+    // TODO: Show all history (not only for one resource) => OK
     // TODO: display flash messages ?
-    // TODO: deal with pending accounts validation process
+    // TODO: deal with pending accounts validation process => OK
     // TODO: make it clean (remove debug logs and non necessay comments)
+    // TODO: manage buttons language => OK
+    // TODO: avoid dynamicscript to load 2 times => OK
+    // TODO: place clients before booking => depends on options order !!! => env line 75
 
 
     // space access section
@@ -108,7 +111,7 @@ class CorespaceuserController extends CorespaceaccessController {
         $dataView = [
             'id_space' => $id_space,
             'id_user' => $id_user,
-            'lang' => $lang,
+            'lang' => json_encode($lang),
             "space" => $space,
             'origin' => json_encode($origin),
             'options' => json_encode($options),
