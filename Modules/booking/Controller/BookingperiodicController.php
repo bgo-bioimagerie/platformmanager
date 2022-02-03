@@ -380,11 +380,19 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         // booking nav bar
+        /*
         $curentResource = $_SESSION['bk_id_resource'];
         $curentAreaId = $_SESSION['bk_id_area'];
         $curentDate = date("Y-m-d", $resaInfo["start_time"]);
         $_SESSION['bk_curentDate'] = $curentDate;
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        */
+
+        $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
+        $curentDate = date("Y-m-d", $resaInfo["start_time"]);
+        $_SESSION['bk_curentDate'] = $curentDate;
+        $menuData = $this->calendarMenuData($id_space, $bk_id_area, $id_resource, $curentDate);
+
 
         // date time
         $form->addDate("resa_start", BookingTranslator::Beginning_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["start_time"]));
@@ -430,7 +438,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDelete->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationdefaultdelete/' . $id_space ."/". $resaInfo["id"]);
         $formDelete->setButtonsWidth(2, 10);
         
-        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space);
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
         
         
         $this->render(array("id_space" => $id_space, "lang" => $lang, "menuData" => $menuData,

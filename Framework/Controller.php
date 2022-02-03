@@ -9,6 +9,7 @@ require_once 'Constants.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 
 // Default navbar
 class Navbar{
@@ -111,6 +112,7 @@ abstract class Controller {
 
     protected ?array $currentSpace = null;
     protected int $role = -1;
+    protected ?string $maintenance = null;
 
     public function args() {
         return $this->args;
@@ -139,6 +141,13 @@ abstract class Controller {
             $m = new CoreSpace();
             $this->role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
         }
+
+        $ccm = new CoreConfig();
+        $maintenance = $ccm->getParam("is_maintenance", false);
+        if($maintenance) {
+            $this->maintenance = $ccm->getParam("maintenance_message", "Site maintenance");
+        }
+
     }
 
         /**
@@ -307,7 +316,8 @@ abstract class Controller {
             "rootWeb" => Configuration::get("rootWeb", "/"),
             "lang" => $this->getLanguage(),
             "currentSpace" => $this->currentSpace,  // current space if any
-            "role" => $this->role   // user role in space if any
+            "role" => $this->role,   // user role in space if any
+            "maintenance" => $this->maintenance
         ];
 
         if (getenv("PFM_MODE") == "test") {

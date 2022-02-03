@@ -44,13 +44,13 @@ class CatalogconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, 'catalog', $lang);
         
         if ($formMenusactivation->check()) {
-            $this->menusactivationForm($id_space, 'catalog', 'list');
+            $this->menusactivation($id_space, 'catalog', 'list');
             return $this->redirect("catalogconfig/" . $id_space);
         }
 
         $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'catalogsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivationForm($id_space, 'catalogsettings', 'list');
+            $this->menusactivation($id_space, 'catalogsettings', 'list', 'catalog');
             return $this->redirect("catalogconfig/" . $id_space);
         }
 

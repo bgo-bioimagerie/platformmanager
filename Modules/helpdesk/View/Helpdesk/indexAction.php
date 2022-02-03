@@ -186,7 +186,7 @@ blockquote {
                 <tbody>
                 <tr><td><input type="checkbox" v-bind:checked="selectAll" @click="selectTicket(null)"/></td><td></td><td><button @click="spamSelected()" class="btn btn-warning">Spam selected</button></td></tr>
                 <tr v-for="ticket in tickets" :key="ticket.id" v-bind:class="ticket.unread=='1' ? 'alert alert-warning':''">
-                <td><input @click="selectTicket(ticket.id)" v-bind:checked="ticket?.selected" type="checkbox"/></td>
+                <td><input @click="selectTicket(ticket.id)" v-bind:checked="ticket && ticket.selected" type="checkbox"/></td>
                 <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
                 <td>{{ticket.created_at}}</td>
                 <td>{{ticket.subject}}</td>
@@ -238,7 +238,6 @@ var app = new Vue({
     methods: {
         spam(id) {
             return new Promise((resolve, reject) => {
-                console.debug('spam', id)
                 let headers = new Headers()
                 headers.append('Content-Type','application/json')
                 headers.append('Accept', 'application/json')
@@ -257,8 +256,7 @@ var app = new Vue({
         },
         spamSelected() {
             this.tickets.forEach(async (ticket) => {
-                if (ticket?.selected) {
-                    console.debug('should spam ', ticket.id)
+                if (ticket && ticket.selected) {
                     try {
                         await this.spam(ticket.id)
                     } catch(err) {
@@ -271,12 +269,10 @@ var app = new Vue({
             if (id === null) {
                 let tickets = [...this.tickets]
                 if (this.select) {
-                    console.debug('unselect all')
                     tickets.forEach((ticket) => {
                         ticket.selected = false;
                     })
                 } else {
-                    console.debug('select all')
                     tickets.forEach((ticket) => {
                         ticket.selected = true;
                     })
@@ -288,7 +284,6 @@ var app = new Vue({
             let tickets = [...this.tickets]
             tickets.forEach((ticket) => {
                 if(ticket.id === id) {
-                    console.debug('select/unselect ', id)
                     ticket.selected = !ticket.selected;
                 }
             })
@@ -358,7 +353,6 @@ var app = new Vue({
                     this.ticket = null;
                     this.fetchTickets();
                 }
-                console.debug('ticket updated')
             })
         },
         setMy() {
@@ -404,7 +398,6 @@ var app = new Vue({
                 this.text = '';
         },
         save() {
-            console.debug('save ticket', this.ticket.ticket);
             let headers = new Headers()
             headers.append('Content-Type','application/json')
             headers.append('Accept', 'application/json')
@@ -523,7 +516,6 @@ var app = new Vue({
                     data.messages[i].md = marked(data.messages[i].body, { sanitize: true }) || "";
                 }
                 this.ticket = data;
-                console.debug('get ticket', data);
             })    
         },
         fetchTickets () {
@@ -548,7 +540,6 @@ var app = new Vue({
             then((response) => response.json()).
             then(data => {
                 this.tickets = data.tickets;
-                console.debug('get tickets', data);
             })
             this.fetchUnread();
         },
@@ -578,7 +569,6 @@ var app = new Vue({
                     unreads["s"+unread.status] = `(${unread.total})`
                 });
                 this.unread = unreads;
-                console.debug('unread tickets', unreads);
             })            
         }
     }

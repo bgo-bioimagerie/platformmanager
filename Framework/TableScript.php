@@ -9,8 +9,12 @@
     <script>
         $(document).ready(function () {
             //var tableHeight = window.innerHeight - 200;
+            let defaultCol = 0;
             $('#tableID').DataTable({
-                columnDefs: [{targets: 'no-sort', orderable: false, searchable: false}],
+                columnDefs: [
+                    {targets: 'no-sort', orderable: false, searchable: false}
+                ],
+                order: [[ defaultCol, "desc"]]
             });
         });
     </script>

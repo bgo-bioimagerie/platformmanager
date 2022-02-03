@@ -26,7 +26,7 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Mise à disposition";
         }
-        return "Location";
+        return "Bookings";
     }
 
     public static function bookingConfigAbstract($lang) {

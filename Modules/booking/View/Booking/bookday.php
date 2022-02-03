@@ -6,6 +6,7 @@
 <?php 
 require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/bookfunction.php';
+require_once 'Modules/booking/View/Booking/agendafunction.php';
 ?>	
 	
  
@@ -46,7 +47,6 @@ require_once 'Modules/booking/View/Booking/bookfunction.php';
 }
 
 </style>
-
 <!-- Add the table title -->
 <div class="row" style="background-color: #ffffff; padding-bottom: 12px;">
 

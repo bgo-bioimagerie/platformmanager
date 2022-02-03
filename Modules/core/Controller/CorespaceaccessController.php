@@ -108,7 +108,12 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     public function notifsAction($id_space) {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        try {
+            $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        } catch(Exception) {
+            // no need to raise an exception for that
+            $this->render(['data' => ['notifs' => 0]]);
+        }
         $modelSpacePending = new CorePendingAccount();
         $count = $modelSpacePending->countPendingForSpace($id_space);
         $this->render(['data' => ['notifs' => $count['total']]]);
@@ -219,7 +224,7 @@ class CorespaceaccessController extends CoresecureController {
         foreach ($users as $user) {
             $user["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
             $user["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
-            $user["convention_url"] = sprintf('/core/spaceaccess/%s/users/%s/convention', $id_space, $user['id']);
+            $user["convention_url"] = $user['convention_url'] ? sprintf('/core/spaceaccess/%s/users/%s/convention', $id_space, $user['id']) : '';
             array_push($usersArray, $user);
         }
 

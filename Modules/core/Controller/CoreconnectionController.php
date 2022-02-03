@@ -116,6 +116,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $redirectPath = $this->getRedirectPath();
                 $this->redirectNoRemoveHeader($redirectPath);
             } else {
+                Configuration::getLogger()->info('[login] invalid', ['error' => $connect, 'login' => $login]);
                 $this->loginError($redirection, $connect);
             }
         } else {

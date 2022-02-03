@@ -20,7 +20,7 @@ if($isdev) {
         <?php
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
-        <meta name="mode" description="{{$isdev}}">
+        <meta name="mode" description="<?php echo $isdev ?>">
         <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
@@ -67,7 +67,17 @@ if($isdev) {
         </div>
 
         <div class="container-fluid">
-            <div class="row" id="app">
+                <div class="row" id="app" >
+                    <?php if(isset($context['maintenance']) && $context['maintenance']) { ?>
+                        <div class="container">
+                            <div class="alert alert-warning alert-dismissible  show" role="alert">
+                                <?php echo $context['maintenance']; ?>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>                        
+                    <?php } ?>
                     <?php if (isset($flash) && $flash) { ?>
                         <div class="col-12">
                             <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">

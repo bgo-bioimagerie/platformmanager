@@ -1,6 +1,32 @@
 <?php ?>
 
 <script>
+
+    function editentry(id) {
+        var arrayid = id.split("_");
+        showEditEntryForm(<?php echo $id_space ?>, arrayid[1]);
+    }
+
+    function showEditEntryForm(id_space, id) {
+        $.post(
+            'servicesgetprojectentry/' + id_space + '/' + id,
+            {},
+            function (data) {
+                console.log('????', data);
+                $('#formprojectentryprojectid').val(data.id_project);
+                $('#formprojectentrydate').val(data.date);
+                $('#formprojectentryid').val(data.id);
+                $('#formserviceid').val(data.id_service);
+                $('#formservicequantity').val(data.quantity);
+                $('#formservicecomment').val(data.comment);
+
+                $("#hider").fadeIn("slow");
+                $('#entriespopup_box').fadeIn("slow");
+            },
+            'json'
+            );
+    }
+
     $(document).ready(function () {
 
         $("#hider").hide();
@@ -8,18 +34,6 @@
             $("#hider").hide();
             $('#entriespopup_box').hide();
         });
-
-<?php for ($i = 0; $i < count($projectEntries); $i++) { ?>
-            $("#editentry_<?php echo $projectEntries[$i]["id"] ?>").click(function () {
-                
-                var strid = this.id;
-                var arrayid = strid.split("_");
-                //alert("add note clicked " + arrayid[1]);
-                showEditEntryForm(<?php echo $projectEntries[$i]["id_space"]?>, arrayid[1]);
-            });
-    <?php
-}
-?>
 
         $("#addentrybutton").click(function () {
 
@@ -33,28 +47,6 @@
             $("#hider").fadeIn("slow");
             $('#entriespopup_box').fadeIn("slow");
         })
-        ;
-
-        function showEditEntryForm(id_space, id) {
-            $.post(
-                    'servicesgetprojectentry/' + id_space + '/' + id,
-                    {},
-                    function (data) {
-                        $('#formprojectentryprojectid').val(data.id_project);
-                        $('#formprojectentrydate').val(data.date);
-                        $('#formprojectentryid').val(data.id);
-                        $('#formserviceid').val(data.id_service);
-                        $('#formservicequantity').val(data.quantity);
-                        $('#formservicecomment').val(data.comment);
-
-                        $("#hider").fadeIn("slow");
-                        $('#entriespopup_box').fadeIn("slow");
-                    },
-                    'json'
-                    );
-
-        }
-        ;
 
     });
 </script>            

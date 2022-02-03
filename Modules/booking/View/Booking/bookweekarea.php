@@ -6,6 +6,8 @@
 <?php
 require_once 'Modules/booking/Model/BkBookingSettings.php';
 require_once 'Modules/booking/View/Booking/bookfunction.php';
+require_once 'Modules/booking/View/Booking/agendafunction.php';
+
 
 $available_days = $scheduling["is_monday"] . "," . $scheduling["is_tuesday"] . "," . $scheduling["is_wednesday"] . "," . $scheduling["is_thursday"] . "," . $scheduling["is_friday"] . "," . $scheduling["is_saturday"] . "," . $scheduling["is_sunday"];
 $available_days = explode(",", $available_days);

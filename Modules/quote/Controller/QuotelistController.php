@@ -443,7 +443,7 @@ class QuotelistController extends QuoteController {
                 'total' => $total,
                 'useTTC' => $useTTC,
                 'details' => $details,
-                'clientsInfos' => null,
+                'clientInfos' => null,
                 'invoiceInfo' => $invoiceInfo,
                 'isquote' => $isquote
             ]);

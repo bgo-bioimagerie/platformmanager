@@ -52,7 +52,7 @@ if ($space['color'] == "") {
                             <a href="<?php echo $item["url"] . "/" . $id_space ?>">
                                 <span class="pm-tiles <?php echo $item["icon"] ?>" aria-hidden="true"></span>
                                 <span style="<?php echo "color: ".$item["txtcolor"]; ?>" class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
-                                <span v-if="notifs?.<?php echo strtolower($item['url']); ?>" class="m-1 badge bg-primary">{{notifs?.<?php echo strtolower($item['url']); ?>}}</span>
+                                <span v-if="notifs && notifs.<?php echo strtolower($item['url']); ?>" class="m-1 badge bg-primary">{{notifs.<?php echo strtolower($item['url']); ?>}}</span>
                             </a>
                         </li>
                         <?php
@@ -97,7 +97,7 @@ if ($space['color'] == "") {
                             <a href="<?php echo "corespaceaccess/" . $space["id"] ?>">
                                 <span class="pm-tiles bi-person-fill" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Users($lang) ?></span>
-                                <span v-if="notifs?.spaceaccess" class="m-1 badge bg-primary">{{notifs.spaceaccess}}</span>
+                                <span v-if="notifs && notifs.spaceaccess" class="m-1 badge bg-primary">{{notifs.spaceaccess}}</span>
                             </a>
                         </li> 
 

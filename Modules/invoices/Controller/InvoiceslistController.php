@@ -55,6 +55,11 @@ class InvoiceslistController extends InvoicesController {
         if ($sent == ""){
             $sent = 0;
         }
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
+            $_SESSION['flash'] = InvoicesTranslator::NoTemplate($lang);
+            $_SESSION['flashClass'] = 'warning';
+        }
         
         $modelInvoices = new InInvoice();
         $modelUser = new CoreUser();

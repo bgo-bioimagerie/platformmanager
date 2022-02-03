@@ -93,7 +93,7 @@
                 alert("Empty space clicked - add an item!");
             },
             onRender: function () {
-                console.log("chart rendered");
+                // console.log("chart rendered");
             }
         });
         prettyPrint();
