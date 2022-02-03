@@ -70,11 +70,10 @@ class BjTask extends Model {
         if ($this->exists($id_space, $id_note)) {
             $sql = "UPDATE bj_tasks SET priority=?, deadline=? WHERE id_note=? AND id_space=?";
             $this->runRequest($sql, array($priority, $deadline, $id_note, $id_space));
-            return $id_note;
         } else {
             $sql = "INSERT INTO bj_tasks (id_note, priority, deadline, id_space) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id_note, $priority, $deadline, $id_space));
-            return $this->getDatabase()->lastInsertId();
+            $id_note = $this->getDatabase()->lastInsertId();
         }
         return $id_note;
     }

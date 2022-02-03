@@ -327,12 +327,6 @@ class TableView {
                     $html .= "</td>";
                     $addDelete = true;
                 }
-                
-                //if ($isButtons){
-                //    $html .= "</td>";
-                //}
-                
-                
 
                 if ($this->downloadButton != "") {
                     $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
@@ -374,17 +368,6 @@ class TableView {
                             }
                             $html .= '</td>';
                         }
-                        /*
-                        else if ($value["type"] == "download"){
-                            $html .= '<td>';
-                            if ( $val != "" ){
-                                $html .= "<form role=\"form\" id=\"tabledownload\" class=\"form-horizontal\" action=\"".$value["action"]."\" method=\"POST\">";
-                                $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$val."\">";
-                                $html .= "<input type=\"submit\" class=\"btn btn-default\" value=\"" . $value["text"] . "\" />";
-                                $html .= "</form>";
-                            }
-                            $html .= '</td>';
-                        }*/
                     }
                     else{
                         if (strlen($dat[$key]) && $this->textMaxLength > 0) {
@@ -445,75 +428,6 @@ class TableView {
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
         return str_replace("tableID", $this->tableID, $str1);
-         
-
-        $html .= "<head>";
-
-        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.bootstrap.css\">";
-        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.fixedHeader.css\">";
-
-        $html .= "<script src=\"/externals/jquery-1.11.1.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/jquery.dataTables.min.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/dataTables.fixedHeader.min.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/dataTables.bootstrap.js\"></script>";
-        
-        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css\">";
-        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/fixedcolumns/3.2.2/css/fixedColumns.bootstrap.min.css\">";
-
-        $html .= "<style>";
-        //$html .= "body { font-size: 120%; padding: 1em; margin-top:30px; margin-left: -15px;}";
-        $html .= "div.FixedHeader_Cloned table { margin: 0 !important }";
-
-        $html .= "table{";
-
-        $html .= "	white-space: nowrap;";
-        $html .= "}";
-
-        $html .= "thead tr{";
-        $html .= "	height: 100px;";
-        $html .= "}";
-
-        $html .= "thead th{";
-        $html .= "	vertical-align:bottom; text-align:center;";
-        $html .= "}";
-
-        $html .= "</style>";
-
-        $html .= "<script>";
-        $html .= "$(document).ready( function() {";
-        $html .= "$('#" . $this->tableID . "').dataTable( {";
-        
-        $html .= "\"aoColumns\": [";
-
-        for ($c = 0; $c < $headerscount; $c++) {
-            if ($c == $headerscount - 1) {
-                $html .= "{ \"bSearchable\": true }";
-            } else if ($c == 1) {
-                $html .= "null,";
-            } else {
-                $html .= "{ \"bSearchable\": true },";
-            }
-        }
-        $html .="],";
-        $html .= "\"lengthMenu\": [[100, 200, 300, -1], [100, 200, 300, \"All\"]]";
-        $html .= "}";
-        $html .= ");";
-        $html .="} );";
-        $html .="</script>";
-
-        $html .="<script>";
-        $html .="$(document).ready(function() {";
-        $html .="	var table = $('#" . $this->tableID . "').DataTable();";
-        $html .="	new $.fn.dataTable.FixedHeader( table, {";
-        $html .="		alwaysCloneTop: true";
-        $html .="	});";
-
-        $html .="} );";
-        $html .="</script>";
-
-        $html .= "</head>";
-
-        return $html;
     }
 
     /**

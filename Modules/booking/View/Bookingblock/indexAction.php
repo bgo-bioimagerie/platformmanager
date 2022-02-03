@@ -68,7 +68,7 @@
                            />
                 </div>
                 <div class="col-xs-1">
-                    <b>:</b>
+                    :
                 </div>
                 <div class="col-xs-3">
                     <input class="form-control" id="name" type="text" name="begin_min"
@@ -99,7 +99,7 @@
                            />
                 </div>
                 <div class="col-xs-1">
-                    <b>:</b>
+                    :
                 </div>
                 <div class="col-xs-3">
                     <input class="form-control" id="name" type="text" name="end_min"

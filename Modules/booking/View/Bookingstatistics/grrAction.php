@@ -218,13 +218,13 @@
 
             <thead> <!-- En-tête du tableau -->
                 <tr>				
-                    <th><?php echo BookingTranslator::Area($lang) ?></th>
-                    <th><?php echo BookingTranslator::Resource($lang) ?></th>
-                    <th><?php echo BookingTranslator::Short_description($lang) ?></th>
-                    <th><?php echo CoreTranslator::Date($lang) ?></th> 
-                    <th><?php echo BookingTranslator::Full_description($lang) ?> </th>
-                    <th><?php echo BookingTranslator::Color_code($lang) ?> </th>
-                    <th><?php echo BookingTranslator::recipient($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::Area($lang) ?></th>
+                    <th scope="col"><?php echo BookingTranslator::Resource($lang) ?></th>
+                    <th scope="col"><?php echo BookingTranslator::Short_description($lang) ?></th>
+                    <th scope="col"><?php echo CoreTranslator::Date($lang) ?></th> 
+                    <th scope="col"><?php echo BookingTranslator::Full_description($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::Color_code($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::recipient($lang) ?> </th>
                 </tr>
             </thead>
 
@@ -282,16 +282,16 @@
 
 
             <thead>
-            <th></th>
+            <th scope="col"></th>
             <?php
             foreach ($resourcesNames as $name) {
                 ?>
-                <th><?php echo $name ?></th>
+                <th scope="col"><?php echo $name ?></th>
                 <?php
             }
             ?>
 
-            <th>Total</th>
+            <th scope="col">Total</th>
             </thead>
 
             <tbody>
@@ -303,7 +303,7 @@
                     $i++;
                     ?>
                     <tr>
-                        <th><?php echo $entrySummary[$i] ?></th>
+                        <td><?php echo $entrySummary[$i] ?></td>
                         <?php
                         $j = -1;
                         $totalC = 0;
@@ -312,13 +312,13 @@
                             $j++;
                             ?>
 
-                            <th> (<?php echo $col ?>) <?php echo $timeTable[$entrySummary[$i]][$resourcesNames[$j]] / 3600 ?> </th>
+                            <td> (<?php echo $col ?>) <?php echo $timeTable[$entrySummary[$i]][$resourcesNames[$j]] / 3600 ?> </td>
                             <?php
                             $totalC += $col;
                             $totalH += $timeTable[$entrySummary[$i]][$resourcesNames[$j]];
                         }
                         ?>
-                        <th>(<?php echo $totalC ?>) <?php echo $totalH / 3600 ?> </th>
+                        <td>(<?php echo $totalC ?>) <?php echo $totalH / 3600 ?> </td>
                     </tr>
                     <?php
                     $totalCG += $totalC;
@@ -327,7 +327,7 @@
                 ?>
 
                 <tr>
-                    <th> Total </th>
+                    <td> Total </td>
                     <?php
                     for ($i = 0; $i < count($resourcesNames); $i++) {
                         // calcualte the sum
@@ -338,11 +338,11 @@
                             $sumH += $timeTable[$entrySummary[$x]][$resourcesNames[$i]];
                         }
                         ?>
-                        <th> (<?php echo $sumC ?>) <?php echo $sumH / 3600 ?> </th>
+                        <td> (<?php echo $sumC ?>) <?php echo $sumH / 3600 ?> </td>
                         <?php
                     }
                     ?>
-                    <th> (<?php echo $totalCG ?>) <?php echo $totalHG / 3600 ?> </th>
+                    <td> (<?php echo $totalCG ?>) <?php echo $totalHG / 3600 ?> </td>
                 </tr>
 
             </tbody>
