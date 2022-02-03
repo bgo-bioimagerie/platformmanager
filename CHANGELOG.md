@@ -6,6 +6,8 @@
 * [invoices] show message if no template defined
 * [core] add status and msg to core files
 * [helpdesk] on file upload (manual), create dir if not exists
+* [core] fix default sort order in tables and remove download button if no url
+* [core] fix typos/spelling
 
 ## 2.3.1
 
