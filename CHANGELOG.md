@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3.2
+
+* [booking][services] fix popup when editing with pagination
+
 ## 2.3.1
 
 * [core] fix upgrade for redis invoice numbers (1641387865_update_invoice_numbers_redis.php)
