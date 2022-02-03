@@ -8,6 +8,7 @@
 * [helpdesk] on file upload (manual), create dir if not exists
 * [core] fix default sort order in tables and remove download button if no url
 * [core] fix typos/spelling
+* [booking] manage redirect after reservation edit to page were booking was done
 
 ## 2.3.2
 
