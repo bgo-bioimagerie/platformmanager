@@ -67,7 +67,7 @@ class CoreFiles extends Model {
         $name = basename($path);
         
         if(!is_dir($base)) {
-            mkdir($base, 0777, true);
+            mkdir($base, 0755, true);
         }
         FileUpload::uploadFile($base, $formFileId, $name);
     }
@@ -101,7 +101,7 @@ class CoreFiles extends Model {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
         if(!is_dir($destDirName)) {
-            mkdir($destDirName, 0777, true);
+            mkdir($destDirName, 0755, true);
         }
         copy($path, $dest);
     }
@@ -113,7 +113,7 @@ class CoreFiles extends Model {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
         if(!is_dir($destDirName)) {
-            mkdir($destDirName, 0777, true);
+            mkdir($destDirName, 0755, true);
         }
         file_put_contents($dest, $data);
     }

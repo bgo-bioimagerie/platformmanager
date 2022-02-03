@@ -63,7 +63,7 @@ class ServicesInstall extends Model {
         
 
         if (!file_exists('data/services/')) {
-            mkdir('data/services/', 0777, true);
+            mkdir('data/services/', 0755, true);
         }
     }
 

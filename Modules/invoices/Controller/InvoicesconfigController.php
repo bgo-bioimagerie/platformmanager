@@ -175,7 +175,7 @@ class InvoicesconfigController extends CoresecureController {
         $formUpload->setButtonsWidth(2, 10);
         if ($formUpload->check()) {
             if (!file_exists('data/invoices/' . $id_space)) {
-                mkdir('data/invoices/' . $id_space, 0777, true);
+                mkdir('data/invoices/' . $id_space, 0755, true);
             }
 
             if(file_exists('data/invoices/' . $id_space . '/template.twig')) {
@@ -216,7 +216,7 @@ class InvoicesconfigController extends CoresecureController {
         $formUploadImages->setColumnsWidth(0, 12);
         if ($formUploadImages->check()) {
             if (!file_exists('data/invoices/' . $id_space)) {
-                mkdir('data/invoices/' . $id_space, 0777, true);
+                mkdir('data/invoices/' . $id_space, 0755, true);
             }
             FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'image', $_FILES["image"]["name"]);
             $this->redirect('invoicepdftemplate/' . $id_space);

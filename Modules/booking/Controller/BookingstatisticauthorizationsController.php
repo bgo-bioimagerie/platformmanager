@@ -79,7 +79,7 @@ class BookingstatisticauthorizationsController extends StatisticsController {
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
             ]);
-            return $this->redirect('statistics/'.$id_space);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
 
             //$f = $this->generateStats($id_space, $period_begin, $period_end);
             //return ['data' => ['file' => $f]];
@@ -131,7 +131,7 @@ class BookingstatisticauthorizationsController extends StatisticsController {
             "file" => ["id" => $fid],
             "space" => ["id" => $id_space]
         ]);
-        return $this->redirect('statistics/'.$id_space);
+        return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
 
 
         // query

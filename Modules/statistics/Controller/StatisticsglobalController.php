@@ -113,9 +113,7 @@ class StatisticsglobalController extends StatisticsController {
                 "space" => ["id" => $id_space]
             ]);
 
-
-            //$f  = $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
-            return $this->redirect('statistics/'.$id_space);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));

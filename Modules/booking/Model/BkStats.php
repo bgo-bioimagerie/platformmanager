@@ -9,6 +9,7 @@ require_once 'Modules/resources/Model/ReVisa.php';
 require_once 'Modules/booking/Model/BkAuthorization.php';
 require_once 'Modules/booking/Model/BkGraph.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 
 require_once 'Modules/clients/Model/ClClient.php';
@@ -20,7 +21,7 @@ class BkStats {
     public const STATS_BK = 'bk_bk';
     public const STATS_MANUAL = 'bk_manual';
     public const STATS_QUANTITIES = 'bk_quantities';
-    public const STATS_TIME = 'bk_time';
+    public const STATS_BK_TIME = 'bk_time';
 
     public function generateStats($file, $id_space, $period_begin, $period_end) {
 
@@ -612,6 +613,55 @@ class BkStats {
 
         return array('styleBorderedCell' => $styleBorderedCell,
             'styleBorderedCenteredCell' => $styleBorderedCenteredCell);
+    }
+
+    public function getQuantitiesReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en') {
+        $modelBooking = new BkCalendarEntry();
+        $stats = $modelBooking->getStatsQuantities(
+                $id_space,
+                $dateBegin,
+                $dateEnd,
+                $lang
+        );
+        if(empty($stats)) {
+            throw new PfmParamException('no data found for this period');
+        }
+        $data = '';
+        foreach ($stats as $stat) {
+            $data .= $stat['name'].';'.$stat['count']."\n";
+        }
+        $dir = dirname($filepath);
+        if(!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        file_put_contents($filepath, $data);
+    }
+
+    public function getReservationsRespReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en') {
+        $modelBooking = new BkCalendarEntry();
+        $stats = $modelBooking->getStatTimeResps(
+                $id_space,
+                $dateBegin,
+                $dateEnd
+        );
+        $csv = ",";
+        foreach ( $stats["resources"] as $resoure ){
+            $csv .= $resoure["name"] . ",";
+        }
+        $csv .= "\n";
+        foreach ( $stats["count"] as $data ){
+            $csv .= $data["responsible"] . ",";
+            foreach( $data["count"] as $count ){
+                $csv .= $count["time"] . ",";
+            }
+            $csv .= "\n";
+        }
+        
+        $dir = dirname($filepath);
+        if(!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        file_put_contents($filepath, $csv);
     }
 
 

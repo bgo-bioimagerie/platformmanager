@@ -56,9 +56,8 @@ class ResourcesInstall extends Model {
         $model10->createTable();
         
         
-        if (!file_exists('data/resources/')) {
-            mkdir('data/resources/', 0777, true);
-            mkdir('data/resources/events', 0777, true);
+        if (!file_exists('data/resources/events')) {
+            mkdir('data/resources/events', 0755, true);
         }
     }
 }

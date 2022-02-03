@@ -49,21 +49,28 @@ class BookingstatisticsController extends StatisticsController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "statquantities/" .$id_space);
         
         if ($form->check()){
-        
-            $modelBooking = new BkCalendarEntry();
-            $stats = $modelBooking->getStatsQuantities(
-                    $id_space,
-                    CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
-                    CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
-                    );
-
-            $stats = !empty($stats) ?: "No data found for this period";
-            // TODO: link that to a report generation
-            print_r($stats);
-            return ['data' => ['stats' => $stats]];
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $dateBegin = $form->getParameter("datebegin");
+            $dateEnd = $form->getParameter("dateend");
+            $name = 'stats_'.BkStats::STATS_QUANTITIES.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => BkStats::STATS_QUANTITIES,
+                "dateBegin" => $dateBegin,
+                "dateEnd" => $dateEnd, 
+                "user" => ["id" => $_SESSION['id_user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
+            
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
         
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
@@ -84,37 +91,28 @@ class BookingstatisticsController extends StatisticsController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatreservationresp/" .$id_space);
         
         if ($form->check()){
-        
-            $modelBooking = new BkCalendarEntry();
-            $stats = $modelBooking->getStatTimeResps(
-                    $id_space,
-                    CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
-                    CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
-                    );
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $dateBegin = $form->getParameter("datebegin");
+            $dateEnd = $form->getParameter("dateend");
+            $name = 'stats_'.BkStats::STATS_BK_TIME.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => BkStats::STATS_BK_TIME,
+                "dateBegin" => $dateBegin,
+                "dateEnd" => $dateEnd, 
+                "user" => ["id" => $_SESSION['id_user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
             
-            $csv = ",";
-            foreach ( $stats["resources"] as $resoure ){
-                $csv .= $resoure["name"] . ",";
-            }
-            $csv .= "\n";
-            foreach ( $stats["count"] as $data ){
-                $csv .= $data["responsible"] . ",";
-                foreach( $data["count"] as $count ){
-                    $csv .= $count["time"] . ",";
-                }
-                $csv .= "\n";
-            }
-            
-            if(getenv('PFM_MODE') == 'test') {
-               return ['data' => ['stats' => $csv]];
-            }
-            $filename = "booking_stats_resps_".date('Y-m-d').".csv";
-            header('Content-Disposition: attachment; filename="'.$filename.'";');
-            echo $csv;
-            return;
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
         
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
@@ -194,7 +192,7 @@ class BookingstatisticsController extends StatisticsController {
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
             ]);
-            return $this->redirect('statistics/'.$id_space);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
         $this->render(array(
@@ -333,7 +331,7 @@ class BookingstatisticsController extends StatisticsController {
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
             ]);
-            return $this->redirect('statistics/'.$id_space);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -347,6 +345,7 @@ class BookingstatisticsController extends StatisticsController {
     }
 
     public function grrAction($id_space) {
+        // table not file, do not async
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -404,6 +403,8 @@ class BookingstatisticsController extends StatisticsController {
             $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
 
             $outputType = $this->request->getParameterNoException('output');
+
+
 
             if ($outputType == 1) { // only details
                 $this->render(array(

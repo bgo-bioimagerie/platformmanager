@@ -28,6 +28,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/quote/Model/Quote.php';
 require_once 'Modules/services/Model/SeService.php';
+require_once 'Modules/services/Model/SeStats.php';
 
 require_once 'Modules/statistics/Model/GlobalStats.php';
 
@@ -487,6 +488,7 @@ class EventHandler {
                 case BkStats::STATS_AUTH_STAT:
                     $bs = new BkStats();
                     $bs->generateStats($file, $msg['space']['id'],  $msg['dateBegin'], $msg['dateEnd']);
+                    break;
                 case BkStats::STATS_AUTH_LIST:
                     $statUserModel = new BkStatsUser();
                     $resource_id = $msg['resource_id'];
@@ -495,14 +497,40 @@ class EventHandler {
                     } else {
                         $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang);
                     }
+                    break;
                 case BkStats::STATS_BK_USERS:
                     $model = new BkStatsUser();
                     $users = $model->bookingUsers($id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
                     $bs = new BkStats();
                     $bs->exportstatbookingusersCSV($file, $users);
+                    break;
                 case BkStats::STATS_BK:
                     $bs = new BkStats();
                     $bs->getBalanceReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], null, $lang);
+                    break;
+                case BkStats::STATS_QUANTITIES:
+                    $bs = new BkStats();
+                    $bs->getQuantitiesReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case BkStats::STATS_BK_TIME:
+                    $bs = new BkStats();
+                    $bs->getReservationsRespReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case SeStats::STATS_PROJECTS:
+                    $ss = new SeStats();
+                    $ss->generateBalanceReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case SeStats::STATS_PROJECT_SAMPLES:
+                    $ss = new SeStats();
+                    $ss->samplesReport($file, $id_space, $lang);
+                    break;
+                case SeStats::STATS_MAIL_RESPS:
+                    $ss = new SeStats();
+                    $ss->emailRespsReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case SeStats::STATS_ORDERS:
+                    $ss = new SeOrderStats();
+                    $ss->generateBalance($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], null, $lang);
                     break;
                 default:
                     Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);

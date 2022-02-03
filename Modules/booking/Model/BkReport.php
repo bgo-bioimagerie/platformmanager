@@ -11,12 +11,12 @@ class BkReport extends Model {
 
 	/**
 	 * Calculate statistics
-	 * @param unknown $datebegin
-	 * @param unknown $dateend
-	 * @param unknown $champ
-	 * @param unknown $type_recherche
-	 * @param unknown $text
-	 * @param unknown $contition_et_ou
+	 * @param string $datebegin
+	 * @param string $dateend
+	 * @param array $champ
+	 * @param array $type_recherche
+	 * @param array $text
+	 * @param array $contition_et_ou
 	 * @return multitype:
 	 */
 	public function reportstats($id_space, $datebegin, $dateend, $champ, $type_recherche, $text, $contition_et_ou){

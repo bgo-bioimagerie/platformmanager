@@ -81,6 +81,7 @@ class ServicesRouting extends Routing {
 
 
         // stats
+        // deprecated ?
         $this->addRoute("servicesbalance", "servicesbalance", "servicesbalance", "index", array("id_space"), array(""));
 
         // invoicing

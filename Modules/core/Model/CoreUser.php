@@ -315,7 +315,7 @@ class CoreUser extends Model {
             $tmp = $req->fetch();
             return $tmp[0];
         }
-        return 0;
+        return null;
     }
 
     /**

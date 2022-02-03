@@ -13,14 +13,11 @@ class GlobalStats {
 
     public function generateStats($filepath, $dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space, $lang='en') {
 
-        $c = new CoreSpace();
-        $space = $c->getSpace($id_space);
-        $controllerServices = new ServicesstatisticsprojectController(new Request([], false), $space);
-        $spreadsheet = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
-
+        $sk = new SeStats();
+        $spreadsheet = $sk->getBalance($dateBegin, $dateEnd, $id_space, true, null, $lang);
 
         $bk = new BkStats();
-        $spreadsheet = $bk->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet);
+        $spreadsheet = $bk->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet, $lang);
         $spreadsheet->setActiveSheetIndex(1);
 
         // write excel file
