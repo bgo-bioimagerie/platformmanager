@@ -22,7 +22,7 @@
 {
 	text-align:center;
 	background-color:#ffffff;
-	font-family:"Times,sans-serif";
+	font-family:Times,sans-serif;
 	font-weight:bold;
 	font-size:16pt;
 	color:#818181;
@@ -30,7 +30,7 @@
 	margin-top:3px;
 }
 .tableau th {
-	font-family:"Times,sans-serif";
+	font-family:Times,sans-serif;
 	border: thin solid #d1d1d1;
 	padding: 2px;
 	background-color: #f1f1f1;
