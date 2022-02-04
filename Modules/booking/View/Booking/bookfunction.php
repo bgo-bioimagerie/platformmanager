@@ -458,12 +458,119 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$lineColorStep = 4;
 	}
 
+	foreach ($calEntries as $c => $calEntry){
+		$calHour = date('G', $calEntry['start_time']);
+		$calDay = date('j', $calEntry['start_time']);
+		$calDayOfWeek = date('N', $calEntry['start_time']);
+
+		$caseTimeBegin = $date_unix + $day_begin*3600;
+		$caseTimeEnd = $date_unix + $day_end*3600;
+		if($calEntry['start_time'] < $caseTimeBegin) {
+			$calEntry['start_time'] = $caseTimeBegin;
+		}
+		if($calEntry['end_time'] > $caseTimeEnd) {
+			$calEntry['end_time'] = $caseTimeEnd;
+		}
+		$calLen = $calEntry['end_time'] - $calEntry['start_time'];
+		$cal = [$calEntry];
+		if($calLen > 3600){
+			$elts = $calLen / 3600;
+			$cal = [];
+			//$start =  $calEntry['start_time'];
+			$end =  $calEntry['start_time'];
+			for($i=0;$i<$elts;$i++) {
+				$calEntry['end_time'] = $calEntry['start_time'] + 3600;
+				if($calEntry['end_time'] > $end) {
+					$calEntry['end_time'] = $end;
+				}
+				$cal[] = $calEntry;
+				$calEntry['start_time'] += 3600;
+			}
+		}
+		foreach($cal as $c) {
+			Configuration::getLogger()->error('?????', ['start' => date('H:i', $c['start_time']), 'end' => date('H:i', $c['end_time'])]);
+			$blocNumber = ($c['end_time'] - $c['start_time'])/($caseTimeLength);
+			$curHour = date('G', $c['start_time']);
+
+			$pixelHeight = $blocNumber*$agendaStyle["line_height"];
+			$shortDescription = $c['short_description'];
+			$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], true);
+			$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
+			if($text === '') {
+				$text = '#'.$c['id'];
+			}
+			$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $c['id'];
+			$c['text'] = $text;
+			$c['pixelHeight'] = $pixelHeight;
+			$c['link'] = $linkAdress;
+			$c['hstart'] = date('i', $calEntry['start_time']);
+			$c['hend'] = date('i', $calEntry['end_time']);
+			$calRows[$curHour]['entries'][] = $c;
+		}
+	}
+
+	Configuration::getLogger()->error('?????????? CAL', ['b' => $day_begin, 'e' => $day_end]);
+	for($i=$day_begin;$i<$day_end;$i++) {
+		if(key_exists($i, $calRows)) {
+			$calRows[$i]['plus'] = null;
+		} else { 
+			$calRows[$i] = ['entries' => [], 'plus' => null];
+		}
+	}
+
+	foreach ($calRows as $h => $value) {
+		$total=0;
+		foreach ($value['entries'] as $c) {
+			$total += $c['end_time'] - $c['start_time'];
+		}
+		if($total >= 3600) {
+			continue; // hour is full
+		}
+		if ($isDayAvailable && $isUserAuthorizedToBook){
+			$h2 = str_replace(".", "-", $h);
+			$he = explode("-", $h2);
+			if($caseTimeLength == 900) {
+				if (count($he) == 1){$he[1] = "00";}
+				if ($he[1] == "25"){$he[1] = "15";}
+				if ($he[1] == "50"){$he[1] = "30";}
+				if ($he[1] == "5"){$he[1] = "30";}
+				if ($he[1] == "75"){$he[1] = "45";}
+				if ($he[0] < 10){$he[0] = "0". $he[0];}
+			} else if($caseTimeLength == 1800){
+				if (count($he) == 1){$he[1] = "00";}
+				if ($he[1] == "5"){$he[1] = "30";}
+				if ($he[0] < 10){$he[0] = "0". $he[0];}
+			} else {
+				if (count($he) == 1){$he[1] = "00";}
+				if ($he[1] == "25"){$he[1] = "15";}
+				if ($he[1] == "50"){$he[1] = "30";}
+				if ($he[1] == "75"){$he[1] = "45";}
+				if ($he[0] < 10){$he[0] = "0". $he[0];}
+			}
+			$hed = $he[0] . "-" .$he[1];
+			if( $user_space_role >=CoreSpace::$MANAGER  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+				$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
+				$calRows[$h]['plus'] = $linkAdress;
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
 
 	$leftBlocks = ($day_end*3600 - $day_begin*3600)/$caseTimeLength;
 	$lineColorId = 0;
 	$i=0;
 
-	for ($h = $day_begin ; $h < $day_end ; $h = $h+$step){
+	/*for ($h = $day_begin ; $h < $day_end ; $h = $h+$step){
 		$curHour = str_replace(".", "-", $h);
 		$calRows[$curHour[0]] = ['entries' => []];
 
@@ -565,7 +672,7 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			}
 			Configuration::getLogger()->error('??????',['block' => $blocNumber, "s" => $step, "h" => $h, "l" => $leftBlocks]);
 		}
-	}
+	}*/
 
 return $calRows;
 }

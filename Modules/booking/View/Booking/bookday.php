@@ -180,22 +180,14 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 </div>
 
 <?php
-$colHeader = [];
-for ($h = $day_begin ; $h < $day_end ; $h++){
-	$colHeader[$h] = ['entries' => []];
-}
-$rows = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $bk_id_resource);
 
-foreach ($rows as $h => $row) {
-	$colHeader[$h]['entries'][] = $row;
-}
-
-echo json_encode($colHeader);
+$colHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $bk_id_resource);
+ksort($colHeader);
+//echo json_encode($colHeader);
 
 ?>
 <style>
 .tcellResa {
-	margin: 5px;
 }
 
 </style>
@@ -217,7 +209,8 @@ echo json_encode($colHeader);
     </tr>
 	-->
 	<tr>
-		<th colspan="2" scope="col" id="resource" style="text-align: center">
+		<th scope="col"></th>
+		<th colspan="1" scope="col" id="resource" style="text-align: center">
 		<?php
 		echo $resourceBase['name'];
 		if($resourceBase['last_state'] != ""){
@@ -235,14 +228,17 @@ echo json_encode($colHeader);
 	<?php
 	foreach ($colHeader as $i => $hCal) {
 		$hCalEntries = $hCal['entries'];
+		$hPlus = $hCal['plus'];
 	?>
 		<tr>
-			<td headers="resource time" class="col-xs-2"><?php echo $i ?>:00</td>
+			<td headers="time" class="col-xs-2"><?php echo $i ?>:00</td>
 			<td headers="resource bookings">
-				<a class="glyphicon glyphicon-plus" href="NEW"></a>
+				<?php if ($hPlus) { ?>
+				<div><a class="glyphicon glyphicon-plus" href="<?php echo $hPlus ?>"></a></div>
+				<?php } ?>
 				<?php foreach($hCalEntries as $hcalEntry) {?>
-					<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>;">
-						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="TOTO"><?php echo $hcalEntry['id'] ?></a>
+					<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
+						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text'].'<div>'.$hcalEntry['hstart'].':'.$hcalEntry['hend'].'</div>'; ?></a>
 					</div>
 				<?php } ?>
 			</td>
