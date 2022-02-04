@@ -222,6 +222,76 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 	</div>
 </div>
 
+<?php
+$colHeader = [];
+
+for($r = 0 ; $r < count($resourcesBase) ; $r++){
+	$colResHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries[$r], $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id']);
+	foreach($colResHeader as $h => $data) {
+		if(!key_exists($h, $colHeader)) {
+			$colHeader[$h] = [$resourcesBase[$r]['id'] => $data];
+		} else {
+			$colHeader[$h][$resourcesBase[$r]['id']] = $data;
+		}
+	}
+}
+
+
+ksort($colHeader);
+?>
+
+<div class="table-responsive">
+<table aria-label="bookings day view" class="table">
+<thead>
+	<tr>
+		<th scope="col"></th>
+		<?php for($r = 0 ; $r < count($resourcesBase) ; $r++){ ?>
+		<th colspan="1" scope="col" id="resource" style="text-align: center">
+		<?php
+		echo $resourcesBase[$r]['name'];
+		if($resourcesBase[$r]['last_state'] != ""){
+			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourcesBase[$r]['id'].'" style="background-color:'.$resourcesBase[$r]['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
+		}
+		?>
+		</th>
+		<?php } ?>
+	</tr>
+	<tr>
+		<th id="time">Time</th>
+		<th id="bookings">Bookings</th>
+	</tr>
+</thead>
+<tbody>
+	<?php
+	foreach ($colHeader as $i => $hCal) {
+	?>
+		<tr>
+			<td headers="time" class="col-xs-2"><?php echo $i ?>:00</td>
+			<?php for($r = 0 ; $r < count($resourcesBase) ; $r++){
+				$hCalEntries = $hCal[$resourcesBase[$r]['id']]['entries'];
+				$hPlus = $hCal[$resourcesBase[$r]['id']]['plus'];	
+			?>
+			<td headers="resource bookings">
+				<?php if ($hPlus) { ?>
+				<div><a class="glyphicon glyphicon-plus" href="<?php echo $hPlus ?>"></a></div>
+				<?php } ?>
+				<?php foreach($hCalEntries as $hcalEntry) {?>
+					<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
+						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
+						<?php if($hcalEntry['expand']) {
+							echo '<div>'.$hcalEntry['hstart'].' - '.$hcalEntry['hend'].'</div>';
+						}?>
+						</a>
+					</div>
+				<?php } ?>
+			</td>
+			<?php } ?>
+		<tr>
+	<?php }	?>
+</tbody>
+</table>
+</div>
+
 <div class="row">
 	<div class="col-sm-12">
 	<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
