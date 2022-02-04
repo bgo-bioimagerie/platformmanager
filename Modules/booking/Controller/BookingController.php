@@ -221,6 +221,7 @@ class BookingController extends BookingabstractController {
 
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -359,6 +360,7 @@ class BookingController extends BookingabstractController {
         // get the resource info
         $modelRes = new ResourceInfo();
         $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
+        $curentAreaId = $menuData['curentAreaId'];
 
         $resIds = [];
         for ($r = 0; $r < count($resourcesBase); $r++) {
@@ -508,6 +510,7 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -648,6 +651,7 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
          
         // get the area info
         $area = $modelArea->get($id_space, $curentAreaId);
@@ -804,6 +808,7 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 31, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
