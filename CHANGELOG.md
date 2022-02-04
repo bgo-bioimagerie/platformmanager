@@ -9,6 +9,7 @@
 * [core] fix default sort order in tables and remove download button if no url
 * [core] fix typos/spelling
 * [booking] fix default color code
+* [users] if date_end_contract is empty, insert null in db
 
 ## 2.3.2
 
