@@ -16,6 +16,7 @@
 * [services] fix date on followup when in french #555
 * [invoices] fix template var name clientsInfos -> clientInfos
 * [booking] fix resource status color in dayarea/weekarea
+* [booking] fix missing import for invoices
 
 ## 2.3.1
 
