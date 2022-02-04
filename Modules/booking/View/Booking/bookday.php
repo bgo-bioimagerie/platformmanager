@@ -179,4 +179,93 @@ $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
 	</div>
 </div>
 
+<?php
+$colHeader = [];
+for ($h = $day_begin ; $h < $day_end ; $h++){
+	$colHeader[$h] = ['entries' => []];
+}
+$rows = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $bk_id_resource);
+/*
+foreach ($rows as $h => $row) {
+	$colHeader[$h]['entries'][] = $row;
+}*/
+
+echo json_encode($colHeader);
+
+?>
+<style>
+.tcellResa {
+	margin: 5px;
+}
+
+</style>
+<div class="table-responsive">
+<table aria-label="bookings day view" class="table">
+<thead>
+	<!--
+    <tr>
+        <th colspan="2" id="main1">main title 1</th>
+        <th colspan="4" id="main2">main title 2</th>
+    </tr>
+    <tr>
+        <th id="sub1">t1</th>
+        <th id="sub2">t2</th>
+        <th id="sub3">t3</th>
+        <th id="sub4">t4</th>
+        <th id="sub5">t5</th>
+        <th id="sub6">t6</th>
+    </tr>
+	-->
+	<tr>
+		<th colspan="2" scope="col" id="resource" style="text-align: center">
+		<?php
+		echo $resourceBase['name'];
+		if($resourceBase['last_state'] != ""){
+			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
+		}
+		?>
+		</th>
+	</tr>
+	<tr>
+		<th id="time">Time</th>
+		<th id="bookings">Bookings</th>
+	</tr>
+</thead>
+<tbody>
+	<?php
+	foreach ($colHeader as $i => $hCal) {
+		$hCalEntries = $hCal['entries'];
+	?>
+		<tr>
+			<td headers="resource time" class="col-xs-2"><?php echo $i ?>:00</td>
+			<td headers="resource bookings">
+				<a class="glyphicon glyphicon-plus" href="NEW"></a>
+				<?php foreach($hCalEntries as $hcalEntry) {?>
+					<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>;">
+						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="TOTO"><?php echo $hcalEntry['id'] ?></a>
+					</div>
+				<?php } ?>
+			</td>
+		<tr>
+	<?php }	?>
+    <!--<tr>
+        <td headers="main1 sub1">cell11</td>
+        <td headers="main1 sub2">cell12</td>
+        <td headers="main2 sub3">cell13</td>
+        <td headers="main2 sub4">cell14</td>
+        <td headers="main2 sub5">cell15</td>
+        <td headers="main2 sub6">cell16</td>
+    </tr>
+    <tr>
+        <td headers="main1 sub1">cell21</td>
+        <td headers="main1 sub2">cell22</td>
+        <td headers="main2 sub3">cell23</td>
+        <td headers="main2 sub4">cell24</td>
+        <td headers="main2 sub5">cell25</td>
+        <td headers="main2 sub6">cell26</td>
+    </tr>-->
+</tbody>
+</table>
+</div>
+
 <?php endblock(); ?>
