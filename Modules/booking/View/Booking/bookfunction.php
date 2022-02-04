@@ -296,6 +296,8 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$leftBlocks = ($day_end*3600 - $day_begin*3600)/3600;
 		$modelBookingSetting = new BkBookingSettings();
 		$lineColorId = 0;
+
+		
 		for ($h = $day_begin ; $h < $day_end ; $h = $h+1){
 				
 			$caseTimeBegin = $date_unix + $h*3600;
@@ -404,23 +406,27 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					
 						<div class="text-center" id="tcell" style="height: <?php echo $agendaStyle["line_height"]?>px; background-color: <?php echo $bgColor?>;">
 						<?php if ($isDayAvailable){?>
-						<?php if ($isUserAuthorizedToBook){
-						$h2 = str_replace(".", "-", $h);
-						$he = explode("-", $h2);
-						if (count($he) == 1){$he[1] = "00";}
-						if ($he[1] == "25"){$he[1] = "15";}
-						if ($he[1] == "50"){$he[1] = "30";}
-						if ($he[1] == "75"){$he[1] = "45";}
-						if ($he[0] < 10){$he[0] = "0". $he[0];}
-						$hed = $he[0] . "-" .$he[1];
-						if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-							$linkAdress = "bookingeditreservation/".$id_space ."/t_" . $dateString."_".$h2."_".$resourceID;
-							?>
-						<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
-						<?php }}}?>
+							<?php if ($isUserAuthorizedToBook){
+								$h2 = str_replace(".", "-", $h);
+								$he = explode("-", $h2);
+								if (count($he) == 1){$he[1] = "00";}
+								if ($he[1] == "25"){$he[1] = "15";}
+								if ($he[1] == "50"){$he[1] = "30";}
+								if ($he[1] == "75"){$he[1] = "45";}
+								if ($he[0] < 10){$he[0] = "0". $he[0];}
+								$hed = $he[0] . "-" .$he[1];
+								if( $user_space_role >=3  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+									$linkAdress = "bookingeditreservation/".$id_space ."/t_" . $dateString."_".$h2."_".$resourceID;
+									?>
+								<a class="glyphicon glyphicon-plus" href="<?php echo $linkAdress?>"></a>
+								<?php
+								}
+							}
+						}?>
 						</div>
 					<?php 
 					}	
+
 				}
 	}
 }
@@ -455,9 +461,16 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 
 	$leftBlocks = ($day_end*3600 - $day_begin*3600)/$caseTimeLength;
 	$lineColorId = 0;
+	$i=0;
+
 	for ($h = $day_begin ; $h < $day_end ; $h = $h+$step){
 		$curHour = str_replace(".", "-", $h);
 		$calRows[$curHour[0]] = ['entries' => []];
+
+		if($i > 20) {
+			break;
+		}
+		$i++;
 			
 		$caseTimeBegin = $date_unix + $h*3600;
 		$caseTimeEnd = $date_unix + $h*3600 +$caseTimeLength;
@@ -465,81 +478,21 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$foundStartEntry = false;
 		
 		foreach ($calEntries as $c => $calEntry){
+			Configuration::getLogger()->error('?????', ['d' => date('Y-m-d H:i', $calEntry['start_time']), 'h' => $h]);
+			$calHour = date('G', $calEntry['start_time']);
+			$calDay = date('j', $calEntry['start_time']);
+			$calDayOfWeek = date('N', $calEntry['start_time']);
+			
 			
 			if($h == $day_begin &&  $calEntry['start_time']<$caseTimeBegin && $calEntry['end_time'] >= $caseTimeBegin){
 				$foundStartEntry = true;
 				$blocNumber = ($calEntry['end_time'] - $caseTimeBegin)/($caseTimeLength);
-				$blocNumber = round($blocNumber); if ($blocNumber < 1){$blocNumber=1;}
-		
-				if ($leftBlocks <= $blocNumber){
-					$blocNumber = $leftBlocks;
-				}
-				$leftBlocks -= $blocNumber;
-				$lineColorId += $blocNumber;
-					
-				$pixelHeight = $blocNumber*$agendaStyle["line_height"];
-		
-				$shortDescription = $calEntry['short_description'];
-				
-				$text = "";
-				if ($blocNumber <= 2){
-					$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
-					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
-				}
-				else{
-					$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
-					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
-				}
-				if($text === '') {
-					$text = '#'.$calEntry['id'];
-				}
-				$linkAdress = "bookingeditreservation/".$id_space ."/r_" . $calEntry['id'];
-				$calEntries[$c]['text'] = $text;
-				$calEntries[$c]['pixelHeight'] = $pixelHeight;
-				$calEntries[$c]['link'] = $linkAdress;
-				$calRows[$curHour]['entries'][] = $calEntries[$c];
-
-				$h+= $blocNumber*$step - $step;
 			}
 							
 			if ($calEntry['start_time'] >= $caseTimeBegin && $calEntry['start_time'] < $caseTimeEnd){
 				// there is an entry in this half time
 				$foundStartEntry = true;
 				$blocNumber = ($calEntry['end_time'] - $calEntry['start_time'])/($caseTimeLength);
-				$blocNumber = round($blocNumber); if ($blocNumber < 1){$blocNumber=1;}
-				
-				if ($leftBlocks <= $blocNumber){
-					$blocNumber = $leftBlocks; 
-				}
-				$leftBlocks -= $blocNumber; 
-				$lineColorId += $blocNumber;
-				
-				$pixelHeight = $blocNumber*$agendaStyle["line_height"];
-					
-				$shortDescription = $calEntry['short_description'];
-				
-				$text = "";
-				if ($blocNumber <= 2){
-					$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
-					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
-					//$text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", <b>Phone:</b>".$calEntry['phone']. ", <b>Desc:</b> " .$calEntry['short_description']."";
-				}
-				else{
-					$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
-					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
-					//$text = $text = "<b>User: </b>". $calEntry["recipient_fullname"] . ", </br><b>Phone:</b>".$calEntry['phone']. ", </br><b>Desc:</b> " .$calEntry['short_description']."";
-				}
-				if($text === '') {
-					$text = '#'.$calEntry['id'];
-				}
-				$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
-				$calEntries[$c]['text'] = $text;
-				$calEntries[$c]['pixelHeight'] = $pixelHeight;
-				$calEntries[$c]['link'] = $linkAdress;
-				$calRows[$curHour]['entries'][] = $calEntries[$c];
-
-
-				$h+= $blocNumber*$step - $step;
 			}
 
 			if (!$foundStartEntry){
@@ -579,7 +532,38 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						$calRows[$curHour]['entries'][] = $calEntries[$c];
 					}
 				}		
+			} else {
+				$blocNumber = round($blocNumber); if ($blocNumber < 1){$blocNumber=1;}
+
+				if ($leftBlocks <= $blocNumber){
+					$blocNumber = $leftBlocks; 
+				}
+				$leftBlocks -= $blocNumber; 
+				$lineColorId += $blocNumber;
+				$pixelHeight = $blocNumber*$agendaStyle["line_height"];
+				$shortDescription = $calEntry['short_description'];
+
+				$text = "";
+				if ($blocNumber <= 2){
+					$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], true);
+					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
+				}
+				else{
+					$text = $modelBookingSetting->getSummary($id_space, $calEntry["recipient_fullname"], $calEntry['phone'], $shortDescription, $calEntry['full_description'], false);
+					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
+				}
+				if($text === '') {
+					$text = '#'.$calEntry['id'];
+				}
+				$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $calEntry['id'];
+				$calEntries[$c]['text'] = $text;
+				$calEntries[$c]['pixelHeight'] = $pixelHeight;
+				$calEntries[$c]['link'] = $linkAdress;
+				$calRows[$curHour]['entries'][] = $calEntries[$c];
+
+				$h+= $blocNumber*$step - $step;
 			}
+			Configuration::getLogger()->error('??????',['block' => $blocNumber, "s" => $step, "h" => $h, "l" => $leftBlocks]);
 		}
 	}
 

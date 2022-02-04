@@ -185,10 +185,10 @@ for ($h = $day_begin ; $h < $day_end ; $h++){
 	$colHeader[$h] = ['entries' => []];
 }
 $rows = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $bk_id_resource);
-/*
+
 foreach ($rows as $h => $row) {
 	$colHeader[$h]['entries'][] = $row;
-}*/
+}
 
 echo json_encode($colHeader);
 
