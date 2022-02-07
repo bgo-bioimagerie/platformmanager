@@ -25,24 +25,28 @@ if ($size_bloc_resa == 900){
 }
 
 for ($d = 0 ; $d < $nbDays ; $d++){
+	// day title
+	$temp = explode("-", $startDate);
+	$date_unix = mktime(0,0,0,$temp[1], $temp[2]+$d, $temp[0]);
+	$dayStream = date("l", $date_unix);
+	$monthStream = date("M", $date_unix);
+	$dayNumStream = date("d", $date_unix);
+	$sufixStream = date("S", $date_unix);
+
+
 	$isAvailableDay = false;
-	if ($available_days[$d] == 1){
+	if($scheduling["is_".strtolower($dayStream)] == 1) {
+	//if ($available_days[$d] == 1){
 		$isAvailableDay = true;
 			
-		// day title
-		$temp = explode("-", $startDate);
-		$date_unix = mktime(0,0,0,$temp[1], $temp[2]+$d, $temp[0]);
-		$dayStream = date("l", $date_unix);
-		$monthStream = date("M", $date_unix);
-		$dayNumStream = date("d", $date_unix);
-		$sufixStream = date("S", $date_unix);
 
 		for($r = 0 ; $r < count($resourcesBase) ; $r++){
 			$cals = [];
 			foreach($calEntries[$r] as $c) {
 
 				$cd = date("l", $c["start_time"]);
-				if($cd != $dayStream) {
+				$ce = date("l", $c["end_time"]);
+				if($cd != $dayStream && $ce != $dayStream) {
 					continue;
 				}
 				$cals[] = $c;
@@ -84,7 +88,14 @@ th {
 <table aria-label="bookings day view" class="table">
 <thead>
 	<tr><th scope="col"></th>
-	<?php $days = $calData[array_keys($calData)[0]] ??  []; foreach ($days as $calDay => $calRes) { ?>
+	<?php
+		$calh = array_keys($calData);
+		$days = [];
+		if(!empty($calh)) {
+			$days = $calData[array_keys($calData)[0]];
+		}
+	?>
+	<?php foreach ($days as $calDay => $calRes) { ?>
 		<th id="<?php echo $calDay?>" colspan="<?php echo count($calRes) ?>"><?php echo $calDay.' '.CoreTranslator::dateFromEn($calDays[$calDay],$lang) ?> </th>
 	<?php } ?>
 	</tr>

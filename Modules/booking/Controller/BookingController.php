@@ -856,6 +856,8 @@ class BookingController extends BookingabstractController {
         }
 
         $resourcesBase = $resourceInfo;
+        $modelEvent = new ReEvent();
+        $resourcesBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase["id"]);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();

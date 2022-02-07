@@ -528,6 +528,7 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			//$curHour = date('G', $calEntry['start_time']);
 			for($i=0;$i<$elts;$i++) {
 				$calEntry['end_time'] = $calEntry['start_time'] + $size_bloc_resa;
+
 				if($calEntry['end_time'] > $end) {
 					$calEntry['end_time'] = $end;
 				}
