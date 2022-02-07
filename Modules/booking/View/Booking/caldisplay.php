@@ -1,5 +1,7 @@
 <?php
 
+require_once 'Modules/core/Model/CoreTranslator.php';
+
 $day_begin = $this->clean($scheduling['day_begin']);
 $day_end = $this->clean($scheduling['day_end']);
 $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
@@ -10,6 +12,7 @@ $available_days = explode(",", $available_days);
 $colHeader = [];
 $calData = [];
 $calResources = [];
+$calDays = [];
 
 $nbBlocks = 1;
 if ($size_bloc_resa == 900){
@@ -59,6 +62,7 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 				}
 			}
 			$calResources[$resourcesBase[$r]['id']] = $resourcesBase[$r];
+            $calDays[$dayStream] = date('Y-m-d', $date_unix);
 		}
 	}
 }
@@ -78,13 +82,13 @@ th {
 <div class="table-responsive">
 <table aria-label="bookings day view" class="table">
 <thead>
-	<tr><th id="time">Time</th>
+	<tr><th scope="col"></th>
 	<?php $days = $calData[array_keys($calData)[0]] ??  []; foreach ($days as $calDay => $calRes) { ?>
-		<th id="<?php echo $calDay?>" colspan="<?php echo count($calRes) ?>"><?php echo $calDay ?></th>
+		<th id="<?php echo $calDay?>" colspan="<?php echo count($calRes) ?>"><?php echo $calDay.' '.CoreTranslator::dateFromEn($calDays[$calDay],$lang) ?> </th>
 	<?php } ?>
 	</tr>
 	<tr>
-        <th scope="col"></th>
+        <th scope="col">Time</th>
         <?php foreach ($days as $calDay => $calRes) { ?>
 		<?php foreach($calResources as $resId => $resource) { ?>
 		<th colspan="1" id="res<?php echo $resId ?>" id="resource" style="text-align: center">
