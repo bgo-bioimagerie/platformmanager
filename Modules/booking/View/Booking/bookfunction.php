@@ -481,7 +481,8 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						'text' => '',
 						'span' => 1,
 						'resource_id' => $resourceID,
-						'day' => date("l", $date_unix)
+						'day' => date("l", $date_unix),
+						'expand' => false
 					];
 				} else {
 					$calRows[$i][] = [
@@ -491,7 +492,8 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						'text' => '',
 						'span' => 1,
 						'resource_id' => $resourceID,
-						'day' => date("l", $date_unix)					
+						'day' => date("l", $date_unix),
+						'expand' => false				
 					];
 				}
 			}
@@ -531,7 +533,7 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			$curHour = date('G', $c['start_time']);
 			$pixelHeight = $blocSize*$agendaStyle["line_height"];
 			$shortDescription = $c['short_description'];
-			$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], true);
+			$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false);
 			$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 			if($text === '') {
 				$text = '#'.$c['id'];

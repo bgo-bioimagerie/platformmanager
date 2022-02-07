@@ -66,6 +66,15 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 ksort($calData);
 ?>
 
+<style>
+td {
+    border: solid 1px !important;
+}
+th {
+    border: solid 1px !important;
+}
+</style>
+
 <div class="table-responsive">
 <table aria-label="bookings day view" class="table">
 <thead>
@@ -107,25 +116,30 @@ ksort($calData);
 				$hCalEntries = $calRes[$resourcesBase[$r]['id']];
 				$hcalEntry = $hCalEntries[$e];
 			?>
-				<?php if($hcalEntry['text'] || $hcalEntry['free']) { ?>
-				<td rowspan="<?php echo $hcalEntry['span'] ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
+				
+                    <?php
+                        $style = '';
+                        if(!$hcalEntry['text'] && $hcalEntry['expand']) {
+                            $style .= 'border-top-style: hidden !important;';
+                        }
+                        if(!$hcalEntry['free']) { $style .= 'background-color:'.$hcalEntry['color_bg'].';';  }
+                    ?>
+				<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
 					<?php if($hcalEntry['free']) { ?>
 						<?php if ($hcalEntry['link']) { ?>
 						<div><a class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
 						<?php } ?>
 					<?php } else { ?>
 					<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
-						<?php if($hcalEntry['text']) { ?>
 						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
-						<?php if($hcalEntry['expand']) {
+						<?php if($calEntry['text'] && $hcalEntry['expand']) {
 							echo '<div>'.$hcalEntry['hstart'].' - '.$hcalEntry['hend'].'</div>';
 						}?>
 						</a>
-						<?php } ?>
 					</div>
 					<?php } ?>
 				</td>
-				<?php } ?>
+			
 			<?php } }?>
 		</tr>
 	<?php
