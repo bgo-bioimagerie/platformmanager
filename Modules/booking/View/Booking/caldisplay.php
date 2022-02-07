@@ -2,6 +2,7 @@
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 
+
 $day_begin = $this->clean($scheduling['day_begin']);
 $day_end = $this->clean($scheduling['day_end']);
 $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
@@ -46,7 +47,7 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 				}
 				$cals[] = $c;
 			}
-			$colResHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id']);
+			$colResHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from);
 			foreach($colResHeader as $h => $colData) {
 				if(!key_exists($h, $calData)) {
 					$calData[$h] = [];

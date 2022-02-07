@@ -15,7 +15,7 @@ $toDate = null;
 $nbDays = 1;
 $resourcesBase = [$resourceBase];
 $calEntries = [$calEntries];
-
+$from = ["day", $date, $bk_id_resource, $bk_id_area, $id_user];
 
 echo drawNavigation('day', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $lang);
 ?>

@@ -13,7 +13,7 @@ $toDate = $sundayDate;
 $nbDays = 7;
 $resourcesBase = [$resourceBase];
 $calEntries = [$calEntries];
-
+$from = ["week", $date, $bk_id_resource, $bk_id_area, $id_user];
 
 echo drawNavigation('week', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $lang);
 include 'Modules/booking/View/Booking/caldisplay.php';

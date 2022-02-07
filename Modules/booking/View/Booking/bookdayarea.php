@@ -11,7 +11,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 $startDate = $date;
 $toDate = null;
 $nbDays = 1;
-
+$from = ["dayarea", $date, $bk_id_resource, $bk_id_area, $id_user];
 
 
 echo drawNavigation('dayarea', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $lang);

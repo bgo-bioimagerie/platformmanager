@@ -433,8 +433,14 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 
 
 
-function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1){
+function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[]){
 	
+	$q = '?';
+	if(!empty($from)) {
+		$elts = implode(':', $from);
+		$q .= "from=$elts";
+	}
+
 	$modelSpace = new CoreSpace();
 	$user_space_role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
 
@@ -473,7 +479,7 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 				}
 				$hed = $he[0] . "-" .$he[1];
 				if( $user_space_role >=CoreSpace::$MANAGER  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-					$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
+					$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID.$q;
 					$calRows[$i][] = [
 						'free' => true,
 						'link' => $linkAdress,
@@ -540,7 +546,7 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			if($text === '') {
 				$text = '#'.$c['id'];
 			}
-			$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $c['id'];
+			$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $c['id'].$q;
 			$c['text'] = $text;
 			$c['pixelHeight'] = $pixelHeight;
 			$c['link'] = $linkAdress;
