@@ -17,6 +17,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 
 require_once 'Modules/booking/Model/BookinginvoiceTranslator.php';
+require_once 'Modules/booking/Model/BookingTranslator.php';
 
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';

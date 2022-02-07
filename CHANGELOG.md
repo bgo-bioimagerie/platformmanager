@@ -8,7 +8,16 @@
 * [helpdesk] on file upload (manual), create dir if not exists
 * [core] fix default sort order in tables and remove download button if no url
 * [core] fix typos/spelling
-* [booking][services] fix popup when editing with pagination
+* [booking] fix default color code
+* [users] if date_end_contract is empty, insert null in db
+
+## 2.3.2
+
+* [booking][services] fix popup when editing with pagination #553
+* [services] fix date on followup when in french #555
+* [invoices] fix template var name clientsInfos -> clientInfos
+* [booking] fix resource status color in dayarea/weekarea
+* [booking] fix missing import for invoices
 
 ## 2.3.1
 
