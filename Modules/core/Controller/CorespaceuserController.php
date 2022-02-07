@@ -33,30 +33,13 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
  * Controller for the home page
  */
 class CorespaceuserController extends CorespaceaccessController {
-
-    
-    // TODO: filter settings with activated modules => OK
-    // TODO: design interface => OK
-    // TODO: remove corespaceaccessusers user's buttons => OK
-    // TODO: Show all history (not only for one resource) => OK
-    // TODO: display flash messages ?
-    // TODO: deal with pending accounts validation process => OK
-    // TODO: make it clean (remove debug logs and non necessay comments)
-    // TODO: manage buttons language => OK
-    // TODO: avoid dynamicscript to load 2 times => OK
-    // TODO: place clients before booking => depends on options order !!! => env line 75
-    // TODO: test on space with not all modules activated
-    // TODO: mention issue closing in last commit
-
-
-    // space access section
     public function editAction($id_space, $id_user) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $origin = ["page" => json_encode($this->request->getParameterNoException("origin"))];
 
         $modelOptions = new CoreSpaceAccessOptions();
-        $options = $modelOptions->getAll($id_space);
+        $options = array_reverse($modelOptions->getAll($id_space));
         $modules = array_map(function($option) { return $option['module'];}, $options);
 
         $spaceAccessForm = $this->generateSpaceAccessForm($id_space, $id_user);
