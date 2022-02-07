@@ -585,7 +585,7 @@ class BookingController extends BookingabstractController {
             'id_space' => $id_space,
             'menuData' => $menuData,
             'resourceInfo' => $resourceInfo,
-            'resourcesBase' => $resourcesBase,
+            'resourceBase' => $resourcesBase,
             'date' => $curentDate,
             'date_unix' => $curentDateUnix,
             'mondayDate' => $mondayDate,
@@ -696,7 +696,28 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId, $id_user);
+        //$calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId, $id_user);
+
+
+        $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
+        $calmap = [];
+        $calEntries = [];
+        foreach($resourcesBase as $r) {
+            $calEntries[] = [];
+        }
+        foreach($cals as $cal) {
+            $calmap[$cal['resource_id']][] = $cal;
+        }
+        foreach($resourcesBase as $i => $r) {
+            $calEntries[$i] = $calmap[$r['id']] ?? [];
+        }
+
+
+
+
+
+
+
         // curentdate unix
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);

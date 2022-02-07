@@ -446,10 +446,56 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 	$calRows = [];
 
 	$caseTimeLength = 3600;
+	$nbBlocks = 1;
 	if ($size_bloc_resa == 900){
 		$caseTimeLength = 900;
+		$nbBlocks = 4;
 	} else if($size_bloc_resa == 1800) {
 		$caseTimeLength = 1800;
+		$nbBlocks = 2;
+	}
+
+	for($i=$day_begin;$i<$day_end;$i++) {
+		$calRows[$i] = [];
+		for($j=0;$j<$nbBlocks;$j++) {
+			$he = [$i, $j];
+			if ($isDayAvailable && $isUserAuthorizedToBook){
+				if($caseTimeLength == 900) {
+					if ($he[1] == 0){$he[1] = "00";}
+					if ($he[1] == 1){$he[1] = "15";}
+					if ($he[1] == 2){$he[1] = "30";}
+					if ($he[1] == 3){$he[1] = "45";}
+				} else if($caseTimeLength == 1800){
+					if ($he[1] == 0){$he[1] = "00";}
+					if ($he[1] == 1){$he[1] = "30";}
+				} else {
+					$he[1] = "00";
+				}
+				$hed = $he[0] . "-" .$he[1];
+				if( $user_space_role >=CoreSpace::$MANAGER  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+					$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
+					$calRows[$i][] = [
+						'free' => true,
+						'link' => $linkAdress,
+						'id' => 0,
+						'text' => '',
+						'span' => 1,
+						'resource_id' => $resourceID,
+						'day' => date("l", $date_unix)
+					];
+				} else {
+					$calRows[$i][] = [
+						'free' => true,
+						'link' => '',
+						'id' => 0,
+						'text' => '',
+						'span' => 1,
+						'resource_id' => $resourceID,
+						'day' => date("l", $date_unix)					
+					];
+				}
+			}
+		}
 	}
 
 	foreach ($calEntries as $c => $calEntry){
@@ -481,10 +527,9 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			}
 		}
 		foreach($cal as $c) {
-			$blocNumber = ($c['end_time'] - $c['start_time'])/($caseTimeLength);
+			$blocSize = ($c['end_time'] - $c['start_time'])/($caseTimeLength);
 			$curHour = date('G', $c['start_time']);
-
-			$pixelHeight = $blocNumber*$agendaStyle["line_height"];
+			$pixelHeight = $blocSize*$agendaStyle["line_height"];
 			$shortDescription = $c['short_description'];
 			$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], true);
 			$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
@@ -497,65 +542,40 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			$c['link'] = $linkAdress;
 			$c['hstart'] = date('H:i', $c['start_time']);
 			$c['hend'] = date('H:i', $c['end_time']);
-			$last = 0;
-			if(key_exists($curHour, $calRows) && key_exists('entries', $calRows[$curHour])) {
-				$last=count($calRows[$curHour]['entries']);
-			}
-			if($last > 0 && $calRows[$curHour]['entries'][$last-1]['id'] == $c['id']) {
-				// same hour and same element, merge them
-				$calRows[$curHour]['entries'][$last-1]['hend'] = $c['hend'];
-				$calRows[$curHour]['entries'][$last-1]['end_time'] = $c['end_time'];
-			} else {
-				$calRows[$curHour]['entries'][] = $c;
-			}
-		}
-	}
-
-	for($i=$day_begin;$i<$day_end;$i++) {
-		if(key_exists($i, $calRows)) {
-			$calRows[$i]['plus'] = null;
-		} else { 
-			$calRows[$i] = ['entries' => [], 'plus' => null];
-		}
-	}
-
-	foreach ($calRows as $h => $value) {
-		$total=0;
-		foreach ($value['entries'] as $c) {
-			$total += $c['end_time'] - $c['start_time'];
-		}
-		if($total >= 3600) {
-			continue; // hour is full
-		}
-		if ($isDayAvailable && $isUserAuthorizedToBook){
-			$h2 = str_replace(".", "-", $h);
-			$he = explode("-", $h2);
+			$c['free'] = false;
+			$c['span'] = 1;
+			$c['day'] = date("l", $c['start_time']);
+			$minutes = date('i', $c['start_time']);
+			$blockNumber = 0;
 			if($caseTimeLength == 900) {
-				if (count($he) == 1){$he[1] = "00";}
-				if ($he[1] == "25"){$he[1] = "15";}
-				if ($he[1] == "50"){$he[1] = "30";}
-				if ($he[1] == "5"){$he[1] = "30";}
-				if ($he[1] == "75"){$he[1] = "45";}
-				if ($he[0] < 10){$he[0] = "0". $he[0];}
+				if ($minutes == "00"){$blockNumber = 0;}
+				if ($minutes == "15"){$blockNumber = 1;}
+				if ($minutes == "30"){$blockNumber = 2;}
+				if ($minutes == "45"){$blockNumber = 3;}
 			} else if($caseTimeLength == 1800){
-				if (count($he) == 1){$he[1] = "00";}
-				if ($he[1] == "5"){$he[1] = "30";}
-				if ($he[0] < 10){$he[0] = "0". $he[0];}
-			} else {
-				if (count($he) == 1){$he[1] = "00";}
-				if ($he[1] == "25"){$he[1] = "15";}
-				if ($he[1] == "50"){$he[1] = "30";}
-				if ($he[1] == "75"){$he[1] = "45";}
-				if ($he[0] < 10){$he[0] = "0". $he[0];}
+				if ($minutes == "00"){$blockNumber = 0;}
+				if ($minutes == "30"){$blockNumber = 1;}
 			}
-			$hed = $he[0] . "-" .$he[1];
-			if( $user_space_role >=CoreSpace::$MANAGER  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
-				$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID;
-				$calRows[$h]['plus'] = $linkAdress;
-			}
+
+				$calRows[$curHour][$blockNumber] = $c;
+
+				for($j=$blockNumber;$j>=0;$j--) {
+					if($calRows[$curHour][$j]['id'] == $c['id']) {
+						if($j==0 || $calRows[$curHour][$j-1]['id'] != $c['id']) {
+							$calRows[$curHour][$j]['span'] = $blockNumber-$j+1;
+							$calRows[$curHour][$j]['end_time'] = $c['end_time'];
+							$calRows[$curHour][$j]['hend'] = date('H:i', $c['end_time']);
+						} else {
+							$calRows[$curHour][$j]['text'] = '';
+						}
+					}
+					
+				}
+
+			
 		}
 	}
 
-return $calRows;
+	return $calRows;
 }
 ?>
