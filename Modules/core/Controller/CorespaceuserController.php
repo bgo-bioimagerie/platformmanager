@@ -56,7 +56,7 @@ class CorespaceuserController extends CorespaceaccessController {
             $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user);
             $clientsUserFormHtml = $clientsUserForm->getHtml($lang);
             if ($clientsUserForm->check()) {
-                $clientsUsersCTRL->validateClientsUserform($id_space, $id_user, $clientsUserForm);
+                $clientsUsersCTRL->validateClientsUserform($id_space, $id_user, $clientsUserForm->getParameter("id_client"));
                 $origin['page'] = 'clientsuser';
             }
             $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user);

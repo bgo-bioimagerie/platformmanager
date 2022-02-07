@@ -27,7 +27,7 @@ class ClientsuseraccountsController extends ClientsController {
         $form = $this->generateClientsUserForm($id_space, $id_user);
         
         if ($form->check()) {
-            $this->validateClientsUserform($id_space, $id_user, $form);
+            $this->validateClientsUserform($id_space, $id_user, $form->getParameter("id_client"));
         }
 
         $tableHtml = $this->generateClientsUserTable($id_space, $id_user);
@@ -78,13 +78,18 @@ class ClientsuseraccountsController extends ClientsController {
         return $form;
     }
 
-    public function validateClientsUserForm($id_space, $id_user, $form) {
+    public function validateClientsUserForm($id_space, $id_user, $id_client) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelClientUser = new ClClientUser();
-        $modelClientUser->set($id_space, $form->getParameter("id_client"), $id_user);
-        $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
-        $_SESSION["flashClass"] = "success";
+        if (!$modelClientUser->exists($id_space, $id_client, $id_user)) {
+            $modelClientUser->set($id_space, $id_client, $id_user);
+            $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flashClass"] = "success";
+        } else {
+            $_SESSION["flash"] = ClientsTranslator::UserAlreadyLinkedToClient($lang);
+            $_SESSION["flashClass"] = "warning";
+        }
     }
 
     /**

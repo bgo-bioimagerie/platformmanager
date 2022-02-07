@@ -269,6 +269,13 @@ class ClientsTranslator {
         return "User has been added to client";
     }
 
+    public static function UserAlreadyLinkedToClient($lang) {
+        if ($lang == "fr") {
+            return "L'utilisateur est déjà lié à ce compte client";
+        }
+        return "User is already linked to this client";
+    }
+
     public static function UserHasBeenDeletedFromClient($lang) {
         if ($lang == "fr") {
             return "L'utilisateur a bien été supprimé du compte client";
