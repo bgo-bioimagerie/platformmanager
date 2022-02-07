@@ -34,7 +34,13 @@ class BookingauthorisationsController extends CoresecureController {
         $bkAuthData = $generatedBkAuth['data'];
 
         if ($form->check()) {
-            $this->validateBkAuthAddForm($id_space, $id_user, $form, "bookingauthorisations");
+            $this->validateBkAuthAddForm(
+                $id_space,
+                $id_user,
+                $form->getParameter("resource") /* stands for category id */,
+                $form->getParameter("visa_id"),
+                $form->getParameter("date")
+            );
         }
 
         return $this->render(array(
@@ -123,16 +129,16 @@ class BookingauthorisationsController extends CoresecureController {
         return $form;
     }
 
-    public function validateBkAuthAddForm($id_space, $id_user, $form, $controller) {
+    public function validateBkAuthAddForm($id_space, $id_user, $id_category, $id_visa, $date) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelAuth = new BkAuthorization();
             $modelAuth->add(
                 $id_space,
                 $id_user,
-                $form->getParameter("resource") /* stands for category id */,
-                $form->getParameter("visa_id"),
-                CoreTranslator::dateToEn($form->getParameter("date"), $lang)
+                $id_category, /* stands for category id */
+                $id_visa,
+                CoreTranslator::dateToEn($date, $lang)
             );
             $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
             $_SESSION["flashClass"] = "success";
@@ -153,10 +159,17 @@ class BookingauthorisationsController extends CoresecureController {
         }
 
         $tableHtml = $this->generateHistoryTable($id_space, $id_user, $id_category);
-        $form = $this->generateEditForm($id_space, $id_user, $id_category, "bookingauthorisations");
+        $form = $this->generateEditForm($id_space, $id_user, $id_category);
 
         if ($form->check()) {
-            $this->validateEditForm($id_space, $id, $form);
+            $this->validateEditForm(
+                $id_space,
+                $id,
+                $form->getParameter("visa_id"),
+                $form->getParameter("date"),
+                $form->getParameter("date_desactivation"),
+                $form->getParameter("is_active")
+            );
         }
 
         $modelSpace = new CoreSpace();
@@ -226,13 +239,14 @@ class BookingauthorisationsController extends CoresecureController {
         return $table->view($data, $headers);
     }
 
-    public function generateEditForm($id_space, $id_user, $id_category) {
+    public function generateEditForm($id_space, $id_user, $id_category, $data = null) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelAuth = new BkAuthorization();
-        $data = $modelAuth->getForResourceAndUser($id_space, $id_category, $id_user)[0] ?? null;
-
+        if ($data === null) {
+            $data = $modelAuth->getForResourceAndUser($id_space, $id_category, $id_user)[0] ?? null;
+        }
         $form = new Form($this->request, "authorisationAddForm");
 
         if ($data) {
@@ -260,7 +274,7 @@ class BookingauthorisationsController extends CoresecureController {
         return $form;
     }
 
-    public function validateEditForm($id_space, $id, $form) {
+    public function validateEditForm($id_space, $id, $visa_id, $date, $date_desactivation, $is_active) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelAuth = new BkAuthorization();
@@ -271,10 +285,10 @@ class BookingauthorisationsController extends CoresecureController {
             $id,
             $bkAuth['user_id'],
             $bkAuth['resource_id'],
-            $form->getParameter("visa_id"),
-            CoreTranslator::dateToEn($form->getParameter("date"), $lang),
-            CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang),
-            $form->getParameter("is_active")
+            $visa_id,
+            CoreTranslator::dateToEn($date, $lang),
+            CoreTranslator::dateToEn($date_desactivation, $lang),
+            $is_active
         );
         $_SESSION["flash"] = BookingTranslator::Modifications_have_been_saved($lang);
         $_SESSION["flashClass"] = "success";
@@ -289,10 +303,17 @@ class BookingauthorisationsController extends CoresecureController {
         $modelAuth = new BkAuthorization();
         $data = $modelAuth->get($id_space, $id);
 
-        $form = $this->generateEditForm($id_space, $data["user_id"], $data['resource_id']);
+        $form = $this->generateEditForm($id_space, $data["user_id"], $data['resource_id'], $data);
 
         if ($form->check()) {
-            $this->validateEditForm($id_space, $id, $form);
+            $this->validateEditForm(
+                $id_space,
+                $id,
+                $form->getParameter("visa_id"),
+                $form->getParameter("date"),
+                $form->getParameter("date_desactivation"),
+                $form->getParameter("is_active")
+            );
         }
 
         $modelSpace = new CoreSpace();
