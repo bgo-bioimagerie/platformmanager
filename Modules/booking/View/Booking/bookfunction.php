@@ -482,7 +482,8 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						'span' => 1,
 						'resource_id' => $resourceID,
 						'day' => date("l", $date_unix),
-						'expand' => false
+						'expand' => false,
+						'hour' => $he[0].'h'.$he[1]
 					];
 				} else {
 					$calRows[$i][] = [
@@ -493,7 +494,8 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 						'span' => 1,
 						'resource_id' => $resourceID,
 						'day' => date("l", $date_unix),
-						'expand' => false				
+						'expand' => false,
+						'hour' => $he[0].'h'.$he[1]
 					];
 				}
 			}

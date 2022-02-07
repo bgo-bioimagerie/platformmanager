@@ -127,7 +127,7 @@ th {
 				<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
 					<?php if($hcalEntry['free']) { ?>
 						<?php if ($hcalEntry['link']) { ?>
-						<div><a class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+						<div><a aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
 						<?php } ?>
 					<?php } else { ?>
 					<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
