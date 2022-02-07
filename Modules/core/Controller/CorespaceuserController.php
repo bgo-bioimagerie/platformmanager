@@ -60,15 +60,18 @@ class CorespaceuserController extends CorespaceaccessController {
         $modules = array_map(function($option) { return $option['module'];}, $options);
 
         $spaceAccessForm = $this->generateSpaceAccessForm($id_space, $id_user);
+        $spaceAccessFormHtml = $spaceAccessForm->getHtml($lang);
         if ($spaceAccessForm->check()) {
             $this->validateSpaceAccessForm($id_space, $id_user, $spaceAccessForm);
             $origin['page'] = 'spaceaccess';
         }
 
-        $clientsUserForm = "";
+        $clientsUserFormHtml = "";
+        $clientsUsertableHtml = "";
         if (in_array('clients', $modules)) {
             $clientsUsersCTRL = new ClientsuseraccountsController($this->request);
             $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user);
+            $clientsUserFormHtml = $clientsUserForm->getHtml($lang);
             if ($clientsUserForm->check()) {
                 $clientsUsersCTRL->validateClientsUserform($id_space, $id_user, $clientsUserForm);
                 $origin['page'] = 'clientsuser';
@@ -76,10 +79,14 @@ class CorespaceuserController extends CorespaceaccessController {
             $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user);
         }
 
-        $bkAuthAddForm = "";
+        $bkAuthAddFormHtml = "";
+        $bkAuthTableHtml = "";
+        $bkHistoryFormHtml = "";
+        $bkHistoryTableHtml = "";
         if (in_array('booking', $modules)) {
             $bookingAuthCTRL = new BookingauthorisationsController($this->request);
             $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit");
+            $bkAuthAddFormHtml = $bkAuthAddForm->getHtml($lang);
             $bkHistoryFormHtml = isset($bkHistoryForm) ? $bkHistoryForm->getHtml($lang) : "no booking history";
             if ($bkAuthAddForm->check()) {
                 $bookingAuthCTRL->validateBkAuthAddForm($id_space, $id_user, $bkAuthAddForm, "corespaceuseredit");
@@ -99,11 +106,11 @@ class CorespaceuserController extends CorespaceaccessController {
             'origin' => json_encode($origin),
             'options' => json_encode($options),
             "forms" => json_encode([
-                'spaceaccess' => $spaceAccessForm->getHtml($lang),
-                'bookingauthorisations' => $bkAuthAddForm->getHtml($lang),
-                'bookingauthorisationsTable' => $bkAuthTableHtml,
-                'clientsuseraccounts' => $clientsUserForm->getHtml($lang),
+                'spaceaccess' => $spaceAccessFormHtml,
+                'clientsuseraccounts' => $clientsUserFormHtml,
                 'clientsuseraccountsTable' => $clientsUsertableHtml,
+                'bookingauthorisations' => $bkAuthAddFormHtml,
+                'bookingauthorisationsTable' => $bkAuthTableHtml,
                 "bookinghistory" => $bkHistoryFormHtml,
                 "bookinghistoryTable" => $bkHistoryTableHtml
             ])
