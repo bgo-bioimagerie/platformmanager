@@ -22,18 +22,15 @@ class ClientsuseraccountsController extends ClientsController {
      * Page showing a table containing all the providers in the database
      */
     public function indexAction($id_space, $id_user) {
-
-        // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
-        // lang
         $lang = $this->getLanguage();
-
         $form = $this->generateClientsUserForm($id_space, $id_user);
-        $tableHtml = $this->generateClientsUserTable($id_space, $id_user);
-
+        
         if ($form->check()) {
             $this->validateClientsUserform($id_space, $id_user, $form);
         }
+
+        $tableHtml = $this->generateClientsUserTable($id_space, $id_user);
 
         $this->render(array(
             "id_space" => $id_space,
@@ -63,7 +60,7 @@ class ClientsuseraccountsController extends ClientsController {
     }
 
     /**
-     * Retuns a form in which user is given and we can select clients to link them to
+     * Returns a form in which user is given and we can select clients to link them to
      */
     public function generateClientsUserForm($id_space, $id_user) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
@@ -88,7 +85,6 @@ class ClientsuseraccountsController extends ClientsController {
         $modelClientUser->set($id_space, $form->getParameter("id_client"), $id_user);
         $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
         $_SESSION["flashClass"] = "success";
-        $this->redirect("corespaceuseredit/" . $id_space . "/" . $id_user, ["origin" => "clientsusers"]);
     }
 
     /**
@@ -99,7 +95,6 @@ class ClientsuseraccountsController extends ClientsController {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientUser = new ClClientUser();
         $modelClientUser->deleteClientUser($id_space, $id_client, $id_user);
-        
         $this->redirect("corespaceuseredit/" . $id_space . "/" . $id_user, ["origin" => "clientsuseraccounts"]);
     }
 

@@ -136,7 +136,6 @@ class BookingauthorisationsController extends CoresecureController {
             );
             $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
             $_SESSION["flashClass"] = "success";
-            $this->redirect($controller ."/" . $id_space . "/" . $id_user, ["origin" => "bookingaccess"]);
     }
 
     public function historyAction($id_space, $id) {
@@ -277,7 +276,6 @@ class BookingauthorisationsController extends CoresecureController {
             CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang),
             $form->getParameter("is_active")
         );
-
         $_SESSION["flash"] = BookingTranslator::Modifications_have_been_saved($lang);
         $_SESSION["flashClass"] = "success";
         $redirectionUrl = "corespaceuseredit/" . $id_space . "/" . /* $bkAuth['resource_id'] . "_" .  */$bkAuth['user_id'];
