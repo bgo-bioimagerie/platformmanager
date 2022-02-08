@@ -75,9 +75,9 @@ class DocumentslistController extends DocumentsController {
             $data = $modelDoc->getPublicDocs($id_space);
         }
 
-        $modelUser = new CoreUser();
+        //$modelUser = new CoreUser();
         for ($i = 0; $i < count($data); $i++) {
-            $data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
+            //$data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
             $data[$i]["lastmodified"] = CoreTranslator::dateFromEn($data[$i]["date_modified"], $lang);
             $visibility = 'Private';
             switch ($data[$i]['visibility']) {
@@ -88,10 +88,10 @@ class DocumentslistController extends DocumentsController {
                     $visibility = 'Members';
                     break;
                 case Document::$VISIBILITY_USER:
-                    $visibility = 'User'.$data[$i]['id_ref'];
+                    $visibility = 'User ['.$data[$i]['id_ref'].']';
                     break;
                 case Document::$VISIBILITY_CLIENT:
-                    $visibility = 'Client '.$data[$i]['id_ref'];
+                    $visibility = 'Client ['.$data[$i]['id_ref'].']';
                     break;
                 case Document::$VISIBILITY_PRIVATE:
                     $visibility = 'Private';
@@ -133,7 +133,7 @@ class DocumentslistController extends DocumentsController {
         $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
 
         if($this->role < $editRole) {
-            throw new PfmAuthException('not enough priviledges');
+            throw new PfmAuthException('not enough privileges');
         }
         $lang = $this->getLanguage();
         $model = new Document();
@@ -263,7 +263,7 @@ class DocumentslistController extends DocumentsController {
         $modelCoreConfig = new CoreConfig();
         $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
         if($this->role < $editRole) {
-            throw new PfmAuthException('not enough priviledges');
+            throw new PfmAuthException('not enough privileges');
         }
         $model = new Document();
         $model->delete($id_space, $id);
