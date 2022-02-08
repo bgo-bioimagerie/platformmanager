@@ -89,23 +89,19 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 
 
     <div class="container">
-
-        <table class="table month view">
-            <caption>
-		<?php
+        <div class="row"><div class="col-sm-12" style="text-align: center"><?php
 		echo $resourceBase['name'];
 		if($resourceBase['last_state'] != ""){
 			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
 		}
-		?>
-            </caption>
+		?></div></div>
+        <table aria-label="table month view" class="table">
             <thead>
                 <?php $day_list = $days_en; if($lang == 'fr') { $day_list = $days_fr; } ?>
                 <tr>
-                    <?php foreach($day_list as $d) {
-                        echo '<th scope="col">'.$d.'</th>';
-                    }
-                    ?>
+                    <?php foreach($day_list as $d) { ?>
+                        <th scope="col"><?php echo $d ?></th>
+                    <?php } ?>
                 </tr>
             </thead>
             <tbody>
