@@ -54,9 +54,9 @@
         </div>
 
         <div class="form-group ">
-            <label for="inputEmail" class="control-label col-xs-2"> Condition </label>
+            <label for="condition_et_ou" class="control-label col-xs-2"> Condition </label>
             <div class="col-xs-10">
-                <select class="form-control" name="condition_et_ou" >
+                <select class="form-control" id="condition_et_ou" name="condition_et_ou" >
                     <OPTION value="and" <?php
                     if (isset($condition_et_ou) && $condition_et_ou == 1) {
                         echo "selected=\"selected\"";
@@ -73,8 +73,8 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo BookingTranslator::query($lang) ?></label>
-            <div class="col-xs-10">
+            <label for="champ" class="control-label col-xs-2"><?php echo BookingTranslator::query($lang) ?></label>
+            <div class="col-xs-10" id="champ">
                 <?php for ($i = 0; $i < 5; $i++) {
                     ?>
                     <div class="col-xs-4">
@@ -176,9 +176,9 @@
         </div>	
         <br>
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2">Résumé par (ne concerne que les résumés) :</label>
+            <label for="summary_rq" class="control-label col-xs-2">Résumé par (ne concerne que les résumés) :</label>
             <div class="col-xs-10">
-                <select class="form-control" name="summary_rq">
+                <select class="form-control" id="summary_rq" name="summary_rq">
                     <?php
                     $checkedC = "";
                     $checkedS = "";

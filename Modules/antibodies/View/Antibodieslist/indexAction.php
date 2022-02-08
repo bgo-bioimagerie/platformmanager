@@ -240,12 +240,12 @@ if (!isset($searchCom)) {
                                    />
                         </div>
 
-                        <label for="inputEmail" class="control-label col-md-1">No H2P2:</label>
+                        <label for="searchNoH2P2" class="control-label col-md-1">No H2P2:</label>
                         <div class="col-md-2">
                             <input class="form-control" id="searchNoH2P2" type="text" name="searchNoH2P2" value="<?php echo $searchNoH2P2 ?>"
                                    />
                         </div>
-                        <label for="inputEmail" class="control-label col-md-2">Source:</label>
+                        <label for="searchSource" class="control-label col-md-2">Source:</label>
                         <div class="col-md-3">
                             <input class="form-control" id="searchSource" type="text" name="searchSource" value="<?php echo $searchSource ?>"
                                    />
@@ -257,13 +257,13 @@ if (!isset($searchCom)) {
                 <div class="col-md-12">
                     <label class="control-label col-md-1"></label>
                     <div class="col-md-9">	
-                        <label for="inputEmail" class="control-label col-md-1">Tissu cible:</label>
+                        <label for="searchCible" class="control-label col-md-1">Tissu cible:</label>
                         <div class="col-md-3">
                             <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
                                    />
                         </div>
 
-                        <label for="inputEmail" class="control-label col-md-1">Statut:</label>
+                        <label for="searchValide" class="control-label col-md-1">Statut:</label>
                         <div class="col-md-2">
                             <select class="form-control" id="searchValide" name="searchValide">
                                 <OPTION value="0" <?php
@@ -289,7 +289,7 @@ if (!isset($searchCom)) {
                             </select>
                         </div>
 
-                        <label for="inputEmail" class="control-label col-md-2">Propriétaire:</label>
+                        <label for="searchResp" class="control-label col-md-2">Propriétaire:</label>
                         <div class="col-md-3">
                             <input class="form-control" id="searchResp" type="text" name="searchResp" value="<?php echo $searchResp ?>"
                                    />
