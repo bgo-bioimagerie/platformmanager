@@ -56,7 +56,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
                 'total' => $total,
                 'useTTC' => $useTTC,
                 'details' => $details,
-                'clientsInfos' => $clientInfos,
+                'clientInfos' => $clientInfos,
                 'invoiceInfo' => $invoiceInfo,
             ]);
         }
