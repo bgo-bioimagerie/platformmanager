@@ -28,8 +28,8 @@ class BookingauthorisationsController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
 
-        $form = $this->generateBkAuthAddForm($id_space, $id_user, "bookingauthorisations");
-        $generatedBkAuth = $this->generateBkAuthTable($id_space, $id_user, "bookingauthorisations");
+        $form = $this->generateBkAuthAddForm($id_space, $id_user, "bookingauthorisations", $lang);
+        $generatedBkAuth = $this->generateBkAuthTable($id_space, $id_user, "bookingauthorisations", $lang);
         $tableHtml = $generatedBkAuth['bkTableHtml'];
         $bkAuthData = $generatedBkAuth['data'];
 
@@ -53,10 +53,7 @@ class BookingauthorisationsController extends CoresecureController {
         ));
     }
 
-    public function generateBkAuthTable($id_space, $id_user, $controller) {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
-
+    public function generateBkAuthTable($id_space, $id_user, $controller, $lang) {
         $modelResources = new ReCategory();
         $resources = $modelResources->getBySpace($id_space);
         $modelUser = new CoreUser();
@@ -90,21 +87,16 @@ class BookingauthorisationsController extends CoresecureController {
             "date_authorised" => CoreTranslator::Date($lang)
         );
 
-        $route = ($controller === "bookingauthorisations") ? $controller . "hist" : $controller;
-
         $table = new TableView("bkAuth");
         $table->setTitle(BookingTranslator::Authorisations_for($lang) . " " . $userName, 3);
         $table->setColorIndexes(array("authorised" => "authorised_color"));
         if ($controller === "bookingauthorisations") {
-            $table->addLineButton($route . "/" . $id_space, "id", BookingTranslator::History($lang));    
+            $table->addLineButton($controller . "hist" . "/" . $id_space, "id", BookingTranslator::History($lang));    
         }
         return ["bkTableHtml" => $table->view($data, $headers), "data" => $data];
     }
 
-    public function generateBkAuthAddForm($id_space, $id_user, $controller) {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
-
+    public function generateBkAuthAddForm($id_space, $id_user, $controller, $lang) {
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
         $modelReCategories = new ReCategory();
@@ -136,7 +128,7 @@ class BookingauthorisationsController extends CoresecureController {
             $modelAuth->add(
                 $id_space,
                 $id_user,
-                $id_category, /* stands for category id */
+                $id_category,
                 $id_visa,
                 CoreTranslator::dateToEn($date, $lang)
             );
@@ -168,7 +160,8 @@ class BookingauthorisationsController extends CoresecureController {
                 $form->getParameter("visa_id"),
                 $form->getParameter("date"),
                 $form->getParameter("date_desactivation"),
-                $form->getParameter("is_active")
+                $form->getParameter("is_active"),
+                $lang
             );
         }
 
@@ -274,9 +267,7 @@ class BookingauthorisationsController extends CoresecureController {
         return $form;
     }
 
-    public function validateEditForm($id_space, $id, $visa_id, $date, $date_desactivation, $is_active) {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
+    public function validateEditForm($id_space, $id, $visa_id, $date, $date_desactivation, $is_active, $lang) {
         $modelAuth = new BkAuthorization();
         // We keep initial user and resource ids since it can't and shouldn't be modified in the edit action
         $bkAuth = $modelAuth->get($id_space, $id);
@@ -312,7 +303,8 @@ class BookingauthorisationsController extends CoresecureController {
                 $form->getParameter("visa_id"),
                 $form->getParameter("date"),
                 $form->getParameter("date_desactivation"),
-                $form->getParameter("is_active")
+                $form->getParameter("is_active"),
+                $lang
             );
         }
 

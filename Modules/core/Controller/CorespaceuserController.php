@@ -68,7 +68,7 @@ class CorespaceuserController extends CorespaceaccessController {
         $bkHistoryTableHtml = "";
         if (in_array('booking', $modules)) {
             $bookingAuthCTRL = new BookingauthorisationsController($this->request);
-            $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit");
+            $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit", $lang);
             $bkAuthAddFormHtml = $bkAuthAddForm->getHtml($lang);
             $bkHistoryFormHtml = isset($bkHistoryForm) ? $bkHistoryForm->getHtml($lang) : "no booking history";
             if ($bkAuthAddForm->check()) {
@@ -81,7 +81,7 @@ class CorespaceuserController extends CorespaceaccessController {
                 );
                 $origin['page'] = 'bookingaccess';
             }
-            $bkAuthTableHtml = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit")['bkTableHtml'];
+            $bkAuthTableHtml = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit", $lang)['bkTableHtml'];
             $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, null, true);
         }
         
