@@ -97,7 +97,7 @@ class MailerController extends CoresecureController {
         $editRole = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
         
         if($this->role < $editRole) {
-            throw new PfmAuthException('not enough priviledges');
+            throw new PfmAuthException('not enough privileges');
         }
         $from = $this->request->getParameter("from");
         $to = $this->request->getParameter("to");
