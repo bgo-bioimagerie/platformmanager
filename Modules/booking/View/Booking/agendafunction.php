@@ -39,19 +39,19 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 	$html .= '<div class="col-md-6 text-right">
 		<div class="btn-group" role="group">';
 	//$html .='		<div class="col-sm-1">';
-	$html .='			<a style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
+	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
 	//$html .='		</div>';
 	//$html .= '		<div class="col-sm-1">';
-	$html .= '			<a style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
+	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
 	//$html .='		</div>';
 	//$html .='		<div class="col-sm-1">';
-	$html .='			<a style="color:#333;" href="bookingweek/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekactive.'" type="button">'.BookingTranslator::Week($lang).'</button></a>';
+	$html .='			<a aria-label="go to week view" style="color:#333;" href="bookingweek/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekactive.'" type="button">'.BookingTranslator::Week($lang).'</button></a>';
 	//$html .='		</div>';
 	//$html .='		<div class="col-sm-1">';
-	$html .='			<a style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
+	$html .='			<a aria-label="go to week area view" style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
 	//$html .='		</div>';
 	//$html .='		<div class="col-sm-1">';
-	$html .='			<a style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-default '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
+	$html .='			<a aria-label="go to month view" style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-default '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
 	//$html .='		</div>';
     $html .='        </div>
         </div>
