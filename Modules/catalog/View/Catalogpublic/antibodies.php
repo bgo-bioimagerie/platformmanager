@@ -15,7 +15,7 @@
 
     <script>
         $(document).ready(function () {
-            var table = $('#example').DataTable({
+            var table = $('#antibodies').DataTable({
                 scrollY: "700px",
                 scrollX: true,
                 scrollCollapse: true,
@@ -36,7 +36,7 @@
 
 <div class="row" style="background-color: #ffffff;">
 
-    <table id="example" class="table table-bordered table-striped" cellspacing="0" width="100%">
+    <table id="antibodies" class="table table-bordered table-striped" cellspacing="0" width="100%">
         <thead>
 
             <tr>

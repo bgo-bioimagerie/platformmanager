@@ -15,7 +15,7 @@
 
     <script>
         $(document).ready(function () {
-            var table = $('#example').DataTable({
+            var table = $('#antibodies').DataTable({
                 scrollY: "700px",
                 scrollX: true,
                 scrollCollapse: true,
@@ -317,7 +317,7 @@ if (!isset($searchCom)) {
         </div>
 
         <div class="col-xs-12">
-            <table id="example" aria-label="antibodies listing" class="table table-striped table-bordered" style="font-size: 10px;">
+            <table id="antibodies" aria-label="antibodies listing" class="table table-striped table-bordered" style="font-size: 10px;">
                 <thead>	 
                     <tr>
                         <th id="antibody" class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
