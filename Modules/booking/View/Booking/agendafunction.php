@@ -38,21 +38,11 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 
 	$html .= '<div class="col-md-6 text-right">
 		<div class="btn-group" role="group">';
-	//$html .='		<div class="col-sm-1">';
 	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
-	//$html .='		</div>';
-	//$html .= '		<div class="col-sm-1">';
 	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
-	//$html .='		</div>';
-	//$html .='		<div class="col-sm-1">';
 	$html .='			<a aria-label="go to week view" style="color:#333;" href="bookingweek/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekactive.'" type="button">'.BookingTranslator::Week($lang).'</button></a>';
-	//$html .='		</div>';
-	//$html .='		<div class="col-sm-1">';
 	$html .='			<a aria-label="go to week area view" style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
-	//$html .='		</div>';
-	//$html .='		<div class="col-sm-1">';
 	$html .='			<a aria-label="go to month view" style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-default '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
-	//$html .='		</div>';
     $html .='        </div>
         </div>
     </div>';
@@ -70,7 +60,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
     $mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
     $mois_en = Array("", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
-    $days_fr = ["Lun", "Mar", "Mecr", "Jeu", "Ven", "Sam", "Dim"];
+    $days_fr = ["Lun", "Mar", "Merc", "Jeu", "Ven", "Sam", "Dim"];
     $days_en = ["Mon", "Tue", "Web", "Thu", "Fri", "Sat", "Sun"];
 
 
@@ -83,10 +73,6 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
     $id_user = $nav['id_user']
 
     ?>
-
- 
-
-
 
     <div class="container">
         <div class="row"><div class="col-sm-12" style="text-align: center"><?php

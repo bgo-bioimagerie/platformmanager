@@ -9,7 +9,6 @@ require_once 'Modules/booking/View/Booking/bookfunction.php';
 require_once 'Modules/booking/View/Booking/agendafunction.php';
 
 
-
 $startDate = $mondayDate;
 $toDate = $sundayDate;
 $nbDays = 7;

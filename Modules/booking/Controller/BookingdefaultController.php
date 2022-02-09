@@ -174,8 +174,6 @@ class BookingdefaultController extends BookingabstractController {
             $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4]];
         }
 
-
-
         if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
@@ -838,6 +836,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->addComment(BookingTranslator::RemoveReservationPeriodic($lang));
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
         $formDeletePeriod->setButtonsWidth(2, 10);
+
 
         return $this->render(array(
             "id_space" => $id_space,

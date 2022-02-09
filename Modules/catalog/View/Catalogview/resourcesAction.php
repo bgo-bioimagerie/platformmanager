@@ -31,7 +31,7 @@
             </div>
             <div class="col-md-10">
                 <div style="font-weight: bold;"><?php echo $entry["name"] ?></div>
-                <div><i> <?php echo $entry["category"] ?></i></div>
+                <div><em> <?php echo $entry["category"] ?></em></div>
                 <div> <?php echo $entry["description"] ?></div>
             </div>	
         </div>
