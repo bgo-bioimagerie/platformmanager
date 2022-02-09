@@ -10,9 +10,10 @@
 
 
     <script>
+        //id=\"form_blk_$name\"
         let visibility = document.getElementById('visibility');
-        let client = document.getElementById('id_ref_client');
-        let user = document.getElementById('id_ref_user');
+        let client = document.getElementById('form_blk_id_ref_client');
+        let user = document.getElementById('form_blk_id_ref_user');
         if(client && user) {
             if(visibility && visibility.value != <?php echo Document::$VISIBILITY_CLIENT ?>){
                 client.style.display = "none";
