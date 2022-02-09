@@ -12,6 +12,7 @@
 * [booking] fix default color code
 * [users] if date_end_contract is empty, insert null in db
 * [core] code cleanup #554
+* [booking] fix package display on new reservation
 
 ## 2.3.2
 
