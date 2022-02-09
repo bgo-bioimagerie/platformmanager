@@ -219,8 +219,8 @@ class BookingController extends BookingabstractController {
         $afterTime = $tmpTime + 86400;
         $afterDate = date("Y-m-d", $afterTime);
 
-
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -345,6 +345,8 @@ class BookingController extends BookingabstractController {
 
         
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
         $foundA = false;
         foreach ($menuData["areas"] as $are) {
             if ($curentAreaId == $are["id"]) {
@@ -508,6 +510,8 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -648,6 +652,8 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
          
         // get the area info
         $area = $modelArea->get($id_space, $curentAreaId);
@@ -804,6 +810,8 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 31, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
