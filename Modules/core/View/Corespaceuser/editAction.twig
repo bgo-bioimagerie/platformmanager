@@ -122,21 +122,16 @@
                 return originPage;
             },
             generateSections() {
-                let spaceModuleName = "space";
-                let spaceSection = new Section(
-                    "spaceaccess",
-                    spaceModuleName,
-                    spaceModuleName + "Btn",
-                    this.getDisplayName(spaceModuleName),
-                    this.data.forms.spaceaccess
-                );
-                this.sections.push(spaceSection);
+                this.data.options.push({
+                    module: "space",
+                    toolname: "spaceaccess"
+                });
                 this.data.options.forEach(option => {
                     let section = new Section(
                         option.toolname,
                         option.module,
                         option.module + "Btn",
-                        this.getDisplayName(option.module),
+                        this.data.btnsNames[option.module],
                         this.data.forms[option.toolname],
                         this.data.forms[option.toolname + "Table"]
                     );
@@ -146,34 +141,13 @@
                             subSectionModule,
                             subSectionModule,
                             subSectionModule + "Btn",
-                            this.getDisplayName(subSectionModule),
+                            this.data.btnsNames[subSectionModule],
                             this.data.forms[subSectionModule],
                             this.data.forms[subSectionModule + "Table"]
                         );
                     }
                     this.sections.push(section);
                 });
-            },
-            getDisplayName(module) {
-                let result = "";
-                let french = (this.lang === 'fr');
-                switch (module) {
-                    case "space":
-                        result = french ? "Accès à l'espace" : "Space Access";
-                        break;
-                    case "booking":
-                        result = french ? "Habilitations" : "Authorisations";
-                        break;
-                    case "clients":
-                        result = french ? "Comptes clients" : "Clients accounts";
-                        break;
-                    case "bookinghistory":
-                        result = french ? "Historique des habilitations" : "Authorisations history";
-                        break;
-                    default:
-                        break;
-                }
-                return result;
             }
         }
     });

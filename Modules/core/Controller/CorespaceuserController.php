@@ -103,6 +103,12 @@ class CorespaceuserController extends CorespaceaccessController {
                     'bookingauthorisationsTable' => $bkAuthTableHtml,
                     'bookinghistory' => $bkHistoryFormHtml,
                     'bookinghistoryTable' => $bkHistoryTableHtml
+                ],
+                'btnsNames' => [
+                    'space' => CoreTranslator::Space_access($lang),
+                    'clients' => ClientsTranslator::clientsuseraccounts($lang),
+                    'booking' => BookingTranslator::bookingauthorisations($lang),
+                    'bookinghistory' => BookingTranslator::History($lang)
                 ]
             ])
         ];

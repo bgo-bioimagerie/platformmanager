@@ -1417,6 +1417,14 @@ class CoreTranslator {
         return "Access";
     }
 
+    public static function Space_access($lang) {
+        if ($lang == "fr") {
+            return "Accès à l'espace";
+        }
+        return "Space access";
+    }
+    
+
     public static function View_Menu($lang) {
         if ($lang == "fr") {
             return "Menu espace";
