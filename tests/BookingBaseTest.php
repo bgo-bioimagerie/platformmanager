@@ -217,14 +217,21 @@ class BookingBaseTest extends BaseTest {
             "date" => date('Y-m-d')
         ]);
         $c = new BookingauthorisationsController($req, $space);
-        $c->runAction('booking', 'add', ['id_space' => $space['id'], 'id' => $id_resource_category."_".$user['id']]);
+        /* $c->runAction('booking', 'add', ['id_space' => $space['id'], 'id' => $id_resource_category."_".$user['id']]); */
+        $c->validateBkAuthAddForm(
+            $space['id'],
+            $user['id'],
+            $id_resource_category,
+            $visas['ids'][0],
+            date('Y-m-d')
+        );
 
 
         $req = $this->request([
             "path" => "bookingauthorizations/".$space['id']."/".$user['id'],
         ]);
         $c = new BookingauthorisationsController($req, $space);
-        $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id' => $user['id']]);
+        $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id_user' => $user['id']]);
         $this->assertTrue(!empty($data['bkauthorizations']));
     }
 
