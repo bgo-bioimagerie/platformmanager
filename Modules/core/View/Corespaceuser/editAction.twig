@@ -75,7 +75,7 @@
         el: '#formSection',
         data () {
             return {
-                data: false,
+                data: {{ data|raw }},
                 sections: [],
                 params: {
                     spaceId: {{ id_space }},
@@ -86,7 +86,6 @@
             }
         },
         mounted: function() {
-            this.data = JSON.parse(this.$el.attributes['data'].value);
             this.generateSections();
             this.showForm(this.getOriginPage());
         },
