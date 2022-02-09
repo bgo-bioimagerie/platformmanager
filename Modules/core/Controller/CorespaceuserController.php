@@ -90,18 +90,20 @@ class CorespaceuserController extends CorespaceaccessController {
         $dataView = [
             'id_space' => $id_space,
             'id_user' => $id_user,
-            'lang' => json_encode($lang),
-            "space" => $space,
-            'origin' => json_encode($origin),
-            'options' => json_encode($options),
-            "forms" => json_encode([
-                'spaceaccess' => $spaceAccessFormHtml,
-                'clientsuseraccounts' => $clientsUserFormHtml,
-                'clientsuseraccountsTable' => $clientsUsertableHtml,
-                'bookingauthorisations' => $bkAuthAddFormHtml,
-                'bookingauthorisationsTable' => $bkAuthTableHtml,
-                "bookinghistory" => $bkHistoryFormHtml,
-                "bookinghistoryTable" => $bkHistoryTableHtml
+            'data' => json_encode([
+                'lang' => $lang,
+                "space" => $space,
+                'origin' => $origin,
+                'options' => $options,
+                'forms' => [
+                    'spaceaccess' => $spaceAccessFormHtml,
+                    'clientsuseraccounts' => $clientsUserFormHtml,
+                    'clientsuseraccountsTable' => $clientsUsertableHtml,
+                    'bookingauthorisations' => $bkAuthAddFormHtml,
+                    'bookingauthorisationsTable' => $bkAuthTableHtml,
+                    'bookinghistory' => $bkHistoryFormHtml,
+                    'bookinghistoryTable' => $bkHistoryTableHtml
+                ]
             ])
         ];
         return $this->render($dataView, "editAction");

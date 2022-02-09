@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="row pm-table">
-    <div id="formSection" data-origin="{{origin}}" data-options="{{options}}" data-forms="{{forms}}" data-lang="{{lang}}">
+    <div id="formSection" data = "{{data}}">
         <input
             v-for="item in sections"
             :id="item.btnId"
@@ -83,9 +83,7 @@
         el: '#formSection',
         data () {
             return {
-                origin: false,
-                options: [],
-                forms: [],
+                data: false,
                 sections: [],
                 params: {
                     spaceId: {{ id_space }},
@@ -96,10 +94,7 @@
             }
         },
         mounted: function() {
-            this.origin = JSON.parse(this.$el.attributes['data-origin'].value);
-            this.options = JSON.parse(this.$el.attributes['data-options'].value);
-            this.forms = JSON.parse(this.$el.attributes['data-forms'].value);
-            this.lang = JSON.parse(this.$el.attributes['data-lang'].value);
+            this.data = JSON.parse(this.$el.attributes['data'].value);
             this.generateSections();
             this.showForm(this.getOriginPage());
         },
@@ -123,13 +118,13 @@
             },
             getOriginPage() {
                 let originPage = "space";
-                if (this.origin.page.match(/clientsuser/g)) {
+                if (this.data.origin.page.match(/clientsuser/g)) {
                     originPage = "clients";
-                } else if (this.origin.page.match(/spaceaccess/g)) {
+                } else if (this.data.origin.page.match(/spaceaccess/g)) {
                     originPage = "space";
-                } else if (this.origin.page.match(/bookingaccess/g)) {
+                } else if (this.data.origin.page.match(/bookingaccess/g)) {
                     originPage = "booking";
-                } else if (this.origin.page.match(/bkauthhistory/g)) {
+                } else if (this.data.origin.page.match(/bkauthhistory/g)) {
                     originPage = "bookinghistory";
                 }
                 return originPage;
@@ -141,17 +136,17 @@
                     spaceModuleName,
                     spaceModuleName + "Btn",
                     this.getDisplayName(spaceModuleName),
-                    this.forms.spaceaccess
+                    this.data.forms.spaceaccess
                 );
                 this.sections.push(spaceSection);
-                this.options.forEach(option => {
+                this.data.options.forEach(option => {
                     let section = new Section(
                         option.toolname,
                         option.module,
                         option.module + "Btn",
                         this.getDisplayName(option.module),
-                        this.forms[option.toolname],
-                        this.forms[option.toolname + "Table"]
+                        this.data.forms[option.toolname],
+                        this.data.forms[option.toolname + "Table"]
                     );
                     if(option.module === "booking") {
                         let subSectionModule = "bookinghistory";
@@ -160,8 +155,8 @@
                             subSectionModule,
                             subSectionModule + "Btn",
                             this.getDisplayName(subSectionModule),
-                            this.forms[subSectionModule],
-                            this.forms[subSectionModule + "Table"]
+                            this.data.forms[subSectionModule],
+                            this.data.forms[subSectionModule + "Table"]
                         );
                     }
                     this.sections.push(section);
@@ -181,7 +176,7 @@
                         result = french ? "Comptes clients" : "Clients accounts";
                         break;
                     case "bookinghistory":
-                        result = french ? "Historique des habilitations" : "Authiorisations history";
+                        result = french ? "Historique des habilitations" : "Authorisations history";
                         break;
                     default:
                         break;
