@@ -276,6 +276,13 @@ class BookingTranslator {
         return "The user specifies";
     }
 
+    public static function Force_packages($lang) {
+        if($lang == "fr") {
+            return "Doit utiliser les packages";
+        }
+        return "Must use packages";
+    }
+
     public static function the_booking_duration($lang) {
         if ($lang == "fr") {
             return "La durée de la réservation";

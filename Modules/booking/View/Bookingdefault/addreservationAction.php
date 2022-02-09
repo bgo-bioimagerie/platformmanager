@@ -32,7 +32,7 @@
         <div class="col-xs-12">
             <div class="form-check col-xs-8 col-xs-offset-4" style="margin-bottom: 10px">
                 <label class="">
-                    <input id="use_package" class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
+                    <input id="use_package" <?php if($forcePackages) { echo "disabled";}  ?> class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                 </label>
             </div>
 

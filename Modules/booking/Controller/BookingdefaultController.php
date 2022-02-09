@@ -848,6 +848,15 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setButtonsWidth(2, 10);
 
 
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $schedul = $modelScheduling->get($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $forcePackages = $schedul['force_packages'] ?? 0;
+        if($forcePackages) {
+            $packageChecked = true;
+        }
+
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
@@ -855,6 +864,7 @@ class BookingdefaultController extends BookingabstractController {
             "data" => ["booking" => $resaInfo],
             "form" => $form,
             "use_packages" => $use_packages,
+            "forcePackages" => $forcePackages,
             "packageChecked" => $packageChecked,
             "userCanEdit" => $userCanEdit,
             "id_reservation" => $resaInfo["id"],
