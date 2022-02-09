@@ -18,16 +18,8 @@
             <div :id="item.name + 'Section'" v-for="item in sections" v-show="item.show">
                 <div name="formDiv" v-html="item.formHtml"></div>
                 <div name="tableDiv" v-html="item.tableHtml"></div>
-                <div name="subsection" v-if="!!item.subSection">
-                    <input
-                        :id="item.subSection.btnId"
-                        type="button"
-                        :class="item.subSection.show ? 'btn btn-primary' : 'btn btn-secondary'"
-                        :value="item.subSection.displayName"
-                        style="margin:5px;"
-                        @click="item.subSection.show = !item.subSection.show">
-                    </input>
-                    <div :id="item.subSection.name + 'Section'" v-show="item.subSection.show">
+                <div name="subsection" v-if="item.subSection">
+                    <div :id="item.subSection.name + 'Section'">
                         <div name="tableDiv" v-html="item.subSection.tableHtml"></div>
                     </div>
                 </div>
