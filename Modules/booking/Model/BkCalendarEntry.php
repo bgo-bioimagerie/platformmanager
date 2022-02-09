@@ -888,4 +888,102 @@ class BkCalendarEntry extends Model {
         return $res->fetchAll();
     }
 
+    private function computeDuration($id_space, $booking) {
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $id_resource = $booking['resource_id'];
+        $id_client = $booking['responsible_id'];
+        $start_time = $booking['start_time'];
+        $end_time = $booking['end_time'];
+        $bkScheduling = $modelScheduling->get($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $day_begin = $bkScheduling['day_begin'];
+        $day_end = $bkScheduling['day_end'];
+
+        $modelClient = new ClCLient();
+        $LABpricingid = $modelClient->getPricingID($id_space, $id_client);
+        $pricingModel = new BkNightWE();
+        $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
+
+        $night_begin = $pricingInfo['night_start'];
+        $night_end = $pricingInfo['night_end'];
+        $we_array1 = explode(",", $pricingInfo['choice_we']);
+        $we_array = array();
+        for ($s = 0; $s < count($we_array1); $s++) {
+            if ($we_array1[$s] > 0) {
+                $we_array[] = $s + 1;
+            }
+        }
+        
+
+        $duration = 0;
+
+
+        $searchDate_start = $start_time;
+        $searchDate_end = $end_time;
+
+        $booking_time_scale = 2;
+        $resa_block_size = 3600;
+        $gap = 3600;
+        switch ($booking_time_scale) {
+            case '1':
+                $gap = $resa_block_size;
+                break;
+            case '2':
+                $gap = 3600;
+                break;
+            case '3':
+                $gap = 3600 * 24;
+                break;
+            default:
+                $gap = 3600;
+                break;
+        }
+
+        $gaps = [];
+        $gapDuration = 0;
+        $timeStep = $searchDate_start+$gap;
+        $kind = 'day';
+        while ($timeStep < $searchDate_end) {
+            $is_open = true; // is open ? (is_monday etc...)
+            $d = strtolower(date('l', $timeStep));
+            if(!array_key_exists('is_'.$d, $bkScheduling) || !$bkScheduling['is_'.$d]) {
+                $is_open = false;
+            }
+            if(date('G', $timeStep) > $day_end || date('G', $timeStep) < $day_begin || !$is_open) { // after day end continue till open
+                $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                $gapDuration = 0;
+                $searchDate_start = $timeStep;
+                $timeStep += $gap;
+                continue;
+            }
+            if($we_array[date('N', $timeStep)-1]) {
+                // weekend
+                $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                $gapDuration = 0;
+                $searchDate_start = $timeStep;
+                $kind = 'we';
+            } else if(date('G', $timeStep) < $night_end || date('G', $timeStep) > $night_begin) {
+                $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                $gapDuration = 0;
+                $searchDate_start = $timeStep;
+                $kind = 'night';
+            } else {
+                if($kind != 'day') {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } else {
+                    $gapDuration += $gap;
+                }
+                $kind = 'day';
+            }
+            $duration += $gap;
+            $timeStep += $gap;
+        }
+        $gaps[] = ['start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+        $result = ['total' => $duration, 'steps' => $gaps];
+        Configuration::getLogger()->debug('[booking] compute_duration', $result);
+        return $result;
+    }
+
 }
