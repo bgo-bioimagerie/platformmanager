@@ -39,8 +39,8 @@ class BkScheduling extends Model {
         return array("id" => 0, "is_monday" => 1, "is_tuesday" => 1,
             "is_wednesday" => 1, "is_thursday" => 1, "is_friday" => 1,
             "is_saturday" => 0, "is_sunday" => 0, "day_begin" => 8,
-            "day_end" => 18, "size_bloc_resa" => 3600, "booking_time_scale" => 1,
-            "resa_time_setting" => 1, "default_color_id" => 1, "id_rearea" => 0);
+            "day_end" => 18, "size_bloc_resa" => 3600, "booking_time_scale" => 2,
+            "resa_time_setting" => 2, "default_color_id" => 1, "id_rearea" => 0);
     }
 
     
