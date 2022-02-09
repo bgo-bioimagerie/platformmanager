@@ -36,7 +36,7 @@ class CorespaceuserController extends CorespaceaccessController {
     public function editAction($id_space, $id_user) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        $origin = ["page" => json_encode($this->request->getParameterNoException("origin"))];
+        $origin = ["page" => $this->request->getParameterNoException("origin")];
 
         $modelOptions = new CoreSpaceAccessOptions();
         $options = array_reverse($modelOptions->getAll($id_space));
@@ -48,6 +48,8 @@ class CorespaceuserController extends CorespaceaccessController {
             $this->validateSpaceAccessForm($id_space, $id_user, $spaceAccessForm);
             $origin['page'] = 'spaceaccess';
         }
+        $forms = ['space' => ['forms' => [$spaceAccessFormHtml], 'show' => 1]];
+        $btnNames = ['space' => CoreTranslator::Space_access($lang)];
 
         $clientsUserFormHtml = "";
         $clientsUsertableHtml = "";
@@ -60,17 +62,17 @@ class CorespaceuserController extends CorespaceaccessController {
                 $origin['page'] = 'clientsuser';
             }
             $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user);
+            $forms['clients'] = ['forms'  => [$clientsUserFormHtml, $clientsUsertableHtml], 'show' => 0];
+            $btnNames['clients'] = ClientsTranslator::clientsuseraccounts($lang);
         }
 
         $bkAuthAddFormHtml = "";
         $bkAuthTableHtml = "";
-        $bkHistoryFormHtml = "";
         $bkHistoryTableHtml = "";
         if (in_array('booking', $modules)) {
             $bookingAuthCTRL = new BookingauthorisationsController($this->request);
             $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit", $lang);
             $bkAuthAddFormHtml = $bkAuthAddForm->getHtml($lang);
-            $bkHistoryFormHtml = isset($bkHistoryForm) ? $bkHistoryForm->getHtml($lang) : "no booking history";
             if ($bkAuthAddForm->check()) {
                 $bookingAuthCTRL->validateBkAuthAddForm(
                     $id_space,
@@ -83,34 +85,25 @@ class CorespaceuserController extends CorespaceaccessController {
             }
             $bkAuthTableHtml = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit", $lang)['bkTableHtml'];
             $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, null, true);
+            $forms['booking'] = ['forms' => [$bkAuthAddFormHtml, $bkAuthTableHtml, $bkHistoryTableHtml], 'show' => 0];
+            $btnNames['booking'] = BookingTranslator::bookingauthorisations($lang);
         }
+
+        Configuration::getLogger()->debug("[TEST]", ["btnNames" => $btnNames]);
         
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
         $dataView = [
             'id_space' => $id_space,
             'id_user' => $id_user,
-            'data' => json_encode([
-                'lang' => $lang,
+            'data' => [
                 "space" => $space,
                 'origin' => $origin,
                 'options' => $options,
-                'forms' => [
-                    'spaceaccess' => $spaceAccessFormHtml,
-                    'clientsuseraccounts' => $clientsUserFormHtml,
-                    'clientsuseraccountsTable' => $clientsUsertableHtml,
-                    'bookingauthorisations' => $bkAuthAddFormHtml,
-                    'bookingauthorisationsTable' => $bkAuthTableHtml,
-                    'bookinghistory' => $bkHistoryFormHtml,
-                    'bookinghistoryTable' => $bkHistoryTableHtml
-                ],
-                'btnsNames' => [
-                    'space' => CoreTranslator::Space_access($lang),
-                    'clients' => ClientsTranslator::clientsuseraccounts($lang),
-                    'booking' => BookingTranslator::bookingauthorisations($lang),
-                    'bookinghistory' => BookingTranslator::History($lang)
-                ]
-            ])
+                'btnsNames' => $btnNames
+            ],
+            'forms' => $forms,
+            'lang' => $lang
         ];
         return $this->render($dataView, "editAction");
     }

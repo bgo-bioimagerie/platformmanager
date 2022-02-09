@@ -2,154 +2,93 @@
    
 {% block content %}
 
-<div class="row pm-table">
-    <div id="formSection" data = "{{data}}">
-        <input
-            v-for="item in sections"
-            :id="item.btnId"
-            type="button"
-            :class="item.show ? 'btn btn-primary' : 'btn btn-secondary'"
-            :value="item.displayName"
-            style="margin:5px;"
-            @click="showForm(item.module)">
-        </input>
+<div class="row pm-table" id="corespaceuseredit">
+    <div id="formSection"">
+     {% for key,value in data.btnsNames %}
+        <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{value}}</button>
+     {% endfor %}
+    </div>
 
-        <div id="sections" style="margin:5px;">
-            <div :id="item.name + 'Section'" v-for="item in sections" v-show="item.show">
-                <div name="formDiv" v-html="item.formHtml"></div>
-                <div name="tableDiv" v-html="item.tableHtml"></div>
-                <div name="subsection" v-if="item.subSection">
-                    <div :id="item.subSection.name + 'Section'">
-                        <div name="tableDiv" v-html="item.subSection.tableHtml"></div>
-                    </div>
-                </div>
+    <div id="sections" style="margin:5px;">
 
-                <script v-if="item.module==='booking'" type="module">
-                    import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
-                    if (!app.$data.dynamicsLoaded) {
-                        let dynamicForms = new DynamicForms();
-                        let spaceId = {{ id_space }};
-                        let sourceId = "resource";
-                        let targets = [
-                            {
-                                elementId: "visa_id",
-                                apiRoute: `revisas/getcategoryvisas/`,
-                                activateOnLoad: true
-                            }
-                        ];
-                        dynamicForms.dynamicFields(sourceId, targets, spaceId);
-                        app.$data.dynamicsLoaded = true;
-                    }
-                </script>
-
-                <script>
-                    function ConfirmDelete(id, name) {
-                        let spaceId = {{ id_space }}
-                        let userId = {{ id_user }}
-                        if (confirm(`Delete ${name} ?`)) {
-                            location.href=`clientsuseraccountsdelete/${spaceId}/${userId}/${id}`;
-                        }
-                    }
-                </script>
-
-            </div>
+    {% for formid,form in forms %}
+        <div id="{{formid}}"" style="display: none">
+        {% for f in form.forms %}
+                {{f | raw}}
+        {% endfor %}
         </div>
+    {% endfor %}
+
+        
+
+    <script type="module">
+        import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+        let dynamicForms = new DynamicForms();
+        let spaceId = {{ id_space }};
+        let sourceId = "resource";
+        let targets = [
+            {
+                elementId: "visa_id",
+                apiRoute: `revisas/getcategoryvisas/`,
+                activateOnLoad: true
+            }
+        ];
+        dynamicForms.dynamicFields(sourceId, targets, spaceId);
+    </script>
 
     </div>
 </div>
 
 <script>
-    class Section {
-        constructor(name, module, btnId, displayName, formHtml = null, tableHtml = null, show = false, subSection = null) {
-            this.name = name;
-            this.module = module;
-            this.btnId = btnId;
-            this.displayName = displayName;
-            this.formHtml = formHtml;
-            this.tableHtml = tableHtml;
-            this.subSection = subSection;
-            this.show = show;
-        }
+
+let sections = {
+{% for formid,form in forms %}
+    '{{formid}}': {{form.show | raw}},
+{% endfor %}
+}
+
+show();
+
+function getOriginPage() {
+    let originPage = "space";
+    {% if data.origin.page %}
+    if ('{{data.origin.page}}'.match(/clientsuser/g)) {
+        originPage = "clients";
+    } else if ('{{data.origin.page}}'.match(/spaceaccess/g)) {
+        originPage = "space";
+    } else if ('{{data.origin.page}}'.match(/bookingaccess/g)) {
+        originPage = "booking";
+    } else if ('{{data.origin.page}}'.match(/bkauthhistory/g)) {
+        originPage = "bookinghistory";
     }
-    var app = new Vue({
-        el: '#formSection',
-        data () {
-            return {
-                data: {{ data|raw }},
-                sections: [],
-                params: {
-                    spaceId: {{ id_space }},
-                    userId: {{ id_user }},
-                    lang: 'en'
-                },
-                dynamicsLoaded: false
-            }
-        },
-        mounted: function() {
-            this.generateSections();
-            this.showForm(this.getOriginPage());
-        },
-        methods: {
-            showForm(itemModule) {
-                let found = false;
-                this.sections.forEach((section, index, array) => {
-                    if (section.module === itemModule) {
-                        section.show = true;
-                        found = true;
-                    } else {
-                        if (section.subSection && section.subSection.module === itemModule) {
-                            section.show = true;
-                            section.subSection.show = !section.subSection.show;
-                        } else {
-                            section.show = false;
-                            section.subSection ? section.subSection.show = false : null;
-                        }
-                    } 
-                });   
-            },
-            getOriginPage() {
-                let originPage = "space";
-                if (this.data.origin.page.match(/clientsuser/g)) {
-                    originPage = "clients";
-                } else if (this.data.origin.page.match(/spaceaccess/g)) {
-                    originPage = "space";
-                } else if (this.data.origin.page.match(/bookingaccess/g)) {
-                    originPage = "booking";
-                } else if (this.data.origin.page.match(/bkauthhistory/g)) {
-                    originPage = "bookinghistory";
-                }
-                return originPage;
-            },
-            generateSections() {
-                this.data.options.push({
-                    module: "space",
-                    toolname: "spaceaccess"
-                });
-                this.data.options.forEach(option => {
-                    let section = new Section(
-                        option.toolname,
-                        option.module,
-                        option.module + "Btn",
-                        this.data.btnsNames[option.module],
-                        this.data.forms[option.toolname],
-                        this.data.forms[option.toolname + "Table"]
-                    );
-                    if(option.module === "booking") {
-                        let subSectionModule = "bookinghistory";
-                        section.subSection = new Section(
-                            subSectionModule,
-                            subSectionModule,
-                            subSectionModule + "Btn",
-                            this.data.btnsNames[subSectionModule],
-                            this.data.forms[subSectionModule],
-                            this.data.forms[subSectionModule + "Table"]
-                        );
-                    }
-                    this.sections.push(section);
-                });
-            }
+    {% endif %}
+    return originPage;
+}
+
+
+function show(key) {
+    if(!key) {
+        key = getOriginPage();
+    }
+    Object.keys(sections).forEach(k => {
+        if(k==key) {
+            sections[k] = 1;
+        } else {
+            sections[k] = 0;
         }
-    });
+    })
+    
+    Object.keys(sections).forEach(k => {
+        if(sections[k]) {
+            document.getElementById('b_'+k).className ='btn btn-primary';
+            document.getElementById(k).style.display = 'block';
+        } else {
+            document.getElementById(k).style.display = 'none';
+            document.getElementById('b_'+k).className ='btn btn-secondary';
+        }
+    })
+}
+    
 </script>
 
 {% endblock %}
