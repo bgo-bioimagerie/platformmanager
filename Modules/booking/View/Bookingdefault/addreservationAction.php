@@ -155,13 +155,9 @@ if ($packageChecked > 0) {
         let use_package = document.getElementById('use_package');
         if (use_package) {
             document.getElementById('use_package').onchange = function () {
-                let php_var = "<?php echo $isPackageCheched; ?>";
-                if (php_var === "1") {
-                    let p_div = document.getElementById('package_div');
-                    if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
-                } else {
-                    document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
-                }
+                let p_div = document.getElementById('package_div');
+                if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
+                document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
             }
         }
         ;
