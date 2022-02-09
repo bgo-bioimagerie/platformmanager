@@ -7,7 +7,7 @@ foreach ($news as $n) {
         <img class="img-responsive" style="border-top-left-radius: 5px; border-top-right-radius: 5px;" src="<?php echo $n["media"] ?>" alt="media not found" width="100%"> 
         <div style="padding: 7px 7px 7px 7px;">
             <p style="font: bold 14px/18px Helvetica, Arial, sans-serif;">
-                <b><?php echo $n["title"] ?></b>
+                <strong><?php echo $n["title"] ?></strong>
                 <?php echo $n["content"] ?>
             </p>
         </div>

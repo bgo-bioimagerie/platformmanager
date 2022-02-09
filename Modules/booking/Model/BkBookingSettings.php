@@ -192,18 +192,18 @@ class BkBookingSettings extends Model {
         $summary = "" ;
         if ($entryList[$i]['is_visible'] == 1) {
             if ($entryList[$i]['is_tag_visible'] == 1) {
-                $summary .= "<b>" . $tagNameTr . ": </b>";
+                $summary .= "<strong>" . $tagNameTr . ": </strong>";
             }
             if ($entryList[$i]['font'] == "bold") {
-                $summary .= "<b>";
+                $summary .= "<strong>";
             } elseif ($entryList[$i]['font'] == "italic") {
-                $summary .= "<i>";
+                $summary .= "<em>";
             }
             $summary .= $content;
             if ($entryList[$i]['font'] == "bold") {
-                $summary .= "</b>";
+                $summary .= "</strong>";
             } elseif ($entryList[$i]['font'] == "italic") {
-                $summary .= "</i>";
+                $summary .= "</em>";
             }
             if ($last == false) {
                 if ($displayHorizontal) {
