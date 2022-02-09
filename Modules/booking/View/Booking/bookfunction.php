@@ -8,12 +8,9 @@ function bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$elts = implode(':', $from);
 		$q .= "from=$elts";
 	}
-        $modelSpace = new CoreSpace();
-        $user_space_role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
-    
-	//if ($resourceID < 0){
-	//	$resourceID = $_SESSION["bk_id_resource"];
-	//}
+    $modelSpace = new CoreSpace();
+    $user_space_role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
+
 	$dateString = date("Y-m-d", $date_unix);
 	$modelBookingSupplemetary = new BkCalSupInfo();
 	
