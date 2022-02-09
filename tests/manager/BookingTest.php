@@ -174,7 +174,7 @@ class BookingTest extends BookingBaseTest {
         $bookingId = $this->book($space, $user, $clients[0], $resources[0], 10);
     }
 
-    public function testBookinSCheduling() {
+    public function testBookingSCheduling() {
         $ctx = $this->Context();
         $spaces = $ctx['spaces'];
         $space = null;

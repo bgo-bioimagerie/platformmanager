@@ -120,7 +120,7 @@ class BookingschedulingController extends BookingsettingsController {
                     $this->request->getParameter("booking_time_scale"), 
                     $this->request->getParameter("resa_time_setting"), 
                     $this->request->getParameter("default_color_id"),
-                    $this->request->getParameter("force_packages")
+                    $this->request->getParameterNoException("force_packages")
             );
             return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
         }
