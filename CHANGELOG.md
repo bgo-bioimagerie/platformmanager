@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3.3 [unreleased]
+
+* [booking] fix display of package on new booking Closes #563
+
 ## 2.3.2
 
 * [booking][services] fix popup when editing with pagination #553
