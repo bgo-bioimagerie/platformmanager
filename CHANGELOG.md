@@ -10,6 +10,7 @@
 * [core] fix typos/spelling
 * [booking] fix default color code
 * [users] if date_end_contract is empty, insert null in db
+* [core] code cleanup #554
 
 ## 2.3.2
 
