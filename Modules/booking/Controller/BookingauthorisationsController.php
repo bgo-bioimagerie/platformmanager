@@ -49,7 +49,7 @@ class BookingauthorisationsController extends CoresecureController {
             'tableHtml' => $tableHtml,
             "formHtml" => $form->getHtml($lang),
             'space' => $space,
-            'data' => $bkAuthData
+            'data' => ['bkauthorizations' => $bkAuthData]
         ));
     }
 

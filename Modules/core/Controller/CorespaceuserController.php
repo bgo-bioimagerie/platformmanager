@@ -34,11 +34,9 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
  */
 class CorespaceuserController extends CorespaceaccessController {
     public function editAction($id_space, $id_user) {
-        Configuration::getLogger()->debug("[TEST]", ["formid" => $this->request->getParameterNoException("formid")]);
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $origin = ["page" => $this->request->getParameterNoException("origin")];
-
         $modelOptions = new CoreSpaceAccessOptions();
         $options = array_reverse($modelOptions->getAll($id_space));
         $modules = array_map(function($option) { return $option['module'];}, $options);
@@ -84,7 +82,8 @@ class CorespaceuserController extends CorespaceaccessController {
                 );
                 $origin['page'] = 'bookingaccess';
             }
-            $bkAuthTableHtml = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit", $lang)['bkTableHtml'];
+            $bkAuth = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit", $lang);
+            $bkAuthTableHtml = $bkAuth['bkTableHtml'];
             $bkHistoryTableHtml = $bookingAuthCTRL->generateHistoryTable($id_space, $id_user, null, true);
             $forms['booking'] = ['forms' => [$bkAuthAddFormHtml, $bkAuthTableHtml, $bkHistoryTableHtml], 'show' => 0];
             $btnNames['booking'] = BookingTranslator::bookingauthorisations($lang);
