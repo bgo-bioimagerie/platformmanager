@@ -423,10 +423,9 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 if ($reservation["package_id"] > 0) {
                     $userPackages[$reservation["package_id"]] ++;
                 } else {
-                    // OSALLOU
-                    $test = $modelCal->computeDuration($id_space, $reservation);
-                    Configuration::getLogger()->error('???????? TEST COMPUTE', ['r' => $test]);
-                    $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
+                    $slots = $modelCal->computeDuration($id_space, $reservation);
+                    $resaDayNightWe = $slots['hours'];
+                    //$resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     if ($isInvoicingUnit) {
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
                             // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
@@ -906,11 +905,20 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 //print_r($user);
                 $resas = $modelCalEntry->getResourcesUserResaForInvoice($id_space, $r['resource_id'], $user['recipient_id'], $id_invoice);
                 $time = 0;
+                $time_day = 0;
+                $time_night = 0;
+                $time_we = 0;
                 for ($i = 0; $i < count($resas); $i++) {
+                    $slots = $modelCalEntry->computeDuration($id_space, $resas[$i]);
+                    $resaDayNightWe = $slots['hours'];
+                    $time += $slots['total'];
+                    $time_day += $resaDayNightWe['nb_hours_day'];
+                    $time_night += $resaDayNightWe['nb_hours_night'];
+                    $time_we += $resaDayNightWe['nb_hours_we'];
 
-                    $time += floatval($resas[$i]['end_time']) - floatval($resas[$i]['start_time']);
+                    //$time += floatval($resas[$i]['end_time']) - floatval($resas[$i]['start_time']);
                 }
-                $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 1));
+                $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 1), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
             }
         }
         return $data;
@@ -929,7 +937,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $headers = array("resource" => BookinginvoiceTranslator::Resource($lang),
             "user" => BookinginvoiceTranslator::Recipient($lang),
-            "time" => BookinginvoiceTranslator::Duration($lang)
+            "time" => BookinginvoiceTranslator::Duration($lang),
+            "day" =>  BookinginvoiceTranslator::Day($lang),
+            "night" =>  BookinginvoiceTranslator::night($lang),
+            "we" =>  BookinginvoiceTranslator::WE($lang),
         );
 
         $tableHtml = $table->view($data, $headers);
