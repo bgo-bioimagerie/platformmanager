@@ -5,7 +5,10 @@ require_once 'Framework/Events.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/booking/Model/BkScheduling.php';
+require_once 'Modules/booking/Model/BkNightWE.php';
 
 /**
  * Class defining the GRR area model
@@ -888,7 +891,7 @@ class BkCalendarEntry extends Model {
         return $res->fetchAll();
     }
 
-    private function computeDuration($id_space, $booking) {
+    public function computeDuration($id_space, $booking) {
         $modelResource = new ResourceInfo();
         $modelScheduling = new BkScheduling();
         $id_resource = $booking['resource_id'];
@@ -906,24 +909,13 @@ class BkCalendarEntry extends Model {
 
         $night_begin = $pricingInfo['night_start'];
         $night_end = $pricingInfo['night_end'];
-        $we_array1 = explode(",", $pricingInfo['choice_we']);
-        $we_array = array();
-        for ($s = 0; $s < count($we_array1); $s++) {
-            if ($we_array1[$s] > 0) {
-                $we_array[] = $s + 1;
-            }
-        }
+        $we_array = explode(",", $pricingInfo['choice_we']);
         
-
-        $duration = 0;
-
-
         $searchDate_start = $start_time;
         $searchDate_end = $end_time;
 
         $booking_time_scale = 2;
         $resa_block_size = 3600;
-        $gap = 3600;
         switch ($booking_time_scale) {
             case '1':
                 $gap = $resa_block_size;
@@ -941,47 +933,67 @@ class BkCalendarEntry extends Model {
 
         $gaps = [];
         $gapDuration = 0;
-        $timeStep = $searchDate_start+$gap;
-        $kind = 'day';
+        $timeStep = $searchDate_start;
+        $kind = null;
+
         while ($timeStep < $searchDate_end) {
             $is_open = true; // is open ? (is_monday etc...)
             $d = strtolower(date('l', $timeStep));
             if(!array_key_exists('is_'.$d, $bkScheduling) || !$bkScheduling['is_'.$d]) {
                 $is_open = false;
             }
-            if(date('G', $timeStep) > $day_end || date('G', $timeStep) < $day_begin || !$is_open) { // after day end continue till open
-                $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
-                $gapDuration = 0;
-                $searchDate_start = $timeStep;
-                $timeStep += $gap;
-                continue;
-            }
-            if($we_array[date('N', $timeStep)-1]) {
-                // weekend
-                $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
-                $gapDuration = 0;
-                $searchDate_start = $timeStep;
-                $kind = 'we';
-            } else if(date('G', $timeStep) < $night_end || date('G', $timeStep) > $night_begin) {
-                $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
-                $gapDuration = 0;
-                $searchDate_start = $timeStep;
-                $kind = 'night';
-            } else {
-                if($kind != 'day') {
+            if(date('G', $timeStep) >= $day_end || date('G', $timeStep) < $day_begin || !$is_open) { // after day end continue till open
+                if($kind && $kind!="closed") {
                     $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
                     $gapDuration = 0;
                     $searchDate_start = $timeStep;
-                } else {
+                } 
                     $gapDuration += $gap;
+                
+                $kind = 'closed';
+            } else if($we_array[date('N', $timeStep)-1] == 1) {
+                // weekend
+                if($kind && $kind != "we") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'we';
+            } else if(date('G', $timeStep) < $night_end || date('G', $timeStep) >= $night_begin) {
+                if($kind && $kind != "night") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'night';
+            } else {
+                if($kind && $kind != 'day') {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
                 }
+                    $gapDuration += $gap;
+                
                 $kind = 'day';
             }
-            $duration += $gap;
+
             $timeStep += $gap;
         }
-        $gaps[] = ['start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
-        $result = ['total' => $duration, 'steps' => $gaps];
+        if($gapDuration > 0) {
+            $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+        }
+
+        $total_duration = 0;
+        foreach ($gaps as $gap) {
+            if($gap['kind'] != 'closed') {
+                $total_duration += $gap['duration'];
+            }
+        }
+        $result = ['total' => $total_duration, 'steps' => $gaps];
         Configuration::getLogger()->debug('[booking] compute_duration', $result);
         return $result;
     }
