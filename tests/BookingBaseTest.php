@@ -12,6 +12,7 @@ require_once 'Modules/booking/Controller/BookingdefaultController.php';
 require_once 'Modules/booking/Controller/BookingController.php';
 
 require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
+require_once 'Modules/core/Controller/CorespaceuserController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Model/ReVisa.php';
