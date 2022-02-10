@@ -988,12 +988,49 @@ class BkCalendarEntry extends Model {
         }
 
         $total_duration = 0;
+        $nb_day = 0;
+        $nb_night = 0;
+        $nb_we = 0;
         foreach ($gaps as $gap) {
-            if($gap['kind'] != 'closed') {
-                $total_duration += $gap['duration'];
+            if($gap['kind'] == 'closed') {
+                continue;
+            }
+            $total_duration += $gap['duration'];
+            switch ($gap['kind']) {
+                case 'day':
+                    $nb_day += $gap['duration'];
+                    break;
+                case 'night':
+                    $nb_night += $gap['duration'];
+                    break;
+                case 'we':
+                    $nb_we += $gap['duration'];
+                    break;
+                default:
+                    Configuration::getLogger()->error('[compute] unknown kind', ['kind' => $gap['kind']]);
             }
         }
-        $result = ['total' => $total_duration, 'steps' => $gaps];
+
+        $nb_hours_day = round($nb_day / 3600, 1);
+        $nb_hours_night = round($nb_night / 3600, 1);
+        $nb_hours_we = round($nb_we / 3600, 1);
+        $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
+        $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
+        $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
+        $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+
+        $result = [
+            'total' => $total_duration,
+            'steps' => $gaps,
+            'hours' => [
+                'nb_hours_day' => $nb_hours_day,
+                'nb_hours_night' => $nb_hours_night,
+                'nb_hours_we' => $nb_hours_we,
+                'ratio_bookings_day' => $ratio_bookings_day,
+                'ratio_bookings_night' => $ratio_bookings_night,
+                'ratio_bookings_we' => $ratio_bookings_we
+            ]
+        ];
         Configuration::getLogger()->debug('[booking] compute_duration', $result);
         return $result;
     }

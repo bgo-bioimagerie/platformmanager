@@ -423,6 +423,9 @@ class BookinginvoiceController extends InvoiceAbstractController {
                 if ($reservation["package_id"] > 0) {
                     $userPackages[$reservation["package_id"]] ++;
                 } else {
+                    // OSALLOU
+                    $test = $modelCal->computeDuration($id_space, $reservation);
+                    Configuration::getLogger()->error('???????? TEST COMPUTE', ['r' => $test]);
                     $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     if ($isInvoicingUnit) {
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
