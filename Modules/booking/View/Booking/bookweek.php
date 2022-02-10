@@ -250,8 +250,9 @@ else if($size_bloc_resa == 3600){
 				<p class="text-center"><strong> <?php echo  $dayTitle ?></strong> </p>
 				</div>
 				
-				<?php 
-				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $bk_id_resource);
+				<?php
+				$from = ["week", $date, $bk_id_resource, $bk_id_area, $id_user];
+				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $bk_id_resource, $from);
 				?>
 				
 				</div>

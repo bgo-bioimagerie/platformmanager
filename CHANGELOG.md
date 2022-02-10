@@ -9,8 +9,11 @@
 * [helpdesk] on file upload (manual), create dir if not exists
 * [core] fix default sort order in tables and remove download button if no url
 * [core] fix typos/spelling
+* [booking] manage redirect after reservation edit to page were booking was done
 * [booking] fix default color code
 * [users] if date_end_contract is empty, insert null in db
+* [core] code cleanup #554
+* [booking] fix package display on new reservation
 
 ## 2.3.2
 

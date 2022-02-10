@@ -16,7 +16,7 @@
     <form class="form-horizontal">
         <div id="invoiceform" class="col-md-12">
 
-            <table class="table">
+            <table class="table" aria-label="list of products">
                 <thead>
                     <tr>
                         <th scope="col"><?php echo InvoicesTranslator::Product($lang) ?></th>

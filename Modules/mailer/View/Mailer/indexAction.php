@@ -48,7 +48,7 @@
         </div>
         <br><br />
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
+            <label for="subject" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
             <div class="col-xs-10">
                 <input class="form-control" id="subject" type="text" name="subject"
                        />
@@ -56,7 +56,7 @@
         </div>
         <br><br />
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
+            <label for="content" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
             <div class="col-xs-10">
                 <textarea class="form-control" id="content" name="content"
                           >

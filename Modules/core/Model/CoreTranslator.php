@@ -919,7 +919,7 @@ class CoreTranslator {
                 return "administrateur";
             }
             return "rôle introuvable";
-        } else if ($lang == "fr") {
+        } else if ($lang == "en") {
             if ($id_status == 1) {
                 return "visitor";
             } else if ($id_status == 2) {
