@@ -209,23 +209,15 @@ class BookingBaseTest extends BaseTest {
         $visas = $modelVisa->getForListByCategory($space['id'], $id_resource_category);
 
         $req = $this->request([
-            "path" => "bookingauthorizationsadd/".$space['id']."/".$id_resource_category."_".$user['id'],
+            "path" => "corespaceuseredit/".$space['id']."/".$user['id'],
             "formid" => "authorisationAddForm",
             "user" => $user['id'],
             "resource" => $id_resource_category,
             "visa_id" => $visas['ids'][0],
             "date" => date('Y-m-d')
         ]);
-        $c = new BookingauthorisationsController($req, $space);
-        /* $c->runAction('booking', 'add', ['id_space' => $space['id'], 'id' => $id_resource_category."_".$user['id']]); */
-        $c->validateBkAuthAddForm(
-            $space['id'],
-            $user['id'],
-            $id_resource_category,
-            $visas['ids'][0],
-            date('Y-m-d')
-        );
-
+        $c = new CorespaceuserController($req, $space);
+        $c->runAction('corespaceuser', 'edit', ['id_space' => $space['id'], 'id_user' => $user['id']]);
 
         $req = $this->request([
             "path" => "bookingauthorizations/".$space['id']."/".$user['id'],
@@ -234,7 +226,6 @@ class BookingBaseTest extends BaseTest {
         $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id_user' => $user['id']]);
         $this->assertTrue(!empty($data['bkauthorizations']));
     }
-
 
 }
 

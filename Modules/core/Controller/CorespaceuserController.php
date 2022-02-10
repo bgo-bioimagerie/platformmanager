@@ -34,6 +34,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
  */
 class CorespaceuserController extends CorespaceaccessController {
     public function editAction($id_space, $id_user) {
+        Configuration::getLogger()->debug("[TEST]", ["formid" => $this->request->getParameterNoException("formid")]);
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $origin = ["page" => $this->request->getParameterNoException("origin")];
@@ -77,7 +78,7 @@ class CorespaceuserController extends CorespaceaccessController {
                 $bookingAuthCTRL->validateBkAuthAddForm(
                     $id_space,
                     $id_user,
-                    $bkAuthAddForm->getParameter("resource") /* stands for category id */,
+                    $bkAuthAddForm->getParameter("resource"), /* stands for category id */
                     $bkAuthAddForm->getParameter("visa_id"),
                     $bkAuthAddForm->getParameter("date")
                 );
@@ -88,8 +89,6 @@ class CorespaceuserController extends CorespaceaccessController {
             $forms['booking'] = ['forms' => [$bkAuthAddFormHtml, $bkAuthTableHtml, $bkHistoryTableHtml], 'show' => 0];
             $btnNames['booking'] = BookingTranslator::bookingauthorisations($lang);
         }
-
-        Configuration::getLogger()->debug("[TEST]", ["btnNames" => $btnNames]);
         
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
@@ -107,4 +106,5 @@ class CorespaceuserController extends CorespaceaccessController {
         ];
         return $this->render($dataView, "editAction");
     }
+
 }
