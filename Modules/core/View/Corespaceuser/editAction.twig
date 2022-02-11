@@ -2,7 +2,7 @@
    
 {% block content %}
 
-<div class="row" style="background-color: white" id="corespaceuseredit">
+<div class="row pm-table" id="corespaceuseredit">
     <div id="formSection"">
      {% for key,value in data.btnsNames %}
         <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{value}}</button>
