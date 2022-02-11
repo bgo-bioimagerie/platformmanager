@@ -886,6 +886,13 @@ class BookingTranslator {
         return "Authorisations for";
     }
 
+    static public function Add_authorisation_for($lang) {
+        if ($lang == "fr") {
+            return "Ajouter une habilitation pour ";
+        }
+        return "Add an authorisation for";
+    }
+
     public static function Active_Authorizations($lang = "") {
         if ($lang == "fr") {
             return "Habilitation actives";

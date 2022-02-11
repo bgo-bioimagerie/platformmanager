@@ -139,26 +139,6 @@ class BookingdefaultController extends BookingabstractController {
         $modelBkAccess = new BkAccess();
         $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
 
-        $curentDate = date("Y-m-d", time());
-        if (isset($_SESSION['bk_curentDate'])) {
-            $curentDate = $_SESSION['bk_curentDate'];
-        }
-        $temp = explode("-", $curentDate);
-        try {
-            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
-        } catch(Exception $e) {
-            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $curentDate]);
-            $curentDateUnix = time();
-        }
-
-        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
-
-        if (!$canValidateBooking) {
-            $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
-            $_SESSION['flashClass'] = "warning";
-            return $this->redirect("booking/".$id_space, [], ['error' => 'resourceBookingUnauthorized']);
-        }
-
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
         $id = $this->request->getParameter("id");
@@ -173,6 +153,42 @@ class BookingdefaultController extends BookingabstractController {
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
 
         $dateResaStart = $this->request->getParameter("resa_start");
+        $dateResaEnd = $this->request->getParameter("resa_end");
+
+
+
+        $curentDate = date("Y-m-d", time());
+        if (isset($_SESSION['bk_curentDate'])) {
+            $curentDate = $_SESSION['bk_curentDate'];
+        }
+        $temp = explode("-", $curentDate);
+        try {
+            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
+        } catch(Exception $e) {
+            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $curentDate]);
+            $curentDateUnix = time();
+        }
+
+        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
+
+
+        $redir = $this->request->getParameterNoException('from');
+        
+        $backto = [];
+        $redirPage = '';
+        if($redir) {
+            $redirInfo = explode(':', $redir);
+            $redirPage = $redirInfo[0];
+            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4]];
+        }
+
+        if (!$canValidateBooking) {
+            $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
+            $_SESSION['flashClass'] = "warning";
+            return $this->redirect("booking$redirPage/".$id_space, $backto, ['error' => 'resourceBookingUnauthorized']);
+        }
+
+
         $dateResaStartArray = explode("-", $dateResaStart);
         if($dateResaStart == "") {
             throw new PfmParamException("invalid start date");
@@ -201,7 +217,6 @@ class BookingdefaultController extends BookingabstractController {
         }
 
 
-        $dateResaEnd = $this->request->getParameter("resa_end");
         $dateResaEndArray = explode("-", $dateResaEnd);
         if($dateResaEnd == "") {
             throw new PfmParamException("invalid end date");
@@ -614,8 +629,7 @@ class BookingdefaultController extends BookingabstractController {
             }
         }
 
-        $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
-        return $this->redirect("booking/".$id_space."/".$bk_id_area."/".$id_resource, [], ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
+        return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
         //return $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"], [], ['bkcalentry' => ['id' => $id_entry]]);
     }
 
@@ -647,6 +661,7 @@ class BookingdefaultController extends BookingabstractController {
         $form->addHidden("id", $resaInfo["id"]);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
+        $form->addHidden("from", $this->request->getParameterNoException('from'));
 
         $resourceName = $modelResource->get($id_space, $id_resource)['name'];
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
@@ -832,6 +847,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
         $formDeletePeriod->setButtonsWidth(2, 10);
 
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
@@ -850,7 +866,9 @@ class BookingdefaultController extends BookingabstractController {
             "periodInfo" => $periodInfo,
             "id_period" => $id_period,
             "formDelete" => $formDelete->getHtml($lang),
-            "formDeletePeriod" => $formDeletePeriod->getHtml($lang)),
+            "formDeletePeriod" => $formDeletePeriod->getHtml($lang),
+            "from" => $this->request->getParameterNoException('from')
+        ),
             "addreservationAction"
         );
     }

@@ -64,18 +64,18 @@ class Document extends Model {
     }
 
     public function getPublicDocs($id_space){
-        $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE id_space=? AND visibility=?";
+        $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE dc_documents.id_space=? AND dc_documents.visibility=?";
         $req = $this->runRequest($sql, array($id_space, self::$VISIBILITY_PUBLIC));
         return $req->fetchAll();
     }
 
     public function getRestrictedDocs($id_space, $visibility, $id_ref=0) {
         if($visibility == self::$VISIBILITY_MEMBERS) {
-            $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE id_space=? AND visibility=?";
+            $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE dc_documents.id_space=? AND dc_documents.visibility=?";
             $req = $this->runRequest($sql, array($id_space, self::$VISIBILITY_MEMBERS));
             return $req->fetchAll();            
         }
-        $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE id_space=? AND ((visibility=? AND id_ref=?) OR visibility=?)";
+        $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE dc_documents.id_space=? AND ((dc_documents.visibility=? AND id_ref=?) OR dc_documents.visibility=?)";
         $req = $this->runRequest($sql, array($id_space, $visibility, $id_ref, self::$VISIBILITY_PUBLIC));
         return $req->fetchAll();    
     }

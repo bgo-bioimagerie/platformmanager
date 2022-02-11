@@ -423,4 +423,11 @@ class InvoicesTranslator {
         return "Some of your values are non numeric and won't display. PLease edit them before saving.";
     }
 
+    public static function NoTemplate($lang) {
+        if($lang == 'fr') {
+            return 'Attention, il faut définir un template dans la configuration';
+        }
+        return 'Warning: no template defined in configuration';
+    }
+
 }

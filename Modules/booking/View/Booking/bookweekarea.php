@@ -12,6 +12,13 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 $available_days = $scheduling["is_monday"] . "," . $scheduling["is_tuesday"] . "," . $scheduling["is_wednesday"] . "," . $scheduling["is_thursday"] . "," . $scheduling["is_friday"] . "," . $scheduling["is_saturday"] . "," . $scheduling["is_sunday"];
 $available_days = explode(",", $available_days);
 
+$from = ["weekarea", $date, $bk_id_resource, $bk_id_area, $id_user];
+$q = '?';
+if(!empty($from)) {
+    $elts = implode(':', $from);
+    $q .= "from=$elts";
+}
+
 $dayWidth = 100 / 8;
 ?>
 
@@ -265,7 +272,7 @@ $dayWidth = 100 / 8;
                                                 $text .= $modelBookingSetting->getSummary($id_space, $entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
                                                 ?>
                                                 <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>;"> 
-                                                    <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">
+                                                    <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'].$q ?>">
                                                 <?php echo $text ?>
                                                     </a>
                                                 </div>
@@ -289,7 +296,7 @@ $dayWidth = 100 / 8;
                                                 $text .= $modelBookingSetting->getSummary($id_space, $entry ["recipient_fullname"], $entry ['phone'], $shortDescription, $entry ['full_description'], false);
                                                 ?>
                                                 <div class="text-center" id="tcellResa" style="background-color:<?php echo $entry['color_bg'] ?>; "> 
-                                                    <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px;" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>">
+                                                    <a class="text-center" style="color:<?php echo $entry['color_text'] ?>; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px;" href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'].$q ?>">
                                                 <?php echo $text ?>
                                                     </a>
                                                 </div>
@@ -308,7 +315,7 @@ $dayWidth = 100 / 8;
                                                 ?>
                                                 <div class="text-center">
                                                     <a class="glyphicon glyphicon-plus"
-                                                        href="bookingeditreservation/<?php echo $id_space ?>/t_<?php echo $dateString . "_" . "8" . "_" . $resourceID ?>">
+                                                        href="bookingeditreservation/<?php echo $id_space ?>/t_<?php echo $dateString . "_" . "8" . "_" . $resourceID.$q ?>">
                                                     </a>
                                                 </div>
                                                 <?php

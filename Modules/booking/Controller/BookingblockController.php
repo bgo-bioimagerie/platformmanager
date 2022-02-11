@@ -46,7 +46,6 @@ class BookingblockController extends BookingsettingsController {
     /**
      * Query to make several resources unavailable
      * 
-     * @deprecated
      */
     public function blockresourcesqueryAction($id_space) {
         $lang = $this->getLanguage();
