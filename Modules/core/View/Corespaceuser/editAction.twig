@@ -2,7 +2,7 @@
    
 {% block content %}
 
-<div class="row pm-table" id="corespaceuseredit">
+<div class="row" style="background-color: white" id="corespaceuseredit">
     <div id="formSection"">
      {% for key,value in data.btnsNames %}
         <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{value}}</button>
@@ -12,7 +12,7 @@
     <div id="sections" style="margin:5px;">
 
     {% for formid,form in forms %}
-        <div id="{{formid}}"" style="display: none">
+        <div id="{{formid}}"" class="container" style="display: none">
         {% for f in form.forms %}
                 {{f | raw}}
         {% endfor %}
