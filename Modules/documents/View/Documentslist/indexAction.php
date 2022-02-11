@@ -46,7 +46,16 @@
                     </tr>
                 </tbody>
             </table>
-
+            <div id="search">
+                <input aria-label="search doc input" class="form-control" v-model="search" placeholder="search" @input="findDocs"/>
+                <table style="background-color: white" aria-label="search results" class="table table-striped">
+                    <tbody>
+                    <tr v-for="match in matches">
+                        <td>{{match.title}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -73,13 +82,31 @@ let app = new Vue({
         return {
             docs: [],
             level: <?php if($dir) {echo count(explode('/', $dir));} else {echo 0;} ?>,
-            path: <?php echo "'$dir'" ?? 'null' ?>
+            path: <?php echo "'$dir'" ?? 'null' ?>,
+            search: '',
+            matches: []
         }
     },
     created () {
             this.levels(this.level, this.path);
     },
     methods: {
+        findDocs() {
+            if(this.search.length === 0) {
+                this.matches = [];
+                return;
+            }
+            if(this.search.length<3) {
+                return;
+            }
+            let found = [];
+            doclist.forEach(d => {
+               if(d.title.includes(this.search)) {
+                   found.push(d);
+               }
+            });
+            this.matches = found;
+        },
         create() {
             window.location.href = 'documentsedit/<?php echo $id_space ?>/0/?dir='+this.path.join('/')
         },
