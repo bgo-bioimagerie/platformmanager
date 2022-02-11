@@ -861,23 +861,28 @@ class BookinginvoiceController extends InvoiceAbstractController {
     protected function detailsTable($id_space, $id_invoice, $lang) {
         $data = $this->detailsData($id_space, $id_invoice);
 
-        $table = BookinginvoiceTranslator::Details($lang) . "<br/>";
+        $table = "<h3>".BookinginvoiceTranslator::Details($lang) . "</h3><br/>";
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
-                        <th style=\"width: 30%\">" . BookinginvoiceTranslator::Resource($lang) . "</th>
-                        <th style=\"width: 50%\">" . BookinginvoiceTranslator::Recipient($lang) . "</th>
-                        <th style=\"width: 20%\">" . InvoicesTranslator::Quantity($lang) . "</th>
+                        <th style=\"width: 30%; border: solid 1px black;\">" . BookinginvoiceTranslator::Resource($lang) . "</th>
+                        <th style=\"width: 50%; border: solid 1px black;\">" . BookinginvoiceTranslator::Recipient($lang) . "</th>
+                        <th style=\"width: 20%; border: solid 1px black;\">" . InvoicesTranslator::Quantity($lang) . "</th>
                     </tr>
-                </table>
         ";
-
-        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
 
         foreach ($data as $d) {
             $table .= "<tr>";
             $table .= "<td style=\"width: 30%; text-align: left; border: solid 1px black;\">" . $d['resource'] . "</td>";
             $table .= "<td style=\"width: 50%; border: solid 1px black;\">" . $d['user'] . "</td>";
             $table .= "<td style=\"width: 20%; text-align: right; border: solid 1px black;\">" . $d['time'] . "</td>";
+            $table .= "</tr>";
+            $table .= "<tr>";
+            $table .= "<td style=\"width: 30%; border: solid 1px black;\"></td>";
+            $table .= "<td aria-label=\"details\" colspan=\"2\" style=\"text-align: center; border: solid 1px black;\">";
+            $table .= "<span>".BookinginvoiceTranslator::Day($lang).": ". $d['day']."</span>, ";
+            $table .= "<span>".BookinginvoiceTranslator::night($lang).": ". $d['night']."</span>, ";
+            $table .= "<span>".BookinginvoiceTranslator::WE($lang).": ". $d['we']."</span>";
+            $table .= "</td>";
             $table .= "</tr>";
         }
 
