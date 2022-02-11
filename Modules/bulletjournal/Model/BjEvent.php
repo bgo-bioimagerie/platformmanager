@@ -40,11 +40,10 @@ class BjEvent extends Model {
         if ($this->exists($id_space, $id_note)) {
             $sql = "UPDATE bj_events SET start_time=?, end_time=? WHERE id_note=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($start_time, $end_time, $id_note, $id_space));
-            return $id_note;
         } else {
             $sql = "INSERT INTO bj_events (id_note, start_time, end_time, id_space) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id_note, $start_time, $end_time, $id_space));
-            return $this->getDatabase()->lastInsertId();
+            $id_note = $this->getDatabase()->lastInsertId();
         }
         return $id_note;
     }

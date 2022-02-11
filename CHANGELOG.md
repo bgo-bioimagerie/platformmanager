@@ -1,11 +1,31 @@
 # Changes
 
-## 2.3.1
+## 2.4.0
 
+* [core] group users space access options on a single page
 * [core] in corespaceaccess show convention download button only if present
 * [invoices] show message if no template defined
 * [core] add status and msg to core files
 * [helpdesk] on file upload (manual), create dir if not exists
+* [core] fix default sort order in tables and remove download button if no url
+* [core] fix typos/spelling
+* [booking] manage redirect after reservation edit to page were booking was done
+* [booking] fix default color code
+* [users] if date_end_contract is empty, insert null in db
+* [core] code cleanup #554
+* [booking] fix package display on new reservation
+
+## 2.3.2
+
+* [booking][services] fix popup when editing with pagination #553
+* [services] fix date on followup when in french #555
+* [invoices] fix template var name clientsInfos -> clientInfos
+* [booking] fix resource status color in dayarea/weekarea
+* [booking] fix missing import for invoices
+
+## 2.3.1
+
+* [core] fix upgrade for redis invoice numbers
 
 ## 2.3.0
 

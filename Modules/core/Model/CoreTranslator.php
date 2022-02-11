@@ -919,7 +919,7 @@ class CoreTranslator {
                 return "administrateur";
             }
             return "rôle introuvable";
-        } else if ($lang == "fr") {
+        } else if ($lang == "en") {
             if ($id_status == 1) {
                 return "visitor";
             } else if ($id_status == 2) {
@@ -1416,6 +1416,14 @@ class CoreTranslator {
         }
         return "Access";
     }
+
+    public static function Space_access($lang) {
+        if ($lang == "fr") {
+            return "Accès à l'espace";
+        }
+        return "Space access";
+    }
+    
 
     public static function View_Menu($lang) {
         if ($lang == "fr") {

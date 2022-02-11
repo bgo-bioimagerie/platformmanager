@@ -181,7 +181,7 @@ class BkCalSupInfo extends Model {
         // get the entry sup entries
         $supData = $this->getSupInfoData($id_space, $entryID);
         foreach ($supData as $key => $value) {
-            $text .= "<b>" . $key . ": </b>" . $value;
+            $text .= "<strong>" . $key . ": </strong>" . $value;
         }
 
         return $text;
