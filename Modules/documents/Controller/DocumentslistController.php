@@ -141,6 +141,9 @@ class DocumentslistController extends DocumentsController {
 
         $dir = $this->request->getParameterNoException('dir');
         if(!$data['id'] && $dir) {
+            if(str_starts_with($dir, '/')){
+                $dir = ltrim($dir, '/');
+            }
             $data['title'] = $dir.'/newdocument';
         }
 
@@ -177,6 +180,9 @@ class DocumentslistController extends DocumentsController {
 
         if ($form->check()) {
             $title = $this->request->getParameter("title");
+            if(str_starts_with($title, '/')){
+                $title = ltrim($title, '/');
+            }
             $id_user = $_SESSION["id_user"];
             $idNew = $model->set($id, $id_space, $title, $id_user);
             $target_dir = "data/documents/";
