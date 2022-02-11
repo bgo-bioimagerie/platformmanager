@@ -12,7 +12,7 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/clients/Model/ClPricing.php';
 
 /**
- * Class defining the SyColorCode model
+ * Class defining the services invoice model
  *
  * @author Sylvain Prigent
  */
@@ -197,6 +197,7 @@ class ServicesInvoice extends InvoiceModel {
         $addedServicesComment = array();
         $modelPrice = new SePrice();
         $servicesToInvoice = [];
+        $serviceList = [];
         foreach ($id_projects as $id_proj) {
             $services = $modelProject->getNoInvoicesServices($id_space, $id_proj);
 
@@ -219,7 +220,6 @@ class ServicesInvoice extends InvoiceModel {
                 }
             }
 
-            $serviceList = [];
             for ($i = 0; $i < count($servicesMerged); $i++) {
                 $addedServices[] = $servicesMerged[$i]["id_service"];
                 $quantity = floatval($servicesMerged[$i]["quantity"]);
