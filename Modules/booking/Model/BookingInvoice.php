@@ -158,7 +158,6 @@ class BookingInvoice extends InvoiceModel {
                 }
             }
 
-
             // get all packages
             $userPackages = array();
             foreach ($packagesPrices[$res["id"]] as $p) {
@@ -281,7 +280,7 @@ class BookingInvoice extends InvoiceModel {
                         $resourceCount["label"] = $res["name"] . " " . BookingTranslator::Day($lang);
                         $resourceCount["quantity"] = $dayQte;
                         $resourceCount["unitprice"] = $timePrices[$res["id"]]["price_day"];
-                        $resourceCount["content"] .= $res["id"] . "_day=" . $resourceCount["quantity"] . "=" . $resourceCount["unitprice"] . ";";
+                        $resourceCount["content"] = $res["id"] . "_day=" . $resourceCount["quantity"] . "=" . $resourceCount["unitprice"] . ";";
                         $total_ht += floatval($dayQte) * floatval($timePrices[$res["id"]]["price_day"]);
                         $content["count"][] = $resourceCount;
                     }
@@ -290,7 +289,7 @@ class BookingInvoice extends InvoiceModel {
                         $resourceCount["label"] = $res["name"] . " " . BookingTranslator::night($lang);
                         $resourceCount["quantity"] = $nightQte;
                         $resourceCount["unitprice"] = $timePrices[$res["id"]]["price_night"];
-                        $resourceCount["content"] .= $res["id"] . "_night=" . $resourceCount["quantity"] . "=" . $resourceCount["unitprice"] . ";";
+                        $resourceCount["content"] = $res["id"] . "_night=" . $resourceCount["quantity"] . "=" . $resourceCount["unitprice"] . ";";
                         $total_ht += floatval($nightQte) * floatval($timePrices[$res["id"]]["price_night"]);
                         $content["count"][] = $resourceCount;
                     }
@@ -299,7 +298,7 @@ class BookingInvoice extends InvoiceModel {
                         $resourceCount["label"] = $res["name"] . " " . BookingTranslator::WE($lang);
                         $resourceCount["quantity"] = $weQte;
                         $resourceCount["unitprice"] = $timePrices[$res["id"]]["price_we"];
-                        $resourceCount["content"] .= $res["id"] . "_we=" . $resourceCount["quantity"] . "=" . $resourceCount["unitprice"] . ";";
+                        $resourceCount["content"] = $res["id"] . "_we=" . $resourceCount["quantity"] . "=" . $resourceCount["unitprice"] . ";";
                         $total_ht += floatval($weQte) * floatval($timePrices[$res["id"]]["price_we"]);
                         $content["count"][] = $resourceCount;
                     }
