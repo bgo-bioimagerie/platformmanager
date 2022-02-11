@@ -27,7 +27,6 @@ class DocumentslistController extends DocumentsController {
      */
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
-        //$userSpaceStatus = $this->getUserSpaceStatus($id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -75,9 +74,7 @@ class DocumentslistController extends DocumentsController {
             $data = $modelDoc->getPublicDocs($id_space);
         }
 
-        //$modelUser = new CoreUser();
         for ($i = 0; $i < count($data); $i++) {
-            //$data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["id_user"]);
             $data[$i]["lastmodified"] = CoreTranslator::dateFromEn($data[$i]["date_modified"], $lang);
             $visibility = 'Private';
             switch ($data[$i]['visibility']) {
@@ -124,7 +121,10 @@ class DocumentslistController extends DocumentsController {
             "id_space" => $id_space,
             "lang" => $lang, 
             "tableHtml" => $tableView, 
-            "userSpaceStatus" => $this->role));
+            "userSpaceStatus" => $this->role,
+            "dir" => $this->request->getParameterNoException("dir"),
+            "data" => ["documents" => $data]
+        ));
     }
 
     public function editAction($id_space, $id) {
@@ -138,6 +138,11 @@ class DocumentslistController extends DocumentsController {
         $lang = $this->getLanguage();
         $model = new Document();
         $data = $model->get($id_space, $id);
+
+        $dir = $this->request->getParameterNoException('dir');
+        if(!$data['id'] && $dir) {
+            $data['title'] = $dir.'/newdocument';
+        }
 
         $form = new Form($this->request, "DocumentsEditAction");
         $form->setTitle(DocumentsTranslator::Edit_Document($lang));
@@ -168,7 +173,7 @@ class DocumentslistController extends DocumentsController {
 
 
         $form->setValidationButton(CoreTranslator::Save($lang), "documentsedit/" . $id_space . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "documents/" . $id_space);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "documents/" . $id_space. '?dir='.$dir);
 
         if ($form->check()) {
             $title = $this->request->getParameter("title");
