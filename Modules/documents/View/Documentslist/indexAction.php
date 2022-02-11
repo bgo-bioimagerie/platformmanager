@@ -19,9 +19,9 @@
             <table style="background-color: white" aria-label="doc list" class="table table-striped">
                 <thead><tr>
                     <th scope="col" aria-label="folder or file"></th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Last modified</th>
-                    <th scope="col">Owner</th>
+                    <th scope="col"><?php echo DocumentsTranslator::Title($lang)?></th>
+                    <th scope="col"><?php echo DocumentsTranslator::LastModified($lang)?></th>
+                    <th scope="col"><?php echo DocumentsTranslator::Owner($lang)?></th>
                     <th scope="col" aria-label="actions"></th>
                 </tr></thead>
                 <tbody>
@@ -48,11 +48,26 @@
             </table>
             <div id="search">
                 <input aria-label="search doc input" class="form-control" v-model="search" placeholder="search" @input="findDocs"/>
-                <table style="background-color: white" aria-label="search results" class="table table-striped">
+                <table v-if="matches && matches.length>0" style="background-color: white" aria-label="search results" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col" aria-label="download"></th>
+                            <th scope="col"><?php echo DocumentsTranslator::Title($lang)?></th>
+                            <th scope="col" aria-label="actions"></th>
+                        </tr>
+                    </thead>
                     <tbody>
-                    <tr v-for="match in matches">
-                        <td>{{match.title}}</td>
-                    </tr>
+                        <tr v-for="match in matches">
+                            <td><div aria-label="download" v-on:click="download(match.id)"><span class="glyphicon glyphicon-save-file"></span></div></td>
+                            <td>{{match.title}}</td>
+                            <td><?php if($context['role'] > CoreSpace::$USER) { ?>
+                                <div>
+                                    <a v-bind:href="'documentsedit/<?php echo $id_space ?>/' + match.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
+                                    <button v-on:click="confirmDelete(match)" type="button" class="btn btn-sm btn-danger">Delete</button></a>
+                                </div>
+                                <?php } ?>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
