@@ -234,6 +234,7 @@ class ServicesInvoice extends InvoiceModel {
                     'unitprice' => $price,
                     'comment' => $servicesMerged[$i]["comment"]
                 ];
+
             }
         }
 
@@ -278,7 +279,7 @@ class ServicesInvoice extends InvoiceModel {
         $projectServices = $projectsContent['services'];
         foreach($projectServices as $projectService){
             $name = $ssm->getName($id_space, $projectService['id']);
-            $content["count"][] = array("label" => $name, "quantity" => $projectService['quantity'], "unitprice" => $projectService['unit_price']);
+            $content["count"][] = array("label" => $name, "quantity" => $projectService['quantity'], "unitprice" => $projectService['unitprice']);
             $modelProject->setServiceInvoice($id_space, $projectService["id"], $id_invoice);
         }
 
