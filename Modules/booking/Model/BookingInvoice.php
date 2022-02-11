@@ -9,6 +9,7 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/booking/Model/BkCalQuantities.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/booking/Model/BookinginvoiceTranslator.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkOwnerPrice.php';
