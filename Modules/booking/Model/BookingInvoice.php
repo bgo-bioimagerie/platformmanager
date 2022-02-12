@@ -417,6 +417,7 @@ class BookingInvoice extends InvoiceModel {
                 $tarif_we,
                 $we_char
             );
+            $we_array = [6, 7];
         }
 
         $timePrices = array();
@@ -509,12 +510,12 @@ class BookingInvoice extends InvoiceModel {
             $timeStep = $searchDate_start;
             while ($timeStep <= $searchDate_end) {
                 // test if pricing is we
-                if (in_array(date("N", $timeStep), $we_array) && in_array(date("N", $timeStep + $gap), $we_array)) {  // we pricing
+                if ($timePrices['tarif_we']  && in_array(date("N", $timeStep), $we_array) && in_array(date("N", $timeStep + $gap), $we_array)) {  // we pricing
                     $nb_hours_we += $gap;
                 } else {
                     $H = date("H", $timeStep);
 
-                    if ($H >= $night_end && $H < $night_start) { // price day
+                    if (!$timePrices['tarif_night'] || ($H >= $night_end && $H < $night_start)) { // price day
                         $nb_hours_day += $gap;
                     } else { // price night
                         $nb_hours_night += $gap;
