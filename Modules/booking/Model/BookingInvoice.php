@@ -83,7 +83,9 @@ class BookingInvoice extends InvoiceModel {
                         Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
                         throw new PfmParamException("No time pricing defined!");
                     }
-                    $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
+                    $slots = $modelCal->computeDuration($id_space, $reservation);
+                    $resaDayNightWe = $slots['hours'];
+                    // $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
                     $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
                     $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
