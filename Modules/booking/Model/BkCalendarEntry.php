@@ -910,6 +910,8 @@ class BkCalendarEntry extends Model {
         $night_begin = $pricingInfo['night_start'];
         $night_end = $pricingInfo['night_end'];
         $we_array = explode(",", $pricingInfo['choice_we']);
+        $night_rate = $pricingInfo['tarif_night'] == 1 ? true : false;
+        $we_rate = $pricingInfo['tarif_we'] == 1 ? true : false;
         
         $searchDate_start = $start_time;
         $searchDate_end = $end_time;
@@ -951,7 +953,7 @@ class BkCalendarEntry extends Model {
                     $gapDuration += $gap;
                 
                 $kind = 'closed';
-            } else if($we_array[date('N', $timeStep)-1] == 1) {
+            } else if($we_rate && $we_array[date('N', $timeStep)-1] == 1) {
                 // weekend
                 if($kind && $kind != "we") {
                     $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
@@ -961,7 +963,7 @@ class BkCalendarEntry extends Model {
                     $gapDuration += $gap;
                 
                 $kind = 'we';
-            } else if(date('G', $timeStep) < $night_end || date('G', $timeStep) >= $night_begin) {
+            } else if($night_rate && (date('G', $timeStep) < $night_end || date('G', $timeStep) >= $night_begin)) {
                 if($kind && $kind != "night") {
                     $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
                     $gapDuration = 0;
