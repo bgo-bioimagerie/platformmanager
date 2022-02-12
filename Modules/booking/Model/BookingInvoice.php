@@ -126,6 +126,7 @@ class BookingInvoice extends InvoiceModel {
 
         $modelClient = new ClClient();
         $LABpricingid = $modelClient->getPricingID($id_space, $id_resp);
+        Configuration::getLogger()->debug('[invoice][booking] get pricing for client', ['client' => $id_resp, 'id' => $LABpricingid]);
         $modelResouces = new ResourceInfo();
         $resources = $modelResouces->getBySpace($id_space);
 
@@ -133,7 +134,9 @@ class BookingInvoice extends InvoiceModel {
         // old: $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid, $id_resp, $id_space);
         // old: $packagesPrices = $this->getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
         $timePrices = $this->getUnitTimePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
+        Configuration::getLogger()->debug('[invoice][booking] time prices', ['client' => $id_resp, 'id' => $LABpricingid, 'prices' => $timePrices]);
         $packagesPrices = $this->getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
+        Configuration::getLogger()->debug('[invoice][booking] packages prices', ['client' => $id_resp, 'id' => $LABpricingid, 'prices' => $timePrices]);
 
         // get all the reservations for each resources
         $content = ['count' => []];
@@ -190,6 +193,7 @@ class BookingInvoice extends InvoiceModel {
                     }
 
                     $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
+                    Configuration::getLogger()->debug('[invoice][booking] night and week ends', ['resource' => $res['id'], 'count' => $resaDayNightWe]);
 
                     if ($isInvoicingUnit) {
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
