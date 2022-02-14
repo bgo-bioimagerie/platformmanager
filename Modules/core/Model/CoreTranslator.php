@@ -2095,5 +2095,12 @@ class CoreTranslator {
         }
         return "Use with caution!! User removal will not delete user related data. Use only for duplicate accounts or special cases";
     }
+
+    public static function EditionAccess($lang){
+        if($lang == "fr") {
+            return "Droits d'édition";
+        }
+        return "Edition access";
+    }
     
 }
