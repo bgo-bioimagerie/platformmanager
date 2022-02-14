@@ -40,6 +40,7 @@
                             <div v-if="!doc.folder">
                                 <a v-bind:href="'documentsedit/<?php echo $id_space ?>/' + doc.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
                                 <button v-on:click="confirmDelete(doc)" type="button" class="btn btn-sm btn-danger">Delete</button></a>
+                                <button v-on:click="copyLink(doc)" type="button" class="btn btn-sm">Copy link</button>
                             </div>
                             <?php } ?>
                         </td>
@@ -106,6 +107,10 @@ let app = new Vue({
             this.levels(this.level, this.path);
     },
     methods: {
+        copyLink(doc) {
+            let link = `<?php echo Configuration::get('public_url') ?>/documentsopen/<?php echo $id_space?>/${doc.id}`;
+            navigator.clipboard.writeText(link);
+        },
         findDocs() {
             if(this.search.length === 0) {
                 this.matches = [];
