@@ -79,7 +79,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelResource = new ResourceInfo();
         $modelScheduling = new BkScheduling();
-        $schedul = $modelScheduling->get($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $schedul = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
 
         $minutes = 0;
         if (count($hourArray) == 2) {
