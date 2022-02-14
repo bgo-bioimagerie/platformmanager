@@ -59,22 +59,30 @@ class GlobalInvoice extends Model {
         // get invoice content
         $invoiceDataArray = array();
         $total_ht = 0;
-        foreach ($modules as $module) {
 
-            $invoiceModelFile = "Modules/" . strtolower($module) . "/Model/" . ucfirst(strtolower($module)) . "Invoice.php";
-            if (file_exists($invoiceModelFile)) {
 
-                require_once $invoiceModelFile;
-                $modelName = ucfirst(strtolower($module)) . "Invoice";
-                $model = new $modelName();
+        try {
+            foreach ($modules as $module) {
 
-                $moduleArray = array();
-                $moduleArray["module"] = $module;
-                $moduleArray["data"] = $model->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_invoice, $lang);
-                $invoiceDataArray[] = $moduleArray;
+                $invoiceModelFile = "Modules/" . strtolower($module) . "/Model/" . ucfirst(strtolower($module)) . "Invoice.php";
+                if (file_exists($invoiceModelFile)) {
 
-                $total_ht += floatval($moduleArray["data"]["total_ht"]);
+                    require_once $invoiceModelFile;
+                    $modelName = ucfirst(strtolower($module)) . "Invoice";
+                    $model = new $modelName();
+
+                    $moduleArray = array();
+                    $moduleArray["module"] = $module;
+                    $moduleArray["data"] = $model->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_invoice, $lang);
+                    $invoiceDataArray[] = $moduleArray;
+
+                    $total_ht += floatval($moduleArray["data"]["total_ht"]);
+                }
             }
+
+        } catch(Exception $e) {
+            $modelInvoice->setNumber($id_space, $id_invoice, 'error');
+            throw $e;
         }
 
         // set invoice content to the database
