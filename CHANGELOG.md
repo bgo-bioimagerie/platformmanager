@@ -2,6 +2,7 @@
 
 ## 2.4.0
 
+* [documents] add visibility controls on documents to have public, private, user/client scopes
 * [core] group users space access options on a single page
 * [core] in corespaceaccess show convention download button only if present
 * [invoices] show message if no template defined
@@ -15,6 +16,7 @@
 * [core] code cleanup #554
 * [booking] handle booking settings fields *booking scale* and *user specifies*
 * [booking] fix package display on new reservation
+* [invoice] generate invoices in background (async) and show generation status
 
 ## 2.3.2
 
@@ -23,6 +25,7 @@
 * [invoices] fix template var name clientsInfos -> clientInfos
 * [booking] fix resource status color in dayarea/weekarea
 * [booking] fix missing import for invoices
+>>>>>>> develop
 
 ## 2.3.1
 
