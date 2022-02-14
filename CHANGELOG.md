@@ -2,6 +2,7 @@
 
 ## 2.4.0
 
+* [core] group users space access options on a single page
 * [core] in corespaceaccess show convention download button only if present
 * [invoices] show message if no template defined
 * [core] add status and msg to core files
@@ -13,6 +14,7 @@
 * [users] if date_end_contract is empty, insert null in db
 * [core] code cleanup #554
 * [booking] handle booking settings fields *booking scale* and *user specifies*
+* [booking] fix package display on new reservation
 
 ## 2.3.2
 

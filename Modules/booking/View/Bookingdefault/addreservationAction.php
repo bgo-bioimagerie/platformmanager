@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-form">
+<div class="container pm-form">
 
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
@@ -29,10 +29,10 @@
     ?>
 
     <?php if ($use_packages) { ?>
-        <div>
-            <div class="checkbox col-xs-8 col-xs-offset-4">
-                <label>
-                    <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
+        <div class="col-xs-12">
+            <div class="form-check col-xs-8 col-xs-offset-4" style="margin-bottom: 10px">
+                <label class="">
+                    <input id="use_package" class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                 </label>
             </div>
 
