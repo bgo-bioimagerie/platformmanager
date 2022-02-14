@@ -79,7 +79,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $modelResource = new ResourceInfo();
         $modelScheduling = new BkScheduling();
-        $schedul = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $schedule = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
 
         $minutes = 0;
         if (count($hourArray) == 2) {
@@ -89,9 +89,9 @@ class BookingdefaultController extends BookingabstractController {
         $start_time = mktime($hourArray[0], $minutes, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $duration = 0;
         $units = 'h';
-            switch ($schedul['booking_time_scale']) {
+            switch ($schedule['booking_time_scale']) {
                 case 1:
-                    $end_time = $start_time + $schedul['size_bloc_resa'];
+                    $end_time = $start_time + $schedule['size_bloc_resa'];
                     $duration = ($end_time - $start_time) / 60;
                     $units = 'm';
                     break;
@@ -101,8 +101,8 @@ class BookingdefaultController extends BookingabstractController {
                     $units = 'h';
                     break;
                 case 3:
-                    $start_time = mktime($schedul['day_begin'], 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
-                    $end_time = mktime($schedul['day_end'], 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
+                    $start_time = mktime($schedule['day_begin'], 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
+                    $end_time = mktime($schedule['day_end'], 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
                     $duration = 1;
                     $units = 'd';
                     break;
@@ -111,7 +111,7 @@ class BookingdefaultController extends BookingabstractController {
                     $duration = ($end_time - $start_time) / 60;
                     break;
             }
-        if($schedul['resa_time_setting'] == 2) {
+        if($schedule['resa_time_setting'] == 2) {
             $duration=0;
         }
 
@@ -229,13 +229,12 @@ class BookingdefaultController extends BookingabstractController {
             throw new PfmAuthException('access denied for this resource', 403);
         }
 
+        $modelScheduling = new BkScheduling();
+        $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
+
 
         if($all_day_long == 1){
-            $modelResource = new ResourceInfo();
-            $modelScheduling = new BkScheduling();
-            $schedul = $modelScheduling->get($id_space ,$modelResource->getAreaID($id_space, $id_resource));
-            $start_time = mktime($schedul["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
-
+            $start_time = mktime($schedule["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
         }
         else{
             $hour_startH = $this->request->getParameter("hour_startH");
@@ -277,10 +276,7 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         if($all_day_long == 1){
-            $modelResource = new ResourceInfo();
-            $modelScheduling = new BkScheduling();
-            $schedul = $modelScheduling->get($id_space, $modelResource->getAreaID($id_space ,$id_resource));
-            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
+            $end_time = mktime($schedule["day_end"]-1, 59, 59, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
         else{
             $modelScheduling = new BkScheduling();
@@ -289,8 +285,7 @@ class BookingdefaultController extends BookingabstractController {
             $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
 
-        $modelScheduling = new BkScheduling();
-        $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
+        
         $bk_start_start_time = mktime($schedule["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
         $bk_start_end_time = mktime($schedule["day_end"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
 
