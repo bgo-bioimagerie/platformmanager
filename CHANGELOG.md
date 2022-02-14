@@ -14,6 +14,7 @@
 * [booking] fix default color code
 * [users] if date_end_contract is empty, insert null in db
 * [core] code cleanup #554
+* [booking] handle booking settings fields *booking scale* and *user specifies*
 * [booking] fix package display on new reservation
 * [invoice] generate invoices in background (async) and show generation status
 
