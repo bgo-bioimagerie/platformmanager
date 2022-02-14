@@ -2,7 +2,7 @@
     
     <h4 id="pm-help-h4">Status des responsables</h4>
     <p id="pm-help-p">
-        <b>Des responsables peuvent être rattaché à une resources</b>. Suivant l'organisation
+        <strong>Des responsables peuvent être rattaché à une resources</strong>. Suivant l'organisation
         de la plate-forme, le responsables peuvent avoir des status différents 
         (responsables scientifiques, responsables techniques...)
     </p>

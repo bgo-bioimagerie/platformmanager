@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-form">
+<div class="container pm-form">
 
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
@@ -29,10 +29,10 @@
     ?>
 
     <?php if ($use_packages) { ?>
-        <div>
-            <div class="checkbox col-xs-8 col-xs-offset-4">
-                <label>
-                    <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
+        <div class="col-xs-12">
+            <div class="form-check col-xs-8 col-xs-offset-4" style="margin-bottom: 10px">
+                <label class="">
+                    <input id="use_package" class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                 </label>
             </div>
 
@@ -117,7 +117,17 @@
         }
     }
     ?>
-    <button type="button" class="btn btn-default" onclick="location.href = 'booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
+    <?php
+        $q = '?';
+        $redirPage = '';
+        if($from) {
+            $redirInfo = explode(':', $from);
+            $redirPage = $redirInfo[0];
+            $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]";
+        }
+        $url = "booking$redirPage/$id_space?$q"
+    ?>
+    <button type="button" class="btn btn-default" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
 </div>
 
 <?php echo $form->htmlClose() ?>
@@ -145,13 +155,9 @@ if ($packageChecked > 0) {
         let use_package = document.getElementById('use_package');
         if (use_package) {
             document.getElementById('use_package').onchange = function () {
-                let php_var = "<?php echo $isPackageCheched; ?>";
-                if (php_var === "1") {
-                    let p_div = document.getElementById('package_div');
-                    if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
-                } else {
-                    document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
-                }
+                let p_div = document.getElementById('package_div');
+                if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
+                document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
             }
         }
         ;

@@ -54,7 +54,7 @@
             <h1> <?php echo $pageTitle ?></h1>
         </div>
         <div class="col-md-6 text-right" style="margin-top:12px;">
-            <img src="<?php echo $pageLogo ?>" height="50px" />
+            <img alt="logo" src="<?php echo $pageLogo ?>" height="50px" />
         </div>
     </div>
     <div class="page-header">

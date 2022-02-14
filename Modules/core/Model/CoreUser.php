@@ -365,6 +365,9 @@ class CoreUser extends Model {
         $apikey = bin2hex($bytes);
 
         $datecreated = date("Y-m-d", time());
+        if($date_end_contract == '') {
+            $date_end_contract = null;
+        }
 
         $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated, $apikey));
@@ -372,6 +375,9 @@ class CoreUser extends Model {
     }
 
     public function edit($id, $name, $firstname, $email, $status_id, $date_end_contract, $is_active) {
+        if($date_end_contract == '') {
+            $date_end_contract = null;
+        }
         $sql = "UPDATE core_users SET name=?, firstname=?, email=?, status_id=?, date_end_contract=?, is_active=? WHERE id=?";
         $this->runRequest($sql, array($name, $firstname, $email, $status_id, $date_end_contract, $is_active, $id));
     }

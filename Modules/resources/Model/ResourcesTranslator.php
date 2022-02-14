@@ -402,4 +402,11 @@ class ResourcesTranslator {
         return "Required area is not part of this space";
     }
 
+    public static function AuthorisationAdded($lang = "") {
+        if ($lang == "fr") {
+            return "Votre autorisation a été ajoutée avec succès";
+        }
+        return "Authorization has been successfully added";
+    }
+
 }
