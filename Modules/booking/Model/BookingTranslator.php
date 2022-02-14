@@ -1014,9 +1014,9 @@ class BookingTranslator {
 
     public static function Invoice_Responsible($lang = "") {
         if ($lang == "fr") {
-            return "Facturer un responsable";
+            return "Facturer un client";
         }
-        return "Invoice a person in charge";
+        return "Invoice a client";
     }
 
     public static function Details($lang = "") {

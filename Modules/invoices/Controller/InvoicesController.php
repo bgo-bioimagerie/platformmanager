@@ -123,4 +123,5 @@ class InvoicesController extends CoresecureController {
         
         return $html;
     }
+
 }

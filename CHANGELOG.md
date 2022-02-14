@@ -14,6 +14,7 @@
 * [users] if date_end_contract is empty, insert null in db
 * [core] code cleanup #554
 * [booking] fix package display on new reservation
+* [invoice] generate invoices in background (async) and show generation status
 
 ## 2.3.2
 
