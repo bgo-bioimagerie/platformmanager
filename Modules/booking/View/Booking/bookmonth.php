@@ -24,7 +24,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
         'id_user' => $id_user
     ];
     $from = ["month", $date, $bk_id_resource, $bk_id_area, $id_user];
-    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo, $nav, $from);
+    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo, $nav, $from, $context['role']);
     ?>
     </div>
 </div>

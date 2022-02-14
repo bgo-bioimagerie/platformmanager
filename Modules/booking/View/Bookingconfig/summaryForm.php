@@ -45,18 +45,22 @@
             <div class="col-xs-12">
                 <div class="col-xs-3"><label class="control-label">Recipient name:</label></div>
                 <div class="col-xs-2"><select class="form-control" name="tag_visible_rname">
-                        <OPTION value="1" <?php if ($tag_visible == 1) {
-            echo "selected=\"selected\"";
-        } ?>> Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_visible == 0) {
-            echo "selected=\"selected\"";
-        } ?>> Hidden </OPTION>
+                    <OPTION value="1" <?php if ($tag_visible == 1) {
+                        echo "selected=\"selected\"";
+                    } ?>> Visible </OPTION>
+                    <OPTION value="0" <?php if ($tag_visible == 0) {
+                        echo "selected=\"selected\"";
+                    } ?>> Hidden </OPTION>
+                    <OPTION value="2" <?php if ($tag_visible == 2) {
+                        echo "selected=\"selected\"";
+                    } ?>> Managers </OPTION>
+
                     </select></div>
                 <div class="col-xs-3"><select class="form-control" name="tag_title_visible_rname">
-                        <OPTION value="1" <?php if ($tag_title_visible == 1) {
-            echo "selected=\"selected\"";
-        } ?>> Tag Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_title_visible == 0) {
+                    <OPTION value="1" <?php if ($tag_title_visible == 1) {
+                        echo "selected=\"selected\"";
+                    } ?>> Tag Visible </OPTION>
+                    <OPTION value="0" <?php if ($tag_title_visible == 0) {
                         echo "selected=\"selected\"";
                     } ?>> Tag Hidden </OPTION>
                     </select></div>
@@ -74,15 +78,15 @@
                             ?>
                     </select></div>
                 <div class="col-xs-2"><select class="form-control" name="tag_font_rname">
-                        <OPTION value="normal" <?php if ($tag_font == "normal") {
-        echo "selected=\"selected\"";
-    } ?>> normal </OPTION>
-                        <OPTION value="bold" <?php if ($tag_font == "bold") {
-            echo "selected=\"selected\"";
-        } ?>> bold </OPTION>
-                        <OPTION value="italic" <?php if ($tag_font == "italic") {
-            echo "selected=\"selected\"";
-        } ?>> italic </OPTION>
+                    <OPTION value="normal" <?php if ($tag_font == "normal") {
+                        echo "selected=\"selected\"";
+                    } ?>> normal </OPTION>
+                    <OPTION value="bold" <?php if ($tag_font == "bold") {
+                            echo "selected=\"selected\"";
+                        } ?>> bold </OPTION>
+                    <OPTION value="italic" <?php if ($tag_font == "italic") {
+                            echo "selected=\"selected\"";
+                        } ?>> italic </OPTION>
                     </select></div>
             </div> 
 
@@ -103,18 +107,21 @@
             <div class="col-xs-12">
                 <div class="col-xs-3"><label class="control-label">Recipient phone:</label></div>
                 <div class="col-xs-2"><select class="form-control" name="tag_visible_rphone">
-                        <OPTION value="1" <?php if ($tag_visible == 1) {
+                    <OPTION value="1" <?php if ($tag_visible == 1) {
                         echo "selected=\"selected\"";
                     } ?>> Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_visible == 0) {
+                    <OPTION value="0" <?php if ($tag_visible == 0) {
                         echo "selected=\"selected\"";
-                    } ?>> Hiden </OPTION>
+                    } ?>> Hidden </OPTION>
+                    <OPTION value="2" <?php if ($tag_visible == 2) {
+                        echo "selected=\"selected\"";
+                    } ?>> Managers </OPTION>
                     </select></div>
                 <div class="col-xs-3"><select class="form-control" name="tag_title_visible_rphone">
-                        <OPTION value="1" <?php if ($tag_title_visible == 1) {
+                    <OPTION value="1" <?php if ($tag_title_visible == 1) {
                         echo "selected=\"selected\"";
                     } ?>> Tag Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_title_visible == 0) {
+                    <OPTION value="0" <?php if ($tag_title_visible == 0) {
                         echo "selected=\"selected\"";
                     } ?>> Tag Hiden </OPTION>
                     </select></div>
@@ -126,19 +133,19 @@
                     $selected = "selected=\"selected\"";
                 }
                 ?>
-                            <OPTION value="<?php echo $j + 1 ?>" <?php echo $selected ?>> position <?php echo $j + 1 ?> </OPTION>
+                <OPTION value="<?php echo $j + 1 ?>" <?php echo $selected ?>> position <?php echo $j + 1 ?> </OPTION>
         <?php
     }
     ?>
                     </select></div>
                 <div class="col-xs-2"><select class="form-control" name="tag_font_rphone">
-                        <OPTION value="normal" <?php if ($tag_font == "normal") {
-        echo "selected=\"selected\"";
-    } ?>> normal </OPTION>
-                        <OPTION value="bold" <?php if ($tag_font == "bold") {
-        echo "selected=\"selected\"";
-    } ?>> bold </OPTION>
-                        <OPTION value="italic" <?php if ($tag_font == "italic") {
+                    <OPTION value="normal" <?php if ($tag_font == "normal") {
+                        echo "selected=\"selected\"";
+                    } ?>> normal </OPTION>
+                    <OPTION value="bold" <?php if ($tag_font == "bold") {
+                        echo "selected=\"selected\"";
+                    } ?>> bold </OPTION>
+                    <OPTION value="italic" <?php if ($tag_font == "italic") {
                         echo "selected=\"selected\"";
                     } ?>> italic </OPTION>
                     </select></div>
@@ -162,20 +169,23 @@
             <div class="col-xs-12">
                 <div class="col-xs-3"><label class="control-label">Short description:</label></div>
                 <div class="col-xs-2"><select class="form-control" name="tag_visible_sdesc">
-                        <OPTION value="1" <?php if ($tag_visible == 1) {
-                            echo "selected=\"selected\"";
-                        } ?>> Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_visible == 0) {
-            echo "selected=\"selected\"";
-        } ?>> Hiden </OPTION>
+                    <OPTION value="1" <?php if ($tag_visible == 1) {
+                        echo "selected=\"selected\"";
+                    } ?>> Visible </OPTION>
+                    <OPTION value="0" <?php if ($tag_visible == 0) {
+                        echo "selected=\"selected\"";
+                    } ?>> Hidden </OPTION>
+                    <OPTION value="2" <?php if ($tag_visible == 2) {
+                        echo "selected=\"selected\"";
+                    } ?>> Managers </OPTION>
                     </select></div>
                 <div class="col-xs-3"><select class="form-control" name="tag_title_visible_sdesc">
-                        <OPTION value="1" <?php if ($tag_title_visible == 1) {
-            echo "selected=\"selected\"";
-        } ?>> Tag Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_title_visible == 0) {
-            echo "selected=\"selected\"";
-        } ?>> Tag Hiden </OPTION>
+                    <OPTION value="1" <?php if ($tag_title_visible == 1) {
+                        echo "selected=\"selected\"";
+                    } ?>> Tag Visible </OPTION>
+                    <OPTION value="0" <?php if ($tag_title_visible == 0) {
+                        echo "selected=\"selected\"";
+                    } ?>> Tag Hiden </OPTION>
                     </select></div>
     <div class="col-xs-2"><select class="form-control" name="tag_position_sdesc">
     <?php
@@ -220,20 +230,23 @@
             <div class="col-xs-12">
                 <div class="col-xs-3"><label class="control-label">Description:</label></div>
                 <div class="col-xs-2"><select class="form-control" name="tag_visible_desc">
-                        <OPTION value="1" <?php if ($tag_visible == 1) {
-            echo "selected=\"selected\"";
-        } ?>> Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_visible == 0) {
-            echo "selected=\"selected\"";
-        } ?>> Hiden </OPTION>
+                    <OPTION value="1" <?php if ($tag_visible == 1) {
+                        echo "selected=\"selected\"";
+                    } ?>> Visible </OPTION>
+                    <OPTION value="0" <?php if ($tag_visible == 0) {
+                        echo "selected=\"selected\"";
+                    } ?>> Hiden </OPTION>
+                    <OPTION value="2" <?php if ($tag_visible == 2) {
+                        echo "selected=\"selected\"";
+                    } ?>> Managers </OPTION>
                     </select></div>
                 <div class="col-xs-3"><select class="form-control" name="tag_title_visible_desc">
-                        <OPTION value="1" <?php if ($tag_title_visible == 1) {
-            echo "selected=\"selected\"";
-        } ?>> Tag Visible </OPTION>
-                        <OPTION value="0" <?php if ($tag_title_visible == 0) {
-            echo "selected=\"selected\"";
-        } ?>> Tag Hiden </OPTION>
+                    <OPTION value="1" <?php if ($tag_title_visible == 1) {
+                        echo "selected=\"selected\"";
+                    } ?>> Tag Visible </OPTION>
+                    <OPTION value="0" <?php if ($tag_title_visible == 0) {
+                        echo "selected=\"selected\"";
+                    } ?>> Tag Hiden </OPTION>
                     </select></div>
                 <div class="col-xs-2"><select class="form-control" name="tag_position_desc">
     <?php

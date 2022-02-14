@@ -10,6 +10,7 @@
 * [helpdesk] on file upload (manual), create dir if not exists
 * [core] fix default sort order in tables and remove download button if no url
 * [core] fix typos/spelling
+* [booking] on calendar, showuser infos (name, phone,...) options: Hidden/Visible/Managers only Closes #509
 * [booking] manage redirect after reservation edit to page were booking was done
 * [booking] fix default color code
 * [users] if date_end_contract is empty, insert null in db
@@ -25,7 +26,6 @@
 * [invoices] fix template var name clientsInfos -> clientInfos
 * [booking] fix resource status color in dayarea/weekarea
 * [booking] fix missing import for invoices
->>>>>>> develop
 
 ## 2.3.1
 

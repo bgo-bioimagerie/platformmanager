@@ -252,7 +252,7 @@ else if($size_bloc_resa == 3600){
 				
 				<?php
 				$from = ["week", $date, $bk_id_resource, $bk_id_area, $id_user];
-				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $bk_id_resource, $from);
+				bookday($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $bk_id_resource, $from, $context['role']);
 				?>
 				
 				</div>
