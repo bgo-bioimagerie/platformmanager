@@ -85,7 +85,7 @@ class BookingInvoice extends InvoiceModel {
         $controller = "Bookinginvoice";
         $date_generated = date("Y-m-d", time());
         $id_resp = intval($id_client);
-        $invoice_id = $modelInvoice->addInvoice($module, $controller, $id_space, $number, $date_generated, $id_resp, 0, $beginPeriod, $endPeriod);
+        $invoice_id = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', $date_generated, $id_resp, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setTitle($id_space, $invoice_id, BookingTranslator::MAD($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
         $modelInvoice->setEditedBy($id_space, $invoice_id, $id_user);
         $contentAll = $this->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $invoice_id, $lang);
@@ -97,6 +97,7 @@ class BookingInvoice extends InvoiceModel {
         $details = BookinginvoiceTranslator::Details($lang) . "=" . "bookinginvoicedetail/" . $id_space . "/" . $invoice_id;
         $modelInvoiceItem->setItem($id_space, 0, $invoice_id, $module, $controller, $content, $details, $contentAll['total_ht']);
         $modelInvoice->setTotal($id_space, $invoice_id, $contentAll['total_ht']);
+        $modelInvoice->setNumber($id_space, $invoice_id, $number);
         return true;
     }
 
@@ -249,7 +250,7 @@ class BookingInvoice extends InvoiceModel {
                     $resourceCount["label"] = $res["name"] . " " . BookingTranslator::night($lang);
                     $resourceCount["quantity"] = $userTime["nb_hours_night"];
                     $resourceCount["unitprice"] = $timePrices[$res["id"]]["price_night"];
-                    $resourceCount["content"] = $res["id"] . "_night=" . $resourceCount['quantity'] . "=" . $resourceCount['untiprice'] . ";";
+                    $resourceCount["content"] = $res["id"] . "_night=" . $resourceCount['quantity'] . "=" . $resourceCount['unitprice'] . ";";
 
                     $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                     $content["count"][] = $resourceCount;

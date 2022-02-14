@@ -97,6 +97,11 @@ class InInvoice extends Model {
         $this->runRequest($sql, array($total, $id_invoice, $id_space));
     }
 
+    public function setNumber($id_space, $id_invoice, $number) {
+        $sql = "UPDATE in_invoice SET number=? WHERE id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($number, $id_invoice, $id_space));
+    }
+
     public function setDatePaid($id_space, $id, $date) {
         //echo "set date = " . $date . "<br/>";
         //echo "where id = " . $id . "<br/>";

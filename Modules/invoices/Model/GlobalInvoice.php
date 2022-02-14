@@ -52,7 +52,7 @@ class GlobalInvoice extends Model {
         // create invoice in the database
         $modelInvoice = new InInvoice();
         $invoiceNumber = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, $invoiceNumber, date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
+        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
         $modelInvoice->setTitle($id_space, $id_invoice, InvoicesTranslator::Invoice($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
@@ -79,6 +79,7 @@ class GlobalInvoice extends Model {
 
         // set invoice content to the database
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+        $modelInvoice->setNumber($id_space, $id_invoice, $invoiceNumber);
         $modelInvoiceItem = new InInvoiceItem();
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
 

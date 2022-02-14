@@ -60,7 +60,7 @@ class ServicesInvoice extends InvoiceModel {
         $number = $modelInvoice->getNextNumber($id_space);
         $module = "services";
         $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
         $modelInvoice->setTitle($id_space, $id_invoice, ServicesTranslator::services($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
@@ -70,6 +70,7 @@ class ServicesInvoice extends InvoiceModel {
         $orders = $contentAll['orders'];
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+        $modelInvoice->setNumber($id_space, $id_invoice, $number);
 
         foreach ($orders as $order) {
             $modelOrder->setEntryCloded($id_space, $order["id"]);
@@ -161,7 +162,7 @@ class ServicesInvoice extends InvoiceModel {
         }
 
         $number = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
         foreach($contentAll['services'] as $s){
             $modelProject->setServiceInvoice($id_space, $s['id'], $id_invoice);
@@ -181,6 +182,7 @@ class ServicesInvoice extends InvoiceModel {
         $modelInvoiceItem->setItem($id_space ,0, $id_invoice, $module, $controller, $content, $details, $total_ht);
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
         $modelInvoice->setTitle($id_space, $id_invoice, $title);
+        $modelInvoice->setNumber($id_space, $id_invoice, $number);
         return true;
     }
 
