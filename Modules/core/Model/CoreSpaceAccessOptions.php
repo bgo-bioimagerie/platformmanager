@@ -32,14 +32,14 @@ class CoreSpaceAccessOptions extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
-    public function set($id_space, $toolname, $module, $url, $inactive=0) {
+    public function set($id_space, $toolname, $module, $url, $deactivate=0) {
         if (!$this->exists($id_space, $toolname)){
             $sql = "INSERT INTO core_space_access_options (id_space, toolname, module, url) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id_space, $toolname, $module, $url));
         }
         else{
             $sql = "UPDATE core_space_access_options SET module=?, url=?, deleted=? WHERE id_space=? AND toolname=?";
-            $this->runRequest($sql, array($module, $url, $inactive, $id_space, $toolname));
+            $this->runRequest($sql, array($module, $url, $deactivate, $id_space, $toolname));
         }
     }
     
