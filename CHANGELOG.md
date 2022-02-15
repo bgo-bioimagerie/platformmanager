@@ -18,6 +18,7 @@
 * [booking] handle booking settings fields *booking scale* and *user specifies*
 * [booking] fix package display on new reservation
 * [invoice] generate invoices in background (async) and show generation status
+* [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
 
 ## 2.3.2
 
