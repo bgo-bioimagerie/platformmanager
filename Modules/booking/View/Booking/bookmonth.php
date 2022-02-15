@@ -27,7 +27,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
     ];
     echo drawNavigation('month', $id_space, $date, null, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $lang);
 
-    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo, $nav, $from);
+    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo, $nav, $from, $context['role']);
     ?>
     </div>
 </div>

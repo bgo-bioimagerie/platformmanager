@@ -20,8 +20,6 @@ include 'Modules/booking/View/Booking/caldisplay.php';
 		
 ?>
 
-
-
 <div class="row">
 	<div class="col-sm-12">
 	<?php include "Modules/booking/View/colorcodenavbar.php"; ?>

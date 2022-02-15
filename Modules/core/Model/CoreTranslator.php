@@ -1417,6 +1417,14 @@ class CoreTranslator {
         return "Access";
     }
 
+    public static function Space_access($lang) {
+        if ($lang == "fr") {
+            return "Accès à l'espace";
+        }
+        return "Space access";
+    }
+    
+
     public static function View_Menu($lang) {
         if ($lang == "fr") {
             return "Menu espace";
@@ -2086,6 +2094,13 @@ class CoreTranslator {
             return "À utiliser avec précautions !!! La suppression d'utilisateurs ne supprime pas les données associées. N'utiliser qu'en cas de doublon ou de cas exotiques.";
         }
         return "Use with caution!! User removal will not delete user related data. Use only for duplicate accounts or special cases";
+    }
+
+    public static function EditionAccess($lang){
+        if($lang == "fr") {
+            return "Droits d'édition";
+        }
+        return "Edition access";
     }
     
 }

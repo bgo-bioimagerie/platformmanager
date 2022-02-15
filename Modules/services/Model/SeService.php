@@ -44,7 +44,7 @@ class SeService extends Model {
     public function getItemType($id_space, $id){
         $sql = "SELECT type_id FROM se_services WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $data[0];
+        return $data? $data[0]: null;
     }
     
     public function setQuantity($id_space, $id, $quantity){

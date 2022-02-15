@@ -579,6 +579,9 @@ class BookingController extends BookingabstractController {
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
+
+        Configuration::getLogger()->error('?????????', ['c' => $calEntries]);
+
         // view
         return $this->render(array(
             'lang' => $lang,
