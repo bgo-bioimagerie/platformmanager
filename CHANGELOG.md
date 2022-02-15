@@ -19,6 +19,7 @@
 * [booking] fix package display on new reservation
 * [invoice] generate invoices in background (async) and show generation status
 * [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
+* [booking] graphics and code refactoring of calendar
 
 ## 2.3.2
 
