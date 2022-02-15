@@ -118,7 +118,7 @@ class BookingdefaultController extends BookingabstractController {
         $modelResa = new BkCalendarEntry();
         $id_user = $_SESSION["id_user"];
 
-        $resaInfo = $modelResa->getDefault($id_space ,$start_time, $end_time, $id_resource, $duration, $id_user);
+        $resaInfo = $modelResa->getDefault($id_space ,$start_time, $end_time, $id_resource, $id_user);
         $resaInfo['duration'] = $duration;
         $resaInfo['durationUnits'] = $units;
         return $resaInfo;
