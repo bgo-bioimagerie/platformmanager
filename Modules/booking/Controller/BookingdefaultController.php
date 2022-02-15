@@ -200,9 +200,8 @@ class BookingdefaultController extends BookingabstractController {
 
         $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
 
-
         $redir = $this->request->getParameterNoException('from');
-        
+
         $backto = [];
         $redirPage = '';
         if($redir) {
@@ -216,7 +215,6 @@ class BookingdefaultController extends BookingabstractController {
             $_SESSION['flashClass'] = "warning";
             return $this->redirect("booking$redirPage/".$id_space, $backto, ['error' => 'resourceBookingUnauthorized']);
         }
-
 
         $dateResaStartArray = explode("-", $dateResaStart);
         if($dateResaStart == "") {
@@ -677,7 +675,6 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
-        //return $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"], [], ['bkcalentry' => ['id' => $id_entry]]);
     }
 
     private function editreservation($id_space, $resaInfo, $param = "") {
@@ -920,7 +917,7 @@ class BookingdefaultController extends BookingabstractController {
             "id_period" => $id_period,
             "formDelete" => $formDelete->getHtml($lang),
             "formDeletePeriod" => $formDeletePeriod->getHtml($lang),
-            "from" => $this->request->getParameterNoException('from')
+            'from' => $this->request->getParameterNoException('from')
         ),
             "addreservationAction"
         );
