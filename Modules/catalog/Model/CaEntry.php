@@ -36,7 +36,7 @@ class CaEntry extends Model {
     }
 
     public function add($id_space, $id_category, $title, $short_desc, $full_desc) {
-        $sql = "INSERT INTO ca_entries(id_space, id_category, title, short_desc, full_desc) VALUES(?,?,?,?,?)";
+        $sql = "INSERT INTO ca_entries(id_space, id_category, title, short_desc, full_desc, image_url) VALUES(?,?,?,?,?, '')";
         $this->runRequest($sql, array($id_space, $id_category, $title, $short_desc, $full_desc));
         return $this->getDatabase()->lastInsertId();
     }
