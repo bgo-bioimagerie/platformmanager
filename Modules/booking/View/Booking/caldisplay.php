@@ -125,38 +125,39 @@ th {
 				<th rowspan="<?php echo $nbBlocks ?>"  id="h<?php echo $i?>" class="col-xs-2"><?php echo $i ?>:00</th>
 			<?php } ?>
 			<?php foreach($calDay as $calDayEntry => $calRes) { ?>
-			<?php for($r = 0 ; $r < count($resourcesBase) ; $r++){
-				if(!array_key_exists($resourcesBase[$r]['id'], $calRes)) {
-					continue;
-				}
-				$hCalEntries = $calRes[$resourcesBase[$r]['id']];
-				$hcalEntry = $hCalEntries[$e];
-			?>
-				
-                    <?php
-                        $style = '';
-                        if(!$hcalEntry['text'] && $hcalEntry['expand']) {
-                            $style .= 'border-top-style: hidden !important;';
-                        }
-                        if(!$hcalEntry['free']) { $style .= 'background-color:'.$hcalEntry['color_bg'].';';  }
-                    ?>
-				<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
-					<?php if($hcalEntry['free']) { ?>
-						<?php if ($hcalEntry['link']) { ?>
-						<div><a aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+				<?php for($r = 0 ; $r < count($resourcesBase) ; $r++){
+					if(!array_key_exists($resourcesBase[$r]['id'], $calRes)) {
+						continue;
+					}
+					$hCalEntries = $calRes[$resourcesBase[$r]['id']];
+					$hcalEntry = $hCalEntries[$e];
+				?>
+					
+				<?php
+					$style = '';
+					if(!$hcalEntry['text'] && $hcalEntry['expand']) {
+						$style .= 'border-top-style: hidden !important;';
+					}
+					if(!$hcalEntry['free']) { $style .= 'background-color:'.$hcalEntry['color_bg'].';';  }
+				?>
+					<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
+						<?php if($hcalEntry['free']) { ?>
+							<?php if ($hcalEntry['link']) { ?>
+							<div><a aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+							<?php } ?>
+						<?php } else { ?>
+						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
+							<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
+							<?php if($calEntry['text'] && $hcalEntry['expand']) {
+								echo '<div>'.$hcalEntry['hstart'].' - '.$hcalEntry['hend'].'</div>';
+							}?>
+							</a>
+						</div>
 						<?php } ?>
-					<?php } else { ?>
-					<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
-						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
-						<?php if($calEntry['text'] && $hcalEntry['expand']) {
-							echo '<div>'.$hcalEntry['hstart'].' - '.$hcalEntry['hend'].'</div>';
-						}?>
-						</a>
-					</div>
-					<?php } ?>
-				</td>
-			
-			<?php } }?>
+					</td>
+				
+				<?php } ?>
+			<?php 	} ?>
 		</tr>
 	<?php
 			}
