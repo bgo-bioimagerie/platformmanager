@@ -2,6 +2,7 @@
 
 ## 2.4.0
 
+* [core] reduce space users options after a module is deactivated
 * [documents] add visibility controls on documents to have public, private, user/client scopes
 * [core] group users space access options on a single page
 * [core] in corespaceaccess show convention download button only if present
