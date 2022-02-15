@@ -32,7 +32,7 @@ class ClientsRouting extends Routing{
         
         // client account
         $this->addRoute("clientsuseraccounts", "clientsuseraccounts", "clientsuseraccounts", "index", array("id_space", "id_user"), array("", ""));
-        $this->addRoute("clientsuseraccountsdelete", "clientsuseraccountsdelete", "clientsuseraccounts", "delete", array("id_space", "id_user", "id"), array("", "", ""));
+        $this->addRoute("clientsuseraccountsdelete", "clientsuseraccountsdelete", "clientsuseraccounts", "delete", array("id_space", "id_user", "id_client"), array("", "", ""));
         
         
         

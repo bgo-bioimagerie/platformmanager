@@ -293,7 +293,7 @@ function _ti_warning($message, $trace, $warning_trace=null) {
 			$format = "\nWarning: %s in %s on line %d\n";
 		}else{
 			// from browser
-			$format = "<br />\n<b>Warning</b>:  %s in <b>%s</b> on line <b>%d</b><br />\n";
+			$format = "<br />\n<strong>Warning</strong>:  %s in <strong>%s</strong> on line <strong>%d</strong><br />\n";
 		}
 		if (!$warning_trace) {
 			$warning_trace = $trace;

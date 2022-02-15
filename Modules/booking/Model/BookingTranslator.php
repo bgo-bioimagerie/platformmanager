@@ -886,6 +886,13 @@ class BookingTranslator {
         return "Authorisations for";
     }
 
+    static public function Add_authorisation_for($lang) {
+        if ($lang == "fr") {
+            return "Ajouter une habilitation pour ";
+        }
+        return "Add an authorisation for";
+    }
+
     public static function Active_Authorizations($lang = "") {
         if ($lang == "fr") {
             return "Habilitation actives";
@@ -1007,9 +1014,9 @@ class BookingTranslator {
 
     public static function Invoice_Responsible($lang = "") {
         if ($lang == "fr") {
-            return "Facturer un responsable";
+            return "Facturer un client";
         }
-        return "Invoice a person in charge";
+        return "Invoice a client";
     }
 
     public static function Details($lang = "") {

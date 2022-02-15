@@ -3,9 +3,9 @@
 <div id="hider" class="col-12"></div> 
 <div id="popup_box" class="pm_popup_box" style="display: none;">    
     <div class="row">
-        <div id="content_section" class="col-md-12" style="text-align:center;">
+        <div id="content_section" class="col-12" style="text-align:center;">
             <div id="news">
-                <div class="col-md-1 col-md-offset-11" style="text-align: right;">
+                <div class="col-1 offset-11" style="text-align: right;">
                     <a id="close"
                         v-on:click="closePopup"
                         class="bi-x-circle-fill"

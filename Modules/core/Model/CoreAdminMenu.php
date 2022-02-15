@@ -44,16 +44,16 @@ class CoreAdminMenu extends Model {
 
         if (!$this->isAdminMenu("Menus")) {
             $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
-            $this->runRequest($sql, array("Menus", "coremainmenus", "glyphicon-th-list"));
+            $this->runRequest($sql, array("Menus", "coremainmenus", "bi-list"));
         }
         else{
             $sql = "UPDATE core_adminmenu SET link=?, icon=? WHERE name=?";
-            $this->runRequest($sql, array("coremainmenus", "glyphicon-th-list", "Menus"));
+            $this->runRequest($sql, array("coremainmenus", "bi-list", "Menus"));
         }
 
         if (!$this->isAdminMenu("Spaces")) {
             $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
-            $this->runRequest($sql, array("Spaces", "spaceadmin", "glyphicon-briefcase"));
+            $this->runRequest($sql, array("Spaces", "spaceadmin", "bi-briefcase"));
         }
 
         if (!$this->isAdminMenu("Core")) {

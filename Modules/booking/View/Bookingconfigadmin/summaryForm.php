@@ -1,4 +1,4 @@
-<div class="col-12 col-md-10 col-md-offset-1">
+<div class="col-12 col-10 offset-1">
     <div class="page-header">
         <h3>
             <?php echo BookingTranslator::Booking_summary_options($lang) ?> <br> <small></small>
@@ -225,7 +225,7 @@
     } ?>> italic </OPTION>
                     </select></div>
                 <br></br>
-                <div class="col-2 col-offset-10" id="button-div">
+                <div class="col-2 offset-10" id="button-div">
                     <input type="submit" class="btn btn-primary" value="save" />
                 </div>
         </form>

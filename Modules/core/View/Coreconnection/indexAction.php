@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="row justify-content-md-center">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-6">
                     <form class="form form-signin mb-3" action="corelogin" method="post">
                         <input class="form-control" name="redirection" type="hidden" value="<?php echo $redirection ?>">
                         <input class="form-control" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
@@ -56,7 +56,7 @@
                     </form>
 
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-6">
                     <div class="row">
                         <div class="col-12">
                             <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>

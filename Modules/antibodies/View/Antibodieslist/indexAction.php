@@ -15,7 +15,7 @@
 
     <script>
         $(document).ready(function () {
-            var table = $('#antobodies').DataTable({
+            var table = $('#antibodies').DataTable({
                 scrollY: "700px",
                 scrollX: true,
                 scrollCollapse: true,
@@ -309,38 +309,38 @@
             <table id="antibodies" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
                 <thead>	 
                     <tr>
-                        <th class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
-                        <th class="text-center" colspan="2" style="background-color: #ffeeee; color:#337AB7;">Protocole</th>
-                        <th class="text-center" colspan="7" style="background-color: #eeffee; color:#337AB7;">Tissus</th>
-                        <th class="text-center" colspan="4" style="background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
+                        <th id="antibody" class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
+                        <th id="protocol" class="text-center" colspan="2" style="background-color: #ffeeee; color:#337AB7;">Protocole</th>
+                        <th id="tissues" class="text-center" colspan="7" style="background-color: #eeffee; color:#337AB7;">Tissus</th>
+                        <th id="owner" class="text-center" colspan="4" style="background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
                     </tr>
 
                     <tr>		
-                        <th class="text-center" style="color:#337AB7;">No</th> 
-                        <th class="text-center" style="color:#337AB7;">Nom</th>
-                        <th class="text-center" style="color:#337AB7;">St</th>
-                        <th class="text-center" style="color:#337AB7;">Fournisseur</th>
-                        <th class="text-center" style="color:#337AB7;">Source</th>
-                        <th class="text-center" style="color:#337AB7;">Référence</th>
-                        <th class="text-center" style="color:#337AB7;">Clone</th>
-                        <th class="text-center" style="color:#337AB7;">lot</th>
-                        <th class="text-center" style="color:#337AB7;">Isotype</th>
+                        <th id="number" class="text-center" style="color:#337AB7;">No</th> 
+                        <th id="name" class="text-center" style="color:#337AB7;">Nom</th>
+                        <th id="temperature" class="text-center" style="color:#337AB7;">St</th>
+                        <th id="provider" class="text-center" style="color:#337AB7;">Fournisseur</th>
+                        <th id="source" class="text-center" style="color:#337AB7;">Source</th>
+                        <th id="ref" class="text-center" style="color:#337AB7;">Référence</th>
+                        <th id="clone" class="text-center" style="color:#337AB7;">Clone</th>
+                        <th id="batch" class="text-center" style="color:#337AB7;">lot</th>
+                        <th id="isotype" class="text-center" style="color:#337AB7;">Isotype</th>
 
-                        <th class="text-center" style="background-color: #ffeeee; color:#337AB7;">proto</th>
-                        <th class="text-center" style="background-color: #ffeeee; color:#337AB7;">AcI dil</th>
+                        <th id="proto" class="text-center" style="background-color: #ffeeee; color:#337AB7;">proto</th>
+                        <th id="aci" class="text-center" style="background-color: #ffeeee; color:#337AB7;">AcI dil</th>
 
-                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;"></th>
-                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">commentaire</th>
-                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">espèce</th>
-                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">organe</th>
-                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">statut</th>
-                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">ref. bloc</th>
-                        <th class="text-center" style="background-color: #eeffee; color:#337AB7;">prélèvement</th>	
+                        <th id="image" class="text-center" style="background-color: #eeffee; color:#337AB7;"></th>
+                        <th id="comment" class="text-center" style="background-color: #eeffee; color:#337AB7;">commentaire</th>
+                        <th id="species" class="text-center" style="background-color: #eeffee; color:#337AB7;">espèce</th>
+                        <th id="organ" class="text-center" style="background-color: #eeffee; color:#337AB7;">organe</th>
+                        <th id="status" class="text-center" style="background-color: #eeffee; color:#337AB7;">statut</th>
+                        <th id="refblock" class="text-center" style="background-color: #eeffee; color:#337AB7;">ref. bloc</th>
+                        <th id="sample" class="text-center" style="background-color: #eeffee; color:#337AB7;">prélèvement</th>	
 
-                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">Nom</th>
-                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">disponibilité</th>
-                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">Date réception</th>
-                        <th class="text-center" style="background-color: #eeeeff; color:#337AB7;">No Dossier</th>
+                        <th id="name" class="text-center" style="background-color: #eeeeff; color:#337AB7;">Nom</th>
+                        <th id="available" class="text-center" style="background-color: #eeeeff; color:#337AB7;">disponibilité</th>
+                        <th id="date" class="text-center" style="background-color: #eeeeff; color:#337AB7;">Date réception</th>
+                        <th id="case" class="text-center" style="background-color: #eeeeff; color:#337AB7;">No Dossier</th>
 
                     </tr>
                 </thead>
@@ -357,20 +357,20 @@
                                 }
                                 ?>
 
-                            <td style="width:1em;" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2']); ?></a></td>
-                            <td width="5%" class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
-                            <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['stockage']); ?></td>
-                            <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['fournisseur']); ?></td>
-                            <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['source']); ?></td>
-                            <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['reference']); ?></td>
-                            <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['clone']); ?></td>
-                            <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['lot']); ?></td>
-                            <td width="5%" class="text-left"><?php echo $this->clean($anticorps ['isotype']); ?></td>
+                            <td headers="antibody number"  class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2']); ?></a></td>
+                            <td headers="antibody name"  class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
+                            <td headers="antibody temperature"  class="text-left"><?php echo $this->clean($anticorps ['stockage']); ?></td>
+                            <td headers="antibody provider"  class="text-left"><?php echo $this->clean($anticorps ['fournisseur']); ?></td>
+                            <td headers="antibody source"  class="text-left"><?php echo $this->clean($anticorps ['source']); ?></td>
+                            <td headers="antibody ref"  class="text-left"><?php echo $this->clean($anticorps ['reference']); ?></td>
+                            <td headers="antibody clone"  class="text-left"><?php echo $this->clean($anticorps ['clone']); ?></td>
+                            <td headers="antibody batch"  class="text-left"><?php echo $this->clean($anticorps ['lot']); ?></td>
+                            <td headers="antibody isotype"  class="text-left"><?php echo $this->clean($anticorps ['isotype']); ?></td>
 
 
 
                             <!--  PROTOCOLE -->
-                            <td width="5%" class="text-left" style="background-color: #ffeeee;"><?php
+                            <td headers="protocol proto"  class="text-left" style="background-color: #ffeeee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
@@ -386,7 +386,7 @@
                                 ?></td>
 
 
-                            <td width="5%" class="text-left" style="background-color: #ffeeee;"><?php
+                            <td headers="protocol aci"  class="text-left" style="background-color: #ffeeee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
@@ -399,7 +399,7 @@
 
 
                             <!-- TISSUS -->
-                            <td width="10%" class="text-left" style="background-color: #eeffee;">
+                            <td headers="tissues image" width="10%" class="text-left" style="background-color: #eeffee;">
 
                                 <?php
                                 foreach ($anticorps['tissus'] as $tissus) {
@@ -435,7 +435,7 @@
     ?>
                             </td>
                             
-                            <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
+                            <td headers="tissues comment"  class="text-left" style="background-color: #eeffee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
@@ -446,7 +446,7 @@
                                 echo $val;
                                 ?></td>
 
-                            <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
+                            <td headers="tissues species"  class="text-left" style="background-color: #eeffee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
@@ -456,7 +456,7 @@
                                 echo $val;
                                 ?></td>
 
-                            <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
+                            <td headers="tissues organ"  class="text-left" style="background-color: #eeffee;"><?php
                             $tissus = $anticorps ['tissus'];
                             $val = "";
                             for ($i = 0; $i < count($tissus); ++$i) {
@@ -467,7 +467,7 @@
                             echo $val;
                                 ?></td>
 
-                            <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
+                            <td headers="tissues status"  class="text-left" style="background-color: #eeffee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
@@ -488,7 +488,7 @@
                                 ?></td>
 
 
-                            <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
+                            <td headers="tissues refblock"  class="text-left" style="background-color: #eeffee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
@@ -499,7 +499,7 @@
                                 echo $val;
                                 ?></td>
 
-                            <td width="5%" class="text-left" style="background-color: #eeffee;"><?php
+                            <td headers="tissues sample"  class="text-left" style="background-color: #eeffee;"><?php
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
@@ -513,7 +513,7 @@
 
 
 
-                            <td width="5%" class="text-left" style="width:5em; background-color: #eeeeff;"><?php
+                            <td headers="owner name"  class="text-left" style="width:5em; background-color: #eeeeff;"><?php
                                 $owner = $anticorps ['proprietaire'];
                                 foreach ($owner as $ow) {
                                     $name = $ow['name'] . " " . $ow['firstname'];
@@ -537,7 +537,7 @@
                                 ?>
                             </td>
 
-                            <td width="5%" class="text-left" style="background-color: #eeeeff;"><?php
+                            <td headers="owner available"  class="text-left" style="background-color: #eeeeff;"><?php
                                 $owner = $anticorps ['proprietaire'];
                                 foreach ($owner as $ow) {
                                     $dispo = $ow['disponible'];
@@ -560,7 +560,7 @@
                                 ?>
                             </td>
 
-                            <td width="5%" class="text-left" style="background-color: #eeeeff;"><?php
+                            <td headers="owner date"  class="text-left" style="background-color: #eeeeff;"><?php
                                 $owner = $anticorps ['proprietaire'];
                                 foreach ($owner as $ow) {
                                     $name = $ow['name'] . " " . $ow['firstname'];
@@ -584,7 +584,7 @@
                                 ?>
                             </td>
 
-                            <td width="5%" class="text-left" style="background-color: #eeeeff;"><?php
+                            <td headers="owner case"  class="text-left" style="background-color: #eeeeff;"><?php
                                 $owner = $anticorps ['proprietaire'];
                                 foreach ($owner as $ow) {
                                     $name = $ow['name'] . " " . $ow['firstname'];
@@ -625,7 +625,7 @@
 <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
 <div id="hider" class="col-12"></div> 
 <div id="imagepopup_box" class="pm_popup_box_full" style="display: none;">
-    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="tissusbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
+    <div class="col-1 offset-11" style="text-align: right;"><a id="tissusbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
     <div id="imagedivcontent">
 
     </div>    

@@ -34,10 +34,10 @@ blockquote {
 <div id="helpdeskapp" style="background-color: #fff; height:100%">
     <div class="row">
         <!-- Form -->
-        <div v-if="message" class="col-sm-12 text-center">
+        <div v-if="message" class="col-12 text-center">
             <div class="alert alert-warning">{{message}}</div>
         </div>
-        <div class="col-sm-2 text-center" style="background-color: <?php echo $menuInfo["color"] ?> ; color: <?php echo $menuInfo["txtcolor"] ?>">
+        <div class="col-2 text-center" style="background-color: <?php echo $menuInfo["color"] ?> ; color: <?php echo $menuInfo["txtcolor"] ?>">
             <div @click="newTicket()">Create</div>
             <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
             <div v-bind:class="filter==0 ? 'selection':''"  @click="setFilter(0)">New {{unread["s0"]}}</div>
@@ -53,7 +53,7 @@ blockquote {
             }
             ?>
         </div>
-        <div v-if="settings" class="col-sm-10">
+        <div v-if="settings" class="col-10">
             <div class="form">
                 <div class="form-check">
                     <input class="form-check-input" v-model="preferences.notifyNew" type="checkbox" value="" id="notifyNew">
@@ -76,9 +76,9 @@ blockquote {
                     <button @click="setSettings" class="btn btn-primary">Save</button>
             </div>
         </div>
-        <div v-if="!settings && ticket !== null" class="col-sm-10 text-center">
+        <div v-if="!settings && ticket !== null" class="col-10 text-center">
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-8">
                     <div v-for="message in ticket.messages" :key="message.id">
                         <div class="card">
                             <div class="card-header">
@@ -129,7 +129,7 @@ blockquote {
                             </div>
                         </div>
                     </div>
-                <div class="col-sm-4">
+                <div class="col-4">
                     <div class="card">
                         <div class="card-header">
                         <div class="cart-title">#{{ticket.ticket.id}}: {{ticket.ticket.subject}}</div>
@@ -137,7 +137,7 @@ blockquote {
                         <div class="card-body">
                             <form class="form-horizontal">
                             <div class="form-group">
-                            <label for="tstatus" class="col-sm-2">Status</label>
+                            <label for="tstatus" class="col-2">Status</label>
                             <div >
                                 <select id="tstatus" class="form-select" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
                                     <option value="0">New</option>
@@ -152,7 +152,7 @@ blockquote {
                                 </div>
                             </div>
                             <div class="form-group" v-if="ticket.ticket.assigned">
-                                <label for="tassign" class="col-sm-2">Assignee</label>
+                                <label for="tassign" class="col-2">Assignee</label>
                                 <div>
                                     <input id="tassign" class="form-control" readonly v-bind:value="ticket.ticket.assigned_name"/>
                                 </div>
@@ -165,7 +165,7 @@ blockquote {
                 </div>
             </div>
         </div>
-        <div v-if="!settings && ticket === null" class="col-sm-10 text-center">
+        <div v-if="!settings && ticket === null" class="col-10 text-center">
             <div>
                 <button v-if="offset > 0" class="btn btn-primary" @click="prevPage()">prev</button>
                 <button class="btn btn-primary" @click="nextPage()">next</button>

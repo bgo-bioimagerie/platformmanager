@@ -2,11 +2,11 @@
 
     
 <?php startblock('content') ?>
-<div class="pm-table">
+<div class="pm-table row ">
 
-    <div class="col-md-12" style="height:7px;">
+    <div class="col-12" style="height:7px;">
     </div>
-    <div class="col-md-12">
+    <div class="col-12">
         <div class="btn-group btn-group-sm">
             <button class="btn btn-outline-dark <?php
             if ($letter == "All") {
@@ -146,9 +146,9 @@
         </div>
 
     </div>
-    <div class="col-md-12" style="height: 7px;">
+    <div class="col-12" style="height: 7px;">
     </div>
-    <div class="col-md-12">
+    <div class="col-12">
         <?php echo $tableHtml ?>
     </div>
 </div>

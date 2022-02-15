@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-form">
+<div class="container pm-form">
 
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
@@ -30,7 +30,7 @@
 
     <?php if ($use_packages) { ?>
         <div>
-            <div class="checkbox col-8 col-offset-4">
+            <div class="checkbox col-8 offset-4">
                 <label>
                     <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                 </label>
@@ -103,7 +103,7 @@
 <!-- End periodicity -->
 
 <div class="col-12"></div>
-<div id="buttons" class="col-4 col-offset-8">
+<div id="buttons" class="col-4 offset-8">
     <?php if ($userCanEdit) { ?>	
         <input type="submit" class="btn btn-primary" value="Save" />
         <?php if ($id_reservation > 0) { ?>
@@ -117,7 +117,17 @@
         }
     }
     ?>
-    <button type="button" class="btn btn-outline-dark" onclick="location.href = 'booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
+    <?php
+    $q = '?';
+    $redirPage = '';
+    if($from) {
+        $redirInfo = explode(':', $from);
+        $redirPage = $redirInfo[0];
+        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]";
+    }
+    $url = "booking$redirPage/$id_space?$q"
+    ?>
+    <button type="button" class="btn btn-outline-dark" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
 </div>
 
 <?php echo $form->htmlClose() ?>
@@ -145,13 +155,9 @@ if ($packageChecked > 0) {
         let use_package = document.getElementById('use_package');
         if (use_package) {
             document.getElementById('use_package').onchange = function () {
-                let php_var = "<?php echo $isPackageCheched; ?>";
-                if (php_var === "1") {
-                    let p_div = document.getElementById('package_div');
-                    if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
-                } else {
-                    document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
-                }
+                let p_div = document.getElementById('package_div');
+                if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
+                document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
             }
         }
         ;
@@ -165,13 +171,13 @@ if ($packageChecked > 0) {
 <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
 <div id="hider" class="col-12"></div> 
 <div id="entriespopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
+    <div class="col-1 offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
 </div>
 <?php echo $formDelete ?>
 </div> 
 
 <div id="entriesperiodpopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesperiodbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
+    <div class="col-1 offset-11" style="text-align: right;"><a id="entriesperiodbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
 </div>
 <?php echo $formDeletePeriod ?>
 </div> 

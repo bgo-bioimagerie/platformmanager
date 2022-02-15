@@ -35,7 +35,7 @@
 
 <div class="pm-table">
     
-    <div class="col-md-12">
+    <div class="col-12">
         <?php 
         if($allPeriod == 1){
             echo "<h3>" . ServicesTranslator::GanttPeriod($lang) . "<h3/>";
@@ -45,7 +45,7 @@
         }
         ?>
     </div>    
-    <div class="col-md-12">
+    <div class="col-12">
         <div class="text-center">
             <div class="btn-group btn-group-sm">
                 
@@ -63,7 +63,7 @@
         </div> 
     </div>    
       
-    <div class="col-md-12">
+    <div class="col-12">
         <div class="gantt"></div>
     </div>
     
@@ -87,10 +87,10 @@
             maxScale: "months",
             itemsPerPage: 100,
             onItemClick: function (data) {
-                alert("Item clicked - show some details");
+                //alert("Item clicked - show some details");
             },
             onAddClick: function (dt, rowId) {
-                alert("Empty space clicked - add an item!");
+                //alert("Empty space clicked - add an item!");
             },
             onRender: function () {
                 // console.log("chart rendered");

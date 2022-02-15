@@ -101,12 +101,12 @@ if($isdev) {
                     <?php
                     if ($context['sideMenu']) {
                     ?>
-                    <div class="col-2" id="sidemenu">
+                    <div class="col-12 col-md-2" id="sidemenu">
                     <?php
                         echo $context['sideMenu'];
                     ?>
                     </div>
-                    <div class="col-10" id="content">
+                    <div class="col-12 col-md-10" id="content">
                     <?php } else { ?>
                     <div class="col-12" id="content">
                     <?php } ?>

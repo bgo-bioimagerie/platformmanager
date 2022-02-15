@@ -207,15 +207,17 @@ class BookingconfigController extends CoresecureController {
     protected function bookingOptionForm($id_space, $lang) {
 
         $modelCoreConfig = new CoreConfig();
-        $BkDescriptionFields = $modelCoreConfig->getParamSpace("BkDescriptionFields", $id_space);
+        $BkDescriptionFields = $modelCoreConfig->getParamSpace("BkDescriptionFields", $id_space, 0);
             
         $form = new Form($this->request, "bookingOptionForm");
         $form->addSeparator(BookingTranslator::Edit_booking_options($lang));
         
-        $choices = array(BookingTranslator::Both_short_and_full_description($lang),
+        $choices = array(
+        ' -- ',
+        BookingTranslator::Both_short_and_full_description($lang),
         BookingTranslator::Only_short_description($lang),
 	    BookingTranslator::Only_full_description($lang));
-        $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(1,2,3), $BkDescriptionFields);
+        $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(0,1,2,3), $BkDescriptionFields);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
         $form->setButtonsWidth(2, 9);

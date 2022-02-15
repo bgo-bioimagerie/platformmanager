@@ -1,12 +1,12 @@
-<div class="col-12 col-md-10" style="border-bottom: 1px solid #666;">
+<div class="col-12 col-10" style="border-bottom: 1px solid #666;">
     <div class="col-10">
         <p style="text-transform: uppercase; font-weight: bold; color: #666;">
-            <b>
+            <strong>
                 <?php echo date("F Y", mktime(0, 0, 0, $month, 1, $year)) ?>
-            </b>
+            </strong>
         </p>
     </div>
-    <div class="col-md-2 text-left">
+    <div class="col-2 text-left">
         <div class="dropdown">
             <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span style="color: #666;" class="bi-plus"></span>
@@ -22,7 +22,7 @@
 </div>
 
 <div class="col-12">
-    <table class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
+    <table aria-label="month list of notes" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
         <?php
         foreach ($notes as $dnote) {
             if ($dnote["is_month_task"] == 1) {

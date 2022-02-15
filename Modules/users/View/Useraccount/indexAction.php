@@ -13,7 +13,7 @@
         <?php echo $formHtml ?>
 
 
-        <div class="col-md-12">
+        <div class="col-12">
             <h2>External connection providers</h2>
         <?php
         foreach ($providers as $provider) {
@@ -25,7 +25,7 @@
         }
         ?>
         </div>
-        <div class="col-md-12">
+        <div class="col-12">
             <h2>Linked providers</h2>
             <table class="table" aria-label="external providers linked to account">
             <thead><tr><th scope="col">Provider</th><th scope="col">ID</th></tr></thead>

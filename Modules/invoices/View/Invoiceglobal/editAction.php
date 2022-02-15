@@ -5,7 +5,7 @@
 
 <div class="pm-table">
     
-    <div class="col-md-10">
+    <div class="col-10">
         <div id="invoice-message-div" class="alert alert-success">
             
         </div>
@@ -14,9 +14,9 @@
     <h3><?php echo InvoicesTranslator::Edit_invoice($lang) ?> : <?php echo $invoice["number"] ?> </h3>
 
     <form class="form-horizontal">
-        <div id="invoiceform" class="col-md-12">
+        <div id="invoiceform" class="col-12">
 
-            <table class="table">
+            <table class="table" aria-label="list of products">
                 <thead>
                     <tr>
                         <th scope="col"><?php echo InvoicesTranslator::Product($lang) ?></th>
@@ -29,7 +29,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-md-12">
+        <div class="col-12">
             <div class="form-group">
                 <label class="control-label col-8 text-right"> <?php echo InvoicesTranslator::Discount($lang) ?> </label>
                 <div class="col-4">
@@ -43,8 +43,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="col-md-12 text-right">
+        <div class="col-12">
+            <div class="col-12 text-right">
                 <button id="invoicevalidate" class="btn btn-primary"><?php echo CoreTranslator::Save($lang) ?></button>
                 <a href="invoiceglobalpdf/<?php echo $id_space ?>/<?php echo $invoice["id"] ?>/0" class="btn btn-danger"><?php echo InvoicesTranslator::PDF($lang) ?></a>
                 <a href="invoiceglobalpdf/<?php echo $id_space ?>/<?php echo $invoice["id"] ?>/1" class="btn btn-danger"><?php echo InvoicesTranslator::PDFDetails($lang) ?></a>

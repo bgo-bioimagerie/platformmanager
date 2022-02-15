@@ -5,7 +5,7 @@
 
     <div class="pm-table">
 
-        <div class="col-md-10">
+        <div class="col-10">
             <h3><?php echo ResourcesTranslator::Suivi($lang) . ": " . $resourceInfo["name"] ?></h3>
         </div> 
         <div class="col-10"><p></p></div>

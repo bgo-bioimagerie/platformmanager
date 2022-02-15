@@ -54,9 +54,9 @@
         </div>
 
         <div class="form-group ">
-            <label for="inputEmail" class="control-label col-2"> Condition </label>
+            <label for="condition_et_ou" class="control-label col-2"> Condition </label>
             <div class="col-10">
-                <select class="form-control" name="condition_et_ou" >
+                <select class="form-control" id="condition_et_ou" name="condition_et_ou" >
                     <OPTION value="and" <?php
                     if (isset($condition_et_ou) && $condition_et_ou == 1) {
                         echo "selected=\"selected\"";
@@ -73,8 +73,8 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-2"><?php echo BookingTranslator::query($lang) ?></label>
-            <div class="col-10">
+            <label for="champ" class="control-label col-2"><?php echo BookingTranslator::query($lang) ?></label>
+            <div class="col-10" id="champ">
                 <?php for ($i = 0; $i < 5; $i++) {
                     ?>
                     <div class="col-4">
@@ -176,9 +176,9 @@
         </div>	
         <br>
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-2">Résumé par (ne concerne que les résumés) :</label>
+            <label for="summary_rq" class="control-label col-2">Résumé par (ne concerne que les résumés) :</label>
             <div class="col-10">
-                <select class="form-control" name="summary_rq">
+                <select class="form-control" id="summary_rq" name="summary_rq">
                     <?php
                     $checkedC = "";
                     $checkedS = "";
@@ -201,14 +201,14 @@
             </div>
         </div>
 
-        <div class="col-2 col-offset-10" id="button-div">
+        <div class="col-2 offset-10" id="button-div">
             <input class="form-control" id="name" type="hidden" name="is_request" value="y"/>
             <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Ok($lang) ?>" />
         </div>
     </form>
 </div>
 
-<div class="col-md-10 col-md-offset-2 pm-table-short">
+<div class="col-10 offset-2 pm-table-short">
 
     <?php
     if (isset($table)) {
@@ -218,13 +218,13 @@
 
             <thead> <!-- En-tête du tableau -->
                 <tr>				
-                    <th><?php echo BookingTranslator::Area($lang) ?></th>
-                    <th><?php echo BookingTranslator::Resource($lang) ?></th>
-                    <th><?php echo BookingTranslator::Short_description($lang) ?></th>
-                    <th><?php echo CoreTranslator::Date($lang) ?></th> 
-                    <th><?php echo BookingTranslator::Full_description($lang) ?> </th>
-                    <th><?php echo BookingTranslator::Color_code($lang) ?> </th>
-                    <th><?php echo BookingTranslator::recipient($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::Area($lang) ?></th>
+                    <th scope="col"><?php echo BookingTranslator::Resource($lang) ?></th>
+                    <th scope="col"><?php echo BookingTranslator::Short_description($lang) ?></th>
+                    <th scope="col"><?php echo CoreTranslator::Date($lang) ?></th> 
+                    <th scope="col"><?php echo BookingTranslator::Full_description($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::Color_code($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::recipient($lang) ?> </th>
                 </tr>
             </thead>
 
@@ -263,7 +263,7 @@
 
 </div>
 
-<div class="col-md-10 col-md-offset-2" id="pm-table">
+<div class="col-10 offset-2" id="pm-table">
 
     <?php
     if (isset($summaryTable)) {
@@ -282,16 +282,16 @@
 
 
             <thead>
-            <th></th>
+            <th scope="col"></th>
             <?php
             foreach ($resourcesNames as $name) {
                 ?>
-                <th><?php echo $name ?></th>
+                <th scope="col"><?php echo $name ?></th>
                 <?php
             }
             ?>
 
-            <th>Total</th>
+            <th scope="col">Total</th>
             </thead>
 
             <tbody>
@@ -303,7 +303,7 @@
                     $i++;
                     ?>
                     <tr>
-                        <th><?php echo $entrySummary[$i] ?></th>
+                        <td><?php echo $entrySummary[$i] ?></td>
                         <?php
                         $j = -1;
                         $totalC = 0;
@@ -312,13 +312,13 @@
                             $j++;
                             ?>
 
-                            <th> (<?php echo $col ?>) <?php echo $timeTable[$entrySummary[$i]][$resourcesNames[$j]] / 3600 ?> </th>
+                            <td> (<?php echo $col ?>) <?php echo $timeTable[$entrySummary[$i]][$resourcesNames[$j]] / 3600 ?> </td>
                             <?php
                             $totalC += $col;
                             $totalH += $timeTable[$entrySummary[$i]][$resourcesNames[$j]];
                         }
                         ?>
-                        <th>(<?php echo $totalC ?>) <?php echo $totalH / 3600 ?> </th>
+                        <td>(<?php echo $totalC ?>) <?php echo $totalH / 3600 ?> </td>
                     </tr>
                     <?php
                     $totalCG += $totalC;
@@ -327,7 +327,7 @@
                 ?>
 
                 <tr>
-                    <th> Total </th>
+                    <td> Total </td>
                     <?php
                     for ($i = 0; $i < count($resourcesNames); $i++) {
                         // calcualte the sum
@@ -338,11 +338,11 @@
                             $sumH += $timeTable[$entrySummary[$x]][$resourcesNames[$i]];
                         }
                         ?>
-                        <th> (<?php echo $sumC ?>) <?php echo $sumH / 3600 ?> </th>
+                        <td> (<?php echo $sumC ?>) <?php echo $sumH / 3600 ?> </td>
                         <?php
                     }
                     ?>
-                    <th> (<?php echo $totalCG ?>) <?php echo $totalHG / 3600 ?> </th>
+                    <td> (<?php echo $totalCG ?>) <?php echo $totalHG / 3600 ?> </td>
                 </tr>
 
             </tbody>

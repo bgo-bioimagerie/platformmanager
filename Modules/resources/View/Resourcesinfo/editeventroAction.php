@@ -14,7 +14,7 @@
     
     <?php if ($id_event > 0){ ?>
     <div class="col-10 col-md-5">
-        <div class="col-10" id="pm-table">
+        <div id="pm-table">
             <?php echo $filesTable ?>
         </div>
     </div>
