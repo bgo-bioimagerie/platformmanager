@@ -2,7 +2,7 @@
 
     
 <?php startblock('content') ?>
-<div class="pm-table">
+<div class="container pm-table">
     <?php echo $formHtml ?>
 </div>
 <?php endblock(); ?>

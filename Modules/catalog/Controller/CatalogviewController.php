@@ -45,7 +45,6 @@ class CatalogviewController extends CoresecureController {
         $entries = $modelEntry->getCategoryEntries($id_space, $idCategory);
 
         $modelCoreConfig = new CoreConfig();
-
         
         $useAntibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $id_space);
         if ($useAntibodies == 1) {

@@ -24,37 +24,37 @@ class InvoicesController extends CoresecureController {
     public function navbar($id_space) {
 
         $lang = $this->getLanguage();
-        
-        $html  = '<div class="col-12" style="border: none; margin-top: 7px; padding-right: 0px; padding-left: 0px;">';
-        $html .= '<div class="col-12" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
+
+        $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
+        $html .= '<div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
         $html .= '<a  style="background-color:{{bgcolor}}; color: {{color}};" href="invoices/'.$id_space.'"> {{title}}'; 
         $html .= '    <span style="color: {{color}}; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
 
-        $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
         $html .= '<a style="color:{{color}}" id="menu-button" href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
         $html .= '</div>';
         
-        $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
         $html .= '<a style="color:{{color}}" id="menu-button" href="invoicessent/' . $id_space . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
         $html .= '</div>';
         
-        $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
         $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisas/' . $id_space . '">' . InvoicesTranslator::Visas($lang) . '</a>';
         $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
         $html .= '</div>';
         
         
-        $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
         $html .= '<br/>';
         $html .= '</div>';
         
-        $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
         $html .= '<a style="color:{{color}}" href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
         $html .= '</div>';
         
-        $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
         $html .= '<br/>';
         $html .= '</div>';
         

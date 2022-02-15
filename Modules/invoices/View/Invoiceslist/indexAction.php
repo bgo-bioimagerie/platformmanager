@@ -3,12 +3,12 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-table">
+<div class="container pm-table">
     
     <?php 
     if(count($years) > 0){
         ?>
-    <div class="col-10" style="margin-bottom: 14px; padding-bottom: 7px; border-bottom: 1px solid #e1e1e1;">
+    <div class="col-12" style="margin-bottom: 14px; padding-bottom: 7px; border-bottom: 1px solid #e1e1e1;">
         <div class="text-center">
             <div class="btn-group btn-group-md">
         <?php

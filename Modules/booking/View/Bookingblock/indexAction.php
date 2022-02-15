@@ -24,17 +24,14 @@
             <?php } ?>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="name" class="control-label col-3"><?php echo BookingTranslator::Short_description($lang) ?></label>
-            <div class="col-8">
                 <input class="form-control" id="name" type="text" name="short_description"
                        value=""
                        />
-            </div>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label class="control-label col-3"><?php echo ResourcesTranslator::Resources($lang) ?></label>
-            <div class="col-8">
                 <select class="form-control" name="resources[]" size="10" multiple="multiple">
                     <?php
                     foreach ($resources as $resource) {
@@ -44,23 +41,18 @@
                     }
                     ?>
                 </select>
-            </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="begin_date" class="control-label col-3"><?php echo BookingTranslator::Beginning_of_the_reservation($lang) ?>:</label>
-            <div class="col-8">
-                <div class='input-group date'>
                     <input type='date' class="form-control" id="begin_date" name="begin_date"
                            value=""/>
-                </div>
-            </div>
         </div>
-        <div class="form-group">    
-            <div class="">
+        <div class="form-group mb-3">    
+        <div class="row mb-3">
                 <!-- time -->
 
-                <label for="begin_hour" class="control-label col-3"><?php echo BookingTranslator::time($lang) ?>:</label>
+                <label for="begin_hour" class="control-label col-1"><?php echo BookingTranslator::time($lang) ?>:</label>
 
                 <div class="col-3">
                     <input class="form-control" id="begin_hour" type="text" name="begin_hour"
@@ -71,14 +63,15 @@
                     :
                 </div>
                 <div class="col-3">
-                    <input class="form-control" id="name" type="text" name="begin_min"
+                    <input class="form-control" id="begin_min" type="text" name="begin_min"
                            value=""
                            />
                 </div>
             </div>
+                
         </div>
 
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label for="end_date" class="control-label col-3"><?php echo BookingTranslator::End_of_the_reservation($lang) ?>:</label>
             <div class="col-8">
                 <div class='input-group date'>
@@ -88,10 +81,10 @@
             </div>
         </div>
         <div class="form-group">    
-            <div class="">
+            <div class="row mb-3">
                 <!-- time -->
 
-                <label for="end_hour" class="control-label col-3"><?php echo BookingTranslator::time($lang) ?>:</label>
+                <label for="end_hour" class="control-label col-1"><?php echo BookingTranslator::time($lang) ?>:</label>
 
                 <div class="col-3">
                     <input class="form-control" id="end_hour" type="text" name="end_hour"
@@ -102,7 +95,7 @@
                     :
                 </div>
                 <div class="col-3">
-                    <input class="form-control" id="name" type="text" name="end_min"
+                    <input class="form-control" id="end_min" type="text" name="end_min"
                            value=""
                            />
                 </div>
@@ -112,8 +105,8 @@
         <!-- color code -->
         <div class="form-group">
             <label for="color_code_id" class="control-label col-3"><?php echo BookingTranslator::Color_code($lang) ?></label>
-            <div class="col-8">
-                <select class="form-control" id="color_code_id" name="color_code_id" <?php echo $readOnlyGlobal ?>>
+            <div class="col-8 mb-3">
+                <select class="form-select" id="color_code_id" name="color_code_id" <?php echo $readOnlyGlobal ?>>
                     <?php
                     $colorID = 1;
                     foreach ($colorCodes as $colorCode) {

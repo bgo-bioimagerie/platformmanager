@@ -14,8 +14,8 @@
     <?php foreach ($entries as $entry) {
         ?>
 
-        <div class="col-12">
-            <div class="card" style="text-align: center; <?php echo $selectedStyle; ?>">
+        <div class="col-12 col-md-4">
+            <div class="card" style="text-align: center;">
                 <div class="card-header"><?php echo $entry["title"] ?></div>
                 <div class="card-body">
                     <div class="row">

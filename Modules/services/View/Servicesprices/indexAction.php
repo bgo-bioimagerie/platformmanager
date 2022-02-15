@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-form">
+<div class="container pm-form">
     <?php echo $tableHtml ?>
 </div>
 

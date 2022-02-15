@@ -32,9 +32,8 @@
                     </select>
                 </div>
                 <div class="checkbox col-8 offset-4">
-                    <label>
-                        <input type="checkbox" name="email"> Email
-                    </label>
+                    <label for="email" class="form-check-label">Email</label>
+                        <input id="email" class="form-check-input" type="checkbox" name="email">
                 </div>
 
             </div>	

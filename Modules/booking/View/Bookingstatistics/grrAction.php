@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-form-short">
+<div class="pm-form-short container ">
     <form role="form" class="form-horizontal" action="bookinggrrstats/<?php echo $id_space ?>"
           method="post" id="statform">
 
@@ -16,12 +16,12 @@
         <?php
         if (isset($errorMessage) && $errorMessage != '') {
             ?>
-            <div class="alert alert-danger">
+            <div class="col-12 alert alert-danger">
                 <p><?php echo $errorMessage ?></p>
             </div>
         <?php } ?>
 
-        <div class="form-group ">
+        <div class="form-group mb-3 row">
             <label class="control-label col-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
             <div class="col-10">
                 <div class='input-group date'>
@@ -37,7 +37,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group ">
+        <div class="form-group mb-3 row">
             <label class="control-label col-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
             <div class="col-10">
                 <div class='input-group date'>
@@ -53,10 +53,10 @@
             </div>
         </div>
 
-        <div class="form-group ">
+        <div class="form-group mb-3 row ">
             <label for="condition_et_ou" class="control-label col-2"> Condition </label>
             <div class="col-10">
-                <select class="form-control" id="condition_et_ou" name="condition_et_ou" >
+                <select class="form-select" id="condition_et_ou" name="condition_et_ou" >
                     <OPTION value="and" <?php
                     if (isset($condition_et_ou) && $condition_et_ou == 1) {
                         echo "selected=\"selected\"";
@@ -72,11 +72,12 @@
 
         </div>
 
-        <div class="form-group">
+        <div class="form-group row mb-3">
             <label for="champ" class="control-label col-2"><?php echo BookingTranslator::query($lang) ?></label>
             <div class="col-10" id="champ">
                 <?php for ($i = 0; $i < 5; $i++) {
                     ?>
+                    <div class="row">
                     <div class="col-4">
                         <select class="form-control" name="champ[]" >
                             <?php
@@ -110,7 +111,7 @@
 
                     </div>
                     <div class="col-4">
-                        <select class="form-control" name="type_recherche[]" >
+                        <select class="form-select" name="type_recherche[]" >
                             <OPTION value="1" <?php
                             if (isset($type_recherche[$i]) && $type_recherche[$i] == 1) {
                                 echo "selected=\"selected\"";
@@ -132,15 +133,16 @@
                         ?>
                         <input type="text" class="form-control" name="text[]" value="<?php echo $value ?>" />
                     </div>
+                    </div>
                 <?php }
                 ?>
             </div>
         </div>
         <br>
-        <div class="form-group">
+        <div class="form-group row">
             <label class="control-label col-2"><?php echo BookingTranslator::Output($lang) ?></label>
             <div class="col-10">
-                <select class="form-control" name="output">
+                <select class="form-select" name="output">
                     <?php
                     if (isset($output)) {
                         
@@ -175,10 +177,10 @@
             </div>
         </div>	
         <br>
-        <div class="form-group">
+        <div class="form-group row">
             <label for="summary_rq" class="control-label col-2">Résumé par (ne concerne que les résumés) :</label>
             <div class="col-10">
-                <select class="form-control" id="summary_rq" name="summary_rq">
+                <select class="form-select" id="summary_rq" name="summary_rq">
                     <?php
                     $checkedC = "";
                     $checkedS = "";

@@ -10,7 +10,7 @@
 <div class="my-gallery" style="background-color:#ffffff; min-height: 100%" itemscope itemtype="http://schema.org/ImageGallery">
     <?php foreach ($entries as $entry) {
         ?>
-        <div class="col-8 offset-2">
+        <div class="col-12">
             <div class="col-2">
                 <?php
                 $imageFile = $entry["image"];

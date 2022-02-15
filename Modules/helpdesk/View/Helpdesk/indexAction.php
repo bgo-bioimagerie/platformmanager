@@ -137,7 +137,7 @@ blockquote {
                         <div class="card-body">
                             <form class="form-horizontal">
                             <div class="form-group">
-                            <label for="tstatus" class="col-2">Status</label>
+                            <label for="tstatus" class="">Status</label>
                             <div >
                                 <select id="tstatus" class="form-select" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
                                     <option value="0">New</option>
@@ -152,7 +152,7 @@ blockquote {
                                 </div>
                             </div>
                             <div class="form-group" v-if="ticket.ticket.assigned">
-                                <label for="tassign" class="col-2">Assignee</label>
+                                <label for="tassign" class="">Assignee</label>
                                 <div>
                                     <input id="tassign" class="form-control" readonly v-bind:value="ticket.ticket.assigned_name"/>
                                 </div>

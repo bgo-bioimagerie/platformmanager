@@ -59,7 +59,7 @@
             $selectedStyle = "background-color: #337ab7; color: #ffffff";
         }
     ?>
-        <div class="col-4 col-2">
+        <div class="col-4 col-md-2">
             <div class="card" style="text-align: center; <?php echo $selectedStyle; ?>">
                 <div class="card-header"></div>
                 <div class="card-body">
