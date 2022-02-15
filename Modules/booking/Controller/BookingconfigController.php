@@ -40,7 +40,6 @@ class BookingconfigController extends CoresecureController {
         $lang = $this->getLanguage();
 
         // menu activation form
-        //$formMenusactivation = $this->menusactivationForm($id_space, $lang);
         $formMenusactivation = $this->menusactivationForm($id_space, 'booking', $lang);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'booking', 'calendar');
@@ -48,13 +47,15 @@ class BookingconfigController extends CoresecureController {
         }
         $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'bookingsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivation($id_space, 'bookingsettings', 'calendar', 'booking');
-                        
-            if ( $this->request->getParameter("bookingsettingsMenustatus") > 0 ){
-                $modelAccess = new CoreSpaceAccessOptions();
-                $modelAccess->set($id_space, "bookingauthorisations", "booking", "bookingauthorisations");
-            }
+            $this->menusactivation($id_space, 'bookingsettings', 'calendar', 'booking');                   
             
+            $modelAccess = new CoreSpaceAccessOptions();
+            $toolname = "bookingauthorisations";
+            if ( $this->request->getParameter("bookingsettingsMenustatus") > 0 ) {
+                $modelAccess->set($id_space, $toolname, "booking", $toolname);
+            } else if ($modelAccess->exists($id_space, $toolname)) {
+                $modelAccess->set($id_space, $toolname, "booking", $toolname, 1);
+            }
             return $this->redirect("bookingconfig/".$id_space);
         }
         
