@@ -2,6 +2,7 @@
 
 ## 2.4.0
 
+* [documentation] add packages documentation and use case
 * [documents] add visibility controls on documents to have public, private, user/client scopes
 * [core] group users space access options on a single page
 * [core] in corespaceaccess show convention download button only if present
