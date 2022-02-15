@@ -209,8 +209,9 @@ class TableView {
      * Generate a basic table view
      * @param array $data table data ( 'key' => value)
      * @param array $headers table headers ( 'key' => 'headername' )
+     * @param bool $small display bootstrap small table
      */
-    public function view($data, $headers) {
+    public function view($data, $headers, $small=false) {
 
         $html = "";
         if ($this->isPrint()) {
@@ -252,8 +253,11 @@ class TableView {
             $html .= "</div>";
         }
 
-       
-        $html .= "<div class=\"table-responsive\"><table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
+        $is_small = '';
+       if($small) {
+            $is_small = ' table-sm ';
+       }
+        $html .= "<div class=\"table-responsive\"><table id=\"".$this->tableID."\" class=\"table $is_small table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
         //$html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";
 
         $isButtons = $this->isButtons();
