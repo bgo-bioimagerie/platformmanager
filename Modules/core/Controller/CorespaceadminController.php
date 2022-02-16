@@ -83,15 +83,17 @@ class CorespaceadminController extends CoresecureController {
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
+        $lang = $this->getLanguage();
+
+        $form = new Form($this->request, "corespaceadminedit");
+        $form->setTitle(CoreTranslator::Edit_space($lang));
+
         if(!$space) {
             $space = CoreSpace::new();
+            $form->addSelect("preconfigure", CoreTranslator::Preconfigure_space($lang), array(CoreTranslator::no($lang),CoreTranslator::yes($lang)), array(0,1), 0);
         }
 
         $spaceAdmins = $modelSpace->spaceAdmins($id_space);
-        
-        $lang = $this->getLanguage();
-        $form = new Form($this->request, "corespaceadminedit");
-        $form->setTitle(CoreTranslator::Edit_space($lang));
         
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
@@ -133,7 +135,6 @@ class CorespaceadminController extends CoresecureController {
         $choices = $expirationChoices['labels'];
         $choicesid = $expirationChoices['ids'];
 
-
         $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $space['user_desactivate'] ?? 1);
         
         $formAdd = new FormAdd($this->request, "addformspaceedit");
@@ -147,7 +148,6 @@ class CorespaceadminController extends CoresecureController {
         if ($form->check()){
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
-            # $shortname = str_replace(" ", "", $shortname);
             $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
             if($space && $space['shortname']) {
                 // Cannot modify shortname once set

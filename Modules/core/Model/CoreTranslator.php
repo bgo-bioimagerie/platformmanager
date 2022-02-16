@@ -725,6 +725,13 @@ class CoreTranslator {
         return "Deactivate user account when";
     }
 
+    public static function Preconfigure_space($lang = "") {
+        if ($lang == "fr") {
+            return "Préconfigurer l'espace";
+        }
+        return "Pre-configure space";
+    }
+
     public static function never($lang = "") {
         if ($lang == "fr") {
             return "jamais";
