@@ -16,6 +16,9 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+require_once 'Modules/clients/Controller/ClientsconfigController.php';
+require_once 'Modules/resources/Controller/ResourcesconfigController.php';
+require_once 'Modules/booking/Controller/BookingconfigController.php';
 
 
 /**
@@ -224,6 +227,11 @@ class CorespaceadminController extends CoresecureController {
             }
             
             $newSpace = $modelSpace->getSpace($id);
+
+            if ($this->request->getParameterNoException("preconfigure")) {
+                $this->preconfigureSpace($newSpace);
+            }
+
             if($isSuperAdmin) {
                 return $this->redirect("spaceadmin", [], ['space' => $newSpace]);
             }
@@ -231,6 +239,51 @@ class CorespaceadminController extends CoresecureController {
         
         return $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang), "data" => ["space" => $space]));
         
+    }
+
+    protected function preconfigureSpace($space) {
+        if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
+
+        // TODO: set modules to activate at preconfiguration in config ?
+        $modulesToActivate = array(
+            ["name" => "booking", "status" => 2],
+            ["name" => "bookingsettings", "status" => 3],
+            ["name" => "clients", "status" => 3],
+            ["name" => "resources", "status" => 3],
+        );
+
+        // activate modules
+        foreach ($modulesToActivate as $module) {
+            $this->activateModule($module['name'], $module['status'], $space);
+        }
+
+        // go to space home page
+        $this->request->setParams(["path" => "corespace/".$space['id']]);
+        $coreSpace = new CorespaceController($this->request, $space);
+        $coreSpace->runAction('core', 'view', ['id_space' => $space['id']]);
+
+        // guide admin through modules at connexion ?
+        
+
+    }
+
+    protected function activateModule($moduleName, $status, $space) {
+        $formId = $moduleName . "menusactivationForm";
+        $moduleBaseName = strpos($moduleName, 'settings') ? explode("settings", $moduleName)[0] : $moduleName;
+        $params = array(
+            "path" => $moduleBaseName . "config/".$space['id'],
+            "formid" => $formId,
+            $moduleName . "Menustatus" => $status,
+            $moduleName . "DisplayMenu" => 0,
+            $moduleName . "DisplayColor" =>  $space['color'],
+            $moduleName . "DisplayColorTxt" => $space['txtcolor']
+        );
+        $this->request->setParams($params);
+        $ctrlName = $moduleBaseName . 'configController';
+        $c = new $ctrlName($this->request, $space);
+        $c->runAction($moduleBaseName, 'index', ['id_space' => $space['id']]);
     }
     
     public function deleteAction($id_space){
