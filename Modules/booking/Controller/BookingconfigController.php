@@ -52,9 +52,11 @@ class BookingconfigController extends CoresecureController {
             $modelAccess = new CoreSpaceAccessOptions();
             $toolname = "bookingauthorisations";
             if ( $this->request->getParameter("bookingsettingsMenustatus") > 0 ) {
-                $modelAccess->set($id_space, $toolname, "booking", $toolname);
+                $modelAccess->exists($id_space, $toolname)
+                    ? $modelAccess->reactivate($id_space, $toolname)
+                    : $modelAccess->set($id_space, $toolname, "booking", $toolname);
             } else if ($modelAccess->exists($id_space, $toolname)) {
-                $modelAccess->set($id_space, $toolname, "booking", $toolname, 1);
+                $modelAccess->delete($id_space, $toolname);
             }
             return $this->redirect("bookingconfig/".$id_space);
         }

@@ -32,14 +32,14 @@ class CoreSpaceAccessOptions extends Model {
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
     
-    public function set($id_space, $toolname, $module, $url, $deactivate=0) {
+    public function set($id_space, $toolname, $module, $url) {
         if (!$this->exists($id_space, $toolname)){
             $sql = "INSERT INTO core_space_access_options (id_space, toolname, module, url) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id_space, $toolname, $module, $url));
         }
         else{
-            $sql = "UPDATE core_space_access_options SET module=?, url=?, deleted=? WHERE id_space=? AND toolname=?";
-            $this->runRequest($sql, array($module, $url, $deactivate, $id_space, $toolname));
+            $sql = "UPDATE core_space_access_options SET module=?, url=?, WHERE id_space=? AND toolname=?";
+            $this->runRequest($sql, array($module, $url, $id_space, $toolname));
         }
     }
     
@@ -52,5 +52,14 @@ class CoreSpaceAccessOptions extends Model {
         return false;
     }
     
+    public function delete($id_space, $toolname) {
+        $sql = "UPDATE core_space_access_options SET deleted=1,deleted_at=NOW() WHERE toolname=? AND id_space=?";
+        $this->runRequest($sql, array($toolname, $id_space));
+    }
+
+    public function reactivate($id_space, $toolname) {
+        $sql = "UPDATE core_space_access_options SET deleted=0,deleted_at=NULL WHERE toolname=? AND id_space=?";
+        $this->runRequest($sql, array($toolname, $id_space));
+    }
     
 }

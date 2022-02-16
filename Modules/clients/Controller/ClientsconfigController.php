@@ -48,9 +48,11 @@ class ClientsconfigController extends CoresecureController {
             $modelAccess = new CoreSpaceAccessOptions();
             $toolname = "clientsuseraccounts";
             if ( $this->request->getParameter("clientsMenustatus") > 0 ) {
-                $modelAccess->set($id_space, $toolname, "clients", $toolname);
+                $modelAccess->exists($id_space, $toolname)
+                    ? $modelAccess->reactivate($id_space, $toolname)
+                    : $modelAccess->set($id_space, $toolname, "clients", $toolname);
             } else if ($modelAccess->exists($id_space, $toolname)) {
-                $modelAccess->set($id_space, $toolname, "clients", $toolname, 1);
+                $modelAccess->delete($id_space, $toolname);
             }
 
             $this->redirect("clientsconfig/".$id_space);
