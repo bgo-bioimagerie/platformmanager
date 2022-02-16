@@ -55,7 +55,7 @@ class BookingconfigController extends CoresecureController {
                 $modelAccess->exists($id_space, $toolname)
                     ? $modelAccess->reactivate($id_space, $toolname)
                     : $modelAccess->set($id_space, $toolname, "booking", $toolname);
-            } else if ($modelAccess->exists($id_space, $toolname)) {
+            } else {
                 $modelAccess->delete($id_space, $toolname);
             }
             return $this->redirect("bookingconfig/".$id_space);

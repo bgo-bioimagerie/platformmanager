@@ -51,7 +51,7 @@ class ClientsconfigController extends CoresecureController {
                 $modelAccess->exists($id_space, $toolname)
                     ? $modelAccess->reactivate($id_space, $toolname)
                     : $modelAccess->set($id_space, $toolname, "clients", $toolname);
-            } else if ($modelAccess->exists($id_space, $toolname)) {
+            } else {
                 $modelAccess->delete($id_space, $toolname);
             }
 

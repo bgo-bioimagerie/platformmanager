@@ -38,7 +38,7 @@ class CoreSpaceAccessOptions extends Model {
             $this->runRequest($sql, array($id_space, $toolname, $module, $url));
         }
         else{
-            $sql = "UPDATE core_space_access_options SET module=?, url=?, WHERE id_space=? AND toolname=?";
+            $sql = "UPDATE core_space_access_options SET module=?, url=? WHERE id_space=? AND toolname=?";
             $this->runRequest($sql, array($module, $url, $id_space, $toolname));
         }
     }
@@ -58,7 +58,7 @@ class CoreSpaceAccessOptions extends Model {
     }
 
     public function reactivate($id_space, $toolname) {
-        $sql = "UPDATE core_space_access_options SET deleted=0,deleted_at=NULL WHERE toolname=? AND id_space=?";
+        $sql = "UPDATE core_space_access_options SET deleted=0, deleted_at=NULL WHERE toolname=? AND id_space=?";
         $this->runRequest($sql, array($toolname, $id_space));
     }
     
