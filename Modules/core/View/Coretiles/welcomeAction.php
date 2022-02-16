@@ -22,7 +22,7 @@
 <div class="container" id="welcome">
     <div class="row">
 
-        <div class="col-2">
+        <div class="col-12 col-md-4">
                 <div><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
                     <div style="margin: 10px"><a href="coretiles?mine=1"><button class="btn btn-primary btn-block"><?php echo CoreTranslator::MySpaces($lang); ?></button></a></li></div>
                 <?php 
@@ -35,9 +35,9 @@
         </div>
 
 
-        <div class="col-6">
+        <div class="col-12 col-md-4">
             <div class="row">
-                <div class="col-6">
+                <div class="col-12">
                     <input id="search" type="text" class="form-control" v-model="search" placeholder="search"/>
                 </div>
             </div>
@@ -57,13 +57,13 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div v-if="space.join" style="bottom: 20px; right: 10px">
+                        <div v-if="space.join" style="bottom: 20px">
                             <a :href="`coretilesselfjoinspace/${space.id}`">
-                                <button type="button" class="btn btn-md btn-success">{{space.join}}</button>
+                                <button type="button" class="btn btn-sm btn-success">{{space.join}}</button>
                             </a>
                         </div>
-                        <div v-if="space.join_requested" style="bottom: 20px; right: 10px">
-                            <button type="button" class="btn btn-md btn-info" disabled>{{space.join_requested}}</button>
+                        <div v-if="space.join_requested" style="bottom: 20px">
+                            <button type="button" class="btn btn-sm btn-info" disabled>{{space.join_requested}}</button>
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
             </div>
             <?php } ?>
         </div>
-        <div class="col-4" id="user_home">
+        <div class="col-12 col-md-4" id="user_home">
             <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { ?>
                 <div v-if="bookings && bookings.length > 0" id="future_bookings">
                     <div class="card text-dark bg-light">

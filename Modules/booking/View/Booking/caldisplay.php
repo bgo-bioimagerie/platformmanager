@@ -143,7 +143,7 @@ th {
 					<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
 						<?php if($hcalEntry['free']) { ?>
 							<?php if ($hcalEntry['link']) { ?>
-							<div><a aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="bi-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+							<div><a data-status="free" aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="bi-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
 							<?php } ?>
 						<?php } else { ?>
 						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
