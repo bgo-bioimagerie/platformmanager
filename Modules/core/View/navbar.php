@@ -51,6 +51,11 @@
 				<?php }?>
 			</ul>
 			<ul class="navbar-nav navbar-right">
+				<li class="nav-item form-check form-switch">
+					<input class="nav-link form-check-input" <?php if($theme == 'dark') { echo "checked";} ?> type="checkbox" id="flexSwitchCheckDefault" onclick="window.location.href=window.location.pathname+'?theme=switch'">
+				</li>
+
+
 				<?php if($impersonate!=null) { ?><li class="nav-item"><a href="corespaceaccess/0/unimpersonate"><button class="btn btn-danger">Log back to <?php echo $impersonate; ?></button></a></li><?php } ?>
 				<?php if(isset($_SESSION["login"]) && $_SESSION["id_user"] > 0) { ?>
 				<li class="nav-item dropdown">

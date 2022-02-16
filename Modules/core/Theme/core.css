@@ -1,7 +1,5 @@
 body{
     height: 100%;
-    background-color: #e7ecf0;
-    
 }
 
 footer {
@@ -45,24 +43,20 @@ footer {
 }
 
 .pm-form{
-    background-color: #ffffff; 
     border: 7px solid #e7ecf0;
 }
 
 .pm-form-short{
-    background-color: #ffffff; 
     border: 7px solid #e7ecf0;
     padding-bottom: 7px;
 }
 
 .pm-table{
-    background-color: #ffffff; 
     border: 7px solid #e7ecf0;
     padding-top: 7px;
 }
 
 .pm-table-short{
-    background-color: #ffffff; 
     border: 7px solid #e7ecf0;
     padding-top: 7px;
 }

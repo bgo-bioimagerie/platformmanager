@@ -337,7 +337,7 @@ class TableView {
                 }
                 foreach ($headers as $key => $value) {
 
-                    $ccolor = Constants::COLOR_WHITE;
+                    $ccolor = '';
                     if (isset($this->colorIndexes[$key])){  
                         $ccolor = $dat[$this->colorIndexes[$key]];
                     }
@@ -346,7 +346,7 @@ class TableView {
                             $ccolor = $dat[$this->colorIndexes["all"]];
 	    		        }
                     }
-                    $tcolor = Constants::COLOR_BLACK;
+                    $tcolor = '';
                     if(isset($this->colorIndexes["all_text"])) {
                         $tcolor = $dat[$this->colorIndexes["all_text"]];
                     }

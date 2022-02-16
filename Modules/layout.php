@@ -35,7 +35,11 @@ if($isdev) {
             echo '<script src="externals/vuejs/vue.min.js"></script>';
         }
         ?>
-        <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <?php if(isset($context['theme']) && $context['theme'] == 'dark') { ?>
+            <link rel="stylesheet" href="externals/pfm/themes/bootstrap-night.css">
+        <?php } else { ?>
+            <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <?php } ?>
         <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
         <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
@@ -49,7 +53,7 @@ if($isdev) {
         <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
-    <body style="background-color: #e7ecf0;">
+    <body>
 
         <?php startblock('navbar') ?>
             <?php
