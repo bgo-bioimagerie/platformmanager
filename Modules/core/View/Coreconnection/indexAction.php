@@ -31,7 +31,7 @@
         </div>
 
         <!-- Login -->
-        <div class="col-12 col-lg-8">
+        <div class="col-12 col-md-8">
             <div class="row">
                 <div class="col-12">
                     <?php if (isset($msgError) && $msgError != "") { ?>
@@ -42,36 +42,31 @@
                 </div>
             </div>
             <div class="row justify-content-md-center">
-                <div class="col-12 col-6">
-                    <form class="form form-signin mb-3" action="corelogin" method="post">
+                <div class="col-12 col-md-6">
+                    <form class="form form-signin" action="corelogin" method="post">
                         <input class="form-control" name="redirection" type="hidden" value="<?php echo $redirection ?>">
-                        <input class="form-control" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
-                        <input class="form-control" name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
-                        <div class="checkbox">
+                        <input class="form-control mb-3" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
+                        <input class="form-control mb-3" name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
+                        <div class="checkbox mb-3">
                             <label class="form-check-label" for="remember"><?php echo CoreTranslator::RememberMe($language) ?></label>
                             <input class="form-check-input" type="checkbox" id="remember" name="remember" value="">
                         </div>
-
-                        <button class="btn btn-primary" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-3"><button class="btn btn-primary" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button></div>
+                            <div class="col-12 col-md-9">
+                                <div><a href="corepasswordforgotten" class="m-3"><?php echo CoreTranslator::PasswordForgotten($language) ?></a></div>
+                                <div><a href="mailto:<?php echo $admin_email ?>" class="m-3"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a></div>
+                            </div>
+                        </div>
                     </form>
 
                 </div>
-                <div class="col-12 col-6">
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>
-                        </div>
 
-                        <div class="col-12">
-                            <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </div>
         <?php if(Configuration::get('allow_registration', false)) { ?>
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-md-4">
                 <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
             </div>
         <?php }  ?>
