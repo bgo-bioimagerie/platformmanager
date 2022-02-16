@@ -185,6 +185,9 @@ class BookingInvoice extends InvoiceModel {
             $userTime["nightQte"] = 0;
             $userTime["weQte"] = 0;
 
+            // TODO: not used for the moment, memory impact to consider depending number of elements
+            // $userDetails = [];
+
             $totalQte = 0; // $totalQte = total number of items booked
 
             foreach ($reservations as $reservation) {
@@ -192,6 +195,18 @@ class BookingInvoice extends InvoiceModel {
                 // count: day night we, packages
                 if ($reservation["package_id"] > 0) {
                     $userPackages[$reservation["package_id"]] ++;
+                    /*
+                    $userDetails[] = [
+                        'id' => $reservation['id'],
+                        'start_time' => $reservation['start_time'],
+                        'end_time' => $reservation['end_time'],
+                        'nb_hours_day' => 1,
+                        'nb_hours_night' => 0,
+                        'nb_hours_we' => 0,
+                        'resource' => $reservation['resource_id'],
+                        'user' => $reservation['recipient_id']
+                    ];
+                    */
                 } else {
                     if(!$timePrices || !array_key_exists($res['id'], $timePrices)) {
                         Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
@@ -228,11 +243,35 @@ class BookingInvoice extends InvoiceModel {
                         $userTime["dayQte"] += $tmpDayQte;
                         $userTime["nightQte"] += $tmpNightQte;
                         $userTime["weQte"] += $tmpWeQte;
+                        /*
+                        $userDetails[] = [
+                            'id' => $reservation['id'],
+                            'start_time' => $reservation['start_time'],
+                            'end_time' => $reservation['end_time'],
+                            'nb_hours_day' => $tmpDayQte,
+                            'nb_hours_night' => $tmpNightQte,
+                            'nb_hours_we' => $tmpWeQte,
+                            'resource' => $reservation['resource_id'],
+                            'user' => $reservation['recipient_id']
+                        ];
+                        */
                         
                     } else {
                         $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
                         $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
                         $userTime["nb_hours_we"] += $resaDayNightWe["nb_hours_we"];
+                        /*
+                        $userDetails[] = [
+                            'id' => $reservation['id'],
+                            'start_time' => $reservation['start_time'],
+                            'end_time' => $reservation['end_time'],
+                            'nb_hours_day' => $resaDayNightWe["nb_hours_day"],
+                            'nb_hours_night' => $resaDayNightWe["nb_hours_night"],
+                            'nb_hours_we' => $resaDayNightWe["nb_hours_we"],
+                            'resource' => $reservation['resource_id'],
+                            'user' => $reservation['recipient_id']
+                        ];
+                        */
                     }                    
                 }
 
@@ -270,8 +309,13 @@ class BookingInvoice extends InvoiceModel {
 
                     $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                     $content["count"][] = $resourceCount;
-
                 }
+                /*
+                foreach ($userDetails as $resaDetails) {
+                    $content["details"][] = $resaDetails;
+                }
+                */
+                
                 foreach ($packagesPrices[$res["id"]] as $p) {
                     if ($userPackages[$p["id"]] > 0) {
 
@@ -281,6 +325,7 @@ class BookingInvoice extends InvoiceModel {
                         $resourceCount["content"] = $res["id"] . "_pk_" . $p['id'] .'=' . $resourceCount['quantity'] . "=" . $resourceCount['unitprice'] . ";";
                         $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                         $content["count"][] = $resourceCount;
+
                     }
                 }
 
@@ -358,6 +403,7 @@ class BookingInvoice extends InvoiceModel {
             "quantity" => BookingTranslator::Quantities($lang)
         );
         $data["content"] = array();
+
         foreach($resources as $resource){
             $resouceName = $modelResource->getName($id_space, $resource[0]);
 
