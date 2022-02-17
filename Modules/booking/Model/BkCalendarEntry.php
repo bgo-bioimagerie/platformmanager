@@ -906,6 +906,9 @@ class BkCalendarEntry extends Model {
         $LABpricingid = $modelClient->getPricingID($id_space, $id_client);
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
+        if(!$pricingInfo) {
+            throw new PfmException('no pricing found for client '.$id_client);
+        }
 
         $night_begin = $pricingInfo['night_start'];
         $night_end = $pricingInfo['night_end'];
@@ -993,8 +996,10 @@ class BkCalendarEntry extends Model {
         $nb_day = 0;
         $nb_night = 0;
         $nb_we = 0;
+        $nb_closed = 0;
         foreach ($gaps as $gap) {
             if($gap['kind'] == 'closed') {
+                $nb_closed += $gap['duration'];
                 continue;
             }
             $total_duration += $gap['duration'];
@@ -1013,6 +1018,7 @@ class BkCalendarEntry extends Model {
             }
         }
 
+        $nb_hours_closed = round($nb_closed / 3600, 1);
         $nb_hours_day = round($nb_day / 3600, 1);
         $nb_hours_night = round($nb_night / 3600, 1);
         $nb_hours_we = round($nb_we / 3600, 1);
@@ -1025,6 +1031,7 @@ class BkCalendarEntry extends Model {
             'total' => $total_duration,
             'steps' => $gaps,
             'hours' => [
+                'nb_hours_closed' => $nb_hours_closed,
                 'nb_hours_day' => $nb_hours_day,
                 'nb_hours_night' => $nb_hours_night,
                 'nb_hours_we' => $nb_hours_we,
