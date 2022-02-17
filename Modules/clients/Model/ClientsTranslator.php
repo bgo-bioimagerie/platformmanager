@@ -346,5 +346,22 @@ class ClientsTranslator {
         return "Add a client account for";
     }
 
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "company":
+                    $result = ($lang === "fr") ? "Editer les informations de votre structure" : "Edit your structure informations";
+                    break;
+                case "client":
+                    $result .= ($lang === "fr") ? "un client" : "a client";
+                    break;
+                case "pricing":
+                    $result .= ($lang === "fr") ? "un tarif" : "a pricing";
+                    break;
+                default:
+                    break;
+            }
+        return $result;
+    }
 
 }

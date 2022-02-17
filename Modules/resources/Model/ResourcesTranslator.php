@@ -409,4 +409,25 @@ class ResourcesTranslator {
         return "Authorization has been successfully added";
     }
 
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "area":
+                    $result .= ($lang === "fr") ? "un domaine" : "an area";
+                    break;
+                case "category":
+                    $result .= ($lang === "fr") ? "une catégorie" : "a category";
+                    break;
+                case "resource":
+                    $result .= ($lang === "fr") ? "une ressource" : "a resource";
+                    break;
+                case "visa":
+                    $result .= ($lang === "fr") ? "un visa" : "a visa";
+                    break;
+                default:
+                    break;
+            }
+        return $result;
+    }
+
 }

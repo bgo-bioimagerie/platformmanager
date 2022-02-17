@@ -17,15 +17,38 @@
             class="tab btn btn-secondary"
             style="margin:5px; font-weight:bold">
             TODO
-    </button>
+        </button>
     </div>
     <div id="sections">
-        <div id="spaceedit_form">
+        <div id="spaceedit_form" style="display:none">
             {{ formHtml | raw }}
         </div>
 
-        <div id="spaceedit_todo" style="display:none">
-            TODO LIST
+        <div id="spaceedit_todo" style="display:block">
+
+            <h3>Basic space configuration</h3>
+
+            {% for module in todolist %}
+                <div>
+                    <h4>{{ module.title }}</h4>
+                    {% for task in module.tasks %}
+                        {% set checked = task.done ? "checked" : "" %}
+                        <div>
+                            <input
+                                type="checkbox"
+                                id="{{task.id}}"
+                                name="{{task.id}}"
+                                {{checked}} >
+                            <label for="{{task.id}}" style="font-weight:normal">
+                                <a href="{{task.url}}">
+                                    {{task.title}}
+                                </a>
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
         </div>
     </div>
 </div>

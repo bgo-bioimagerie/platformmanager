@@ -20,6 +20,10 @@ require_once 'Modules/clients/Controller/ClientsconfigController.php';
 require_once 'Modules/resources/Controller/ResourcesconfigController.php';
 require_once 'Modules/booking/Controller/BookingconfigController.php';
 
+require_once 'Modules/resources/Model/ResourcesTranslator.php';
+require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+
 
 /**
  * 
@@ -237,9 +241,79 @@ class CorespaceadminController extends CoresecureController {
                 return $this->redirect("spaceadmin", [], ['space' => $newSpace]);
             }
         }
+        // generate todoList informations
+        $todolist = $this->todolist($space['id']);
+        return $this->render(
+            array(
+                "lang" => $lang,
+                "formHtml" => $form->getHtml($lang),
+                "todolist" => $todolist,
+                "data" => ["space" => $space]
+            )
+        );
         
-        return $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang), "data" => ["space" => $space]));
-        
+    }
+
+    protected function todolist($id_space) {
+        Configuration::getLogger()->debug("[TEST]", ["generating todoList"]);
+        $lang = $this->getLanguage();
+        // TODO: check what has already been done !
+        // TODO: translate titles
+        $todoData = array();
+        $todoData['resources'] = [
+            "title" => "Resources",
+            "tasks" => [
+                [
+                    "id" => "re_area",
+                    "title" => ResourcesTranslator::Create_item("area", $lang),
+                    "url" => "reareasedit/" . $id_space,
+                    "done" => false
+                ],
+                [
+                    "id" => "re_category",
+                    "title" => ResourcesTranslator::Create_item("category", $lang),
+                    "url" => "recategoriesedit/" . $id_space,
+                    "done" => false
+                ],
+                [
+                    "id" => "re_resource",
+                    "title" => ResourcesTranslator::Create_item("resource", $lang),
+                    "url" => "resourcesedit/" . $id_space,
+                    "done" => false
+                ],
+                // TODO: think about actions order => for example, need to create a first user to be able to create visas
+                [
+                    "id" => "re_visa",
+                    "title" => ResourcesTranslator::Create_item("visa", $lang),
+                    "url" => "resourceseditvisa/" . $id_space,
+                    "done" => false
+                ],
+            ]
+        ];
+        $todoData['clients'] = [
+            "title" => "Clients",
+            "tasks" => [
+                [
+                    "id" => "cl_company",
+                    "title" => ClientsTranslator::Create_item("company", $lang),
+                    "url" => "clcompany/" . $id_space,
+                    "done" => false
+                ],
+                [
+                    "id" => "cl_client",
+                    "title" => clientsTranslator::Create_item("client", $lang),
+                    "url" => "clclientedit/" . $id_space,
+                    "done" => false
+                ],
+                [
+                    "id" => "cl_pricing",
+                    "title" => ClientsTranslator::Create_item("pricing", $lang),
+                    "url" => "clpricingedit/" . $id_space,
+                    "done" => false
+                ],
+            ]
+        ];
+        return $todoData;
     }
 
     protected function preconfigureSpace($space) {
