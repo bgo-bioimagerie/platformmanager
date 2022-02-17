@@ -82,6 +82,7 @@ class CorespaceadminController extends CoresecureController {
     
     public function editAction($id_space){
         // Check user is superadmin or space admin
+        Configuration::getLogger()->debug("[TEST]", ["in spaceadmin edit action"]);
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
         $modelSpace = new CoreSpace();
@@ -259,14 +260,9 @@ class CorespaceadminController extends CoresecureController {
             $this->activateModule($module['name'], $module['status'], $space);
         }
 
-        // go to space home page
-        $this->request->setParams(["path" => "corespace/".$space['id']]);
-        $coreSpace = new CorespaceController($this->request, $space);
-        $coreSpace->runAction('core', 'view', ['id_space' => $space['id']]);
-
-        // guide admin through modules at connexion ?
-        
-
+        $this->redirect("spaceadminedit/". $space['id']);
+        $this->runAction('core', 'edit', ['id_space' => $space['id']]);
+        // TODO: display flash !
     }
 
     protected function activateModule($moduleName, $status, $space) {
