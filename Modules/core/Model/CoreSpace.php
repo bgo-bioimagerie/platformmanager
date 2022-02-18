@@ -153,7 +153,7 @@ class CoreSpace extends Model {
         `plan` int NOT NULL DEFAULT 0,
         `plan_expire` int NOT NULL DEFAULT 0,
         `user_desactivate` int(1) NOT NULL DEFAULT 1,
-        `termsofuse` varchar(255)  /* terms of use URL */
+        `termsofuse` varchar(255),  /* terms of use URL */
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -214,7 +214,8 @@ class CoreSpace extends Model {
             "admins" => [],
             "plan" => 0,
             "plan_expire" => 0,
-            "user_desactivate" => 1
+            "user_desactivate" => 1,
+            "termsofuse" => ""
         ];
     }
     
