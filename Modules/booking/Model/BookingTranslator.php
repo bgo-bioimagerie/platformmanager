@@ -1706,4 +1706,11 @@ class BookingTranslator {
         }
         return "My bookings";
     }
+
+    public static function Closed($lang = "") {
+        if($lang == "fr") {
+            return "Fermé";
+        }
+        return "Closed";
+    }
 }
