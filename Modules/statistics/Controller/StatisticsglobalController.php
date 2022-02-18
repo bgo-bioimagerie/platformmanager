@@ -90,8 +90,8 @@ class StatisticsglobalController extends StatisticsController {
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
 
-            $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
-            return;
+            $f  = $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
+            return ['data' => ['file' => $f]];
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
@@ -110,10 +110,18 @@ class StatisticsglobalController extends StatisticsController {
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         // record modifications and download file
+
+        if(getenv('PFM_MODE') == 'test') {
+            $tempName = tempnam('/tmp', 'statistics').'.xlsx';
+            Configuration::getLogger()->debug('[statistics] generate stats file', ['file' => $tempName]);
+            $objWriter->save($tempName);
+            return $tempName;
+        }
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
+        return null;
     }
 
 }

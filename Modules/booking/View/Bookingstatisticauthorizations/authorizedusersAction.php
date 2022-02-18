@@ -1,6 +1,6 @@
 <?php include 'Modules/statistics/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form">
@@ -16,7 +16,7 @@
             </div>
 
             <div class="form-group">
-                <label for="inputEmail" class="control-label col-xs-4"><?php echo ResourcesTranslator::Categories($lang) ?></label>
+                <label for="resource_id" class="control-label col-xs-4"><?php echo ResourcesTranslator::Categories($lang) ?></label>
                 <div class="col-xs-8">
                     <select class="form-control" name="resource_id" id="resource_id"
                             >
@@ -46,5 +46,4 @@
     </div>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

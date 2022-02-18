@@ -1,7 +1,52 @@
 # Changes
 
+## 2.4.0
+
+* [core] reduce space users options after a module is deactivated
+* [documentation] update space join use case
+* [documents] add visibility controls on documents to have public, private, user/client scopes
+* [core] group users space access options on a single page
+* [core] in corespaceaccess show convention download button only if present
+* [invoices] show message if no template defined
+* [core] add status and msg to core files
+* [helpdesk] on file upload (manual), create dir if not exists
+* [core] fix default sort order in tables and remove download button if no url
+* [core] fix typos/spelling
+* [booking] on calendar, showuser infos (name, phone,...) options: Hidden/Visible/Managers only Closes #509
+* [booking] manage redirect after reservation edit to page were booking was done
+* [booking] fix default color code
+* [users] if date_end_contract is empty, insert null in db
+* [core] code cleanup #554
+* [booking] handle booking settings fields *booking scale* and *user specifies*
+* [booking] fix package display on new reservation
+* [invoice] generate invoices in background (async) and show generation status
+* [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
+* [booking] graphics and code refactoring of calendar
+* [core] handle multiple Accept values in http headers for API calls (application/json)
+* [core] on user join request, request a comment from user to be added to email
+
+## 2.3.3 [unreleased]
+
+* [booking] fix display of package on new booking Closes #563
+
+## 2.3.2
+
+* [booking][services] fix popup when editing with pagination #553
+* [services] fix date on followup when in french #555
+* [invoices] fix template var name clientsInfos -> clientInfos
+* [booking] fix resource status color in dayarea/weekarea
+* [booking] fix missing import for invoices
+
+## 2.3.1
+
+* [core] fix upgrade for redis invoice numbers
+
 ## 2.3.0
 
+* [invoices] fix non-numeric quantity and/or price cases in invoice edition
+* [services] dynamize client selection in project edition
+* [services] services quantity types differenciation in projects, orders and invoices
+* [coreconfig] remove module color edition from core config
 * [booking] fix all_day reservation end date
 * [core] remove most references to CoreTranslator::dateFromEn()
 * [spaces] remove request access button from private spaces
@@ -21,9 +66,14 @@
 * [layout] display enhancements
 * [core] add index on id_space
 * [services] fix services orders errors with client not registered
+* [core] set user deactivation settings per space
 * [booking] check booking start/end time and day at reservation
 * [core] add button to user spaces
-* [core] on user join request, request a comment from user to be added to email
+* [statistics] various fixes
+* [antibodies] fix missing table creation at install
+* [booking] send emails only if user status > VISITOR in space
+* [com] check ACLs on com module and limit edition to space admins
+* [booking] fix booking emails if invalid/recuring, notify if new or update
 
 ## 2.2.2
 
@@ -43,7 +93,7 @@
 * [booking] fix authorizations when related to user's roles
 * [helpdesk] sort tickets and fix refresh
 * [helpdesk] ignore auto replies
-* [core] check id_user to see if user is logged
+* [core] check id_user to see if user is logged
 * [core] on register after email validation validate the account #472
 * [statistics] require env var MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD} in pfm/pfm-events containers
 * [core] use module url and not name for notifications #476
@@ -52,7 +102,7 @@
 
 ## 2.2.0
 
-**Warning**: [admin] Ldap configuration modification from ini or env variables
+**Warning**: [admin] Ldap configuration modification from ini or env variables
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 

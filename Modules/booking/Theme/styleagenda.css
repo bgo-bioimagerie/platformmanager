@@ -1,66 +1,66 @@
 .liste{
-width:250px;
-margin-bottom:3px;
-margin-top:30px;
-background-color:#000;
-color:#ffffff;
-border: 1px solid #f1f1f1;
+	width:250px;
+	margin-bottom:3px;
+	margin-top:30px;
+	background-color:#000;
+	color:#ffffff;
+	border: 1px solid #f1f1f1;
 }
 .tableau {
-margin-top:0px;
-border: thin solid #f1f1f1;
-border-collapse: collapse;
-margin-left:auto;
-margin-right:auto;
-width:100%;
-/*height:300px;*/
-text-align:left;
-cursor:default;
+	margin-top:0px;
+	border: thin solid #f1f1f1;
+	border-collapse: collapse;
+	margin-left:auto;
+	margin-right:auto;
+	width:100%;
+	/*height:300px;*/
+	text-align:left;
+	cursor:default;
 
 }
 .tableau caption
 {
-text-align:center;
-background-color:#ffffff;
-font-family:"Times,sans-serif;
-font-weight:bold;
-font-size:16pt;
-color:#818181;
-padding:25px;
-margin-top:3px;
+	text-align:center;
+	background-color:#ffffff;
+	font-family:Times,sans-serif;
+	font-weight:bold;
+	font-size:16pt;
+	color:#818181;
+	padding:25px;
+	margin-top:3px;
 }
 .tableau th {
-font-family:"Times,sans-serif;
-border: thin solid #d1d1d1;
-padding: 2px;
-background-color: #f1f1f1;
-font-size:16px;
-font-weight:bold;
-text-align:center;
+	font-family:Times,sans-serif;
+	border: thin solid #d1d1d1;
+	padding: 2px;
+	background-color: #f1f1f1;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
 }
 .tableau td {
-font-family:Times,serif;
-border: thin solid #d1d1d1;
-padding: 10px;
-font-weight:bold;
-cursor:pointer;
-width:100px;
-height:75px;
-font-size:16px;
+	font-family:Times,sans-serif;
+	border: thin solid #d1d1d1;
+	padding: 10px;
+	font-weight:bold;
+	cursor:pointer;
+	width:100px;
+	height:75px;
+	font-size:16px;
 }
 .desactive
 {
-background-color:#f1f1f1;
+	background-color:#f1f1f1;
 }
 td.ferier
 {
-background-color:#ffffff;
+	background-color:#ffffff;
 }
 .special
 {
-background-color:#e1e1e1;
-color:#990000;
-text-decoration:blink;
+	background-color:#e1e1e1;
+	color:#990000;
+	text-decoration:blink;
 }
 #notif
 {
@@ -74,12 +74,12 @@ text-decoration:blink;
 }
 #lien {margin-top:20px;}
 #lien a,#lien a:visited{
-padding:10px 30px;
-background-color:#336633;
-color:#FFFFFF;
-border:1px solid #333333;
-text-decoration:none;
+	padding:10px 30px;
+	background-color:#336633;
+	color:#FFFFFF;
+	border:1px solid #333333;
+	text-decoration:none;
 }
 #lien a:hover{
-background-color:#339900;
+	background-color:#339900;
 }

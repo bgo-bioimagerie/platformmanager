@@ -5,7 +5,7 @@
 Error - Platform-Manager
 <?php endblock() ?> 
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 <div class="container">
     <div class="jumbotron" style="margin-top: 50px;">
@@ -17,4 +17,4 @@ Error - Platform-Manager
         </p>
     </div>
 </div>
-<?php endblock();
+<?php endblock(); ?>

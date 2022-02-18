@@ -7,6 +7,91 @@ require_once 'Errors.php';
 require_once 'Constants.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreAdminMenu.php';
+require_once 'Modules/core/Model/CoreConfig.php';
+
+// Default navbar
+class Navbar{
+
+    private string $login = '';
+
+    /**
+     * Get the navbar content
+     * @return string
+     */
+    public function __construct(public ?string $lang) {
+        $this->lang = $lang;
+        if(isset($_SESSION["login"])) {
+            $this->login = $_SESSION["login"];
+        }
+    }
+
+    public function get():string {
+        $userName = $this->login;
+        $toolMenu = $this->getMenu();
+        $toolAdmin = $this->getAdminMenu();
+
+        // get the view menu,fill it, and return the content
+        return $this->generateNavfile(
+                array('userName' => $userName,
+                    'toolMenu' => $toolMenu,
+                    'toolAdmin' => $toolAdmin,
+                    'impersonate' => $_SESSION['logged_login'] ?? null,
+                    'lang' => $this->lang));
+    }
+
+    /**
+     * Get the tool menu
+     * @return multitype: tool menu content
+     */
+    public function getMenu() {
+        $modelMainMenus = new CoreMainMenu();
+        return $modelMainMenus->getAll();
+    }
+
+    /**
+     * Get the admin menu
+     * @return multitype: Amdin menu
+     */
+    public function getAdminMenu() {
+        if(!isset($_SESSION["user_status"])) {
+            return null;
+        }
+        $user_status_id = $_SESSION["user_status"];
+
+        $toolAdmin = null;
+        if ($user_status_id >= CoreStatus::$ADMIN) {
+            $modulesModel = new CoreAdminMenu();
+            $toolAdmin = $modulesModel->getAdminMenus();
+        }
+        return $toolAdmin;
+    }
+
+    /**
+     * Internal method to build the navbar into HTML
+     * @param  $data navbar content
+     * @throws Exception
+     * @return string Menu view (html) 
+     */
+    private function generateNavfile($data) {
+        $file = 'Modules/core/View/navbar.php';
+        if (file_exists($file)) {
+            extract($data);
+
+            ob_start();
+
+            require $file;
+
+            return ob_get_clean();
+        } else {
+            throw new PfmFileException("unable to find the file: '$file' ", 404);
+        }
+    }
+
+}
+
+
 
 /**
  * Abstract class defining a controller. 
@@ -27,6 +112,7 @@ abstract class Controller {
 
     protected ?array $currentSpace = null;
     protected int $role = -1;
+    protected ?string $maintenance = null;
 
     public function args() {
         return $this->args;
@@ -55,6 +141,13 @@ abstract class Controller {
             $m = new CoreSpace();
             $this->role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
         }
+
+        $ccm = new CoreConfig();
+        $maintenance = $ccm->getParam("is_maintenance", false);
+        if($maintenance) {
+            $this->maintenance = $ccm->getParam("maintenance_message", "Site maintenance");
+        }
+
     }
 
         /**
@@ -183,7 +276,17 @@ abstract class Controller {
         $classController = get_class($this);
         $controllerView = str_replace("Controller", "", $classController);
 
-        if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
+        $isJson = false;
+        if(isset($_SERVER['HTTP_ACCEPT'])) {
+            $accept = explode(',', $_SERVER['HTTP_ACCEPT']);
+            foreach($accept as $a) {
+                if($a == "application/json") {
+                    $isJson = true;
+                    break;
+                }
+            }
+        }
+        if($isJson){
             header('Content-Type: application/json');
             if(isset($dataView['data'])) {
                 ob_start();
@@ -194,7 +297,6 @@ abstract class Controller {
                     Configuration::getLogger()->error('[api] json error', ['error', $e->getMessage()]);
                 }
                 ob_end_flush();
-                flush();
             }
             return null;
         }
@@ -222,19 +324,22 @@ abstract class Controller {
             "spaceMenu" => $this->spaceMenu(),
             "extraSpaceMenus" => $this->spaceExtraMenus(),
             "rootWeb" => Configuration::get("rootWeb", "/"),
+            "lang" => $this->getLanguage(),
             "currentSpace" => $this->currentSpace,  // current space if any
-            "role" => $this->role   // user role in space if any
+            "role" => $this->role,   // user role in space if any
+            "maintenance" => $this->maintenance
         ];
 
         if (getenv("PFM_MODE") == "test") {
             // Need to know module name and action
-            if(getenv('PFM_TEST_VIEW') !== '0') { // do not test views
-                if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
-                    require_once 'Modules/core/Controller/CorenavbarController.php';
-                    $navController = new CorenavbarController($this->request);
-                    $dataView["navbar"] = $navController->navbar();
+            if(getenv('PFM_TEST_VIEW') === '1') { // do not test views
+                //ob_start();
+                if(file_exists("Modules/".$this->module."/View/$controllerView/$actionView.twig")) {
+                    $nav = new Navbar($this->getLanguage());
+                    $dataView["navbar"] = $nav->get();
                     try {
-                        echo $this->twig->render("Modules/core/View/$controllerView/$actionView.twig", $dataView);
+                        ob_start();
+                        echo $this->twig->render("Modules/".$this->module."/View/$controllerView/$actionView.twig", $dataView);
                     } catch(Throwable $e) {
                         Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
                         $view = new View($actionView, $controllerView, $this->module);
@@ -252,24 +357,23 @@ abstract class Controller {
             return null;
         }
 
-        if(file_exists("Modules/core/View/$controllerView/$actionView.twig")) {
-            // TODO add navbar generation
-            require_once 'Modules/core/Controller/CorenavbarController.php';
-            $navController = new CorenavbarController($this->request);
-            $dataView["navbar"] = $navController->navbar();
+        if(file_exists("Modules/".$this->module."/View/$controllerView/$actionView.twig")) {
+            $nav = new Navbar($this->getLanguage());
+            $dataView["navbar"] = $nav->get();
             try {
-                echo $this->twig->render("Modules/core/View/$controllerView/$actionView.twig", $dataView);
-                return;
+                ob_start();
+                echo $this->twig->render("Modules/".$this->module."/View/$controllerView/$actionView.twig", $dataView);
             } catch(Throwable $e) {
                 Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
                 $view = new View($actionView, $controllerView, $this->module);
                 $view->generate($dataView);
-                return;
             }
+            ob_end_flush();
+            return;
         }
-
         $view = new View($actionView, $controllerView, $this->module);
         $view->generate($dataView);
+        ob_end_flush();
     }
 
     /**

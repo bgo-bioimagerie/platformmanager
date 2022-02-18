@@ -402,6 +402,7 @@ class Router {
                     "sideMenu" => null,
                     "spaceMenu" => null,
                     "rootWeb" => Configuration::get("rootWeb", "/"),
+                    "lang" => 'en',
                     "currentSpace" => null,  // current space if any
                     "role" => -1   // user role in space if any
             ],

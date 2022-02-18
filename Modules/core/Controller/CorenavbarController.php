@@ -8,7 +8,7 @@ require_once 'Modules/core/Model/CoreMainSubMenu.php';
 
 /**
  * Mather class for controller using secure connection
- * 
+ * @deprecated replaced by framework Controller/Navbar
  * @author Sylvain Prigent
  */
 class CorenavbarController extends CoresecureController {
@@ -17,7 +17,6 @@ class CorenavbarController extends CoresecureController {
      * 
      */
     public function indexAction() {
-        
     }
 
     /**

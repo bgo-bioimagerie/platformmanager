@@ -23,11 +23,6 @@ require_once 'Modules/invoices/Model/InInvoice.php';
 // require_once 'externals/PHPExcel/Classes/PHPExcel.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
-/**
- * @deprecated
- * @author sprigent
- * Controller for the home page
- */
 
 class ServicesstatisticsorderController extends ServicesController {
 
@@ -64,8 +59,8 @@ class ServicesstatisticsorderController extends ServicesController {
         if ($form->check()) {
             $date_start = CoreTranslator::dateToEn($form->getParameter("begining_period"), $lang);
             $date_end = CoreTranslator::dateToEn($form->getParameter("end_period"), $lang);
-            $this->generateBalance($id_space, $date_start, $date_end);
-            return;
+            $f = $this->generateBalance($id_space, $date_start, $date_end);
+            return ['data' => ['file' => $f]];
         }
 
         // set the view
@@ -95,7 +90,7 @@ class ServicesstatisticsorderController extends ServicesController {
         $controller = "servicesinvoiceorder";
         $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space);
 
-        $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet);
+        return $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet);
     }
 
     private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null) {
@@ -218,7 +213,8 @@ class ServicesstatisticsorderController extends ServicesController {
             $curentLine++;
 
             // getting client from user
-            $id_user = $modelUser->getInfo($proj["id_user"]);
+            $user = $modelUser->getInfo($proj["id_user"]);
+            $id_user = $user['id'];
             $modelClUser = new ClClientUser();
             // FIXME: array to string conversion that is displayed in generated spreadsheet instead of anything else when in debug mode
             // Should work not in debug mode
@@ -263,7 +259,7 @@ class ServicesstatisticsorderController extends ServicesController {
         // ////////////////////////////////////////////////////
        
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(1);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -300,7 +296,7 @@ class ServicesstatisticsorderController extends ServicesController {
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
-            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["no_identification"]);
             $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
 
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -405,7 +401,7 @@ class ServicesstatisticsorderController extends ServicesController {
         //                Services details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_details($lang));
         $spreadsheet->setActiveSheetIndex(3);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -528,6 +524,12 @@ class ServicesstatisticsorderController extends ServicesController {
 
         // write excel file
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        if(getenv('PFM_MODE') == 'test') {
+            $f = tempnam('/tmp', 'statistics').'.xlsx';
+            $objWriter->save($f);
+            return $f;
+
+        }
         //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="platorm-manager-projet-bilan.xlsx"');

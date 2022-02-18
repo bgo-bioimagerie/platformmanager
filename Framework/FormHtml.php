@@ -106,7 +106,7 @@ class FormHtml {
      * @return string HTML code
      */
     static public function hidden($name, $value, $required) {
-        $html = "<div class=\"form-group\">";
+        $html = "<div class=\"form-group\" id=\"form_blk_$name\">";
         $html .= "<input class=\"form-control\" type=\"hidden\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
         $html .= "/>";
@@ -154,7 +154,7 @@ class FormHtml {
             $reqTxt = "*";
         }
         
-        $html = "<div class=\"form-group" . $validated . "\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control";
@@ -214,7 +214,7 @@ class FormHtml {
             $reqTxt = "*";
         }
 
-        $html = "<div class=\"form-group" . $validated . "\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"password\" id=\"" . $name . "\" name=\"" . $name . "\"";
@@ -243,7 +243,7 @@ class FormHtml {
             $star = "*";
         }
 
-        $html = "<div class=\"form-group" . $validated . "\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $star . "</label>";
 
         $html .= "<div class='col-xs-" . $inputWidth . "'>";
@@ -270,7 +270,7 @@ class FormHtml {
             $vectv = "[]";
         }
 
-        $html = "<div class='col-xs-12 input-group date'>";
+        $html = "<div id=\"form_blk_$name\" class='col-xs-12 input-group date'>";
         $html .= "<input id=\"date-daily\" type='date' class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\" value=\"" . $value . "\"/>";
         $html .= "</div>";
         $html .= "</div>";
@@ -293,7 +293,7 @@ class FormHtml {
 
         //echo "hours values html = ";
         //print_r($value); echo "<br/>";
-        $html = "<div class=\"form-group" . $validated . "\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class='col-xs-" . $inputWidth . "'>";
 
@@ -314,7 +314,7 @@ class FormHtml {
 
         //echo "hours values html = ";
         //print_r($value); echo "<br/>";
-        $html = "<div class=\"col-xs-12\">";
+        $html = "<div id=\"form_blk_$name\" class=\"col-xs-12\">";
         $html .= "<div class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class='col-xs-" . $inputWidth . "'>";
@@ -351,7 +351,7 @@ class FormHtml {
      * @return string
      */
     static public function color($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
-        $html = "<div class=\"form-group" . $validated . "\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group" . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"color\" id=\"" . $name . "\" name=\"" . $name . "\"";
@@ -380,7 +380,7 @@ class FormHtml {
         }
         
         
-        $html = "<div class=\"form-group " . $validated . "\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group " . $validated . "\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control";
@@ -406,18 +406,18 @@ class FormHtml {
      * @param type $inputWidth
      * @return string
      */
-    static public function number($label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
+    static public function number($label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9, $isFloat = false) {
 
         $reqTxt = "";
         if ($required) {
             $reqTxt = "*";
         }
-
-        $html = "<div class=\"form-group\">";
+        $float = $isFloat ? "step=\"any\"" : "";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"number\" id=\"" . $name . "\" name=\"" . $name . "\"";
-        $html .= " value=\"" . $value . "\"" . $required;
+        $html .= " value=\"" . $value . "\"" . $required . " " . $float;
         $html .= "/>";
         $html .= "</div>";
         $html .= "</div>";
@@ -450,7 +450,6 @@ class FormHtml {
      * 
      * @param type $name
      * @param type $value
-     * @param type $required
      * @param type $vect
      * @return string
      */
@@ -460,9 +459,8 @@ class FormHtml {
         if ($vect) {
             $vectv = "[]";
         }
-        $html = "<span class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
-        $html .= ">" . $value . "</span>";
-
+        $html = "<label class=\"control-label\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
+        $html .= ">" . $value . "</label>";
         return $html;
     }
     /**
@@ -480,7 +478,7 @@ class FormHtml {
         if ($useJavascript) {
             $divid = "id='editor'";
         }
-        $html = "<div class=\"form-group\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= "<textarea " . $divid . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\">" . $value . "</textarea>";
@@ -498,7 +496,7 @@ class FormHtml {
      * @return string
      */
     static public function upload($label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
-        $html = "<div class=\"form-group\"> ";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group\"> ";
         $html .= " <label class=\"control-label col-xs-" . $labelWidth . "\"> " . $label . " </label> ";
         $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
         
@@ -522,7 +520,7 @@ class FormHtml {
     static public function downloadbutton($formid, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
         //if ($manual) {
-            $html = "<div class=\"form-group\">";
+            $html = "<div id=\"form_blk_$name\" class=\"form-group\">";
             $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . "</label>";
             $html .= "<div class=\"col-xs-" . $inputWidth . "\">";
             $html .= "<input name=\"".$name."\" type=\"hidden\" value=\"".$value."\">";
@@ -610,7 +608,7 @@ class FormHtml {
             $star = "*";
         }
 
-        $html = "<div class=\"form-group\">";
+        $html = "<div id=\"form_blk_$name\" class=\"form-group\">";
         $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . $star . "</label>";
         $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
         $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value, $isMandatory, false, $submitOnChange);
@@ -635,7 +633,7 @@ class FormHtml {
         $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
         for ($i = 0; $i < count($choices); $i++) {
 
-            $html .= "<div class=\"checkbox\"> ";
+            $html .= "<div id=\"form_blk_$choicesid[$i]\" class=\"checkbox\"> ";
             $html .= "<label> ";
             $checked = "";
             if ($values[$i] == 1) {

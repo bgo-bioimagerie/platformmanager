@@ -829,6 +829,13 @@ class CoreTranslator {
         return "Inactive";
     }
 
+    public static function Expiring($lang) {
+        if ($lang == "fr") {
+            return "Expiration";
+        }
+        return "Expiring";
+    }
+
     public static function Search($lang) {
         if ($lang == "fr") {
             return "Rechercher";
@@ -912,7 +919,7 @@ class CoreTranslator {
                 return "administrateur";
             }
             return "rôle introuvable";
-        } else if ($lang == "fr") {
+        } else if ($lang == "en") {
             if ($id_status == 1) {
                 return "visitor";
             } else if ($id_status == 2) {
@@ -1409,6 +1416,14 @@ class CoreTranslator {
         }
         return "Access";
     }
+
+    public static function Space_access($lang) {
+        if ($lang == "fr") {
+            return "Accès à l'espace";
+        }
+        return "Space access";
+    }
+    
 
     public static function View_Menu($lang) {
         if ($lang == "fr") {
@@ -2062,11 +2077,39 @@ class CoreTranslator {
         return "An error occured during connection.";
     }
 
+    public static function spaceUserUnjoin($lang = "") {
+        if ($lang == "fr") {
+            return "Accès supprimé";
+        }
+        return "Access removal";
+    }
+
+    public static function spaceUserUnjoinTxt($space, $lang = "") {
+        if ($lang == "fr") {
+            return "Vos accès à l'espace $space ont été supprimés";
+        }
+        return "Your access to $space has been removed";
+    }
+
     public static function MySpaces($lang = "") {
         if($lang == "fr") {
             return "Mes espaces";
         }
         return "My spaces";
+    }
+
+    public static function DeleteUserCaution($lang) {
+        if($lang == "fr") {
+            return "À utiliser avec précautions !!! La suppression d'utilisateurs ne supprime pas les données associées. N'utiliser qu'en cas de doublon ou de cas exotiques.";
+        }
+        return "Use with caution!! User removal will not delete user related data. Use only for duplicate accounts or special cases";
+    }
+
+    public static function EditionAccess($lang){
+        if($lang == "fr") {
+            return "Droits d'édition";
+        }
+        return "Edition access";
     }
     
 }

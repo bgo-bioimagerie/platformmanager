@@ -50,7 +50,7 @@ class CoreVirtual extends Model {
     /**
      * Set name/value in redis, value will be json_encoded
      */
-    public function set(int $id_space, string $name, mixed $value, $expire=0) {
+    public function set(int $id_space, string $name, mixed $value, $expire=null) {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
         try {
@@ -82,6 +82,64 @@ class CoreVirtual extends Model {
         }
         return $val;
     }
+
+    public function newRequest($id_space, $module, $name) {
+        $redis = new Redis();
+        $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+        $rid = time().':'.$name;
+        try {
+        $redis->hSet('pfm:'.$id_space.':'.$module.':request', $rid, 'waiting');
+        $redis->expire('pfm:'.$id_space.':'.$module.':request', 3600 * 5); // expire in 5h
+        } catch(Exception $e) {
+            $redis->close();
+            throw $e;
+        }
+        $redis->close();
+        return $rid;
+    }
+
+    public function updateRequest($id_space, $module, $rid, $msg) {
+        $redis = new Redis();
+        $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+        try {
+        $redis->hSet('pfm:'.$id_space.':'.$module.':request', $rid, $msg);
+        $redis->expire('pfm:'.$id_space.':'.$module.':request', 3600 * 5); // expire in 5h
+        } catch(Exception $e) {
+            $redis->close();
+            throw $e;
+        }
+        $redis->close();
+        return $rid;
+    }
+
+    public function deleteRequest($id_space, $module, $rid) {
+        $redis = new Redis();
+        $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+        try {
+        $redis->hDel('pfm:'.$id_space.':'.$module.':request', $rid);
+        } catch(Exception $e) {
+            $redis->close();
+            throw $e;
+        }
+        $redis->close();
+        return $rid;
+    }
+
+    public function getRequests($id_space, $module) {
+        $redis = new Redis();
+        $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
+        $requests = [];
+        try {
+            $requests = $redis->hGetAll('pfm:'.$id_space.':'.$module.':request');
+            krsort($requests);
+        } catch(Exception $e) {
+            $redis->close();
+            throw $e;
+        }
+        $redis->close();
+        return $requests;        
+    }
+
 
 }
 

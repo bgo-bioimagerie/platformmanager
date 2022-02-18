@@ -127,7 +127,8 @@ class BookingsupsinfoController extends BookingsettingsController {
             }
             */
             $modelSups->removeUnlistedSupInfos($id_space, $supID);
-            $_SESSION["message"] = BookingTranslator::Supplementaries_saved($lang);
+            $_SESSION['flash'] = BookingTranslator::Supplementaries_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("bookingsupsinfo/".$id_space);
             return;
         }

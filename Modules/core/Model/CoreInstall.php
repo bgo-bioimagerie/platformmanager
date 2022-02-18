@@ -763,7 +763,6 @@ class CoreDB extends Model {
             $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
             $record = str_replace('.php', '', $f);
             $res = $this->runRequest($sql, [$record]);
-            Configuration::getLogger()->error("?????", ['n' =>$f, 'r' => $res]);
 
             if(!$res) {
                 Configuration::getLogger()->error('request failed');

@@ -1,29 +1,24 @@
 <?php include 'Modules/bulletjournal/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="col-md-10" id="pm-table">
     
     <div class="col-xs-12 text-center" style="text-transform:uppercase; color:#666;">
-        <b>Collection: <?php echo $collection["name"] ?></b>
+        <strong>Collection: <?php echo $collection["name"] ?></strong>
     </div>
     
-    <table class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $di ?>">
+    <table aria-label="collection list" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $di ?>">
+        <tbody>
             <?php
             foreach ($notes as $dnote) {
-                //echo "note = " . $dnote["is_month_task"] . "<br/>";
-                // echo "note date = " . $dnote["date"] . "<br/>";
-                // echo "note is month = " . $dnote["is_month_task"] . "<br/>";
                 if ($dnote["is_month_task"] == 0) {
-                    //echo "note pass= " . $dnote["date"] . "<br/>";
                     $d = $i;
                     if ($i < 10) {
                         $d = "0" . $i;
                     }
-                    //echo "compare to " . $year . "-" . $month . "-" . $d . "<br/>";
                     if ($dnote["date"] == $year . "-" . $month . "-" . $d) {
-                        //echo "found <br/>";
                         $typeicon = "glyphicon glyphicon-minus";
                         if ($dnote["type"] == 2) {
                             $typeicon = "glyphicon glyphicon-asterisk";
@@ -109,8 +104,8 @@
                 }
             }
             ?>
-        </table>
+        </tbody>
+    </table>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

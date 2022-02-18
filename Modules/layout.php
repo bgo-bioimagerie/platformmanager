@@ -20,7 +20,7 @@ if($isdev) {
         <?php
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
-        <meta name="mode" description="{{$isdev}}">
+        <meta name="mode" description="<?php echo $isdev ?>">
         <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
@@ -53,9 +53,8 @@ if($isdev) {
 
         <?php startblock('navbar') ?>
             <?php
-                require_once 'Modules/core/Controller/CorenavbarController.php';
-                $navController = new CorenavbarController(new Request(array(), false));
-                echo $navController->navbar();
+            $nav = new Navbar($context['lang']);
+            echo $nav->get();
             ?>
         <?php endblock() ?>
 
@@ -69,6 +68,16 @@ if($isdev) {
 
         <div class="row">
                 <div id="app" >
+                    <?php if(isset($context['maintenance']) && $context['maintenance']) { ?>
+                        <div class="container">
+                            <div class="alert alert-warning alert-dismissible  show" role="alert">
+                                <?php echo $context['maintenance']; ?>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>                        
+                    <?php } ?>
                     <?php if (isset($flash) && $flash) { ?>
                         <div class="container">
                             <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
@@ -120,7 +129,7 @@ if($isdev) {
 
         <?php
         if($isdev) {
-            echo $debugbarRenderer->render();
+           echo $debugbarRenderer->render();
         }
         ?>
     </body>

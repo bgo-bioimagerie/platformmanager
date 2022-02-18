@@ -5,6 +5,7 @@ require_once 'Framework/Events.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * Class defining the GRR area model
@@ -479,10 +480,10 @@ class BkCalendarEntry extends Model {
                 $data[$i]["phone"] = "";
             }
             if(!$data[$i]["color_bg"]) {
-                $data[$i]["color_bg"] = "aaaaaa";
+                $data[$i]["color_bg"] = "#aaaaaa";
             }
             if(!$data[$i]["color_text"]) {
-                $data[$i]["color_text"] = "000000";
+                $data[$i]["color_text"] = "#000000";
             }
         }
 
@@ -819,9 +820,10 @@ class BkCalendarEntry extends Model {
                 AND core_j_spaces_user.id_space=?
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
-                AND user.is_active = 1 
+                AND user.is_active = 1
+                AND core_j_spaces_user.status>?
                 ;";
-        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space));
+        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space, CoreSpace::$VISITOR));
         return $req->fetchAll();
     }
 
@@ -841,8 +843,9 @@ class BkCalendarEntry extends Model {
                 AND user.is_active = 1  
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
+                AND core_j_spaces_user.status>?
                 ;";
-        $req = $this->runRequest($sql, array($area_id, $id_space, $id_space));
+        $req = $this->runRequest($sql, array($area_id, $id_space, $id_space, CoreSpace::$VISITOR));
         return $req->fetchAll();
     }
 

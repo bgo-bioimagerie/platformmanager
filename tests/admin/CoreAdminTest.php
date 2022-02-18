@@ -51,6 +51,7 @@ class CoreTest extends BaseTest {
                 "txtcolor" => "#ffffff",
                 "support" => "",
                 "description" => "",
+                "user_desactivate" => 1,
                 "admins" => []
             ]);
             $c = new CorespaceadminController($req);

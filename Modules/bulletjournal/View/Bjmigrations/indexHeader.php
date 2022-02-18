@@ -9,9 +9,9 @@
 
     <div class="col-md-2 text-left">
         <p>
-            <b>
+            <strong>
                 <?php echo date("F Y", mktime(0, 0, 0, $month, 1, $year)) ?>
-            </b>
+            </strong>
         </p>
     </div>
 </div>

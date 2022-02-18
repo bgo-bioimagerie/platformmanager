@@ -219,8 +219,8 @@ class BookingController extends BookingabstractController {
         $afterTime = $tmpTime + 86400;
         $afterDate = date("Y-m-d", $afterTime);
 
-
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -283,14 +283,14 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
         
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
@@ -309,7 +309,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookday");
     }
 
@@ -344,6 +345,8 @@ class BookingController extends BookingabstractController {
 
         
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
         $foundA = false;
         foreach ($menuData["areas"] as $are) {
             if ($curentAreaId == $are["id"]) {
@@ -369,7 +372,9 @@ class BookingController extends BookingabstractController {
         $colors =$modelEvent->getLastStateColors($id_space, $resIds);
         $cmap = [];
         foreach($colors as $c) {
-            $cmap[$c['id_resource']] = $c['color'];
+            if(!key_exists($c['id_resource'], $cmap)) {
+                $cmap[$c['id_resource']] = $c['color'];
+            }
         }
 
         $modelAccess = new BkAccess();
@@ -435,13 +440,13 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
@@ -459,7 +464,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookdayarea");
     }
 
@@ -504,6 +510,8 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -567,17 +575,20 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
+
+        Configuration::getLogger()->error('?????????', ['c' => $calEntries]);
+
         // view
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'menuData' => $menuData,
             'resourceInfo' => $resourceInfo,
-            'resourcesBase' => $resourcesBase,
+            'resourceBase' => $resourcesBase,
             'date' => $curentDate,
             'date_unix' => $curentDateUnix,
             'mondayDate' => $mondayDate,
@@ -593,7 +604,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookweek");
     }
 
@@ -643,6 +655,8 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
          
         // get the area info
         $area = $modelArea->get($id_space, $curentAreaId);
@@ -660,7 +674,9 @@ class BookingController extends BookingabstractController {
         $colors =$modelEvent->getLastStateColors($id_space, $resIds);
         $cmap = [];
         foreach($colors as $c) {
-            $cmap[$c['id_resource']] = $c['color'];
+            if(!key_exists($c['id_resource'], $cmap)) {
+                $cmap[$c['id_resource']] = $c['color'];
+            }
         }
 
         $modelRescal = new ResourceInfo();
@@ -683,7 +699,28 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId, $id_user);
+        //$calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId, $id_user);
+
+
+        $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
+        $calmap = [];
+        $calEntries = [];
+        foreach($resourcesBase as $r) {
+            $calEntries[] = [];
+        }
+        foreach($cals as $cal) {
+            $calmap[$cal['resource_id']][] = $cal;
+        }
+        foreach($resourcesBase as $i => $r) {
+            $calEntries[$i] = $calmap[$r['id']] ?? [];
+        }
+
+
+
+
+
+
+
         // curentdate unix
         $temp = explode("-", $curentDate);
         $curentDateUnix = mktime(0, 0, 0, $temp[1], $temp[2], $temp[0]);
@@ -724,13 +761,13 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'menuData' => $menuData,
@@ -752,7 +789,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookweekarea");
     }
 
@@ -796,6 +834,8 @@ class BookingController extends BookingabstractController {
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 31, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
+        $curentAreaId = $menuData['curentAreaId'];
+
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -819,6 +859,8 @@ class BookingController extends BookingabstractController {
         }
 
         $resourcesBase = $resourceInfo;
+        $modelEvent = new ReEvent();
+        $resourcesBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase["id"]);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
@@ -850,13 +892,13 @@ class BookingController extends BookingabstractController {
             $user = [];
         }
         
-        $users = array_merge(['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => ''], $user);
+        $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         // view
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
             'menuData' => $menuData,
@@ -878,7 +920,8 @@ class BookingController extends BookingabstractController {
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'data' => ['bookings' => $calEntries]
         ), "bookmonth");
     }
 

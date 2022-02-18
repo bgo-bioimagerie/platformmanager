@@ -1,8 +1,8 @@
 <?php include 'Modules/core/View/Corespaceaccess/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
-<div class="pm-table">
+<div class="pm-table row ">
 
     <div class="col-md-12" style="height:7px;">
     </div>
@@ -152,5 +152,4 @@
         <?php echo $tableHtml ?>
     </div>
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

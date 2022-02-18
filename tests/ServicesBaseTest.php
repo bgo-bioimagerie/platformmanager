@@ -153,6 +153,44 @@ class ServicesBaseTest extends BaseTest {
         return $data['origin'];
     }
 
+    protected function addServiceToProject($space, $project, $service) {
+        Configuration::getLogger()->debug('add service to project', ['project' => $project, 'space' => $space, 'service' => $service]);
+        $date = new DateTime();
+        $date->modify('next monday');
+        $req = $this->request([
+            "path" => "servicesprojecteditentryquery/".$space['id']."/".$project['id'],
+            "formid" => "editNoteForm",
+            "formprojectentryid" => 0,
+            "formprojectentryprojectid" => $project['id'],
+            "formprojectentrydate" => $date->format('Y-m-d'),
+            "formserviceid" => $service['id'],
+            "formservicequantity" => 2,
+            "formservicecomment" => "add a service to project"
+        ]);
+        $c = new ServicesprojectsController($req, $space);
+        $data = $c->runAction('services', 'editentryquery', ['id_space' => $space['id']]);
+        $this->assertTrue($data['entry']['id'] > 0);
+        return $data['entry'];
+    }
+
+    protected function closeProject($space, $project, $visa) {
+        Configuration::getLogger()->debug('close project', ['project' => $project, 'space' => $space]);
+        $date = new DateTime();
+        $date->modify('next monday');
+        $req = $this->request([
+            "path" => "servicesprojectclosing/".$space['id']."/".$project['id'],
+            "formid" => "projectclosingform",
+            "date_close" => $date->format('Y-m-d'),
+            "closed_by" => $visa['id'],
+            "samplereturn" => '',
+            "samplereturndate" => '',
+        ]);
+        $c = new ServicesprojectsController($req, $space);
+        $data = $c->runAction('services', 'closing', ['id_space' => $space['id'], 'id' => $project['id']]);
+        $this->assertTrue($data['project']['id'] > 0);
+        return $data['project'];
+    }
+
     
     protected function createProject($space, $user, $name, $visa, $client, $client_user, $origin) {
         Configuration::getLogger()->debug('create origin', ['user' => $user, 'space' => $space, 'name' => $name]);
@@ -163,7 +201,7 @@ class ServicesBaseTest extends BaseTest {
             "path" => "servicesprojectsedit/".$space['id']."/0",
             "formid" => "projectEditForm",
             "in_charge" => $visa['id'],
-            "id_resp" => $client['id'],
+            "id_client" => $client['id'],
             "name" => $name,
             "id_user" => $client_user['id'],
             "new_team" => 1,

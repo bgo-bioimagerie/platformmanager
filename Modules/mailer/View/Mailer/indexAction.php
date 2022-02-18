@@ -1,6 +1,6 @@
 <?php include 'Modules/mailer/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-form">
@@ -41,14 +41,14 @@
                             $areaId = $this->clean($resource['id']);
                             ?>
                             <OPTION value="r_<?php echo $areaId ?>" > <?php echo ResourcesTranslator::Resource($lang) . ": " . $areaname ?> </OPTION>
-    <?php }
-} ?>
+                        <?php }
+                    } ?>
                 </select>
             </div>
         </div>
         <br><br />
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
+            <label for="subject" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
             <div class="col-xs-10">
                 <input class="form-control" id="subject" type="text" name="subject"
                        />
@@ -56,7 +56,7 @@
         </div>
         <br><br />
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
+            <label for="content" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
             <div class="col-xs-10">
                 <textarea class="form-control" id="content" name="content"
                           >
@@ -74,5 +74,4 @@
     </form>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

@@ -22,6 +22,7 @@ class CorePlan {
      */
     // flag to add space managers as grafana org members
     const FLAGS_GRAFANA = 'grafana';
+    const FLAGS_DOCUMENTS = 'documents';
 
     private ?array $plan = null;
 
@@ -150,6 +151,7 @@ class CoreSpace extends Model {
         `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
         `plan` int NOT NULL DEFAULT 0,
         `plan_expire` int NOT NULL DEFAULT 0,
+        `user_desactivate` int(1) NOT NULL DEFAULT 1,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -159,6 +161,7 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
         $this->addColumn('core_spaces', 'plan', "int", '0');
         $this->addColumn('core_spaces', 'plan_expire', "int", '0');
+        $this->addColumn('core_spaces', 'user_desactivate', "int(1)", '1');
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
@@ -208,6 +211,7 @@ class CoreSpace extends Model {
             "admins" => [],
             "plan" => 0,
             "plan_expire" => 0,
+            "user_desactivate" => 1
         ];
     }
     
@@ -372,7 +376,7 @@ class CoreSpace extends Model {
     }
 
     public function getDistinctSpaceMenusModules($id_space) {
-        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
+        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
@@ -510,6 +514,11 @@ class CoreSpace extends Model {
     public function setDescription($id, $description){
         $sql = "UPDATE core_spaces SET description=? WHERE id=?";
         $this->runRequest($sql, array($description, $id));
+    }
+
+    public function setDeactivate($id, $deactivate){
+        $sql = "UPDATE core_spaces SET user_desactivate=? WHERE id=?";
+        $this->runRequest($sql, array($deactivate, $id));        
     }
 
     public function setShortname($id, $shortname){

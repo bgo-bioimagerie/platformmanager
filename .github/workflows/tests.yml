@@ -15,19 +15,22 @@ jobs:
           --health-retries 5
         ports:
           - 6379:6379
+      mariadb:
+        image: mariadb:latest
+        ports:
+          - 3306
+        env:
+          MYSQL_USER: platform_manager
+          MYSQL_PASSWORD: platform_manager
+          MYSQL_DATABASE: platform_manager
+          MYSQL_ROOT_PASSWORD: platform_manager
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true  # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
-
-      - uses: mirromutth/mysql-action@v1.1
-        with:
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          mysql database: 'platform_manager'
-          mysql user: 'platform_manager'
-          mysql password: 'platform_manager'
 
       - name: Setup PHP
         id: setup-php
@@ -37,8 +40,10 @@ jobs:
           tools: phpunit
           extensions: redis, gd, pdo, pdo_mysql, mysqli, zip, ldap, imap, sockets
 
-      - name: tests 
+      - name: tests
+        env:
+          MYSQLCONFIG: mysql:host=127.0.0.1;port=${{ job.services.mariadb.ports[3306] }};dbname=platform_manager;charset=utf8
         run: |
           composer install --ignore-platform-reqs
-          ./tests/wait-for-it.sh localhost:3306
-          DEBUG=1 PFM_CONFIG=Config/conf_test.ini PFM_MODE=test ./vendor/phpunit/phpunit/phpunit --stderr
+          ./tests/wait-for-it.sh localhost:${{ job.services.mariadb.ports[3306] }}
+          MYSQL_DSN=$MYSQLCONFIG DEBUG=1 PFM_CONFIG=Config/conf_test.ini PFM_MODE=test ./vendor/phpunit/phpunit/phpunit --stderr

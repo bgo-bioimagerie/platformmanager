@@ -15,6 +15,8 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
+require_once 'Modules/core/Model/CoreConfig.php';
+
 
 /**
  * 
@@ -46,15 +48,27 @@ class CorespaceadminController extends CoresecureController {
         
         $table = new TableView();
         $table->setTitle(CoreTranslator::Spaces($lang), 3);
+
+        $plans = [];
+        foreach (Configuration::get('plans', []) as $plan) {
+            $plans[$plan['id']] = $plan['name'];
+        }
         
         $modelSpace = new CoreSpace();
         $data = $modelSpace->getSpaces("name");
         for($i = 0 ; $i < count($data) ; $i++){
             $data[$i]["url"] = "corespace/" . $data[$i]["id"];
+            $data[$i]['plan_expire'] = $data[$i]['plan_expire'] ? date('Y-m-d', $data[$i]['plan_expire']) : '';
+            $data[$i]['plan'] = $plans[$data[$i]['plan']] ?? $data[$i]['plan'];
         }
         
-        $headers = array("name" => CoreTranslator::Name($lang), "status" => CoreTranslator::Status($lang),
-                         "url" => CoreTranslator::Url($lang));
+        $headers = array(
+            "name" => CoreTranslator::Name($lang),
+            "status" => CoreTranslator::Status($lang),
+            "url" => CoreTranslator::Url($lang),
+            "plan" => 'Plan',
+            "plan_expire" => 'Expiration'
+        );
         
         $table->addLineEditButton("spaceadminedit");
         $table->addDeleteButton("spaceadmindelete");
@@ -114,6 +128,13 @@ class CorespaceadminController extends CoresecureController {
             }
         }
 
+        $cc = new CoreConfig();
+        $expirationChoices = $cc->getExpirationChoices($lang);
+        $choices = $expirationChoices['labels'];
+        $choicesid = $expirationChoices['ids'];
+
+
+        $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $space['user_desactivate'] ?? 1);
         
         $formAdd = new FormAdd($this->request, "addformspaceedit");
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
@@ -189,6 +210,7 @@ class CorespaceadminController extends CoresecureController {
 
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
+            $modelSpace->setDeactivate($id, $this->request->getParameter('user_desactivate'));
             
             // upload image
             $target_dir = "data/core/menu/";

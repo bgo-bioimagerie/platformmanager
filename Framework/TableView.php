@@ -270,7 +270,7 @@ class TableView {
         
         
         if ($this->downloadButton != "") {
-            $html .= "<th></th>";
+            $html .= "<th aria-label=\"download\"></th>";
         }
         foreach ($headers as $key => $value) {
             $title = "";
@@ -314,7 +314,7 @@ class TableView {
                     }
                     $html .= '<td style="width: 1%; white-space: nowrap;">';
                     if($this->editJS){
-                        $html .= "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button><span> </span>" ;
+                        $html .= "<button onclick=\"editentry('".$this->editURL . "_" . $idxVal."')\" id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button><span> </span>" ;
                     }
                     else{
                          $html .= "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button><span> </span>";   
@@ -327,12 +327,6 @@ class TableView {
                     $html .= "</td>";
                     $addDelete = true;
                 }
-                
-                //if ($isButtons){
-                //    $html .= "</td>";
-                //}
-                
-                
 
                 if ($this->downloadButton != "") {
                     $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
@@ -374,17 +368,6 @@ class TableView {
                             }
                             $html .= '</td>';
                         }
-                        /*
-                        else if ($value["type"] == "download"){
-                            $html .= '<td>';
-                            if ( $val != "" ){
-                                $html .= "<form role=\"form\" id=\"tabledownload\" class=\"form-horizontal\" action=\"".$value["action"]."\" method=\"POST\">";
-                                $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$val."\">";
-                                $html .= "<input type=\"submit\" class=\"btn btn-default\" value=\"" . $value["text"] . "\" />";
-                                $html .= "</form>";
-                            }
-                            $html .= '</td>';
-                        }*/
                     }
                     else{
                         if (strlen($dat[$key]) && $this->textMaxLength > 0) {
@@ -423,6 +406,14 @@ class TableView {
     private function addHeader(){
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
+        $col = 0;
+        if ($this->downloadButton != "") {
+            $col++;
+        }
+        if(count($this->linesButtonActions) > 0 && !$this->isprint) {
+            $col+=count($this->linesButtonActions);
+        }
+        $str1 = str_replace('let defaultCol = 0;','let defaultCol = '.$col.';', $str1);
         return str_replace("tableID", $this->tableID, $str1);
     }
     
@@ -437,74 +428,6 @@ class TableView {
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
         return str_replace("tableID", $this->tableID, $str1);
-         
-
-        $html .= "<head>";
-
-        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.bootstrap.css\">";
-        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.fixedHeader.css\">";
-
-        $html .= "<script src=\"/externals/jquery-1.11.1.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/jquery.dataTables.min.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/dataTables.fixedHeader.min.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/dataTables.bootstrap.js\"></script>";
-        
-        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css\">";
-        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/fixedcolumns/3.2.2/css/fixedColumns.bootstrap.min.css\">";
-
-        $html .= "<style>";
-        //$html .= "body { font-size: 120%; padding: 1em; margin-top:30px; margin-left: -15px;}";
-        $html .= "div.FixedHeader_Cloned table { margin: 0 !important }";
-
-        $html .= "table{";
-
-        $html .= "	white-space: nowrap;";
-        $html .= "}";
-
-        $html .= "thead tr{";
-        $html .= "	height: 100px;";
-        $html .= "}";
-
-        $html .= "thead th{";
-        $html .= "	vertical-align:bottom; text-align:center;";
-        $html .= "}";
-
-        $html .= "</style>";
-
-        $html .= "<script>";
-        $html .= "$(document).ready( function() {";
-        $html .= "$('#" . $this->tableID . "').dataTable( {";
-        $html .= "\"aoColumns\": [";
-
-        for ($c = 0; $c < $headerscount; $c++) {
-            if ($c == $headerscount - 1) {
-                $html .= "{ \"bSearchable\": true }";
-            } else if ($c == 1) {
-                $html .= "null,";
-            } else {
-                $html .= "{ \"bSearchable\": true },";
-            }
-        }
-        $html .="],";
-        $html .= "\"lengthMenu\": [[100, 200, 300, -1], [100, 200, 300, \"All\"]]";
-        $html .= "}";
-        $html .= ");";
-        $html .="} );";
-        $html .="</script>";
-
-        $html .="<script>";
-        $html .="$(document).ready(function() {";
-        $html .="	var table = $('#" . $this->tableID . "').DataTable();";
-        $html .="	new $.fn.dataTable.FixedHeader( table, {";
-        $html .="		alwaysCloneTop: true";
-        $html .="	});";
-
-        $html .="} );";
-        $html .="</script>";
-
-        $html .= "</head>";
-
-        return $html;
     }
 
     /**
@@ -513,6 +436,9 @@ class TableView {
      * @return string
      */
     private function addDownloadButtonHtml($url) {
+        if(!$url) {
+            return '<td></td>';
+        }
         $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
 
         return $html;

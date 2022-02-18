@@ -1,6 +1,6 @@
 <?php include 'Modules/invoices/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-table">
@@ -16,7 +16,7 @@
     <form class="form-horizontal">
         <div id="invoiceform" class="col-md-12">
 
-            <table class="table">
+            <table class="table" aria-label="list of products">
                 <thead>
                     <tr>
                         <th scope="col"><?php echo InvoicesTranslator::Product($lang) ?></th>
@@ -151,5 +151,4 @@
 
 </script>
 
-<?php
-endblock();
+<?php endblock(); ?>

@@ -108,7 +108,7 @@ class Email extends Model {
         }
     }
 
-    private function getFromEmail($spaceShortName) {
+    public function getFromEmail($spaceShortName) {
         $from = Configuration::get('smtp_from');
         $helpdeskEmail = Configuration::get('helpdesk_email');
         if($helpdeskEmail) {
@@ -288,7 +288,7 @@ class Email extends Model {
 
     public function getMailerSetCopyToFrom($spaceId) {
         $modelConfig = new CoreConfig();
-        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId);
+        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId, 1);
         return ($mailerSetCopyToFrom == 1);
     }
 

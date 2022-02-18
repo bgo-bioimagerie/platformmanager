@@ -1,9 +1,9 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
-<div class="pm-form">
+<div class="container pm-form">
 
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
@@ -29,10 +29,10 @@
     ?>
 
     <?php if ($use_packages) { ?>
-        <div>
-            <div class="checkbox col-xs-8 col-xs-offset-4">
-                <label>
-                    <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
+        <div class="col-xs-12">
+            <div class="form-check col-xs-8 col-xs-offset-4" style="margin-bottom: 10px">
+                <label class="">
+                    <input id="use_package" class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                 </label>
             </div>
 
@@ -56,14 +56,14 @@
             </label>
             <div class="col-xs-6">
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
+                    <label><input  type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
+                    <label><input  type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
-                    <select name="periodic_week">
+                    <label><input  type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
+                    <select class="form-control" name="periodic_week">
                         <option value="1"><?php echo BookingTranslator::EveryWeek($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::Every2Week($lang) ?></option>
                         <option value="3"><?php echo BookingTranslator::Every3Week($lang) ?></option>
@@ -72,8 +72,8 @@
                     </select>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="4"></label>
-                    <select name="periodic_month">
+                    <label ><input type="radio" name="periodic_radio" value="4"></label>
+                    <select class="form-control" name="periodic_month">
                         <option value="1"><?php echo BookingTranslator::EveryMonthSameDate($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::EveryMonthSameDay($lang) ?></option>
                     </select>
@@ -117,7 +117,17 @@
         }
     }
     ?>
-    <button type="button" class="btn btn-default" onclick="location.href = 'booking/<?php echo $id_space ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
+    <?php
+    $q = '?';
+    $redirPage = '';
+    if($from) {
+        $redirInfo = explode(':', $from);
+        $redirPage = $redirInfo[0];
+        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]";
+    }
+    $url = "booking$redirPage/$id_space?$q"
+    ?>
+    <button type="button" class="btn btn-default" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
 </div>
 
 <?php echo $form->htmlClose() ?>
@@ -145,13 +155,9 @@ if ($packageChecked > 0) {
         let use_package = document.getElementById('use_package');
         if (use_package) {
             document.getElementById('use_package').onchange = function () {
-                let php_var = "<?php echo $isPackageCheched; ?>";
-                if (php_var === "1") {
-                    let p_div = document.getElementById('package_div');
-                    if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
-                } else {
-                    document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
-                }
+                let p_div = document.getElementById('package_div');
+                if(p_div) { p_div.style.display = this.checked ? 'block' : 'none'; }
+                document.getElementById('resa_time_div').style.display = !this.checked ? 'block' : 'none';
             }
         }
         ;
@@ -178,5 +184,4 @@ if ($packageChecked > 0) {
 
 <?php include 'Modules/booking/View/Bookingdefault/deletescript.php'; ?>
 
-<?php
-endblock();
+<?php endblock(); ?>
