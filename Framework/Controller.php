@@ -276,7 +276,17 @@ abstract class Controller {
         $classController = get_class($this);
         $controllerView = str_replace("Controller", "", $classController);
 
-        if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
+        $isJson = false;
+        if(isset($_SERVER['HTTP_ACCEPT'])) {
+            $accept = explode(',', $_SERVER['HTTP_ACCEPT']);
+            foreach($accept as $a) {
+                if($a == "application/json") {
+                    $isJson = true;
+                    break;
+                }
+            }
+        }
+        if($isJson){
             header('Content-Type: application/json');
             if(isset($dataView['data'])) {
                 ob_start();
