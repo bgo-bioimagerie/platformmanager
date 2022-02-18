@@ -363,7 +363,7 @@ class ClientsTranslator {
                     $result .= ($lang === "fr") ? "un client" : "a client";
                     break;
                 case "pricing":
-                    $result .= ($lang === "fr") ? "un tarif" : "a pricing";
+                    $result .= ($lang === "fr") ? "un secteur d'activité" : "a pricing";
                     break;
                 default:
                     break;

@@ -1673,9 +1673,9 @@ class BookingTranslator {
 
     public static function VisaNeeded($lang) {
         if ($lang == "fr") {
-            return "Vous devez d'abord spécifier un visa dans le module Ressources > Visas";
+            return "Pour ajouter une autorisation de réservation, vous devez d'abord spécifier un visa dans le module Ressources > Visas";
         }
-        return "You need first to specify a visa in Resources module>Visas";
+        return "In order to add a booking authorization, you need to specify a visa in Resources module>Visas";
     }
 
     public static function maxInvoicingUnits($lang) {

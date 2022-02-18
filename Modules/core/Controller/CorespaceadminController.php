@@ -260,7 +260,9 @@ class CorespaceadminController extends CoresecureController {
         $lang = $this->getLanguage();
         // TODO: check what has already been done !
         // TODO: make clients info optional ? => check first if ok (in invoices for exemple)
+        // TODO: set checkboxes as not modifiable
         $modelUser = new CoreUser();
+        $modelPending = new CorePendingAccount();
         
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
@@ -272,25 +274,23 @@ class CorespaceadminController extends CoresecureController {
         $modelClient = new ClClient();
 
         $todoData = array();
-
         $todoData['users'] = [
             "title" => "Users",
             "tasks" => [
                 [
-                    "id" => "user",
+                    "id" => "users",
                     "title" => UsersTranslator::Create_item("user", $lang),
                     "url" => "corespaceaccessuseradd/" . $id_space,
                     "done" => $modelUser->getSpaceActiveUsers($id_space)
                 ],
-                /* [
-                    "id" => "re_category",
-                    "title" => ResourcesTranslator::Create_item("category", $lang),
-                    "url" => "recategoriesedit/" . $id_space,
-                    "done" => $modelCategory->getBySpace($id_space)
-                ], */
+                [
+                    "id" => "users_pending",
+                    "title" => UsersTranslator::Create_item("pending", $lang),
+                    "url" => "corespacependingusers/" . $id_space,
+                    "done" => $modelPending->getActivatedForSpace($id_space)
+                ],
             ]
         ];
-
         $todoData['resources'] = [
             "title" => "Resources",
             "tasks" => [
@@ -344,6 +344,15 @@ class CorespaceadminController extends CoresecureController {
                 ]
             ]
         ];
+
+        // set documentation urls
+        $modulesDocUrl = "http://bgo-bioimagerie.github.io/platformmanager/modules/module/";
+        
+        foreach(array_keys($todoData) as $module) {
+            $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
+        }
+        Configuration::getLogger()->debug("[TEST]", ["todoData" => $todoData]);
+
         return $todoData;
     }
 

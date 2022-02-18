@@ -32,7 +32,14 @@
             
             {% for module in todolist %}
                 <div>
-                    <h4>{{ module.title }}</h4>
+                    <h4> {{ module.title }} </h4>
+                    <p>
+                        <a href="{{module.docurl}}" style="font-style:italic">
+                            {{ module.title }} documentation
+                        </a>
+                    </p>
+                            
+
                     {% for task in module.tasks %}
                         {% set checked = task.done ? "checked" : "" %}
                         <div>
@@ -40,6 +47,7 @@
                                 type="checkbox"
                                 id="{{task.id}}"
                                 name="{{task.id}}"
+                                disabled
                                 {{checked}} >
                             <label for="{{task.id}}" style="font-weight:normal">
                                 <a href="{{task.url}}">

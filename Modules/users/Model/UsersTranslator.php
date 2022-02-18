@@ -96,13 +96,16 @@ class UsersTranslator {
     
     public static function Create_item($item, $lang = "") {
         $result = ($lang === "fr") ? "Créer " : "Create " ;
-            switch ($item) {
-                case "user":
-                    $result .= ($lang === "fr") ? "un⋅e utilisateur⋅rice" : "a user";
-                    break;
-                default:
-                    break;
-            }
+        switch ($item) {
+            case "user":
+                $result .= ($lang === "fr") ? "ou ajouter un⋅e utilisateur⋅rice" : "or add a user";
+                break;
+            case "pending":
+                $result = ($lang === "fr") ? "et/ou valider un compte en attente" : "and/or accept one pending request";
+                break;
+            default:
+                break;
+        }
         return $result;
     }    
     
