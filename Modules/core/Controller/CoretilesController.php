@@ -332,16 +332,19 @@ class CoretilesController extends CorecookiesecureController {
                 $comment = '';
                 if($this->role < CoreSpace::$MANAGER) {
                     $comment = $this->request->getParameterNoException('comment');
-                    if(!$comment) {
-                        $form = new Form($this->request, 'selfJoinSpace');
-                        if($form->check() && !$comment) {
-                            $_SESSION['flash'] = 'Missing comment!!';
+                    $agree = $this->request->getParameterNoException('agree');
+                    $formid = $this->request->getParameterNoException('formid');
+                    if($formid == 'coretilesselfjoinspace') {
+                        if($this->currentSpace['termsofuse'] && !$agree) {
+                            $_SESSION['flash'] = 'You must agree with the usage policy!!';
+                            return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                         }
-                        $form->addHidden('space', $id_space);
-                        $form->addTextArea('comment', CoreTranslator::JoinWhy($lang), true, '');
-                        $form->setValidationButton(CoreTranslator::RequestJoin(false, $lang), "coretilesselfjoinspace/".$id_space);
-                        $form->setCancelButton(CoreTranslator::Cancel($lang), "coretiles");
-                        return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName, 'form' => $form->getHtml()]);
+                        if(!$comment) {
+                                $_SESSION['flash'] = 'Comment needed!!';
+                            return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
+                        }
+                    } else if(!$comment || ($this->currentSpace['termsofuse'] && !$agree)){
+                        return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                     }
                 }
 

@@ -1996,6 +1996,13 @@ class CoreTranslator {
         return "Support email";
     }
 
+    public static function Policy($lang = "") {
+        if ($lang == "fr") {
+            return "Charte d'utilisation";
+        }
+        return "Usage policy";
+    }
+
     public static function MailSubjectPrefix($spaceName = "") {
         return ($spaceName !== "") ? "[pfm: " . $spaceName . "] " : "";
     }

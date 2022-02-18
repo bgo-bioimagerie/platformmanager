@@ -101,6 +101,7 @@ class CorespaceadminController extends CoresecureController {
         $form->addTextArea("description", CoreTranslator::Description($lang), false, $space["description"]);
         $form->addText("contact", CoreTranslator::Contact($lang), true, $space["contact"]);
         $form->addText("support", CoreTranslator::Support($lang), false, $space["support"]);
+        $form->addText("termsofuse", CoreTranslator::Policy($lang), false, $space['termsofuse'] ?? '');
 
         $modelUser = new CoreUser();
         $users = $modelUser->getActiveUsers("name");
@@ -211,6 +212,9 @@ class CorespaceadminController extends CoresecureController {
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
             $modelSpace->setDeactivate($id, $this->request->getParameter('user_desactivate'));
+
+            $termsofuse = $this->request->getParameterNoException("termsofuse");
+            $modelSpace->setTermsOfUse($id, $termsofuse);
             
             // upload image
             $target_dir = "data/core/menu/";
