@@ -2,6 +2,7 @@
 
 ## 2.4.0
 
+* [documentation] add packages documentation and use case
 * [core] reduce space users options after a module is deactivated
 * [documentation] update space join use case
 * [documents] add visibility controls on documents to have public, private, user/client scopes
