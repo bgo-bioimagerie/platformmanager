@@ -23,6 +23,7 @@ require_once 'Modules/booking/Controller/BookingconfigController.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
+require_once 'Modules/users/Model/UsersTranslator.php';
 
 
 /**
@@ -258,8 +259,38 @@ class CorespaceadminController extends CoresecureController {
         Configuration::getLogger()->debug("[TEST]", ["generating todoList"]);
         $lang = $this->getLanguage();
         // TODO: check what has already been done !
-        // TODO: translate titles
+        // TODO: make clients info optional ? => check first if ok (in invoices for exemple)
+        $modelUser = new CoreUser();
+        
+        $modelArea = new ReArea();
+        $modelCategory = new ReCategory();
+        $modelResource = new ResourceInfo();
+        $modelVisa = new ReVisa();
+
+        $modelCompany = new ClCompany();
+        $modelPricing = new ClPricing();
+        $modelClient = new ClClient();
+
         $todoData = array();
+
+        $todoData['users'] = [
+            "title" => "Users",
+            "tasks" => [
+                [
+                    "id" => "user",
+                    "title" => UsersTranslator::Create_item("user", $lang),
+                    "url" => "corespaceaccessuseradd/" . $id_space,
+                    "done" => $modelUser->getSpaceActiveUsers($id_space)
+                ],
+                /* [
+                    "id" => "re_category",
+                    "title" => ResourcesTranslator::Create_item("category", $lang),
+                    "url" => "recategoriesedit/" . $id_space,
+                    "done" => $modelCategory->getBySpace($id_space)
+                ], */
+            ]
+        ];
+
         $todoData['resources'] = [
             "title" => "Resources",
             "tasks" => [
@@ -267,26 +298,26 @@ class CorespaceadminController extends CoresecureController {
                     "id" => "re_area",
                     "title" => ResourcesTranslator::Create_item("area", $lang),
                     "url" => "reareasedit/" . $id_space,
-                    "done" => false
+                    "done" => $modelArea->getForSpace($id_space)
                 ],
                 [
                     "id" => "re_category",
                     "title" => ResourcesTranslator::Create_item("category", $lang),
                     "url" => "recategoriesedit/" . $id_space,
-                    "done" => false
+                    "done" => $modelCategory->getBySpace($id_space)
                 ],
                 [
                     "id" => "re_resource",
                     "title" => ResourcesTranslator::Create_item("resource", $lang),
                     "url" => "resourcesedit/" . $id_space,
-                    "done" => false
+                    "done" => $modelResource->getForSpace($id_space)
                 ],
                 // TODO: think about actions order => for example, need to create a first user to be able to create visas
                 [
                     "id" => "re_visa",
                     "title" => ResourcesTranslator::Create_item("visa", $lang),
                     "url" => "resourceseditvisa/" . $id_space,
-                    "done" => false
+                    "done" => $modelVisa->getForSpace($id_space)
                 ],
             ]
         ];
@@ -297,20 +328,20 @@ class CorespaceadminController extends CoresecureController {
                     "id" => "cl_company",
                     "title" => ClientsTranslator::Create_item("company", $lang),
                     "url" => "clcompany/" . $id_space,
-                    "done" => false
-                ],
-                [
-                    "id" => "cl_client",
-                    "title" => clientsTranslator::Create_item("client", $lang),
-                    "url" => "clclientedit/" . $id_space,
-                    "done" => false
+                    "done" => $modelCompany->getForSpace($id_space)
                 ],
                 [
                     "id" => "cl_pricing",
                     "title" => ClientsTranslator::Create_item("pricing", $lang),
                     "url" => "clpricingedit/" . $id_space,
-                    "done" => false
+                    "done" => !empty($modelPricing->getForList($id_space)['ids'])
                 ],
+                [
+                    "id" => "cl_client",
+                    "title" => clientsTranslator::Create_item("client", $lang),
+                    "url" => "clclientedit/" . $id_space,
+                    "done" => !empty($modelClient->getForList($id_space)['ids'])
+                ]
             ]
         ];
         return $todoData;
@@ -323,6 +354,7 @@ class CorespaceadminController extends CoresecureController {
 
         // TODO: set modules to activate at preconfiguration in config ?
         $modulesToActivate = array(
+            // shouldn't we set 1 key/value pair by entry ? ex "booking" => 2. Would reduce array of 1 dimension
             ["name" => "booking", "status" => 2],
             ["name" => "bookingsettings", "status" => 3],
             ["name" => "clients", "status" => 3],

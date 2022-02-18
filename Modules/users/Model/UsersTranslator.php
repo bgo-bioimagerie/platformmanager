@@ -94,6 +94,16 @@ class UsersTranslator {
         return "Account informations have been saved";
     }
     
-    
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "user":
+                    $result .= ($lang === "fr") ? "un⋅e utilisateur⋅rice" : "a user";
+                    break;
+                default:
+                    break;
+            }
+        return $result;
+    }    
     
 }

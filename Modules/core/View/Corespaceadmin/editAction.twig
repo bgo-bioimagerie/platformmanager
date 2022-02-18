@@ -20,14 +20,16 @@
         </button>
     </div>
     <div id="sections">
-        <div id="spaceedit_form" style="display:none">
+        <div id="spaceedit_form" style="display:block">
             {{ formHtml | raw }}
         </div>
 
-        <div id="spaceedit_todo" style="display:block">
+        <div id="spaceedit_todo" style="display:none">
 
-            <h3>Basic space configuration</h3>
-
+            <div class="page-header">
+                <h3>Basic space configuration</h3>
+            </div>
+            
             {% for module in todolist %}
                 <div>
                     <h4>{{ module.title }}</h4>

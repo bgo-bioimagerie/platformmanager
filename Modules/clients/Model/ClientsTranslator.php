@@ -101,6 +101,13 @@ class ClientsTranslator {
         return "Pricings";
     }
 
+    public static function Pricing_needed($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord créer au moins un secteur d'activité";
+        }
+        return "You need to create a pricing first";
+    }
+
     public static function Edit_Client($lang) {
         if ($lang == "fr") {
             return "Edition Client";
