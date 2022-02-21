@@ -16,6 +16,7 @@ $nbDays = 1;
 $resourcesBase = [$resourceBase];
 $calEntries = [$calEntries];
 $from = ["day", $date, $bk_id_resource, $bk_id_area, $id_user];
+$isUserAuthorizedToBook = [ $isUserAuthorizedToBook];
 
 echo drawNavigation('day', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $lang);
 ?>
