@@ -782,6 +782,12 @@ class BkCalendarEntry extends Model {
         return false;
     }
 
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM bk_calendar_entry WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+
     /**
      * Get all the entries of a given user
      * @param unknown $user_id

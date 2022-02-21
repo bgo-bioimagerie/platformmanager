@@ -365,6 +365,9 @@ class ClientsTranslator {
                 case "pricing":
                     $result .= ($lang === "fr") ? "un secteur d'activité" : "a pricing";
                     break;
+                    case "clientsuser":
+                        $result = ($lang === "fr") ? "Lier un compte client au compte utilisateur :" : "Link a client account to user account:";
+                        break;
                 default:
                     break;
             }

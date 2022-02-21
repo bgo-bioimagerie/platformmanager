@@ -37,8 +37,7 @@
                         <a href="{{module.docurl}}" style="font-style:italic">
                             {{ module.title }} documentation
                         </a>
-                    </p>
-                            
+                    </p>    
 
                     {% for task in module.tasks %}
                         {% set checked = task.done ? "checked" : "" %}
@@ -50,10 +49,18 @@
                                 disabled
                                 {{checked}} >
                             <label for="{{task.id}}" style="font-weight:normal">
-                                <a href="{{task.url}}">
+                                <a id="{{task.id}}_link" href="{{task.url}}">
                                     {{task.title}}
                                 </a>
                             </label>
+                            {% if task.options %}
+                                <select id="{{task.id}}_select" class="customSelector">
+                                    <option value="" selected="selected" disabled>{{task.options.defaultText}}</option>
+                                    {% for item in task.options.list %}
+                                        <option value={{item.id}}>{{item.login}}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>
@@ -63,8 +70,9 @@
     </div>
 </div>
 
-
 <script>
+    setLinks();
+
     function show(elemId) {
         const sections = [...document.getElementById('sections').children];
         const btns = [...document.getElementsByClassName('tab')];
@@ -79,6 +87,20 @@
             } else {
                 child.style.display = 'none';
             }
+        });
+    }
+
+    function setLinks() {
+        const customSelectors = document.getElementsByClassName('customSelector');
+        const taskNames = Array.from(customSelectors).map(item => item.id.split("_")[0]);
+        taskNames.forEach(taskName => {
+            let element = document.getElementById(taskName + '_link') ?? false;
+            let url = element.href;
+            let selector = document.getElementById(taskName + '_select') ?? false;
+            selector.addEventListener("change", (event) => {
+                let selectedValue = event.target.options[event.target.selectedIndex].value;
+                element.href = url + "/" + selectedValue;
+            });
         });
     }
 </script>

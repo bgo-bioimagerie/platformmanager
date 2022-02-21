@@ -1706,4 +1706,28 @@ class BookingTranslator {
         }
         return "My bookings";
     }
+
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "colorcode":
+                    $result .= ($lang === "fr") ? "un code couleur" : "a color code";
+                    break;
+                case "schedule":
+                    $result .= ($lang === "fr") ? "un profil horaire pour un domaine" : "a schedule profile for one area";
+                    break;
+                case "authorisations":
+                    $result = ($lang === "fr") ? "Gérer les autorisations de réservation pour :" : "Manage booking authorisations for:";
+                    break;
+                    case "access":
+                        $result = ($lang === "fr") ? "Gérer les accès à une ressource" : "Manage a resource access";
+                        break;
+                case "booking":
+                    $result .= ($lang === "fr") ? "une première réservation" : "a first reservation";
+                    break;
+                default:
+                    break;
+            }
+        return $result;
+    }
 }

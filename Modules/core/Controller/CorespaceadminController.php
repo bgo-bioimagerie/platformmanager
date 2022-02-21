@@ -87,7 +87,6 @@ class CorespaceadminController extends CoresecureController {
     
     public function editAction($id_space){
         // Check user is superadmin or space admin
-        Configuration::getLogger()->debug("[TEST]", ["in spaceadmin edit action"]);
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
         $modelSpace = new CoreSpace();
@@ -256,11 +255,15 @@ class CorespaceadminController extends CoresecureController {
     }
 
     protected function todolist($id_space) {
-        Configuration::getLogger()->debug("[TEST]", ["generating todoList"]);
+
+        // TODO: quand création de compte, nécessité d'accepter le pending user avant validation => rediriger vers accès !
+        // TODO: gérer les accès => se coche à un moment (création de ressource ?)
+        // TODO: gérer flashs dans accès quand pas configuré (manquent visa, clients, etc...)
+        // TODO: idem lier un client
+        // TODO: afficher bouton TODO bandeau espace ?
+        // TODO: diriger directement vers bon onglet des accès utilisateurs */
         $lang = $this->getLanguage();
-        // TODO: check what has already been done !
         // TODO: make clients info optional ? => check first if ok (in invoices for exemple)
-        // TODO: set checkboxes as not modifiable
         $modelUser = new CoreUser();
         $modelPending = new CorePendingAccount();
         
@@ -273,7 +276,14 @@ class CorespaceadminController extends CoresecureController {
         $modelPricing = new ClPricing();
         $modelClient = new ClClient();
 
+        $modelBkEntry = new BkCalendarEntry();
+        $modelColor = new BkColorCode();
+        $modelSchedule = new BkScheduling();
+        $modelBkAccess = new BkAccess();
+        $modelBkAuth = new BkAuthorization();
+
         $todoData = array();
+        $opt = "(".CoreTranslator::Optional($lang).") ";
         $todoData['users'] = [
             "title" => "Users",
             "tasks" => [
@@ -284,7 +294,7 @@ class CorespaceadminController extends CoresecureController {
                     "done" => $modelUser->getSpaceActiveUsers($id_space)
                 ],
                 [
-                    "id" => "users_pending",
+                    "id" => "pendingUsers",
                     "title" => UsersTranslator::Create_item("pending", $lang),
                     "url" => "corespacependingusers/" . $id_space,
                     "done" => $modelPending->getActivatedForSpace($id_space)
@@ -295,26 +305,25 @@ class CorespaceadminController extends CoresecureController {
             "title" => "Resources",
             "tasks" => [
                 [
-                    "id" => "re_area",
+                    "id" => "area",
                     "title" => ResourcesTranslator::Create_item("area", $lang),
                     "url" => "reareasedit/" . $id_space,
                     "done" => $modelArea->getForSpace($id_space)
                 ],
                 [
-                    "id" => "re_category",
+                    "id" => "category",
                     "title" => ResourcesTranslator::Create_item("category", $lang),
                     "url" => "recategoriesedit/" . $id_space,
                     "done" => $modelCategory->getBySpace($id_space)
                 ],
                 [
-                    "id" => "re_resource",
+                    "id" => "resource",
                     "title" => ResourcesTranslator::Create_item("resource", $lang),
                     "url" => "resourcesedit/" . $id_space,
                     "done" => $modelResource->getForSpace($id_space)
                 ],
-                // TODO: think about actions order => for example, need to create a first user to be able to create visas
                 [
-                    "id" => "re_visa",
+                    "id" => "visa",
                     "title" => ResourcesTranslator::Create_item("visa", $lang),
                     "url" => "resourceseditvisa/" . $id_space,
                     "done" => $modelVisa->getForSpace($id_space)
@@ -325,33 +334,81 @@ class CorespaceadminController extends CoresecureController {
             "title" => "Clients",
             "tasks" => [
                 [
-                    "id" => "cl_company",
+                    "id" => "company",
                     "title" => ClientsTranslator::Create_item("company", $lang),
                     "url" => "clcompany/" . $id_space,
                     "done" => $modelCompany->getForSpace($id_space)
                 ],
                 [
-                    "id" => "cl_pricing",
+                    "id" => "pricing",
                     "title" => ClientsTranslator::Create_item("pricing", $lang),
                     "url" => "clpricingedit/" . $id_space,
                     "done" => !empty($modelPricing->getForList($id_space)['ids'])
                 ],
                 [
-                    "id" => "cl_client",
-                    "title" => clientsTranslator::Create_item("client", $lang),
+                    "id" => "client",
+                    "title" => ClientsTranslator::Create_item("client", $lang),
                     "url" => "clclientedit/" . $id_space,
                     "done" => !empty($modelClient->getForList($id_space)['ids'])
+                ],
+                [
+                    // TODO: add script in editAction to check if user exists then set link with first user id
+                    "id" => "clientsuser",
+                    "title" => ClientsTranslator::Create_item("clientsuser", $lang),
+                    "url" => "corespaceuseredit/" . $id_space,
+                    "done" => !empty($modelClient->getForList($id_space)['ids']),
+                    "options" => [
+                        "list" => $modelUser->getSpaceActiveUsers($id_space),
+                        "defaultText" => UsersTranslator::User_account($lang)
+                    ]
+                ]
+            ]
+        ];
+        $todoData['booking'] = [
+            "title" => "Booking",
+            "tasks" => [
+                [
+                    "id" => "colorcodes",
+                    "title" => BookingTranslator::Create_item("colorcode", $lang),
+                    "url" => "bookingcolorcodeedit/" . $id_space,
+                    "done" => $modelColor->getForSpace($id_space)
+                ],
+                [
+                    "id" => "schedule",
+                    "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
+                    "url" => "bookingscheduling/" . $id_space,
+                    "done" => $modelSchedule->getForSpace($id_space)
+                ],
+                [
+                    "id" => "auth",
+                    "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
+                    "url" => "corespaceuseredit/" . $id_space,
+                    "done" => $modelBkAuth->getForSpace($id_space),
+                    "options" => [
+                        "list" => $modelUser->getSpaceActiveUsers($id_space),
+                        "defaultText" => UsersTranslator::User_account($lang)
+                    ]
+                ],
+                [
+                    "id" => "access",
+                    "title" => BookingTranslator::Create_item("access", $lang),
+                    "url" => "bookingaccessibilities/" . $id_space,
+                    "done" => $modelBkAccess->getAll($id_space)
+                ],
+                [
+                    "id" => "booking",
+                    "title" => BookingTranslator::Create_item("booking", $lang),
+                    "url" => "bookingdayarea/" . $id_space,
+                    "done" => $modelBkEntry->getForSpace($id_space)
                 ]
             ]
         ];
 
         // set documentation urls
-        $modulesDocUrl = "http://bgo-bioimagerie.github.io/platformmanager/modules/module/";
-        
+        $modulesDocUrl = "https://bgo-bioimagerie.github.io/platformmanager/modules/module/";
         foreach(array_keys($todoData) as $module) {
             $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
         }
-        Configuration::getLogger()->debug("[TEST]", ["todoData" => $todoData]);
 
         return $todoData;
     }
@@ -363,7 +420,6 @@ class CorespaceadminController extends CoresecureController {
 
         // TODO: set modules to activate at preconfiguration in config ?
         $modulesToActivate = array(
-            // shouldn't we set 1 key/value pair by entry ? ex "booking" => 2. Would reduce array of 1 dimension
             ["name" => "booking", "status" => 2],
             ["name" => "bookingsettings", "status" => 3],
             ["name" => "clients", "status" => 3],

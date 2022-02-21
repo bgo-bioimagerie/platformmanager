@@ -2109,5 +2109,12 @@ class CoreTranslator {
         }
         return "Edition access";
     }
+
+    public static function Optional($lang){
+        if($lang == "fr") {
+            return "optionnel";
+        }
+        return "optional";
+    }
     
 }

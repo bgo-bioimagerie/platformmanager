@@ -107,6 +107,13 @@ class UsersTranslator {
                 break;
         }
         return $result;
-    }    
+    }
+
+    public static function User_account($lang) {
+        if ($lang == "fr") {
+            return "compte utilisateur";
+        }
+        return "user account";
+    }
     
 }
