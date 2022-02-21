@@ -27,12 +27,12 @@ class InvoicesController extends CoresecureController {
 
         $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a  style="background-color:{{bgcolor}}; color: {{color}};" href="invoices/'.$id_space.'"> {{title}}'; 
-        $html .= '    <span style="color: {{color}}; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
+        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="invoices/'.$id_space.'"> {{title}}'; 
+        $html .= '    <span style="color: {{color}}; font-size:16px; float:right;" class=" hidden-xs showopacity {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
 
-        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color: {{color}}">';
         $html .= '<a style="color:{{color}}" id="menu-button" href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
         $html .= '</div>';
         
@@ -53,11 +53,10 @@ class InvoicesController extends CoresecureController {
         $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
         $html .= '<a style="color:{{color}}" href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
         $html .= '</div>';
-        
-        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
-        $html .= '<br/>';
         $html .= '</div>';
         
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+
 
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
@@ -93,10 +92,10 @@ class InvoicesController extends CoresecureController {
                     }
 
                     if ($count > 0) {
-                        $html .= "<br/>";
+                        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}}; color: {{color}}"><br/></div>';
                     }
                     
-                    $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+                    $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
                     $html .= '<br/>';
                     $html .= $txt;
                     $html .= '</div>';
@@ -106,7 +105,7 @@ class InvoicesController extends CoresecureController {
                     $url = $model->getUrl($i);
                     $txt = $translator->$url($lang);
 
-                    $html .= '<div class="col-12 pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+                    $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
                     $html .= '<a style="color:{{color}}" href="' . $url . "/" . $id_space . '">' . $txt . '</a>';
                     $html .= '</div>';
                 }

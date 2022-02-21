@@ -2,6 +2,7 @@
 
 ## 2.4.0
 
+* [documentation] add packages documentation and use case
 * [core] reduce space users options after a module is deactivated
 * [documentation] update space join use case
 * [documents] add visibility controls on documents to have public, private, user/client scopes
@@ -22,6 +23,7 @@
 * [invoice] generate invoices in background (async) and show generation status
 * [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
 * [booking] graphics and code refactoring of calendar
+* [core] handle multiple Accept values in http headers for API calls (application/json)
 
 ## 2.3.3 [unreleased]
 
