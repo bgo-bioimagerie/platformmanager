@@ -200,12 +200,22 @@ class RevisasController extends ResourcesBaseController {
         echo $content;
     }
 
-    
     public function deleteAction($id_space, $id){
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelVisa = new ReVisa();
         $modelVisa->delete($id_space, $id);
         
         $this->redirect("resourcesvisa/" . $id_space);
+    }
+
+    public function getCategoryvisasAction($id_space, $id_category) {
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $modelReVisa = new ReVisa();
+        $visas = $modelReVisa->getForListByCategory($id_space, $id_category);
+        $data = array();
+        for ($i=0; $i<count($visas['ids']); $i++) {
+            $data[$i] = ["id" => $visas["ids"][$i], "name" => $visas["names"][$i]];
+        }
+        $this->render(['data' => ['elements' => $data]]);
     }
 }
