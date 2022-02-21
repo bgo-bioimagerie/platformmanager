@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Modules/booking/Model/BookingTranslator.php';
 
 
 $day_begin = $this->clean($scheduling['day_begin']);
@@ -117,6 +118,9 @@ th {
 </thead>
 <tbody>
 	<?php
+	if(empty($calData)) {
+		echo "<tr><td>".BookingTranslator::Closed($lang)."</td></tr>";
+	}
 	foreach ($calData as $i => $calDay) {
 			for($e=0;$e<$nbBlocks;$e++) {
 	?>

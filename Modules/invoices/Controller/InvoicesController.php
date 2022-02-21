@@ -32,7 +32,7 @@ class InvoicesController extends CoresecureController {
         $html .= '</a>';
         $html .= '</div>';
 
-        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}}; style="color: {{color}}"">';
+        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}};color: {{color}}">';
         $html .= '<a style="color: {{color}}" id="menu-button" href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
         $html .= '</div>';
         
