@@ -90,12 +90,8 @@ class InvoicesController extends CoresecureController {
                     } else {
                         $txt = $module;
                     }
-
-                    if ($count > 0) {
-                        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}}; color: {{color}}"><br/></div>';
-                    }
                     
-                    $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+                    $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}; padding: 10px">';
                     $html .= '<br/>';
                     $html .= $txt;
                     $html .= '</div>';
