@@ -84,7 +84,6 @@ th {
     border: solid 1px !important;
 }
 </style>
-
 <div class="table-responsive">
 <table aria-label="bookings day view" class="table">
 <thead>
