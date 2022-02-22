@@ -5,27 +5,14 @@
 <div id="content" class="container pm-form">
     <div id="buttons">
         <button
-            id="form_btn"
-            onclick="show('spaceedit_form')"
+            id="todo_btn"
             class="tab btn btn-primary"
             style="margin:5px; font-weight:bold">
-            FORM
-        </button>
-        <button
-            id="todo_btn"
-            onclick="show('spaceedit_todo')"
-            class="tab btn btn-secondary"
-            style="margin:5px; font-weight:bold">
-            TODO
+            Display Todo
         </button>
     </div>
     <div id="sections">
-        <div id="spaceedit_form" style="display:block">
-            {{ formHtml | raw }}
-        </div>
-
-        <div id="spaceedit_todo" style="display:none">
-
+        <div id="spaceedit_todo">
             <div class="page-header">
                 <h3>Basic space configuration</h3>
             </div>
@@ -65,27 +52,27 @@
                     {% endfor %}
                 </div>
             {% endfor %}
-
+        </div>
+        <div id="spaceedit_form" style="display:block">
+            {{ formHtml | raw }}
         </div>
     </div>
 </div>
 
 <script>
     setLinks();
+    setShowAction();
 
-    function show(elemId) {
-        const sections = [...document.getElementById('sections').children];
-        const btns = [...document.getElementsByClassName('tab')];
-        btns.forEach(btn => {
-            (btn.id === event.target.id)
-                ? btn.classList.replace('btn-secondary', 'btn-primary')
-                : btn.classList.replace('btn-primary', 'btn-secondary');
-        });
-        sections.forEach(child => {
-            if (child.id === elemId) {
-                child.style.display = 'block';
+    function setShowAction() {
+        const todoBtn = document.getElementById("todo_btn");
+        const section = document.getElementById("spaceedit_todo");
+        todoBtn.addEventListener("click", () => {
+            section.classList.toggle("expanded");
+            const expanded = section.classList.contains("expanded");
+            if (expanded) {
+                todoBtn.innerHTML = "Hide Todo";
             } else {
-                child.style.display = 'none';
+                todoBtn.innerHTML = "Display Todo";
             }
         });
     }
@@ -104,5 +91,17 @@
         });
     }
 </script>
+
+<style type="text/css">
+    #spaceedit_todo {
+        max-height: 0px;
+        overflow-y: hidden;
+        transition: all 0.2s linear;
+    }
+
+    #spaceedit_todo.expanded {
+        max-height: 1080px;
+    }
+</style>
 
 {% endblock %}
