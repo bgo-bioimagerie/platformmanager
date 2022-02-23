@@ -93,8 +93,10 @@ class CorespaceadminController extends CoresecureController {
         $space = $modelSpace->getSpace($id_space);
         $lang = $this->getLanguage();
 
+        $formTitle = ($id_space > 0) ? "Edit_space" : "Create_space";
+
         $form = new Form($this->request, "corespaceadminedit");
-        $form->setTitle(CoreTranslator::Edit_space($lang));
+        $form->setTitle(CoreTranslator::$formTitle($lang));
 
         if(!$space) {
             $space = CoreSpace::new();
@@ -242,7 +244,7 @@ class CorespaceadminController extends CoresecureController {
             }
         }
         // generate todoList informations
-        $todolist = $this->todolist($space['id']);
+        $todolist = ($id_space > 0) ? $this->todolist($space['id']) : null;
         return $this->render(
             array(
                 "lang" => $lang,
@@ -256,34 +258,28 @@ class CorespaceadminController extends CoresecureController {
 
     protected function todolist($id_space) {
 
-        // TODO: quand création de compte, nécessité d'accepter le pending user avant validation => rediriger vers accès !
-        // TODO: gérer les accès => se coche à un moment (création de ressource ?)
-        // TODO: gérer flashs dans accès quand pas configuré (manquent visa, clients, etc...)
+        // TODO: bug d'affichage sur resourcesvisa
+        // TODO: gérer les accès => se coche au moment de la création de resource. OK
         // TODO: idem lier un client
+        // TODO: gérer flashs dans accès quand pas configuré (manquent visa, clients, etc...)
         // TODO: afficher bouton TODO bandeau espace ?
         // TODO: diriger directement vers bon onglet des accès utilisateurs */
         $lang = $this->getLanguage();
         // TODO: make clients info optional ? => check first if ok (in invoices for exemple)
+
+        $modelSpace = new CoreSpace();
         $modelUser = new CoreUser();
         $modelPending = new CorePendingAccount();
-        
-        $modelArea = new ReArea();
-        $modelCategory = new ReCategory();
-        $modelResource = new ResourceInfo();
-        $modelVisa = new ReVisa();
-
-        $modelCompany = new ClCompany();
-        $modelPricing = new ClPricing();
-        $modelClient = new ClClient();
-
-        $modelBkEntry = new BkCalendarEntry();
-        $modelColor = new BkColorCode();
-        $modelSchedule = new BkScheduling();
-        $modelBkAccess = new BkAccess();
-        $modelBkAuth = new BkAuthorization();
 
         $todoData = array();
         $opt = "(".CoreTranslator::Optional($lang).") ";
+        $modules = $modelSpace->getDistinctSpaceMenusModules($id_space);
+        
+        $modulesList = array();
+        foreach($modules as $module) {
+            array_push($modulesList, $module['module']);
+        }
+        Configuration::getLogger()->debug("[TEST]", ["modules" => $modulesList]);
         $todoData['users'] = [
             "title" => "Users",
             "tasks" => [
@@ -301,108 +297,129 @@ class CorespaceadminController extends CoresecureController {
                 ],
             ]
         ];
-        $todoData['resources'] = [
-            "title" => "Resources",
-            "tasks" => [
-                [
-                    "id" => "area",
-                    "title" => ResourcesTranslator::Create_item("area", $lang),
-                    "url" => "reareasedit/" . $id_space,
-                    "done" => $modelArea->getForSpace($id_space)
-                ],
-                [
-                    "id" => "category",
-                    "title" => ResourcesTranslator::Create_item("category", $lang),
-                    "url" => "recategoriesedit/" . $id_space,
-                    "done" => $modelCategory->getBySpace($id_space)
-                ],
-                [
-                    "id" => "resource",
-                    "title" => ResourcesTranslator::Create_item("resource", $lang),
-                    "url" => "resourcesedit/" . $id_space,
-                    "done" => $modelResource->getForSpace($id_space)
-                ],
-                [
-                    "id" => "visa",
-                    "title" => ResourcesTranslator::Create_item("visa", $lang),
-                    "url" => "resourceseditvisa/" . $id_space,
-                    "done" => $modelVisa->getForSpace($id_space)
-                ],
-            ]
-        ];
-        $todoData['clients'] = [
-            "title" => "Clients",
-            "tasks" => [
-                [
-                    "id" => "company",
-                    "title" => ClientsTranslator::Create_item("company", $lang),
-                    "url" => "clcompany/" . $id_space,
-                    "done" => $modelCompany->getForSpace($id_space)
-                ],
-                [
-                    "id" => "pricing",
-                    "title" => ClientsTranslator::Create_item("pricing", $lang),
-                    "url" => "clpricingedit/" . $id_space,
-                    "done" => !empty($modelPricing->getForList($id_space)['ids'])
-                ],
-                [
-                    "id" => "client",
-                    "title" => ClientsTranslator::Create_item("client", $lang),
-                    "url" => "clclientedit/" . $id_space,
-                    "done" => !empty($modelClient->getForList($id_space)['ids'])
-                ],
-                [
-                    // TODO: add script in editAction to check if user exists then set link with first user id
-                    "id" => "clientsuser",
-                    "title" => ClientsTranslator::Create_item("clientsuser", $lang),
-                    "url" => "corespaceuseredit/" . $id_space,
-                    "done" => !empty($modelClient->getForList($id_space)['ids']),
-                    "options" => [
-                        "list" => $modelUser->getSpaceActiveUsers($id_space),
-                        "defaultText" => UsersTranslator::User_account($lang)
+
+        if (in_array("resources", $modulesList)) {
+            $modelArea = new ReArea();
+            $modelCategory = new ReCategory();
+            $modelResource = new ResourceInfo();
+            $modelVisa = new ReVisa();
+            $todoData['resources'] = [
+                "title" => "Resources",
+                "tasks" => [
+                    [
+                        "id" => "area",
+                        "title" => ResourcesTranslator::Create_item("area", $lang),
+                        "url" => "reareasedit/" . $id_space,
+                        "done" => $modelArea->getForSpace($id_space)
+                    ],
+                    [
+                        "id" => "category",
+                        "title" => ResourcesTranslator::Create_item("category", $lang),
+                        "url" => "recategoriesedit/" . $id_space,
+                        "done" => $modelCategory->getBySpace($id_space)
+                    ],
+                    [
+                        "id" => "resource",
+                        "title" => ResourcesTranslator::Create_item("resource", $lang),
+                        "url" => "resourcesedit/" . $id_space,
+                        "done" => $modelResource->getForSpace($id_space)
+                    ],
+                    [
+                        "id" => "visa",
+                        "title" => ResourcesTranslator::Create_item("visa", $lang),
+                        "url" => "resourceseditvisa/" . $id_space,
+                        "done" => $modelVisa->getForSpace($id_space)
+                    ],
+                ]
+            ];
+        }
+
+        if (in_array("clients", $modulesList)) {
+            $modelCompany = new ClCompany();
+            $modelPricing = new ClPricing();
+            $modelClient = new ClClient();
+            $modelClientsuser = new ClClientUser();
+            $todoData['clients'] = [
+                "title" => "Clients",
+                "tasks" => [
+                    [
+                        "id" => "company",
+                        "title" => ClientsTranslator::Create_item("company", $lang),
+                        "url" => "clcompany/" . $id_space,
+                        "done" => $modelCompany->getForSpace($id_space)
+                    ],
+                    [
+                        "id" => "pricing",
+                        "title" => ClientsTranslator::Create_item("pricing", $lang),
+                        "url" => "clpricingedit/" . $id_space,
+                        "done" => !empty($modelPricing->getForList($id_space)['ids'])
+                    ],
+                    [
+                        "id" => "client",
+                        "title" => ClientsTranslator::Create_item("client", $lang),
+                        "url" => "clclientedit/" . $id_space,
+                        "done" => !empty($modelClient->getForList($id_space)['ids'])
+                    ],
+                    [
+                        "id" => "clientsuser",
+                        "title" => ClientsTranslator::Create_item("clientsuser", $lang),
+                        "url" => "corespaceuseredit/" . $id_space,
+                        "done" => $modelClientsuser->getForSpace($id_space),
+                        "options" => [
+                            "list" => $modelUser->getSpaceActiveUsers($id_space),
+                            "defaultText" => UsersTranslator::User_account($lang)
+                        ]
                     ]
                 ]
-            ]
-        ];
-        $todoData['booking'] = [
-            "title" => "Booking",
-            "tasks" => [
-                [
-                    "id" => "colorcodes",
-                    "title" => BookingTranslator::Create_item("colorcode", $lang),
-                    "url" => "bookingcolorcodeedit/" . $id_space,
-                    "done" => $modelColor->getForSpace($id_space)
-                ],
-                [
-                    "id" => "schedule",
-                    "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
-                    "url" => "bookingscheduling/" . $id_space,
-                    "done" => $modelSchedule->getForSpace($id_space)
-                ],
-                [
-                    "id" => "auth",
-                    "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
-                    "url" => "corespaceuseredit/" . $id_space,
-                    "done" => $modelBkAuth->getForSpace($id_space),
-                    "options" => [
-                        "list" => $modelUser->getSpaceActiveUsers($id_space),
-                        "defaultText" => UsersTranslator::User_account($lang)
+            ];
+        }
+
+        if (in_array("booking", $modulesList)) {
+            $modelBkEntry = new BkCalendarEntry();
+            $modelColor = new BkColorCode();
+            $modelSchedule = new BkScheduling();
+            $modelBkAccess = new BkAccess();
+            $modelBkAuth = new BkAuthorization();
+            $todoData['booking'] = [
+                "title" => "Booking",
+                "tasks" => [
+                    [
+                        "id" => "colorcodes",
+                        "title" => BookingTranslator::Create_item("colorcode", $lang),
+                        "url" => "bookingcolorcodeedit/" . $id_space,
+                        "done" => $modelColor->getForSpace($id_space)
+                    ],
+                    [
+                        "id" => "schedule",
+                        "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
+                        "url" => "bookingscheduling/" . $id_space,
+                        "done" => $modelSchedule->getForSpace($id_space)
+                    ],
+                    [
+                        "id" => "auth",
+                        "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
+                        "url" => "corespaceuseredit/" . $id_space,
+                        "done" => $modelBkAuth->getForSpace($id_space),
+                        "options" => [
+                            "list" => $modelUser->getSpaceActiveUsers($id_space),
+                            "defaultText" => UsersTranslator::User_account($lang)
+                        ]
+                    ],
+                    [
+                        "id" => "access",
+                        "title" => BookingTranslator::Create_item("access", $lang),
+                        "url" => "bookingaccessibilities/" . $id_space,
+                        "done" => $modelBkAccess->getAll($id_space)
+                    ],
+                    [
+                        "id" => "booking",
+                        "title" => BookingTranslator::Create_item("booking", $lang),
+                        "url" => "bookingdayarea/" . $id_space,
+                        "done" => $modelBkEntry->getForSpace($id_space)
                     ]
-                ],
-                [
-                    "id" => "access",
-                    "title" => BookingTranslator::Create_item("access", $lang),
-                    "url" => "bookingaccessibilities/" . $id_space,
-                    "done" => $modelBkAccess->getAll($id_space)
-                ],
-                [
-                    "id" => "booking",
-                    "title" => BookingTranslator::Create_item("booking", $lang),
-                    "url" => "bookingdayarea/" . $id_space,
-                    "done" => $modelBkEntry->getForSpace($id_space)
                 ]
-            ]
-        ];
+            ];
+        }
 
         // set documentation urls
         $modulesDocUrl = "https://bgo-bioimagerie.github.io/platformmanager/modules/module/";

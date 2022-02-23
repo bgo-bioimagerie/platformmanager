@@ -1382,6 +1382,13 @@ class CoreTranslator {
         return "Edit space";
     }
 
+    public static function Create_space($lang) {
+        if ($lang == "fr") {
+            return "Ajouter un espace";
+        }
+        return "Add space";
+    }
+
     public static function PrivateA($lang) {
         if ($lang == "fr") {
             return "Privé";

@@ -3,105 +3,119 @@
 {% block content %}
 
 <div id="content" class="container pm-form">
-    <div id="buttons">
-        <button
-            id="todo_btn"
-            class="tab btn btn-primary"
-            style="margin:5px; font-weight:bold">
-            Display Todo
-        </button>
-    </div>
-    <div id="sections">
-        <div id="spaceedit_todo">
-            <div class="page-header">
-                <h3>Basic space configuration</h3>
-            </div>
-            
-            {% for module in todolist %}
-                <div>
-                    <h4> {{ module.title }} </h4>
-                    <p>
-                        <a href="{{module.docurl}}" style="font-style:italic">
-                            {{ module.title }} documentation
-                        </a>
-                    </p>    
-
-                    {% for task in module.tasks %}
-                        {% set checked = task.done ? "checked" : "" %}
-                        <div>
-                            <input
-                                type="checkbox"
-                                id="{{task.id}}"
-                                name="{{task.id}}"
-                                disabled
-                                {{checked}} >
-                            <label for="{{task.id}}" style="font-weight:normal">
-                                <a id="{{task.id}}_link" href="{{task.url}}">
-                                    {{task.title}}
-                                </a>
-                            </label>
-                            {% if task.options %}
-                                <select id="{{task.id}}_select" class="customSelector">
-                                    <option value="" selected="selected" disabled>{{task.options.defaultText}}</option>
-                                    {% for item in task.options.list %}
-                                        <option value={{item.id}}>{{item.login}}</option>
-                                    {% endfor %}
-                                </select>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
+    {% if todolist %}
+        <div id="buttons">
+            <button
+                id="todo_btn"
+                class="tab btn btn-primary"
+                style="margin:5px; font-weight:bold">
+                Show Todo
+            </button>
         </div>
+        <div id="sections">
+            <div id="spaceedit_todo">
+                <div class="page-header">
+                    <h3>Basic space configuration</h3>
+                </div>
+                
+                {% for module in todolist %}
+                    <div>
+                        <h4> {{ module.title }} </h4>
+                        <p>
+                            <a href="{{module.docurl}}" style="font-style:italic">
+                                {{ module.title }} documentation
+                            </a>
+                        </p>    
+
+                        {% for task in module.tasks %}
+                            {% set checked = task.done ? "checked" : "" %}
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="{{task.id}}"
+                                    name="{{task.id}}"
+                                    disabled
+                                    {{checked}} >
+                                <label for="{{task.id}}" style="font-weight:normal">
+                                    <a id="{{task.id}}_link" href="{{task.url}}">
+                                        {{task.title}}
+                                    </a>
+                                </label>
+                                {% if task.options %}
+                                    <select id="{{task.id}}_select" class="customSelector">
+                                        <option value="" selected="selected" disabled>{{task.options.defaultText}}</option>
+                                        {% for item in task.options.list %}
+                                            <option value={{item.id}}>{{item.login}}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         <div id="spaceedit_form" style="display:block">
             {{ formHtml | raw }}
         </div>
     </div>
 </div>
 
-<script>
-    setLinks();
-    setShowAction();
+{% if todolist %}
 
-    function setShowAction() {
-        const todoBtn = document.getElementById("todo_btn");
-        const section = document.getElementById("spaceedit_todo");
-        todoBtn.addEventListener("click", () => {
-            section.classList.toggle("expanded");
-            const expanded = section.classList.contains("expanded");
-            if (expanded) {
-                todoBtn.innerHTML = "Hide Todo";
-            } else {
-                todoBtn.innerHTML = "Display Todo";
-            }
-        });
-    }
+    <script>
+        setLinks();
+        setShowAction();
 
-    function setLinks() {
-        const customSelectors = document.getElementsByClassName('customSelector');
-        const taskNames = Array.from(customSelectors).map(item => item.id.split("_")[0]);
-        taskNames.forEach(taskName => {
-            let element = document.getElementById(taskName + '_link') ?? false;
-            let url = element.href;
-            let selector = document.getElementById(taskName + '_select') ?? false;
-            selector.addEventListener("change", (event) => {
-                let selectedValue = event.target.options[event.target.selectedIndex].value;
-                element.href = url + "/" + selectedValue;
+        function setShowAction() {
+            const todoBtn = document.getElementById("todo_btn");
+            const section = document.getElementById("spaceedit_todo");
+            todoBtn.addEventListener("click", () => {
+                section.classList.toggle("expanded");
+                const expanded = section.classList.contains("expanded");
+                if (expanded) {
+                    todoBtn.innerHTML = "Hide Todo";
+                } else {
+                    todoBtn.innerHTML = "Show Todo";
+                }
             });
-        });
-    }
-</script>
+        }
 
-<style type="text/css">
-    #spaceedit_todo {
-        max-height: 0px;
-        overflow-y: hidden;
-        transition: all 0.2s linear;
-    }
+        function setLinks() {
+            const customSelectors = document.getElementsByClassName('customSelector');
+            const taskNames = Array.from(customSelectors).map(item => item.id.split("_")[0]);
+            taskNames.forEach(taskName => {
+                let element = document.getElementById(taskName + '_link') ?? false;
+                let url = element.href;
+                let selector = document.getElementById(taskName + '_select') ?? false;
 
-    #spaceedit_todo.expanded {
-        max-height: 1080px;
-    }
-</style>
+                element.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    if (selector.options[selector.selectedIndex].value != "") {
+                        window.location = event.target.href;
+                    }
+                });
+
+                selector.addEventListener("change", (event) => {
+                    let selectedValue = event.target.options[event.target.selectedIndex].value;
+                    element.href = url + "/" + selectedValue;
+                });
+            });
+        }
+    </script>
+
+    <style type="text/css">
+        #spaceedit_todo {
+            max-height: 0px;
+            overflow-y: hidden;
+            transition: all 0.2s linear;
+        }
+
+        #spaceedit_todo.expanded {
+            max-height: 1080px;
+        }
+    </style>
+
+{% endif %}
 
 {% endblock %}

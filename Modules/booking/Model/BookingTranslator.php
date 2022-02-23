@@ -1714,7 +1714,7 @@ class BookingTranslator {
                     $result .= ($lang === "fr") ? "un code couleur" : "a color code";
                     break;
                 case "schedule":
-                    $result .= ($lang === "fr") ? "un profil horaire pour un domaine" : "a schedule profile for one area";
+                    $result = ($lang === "fr") ? "Editer un profil horaire pour un domaine" : "Edit a schedule profile for one area";
                     break;
                 case "authorisations":
                     $result = ($lang === "fr") ? "Gérer les autorisations de réservation pour :" : "Manage booking authorisations for:";

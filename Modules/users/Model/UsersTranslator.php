@@ -98,7 +98,7 @@ class UsersTranslator {
         $result = ($lang === "fr") ? "Créer " : "Create " ;
         switch ($item) {
             case "user":
-                $result .= ($lang === "fr") ? "ou ajouter un⋅e utilisateur⋅rice" : "or add a user";
+                $result = ($lang === "fr") ? "ajouter un⋅e utilisateur⋅rice" : "add a user";
                 break;
             case "pending":
                 $result = ($lang === "fr") ? "et/ou valider un compte en attente" : "and/or accept one pending request";
