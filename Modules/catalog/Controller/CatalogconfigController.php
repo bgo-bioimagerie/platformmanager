@@ -109,7 +109,7 @@ class CatalogconfigController extends CoresecureController {
 
     protected function antibodiesForm($id_space, $lang) {
         $modelCoreConfig = new CoreConfig();
-        $ca_use_antibodies = $modelCoreConfig->getParam("ca_use_antibodies", $id_space);
+        $ca_use_antibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $id_space, 0);
 
         $form = new Form($this->request, "ca_use_antibodiesForm");
         $form->addSeparator(CatalogTranslator::Antibody($lang));
@@ -124,7 +124,7 @@ class CatalogconfigController extends CoresecureController {
     
     protected function resourcesForm($id_space, $lang) {
         $modelCoreConfig = new CoreConfig();
-        $ca_use_resources = $modelCoreConfig->getParam("ca_use_resources", $id_space);
+        $ca_use_resources = $modelCoreConfig->getParamSpace("ca_use_resources", $id_space, 0);
 
         $form = new Form($this->request, "ca_use_resourcesForm");
         $form->addSeparator(CatalogTranslator::Resources($lang));

@@ -24,6 +24,7 @@
 * [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
 * [booking] graphics and code refactoring of calendar
 * [core] handle multiple Accept values in http headers for API calls (application/json)
+* [catalog] fix default config display and layout
 
 ## 2.3.3 [unreleased]
 
