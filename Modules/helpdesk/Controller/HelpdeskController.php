@@ -187,6 +187,10 @@ class HelpdeskController extends CoresecureController {
                 $file = $c->get($attachId);
                 $attachementFiles[] = $file;
                 $filePath = $c->path($file);
+                $fileBase = dirname($filePath);
+                if(!file_exists($fileBase)) {
+                    mkdir($fileBase, 0750, true);
+                }
                 if(!move_uploaded_file($_FILES[$fid]["tmp_name"], $filePath)) {
                     Configuration::getLogger()->error('[helpdesk] file upload error', ['file' => $_FILES[$fid], 'to' => $filePath]);
                     throw new PfmFileException("Error, there was an error uploading your file", 500);

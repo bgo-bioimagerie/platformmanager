@@ -32,9 +32,9 @@
             </div>
             <br><br/>
             <div class="form-group">
-                <label class="control-label col-xs-2"><?php echo MailerTranslator::To($lang) ?></label>
+                <label for="to" class="control-label col-xs-2"><?php echo MailerTranslator::To($lang) ?></label>
                 <div class="col-xs-10">
-                    <select class="form-control" name="to">
+                    <select class="form-control" id="to" name="to">
                         <OPTION value="all" > all </OPTION>
                         <OPTION value="managers" > <?php echo CoreTranslator::Managers($lang) ?> </OPTION>
                         <?php if($superAdmin) { ?><OPTION value="admins" > <?php echo CoreTranslator::Admins($lang) ?> </OPTION><?php } ?>
@@ -60,7 +60,7 @@
             </div>
             <br><br />
             <div class="form-group">
-                <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
+                <label for="subject" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
                 <div class="col-xs-10">
                     <input class="form-control" id="subject" type="text" name="subject"
                         />
@@ -68,7 +68,7 @@
             </div>
             <br><br />
             <div class="form-group">
-                <label for="inputEmail" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
+                <label for="content" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
                 <div class="col-xs-10">
                     <textarea class="form-control" id="content" name="content">
                     </textarea>

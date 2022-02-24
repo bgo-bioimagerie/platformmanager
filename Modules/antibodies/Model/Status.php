@@ -69,7 +69,7 @@ class Status extends Model {
      */
     public function get($id_space, $id) {
         if(!$id){
-            return array("color" => Constants::COLOR_WHITE, "nom" => "");
+            return array("color" => Constants::COLOR_WHITE, "nom" => "", "display_order" => 0);
         }
         
         $sql = "select * from ac_status where id=? AND id_space=? AND deleted=0";
