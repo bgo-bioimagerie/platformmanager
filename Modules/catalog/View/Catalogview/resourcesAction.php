@@ -1,12 +1,10 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
 <?php startblock('content') ?>
+<div class="container">
 
 <?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
 
-<div  style="background-color:#ffffff;">
-    <br/>
-</div>
 <div class="row my-gallery" style="background-color:#ffffff; min-height: 100%" itemscope itemtype="http://schema.org/ImageGallery">
     <?php foreach ($entries as $entry) {
         ?>
@@ -44,6 +42,5 @@
     <?php }
     ?>
 </div>
-
-
+</div>
 <?php endblock(); ?>
