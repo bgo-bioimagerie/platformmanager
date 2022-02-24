@@ -24,16 +24,16 @@ Use [packages](../../modules/module/booking/#packages) !
 
 Create packages in booking settings > packages
 
-![join space](../../packages.png)
+![packages](../../packages_1.png)
 
 Set packages prices in Invoices > booking > Prices
 
-![join space](../../packages_2.png)
+![packages](../../packages_2.png)
 
 Packages are available when booking the attached resource
 
-![join space](../../packages_3.png)
+![packages](../../packages_3.png)
 
 If selected in reservations, packages are used in booking invoices
 
-![join space](../../packages_4.png)
+![packages](../../packages_4.png)
