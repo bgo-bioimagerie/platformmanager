@@ -1,7 +1,7 @@
 <?php include 'Modules/catalog/View/publiclayout.php' ?>
 
 <?php startblock('content') ?>
-
+<div class="container">
 <?php include('Modules/catalog/View/Catalogpublic/toolbar.php') ?>
 
 
@@ -27,12 +27,6 @@
         });
     </script>
 
-
-
-
-<div class="row" style="height:15px; background-color: #ffffff;">
-
-</div>
 
 <div class="row" style="background-color: #ffffff;">
 
@@ -131,6 +125,7 @@
 
         </tbody>
     </table>
+</div>
 </div>
 
 <?php endblock(); ?>
