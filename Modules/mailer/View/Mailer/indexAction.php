@@ -89,13 +89,26 @@
     <?php } ?>
     <div class="row"><div class="col-sm-12">
         <h3>Mails</h3>
-        <table id="mails" aria-label="list of mails" class="table"><thead><tr><th scope="col">Date</th><th scope="col">Subject</th><th scope="col">Message</th><th scope="col">Destination</th></tr></thead><tbody>
+        <table id="mails" aria-label="list of mails" class="table">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Message</th>
+                <?php if($role >= $editRole) { ?>
+                <th scope="col">Destination</th>
+                <?php } ?>
+            </tr>
+        </thead>
+        <tbody>
         <?php foreach($mails as $mail) {?>
             <tr>
                 <td><?php echo $mail['created_at']; ?></td>
                 <td><?php echo $mail['subject']; ?></td>
                 <td><?php echo $mail['message']; ?></td>
+                <?php if($role >= $editRole) { ?>
                 <td><?php echo MailerTranslator::dest($mail['type'], $lang); ?></td>
+                <?php } ?>
             </tr>
         <?php } ?>
         </tbody></table>
