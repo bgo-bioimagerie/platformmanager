@@ -102,7 +102,7 @@
         </thead>
         <tbody>
         <?php foreach($mails as $mail) {?>
-            <tr>
+            <tr onclick="show(<?php echo $mail['id']; ?>)">
                 <td><?php echo $mail['created_at']; ?></td>
                 <td><?php echo $mail['subject']; ?></td>
                 <td><?php echo $mail['message']; ?></td>
@@ -113,11 +113,30 @@
         <?php } ?>
         </tbody></table>
     </div></div>
+    <div class="row">
+        <div class="col-xs-12" style="min-height: 50px; border: solid" >
+            <div><strong>Message: <span id="msg_subject"></span></strong></div>
+            <div><span id="msg"></span></div>
+        </div>
+    </div>
 </div>
 
 
 
 <script>
+    let mails = <?php echo json_encode($mails); ?>;
+    function show(id) {
+        console.log('show id')
+        if(!mails) {
+            return;
+        }
+        for(let i=0;i<mails.length;i++){
+            if(mails[i]['id'] == id) {
+                document.getElementById('msg_subject').textContent = mails[i]['subject'];
+                document.getElementById('msg').textContent = mails[i]['message'];
+            }
+        }
+    }
         $(document).ready(function () {
             $('#mails').DataTable({
                 columnDefs: [{targets: 'no-sort', orderable: true, searchable: true}],
