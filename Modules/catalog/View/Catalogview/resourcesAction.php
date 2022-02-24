@@ -12,7 +12,7 @@
         ?>
 
         <div class="col-xs-12 col-md-6">
-            <div class="panel panel-default" style="min-height: 200px; text-align: center; <?php echo $selectedStyle; ?>">
+            <div class="panel panel-default" style="min-height: 200px; text-align: center;">
                 <div class="panel-heading"><?php echo $entry["name"] ?> [<em><?php echo $entry["category"] ?></em>]</div>
                 <div class="panel-body">
                     <div class="row">

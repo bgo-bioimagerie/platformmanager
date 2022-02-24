@@ -15,7 +15,7 @@
         ?>
 
         <div class="col-xs-12 col-md-6">
-            <div class="panel panel-default" style="text-align: center; <?php echo $selectedStyle; ?>">
+            <div class="panel panel-default" style="text-align: center;">
                 <div class="panel-heading"><?php echo $entry["title"] ?></div>
                 <div class="panel-body">
                     <div class="row">
