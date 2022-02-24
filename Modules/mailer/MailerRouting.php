@@ -6,7 +6,7 @@ class MailerRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/core/tiles/[i:id_space]/module/mailer/notifs', 'mailer/mailer/notifs', 'mailer_notifs');
-
+        $router->map('GET', '/mailer/[i:id_space]/delete/[i:id]', 'mailer/mailer/delete', 'mailer_delete');
     }
     
     public function listRoutes(){

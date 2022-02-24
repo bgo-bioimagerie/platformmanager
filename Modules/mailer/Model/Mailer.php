@@ -42,6 +42,11 @@ class Mailer extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
+    public function delete(int $id_space, int $id) {
+        $sql = "DELETE FROM mailer_mails WHERE id_space=? AND id=?";
+        $this->runRequest($sql, [$id_space, $id]);
+    }
+
     public function getMails($id_space, $type=0) {
         $sql = "SELECT * FROM mailer_mails WHERE id_space=?";
         $params = array($id_space);

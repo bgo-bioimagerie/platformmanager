@@ -1,4 +1,7 @@
-<?php include 'Modules/mailer/View/layout.php' ?>
+<?php
+ include 'Modules/mailer/View/layout.php';
+ require_once 'Modules/core/Model/CoreTranslator.php';
+ ?>
 
 <?php startblock('stylesheet') ?>
     <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
@@ -97,7 +100,9 @@
                 <th scope="col">Message</th>
                 <?php if($role >= $editRole) { ?>
                 <th scope="col">Destination</th>
+                <th scope="col"></th>
                 <?php } ?>
+                
             </tr>
         </thead>
         <tbody>
@@ -108,6 +113,7 @@
                 <td><?php echo substr(trim($mail['message']), 0, 15); ?>...</td>
                 <?php if($role >= $editRole) { ?>
                 <td><?php echo MailerTranslator::dest($mail['type'], $lang); ?></td>
+                <td><a href="mailer/<?php echo $id_space; ?>/delete/<?php echo $mail['id']; ?>"><button type="button" class="btn"><?php echo CoreTranslator::Delete($lang) ?></button></a>
                 <?php } ?>
             </tr>
         <?php } ?>

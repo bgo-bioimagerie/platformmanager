@@ -90,6 +90,18 @@ class MailerController extends CoresecureController {
         ));
     }
 
+    public function deleteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
+        $modelConfig = new CoreConfig();
+        $editRole = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
+        if($this->role < $editRole) {
+            throw new PfmAuthException('not enough privileges');
+        }
+        $mm = new Mailer();
+        $mm->delete($id_space, $id);
+        $this->redirect('mailer/'.$id_space);
+    }
+
     public function sendAction($id_space) {
         $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
 
