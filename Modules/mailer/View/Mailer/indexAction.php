@@ -105,7 +105,7 @@
             <tr onclick="show(<?php echo $mail['id']; ?>)">
                 <td><?php echo $mail['created_at']; ?></td>
                 <td><?php echo $mail['subject']; ?></td>
-                <td><?php echo $mail['message']; ?></td>
+                <td><?php echo substr(trim($mail['message']), 0, 15); ?>...</td>
                 <?php if($role >= $editRole) { ?>
                 <td><?php echo MailerTranslator::dest($mail['type'], $lang); ?></td>
                 <?php } ?>
