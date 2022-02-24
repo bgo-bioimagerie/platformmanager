@@ -25,6 +25,7 @@
 * [booking] graphics and code refactoring of calendar
 * [core] handle multiple Accept values in http headers for API calls (application/json)
 * [catalog] fix default config display and layout
+* [antobodies] fix image_url settings in tissues creation
 
 ## 2.3.3 [unreleased]
 

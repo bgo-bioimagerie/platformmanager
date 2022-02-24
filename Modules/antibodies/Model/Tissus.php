@@ -55,9 +55,9 @@ class Tissus extends Model {
                                                      organe, status, ref_bloc,
                                                      dilution, temps_incubation, 
                                                      ref_protocol, prelevement,
-                                                     comment)"
-                    . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
+                                                     comment, image_url)"
+                    . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, ''));
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE ac_j_tissu_anticorps SET id_anticorps=?, espece=?, organe=?, status=?, "
@@ -73,9 +73,9 @@ class Tissus extends Model {
 				                                    organe, status, ref_bloc,
 													dilution, temps_incubation, 
 													ref_protocol, prelevement,
-													comment)"
-                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
+													comment, image_url)"
+                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, ''));
         return $this->getDatabase()->lastInsertId();
     }
 
