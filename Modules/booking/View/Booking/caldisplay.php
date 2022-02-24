@@ -52,7 +52,7 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 				}
 				$cals[] = $c;
 			}
-			$colResHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook, $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
+			$colResHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
 			foreach($colResHeader as $h => $colData) {
 				if(!key_exists($h, $calData)) {
 					$calData[$h] = [];
@@ -84,7 +84,6 @@ th {
     border: solid 1px !important;
 }
 </style>
-
 <div class="table-responsive">
 <table aria-label="bookings day view" class="table">
 <thead>

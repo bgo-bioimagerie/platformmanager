@@ -259,7 +259,8 @@ class BookingController extends BookingabstractController {
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
         $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
-        $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
+        $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $curentDateUnix);
+
 
         // get last state
         $modelEvent = new ReEvent();
@@ -420,7 +421,7 @@ class BookingController extends BookingabstractController {
 
         // isUserAuthorizedToBook
         foreach ($resourcesBase as $resourceBase) {
-            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
+            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $curentDateUnix);
         }
 
         // stylesheet
@@ -556,7 +557,7 @@ class BookingController extends BookingabstractController {
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
         $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase["id"]);
-        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
+        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], 0);
 
         // get last state
         $modelEvent = new ReEvent();
@@ -737,7 +738,7 @@ class BookingController extends BookingabstractController {
         }
         foreach ($resourcesBase as $resourceBase) {
             $resourceBase["accessibility_id"] = $amap[$resourceBase["id"]] ?? null;
-            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
+            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], 0);
         }
 
         // stylesheet
@@ -879,7 +880,7 @@ class BookingController extends BookingabstractController {
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
         $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase["id"]);
-        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], $_SESSION["user_status"], $curentDateUnix);
+        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], 0);
 
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);

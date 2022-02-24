@@ -7,6 +7,8 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
+date_default_timezone_set(Configuration::get('timezone', 'UTC'));
+
 $channel = Events::getChannel();
 list($queue_name, ,) = $channel->queue_declare("pfm_events", false, true, false, false);
 

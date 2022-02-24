@@ -34,7 +34,7 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 		$calRows[$i] = [];
 		for($j=0;$j<$nbBlocks;$j++) {
 			$he = [$i, $j];
-			if ($isDayAvailable && $isUserAuthorizedToBook){
+			if ($isDayAvailable){
 				if($caseTimeLength == 900) {
 					if ($he[1] == 0){$he[1] = "00";}
 					if ($he[1] == 1){$he[1] = "15";}
@@ -47,7 +47,9 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 					$he[1] = "00";
 				}
 				$hed = $he[0] . "-" .$he[1];
-				if( $user_space_role >=CoreSpace::$MANAGER  || $date_unix > time() || ( date("Y-m-d", $date_unix) == date("Y-m-d", time()) &&  $hed > date("H-m", time()) )){
+
+				$curBlockTs = (new DateTime())->setTimestamp($date_unix)->setTime($he[0], $he[1])->getTimestamp();
+				if( $user_space_role >= CoreSpace::$MANAGER  || ($isUserAuthorizedToBook && $curBlockTs > time())){
 					$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID.$q;
 					$calRows[$i][] = [
 						'free' => true,

@@ -160,7 +160,7 @@ class BookingdefaultController extends BookingabstractController {
         $lang = $this->getLanguage();
 
         $modelUser = new CoreUser();
-        $userStatus = $modelUser->getStatus($_SESSION["id_user"]);
+        //$userStatus = $modelUser->getStatus($_SESSION["id_user"]);
         $modelResource = new ResourceInfo();
         $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
         $modelBkAccess = new BkAccess();
@@ -186,19 +186,15 @@ class BookingdefaultController extends BookingabstractController {
             throw new PfmParamException('no end date nor duration specified');
         }
 
-        $curentDate = date("Y-m-d", time());
-        if (isset($_SESSION['bk_curentDate'])) {
-            $curentDate = $_SESSION['bk_curentDate'];
-        }
-        $temp = explode("-", $curentDate);
+        $temp = explode("-", $dateResaStart);
         try {
             $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
         } catch(Exception $e) {
-            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $curentDate]);
+            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $dateResaStart]);
             $curentDateUnix = time();
         }
 
-        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
+        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $curentDateUnix);
 
         $redir = $this->request->getParameterNoException('from');
 
