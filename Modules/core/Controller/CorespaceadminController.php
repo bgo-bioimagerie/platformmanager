@@ -150,9 +150,8 @@ class CorespaceadminController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id_space);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
 
-        $id = $id_space;
         if ($form->check()){
-            $this->editSpace($this->request, $lang, $space, $isSuperAdmin);
+            $id = $this->editSpace($this->request, $lang, $space, $isSuperAdmin);
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
             // upload image
             $target_dir = "data/core/menu/";
@@ -195,6 +194,7 @@ class CorespaceadminController extends CoresecureController {
             // Cannot modify shortname once set
             $shortname = $space['shortname'];
         }
+        $id = $id_space;
         // set base informations
         if($isSuperAdmin) {
             // Only super admin can create
@@ -251,6 +251,7 @@ class CorespaceadminController extends CoresecureController {
 
         $modelSpace->setDescription($id, $request->getParameter("description"));
         $modelSpace->setDeactivate($id, $request->getParameter('user_desactivate'));
+        return $id;
     }
 
     public function importAction() {
