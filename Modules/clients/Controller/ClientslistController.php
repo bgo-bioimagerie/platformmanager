@@ -36,33 +36,11 @@ class ClientslistController extends ClientsController {
     public function importAction($id_space) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         Configuration::getLogger()->debug('[clients] import csv', ['f' => $_FILES, 'p' => $this->request->params()]);
-        if(isset($_FILES['csv'])) {
-            $file_to_read = fopen($_FILES['csv']["tmp_name"], 'r');
-            $headers = null;
-            $lines = [];
-            while (!feof($file_to_read) ) {
-                if(!$headers) {
-                    $headers = fgetcsv($file_to_read);
-                    continue;
-                }
-                $lines[] = fgetcsv($file_to_read);
-        
-            }
-            fclose($file_to_read);
+        $data = $this->clientModel->fromCSV($id_space);
+        if($data) {
             $nbImport = 0;
             $nbErrors = 0;
-            foreach($lines as $c) {
-                if(!$c) {
-                    continue;
-                }
-                $client = [];
-                foreach ($c as $i => $value) {
-                    $client[$headers[$i]] = $value;
-                }
-                if($client['id'] == null) {
-                    continue;
-                }
-                $client['id_space'] = $id_space;
+            foreach($data as $client) {
                 Configuration::getLogger()->debug('[client] import client', ['client' => $client]);
                 try {
                     if(!intval($client['pricing'])){
@@ -81,7 +59,6 @@ class ClientslistController extends ClientsController {
                     $nbErrors++;
                 }
             }
-            unlink($_FILES['csv']["tmp_name"]);
 
             $_SESSION['flash'] = "Clients imported [$nbImport]";
             $_SESSION['flashClass'] = 'success';

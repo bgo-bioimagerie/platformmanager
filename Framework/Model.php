@@ -550,7 +550,7 @@ abstract class Model {
 
     public function toCSV($data) {
         header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=export.csv");
+        header("Content-disposition: filename=".get_class($this).".csv");
         if(!$data) {
             return 'no data';
         }
@@ -570,7 +570,46 @@ abstract class Model {
             fputcsv($fp, $values);
         }
         fclose($fp);
+    }
 
+    public function fromCSV($id_space) {
+        $data = [];
+        if(!isset($_FILES['csv'])) {
+            return $data;
+        }
+        $file_to_read = fopen($_FILES['csv']["tmp_name"], 'r');
+        $headers = null;
+        $lines = [];
+        while (!feof($file_to_read) ) {
+            $data = fgetcsv($file_to_read);
+            if(!$data || (count($data) == 1 && $data[0] == null)) {
+                continue;
+            }
+            if(!$headers) {
+                $headers = $data;
+                
+                continue;
+            }
+            $lines[] = $data;
+    
+        }
+        fclose($file_to_read);
+        unlink($_FILES['csv']["tmp_name"]);
+        foreach($lines as $c) {
+            if(!$c) {
+                continue;
+            }
+            $object = [];
+            foreach ($c as $i => $value) {
+                $object[$headers[$i]] = $value;
+            }
+            if(!isset($object['id']) || $object['id'] == null) {
+                continue;
+            }
+            $object['id_space'] = $id_space;
+            $data[] = $object;
+        }
+        return $data;
     }
 
 }

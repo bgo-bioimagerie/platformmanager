@@ -56,6 +56,10 @@ class CorespaceadminController extends CoresecureController {
         
         $modelSpace = new CoreSpace();
         $data = $modelSpace->getSpaces("name");
+        if($this->request->getParameterNoException('csv') == '1') {
+            return $modelSpace->toCSV($data);
+        }
+
         for($i = 0 ; $i < count($data) ; $i++){
             $data[$i]["url"] = "corespace/" . $data[$i]["id"];
             $data[$i]['plan_expire'] = $data[$i]['plan_expire'] ? date('Y-m-d', $data[$i]['plan_expire']) : '';
@@ -72,6 +76,8 @@ class CorespaceadminController extends CoresecureController {
         
         $table->addLineEditButton("spaceadminedit");
         $table->addDeleteButton("spaceadmindelete");
+        $table->addExportButton('spaceadmin');
+        $table->addImportButton('spaceadmin/import');
         $tableHtml = $table->view($data, $headers);
         
         return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml, "data" => ["spaces" => $data]));
@@ -126,6 +132,7 @@ class CorespaceadminController extends CoresecureController {
             if($expires) {
                 $expires = date('Y-m-d', $expires);
             }
+            $form->addDate('plan_expire', 'Plan Expiration', false, $expires);
         }
 
         $cc = new CoreConfig();
@@ -145,73 +152,8 @@ class CorespaceadminController extends CoresecureController {
 
         $id = $id_space;
         if ($form->check()){
-            $shortname = $this->request->getParameter("name");
-            $shortname = strtolower($shortname);
-            # $shortname = str_replace(" ", "", $shortname);
-            $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
-            if($space && $space['shortname']) {
-                // Cannot modify shortname once set
-                $shortname = $space['shortname'];
-            }
-            // set base informations
-            if($isSuperAdmin) {
-                // Only super admin can create
-                Configuration::getLogger()->debug('[admin][space] create/edit space', ["space" => $id_space, "name" => $this->request->getParameter("name")]);
-                $id = $modelSpace->setSpace($id_space, $this->request->getParameter("name"), 
-                    $this->request->getParameter("status"),
-                    $this->request->getParameter("color"),
-                    $shortname,
-                    $this->request->getParameter("contact"),
-                    $this->request->getParameter("support"),
-                    $this->request->getParameter("txtcolor"),
-                );
-                $plan = $this->request->getParameterNoException("plan");
-                if($plan !== "") {
-                    //plan_expire , plan
-                    $expires = $this->request->getParameterNoException("plan_expire");
-                    if($expires) {
-                        $expires = Utils::timestamp($expires, $lang);
-
-                    } else {
-                        $expires = 0;
-                    }
-                    $modelSpace->setPlan($id, intval($plan), $expires);
-                }
-
-                $planChanged = false;
-                if(!$space['id']) {
-                    $planChanged = true;
-                }
-                if(intval($space['plan']) != intval($plan)) {
-                    $planChanged = true;
-                }
-                if($planChanged) {
-                    $event = [
-                        "action" => Events::ACTION_PLAN_EDIT,
-                        "space" => ["id" => intval($id)],
-                        "plan" => ["id" => intval($plan)],
-                        "old" => ["id" => intval($space['plan'])]
-                    ];
-                    Events::send($event);
-                }
-
-            } else {
-                // Space admin can edit
-                Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);
-                $modelSpace->editSpace($id_space, $this->request->getParameter("name"), 
-                    $this->request->getParameter("status"),
-                    $this->request->getParameter("color"),
-                    $shortname,
-                    $this->request->getParameter("contact"),
-                    $this->request->getParameter("support"),
-                    $this->request->getParameter("txtcolor"),
-                    );
-            }
-
-            $modelSpace->setDescription($id, $this->request->getParameter("description"));
+            $this->editSpace($this->request, $lang, $space, $isSuperAdmin);
             $modelSpace->setAdmins($id, $this->request->getParameter("admins"));
-            $modelSpace->setDeactivate($id, $this->request->getParameter('user_desactivate'));
-            
             // upload image
             $target_dir = "data/core/menu/";
             if ($_FILES && $_FILES["image"]["name"] != "") {
@@ -241,6 +183,114 @@ class CorespaceadminController extends CoresecureController {
         $model->delete($id_space);
         $this->redirect("spaceadmin");
         
+    }
+
+    private function editSpace($request, $lang, $space, $isSuperAdmin=false) {
+        $id_space = $space['id'];
+        $modelSpace = new CoreSpace();
+        $shortname = $request->getParameter("name");
+        $shortname = strtolower($shortname);
+        $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
+        if($space && $space['shortname']) {
+            // Cannot modify shortname once set
+            $shortname = $space['shortname'];
+        }
+        // set base informations
+        if($isSuperAdmin) {
+            // Only super admin can create
+            Configuration::getLogger()->debug('[admin][space] create/edit space', ["space" => $id_space, "name" => $request->getParameter("name")]);
+            $id = $modelSpace->setSpace($id_space, $request->getParameter("name"), 
+                $request->getParameter("status"),
+                $request->getParameter("color"),
+                $shortname,
+                $request->getParameter("contact"),
+                $request->getParameter("support"),
+                $request->getParameter("txtcolor"),
+            );
+            $plan = $request->getParameterNoException("plan");
+            if($plan !== "") {
+                //plan_expire , plan
+                $expires = $request->getParameterNoException("plan_expire");
+                if($expires) {
+                    $expires = Utils::timestamp($expires, $lang);
+                } else {
+                    $expires = 0;
+                }
+                $modelSpace->setPlan($id, intval($plan), $expires);
+            }
+
+            $planChanged = false;
+            if(!$space['id']) {
+                $planChanged = true;
+            }
+            if(intval($space['plan']) != intval($plan)) {
+                $planChanged = true;
+            }
+            if($planChanged) {
+                $event = [
+                    "action" => Events::ACTION_PLAN_EDIT,
+                    "space" => ["id" => intval($id)],
+                    "plan" => ["id" => intval($plan)],
+                    "old" => ["id" => intval($space['plan'])]
+                ];
+                Events::send($event);
+            }
+
+        } else {
+            // Space admin can edit
+            Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $request->getParameter("name")]);
+            $modelSpace->editSpace($id_space, $this->request->getParameter("name"), 
+                $request->getParameter("status"),
+                $request->getParameter("color"),
+                $shortname,
+                $request->getParameter("contact"),
+                $request->getParameter("support"),
+                $request->getParameter("txtcolor"),
+                );
+        }
+
+        $modelSpace->setDescription($id, $request->getParameter("description"));
+        $modelSpace->setDeactivate($id, $request->getParameter('user_desactivate'));
+    }
+
+    public function importAction() {
+        if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
+        $lang = $this->getLanguage();
+        $spaceModel = new CoreSpace();
+        Configuration::getLogger()->debug('[spaces] import csv', ['f' => $_FILES, 'p' => $this->request->params()]);
+        $data = $spaceModel->fromCSV(0);
+        if($data) {
+            $nbImport = 0;
+            $nbErrors = 0;
+            foreach($data as $space) {
+                Configuration::getLogger()->debug('[spaces] import space', ['space' => $space]);
+                try {
+                    $oldspace = $spaceModel->getSpace($space['id']);
+                    if(!$oldspace) {
+                        $oldspace = CoreSpace::new();
+                    }
+                    $req = new Request($space, false);
+                    $this->editSpace($req, $lang, $oldspace, true);
+                    $nbImport++;
+                } catch(Exception $e) {
+                    Configuration::getLogger()->debug('[spaces] import space error', ['space' => $space, 'error' => $e->getMessage()]);
+                    $nbErrors++;
+                }
+            }
+
+            $_SESSION['flash'] = "Clients imported [$nbImport]";
+            $_SESSION['flashClass'] = 'success';
+            if($nbErrors){
+                $_SESSION['flash'] = "Clients import errors [ok: $nbImport,ko: $nbErrors]: ".$e->getMessage();
+                $_SESSION['flashClass'] = 'danger';
+            }
+        } else {
+            $_SESSION['flash'] = "Nothing to import";
+            $_SESSION['flashClass'] = 'danger';
+        }
+        $this->redirect('spaceadmin');
     }
 
 }
