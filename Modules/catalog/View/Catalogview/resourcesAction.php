@@ -1,44 +1,46 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
 <?php startblock('content') ?>
+<div class="container">
 
 <?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
 
-<div  style="background-color:#ffffff;">
-    <br/>
-</div>
-<div class="my-gallery" style="background-color:#ffffff; min-height: 100%" itemscope itemtype="http://schema.org/ImageGallery">
+<div class="row my-gallery" style="background-color:#ffffff; min-height: 100%" itemscope itemtype="http://schema.org/ImageGallery">
     <?php foreach ($entries as $entry) {
         ?>
-        <div class="col-md-8 col-md-offset-2">
-            <div class="col-md-2">
-                <?php
-                $imageFile = $entry["image"];
-                if (!file_exists($imageFile) || is_dir($imageFile)) {
-                   ?>
-                    <div style="height: 70px;"></div>
-                    <?php
-                }
-                else{
-                    list($width, $height, $type, $attr) = getimagesize($imageFile);
-                    ?>
-                    <a href="<?php echo $imageFile ?>">
-                        <img src="<?php echo $imageFile ?>" width="100%" />
-                    </a>
-                <?php 
-                }
-                ?>
+
+        <div class="col-xs-12 col-md-6">
+            <div class="panel panel-default" style="min-height: 200px; text-align: center;">
+                <div class="panel-heading"><?php echo $entry["name"] ?> [<em><?php echo $entry["category"] ?></em>]</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-2">
+                        <?php
+                        $imageFile = $entry["image"];
+                        if (!file_exists($imageFile) || is_dir($imageFile)) {
+                        ?>
+                            
+                            <?php
+                        }
+                        else{
+                            list($width, $height, $type, $attr) = getimagesize($imageFile);
+                            ?>
+                            <a href="<?php echo $imageFile ?>">
+                                <img src="<?php echo $imageFile ?>" width="100%" />
+                            </a>
+                        <?php 
+                        }
+                        ?>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div> <?php echo $entry["description"] ?></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-10">
-                <div style="font-weight: bold;"><?php echo $entry["name"] ?></div>
-                <div><em> <?php echo $entry["category"] ?></em></div>
-                <div> <?php echo $entry["description"] ?></div>
-            </div>	
         </div>
-    <div class="col-md-12" style="height:7px;"></div>
     <?php }
     ?>
 </div>
-
-
+</div>
 <?php endblock(); ?>

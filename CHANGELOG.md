@@ -2,6 +2,34 @@
 
 ## 2.4.0
 
+### Features
+
+* mailer:
+  * record and display sent messages
+  * module *can* be set at *user* level, space members will see
+    messages previously sent, only users with *edit* right
+    (module configuration) can send emails
+* documents:
+  * new file hierarchy document display (virtual directories)
+  * in premium plans, possibility to set document visibility
+    (public, members, private)
+  * module *can* be set at *user* level, users will only see
+    public or members level documents, users with *edit* right
+    (module configuration) can create/edit documents.
+  * booking: in booking configuration, calendar has a new option
+    for labels display (*managers only*). If selected, only space
+    managers will see the label (user id, etc.) in calendar.
+  * invoices: invoices are now generated in background, avoiding
+    a blank (and possibly long) blank page during generation.
+    Invoices page will show generation status and errors if any.
+
+## Security
+
+* [antibodies] fix control access to module pages
+
+### Updates
+
+* [mailer] allow access to space users, users can see sent emails
 * [documentation] add packages documentation and use case
 * [core] reduce space users options after a module is deactivated
 * [documentation] update space join use case
@@ -24,6 +52,10 @@
 * [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
 * [booking] graphics and code refactoring of calendar
 * [core] handle multiple Accept values in http headers for API calls (application/json)
+* [catalog] fix default config display and layout
+* [antobodies] fix image_url settings in tissues creation
+* [antibodies] fix ACL checks
+* [core] add reset for user api key
 
 ## 2.3.3 [unreleased]
 

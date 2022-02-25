@@ -1221,6 +1221,13 @@ class CoreTranslator {
         return "Managers";
     }
 
+    public static function Admins($lang) {
+        if ($lang == "fr") {
+            return "Administrateurs";
+        }
+        return "Administrators";
+    }
+
     public static function UnixDate($unitTime, $lang) {
         if ($lang == "fr") {
             return date("d/m/Y \à H:i", $unitTime);
@@ -2117,6 +2124,7 @@ class CoreTranslator {
         return "Edition access";
     }
 
+<<<<<<< HEAD
     public static function Optional($lang){
         if($lang == "fr") {
             return "optionnel";
@@ -2124,4 +2132,6 @@ class CoreTranslator {
         return "optional";
     }
     
+=======
+>>>>>>> develop
 }
