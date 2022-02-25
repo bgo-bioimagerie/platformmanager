@@ -245,7 +245,36 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $curentDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
+
+
+        $mschedule = new BkScheduling();
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        if($schedule['shared']) {
+            $modelRes = new ResourceInfo();
+            $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
+
+            $resIds = [];
+            for ($r = 0; $r < count($resourcesBase); $r++) {
+                $resIds[] = $resourcesBase[$r]["id"];
+            }
+            $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
+            $calmap = [];
+            $calEntries = [];
+            
+            foreach($cals as $cal) {
+                $calmap[$cal['resource_id']][] = $cal;
+            }
+
+            foreach ($cals as $cal) {
+                if($cal['resource_id'] != $curentResource){
+                    $cal['id'] = 0;
+                }
+                $calEntries[] = $cal;
+            }
+        
+        } else {
+            $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
+        }
 
         // curentdate unix
         $curentDate = (!$curentDate || $curentDate == "") ? date("Y-m-d") : $curentDate;
@@ -407,8 +436,23 @@ class BookingController extends BookingabstractController {
         foreach($cals as $cal) {
             $calmap[$cal['resource_id']][] = $cal;
         }
-        foreach($resourcesBase as $i => $r) {
-            $calEntries[$i] = $calmap[$r['id']] ?? [];
+
+        $mschedule = new BkScheduling();
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        if($schedule['shared']) {
+            foreach($resourcesBase as $i => $r) {
+                foreach ($cals as $cal) {
+                    if($cal['resource_id'] != $r['id']){
+                        $cal['id'] = 0;
+                    }
+                    $calEntries[$i][] = $cal;
+                }
+                
+            }
+        } else {
+            foreach($resourcesBase as $i => $r) {
+                $calEntries[$i] = $calmap[$r['id']] ?? [];
+            }
         }
         
         // curentdate unix
@@ -544,7 +588,39 @@ class BookingController extends BookingabstractController {
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
+        //$calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
+
+        $mschedule = new BkScheduling();
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        if($schedule['shared']) {
+            $modelRes = new ResourceInfo();
+            $resourcesBaseShared = $modelRes->resourcesForArea($id_space, $curentAreaId);
+
+            $resIds = [];
+            for ($r = 0; $r < count($resourcesBaseShared); $r++) {
+                $resIds[] = $resourcesBaseShared[$r]["id"];
+            }
+            $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
+            $calmap = [];
+            $calEntries = [];
+            
+            foreach($cals as $cal) {
+                $calmap[$cal['resource_id']][] = $cal;
+            }
+
+            foreach ($cals as $cal) {
+                if($cal['resource_id'] != $curentResource){
+                    $cal['id'] = 0;
+                }
+                $calEntries[] = $cal;
+            }
+        
+        } else {
+            $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
+        }
+
+
+
 
         // curentdate unix
         $temp = explode("-", $curentDate);
@@ -700,7 +776,6 @@ class BookingController extends BookingabstractController {
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
         //$calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId, $id_user);
 
-
         $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
         $calmap = [];
         $calEntries = [];
@@ -710,15 +785,24 @@ class BookingController extends BookingabstractController {
         foreach($cals as $cal) {
             $calmap[$cal['resource_id']][] = $cal;
         }
-        foreach($resourcesBase as $i => $r) {
-            $calEntries[$i] = $calmap[$r['id']] ?? [];
+
+        $mschedule = new BkScheduling();
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        if($schedule['shared']) {
+            foreach($resourcesBase as $i => $r) {
+                foreach ($cals as $cal) {
+                    if($cal['resource_id'] != $r['id']){
+                        $cal['id'] = 0;
+                    }
+                    $calEntries[$i][] = $cal;
+                }
+                
+            }
+        } else {
+            foreach($resourcesBase as $i => $r) {
+                $calEntries[$i] = $calmap[$r['id']] ?? [];
+            }
         }
-
-
-
-
-
-
 
         // curentdate unix
         $temp = explode("-", $curentDate);
