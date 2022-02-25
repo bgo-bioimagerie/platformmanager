@@ -257,49 +257,64 @@ class CorespaceadminController extends CoresecureController {
     }
 
     protected function todolist($id_space) {
-
         // TODO: gérer flashs dans accès quand pas configuré (manquent visa, clients, etc...)
-        // TODO: afficher bouton TODO bandeau espace ?
-        $lang = $this->getLanguage();
         // TODO: make clients info optional ? => check first if ok (in invoices for example)
-
+        
+        $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $modelUser = new CoreUser();
-        $modelPending = new CorePendingAccount();
 
         $todoData = array();
-        $opt = "(".CoreTranslator::Optional($lang).") ";
-        $modules = $modelSpace->getDistinctSpaceMenusModules($id_space);
+        $activeModules = $modelSpace->getDistinctSpaceMenusModules($id_space);
+        $baseModules = array('users', 'resources', 'clients', 'booking');
         
-        $modulesList = array();
-        foreach($modules as $module) {
-            array_push($modulesList, $module['module']);
+        foreach($activeModules as $activeModule) {
+            $moduleName = $activeModule['module'];
+            if (in_array($moduleName, $baseModules)) {
+                $fName = 'get' . ucFirst($moduleName) . 'Todo'; 
+                $todoData[$moduleName] = $this->$fName($id_space, $lang);
+            }
         }
 
-        $todoData['users'] = [
-            "title" => "Users",
-            "tasks" => [
-                [
-                    "id" => "users",
-                    "title" => UsersTranslator::Create_item("user", $lang),
-                    "url" => "corespaceaccessuseradd/" . $id_space,
-                    "done" => $modelUser->getSpaceActiveUsers($id_space)
-                ],
-                [
-                    "id" => "pendingUsers",
-                    "title" => UsersTranslator::Create_item("pending", $lang),
-                    "url" => "corespacependingusers/" . $id_space,
-                    "done" => $modelPending->getActivatedForSpace($id_space)
-                ],
-            ]
-        ];
+        // set documentation urls
+        $modulesDocUrl = "https://bgo-bioimagerie.github.io/platformmanager/modules/module/";
+        foreach(array_keys($todoData) as $module) {
+            $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
+        }
 
-        if (in_array("resources", $modulesList)) {
-            $modelArea = new ReArea();
-            $modelCategory = new ReCategory();
-            $modelResource = new ResourceInfo();
-            $modelVisa = new ReVisa();
-            $todoData['resources'] = [
+        return $todoData;
+    }
+
+    protected function getUsersTodo($id_space, $lang) {
+        $modelUser = new CoreUser();
+        $modelPending = new CorePendingAccount();
+        return
+            [
+                "title" => "Users",
+                "tasks" => [
+                    [
+                        "id" => "users",
+                        "title" => UsersTranslator::Create_item("user", $lang),
+                        "url" => "corespaceaccessuseradd/" . $id_space,
+                        "done" => $modelUser->getSpaceActiveUsers($id_space)
+                    ],
+                    [
+                        "id" => "pendingUsers",
+                        "title" => UsersTranslator::Create_item("pending", $lang),
+                        "url" => "corespacependingusers/" . $id_space,
+                        "done" => $modelPending->getActivatedForSpace($id_space)
+                    ],
+                ]
+            ];
+    }
+
+    protected function getResourcesTodo($id_space, $lang) {
+        $modelArea = new ReArea();
+        $modelCategory = new ReCategory();
+        $modelResource = new ResourceInfo();
+        $modelVisa = new ReVisa();
+        
+        return
+            [
                 "title" => "Resources",
                 "tasks" => [
                     [
@@ -328,14 +343,17 @@ class CorespaceadminController extends CoresecureController {
                     ],
                 ]
             ];
-        }
+    }
 
-        if (in_array("clients", $modulesList)) {
-            $modelCompany = new ClCompany();
-            $modelPricing = new ClPricing();
-            $modelClient = new ClClient();
-            $modelClientsuser = new ClClientUser();
-            $todoData['clients'] = [
+    protected function getClientsTodo($id_space, $lang) {
+        $modelCompany = new ClCompany();
+        $modelPricing = new ClPricing();
+        $modelClient = new ClClient();
+        $modelClientsuser = new ClClientUser();
+        $modelUser = new CoreUser();
+
+        return
+            [
                 "title" => "Clients",
                 "tasks" => [
                     [
@@ -368,15 +386,19 @@ class CorespaceadminController extends CoresecureController {
                     ]
                 ]
             ];
-        }
+    }
 
-        if (in_array("booking", $modulesList)) {
-            $modelBkEntry = new BkCalendarEntry();
-            $modelColor = new BkColorCode();
-            $modelSchedule = new BkScheduling();
-            $modelBkAccess = new BkAccess();
-            $modelBkAuth = new BkAuthorization();
-            $todoData['booking'] = [
+    protected function getBookingTodo($id_space, $lang) {
+        $modelBkEntry = new BkCalendarEntry();
+        $modelColor = new BkColorCode();
+        $modelSchedule = new BkScheduling();
+        $modelBkAccess = new BkAccess();
+        $modelBkAuth = new BkAuthorization();
+        $modelUser = new CoreUser();
+        $opt = "(".CoreTranslator::Optional($lang).") ";
+
+        return
+            [
                 "title" => "Booking",
                 "tasks" => [
                     [
@@ -415,15 +437,6 @@ class CorespaceadminController extends CoresecureController {
                     ]
                 ]
             ];
-        }
-
-        // set documentation urls
-        $modulesDocUrl = "https://bgo-bioimagerie.github.io/platformmanager/modules/module/";
-        foreach(array_keys($todoData) as $module) {
-            $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
-        }
-
-        return $todoData;
     }
 
     protected function preconfigureSpace($space) {
