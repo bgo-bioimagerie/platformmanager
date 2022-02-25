@@ -56,7 +56,7 @@ function getOriginPage() {
         originPage = "clients";
     } else if ('{{data.origin.page}}'.match(/spaceaccess/g)) {
         originPage = "space";
-    } else if ('{{data.origin.page}}'.match(/bookingaccess/g)) {
+    } else if ('{{data.origin.page}}'.match(/bookingaccess/g) || '{{data.origin.page}}'.match(/auth/g)) {
         originPage = "booking";
     } else if ('{{data.origin.page}}'.match(/bkauthhistory/g)) {
         originPage = "bookinghistory";

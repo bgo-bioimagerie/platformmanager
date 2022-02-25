@@ -92,7 +92,9 @@
                 element.addEventListener("click", (event) => {
                     event.preventDefault();
                     if (selector.options[selector.selectedIndex].value != "") {
-                        window.location = event.target.href;
+                        let targetUrl = event.target.href;
+                        targetUrl += "?origin=" + taskName;
+                        window.location = targetUrl;
                     }
                 });
 

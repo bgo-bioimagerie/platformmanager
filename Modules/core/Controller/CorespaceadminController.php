@@ -258,14 +258,10 @@ class CorespaceadminController extends CoresecureController {
 
     protected function todolist($id_space) {
 
-        // TODO: bug d'affichage sur resourcesvisa
-        // TODO: gérer les accès => se coche au moment de la création de resource. OK
-        // TODO: idem lier un client
         // TODO: gérer flashs dans accès quand pas configuré (manquent visa, clients, etc...)
         // TODO: afficher bouton TODO bandeau espace ?
-        // TODO: diriger directement vers bon onglet des accès utilisateurs */
         $lang = $this->getLanguage();
-        // TODO: make clients info optional ? => check first if ok (in invoices for exemple)
+        // TODO: make clients info optional ? => check first if ok (in invoices for example)
 
         $modelSpace = new CoreSpace();
         $modelUser = new CoreUser();
@@ -279,7 +275,7 @@ class CorespaceadminController extends CoresecureController {
         foreach($modules as $module) {
             array_push($modulesList, $module['module']);
         }
-        Configuration::getLogger()->debug("[TEST]", ["modules" => $modulesList]);
+
         $todoData['users'] = [
             "title" => "Users",
             "tasks" => [
