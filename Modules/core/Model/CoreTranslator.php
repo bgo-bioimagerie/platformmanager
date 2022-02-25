@@ -2124,7 +2124,6 @@ class CoreTranslator {
         return "Edition access";
     }
 
-<<<<<<< HEAD
     public static function Optional($lang){
         if($lang == "fr") {
             return "optionnel";
@@ -2132,6 +2131,4 @@ class CoreTranslator {
         return "optional";
     }
     
-=======
->>>>>>> develop
 }
