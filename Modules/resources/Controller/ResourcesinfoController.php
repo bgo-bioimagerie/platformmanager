@@ -106,6 +106,11 @@ class ResourcesinfoController extends ResourcesBaseController {
             $choicesidA[] = $area["id"];
         }
 
+        if (empty($areas) || empty($cats)) {
+            $_SESSION['flash'] = ResourcesTranslator::Area_category_Needed($lang);
+            $_SESSION['flashClass'] = "warning";
+        }
+
         $modelResource = new ResourceInfo();
         $data = $modelResource->getDefault();
         if ($id > 0) {

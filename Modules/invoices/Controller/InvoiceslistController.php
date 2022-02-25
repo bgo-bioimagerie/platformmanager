@@ -5,6 +5,7 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -54,6 +55,11 @@ class InvoiceslistController extends InvoicesController {
 
         if ($sent == ""){
             $sent = 0;
+        }
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
+            $_SESSION['flash'] = InvoicesTranslator::NoTemplate($lang);
+            $_SESSION['flashClass'] = 'warning';
         }
         
         $modelInvoices = new InInvoice();
@@ -115,10 +121,14 @@ class InvoiceslistController extends InvoicesController {
         }
         $tableView = $table->view($invoices, $headers);
 
+        $cv = new CoreVirtual();
+        $requests = $cv->getRequests($id_space, 'invoices');
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "tableHtml" => $tableView,
+            "requests" => $requests,
             "year" => $year,
             "years" => $years,
             "sent" => $sent,

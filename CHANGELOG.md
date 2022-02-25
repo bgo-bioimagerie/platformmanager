@@ -1,5 +1,63 @@
 # Changes
 
+## 2.4.0
+
+### Features
+
+* mailer:
+  * record and display sent messages
+  * module *can* be set at *user* level, space members will see
+    messages previously sent, only users with *edit* right
+    (module configuration) can send emails
+* documents:
+  * new file hierarchy document display (virtual directories)
+  * in premium plans, possibility to set document visibility
+    (public, members, private)
+  * module *can* be set at *user* level, users will only see
+    public or members level documents, users with *edit* right
+    (module configuration) can create/edit documents.
+  * booking: in booking configuration, calendar has a new option
+    for labels display (*managers only*). If selected, only space
+    managers will see the label (user id, etc.) in calendar.
+  * invoices: invoices are now generated in background, avoiding
+    a blank (and possibly long) blank page during generation.
+    Invoices page will show generation status and errors if any.
+
+## Security
+
+* [antibodies] fix control access to module pages
+
+### Updates
+
+* [core] add space configuration helpers (interactive Todo)
+* [mailer] allow access to space users, users can see sent emails
+* [documentation] add packages documentation and use case
+* [core] reduce space users options after a module is deactivated
+* [documentation] update space join use case
+* [documents] add visibility controls on documents to have public, private, user/client scopes
+* [core] group users space access options on a single page
+* [core] in corespaceaccess show convention download button only if present
+* [invoices] show message if no template defined
+* [core] add status and msg to core files
+* [helpdesk] on file upload (manual), create dir if not exists
+* [core] fix default sort order in tables and remove download button if no url
+* [core] fix typos/spelling
+* [booking] on calendar, showuser infos (name, phone,...) options: Hidden/Visible/Managers only Closes #509
+* [booking] manage redirect after reservation edit to page were booking was done
+* [booking] fix default color code
+* [users] if date_end_contract is empty, insert null in db
+* [core] code cleanup #554
+* [booking] handle booking settings fields *booking scale* and *user specifies*
+* [booking] fix package display on new reservation
+* [invoice] generate invoices in background (async) and show generation status
+* [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
+* [booking] graphics and code refactoring of calendar
+* [core] handle multiple Accept values in http headers for API calls (application/json)
+* [catalog] fix default config display and layout
+* [antobodies] fix image_url settings in tissues creation
+* [antibodies] fix ACL checks
+* [core] add reset for user api key
+
 ## 2.3.3 [unreleased]
 
 * [booking] fix display of package on new booking Closes #563
@@ -14,8 +72,12 @@
 
 ## 2.3.1
 
+<<<<<<< HEAD
 * [core] fix upgrade for redis invoice numbers (1641387865_update_invoice_numbers_redis.php)
   If already applied with 2.3.0, need to remove it from pfm_upgrades table and re-apply install
+=======
+* [core] fix upgrade for redis invoice numbers
+>>>>>>> develop
 
 ## 2.3.0
 

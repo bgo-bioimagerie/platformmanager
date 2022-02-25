@@ -12,6 +12,7 @@
     <div class="container pm-form">
         <?php echo $formHtml ?>
 
+        <?php echo $formApi ?>
 
         <div class="col-md-12">
             <h2>External connection providers</h2>

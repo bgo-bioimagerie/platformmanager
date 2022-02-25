@@ -480,10 +480,10 @@ class BkCalendarEntry extends Model {
                 $data[$i]["phone"] = "";
             }
             if(!$data[$i]["color_bg"]) {
-                $data[$i]["color_bg"] = "aaaaaa";
+                $data[$i]["color_bg"] = "#aaaaaa";
             }
             if(!$data[$i]["color_text"]) {
-                $data[$i]["color_text"] = "000000";
+                $data[$i]["color_text"] = "#000000";
             }
         }
 
@@ -780,6 +780,12 @@ class BkCalendarEntry extends Model {
             }
         }
         return false;
+    }
+
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM bk_calendar_entry WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
     }
 
     /**

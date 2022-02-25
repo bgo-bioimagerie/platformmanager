@@ -22,6 +22,7 @@ class CorePlan {
      */
     // flag to add space managers as grafana org members
     const FLAGS_GRAFANA = 'grafana';
+    const FLAGS_DOCUMENTS = 'documents';
 
     private ?array $plan = null;
 

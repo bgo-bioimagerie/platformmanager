@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 
 /**
  * case validated=0 and validated_by=0 => request is pending 
- * case validated=0 and validated_by>0 => space admin has rejected the join request
+ * case validated=0 and validated_by>0 => space admin has rejected the join request // @outdated
  * case validated=1 and validated_by>0 => space admin has accepted the join request
  * case validated=1 and validated_by=0 => has already join then unjoin
  */
@@ -114,6 +114,11 @@ class CorePendingAccount extends Model {
                 ON infos.id_core = pending.id_user
                 WHERE pending.id_space=? AND pending.validated=0 AND pending.validated_by=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+    
+    public function getActivatedForSpace($id_space) {
+        $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND validated=0 AND validated_by>0";
+        return $this->runRequest($sql, array($id_space))->fetch();
     }
 
     public function countPendingForSpace($id_space) {

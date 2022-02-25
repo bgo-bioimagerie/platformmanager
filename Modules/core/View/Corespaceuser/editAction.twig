@@ -1,0 +1,94 @@
+{% extends "Modules/layout.twig" %}
+   
+{% block content %}
+
+<div class="row pm-table" id="corespaceuseredit">
+    <div id="formSection"">
+     {% for key,value in data.btnsNames %}
+        <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{value}}</button>
+     {% endfor %}
+    </div>
+
+    <div id="sections" style="margin:5px;">
+
+    {% for formid,form in forms %}
+        <div id="{{formid}}"" class="container" style="display: none">
+        {% for f in form.forms %}
+                {{f | raw}}
+        {% endfor %}
+        </div>
+    {% endfor %}
+
+        
+
+    <script type="module">
+        import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
+        let dynamicForms = new DynamicForms();
+        let spaceId = {{ id_space }};
+        let sourceId = "resource";
+        let targets = [
+            {
+                elementId: "visa_id",
+                apiRoute: `revisas/getcategoryvisas/`,
+                activateOnLoad: true
+            }
+        ];
+        dynamicForms.dynamicFields(sourceId, targets, spaceId);
+    </script>
+
+    </div>
+</div>
+
+<script>
+
+let sections = {
+{% for formid,form in forms %}
+    '{{formid}}': {{form.show | raw}},
+{% endfor %}
+}
+
+show();
+
+function getOriginPage() {
+    let originPage = "space";
+    {% if data.origin.page %}
+    if ('{{data.origin.page}}'.match(/clientsuser/g)) {
+        originPage = "clients";
+    } else if ('{{data.origin.page}}'.match(/spaceaccess/g)) {
+        originPage = "space";
+    } else if ('{{data.origin.page}}'.match(/bookingaccess/g) || '{{data.origin.page}}'.match(/auth/g)) {
+        originPage = "booking";
+    } else if ('{{data.origin.page}}'.match(/bkauthhistory/g)) {
+        originPage = "bookinghistory";
+    }
+    {% endif %}
+    return originPage;
+}
+
+
+function show(key) {
+    if(!key) {
+        key = getOriginPage();
+    }
+    Object.keys(sections).forEach(k => {
+        if(k==key) {
+            sections[k] = 1;
+        } else {
+            sections[k] = 0;
+        }
+    })
+    
+    Object.keys(sections).forEach(k => {
+        if(sections[k]) {
+            document.getElementById('b_'+k).className ='btn btn-primary';
+            document.getElementById(k).style.display = 'block';
+        } else {
+            document.getElementById(k).style.display = 'none';
+            document.getElementById('b_'+k).className ='btn btn-secondary';
+        }
+    })
+}
+    
+</script>
+
+{% endblock %}

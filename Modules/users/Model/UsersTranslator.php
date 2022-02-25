@@ -94,6 +94,26 @@ class UsersTranslator {
         return "Account informations have been saved";
     }
     
-    
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+        switch ($item) {
+            case "user":
+                $result = ($lang === "fr") ? "ajouter un⋅e utilisateur⋅rice" : "add a user";
+                break;
+            case "pending":
+                $result = ($lang === "fr") ? "et/ou valider un compte en attente" : "and/or accept one pending request";
+                break;
+            default:
+                break;
+        }
+        return $result;
+    }
+
+    public static function User_account($lang) {
+        if ($lang == "fr") {
+            return "compte utilisateur";
+        }
+        return "user account";
+    }
     
 }

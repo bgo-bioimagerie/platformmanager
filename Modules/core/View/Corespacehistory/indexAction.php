@@ -48,7 +48,6 @@ var app = new Vue({
     refresh() {
         let start = Math.round(this.fromFilter / 1000);
         let end = Math.round(this.toFilter / 1000);
-        console.log('refresh', start, end);
         //http://localhost:4000/corespacehistory/6
         let headers = new Headers()
             headers.append('Content-Type','application/json')
@@ -60,7 +59,6 @@ var app = new Vue({
             fetch(`/corespacehistory/<?php echo $id_space ?>?start=${start}&end=${end}`, cfg).
             then((response) => response.json()).
             then(data => {
-                console.debug('data', data);
                 this.logs = data.logs
             })
     }

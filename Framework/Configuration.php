@@ -328,6 +328,14 @@ class Configuration {
             self::$parameters['redis_port'] = intval(getenv('PFM_REDIS_PORT'));
         }
 
+        if(!isset(self::$parameters['timezone'])) {
+            self::$parameters['timezone'] = 'UTC';
+        }
+        if(getenv('PFM_TIMEZONE')) {
+            self::$parameters['timezone'] = getenv('PFM_TIMEZONE');
+        }
+        date_default_timezone_set(self::$parameters['timezone']);
+
     }
 
     /**

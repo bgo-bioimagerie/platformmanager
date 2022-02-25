@@ -22,7 +22,7 @@ class EnzymesController extends AntibodiesController {
 
     // affiche la liste des Prelevements
     public function indexAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
         $enzymessArray = $this->model->getBySpace($id_space);
@@ -43,6 +43,7 @@ class EnzymesController extends AntibodiesController {
     }
 
     public function editAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get isotype info
         $lang = $this->getLanguage();
@@ -73,7 +74,7 @@ class EnzymesController extends AntibodiesController {
     }
 
     public function deleteAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
         $this->model->delete($id_space,$id);
         $this->redirect("enzymes/" . $id_space);

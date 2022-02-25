@@ -87,13 +87,13 @@
             maxScale: "months",
             itemsPerPage: 100,
             onItemClick: function (data) {
-                alert("Item clicked - show some details");
+                //alert("Item clicked - show some details");
             },
             onAddClick: function (dt, rowId) {
-                alert("Empty space clicked - add an item!");
+                //alert("Empty space clicked - add an item!");
             },
             onRender: function () {
-                console.log("chart rendered");
+                // console.log("chart rendered");
             }
         });
         prettyPrint();
