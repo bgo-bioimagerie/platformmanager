@@ -34,6 +34,8 @@ class CoreUser extends Model {
         $this->setColumnsInfo("validated", "int(1)", 1);
         $this->setColumnsInfo("apikey", "varchar(30)", "");
         $this->primaryKey = "id";
+
+        $this->protected = ['pwd', 'apikey'];
     }
 
     public function getResponsibles(){

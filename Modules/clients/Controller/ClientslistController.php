@@ -33,6 +33,62 @@ class ClientslistController extends ClientsController {
 
     }
 
+    public function importAction($id_space) {
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        Configuration::getLogger()->debug('[clients] import csv', ['f' => $_FILES, 'p' => $this->request->params()]);
+        if(isset($_FILES['csv'])) {
+            $file_to_read = fopen($_FILES['csv']["tmp_name"], 'r');
+            $headers = null;
+            $lines = [];
+            while (!feof($file_to_read) ) {
+                if(!$headers) {
+                    $headers = fgetcsv($file_to_read);
+                    continue;
+                }
+                $lines[] = fgetcsv($file_to_read);
+        
+            }
+            fclose($file_to_read);
+            $nbImport = 0;
+            $nbErrors = 0;
+            foreach($lines as $c) {
+                if(!$c) {
+                    continue;
+                }
+                $client = [];
+                foreach ($c as $i => $value) {
+                    $client[$headers[$i]] = $value;
+                }
+                Configuration::getLogger()->debug('[client] import client', ['client' => $client]);
+                try {
+                    if(!intval($client['pricing'])){
+                        throw new PfmParamException('Invalid pricing, not an integer');
+                    }
+                    $this->clientModel->set(
+                        $client['id'], $id_space, $client['name'], $client['contact_name'], 
+                        $client['phone'], 
+                        $client['email'],
+                        $client['pricing'],
+                        $client['invoice_send_preference']
+                    );
+                    $nbImport++;
+                } catch(Exception $e) {
+                    Configuration::getLogger()->debug('[client] import client error', ['client' => $client, 'error' => $e->getMessage()]);
+                    $nbErrors++;
+                }
+            }
+            unlink($_FILES['csv']["tmp_name"]);
+
+            $_SESSION['flash'] = "Clients imported [$nbImport]";
+            $_SESSION['flashClass'] = 'success';
+            if($nbErrors){
+                $_SESSION['flash'] = "Clients import errors [ok: $nbImport,ko: $nbErrors]: ".$e->getMessage();
+                $_SESSION['flashClass'] = 'danger';
+            }
+        }
+        $this->redirect('clclients/'.$id_space);
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::index()
@@ -49,11 +105,17 @@ class ClientslistController extends ClientsController {
         // Query to the database
         $providersArray = $this->clientModel->getAll($id_space);
 
+        if($this->request->getParameterNoException('csv') == '1') {
+            return $this->clientModel->toCSV($providersArray);
+        }
+
         $table = new TableView();
 
         $table->addLineEditButton("clclientedit/" . $id_space);
         $table->addLineButton("clclientusers/" . $id_space, "id", CoreTranslator::Users($lang));
         $table->addDeleteButton("clclientdelete/" . $id_space);
+        $table->addExportButton('clclients/'.$id_space);
+        $table->addImportButton('clclients/'.$id_space.'/import');
         $tableHtml = $table->view($providersArray, array(
             "name" => CoreTranslator::Name($lang),
             "pricing_name" => ClientsTranslator::Pricing($lang)

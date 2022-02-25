@@ -24,6 +24,8 @@ abstract class Model {
     private $columnsDefaultValue;
     protected $primaryKey;
 
+    protected array $protected = []; // list of fields not to expose
+
     static $reconnectErrors = [
         1317 // interrupted
         ,2002 // refused
@@ -544,6 +546,31 @@ abstract class Model {
             $this->id = $id;
         }
         return $id;
+    }
+
+    public function toCSV($data) {
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=export.csv");
+        if(!$data) {
+            return 'no data';
+        }
+        $keys = [];
+        foreach($data[0] as $key => $value){
+            if(!is_int($key) && !in_array($key, $this->protected)) {
+                $keys[] = $key;
+            }
+        }
+        $fp = fopen('php://output', 'a');
+        fputcsv($fp, $keys);
+        foreach ($data as $c) {
+            $values = [];
+            foreach ($keys as $key) {
+                $values[] = $c[$key];
+            }
+            fputcsv($fp, $values);
+        }
+        fclose($fp);
+
     }
 
 }

@@ -45,6 +45,11 @@ class ClientspricingsController extends ClientsController {
 
         // Query to the database
         $belongingsArray = $this->pricingModel->getAll($id_space);
+
+        if($this->request->getParameterNoException('csv') == '1') {
+            return $this->pricingModel->toCSV($belongingsArray);
+        }
+
         $pricings = $belongingsArray;
         for ($i = 0; $i < count($belongingsArray); $i++) {
             if ($belongingsArray[$i]["type"] == 1) {
@@ -57,6 +62,7 @@ class ClientspricingsController extends ClientsController {
         $table = new TableView();
         $table->addLineEditButton("clpricingedit/" . $id_space);
         $table->addDeleteButton("clpricingdelete/" . $id_space);
+        $table->addExportButton('clpricings/'.$id_space);
         $table->setColorIndexes(array("color" => "color", "txtcolor" => "txtcolor"));
         $tableHtml = $table->view(
             $belongingsArray,

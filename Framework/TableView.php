@@ -17,6 +17,8 @@ class TableView {
     private $editJS;
     private $useSearchVal;
     private $printAction;
+    private $exportAction;
+    private $importAction;
     private $isprint;
     private $deleteURL;
     private $deleteIndex;
@@ -47,6 +49,7 @@ class TableView {
         $this->linesButtonName = array();
         $this->colorIndexes = array();
         $this->exportAction = "";
+        $this->importAction = "";
         $this->iscsv = false;
         $this->textMaxLength = 0;
         $this->numFixedCol = 0;
@@ -155,6 +158,14 @@ class TableView {
         $this->exportAction = $action;
     }
 
+        /**
+     * 
+     * @param type $action
+     */
+    public function addImportButton($action) {
+        $this->importAction = $action;
+    }
+
     /**
      * 
      * @param type $indexesArray
@@ -225,33 +236,31 @@ class TableView {
             $html .= $this->addHeader();
         }
 
-        if ($this->printAction != "" && $this->exportAction != "" && !$this->isprint) {
-            $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
-            // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-            $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-default\">Print</button>";
-            $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-default\">Export</button>";
-            $html .= "</div>";
-        } else {
-            if ($this->printAction != "" && !$this->isprint) {
-                $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
-                // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-                $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-default\">Print</button>";
-                $html .= "</div>";
-            }
-            if ($this->exportAction != "" && !$this->isprint) {
-                $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
-                // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-                $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-default\">Export</button>";
-                $html .= "</div>";
-            }
-        }
-
         if ($this->title != "") {
             $html .= "<div class=\"page-header\">";
             $html .= "<h" . $this->titleLevel . ">" . $this->title . "</h" . $this->titleLevel . ">";
             $html .= "</div>";
         }
 
+
+        $html .= '<div class="row">';
+        if ($this->printAction != "" && !$this->isprint) {
+            $html .= "<div class=\"col-xs-2\">";
+            $html .= "<button style=\"margin:10px\" type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-default\">Print</button>";
+            $html .= '</div>';
+        }
+        if ($this->exportAction != "" && !$this->isprint) {
+            $html .= "<div class=\"col-xs-2\">";
+            $html .= '<a href="'.$this->exportAction.'?csv=1" target="_blank" rel="nofollow noreferrer noopener"><button style="margin:10px" type="button" class="btn btn-default">Export</button></a>';
+            $html .= '</div>';
+        }
+        if ($this->importAction != "" && !$this->isprint) {
+            $html .= "<div class=\"col-xs-4\">";
+            $html .= '<form enctype="multipart/form-data" class="form" method="POST" action="'.$this->importAction.'"><div class="row"><div class="col-xs-6"><input name="csv" type="file" class="form-control"/></div><div class="col-xs-6"><button type="submit" class="btn">Import</button></div></div></form>';
+            $html .= '</div>';
+        }
+
+        $html .= '</div>';
        
         $html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
         //$html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";

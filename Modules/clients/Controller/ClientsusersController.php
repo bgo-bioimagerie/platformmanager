@@ -69,10 +69,14 @@ class ClientsusersController extends ClientsController {
         }
 
         $data = $modelClientUser->getUsersInfo($id_space, $id_client);
+        if($this->request->getParameterNoException('csv') == '1') {
+            return $modelClientUser->toCSV($data);
+        }
 
         $table = new TableView();
         $table->setTitle(ClientsTranslator::ClientUsers($lang));
         $table->addDeleteButton("clclientuserdelete/".$id_space."/" .$id_client);
+        $table->addExportButton('clclientusers/'.$id_space.'/'.$id_client);
         $headers = array("name" => CoreTranslator::Name($lang),
             "firstname" => CoreTranslator::Firstname($lang)
         );

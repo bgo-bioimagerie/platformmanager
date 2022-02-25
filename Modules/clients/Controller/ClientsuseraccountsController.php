@@ -24,6 +24,7 @@ class ClientsuseraccountsController extends ClientsController {
     public function indexAction($id_space, $id_user) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+
         $form = $this->generateClientsUserForm($id_space, $id_user);
         
         if ($form->check()) {
