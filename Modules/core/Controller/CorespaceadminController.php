@@ -257,21 +257,18 @@ class CorespaceadminController extends CoresecureController {
     }
 
     protected function todolist($id_space) {
-        // TODO: gérer flashs dans accès quand pas configuré (manquent visa, clients, etc...)
-        // TODO: make clients info optional ? => check first if ok (in invoices for example)
-        
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
 
         $todoData = array();
-        $activeModules = $modelSpace->getDistinctSpaceMenusModules($id_space);
+        $activeModules = array_column($modelSpace->getDistinctSpaceMenusModules($id_space), 'module');
         $baseModules = array('users', 'resources', 'clients', 'booking');
-        
-        foreach($activeModules as $activeModule) {
-            $moduleName = $activeModule['module'];
-            if (in_array($moduleName, $baseModules)) {
-                $fName = 'get' . ucFirst($moduleName) . 'Todo'; 
-                $todoData[$moduleName] = $this->$fName($id_space, $lang);
+        array_push($activeModules, 'users');
+
+        foreach($baseModules as $baseModule) {
+            if (in_array($baseModule, $activeModules)) {
+                $fName = 'get' . ucFirst($baseModule) . 'Todo'; 
+                $todoData[$baseModule] = $this->$fName($id_space, $lang);
             }
         }
 
