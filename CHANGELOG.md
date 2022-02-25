@@ -2,6 +2,7 @@
 
 ## 2.4.0
 
+* [mailer] allow access to space users, users can see sent emails
 * [documentation] add packages documentation and use case
 * [core] reduce space users options after a module is deactivated
 * [documentation] update space join use case
