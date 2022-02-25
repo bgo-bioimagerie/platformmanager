@@ -89,6 +89,9 @@ class ClientslistController extends ClientsController {
                 $_SESSION['flash'] = "Clients import errors [ok: $nbImport,ko: $nbErrors]: ".$e->getMessage();
                 $_SESSION['flashClass'] = 'danger';
             }
+        } else {
+            $_SESSION['flash'] = "Nothing to import";
+            $_SESSION['flashClass'] = 'danger';
         }
         $this->redirect('clclients/'.$id_space);
     }
