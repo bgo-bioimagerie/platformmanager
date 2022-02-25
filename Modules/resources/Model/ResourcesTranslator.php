@@ -394,6 +394,34 @@ class ResourcesTranslator {
         }
         return "You need first to create a status in Resources module > Instructors status";
     }
+
+    public static function Resource_Needed($lang) {
+        if ($lang == "fr") {
+            return "Aucune ressource créée";
+        }
+        return "No resource created";
+    }
+
+    public static function Area_Needed($lang) {
+        if ($lang == "fr") {
+            return "Aucun domaine créé";
+        }
+        return "No area created";
+    }
+
+    public static function Area_category_Needed($lang) {
+        if ($lang == "fr") {
+            return "Vous devez avoir créé au moins un domaine et une catégorie pour pouvoir créer une ressource";
+        }
+        return "You must have created at least one category and one area to be able to create a resource";
+    }
+
+    public static function User_category_Needed($lang) {
+        if ($lang == "fr") {
+            return "Vous devez avoir au moins un⋅e utilisateur⋅ice actif⋅ve et créé une première catégorie pour pouvoir créer un visa";
+        }
+        return "You must have at least one active user and created a first category to be able to create a visa";
+    }
     
     public static function AreaNotAuthorized($lang = "") {
         if ($lang == "fr") {

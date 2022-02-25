@@ -1799,6 +1799,13 @@ class CoreTranslator {
         return "Or";
     }
 
+    public static function Space_preconfigured($lang) {
+        if ($lang == "fr") {
+            return "Espace préconfiguré";
+        }
+        return "Space preconfigured";
+    }
+
     public static function CreateAccount($lang) {
         if ($lang == "fr") {
             return "Créer un compte";

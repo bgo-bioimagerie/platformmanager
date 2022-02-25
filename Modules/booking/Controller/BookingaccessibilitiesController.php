@@ -4,6 +4,7 @@ require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/booking/Model/BkAccess.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
@@ -37,6 +38,12 @@ class BookingaccessibilitiesController extends BookingsettingsController {
 
         $modelResources = new ResourceInfo();
         $resources = $modelResources->getForSpace($id_space);
+
+        if (empty($resources)) {
+            $_SESSION['flash'] = ResourcesTranslator::Resource_Needed($lang);
+            $_SESSION['flashClass'] = "warning";
+        }
+
         $bkaccess = [];
         foreach ($resources as $resource) {
             $accessId = $model->getAccessId($id_space, $resource["id"]);

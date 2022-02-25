@@ -441,6 +441,7 @@ class CorespaceadminController extends CoresecureController {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
 
+        $lang = $this->getLanguage();
         // TODO: set modules to activate at preconfiguration in config ?
         $modulesToActivate = array(
             ["name" => "booking", "status" => 2],
@@ -456,7 +457,9 @@ class CorespaceadminController extends CoresecureController {
 
         $this->redirect("spaceadminedit/". $space['id']);
         $this->runAction('core', 'edit', ['id_space' => $space['id']]);
-        // TODO: display flash !
+
+        $_SESSION['flash'] = CoreTranslator::Space_preconfigured($lang);
+        $_SESSION['flashClass'] = "success";
     }
 
     protected function activateModule($moduleName, $status, $space) {
