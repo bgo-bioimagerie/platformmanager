@@ -59,6 +59,10 @@ class ClientslistController extends ClientsController {
                 foreach ($c as $i => $value) {
                     $client[$headers[$i]] = $value;
                 }
+                if($client['id'] == null) {
+                    continue;
+                }
+                $client['id_space'] = $id_space;
                 Configuration::getLogger()->debug('[client] import client', ['client' => $client]);
                 try {
                     if(!intval($client['pricing'])){
