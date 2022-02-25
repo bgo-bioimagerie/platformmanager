@@ -40,9 +40,18 @@ Create menus    Menus are a way to group spaces in logical groups.</description>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/use_cases/join_space/</guid>
       <description>Since Platform-Manager V2 (2021-08-10 release), users with an existing account can request to join a space.
-Request join    First, click on Menus in top navbar and choose the structure on which the space you want to join depends. Then you should see, amongst one or several tiles, the one you are looking for.
-Click on Join button contained in this tile.
-Until your join request is accepted or rejected by a space admin, the join button now is inactive and displays Join requested.</description>
+Join a space as a user      you already have an account
+  you don&amp;rsquo;t have an account yet
+  Request access    First, find the space you want to request access to. From Platform-Manager main page, you can select its parent structure if or search for the space name.</description>
+    </item>
+    
+    <item>
+      <title>How to manage interdependant booking resources</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/use_cases/interdependant_resources/</link>
+      <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/use_cases/interdependant_resources/</guid>
+      <description>Use case     you have one equipment for which users need a specific authorization with this equipment, users can perform more than one activity eventually, these activities have different prices  Problem    Using one category (on which users authorizations can be set) representing the equipment and several resources, each of them representing one activity linked to this equipment, do not avoid a user to make a booking for one of these activities whereas some other user already did book another activity for this equipment.</description>
     </item>
     
     <item>
@@ -187,7 +196,10 @@ A client is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/documents/</guid>
-      <description></description>
+      <description>Documents module gives access to a basic documentation storage.
+In the base plan, module allows space managers to upload/download documents on a private basis only (limited to space managers).
+A document name can use a path like naming to simulate a directory hierarchy.
+Example, with a document named resource1/usage.pdf, usage.pdf will be displayed in resource1 directory. Modifying document name will update its location accordingly. This path is virtual, ie is used for display only and ease document categorization.</description>
     </item>
     
     <item>
