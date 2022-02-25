@@ -55,6 +55,7 @@
 * [catalog] fix default config display and layout
 * [antobodies] fix image_url settings in tissues creation
 * [antibodies] fix ACL checks
+* [core] add reset for user api key
 
 ## 2.3.3 [unreleased]
 
