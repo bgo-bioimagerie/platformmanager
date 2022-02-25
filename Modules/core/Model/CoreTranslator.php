@@ -725,6 +725,13 @@ class CoreTranslator {
         return "Deactivate user account when";
     }
 
+    public static function Preconfigure_space($lang = "") {
+        if ($lang == "fr") {
+            return "Préconfigurer l'espace";
+        }
+        return "Pre-configure space";
+    }
+
     public static function never($lang = "") {
         if ($lang == "fr") {
             return "jamais";
@@ -1382,6 +1389,13 @@ class CoreTranslator {
         return "Edit space";
     }
 
+    public static function Create_space($lang) {
+        if ($lang == "fr") {
+            return "Ajouter un espace";
+        }
+        return "Add space";
+    }
+
     public static function PrivateA($lang) {
         if ($lang == "fr") {
             return "Privé";
@@ -1785,6 +1799,13 @@ class CoreTranslator {
         return "Or";
     }
 
+    public static function Space_preconfigured($lang) {
+        if ($lang == "fr") {
+            return "Espace préconfiguré";
+        }
+        return "Space preconfigured";
+    }
+
     public static function CreateAccount($lang) {
         if ($lang == "fr") {
             return "Créer un compte";
@@ -2110,4 +2131,11 @@ class CoreTranslator {
         return "Edition access";
     }
 
+    public static function Optional($lang){
+        if($lang == "fr") {
+            return "optionnel";
+        }
+        return "optional";
+    }
+    
 }

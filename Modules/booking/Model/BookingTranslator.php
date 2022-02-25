@@ -1673,9 +1673,9 @@ class BookingTranslator {
 
     public static function VisaNeeded($lang) {
         if ($lang == "fr") {
-            return "Vous devez d'abord spécifier un visa dans le module Ressources > Visas";
+            return "Pour ajouter une autorisation de réservation, vous devez d'abord spécifier un visa dans le module Ressources > Visas";
         }
-        return "You need first to specify a visa in Resources module>Visas";
+        return "In order to add a booking authorization, you need to specify a visa in Resources module>Visas";
     }
 
     public static function maxInvoicingUnits($lang) {
@@ -1707,6 +1707,30 @@ class BookingTranslator {
         return "My bookings";
     }
 
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "colorcode":
+                    $result .= ($lang === "fr") ? "un code couleur" : "a color code";
+                    break;
+                case "schedule":
+                    $result = ($lang === "fr") ? "Editer un profil horaire pour un domaine" : "Edit a schedule profile for one area";
+                    break;
+                case "authorisations":
+                    $result = ($lang === "fr") ? "Gérer les autorisations de réservation pour :" : "Manage booking authorisations for:";
+                    break;
+                    case "access":
+                        $result = ($lang === "fr") ? "Gérer les accès à une ressource" : "Manage a resource access";
+                        break;
+                case "booking":
+                    $result .= ($lang === "fr") ? "une première réservation" : "a first reservation";
+                    break;
+                default:
+                    break;
+            }
+        return $result;
+    }
+    
     public static function Closed($lang = "") {
         if($lang == "fr") {
             return "Fermé";

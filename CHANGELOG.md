@@ -29,6 +29,7 @@
 
 ### Updates
 
+* [core] add space configuration helpers (interactive Todo)
 * [mailer] allow access to space users, users can see sent emails
 * [documentation] add packages documentation and use case
 * [core] reduce space users options after a module is deactivated
