@@ -4,6 +4,7 @@
 
 * [helpdesk] close connection in anycase
 * [core] fix TODO in corespaceadmin, do not get all bookings, just count them
+* [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)
 
 ## 2.4.0
 
