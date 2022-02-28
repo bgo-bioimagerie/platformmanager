@@ -334,7 +334,8 @@ class Configuration {
         if(getenv('PFM_TIMEZONE')) {
             self::$parameters['timezone'] = getenv('PFM_TIMEZONE');
         }
-        date_default_timezone_set(self::$parameters['timezone']);
+        // do not set because impacts existing bookings....
+        // date_default_timezone_set(self::$parameters['timezone']);
 
     }
 
