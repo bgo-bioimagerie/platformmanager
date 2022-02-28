@@ -41,7 +41,7 @@
         </div>
 
 
-        <div class="container-fluid>
+        <div class="container-fluid">
 
             <div id="app" class="row">
             {% if context.maintenance %}
@@ -58,12 +58,10 @@
                 <div class="col-12">
                     <div class="alert alert-{{flash['class']}} alert-dismissible  show" role="alert">
                         {{flash['msg']}}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                         </button>
                     </div>
                 </div>
-            </div>
             {% endif %}
 
             <div class="col-12">
@@ -74,16 +72,14 @@
                 <div class="col-12 col-md-2" id="sidemenu">
                     {{context.sideMenu | raw}}
                 </div>
-                <div class="col-12 col-md-10">
+                <div class="col-12 col-md-10" id="content">
             {% else %}
-                <div class="col-12">
+                <div class="col-12" id="content">
             {% endif %}
            
             {% block content %}
             {% endblock %}
                 </div>
-                
-            
 
         </div>
     </div>
