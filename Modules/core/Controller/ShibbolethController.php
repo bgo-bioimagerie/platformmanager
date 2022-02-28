@@ -91,7 +91,7 @@ class ShibbolethController extends CorecookiesecureController {
         $m->editBaseInfo($user['id'], $name, $firstName, $email);
         $login = $user['login'];
         $user = $this->initSession($login);
-        Configuration::getLogger()->debug('[oid][orcid] open session for user', ['oid' => $oid, 'user' => $user, 'login' => $login]);
+        Configuration::getLogger()->debug('[oid][shibboleth] open session for user', ['oid' => $oid, 'user' => $user, 'login' => $login]);
         $this->request->getSession()->setAttribut("oid", $oid);
         return $this->redirect('coretiles');
     }
