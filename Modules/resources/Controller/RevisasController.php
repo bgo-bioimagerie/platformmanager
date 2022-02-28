@@ -110,11 +110,14 @@ class RevisasController extends ResourcesBaseController {
 
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
-        $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
 
-        
+        if (empty($users['ids']) || empty($resourcesCategories)) {
+            $_SESSION['flash'] = ResourcesTranslator::User_category_Needed($lang);
+            $_SESSION['flashClass'] = "warning";
+        }
+
+        $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
         $form->addSelect("is_active", ResourcesTranslator::IsActive($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $visaInfo["is_active"]);
-        
         $ischoicesid = array(1, 2);
         $ischoices = array(ResourcesTranslator::Instructor($lang), CoreTranslator::Responsible($lang));
         $form->addSelect("instructor_status", ResourcesTranslator::Instructor_status($lang), $ischoices, $ischoicesid, $visaInfo["instructor_status"]);

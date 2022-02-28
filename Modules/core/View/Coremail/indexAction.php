@@ -17,7 +17,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
         </div>
     <?php } ?>
     </div>
-    <button style="margin-top: 10px" type="submit" class="btn btn-primary"><?php echo CoreTranslator::Update($lang); ?></button>
+    <div><button style="margin-top: 10px" type="submit" class="btn btn-primary"><?php echo CoreTranslator::Update($lang); ?></button></div>
     </form>
     </div>
 

@@ -105,6 +105,12 @@ class BkAuthorization extends Model {
         return $auth->fetch();
     }
 
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM bk_authorization WHERE id_space=? AND deleted=0";
+        $auth = $this->runRequest($sql, array($id_space));
+        return $auth->fetch();
+    }
+
     /**
      * Check if a user have an authorization for a given resource
      * @param number $id_resource ID of the resource

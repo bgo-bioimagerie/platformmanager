@@ -258,7 +258,7 @@ abstract class Controller {
             //$this->{$this->action}();
         } else {
             $classController = get_class($this);
-            throw new PfmException("Action '$action'Action in not defined in the class '$classController'", 500);
+            throw new PfmException("Action '$action'Action not defined in the class '$classController'", 500);
         }
     }
 

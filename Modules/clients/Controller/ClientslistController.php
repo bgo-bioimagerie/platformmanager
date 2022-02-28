@@ -83,6 +83,11 @@ class ClientslistController extends ClientsController {
         // pricings
         $modelPricing = new ClPricing();
         $pricings = $modelPricing->getForList($id_space);
+
+        if (empty($pricings['ids'])) {
+            $_SESSION['flash'] = ClientsTranslator::Pricing_needed($lang);
+            $_SESSION["flashClass"] = 'warning';
+        }
         
         // preferences
         $preferences = array(
@@ -98,9 +103,9 @@ class ClientslistController extends ClientsController {
         $form->addText("name", ClientsTranslator::Identifier($lang), true, $client["name"]);
         $form->addText("contact_name", ClientsTranslator::ContactName($lang), false, $client["contact_name"]);
         $form->addText("phone", ClientsTranslator::Phone($lang), false, $client["phone"]);
-        $form->addEmail("email", ClientsTranslator::Email($lang), false, $client["email"]);
+        $form->addEmail("email", ClientsTranslator::Email($lang), true, $client["email"]);
 
-        $form->addSelect("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
+        $form->addSelectMandatory("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
         $form->addSelect("invoice_send_preference", ClientsTranslator::invoice_send_preference($lang), $preferences["names"], $preferences["ids"], $client["invoice_send_preference"]);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "clclientedit/" . $id_space . "/" . $id);

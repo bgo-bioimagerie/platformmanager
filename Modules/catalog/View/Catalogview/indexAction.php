@@ -14,12 +14,12 @@
     <?php foreach ($entries as $entry) {
         ?>
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-6">
             <div class="card" style="text-align: center;">
                 <div class="card-header"><?php echo $entry["title"] ?></div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-12 col-md-2">
                         <?php
                         $imageFile = "data/catalog/" . $entry["image_url"];
                         if (file_exists($imageFile) && !is_dir($imageFile)) {
@@ -30,7 +30,7 @@
                             </a>
                         <?php } ?>
                         </div>
-                        <div class="col-8">
+                        <div class="col-12 col-md-4">
                             <div> <?php echo $entry["short_desc"] ?></div>
                         </div>
                     </div>

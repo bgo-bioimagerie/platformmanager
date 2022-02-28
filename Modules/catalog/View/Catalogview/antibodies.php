@@ -1,6 +1,7 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
 <?php startblock('content') ?>
+<div class="container">
 <?php include('Modules/catalog/View/Catalogview/toolbar.php') ?>
 
     <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
@@ -27,9 +28,7 @@
 
 
 
-<div class="row" style="height:15px; background-color: #ffffff;">
 
-</div>
 
 <div class="row" style="background-color: #ffffff;">
 
@@ -111,5 +110,6 @@
 
         </tbody>
     </table>
+</div>
 </div>
 <?php endblock(); ?>

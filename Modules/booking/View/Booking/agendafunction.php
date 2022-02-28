@@ -12,9 +12,9 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 
-	$html .= '<a id="goback" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
-	$html .= '<a id="gonext" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
-	$html .= '<a id="gocurrent" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
+	$html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
+	$html .= '<a id="gonext" rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
+	$html .= '<a id="gocurrent" rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
 	$html .= '</div>';
 
 	$d = explode("-", $fromDate);

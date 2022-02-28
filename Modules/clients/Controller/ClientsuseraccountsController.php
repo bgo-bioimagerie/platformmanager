@@ -51,6 +51,11 @@ class ClientsuseraccountsController extends ClientsController {
         $modelUser = new CoreUser();
         $userFullName = $modelUser->getUserFUllName($id_user);
         $accounts = $modelClientUser->getUserClientAccounts($id_user, $id_space);
+
+        if (empty($accounts)) {
+            $_SESSION['flash'] = ClientsTranslator::Client_needed($lang);
+            $_SESSION['flashClass'] = 'warning';
+        }
         $table = new TableView("clientsUser");
         $table->setTitle(ClientsTranslator::ClientAccountsFor($lang) . $userFullName);
         $table->addDeleteButton("clientsuseraccounts" . "delete/" . $id_space . "/" . $id_user);

@@ -101,6 +101,20 @@ class ClientsTranslator {
         return "Pricings";
     }
 
+    public static function Pricing_needed($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord créer au moins un secteur d'activité";
+        }
+        return "You need to create a pricing first";
+    }
+
+    public static function Client_needed($lang) {
+        if ($lang == "fr") {
+            return "Vous n'avez pas créé de compte client. Cela sera nécessaire pour y lier un⋅e utilisateur⋅ice";
+        }
+        return "You haven't created any client account yet. It will be necessary to create one before being able to affect a client account to a user account";
+    }
+
     public static function Edit_Client($lang) {
         if ($lang == "fr") {
             return "Edition Client";
@@ -346,5 +360,25 @@ class ClientsTranslator {
         return "Add a client account for";
     }
 
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "company":
+                    $result = ($lang === "fr") ? "Editer les informations de votre structure" : "Edit your structure informations";
+                    break;
+                case "client":
+                    $result .= ($lang === "fr") ? "un client" : "a client";
+                    break;
+                case "pricing":
+                    $result .= ($lang === "fr") ? "un secteur d'activité" : "a pricing";
+                    break;
+                    case "clientsuser":
+                        $result = ($lang === "fr") ? "Lier un compte client au compte utilisateur :" : "Link a client account to user account:";
+                        break;
+                default:
+                    break;
+            }
+        return $result;
+    }
 
 }
