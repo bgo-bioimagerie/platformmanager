@@ -2,6 +2,7 @@
 
 ## 2.4.1 [unreleased]
 
+* [helpdesk] close connection in anycase
 
 ## 2.4.0
 
