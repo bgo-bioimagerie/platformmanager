@@ -59,7 +59,6 @@ class BkOwnerPrice extends Model {
             }
             if (!$found){
                 $sql = "UPDATE bk_owner_prices SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-                // $sql = "DELETE FROM bk_owner_prices WHERE id=? AND id_space=?";
                 $this->runRequest($sql, array($d["id"], $id_space));
             }
         }

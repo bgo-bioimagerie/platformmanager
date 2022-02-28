@@ -205,7 +205,6 @@ class ClientslistController extends ClientsController {
             $this->clientModel->setAddressDelivery($id_space, $id, $id_adress);
             $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
             $_SESSION['flashClass'] = 'success';
-            // $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
             $this->redirect("clclients/" . $id_space);
             return;
         }

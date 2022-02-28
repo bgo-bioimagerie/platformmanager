@@ -70,7 +70,6 @@ class BkRestrictions extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE bk_restrictions SET deleted=1, deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM bk_restrictions WHERE id=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

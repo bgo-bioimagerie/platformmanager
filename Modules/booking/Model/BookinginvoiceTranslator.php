@@ -371,8 +371,6 @@ class BookinginvoiceTranslator {
 
             return BookingTranslator::translateDayFromEn($dayStream, $lang) . " " . $dayNumStream . " " . BookingTranslator::translateMonthFromEn($monthStream, $lang) . " " . $yearStream;
 
-            // setlocale(LC_TIME, "fr_FR");
-            // return utf8_encode(strftime('%A %d %B %Y', $time));
         }
         // english
 

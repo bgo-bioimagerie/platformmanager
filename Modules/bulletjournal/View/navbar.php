@@ -13,7 +13,7 @@ if ($ecmenucolortxt == "") {
 
     <style>
         #menu-button-div a{
-            font: 12px Arial;
+            font: 12px;
             text-decoration: none;
             color: #333333;
             padding-left: 12px;
@@ -26,7 +26,7 @@ if ($ecmenucolortxt == "") {
         }
 
         #menu-button-div:hover{
-            font: 12px Arial;
+            font: 12px;
             text-decoration: none;
             background-color: #e1e1e1;
             color: #333333;

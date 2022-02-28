@@ -156,7 +156,6 @@ class BkStatsUser extends Model {
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
         $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
-        // $objDrawing = new PHPExcel_Worksheet_HeaderFooterDrawing();
         $objDrawing->setName('PHPExcel logo');
         $objDrawing->setPath($reqIcon[0]);
         $objDrawing->setHeight(60);
@@ -322,10 +321,7 @@ class BkStatsUser extends Model {
         $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
         $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
         //enfin on l’envoie à la feuille de calcul !
-        //$objDrawing->setWorksheet($sheet);
 
-
-        // $writer = PHPExcel_IOFactory::createWriter($spreadsheet, 'Excel2007');
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         $writer->save('./data/statistics/' . $nom);
@@ -351,7 +347,7 @@ class BkStatsUser extends Model {
 
         // get resource category
         $modelResource = new ReCategory();
-        $resourceInfo = $modelResource->getName($id_space, $resource_id); // ->getResourcesCategory($resource_id);
+        $resourceInfo = $modelResource->getName($id_space, $resource_id);
         if(!$resourceInfo) {
             throw new PfmParamException('resource not found');
         }

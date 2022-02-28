@@ -67,6 +67,12 @@ class BjTask extends Model {
     }
 
     public function set($id_space, $id_note, $priority, $deadline) {
+        if($deadline == '') {
+            $deadline = null;
+        }
+        if($priority == '') {
+            $priority = 0;
+        }
         if ($this->exists($id_space, $id_note)) {
             $sql = "UPDATE bj_tasks SET priority=?, deadline=? WHERE id_note=? AND id_space=?";
             $this->runRequest($sql, array($priority, $deadline, $id_note, $id_space));

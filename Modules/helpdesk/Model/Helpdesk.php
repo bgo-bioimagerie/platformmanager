@@ -213,13 +213,6 @@ class Helpdesk extends Model {
         return 0;
     }
 
-    public function replyToTicket($id_ticket, $id_message, $body, $from, $files=[]) {
-        // TODO
-        // create message
-        // create attachements
-        // send message
-    }
-
     public function assign($id_ticket, $id_user) {
         $um = new CoreUser();
         $login = $um->getUserLogin($id_user);
