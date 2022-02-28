@@ -407,6 +407,13 @@ abstract class Model {
         return $this->runRequest($sql, $params)->fetch();
     }
 
+    public function countForSpace($id_space) {
+        $sql = "SELECT count(*) as total FROM $this->tableName WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        $total = $req->fetch();
+        return $total['total'];
+    }
+
     /**
      * @param $space space object
      */

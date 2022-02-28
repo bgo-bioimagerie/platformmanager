@@ -34,6 +34,10 @@ class BkColorCode extends Model {
         $this->addColumn("bk_color_codes", "who_can_use", "int(11)", 1);
     }
 
+    public function __construct() {
+        $this->tableName = "bk_color_codes";
+    }
+
     public function getDefault() {
         return array("id" => 0, "name" => "", "color" => Constants::COLOR_WHITE, "text" => Constants::COLOR_BLACK,
             "display_order" => 0, "id_space" => 0, "who_can_use" => 1);

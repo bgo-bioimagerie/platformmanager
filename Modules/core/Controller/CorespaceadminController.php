@@ -292,13 +292,13 @@ class CorespaceadminController extends CoresecureController {
                         "id" => "users",
                         "title" => UsersTranslator::Create_item("user", $lang),
                         "url" => "corespaceaccessuseradd/" . $id_space,
-                        "done" => $modelUser->getSpaceActiveUsers($id_space)
+                        "done" => $modelUser->countSpaceActiveUsers($id_space)
                     ],
                     [
                         "id" => "pendingUsers",
                         "title" => UsersTranslator::Create_item("pending", $lang),
                         "url" => "corespacependingusers/" . $id_space,
-                        "done" => $modelPending->getActivatedForSpace($id_space)
+                        "done" => $modelPending->countActivatedForSpace($id_space)
                     ],
                 ]
             ];
@@ -318,25 +318,25 @@ class CorespaceadminController extends CoresecureController {
                         "id" => "area",
                         "title" => ResourcesTranslator::Create_item("area", $lang),
                         "url" => "reareasedit/" . $id_space,
-                        "done" => $modelArea->getForSpace($id_space)
+                        "done" => $modelArea->countForSpace($id_space)
                     ],
                     [
                         "id" => "category",
                         "title" => ResourcesTranslator::Create_item("category", $lang),
                         "url" => "recategoriesedit/" . $id_space,
-                        "done" => $modelCategory->getBySpace($id_space)
+                        "done" => $modelCategory->countForSpace($id_space)
                     ],
                     [
                         "id" => "resource",
                         "title" => ResourcesTranslator::Create_item("resource", $lang),
                         "url" => "resourcesedit/" . $id_space,
-                        "done" => $modelResource->getForSpace($id_space)
+                        "done" => $modelResource->countForSpace($id_space)
                     ],
                     [
                         "id" => "visa",
                         "title" => ResourcesTranslator::Create_item("visa", $lang),
                         "url" => "resourceseditvisa/" . $id_space,
-                        "done" => $modelVisa->getForSpace($id_space)
+                        "done" => $modelVisa->countForSpace($id_space)
                     ],
                 ]
             ];
@@ -357,25 +357,25 @@ class CorespaceadminController extends CoresecureController {
                         "id" => "company",
                         "title" => ClientsTranslator::Create_item("company", $lang),
                         "url" => "clcompany/" . $id_space,
-                        "done" => $modelCompany->getForSpace($id_space)
+                        "done" => $modelCompany->countForSpace($id_space)
                     ],
                     [
                         "id" => "pricing",
                         "title" => ClientsTranslator::Create_item("pricing", $lang),
                         "url" => "clpricingedit/" . $id_space,
-                        "done" => !empty($modelPricing->getForList($id_space)['ids'])
+                        "done" => $modelPricing->countForSpace($id_space)
                     ],
                     [
                         "id" => "client",
                         "title" => ClientsTranslator::Create_item("client", $lang),
                         "url" => "clclientedit/" . $id_space,
-                        "done" => !empty($modelClient->getForList($id_space)['ids'])
+                        "done" => $modelClient->countForSpace($id_space)
                     ],
                     [
                         "id" => "clientsuser",
                         "title" => ClientsTranslator::Create_item("clientsuser", $lang),
                         "url" => "corespaceuseredit/" . $id_space,
-                        "done" => $modelClientsuser->getForSpace($id_space),
+                        "done" => $modelClientsuser->countForSpace($id_space),
                         "options" => [
                             "list" => $modelUser->getSpaceActiveUsers($id_space),
                             "defaultText" => UsersTranslator::User_account($lang)
@@ -402,19 +402,19 @@ class CorespaceadminController extends CoresecureController {
                         "id" => "colorcodes",
                         "title" => BookingTranslator::Create_item("colorcode", $lang),
                         "url" => "bookingcolorcodeedit/" . $id_space,
-                        "done" => $modelColor->getForSpace($id_space)
+                        "done" => $modelColor->countForSpace($id_space)
                     ],
                     [
                         "id" => "schedule",
                         "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
                         "url" => "bookingscheduling/" . $id_space,
-                        "done" => $modelSchedule->getForSpace($id_space)
+                        "done" => $modelSchedule->countForSpace($id_space)
                     ],
                     [
                         "id" => "auth",
                         "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
                         "url" => "corespaceuseredit/" . $id_space,
-                        "done" => $modelBkAuth->getForSpace($id_space),
+                        "done" => $modelBkAuth->countForSpace($id_space),
                         "options" => [
                             "list" => $modelUser->getSpaceActiveUsers($id_space),
                             "defaultText" => UsersTranslator::User_account($lang)
@@ -424,7 +424,7 @@ class CorespaceadminController extends CoresecureController {
                         "id" => "access",
                         "title" => BookingTranslator::Create_item("access", $lang),
                         "url" => "bookingaccessibilities/" . $id_space,
-                        "done" => $modelBkAccess->getAll($id_space)
+                        "done" => $modelBkAccess->countForSpace($id_space)
                     ],
                     [
                         "id" => "booking",

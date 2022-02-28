@@ -35,6 +35,10 @@ class ReVisa extends Model {
         return $pdo;
     }
 
+    public function __construct() {
+        $this->tableName = "re_visas";
+    }
+
     public function getForListByCategory($id_space, $id_resource_category) {
         $data = $this->getByCategory($id_space, $id_resource_category);
         $names = array();

@@ -121,6 +121,12 @@ class CorePendingAccount extends Model {
         return $this->runRequest($sql, array($id_space))->fetch();
     }
 
+    public function countActivatedForSpace($id_space) {
+        $sql = "SELECT count(*) as total FROM core_pending_accounts WHERE id_space=? AND validated=1 AND validated_by>0";
+        $total = $this->runRequest($sql, array($id_space))->fetch();
+        return $total['total'];
+    }
+
     public function countPendingForSpace($id_space) {
         $sql = "SELECT count(*) as total
             FROM core_pending_accounts
