@@ -462,6 +462,9 @@ class CoreSpace extends Model {
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
         $roleArray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
         $menuRole = $roleArray ? $roleArray[0] : CoreSpace::$MANAGER;
+        if($menuRole == CoreSpace::$INACTIF) {
+            return 0;
+        }
         $userRole = $this->getUserSpaceRole($id_space, $id_user);
 
         if ($this->isSpacePublic($id_space) && $userRole == -1) {    
