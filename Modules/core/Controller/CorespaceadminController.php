@@ -430,7 +430,7 @@ class CorespaceadminController extends CoresecureController {
                         "id" => "booking",
                         "title" => BookingTranslator::Create_item("booking", $lang),
                         "url" => "bookingdayarea/" . $id_space,
-                        "done" => $modelBkEntry->getForSpace($id_space)
+                        "done" => $modelBkEntry->countForSpace($id_space)
                     ]
                 ]
             ];

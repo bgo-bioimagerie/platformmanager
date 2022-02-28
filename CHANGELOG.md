@@ -3,6 +3,7 @@
 ## 2.4.1 [unreleased]
 
 * [helpdesk] close connection in anycase
+* [core] fix TODO in corespaceadmin, do not get all bookings, just count them
 
 ## 2.4.0
 
