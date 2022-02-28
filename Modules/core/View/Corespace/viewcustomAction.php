@@ -1,7 +1,7 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="row" style="background-color: #fff; height: 2000px;">
@@ -79,5 +79,4 @@
 
     </div> <!-- /container -->
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

@@ -22,6 +22,7 @@ class CorePlan {
      */
     // flag to add space managers as grafana org members
     const FLAGS_GRAFANA = 'grafana';
+    const FLAGS_DOCUMENTS = 'documents';
 
     private ?array $plan = null;
 
@@ -375,7 +376,7 @@ class CoreSpace extends Model {
     }
 
     public function getDistinctSpaceMenusModules($id_space) {
-        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=? ORDER BY display_order";
+        $sql = "SELECT DISTINCT module FROM core_space_menus WHERE id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
@@ -461,6 +462,9 @@ class CoreSpace extends Model {
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
         $roleArray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
         $menuRole = $roleArray ? $roleArray[0] : CoreSpace::$MANAGER;
+        if($menuRole == CoreSpace::$INACTIF) {
+            return 0;
+        }
         $userRole = $this->getUserSpaceRole($id_space, $id_user);
 
         if ($this->isSpacePublic($id_space) && $userRole == -1) {    

@@ -154,7 +154,8 @@ class BookingpackagesController extends BookingsettingsController {
             */
    
             $modelPackages->removeUnlistedPackages($id_space, $packageID);
-            $_SESSION["message"] = BookingTranslator::Packages_saved($lang);
+            $_SESSION["flash"] = BookingTranslator::Packages_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("bookingpackages/".$id_space);
             return;
         }

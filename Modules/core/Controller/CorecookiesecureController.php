@@ -135,17 +135,21 @@ abstract class CorecookiesecureController extends Controller {
 
     /**
      * 
-     * @param type $menuName
-     * @param type $id_space
-     * @param type $id_user
+     * @param string $menuName
+     * @param int $id_space
+     * @param int $id_user
      * @throws Exception
      */
     public function checkAuthorizationMenuSpace($menuName, $id_space, $id_user) {
         $modelSpace = new CoreSpace();
         $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
+            if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
+                throw new PfmAuthException("Error 403: Permission denied", 403);
+            }
+            throw new PfmAuthException("Error 401: need to log", 401);
         }
+        return true;
     }
 
     /**
@@ -179,18 +183,6 @@ abstract class CorecookiesecureController extends Controller {
         return -1;
     }
 
-    /**
-     * @deprecated
-     * @param type $menuName
-     * @return type
-     */
-    /*
-    public function isUserMenuAuthorized($menuName) {
-        $controllerMenu = new CoreMenu();
-        $minimumStatus = $controllerMenu->getMenuStatusByName($menuName);
-        return $this->isUserAuthorized($minimumStatus);
-    }
-    */
 
     /**
      * 
@@ -211,8 +203,8 @@ abstract class CorecookiesecureController extends Controller {
 
     /**
      * 
-     * @param type $id_space
-     * @param type $id_user
+     * @param int $id_space
+     * @param int $id_user
      * @return boolean
      * @throws Exception
      */
@@ -220,16 +212,35 @@ abstract class CorecookiesecureController extends Controller {
 
         $modelUser = new CoreUser();
         $userAppStatus = $modelUser->getStatus($id_user);
-        if ($userAppStatus > 1) {
+        if ($userAppStatus > CoreStatus::$USER) {
             return true;
         }
         $modelSpace = new CoreSpace();
         $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($spaceRole < 4) {
+        if ($spaceRole < CoreSpace::$ADMIN) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 
-    
+    /**
+     * 
+     * @param int $id_space
+     * @param int $id_user
+     * @return boolean
+     */
+    public function isSpaceAdmin($id_space, $id_user) {
+
+        $modelUser = new CoreUser();
+        $userAppStatus = $modelUser->getStatus($id_user);
+        if ($userAppStatus > CoreStatus::$USER) {
+            return true;
+        }
+        $modelSpace = new CoreSpace();
+        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
+        if ($spaceRole < CoreSpace::$ADMIN) {
+            return false;
+        }
+        return true;
+    }
 
 }

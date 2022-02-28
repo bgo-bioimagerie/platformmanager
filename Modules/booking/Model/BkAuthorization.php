@@ -105,6 +105,12 @@ class BkAuthorization extends Model {
         return $auth->fetch();
     }
 
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM bk_authorization WHERE id_space=? AND deleted=0";
+        $auth = $this->runRequest($sql, array($id_space));
+        return $auth->fetch();
+    }
+
     /**
      * Check if a user have an authorization for a given resource
      * @param number $id_resource ID of the resource
@@ -162,7 +168,7 @@ class BkAuthorization extends Model {
     }
 
     public function getNewPeopleForPeriod($id_space, $period_begin, $period_end){
-        $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date >=? AND date <=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 ) ORDER BY date';
+        $sql_search_1 = 'SELECT DISTINCT user_id FROM bk_authorization WHERE deleted=0 AND id_space=? AND date >=? AND date <=? AND resource_id IN ( SELECT id FROM re_category WHERE id_space=? AND deleted=0 )';
         $req = $this->runRequest($sql_search_1, array($id_space, $period_begin, $period_end, $id_space));
         $res_distinct_nf = $req->fetchAll();
         $new_people = 0;

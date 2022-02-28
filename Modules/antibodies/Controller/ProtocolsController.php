@@ -22,6 +22,7 @@ class ProtocolsController extends AntibodiesController {
 
     // affiche la liste des isotypes
     public function indexAction($id_space, $sortEntry) {
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         if ($sortEntry == ""){
             $sortEntry = "id";
         }
@@ -88,7 +89,7 @@ class ProtocolsController extends AntibodiesController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $protocol ['id'] = "";
         $protocol ['kit'] = "";
         $protocol ['no_proto'] = "";
@@ -150,7 +151,7 @@ class ProtocolsController extends AntibodiesController {
     }
 
     public function editqueryAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get form variables
         $id = $this->request->getParameterNoException("id");
         $kit = $this->request->getParameter("kit");
@@ -178,7 +179,7 @@ class ProtocolsController extends AntibodiesController {
     }
 
     public function deleteAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
         $this->protocolModel->delete($id_space,$id);
 

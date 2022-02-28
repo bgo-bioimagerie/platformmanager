@@ -1,6 +1,6 @@
 <?php include 'Modules/resources/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
     <div class="pm-form">
 
@@ -8,5 +8,4 @@
         <div class="col-xs-10"><p></p></div>
                 <?php echo $formHtml ?>
     </div>
-<?php
-endblock();
+<?php endblock(); ?>

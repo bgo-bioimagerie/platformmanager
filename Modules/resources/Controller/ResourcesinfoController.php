@@ -61,10 +61,19 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $modelArea = new ReArea();
         $modelCategory = new ReCategory();
-        // TODO get all area/categories rather than a loop
+        $areas = $modelArea->getForSpace($id_space);
+        $categories = $modelCategory->getBySpace($id_space);
+        $careas = [];
+        $ccats = [];
+        foreach($categories as $c) {
+            $ccats[$c['id']] = $c['name'];
+        }
+        foreach($areas as $c) {
+            $careas[$c['id']] = $c['name'];
+        }
         for ($i = 0; $i < count($resources); $i++) {
-            $resources[$i]["area"] = $modelArea->getName($id_space, $resources[$i]["id_area"]);
-            $resources[$i]["category"] = $modelCategory->getName($id_space, $resources[$i]["id_category"]);
+            $resources[$i]["area"] = $careas[$resources[$i]["id_area"]];
+            $resources[$i]["category"] = $ccats[$resources[$i]["id_category"]];
             if ($resources[$i]["category"] === "") {
                 $_SESSION["flash"] = ResourcesTranslator::NoCategoryWarning($resources[$i]['name'], $lang);
             }
@@ -97,6 +106,11 @@ class ResourcesinfoController extends ResourcesBaseController {
         foreach ($areas as $area) {
             $choicesA[] = $area["name"];
             $choicesidA[] = $area["id"];
+        }
+
+        if (empty($areas) || empty($cats)) {
+            $_SESSION['flash'] = ResourcesTranslator::Area_category_Needed($lang);
+            $_SESSION['flashClass'] = "warning";
         }
 
         $modelResource = new ResourceInfo();

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "lodash": "^4.16.0",
+    "marked": "^0.3.6"
+  }
+}

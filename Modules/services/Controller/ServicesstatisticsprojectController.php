@@ -457,8 +457,15 @@ class ServicesstatisticsprojectController extends ServicesController {
             $curentLine++;
 
             $unitName = $modelClient->getInstitution($id_space ,$invoice["id_responsible"]);
-            $visa = $modelVisa->get($id_space, $proj["in_charge"]); 
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($visa["id_user"]));
+            $proj = null;
+            $responsibleName = '';
+            if ($invoice["controller"] == "servicesinvoiceproject") {
+                $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
+                $visa = $modelVisa->get($id_space, $proj["in_charge"]);
+                $responsibleName = $modelUser->getUserFUllName($visa["id_user"]);
+            }
+
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $responsibleName);
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
 
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
@@ -467,9 +474,7 @@ class ServicesstatisticsprojectController extends ServicesController {
             $spreadsheet->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
             $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($id_space, $invoice["visa_send"]));
 
-            if ($invoice["controller"] == "servicesinvoiceproject") {
-                $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
-
+            if ($invoice["controller"] == "servicesinvoiceproject" && $proj) {
                 if (isset($proj["new_team"])) {
 
                     if ($proj["new_team"] == 2) {
@@ -690,7 +695,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         //                Services billed details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_billed_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_billed_details($lang));
         $spreadsheet->setActiveSheetIndex(4);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
@@ -785,7 +790,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         //                Services details
         // ////////////////////////////////////////////////////
         $objWorkSheet = $spreadsheet->createSheet();
-        $objWorkSheet->setTitle(ServicesTranslator::Sevices_details($lang));
+        $objWorkSheet->setTitle(ServicesTranslator::Services_details($lang));
         $spreadsheet->setActiveSheetIndex(5);
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 

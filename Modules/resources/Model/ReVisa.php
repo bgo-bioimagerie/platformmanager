@@ -35,10 +35,8 @@ class ReVisa extends Model {
         return $pdo;
     }
 
-    public function getForListByCategory($id_space, $id_resource_category){
-        $sql = "SELECT * FROM re_visas WHERE id_resource_category=? AND is_active=1 AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_resource_category, $id_space))->fetchAll();
-        
+    public function getForListByCategory($id_space, $id_resource_category) {
+        $data = $this->getByCategory($id_space, $id_resource_category);
         $names = array();
         $ids = array();
         foreach ($data as $d){
@@ -47,6 +45,11 @@ class ReVisa extends Model {
             $ids[] = $d["id"];
         }
         return array("names" => $names, "ids" => $ids);
+    }
+
+    public function getByCategory($id_space, $id_resource_category) {
+        $sql = "SELECT * FROM re_visas WHERE id_resource_category=? AND is_active=1 AND id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_resource_category, $id_space))->fetchAll();
     }
     
     public function mergeUsers($users){

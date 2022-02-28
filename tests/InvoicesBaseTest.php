@@ -6,11 +6,15 @@ require_once 'Framework/Request.php';
 require_once 'Framework/Configuration.php';
 
 require_once 'Modules/booking/Controller/BookinginvoiceController.php';
+require_once 'Modules/booking/Controller/BookingpricesController.php';
+
 require_once 'Modules/services/Controller/ServicesinvoiceprojectController.php';
 require_once 'Modules/services/Controller/ServicesinvoiceorderController.php';
 
 require_once 'Modules/invoices/Controller/InvoicesconfigController.php';
 require_once 'Modules/invoices/Controller/InvoiceslistController.php';
+
+require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 
 require_once 'tests/BaseTest.php';
 
@@ -52,18 +56,58 @@ class InvoicesBaseTest extends BaseTest {
         try {
             $c->runAction('invoices', 'pdftemplate', ['id_space' => $space['id']]);
         } catch(Throwable) {
+            if(!file_exists(__DIR__."/../data/invoices/".$space["id"])){
+                mkdir(__DIR__."/../data/invoices/".$space["id"]);
+            }
             copy($template, __DIR__."/../data/invoices/".$space["id"]."/template.twig");
         }
         unset($_FILES);
         // move fails in testing...
         //$this->assertTrue(file_exists(__DIR__."/../data/invoices/".$space["id"]."/template.twig"));
+
+        // Set resource / pricing
+        $req = $this->request([
+            "path" => "resources/".$space['id'],
+            "id" => 0
+        ]);
+        $c = new ResourcesinfoController($req, $space);
+        $data = $c->runAction('resources', 'index', ['id_space' => $space['id']]);
+        $resources = $data['resources'];
+        $form = [
+            "path" => "bookingpriceseditquery/".$space['id'],
+            "formid" => "bookingPricesForm",
+        ];
+        foreach ($resources as $resource) {
+            $form['resource_id'] = $resource['id'].'-day';
+            $form['resource'] = $resource['name'];
+            $cpm = new ClPricing();
+            $pricings = $cpm->getAll($space['id']);
+            $price = 10;
+            foreach($pricings as $p) {
+                $form["bel_" . $p['id']] = $price;
+                $price += 10;
+            }
+            $req = $this->request($form);
+            $c = new BookingpricesController($req, $space);
+            $c->runAction('booking', 'editquery', ['id_space' => $space['id']]);
+        }
+
+        $req = $this->request([
+            "path" => "bookingprices/".$space['id'],
+
+        ]);
+        $c = new BookingpricesController($req, $space);
+        $data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
+        $this->assertTrue(!empty($data['prices']));
+
     }
 
     protected function doInvoice($space, $user, $client){
+        $nb_invoices = 0;
         Configuration::getLogger()->debug('generate invoices', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
-        $dateStart = new DateTime('first day of this month');
-        $dateEnd = new DateTime('last day of this month');
+        $dateStart = new DateTime('first day of last month');
+        $dateEnd = new DateTime('last day of next month');
         $req = $this->request([
             "path" => "bookinginvoice/".$space['id'],
             "formid" => "ByPeriodForm",
@@ -72,13 +116,14 @@ class InvoicesBaseTest extends BaseTest {
             "id_resp" => $client['id']
         ]);
         $c = new BookinginvoiceController($req, $space);
-        $data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
-        $invoice_id = $data['invoice']["id"];
-        $this->assertTrue($invoice_id > 0);
+        $c->runAction('booking', 'index', ['id_space' => $space['id']]);
+        $list = $this->listInvoices($space);
+        $this->assertTrue(count($list) > $nb_invoices);
+        $nb_invoices++;
+        $booking_invoice_id = $list[0]['id'];
 
 
         // invoice order
-        /* FAILING in parseOrdersToDetails, a PR is in progress to fix orders
         $req = $this->request([
             "path" => "servicesinvoiceorder/".$space['id'],
             "formid" => "invoicebyunitform",
@@ -87,10 +132,10 @@ class InvoicesBaseTest extends BaseTest {
             "id_client" => $client['id']
         ]);
         $c = new ServicesinvoiceorderController($req, $space);
-        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
-        $service_invoice_id = $data['invoice']["id"];
-        $this->assertTrue($service_invoice_id > 0);
-        */
+        $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $list = $this->listInvoices($space);
+        $this->assertTrue(count($list) > $nb_invoices);
+        $nb_invoices++;
 
 
         // invoice service
@@ -102,9 +147,12 @@ class InvoicesBaseTest extends BaseTest {
             "id_resp" => $client['id']
         ]);
         $c = new ServicesinvoiceprojectController($req, $space);
-        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
-        $service_invoice_id = $data['invoice']["id"];
-        $this->assertTrue($service_invoice_id > 0);
+        $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $list = $this->listInvoices($space);
+        $this->assertTrue(count($list) > $nb_invoices);
+        $nb_invoices++;
+        $service_invoice_id = $list[0]['id'];
+
         $req = $this->request([
             "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
         ]);
@@ -141,14 +189,14 @@ class InvoicesBaseTest extends BaseTest {
 
 
         $req = $this->request([
-            "path" => "bookinginvoiceedit/".$space['id'].'/'.$invoice_id.'/1'
+            "path" => "bookinginvoiceedit/".$space['id'].'/'.$booking_invoice_id.'/1'
         ]);
         // try generate pdf
         $c = new BookinginvoiceController($req, $space);
-        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 1]);
+        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $booking_invoice_id, 'pdf' => 1]);
 
         // with details
-        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 2]);
+        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $booking_invoice_id, 'pdf' => 2]);
 
         $req = $this->request([
             "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id

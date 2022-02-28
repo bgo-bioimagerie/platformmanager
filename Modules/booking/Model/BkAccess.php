@@ -37,7 +37,7 @@ class BkAccess extends Model {
         }
     }
 
-    public function getAll($id_space, $sortentry = 'id') {
+    public function getAll($id_space, $sortentry = 'id_access') {
         $sql = "SELECT * FROM bk_access WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();

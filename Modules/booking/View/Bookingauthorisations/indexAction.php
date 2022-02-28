@@ -1,13 +1,13 @@
 <?php include 'Modules/core/View/Corespaceaccess/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="pm-table">
     
     <?php echo $tableHtml ?>
+    <?php echo $formHtml ?>
     
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

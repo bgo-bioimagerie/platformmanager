@@ -31,6 +31,11 @@ class BookingschedulingController extends BookingsettingsController {
         
         $modelArea = new ReArea();
         $areas = $modelArea->getForSpace($id_space);
+
+        if (empty($areas)) {
+            $_SESSION['flash'] = ResourcesTranslator::Area_Needed($lang);
+            $_SESSION['flashClass'] = "warning";
+        }
         
         $table = new TableView();
         $table->setTitle(BookingTranslator::Scheduling($lang), 3);

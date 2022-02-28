@@ -1,9 +1,9 @@
 <div class="col-xs-12 col-md-10" style="border-bottom: 1px solid #666;">
     <div class="col-xs-10">
         <p style="text-transform: uppercase; font-weight: bold; color: #666;">
-            <b>
+            <strong>
                 <?php echo date("F Y", mktime(0, 0, 0, $month, 1, $year)) ?>
-            </b>
+            </strong>
         </p>
     </div>
     <div class="col-md-2 text-left">
@@ -22,7 +22,7 @@
 </div>
 
 <div class="col-xs-12">
-    <table class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
+    <table aria-label="month list of notes" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
         <?php
         foreach ($notes as $dnote) {
             if ($dnote["is_month_task"] == 1) {

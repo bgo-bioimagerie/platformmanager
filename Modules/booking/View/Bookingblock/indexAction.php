@@ -1,9 +1,9 @@
 <?php include 'Modules/booking/View/layoutsettings.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
-
-<div class="pm-form">
+<div class="container">
+<div class="pm-form row">
     <form role="form" class="form-horizontal" action="bookingblockquery/<?php echo $id_space ?>"
           method="post">
 
@@ -15,7 +15,7 @@
             </h3>
         </div>
 
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-xs-12">
             <?php if ($errormessage != "") {
                 ?>
                 <div class="alert alert-danger text-center">
@@ -25,7 +25,7 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::Short_description($lang) ?></label>
+            <label for="name" class="control-label col-xs-3"><?php echo BookingTranslator::Short_description($lang) ?></label>
             <div class="col-xs-8">
                 <input class="form-control" id="name" type="text" name="short_description"
                        value=""
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-xs-4"><?php echo ResourcesTranslator::Resources($lang) ?></label>
+            <label class="control-label col-xs-3"><?php echo ResourcesTranslator::Resources($lang) ?></label>
             <div class="col-xs-8">
                 <select class="form-control" name="resources[]" size="10" multiple="multiple">
                     <?php
@@ -48,27 +48,27 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::Beginning_of_the_reservation($lang) ?>:</label>
+            <label for="begin_date" class="control-label col-xs-3"><?php echo BookingTranslator::Beginning_of_the_reservation($lang) ?>:</label>
             <div class="col-xs-8">
                 <div class='input-group date'>
-                    <input type='date' class="form-control" name="begin_date"
+                    <input type='date' class="form-control" id="begin_date" name="begin_date"
                            value=""/>
                 </div>
             </div>
         </div>
         <div class="form-group">    
-            <div class="col-xs-8 col-xs-offset-4">
+            <div class="">
                 <!-- time -->
 
-                <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::time($lang) ?>:</label>
+                <label for="begin_hour" class="control-label col-xs-3"><?php echo BookingTranslator::time($lang) ?>:</label>
 
                 <div class="col-xs-3">
-                    <input class="form-control" id="name" type="text" name="begin_hour"
+                    <input class="form-control" id="begin_hour" type="text" name="begin_hour"
                            value="" 
                            />
                 </div>
                 <div class="col-xs-1">
-                    <b>:</b>
+                    :
                 </div>
                 <div class="col-xs-3">
                     <input class="form-control" id="name" type="text" name="begin_min"
@@ -79,27 +79,27 @@
         </div>
 
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::End_of_the_reservation($lang) ?>:</label>
+            <label for="end_date" class="control-label col-xs-3"><?php echo BookingTranslator::End_of_the_reservation($lang) ?>:</label>
             <div class="col-xs-8">
                 <div class='input-group date'>
-                    <input type='date' class="form-control" name="end_date"
+                    <input type='date' class="form-control" id="end_date" name="end_date"
                            value=""/>
                 </div>
             </div>
         </div>
         <div class="form-group">    
-            <div class="col-xs-8 col-xs-offset-4">
+            <div class="">
                 <!-- time -->
 
-                <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::time($lang) ?>:</label>
+                <label for="end_hour" class="control-label col-xs-3"><?php echo BookingTranslator::time($lang) ?>:</label>
 
                 <div class="col-xs-3">
-                    <input class="form-control" id="name" type="text" name="end_hour"
+                    <input class="form-control" id="end_hour" type="text" name="end_hour"
                            value="" 
                            />
                 </div>
                 <div class="col-xs-1">
-                    <b>:</b>
+                    :
                 </div>
                 <div class="col-xs-3">
                     <input class="form-control" id="name" type="text" name="end_min"
@@ -111,9 +111,9 @@
 
         <!-- color code -->
         <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-4"><?php echo BookingTranslator::Color_code($lang) ?></label>
+            <label for="color_code_id" class="control-label col-xs-3"><?php echo BookingTranslator::Color_code($lang) ?></label>
             <div class="col-xs-8">
-                <select class="form-control" name="color_code_id" <?php echo $readOnlyGlobal ?>>
+                <select class="form-control" id="color_code_id" name="color_code_id" <?php echo $readOnlyGlobal ?>>
                     <?php
                     $colorID = 1;
                     foreach ($colorCodes as $colorCode) {
@@ -132,8 +132,8 @@
             </div>
         </div>
 
-        <br></br>
-        <div class="col-xs-4 col-xs-offset-8" id="button-div">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-9" id="button-div">
             <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Save($lang) ?>" />
             <button type="button" onclick="location.href = 'bookingblock/<?php echo $id_space ?>'" class="btn btn-default"><?php echo CoreTranslator::Cancel($lang) ?></button>
         </div>
@@ -141,5 +141,6 @@
 </div>
 </div>
 
-<?php
-endblock();
+</div>
+
+<?php endblock(); ?>

@@ -16,7 +16,7 @@
 </style>
 
 <?php endblock(); ?>
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="container" id="welcome">
@@ -119,7 +119,7 @@
 
             <?php if(!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
             <div class="row">
-                <div class="col-xs-12 text-center">
+                <div class="col-xs-12 text-center" id ="welcome" style="min-height: 400px">
                     <?php if($content) { echo $content; } else {?>
                         <h3 style="margin: 20px"><?php echo CoreTranslator::welcome($lang) ?></h3>
                         <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
@@ -249,7 +249,7 @@ var app = new Vue({
             let slist = {}
             Object.keys(this.spaces).forEach(s => {
                 let space = this.spaces[s]
-                if(space.name?.toLowerCase().includes(event) || space.description?.toLowerCase().includes(event)){
+                if((space.name && space.name.toLowerCase().includes(event)) || (space.description && space.description.toLowerCase().includes(event))){
                     spaces.push(space)
                     slist[space.id] = true
                 }
@@ -258,7 +258,7 @@ var app = new Vue({
                 if (slist[c.id_space]) {
                     return
                 }
-                if (c.title?.toLowerCase().includes(event) || c.short_desc?.toLowerCase().includes(event) || c.full_desc?.toLowerCase().includes(event)) {
+                if ((c.title && c.title.toLowerCase().includes(event)) || (c.short_desc && c.short_desc.toLowerCase().includes(event)) || (c.full_desc && c.full_desc.toLowerCase().includes(event))) {
                     spaces.push(this.spaces[c.id_space])
                     slist[c.id_space] = true
                 }
@@ -267,7 +267,7 @@ var app = new Vue({
                 if (slist[c.id_space]) {
                     return
                 }
-                if (c.name?.toLowerCase().includes(event) || c.description?.toLowerCase().includes(event) || c.long_description?.toLowerCase().includes(event)) {
+                if ((c.name && c.name.toLowerCase().includes(event)) || (c.description && c.description.toLowerCase().includes(event)) || (c.long_description && c.long_description.toLowerCase().includes(event))) {
                     spaces.push(this.spaces[c.id_space])
                     slist[c.id_space] = true
                 }
@@ -281,5 +281,4 @@ var app = new Vue({
 
 
 </script>
-<?php
-endblock();
+<?php endblock(); ?>

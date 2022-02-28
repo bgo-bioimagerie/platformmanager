@@ -249,6 +249,60 @@ class BookingTest extends BookingBaseTest {
             Configuration::getLogger()->error('should be able to book at 19h', ['error' => $e]);
         }
         $this->assertTrue($canBook, 'should be able to book at 19h');
+
+        $this->asUser($manager['login'], $space['id']);
+        $nextMonday = new DateTime();
+        $nextMonday->modify('next monday');
+        // navigate
+        $req = $this->request([
+            'path' => 'bookingday/'.$space['id'],
+            'bk_curentDate' => $nextMonday->format('Y-m-d'),
+            'bk_id_resource' => $resource['id'],
+            'bk_id_area' => $area['id']
+        ]);
+        $c = new BookingController($req, $space);
+        $data = $c->runAction('booking', 'day', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $this->assertTrue(!empty($data['bookings']));
+
+        $req = $this->request([
+            'path' => 'bookingdayarea/'.$space['id'],
+            'bk_curentDate' => $nextMonday->format('Y-m-d'),
+            'bk_id_resource' => $resource['id'],
+            'bk_id_area' => $area['id']
+        ]);
+        $c = new BookingController($req, $space);
+        $data = $c->runAction('booking', 'dayarea', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $this->assertTrue(!empty($data['bookings']));
+
+        $req = $this->request([
+            'path' => 'bookingweek/'.$space['id'],
+            'bk_curentDate' => $nextMonday->format('Y-m-d'),
+            'bk_id_resource' => $resource['id'],
+            'bk_id_area' => $area['id']
+        ]);
+        $c = new BookingController($req, $space);
+        $data = $c->runAction('booking', 'week', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $this->assertTrue(!empty($data['bookings']));
+
+        $req = $this->request([
+            'path' => 'bookingweekarea/'.$space['id'],
+            'bk_curentDate' => $nextMonday->format('Y-m-d'),
+            'bk_id_resource' => $resource['id'],
+            'bk_id_area' => $area['id']
+        ]);
+        $c = new BookingController($req, $space);
+        $data = $c->runAction('booking', 'weekarea', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $this->assertTrue(!empty($data['bookings']));
+
+        $req = $this->request([
+            'path' => 'bookingmonth/'.$space['id'],
+            'bk_curentDate' => $nextMonday->format('Y-m-d'),
+            'bk_id_resource' => $resource['id'],
+            'bk_id_area' => $area['id']
+        ]);
+        $c = new BookingController($req, $space);
+        $data = $c->runAction('booking', 'month', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $this->assertTrue(!empty($data['bookings']));
     }
 
 }

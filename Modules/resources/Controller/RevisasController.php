@@ -110,11 +110,14 @@ class RevisasController extends ResourcesBaseController {
 
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
-        $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
 
-        
+        if (empty($users['ids']) || empty($resourcesCategories)) {
+            $_SESSION['flash'] = ResourcesTranslator::User_category_Needed($lang);
+            $_SESSION['flashClass'] = "warning";
+        }
+
+        $form->addSelect("id_instructor", CoreTranslator::User($lang), $users["names"], $users["ids"], $visaInfo["id_instructor"]);
         $form->addSelect("is_active", ResourcesTranslator::IsActive($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $visaInfo["is_active"]);
-        
         $ischoicesid = array(1, 2);
         $ischoices = array(ResourcesTranslator::Instructor($lang), CoreTranslator::Responsible($lang));
         $form->addSelect("instructor_status", ResourcesTranslator::Instructor_status($lang), $ischoices, $ischoicesid, $visaInfo["instructor_status"]);
@@ -200,12 +203,22 @@ class RevisasController extends ResourcesBaseController {
         echo $content;
     }
 
-    
     public function deleteAction($id_space, $id){
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelVisa = new ReVisa();
         $modelVisa->delete($id_space, $id);
         
         $this->redirect("resourcesvisa/" . $id_space);
+    }
+
+    public function getCategoryvisasAction($id_space, $id_category) {
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $modelReVisa = new ReVisa();
+        $visas = $modelReVisa->getForListByCategory($id_space, $id_category);
+        $data = array();
+        for ($i=0; $i<count($visas['ids']); $i++) {
+            $data[$i] = ["id" => $visas["ids"][$i], "name" => $visas["names"][$i]];
+        }
+        $this->render(['data' => ['elements' => $data]]);
     }
 }

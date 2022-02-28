@@ -208,9 +208,38 @@ class ServicesTranslator {
 
     public static function Quantity($lang) {
         if ($lang == "fr") {
-            return "Quantité/Temps/Prix";
+            return "Quantité";
         }
-        return "Quantity/Time/Price";
+        return "Quantity";
+    }
+
+    public static function ServicesTypes($type, $lang) {
+        $result = $type;
+        if ($lang == "fr") {
+            switch($type) {
+                case "Quantity":
+                    $result = "Quantité";
+                    break;
+                case "Time minutes":
+                    $result = "Temps en minutes";
+                    break;
+                case "Time hours":
+                    $result = "Temps en heures";
+                    break;
+                case "Price":
+                    $result = "Prix";
+                    break;
+                case "Half day":
+                    $result = "Demi-journée";
+                    break;
+                case "Day":
+                    $result = "Journée";
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $result;
     }
 
     public static function Services_Orders($lang) {
@@ -472,7 +501,7 @@ class ServicesTranslator {
         return " to ";
     }
 
-    public static function Sevices_billed_details($lang) {
+    public static function Services_billed_details($lang) {
         if ($lang == "fr") {
             return "PRESTATIONS FACTUREES";
         }
@@ -570,11 +599,11 @@ class ServicesTranslator {
         return "Total number of projects";
     }
 
-    public static function Sevices_details($lang) {
+    public static function Services_details($lang) {
         if ($lang == "fr") {
             return "PRESTATIONS";
         }
-        return "Sevices details";
+        return "Services details";
     }
 
     public static function Sheet($lang) {

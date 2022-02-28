@@ -44,13 +44,13 @@ class CatalogconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, 'catalog', $lang);
         
         if ($formMenusactivation->check()) {
-            $this->menusactivationForm($id_space, 'catalog', 'th-list');
+            $this->menusactivation($id_space, 'catalog', 'th-list');
             return $this->redirect("catalogconfig/" . $id_space);
         }
 
         $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'catalogsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivationForm($id_space, 'catalogsettings', 'th-list');
+            $this->menusactivation($id_space, 'catalogsettings', 'th-list', 'catalog');
             return $this->redirect("catalogconfig/" . $id_space);
         }
 
@@ -109,7 +109,7 @@ class CatalogconfigController extends CoresecureController {
 
     protected function antibodiesForm($id_space, $lang) {
         $modelCoreConfig = new CoreConfig();
-        $ca_use_antibodies = $modelCoreConfig->getParam("ca_use_antibodies", $id_space);
+        $ca_use_antibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $id_space, 0);
 
         $form = new Form($this->request, "ca_use_antibodiesForm");
         $form->addSeparator(CatalogTranslator::Antibody($lang));
@@ -124,7 +124,7 @@ class CatalogconfigController extends CoresecureController {
     
     protected function resourcesForm($id_space, $lang) {
         $modelCoreConfig = new CoreConfig();
-        $ca_use_resources = $modelCoreConfig->getParam("ca_use_resources", $id_space);
+        $ca_use_resources = $modelCoreConfig->getParamSpace("ca_use_resources", $id_space, 0);
 
         $form = new Form($this->request, "ca_use_resourcesForm");
         $form->addSeparator(CatalogTranslator::Resources($lang));

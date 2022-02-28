@@ -12,6 +12,7 @@ require_once 'Modules/booking/Controller/BookingdefaultController.php';
 require_once 'Modules/booking/Controller/BookingController.php';
 
 require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
+require_once 'Modules/core/Controller/CorespaceuserController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Model/ReVisa.php';
@@ -141,6 +142,7 @@ class BookingBaseTest extends BaseTest {
         foreach($data['bkaccess'] as $bkaccess) {
             $this->assertEquals($expects[$bkaccess['resource']], $bkaccess['bkaccess']);
         }
+
     }
 
     protected function viewBooking($space, $user, $id) {
@@ -208,17 +210,23 @@ class BookingBaseTest extends BaseTest {
         $visas = $modelVisa->getForListByCategory($space['id'], $id_resource_category);
 
         $req = $this->request([
-            "path" => "bookingauthorizationsadd/".$space['id']."/".$id_resource_category."_".$user['id'],
+            "path" => "corespaceuseredit/".$space['id']."/".$user['id'],
             "formid" => "authorisationAddForm",
             "user" => $user['id'],
             "resource" => $id_resource_category,
             "visa_id" => $visas['ids'][0],
             "date" => date('Y-m-d')
         ]);
-        $c = new BookingauthorisationsController($req, $space);
-        $c->runAction('booking', 'add', ['id_space' => $space['id'], 'id' => $id_resource_category."_".$user['id']]);
-    }
+        $c = new CorespaceuserController($req, $space);
+        $c->runAction('corespaceuser', 'edit', ['id_space' => $space['id'], 'id_user' => $user['id']]);
 
+        $req = $this->request([
+            "path" => "bookingauthorizations/".$space['id']."/".$user['id'],
+        ]);
+        $c = new BookingauthorisationsController($req, $space);
+        $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id_user' => $user['id']]);
+        $this->assertTrue(!empty($data['bkauthorizations']));
+    }
 
 }
 
