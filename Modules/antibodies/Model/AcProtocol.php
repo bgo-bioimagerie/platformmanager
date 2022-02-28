@@ -227,9 +227,6 @@ class AcProtocol extends Model {
      * 
      */
     public function addProtocol($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "") {
-
-        //, `no_proto`, proto, fixative, option, enzyme, dem, `acl_inc`, linker, inc, acll
-        // ,?,?,?,?,?,?,?,?,?,?,?
         $sql = "insert into ac_protocol(id_space, kit, no_proto, proto, fixative, option_, enzyme, dem, acl_inc, linker, inc, acll, inc2, associe)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -237,9 +234,6 @@ class AcProtocol extends Model {
     }
 
     public function importProtocol($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "") {
-
-        //, `no_proto`, proto, fixative, option, enzyme, dem, `acl_inc`, linker, inc, acll
-        // ,?,?,?,?,?,?,?,?,?,?,?
         $sql = "insert into ac_protocol(id, id_space, kit, no_proto, proto, fixative, option_, enzyme, dem, acl_inc, linker, inc, acll, inc2, associe)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 

@@ -136,10 +136,8 @@ class BookingdefaultController extends BookingabstractController {
             return true;
         }
 
-        // $modelConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
         $limitHours = $modelRestrictions->getBookingDelayUserCanEdit($id_space, $id_resource);
-        //$limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
 
         if ($id_recipient == $id_user) {
 

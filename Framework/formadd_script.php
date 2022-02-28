@@ -55,7 +55,6 @@
                 var chkbox = row.cells[0].childNodes[0];
                 if (null != chkbox && true == chkbox.checked) {
                     if (rowCount <= idx) {
-                        // alert("Cannot delete all the rows.");
                         this.addRow(tableID);
                         table.deleteRow(i);
                         break;

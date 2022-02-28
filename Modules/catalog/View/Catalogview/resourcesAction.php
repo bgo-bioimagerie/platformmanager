@@ -26,7 +26,7 @@
                             list($width, $height, $type, $attr) = getimagesize($imageFile);
                             ?>
                             <a href="<?php echo $imageFile ?>">
-                                <img src="<?php echo $imageFile ?>" width="100%" />
+                                <img alt="resource photo" src="<?php echo $imageFile ?>" width="100%" />
                             </a>
                         <?php 
                         }

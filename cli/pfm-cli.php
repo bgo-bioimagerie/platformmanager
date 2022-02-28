@@ -104,12 +104,14 @@ try {
                 }
                 $installFile = "Modules/" . $module . "/Model/" . $moduleName . "Install.php";
                 if (file_exists($installFile)) {
-                    $logger->info('Update database for module ' . $moduleName . " => ". $installFile);
+                    Configuration::getLogger()->info('Update database for module ' . $moduleName . " => ". $installFile);
                     require_once $installFile;
                     $className = $moduleName . "Install";
                     $object = new $className();
                     $object->createDatabase();
-                    $logger->info('update database for module ' .$modules[$i]  . "done");
+                    Configuration::getLogger()->info('update database for module ' .$modules[$i]  . "done");
+                    $cdb = new CoreDB();
+                    $cdb->base();
                 }
                 break;
             }
@@ -127,20 +129,16 @@ try {
                 $routes = [];
                 foreach ($rl as $rll) {
                     $routes[] = ['methods' => $rll[0], 'url' => $rll[1], 'action' => $rll[2]];
-                    //echo "* $rll[0] - $rll[1] - $rll[2]\n";
                 }
                 $fc = new FCache();
                 $rl = $fc->listAll();
                 foreach ($rl as $rll) {
                     $route = ['methods' => 'GET|POST', 'action' => $rll[1]];
-                    // $url = "* GET|POST - $rll[0] /$rll[0]";
                     $u = '/'.$rll[0];
                     for($i=2;$i<count($rll);$i++) {
-                        // $url .= "/[i:".$rll[$i]."]";
                         $u .= "/[i:".$rll[$i]."]";
                     }
                     $route['url'] = $u;
-                    // $url .= " - ".$rll[1];
                     $routes[] = $route;
                 }
                 if($args->getOpt('yaml')) {

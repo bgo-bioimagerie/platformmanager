@@ -13,14 +13,12 @@ require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SePrice.php';
-//require_once 'Modules/services/Model/SeStats.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 
-// require_once 'externals/PHPExcel/Classes/PHPExcel.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
 
@@ -33,7 +31,6 @@ class ServicesstatisticsorderController extends ServicesController {
      */
     public function __construct(Request $request, ?array $space=null) {
         parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
 
     }
@@ -102,7 +99,6 @@ class ServicesstatisticsorderController extends ServicesController {
         // Create new PHPExcel object
         if($spreadsheet == null) {
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-            // $spreadsheet = new PHPExcel();
 
             // Set properties
             $spreadsheet->getProperties()->setCreator("Platform-Manager");
@@ -220,7 +216,6 @@ class ServicesstatisticsorderController extends ServicesController {
             // Should work not in debug mode
             $client = $modelClUser->getUserClientAccounts($id_space, $id_user);
             $clientName = $client ? $client[0]["name"] : "n/a";
-            // $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
 
            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $clientName /*$modelUser->getUserFUllName($proj["id_resp"])*/);
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -477,24 +472,15 @@ class ServicesstatisticsorderController extends ServicesController {
             $offset = 4;
             $projItemCount = 0;
             foreach ($entries as $entry) {
-                // print_r($entry);
-                // echo "<br/>";
                 $idx++;
                 $pos = $this->findItemPos2($items, $entry["id"]);
-                //echo "id = " . $entry["id"] . " pos = " . $pos . "<br/>";
                 if ($pos > 0 && $entry["pos"] > 0) {
                    
                     $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
                     $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
-                    //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
             }
-            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
-            //if($projItemCount == 0){
-            //    $spreadsheet->getActiveSheet()->removeRow($curentLine);
-            //    $curentLine--;
-            //}
         }
 
         // total services sum

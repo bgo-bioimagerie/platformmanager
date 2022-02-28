@@ -3,7 +3,14 @@
     <?php
     $firstDay = $year . "-" . $month . "-1";
     $lastDayIdx = date("t", strtotime($firstDay));
+    if(strlen($month) == 1) {
+        $month = "0$month";
+    }
     for ($i = 1; $i <= $lastDayIdx; $i++) {
+        $day = $i;
+        if($i<10) {
+            $day = "0$i";
+        }
         ?>
 
         <div style="border-bottom: 1px solid #666;"> 
@@ -16,33 +23,21 @@
 
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a id="addnote_<?php echo $year ?>_<?php echo $month ?>_<?php echo $i ?>"><?php echo BulletjournalTranslator::Notes($lang) ?> </a></li>
-                    <li><a id="addtask_<?php echo $year ?>_<?php echo $month ?>_<?php echo $i ?>"><?php echo BulletjournalTranslator::Task($lang) ?></a></li>
-                    <li><a id="addevent_<?php echo $year ?>_<?php echo $month ?>_<?php echo $i ?>"><?php echo BulletjournalTranslator::Event($lang) ?></a></li>
+                    <li><span style="margin-left: 5px" onclick="showAddNoteForm('<?php echo $year ?>', '<?php echo $month ?>', '<?php echo $day ?>', 0)" id="addnote_<?php echo $year ?>_<?php echo $month ?>_<?php echo $day ?>"><?php echo BulletjournalTranslator::Notes($lang) ?> </span></li>
+                    <li><span style="margin-left: 5px" onclick="showAddTaskForm('<?php echo $year ?>', '<?php echo $month ?>', '<?php echo $day ?>', 0)" id="addtask_<?php echo $year ?>_<?php echo $month ?>_<?php echo $day ?>"><?php echo BulletjournalTranslator::Task($lang) ?></span></li>
+                    <li><span style="margin-left: 5px" onclick="showAddEventForm('<?php echo $year ?>', '<?php echo $month ?>', '<?php echo $day ?>', 0)" id="addevent_<?php echo $year ?>_<?php echo $month ?>_<?php echo $day ?>"><?php echo BulletjournalTranslator::Event($lang) ?></span></li>
                 </ul>
             </div>
         </div>
-        <?php
-        $di = $i;
-        if ($i < 10) {
-            $di = "0" . $i;
-        }
-        ?>
-        <table class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $di ?>">
+        <table role="presentation" aria-label="notes per day" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $day ?>">
             <?php
             foreach ($notes as $dnote) {
-                //echo "note = " . $dnote["is_month_task"] . "<br/>";
-                // echo "note date = " . $dnote["date"] . "<br/>";
-                // echo "note is month = " . $dnote["is_month_task"] . "<br/>";
                 if ($dnote["is_month_task"] == 0) {
-                    //echo "note pass= " . $dnote["date"] . "<br/>";
                     $d = $i;
                     if ($i < 10) {
                         $d = "0" . $i;
                     }
-                    //echo "compare to " . $year . "-" . $month . "-" . $d . "<br/>";
                     if ($dnote["date"] == $year . "-" . $month . "-" . $d) {
-                        //echo "found <br/>";
                         $typeicon = "glyphicon glyphicon-minus";
                         if ($dnote["type"] == 2) {
                             $typeicon = "glyphicon glyphicon-asterisk";
@@ -97,7 +92,6 @@
                             ?>
 
                             <td><a style="color:#666; cursor:pointer;" id="<?php echo $openlink ?>_<?php echo $dnote["id"] ?>"> <?php echo $dnote["name"] ?></a></td>
-                            <td><button id="collections_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo BulletjournalTranslator::Collections($lang) ?></button></td>
                                 <?php
                             if ($dnote["type"] == 2) {
                                 $editTxt = BulletjournalTranslator::MarkAsDone($lang);
@@ -109,8 +103,8 @@
                                     $cancelTxt = BulletjournalTranslator::ReOpen($lang);
                                 }
                                 ?>
-                                <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-primary"><?php echo $editTxt ?></button></td>
-                                <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo $cancelTxt ?></button></td>
+                                <td><button onclick="closeTask(<?php echo $dnote['id'] ?>)" id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-primary"><?php echo $editTxt ?></button></td>
+                                <td><button onclick="cancelTask(<?php echo $dnote['id'] ?>)" id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo $cancelTxt ?></button></td>
                                 <?php
                             } else {
                                 ?>
