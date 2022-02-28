@@ -14,6 +14,10 @@ require_once 'Modules/core/Model/CoreSpace.php';
  */
 class BkCalendarEntry extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calendar_entry";
+    }
+
     /**
      * Create the calendar entry table
      *

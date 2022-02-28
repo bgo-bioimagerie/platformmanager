@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkPackage extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_packages";
+    }
+
     /**
      * Create the area table
      *

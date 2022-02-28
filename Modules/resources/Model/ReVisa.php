@@ -14,6 +14,10 @@ function cmpvisas($a, $b) {
  */
 class ReVisa extends Model {
 
+    public function __construct() {
+        $this->tableName = "re_visas";
+    }
+
     /**
      * Create the table
      * 
@@ -33,10 +37,6 @@ class ReVisa extends Model {
         $pdo = $this->runRequest($sql);
         $this->addColumn('re_visas', 'is_active', 'int(0)', 1);
         return $pdo;
-    }
-
-    public function __construct() {
-        $this->tableName = "re_visas";
     }
 
     public function getForListByCategory($id_space, $id_resource_category) {

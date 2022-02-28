@@ -18,6 +18,10 @@ require_once 'Modules/services/Model/StockShelf.php';
  */
 class SeProject extends Model {
 
+    public function __construct() {
+        $this->tableName = "se_project";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_project` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,

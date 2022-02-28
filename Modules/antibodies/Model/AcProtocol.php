@@ -20,6 +20,10 @@ require_once 'Modules/antibodies/Model/Acii.php';
  */
 class AcProtocol extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_protocol";
+    }
+
     /**
      * Create the protocols table
      * 

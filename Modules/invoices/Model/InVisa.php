@@ -11,6 +11,10 @@ require_once 'Modules/core/Model/CoreUser.php';
  */
 class InVisa extends Model {
 
+    public function __construct() {
+        $this->tableName = "in_visa";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `in_visa` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,

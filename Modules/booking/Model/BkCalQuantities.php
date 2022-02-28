@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkCalQuantities extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calquantities";
+    }
+
     /**
      * Create the calsupplementaries table
      *
