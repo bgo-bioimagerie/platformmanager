@@ -929,6 +929,18 @@ class FormSelectElement extends FormBaseElement {
         return $this;
     }
 
+    // Fetch options from remote url, update list of depends changed
+    public function depends(array $targets) {
+        $js = '
+        let dynamicForms = new DynamicForms();
+       
+        let sourceId = "'.$this->id.'";
+        let targets = '.json_encode($targets, JSON_UNESCAPED_SLASHES).';
+        dynamicForms.dynamicFields(sourceId, targets, id_space);
+        ';
+        $this->javascript['x-dep-'.$this->id] =  $js;
+        
+    }
 
    public function html(?string $user=null, ?string $id_space=null): string {
        $html = '<select class="form-control '.$this->getClasses().'" '.$this->options($user, $id_space).' id="'.$this->id.'" name="'.$this->name.'" value="'.$this->value.'">'."\n";
@@ -1068,6 +1080,9 @@ class PfmForm {
         }
         $html =  "\n<script type=\"module\">\n";
         $html .= "import {FormControls} from '/externals/pfm/controls/formcontrols_script.js';\n";
+        $html .= "import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js'\n";
+
+        $html .= 'let id_space = '.self::$id_space.";\n";
         $html .= 'document.addEventListener("DOMContentLoaded", function(event) {'."\n";
         $html .= "  let control = new FormControls();\n";
         if(!isset(self::$js['_forms'])) {
