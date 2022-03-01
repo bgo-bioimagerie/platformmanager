@@ -22,7 +22,7 @@
 <div class="container" id="welcome">
     <div class="row">
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-3">
             <div><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
             <div class="btn-group-vertical btn-group-justified" role=group">
                     <a class="m-1 btn btn-primary" href="coretiles?mine=1"><?php echo CoreTranslator::MySpaces($lang); ?></a>
@@ -35,21 +35,21 @@
         </div>
 
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-5">
             <div class="row">
                 <div class="col-12">
                     <input id="search" type="text" class="form-control" v-model="search" placeholder="search"/>
                 </div>
             </div>
             <div class="row">
-                <div class="col-4 col-md-4 m-2" v-for="space in matches" :key="space.id">
+                <div class="col-12 m-2" v-for="space in matches" :key="space.id">
                 <div class="card text-dark bg-light">
-                <img class="card-img-top" v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="margin-left: -15px;width:218px;height:150px">
                     <div class="card-header">
                         <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="bi-lock-fill"></span></a>
                     </div>
                    <div class="card-body">
-                        <p style="color:#a1a1a1; font-size:12px;">{{space.description.substr(0, 50)}}</p>
+                        <img class="card-img-top" v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="width:100%">
+                        <p><small>{{space.description.substr(0, 50)}}</small></p>
                         <div>
                             <small v-if="space.support">
                             support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
@@ -71,9 +71,8 @@
             </div>
             <div class="row" id="user_stars">
                 <?php foreach($spaces as $item) { ?>
-                <div class="col-6 col-md-4 m-2">
+                <div class="col-12 col-md-6 m-2">
                 <div class="card text-dark bg-light">
-                    <?php if(isset($icon)) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
                     <div class="card-header">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
                         <?php if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
@@ -82,6 +81,7 @@
                         <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
                     </div>
                     <div class="card-body">
+                        <?php if(isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%"><?php } ?>
                         <?php if(strlen($item['description']) > 50) { echo substr($item["description"], 0, 50)."..."; } else { echo $item['description']; } ?>
                         </div>
                     <div class="card-footer">

@@ -4,11 +4,11 @@
  ?>
 
 <?php startblock('stylesheet') ?>
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/fixedColumns.bootstrap.min.css">
-    <script src="externals/dataTables/jquery.dataTables.min.js"></script>
-    <script src="externals/dataTables/dataTables.bootstrap.min.js"></script>
-    <script src="externals/dataTables/dataTables.fixedColumns.min.js"></script>
+<link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+
+<script src="externals/dataTables/jquery-1.12.3.js"></script>
+<script src="externals/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="externals/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <?php endblock() ?>
 
 <!-- body -->     
