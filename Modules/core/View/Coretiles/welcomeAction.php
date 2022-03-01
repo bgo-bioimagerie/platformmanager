@@ -19,10 +19,10 @@
     
 <?php startblock('content') ?>
 
-<div class="container" id="welcome">
+<div class="" id="welcome">
     <div class="row">
 
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-2">
             <div><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
             <div class="btn-group-vertical btn-group-justified" role=group">
                     <a class="m-1 btn btn-primary" href="coretiles?mine=1"><?php echo CoreTranslator::MySpaces($lang); ?></a>
@@ -35,14 +35,14 @@
         </div>
 
 
-        <div class="col-12 col-md-5">
+        <div class="col-12 col-md-6">
             <div class="row">
-                <div class="col-12">
+                <div class="col-4">
                     <input id="search" type="text" class="form-control" v-model="search" placeholder="search"/>
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 m-2" v-for="space in matches" :key="space.id">
+                <div class="col-12 col-md-4 m-2" v-for="space in matches" :key="space.id">
                 <div class="card text-dark bg-light">
                     <div class="card-header">
                         <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="bi-lock-fill"></span></a>

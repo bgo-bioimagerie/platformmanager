@@ -9,10 +9,9 @@
         <a style="{%if color %} color: {{color}}; {%endif%}" class="menu-button" href="resources/{{id_space}}">{{Resources}}</a>
         <a style="{%if color %} color: {{color}}; {%endif%}" class="menu-button" href="resourcesedit/{{id_space}}/0">+</a>
     </div>
-    
-    <div>
-        <br/>
-        {{Sorting}}
+    <br/>
+    <div class="pm-inline-div">
+        {{Sorting | upper}}
     </div>
     <div class="pm-inline-div">
         <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="reareas/{{id_space}}">{{Areas}}</a>
@@ -22,9 +21,9 @@
         <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="recategories/{{id_space}}">{{Categories}}</a>
         <a style="{%if color %} color: {{color}}; {%endif%}" href="recategoriesedit/{{id_space}}/0">+</a>
     </div>
+    <br/>
     <div class="pm-inline-div">
-        <br/>
-        {{Responsible}}
+        {{Responsible | upper}}
     </div>
     <div class=" pm-inline-div">
         <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="rerespsstatus/{{id_space}}">{{Resps_Status}}</a>
@@ -34,9 +33,9 @@
         <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="resourcesvisa/{{id_space}}">{{Visas}}</a>
         <a style="{%if color %} color: {{color}}; {%endif%}" href="resourceseditvisa/{{id_space}}/0">+</a>
     </div>
+    <br/>
     <div class="pm-inline-div">
-        <br/>
-        {{Suivi}}
+        {{Suivi | upper}}
     </div>
     <div class="pm-inline-div">
         <a style="{%if color %} color: {{color}}; {%endif%}" id="menu-button" href="restates/{{id_space}}">{{States}}</a>

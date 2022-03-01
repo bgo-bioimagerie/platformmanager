@@ -53,27 +53,18 @@ class InvoicesController extends CoresecureController {
         $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
         $html .= '<a style="color:{{color}}" href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
         $html .= '</div>';
-        $html .= '</div>';
-        
-        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
-
 
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
         $menus = $modelSpace->getDistinctSpaceMenusModules($id_space);
-        
-        //print_r($menus);
-        
+                
         $count = -1;
         foreach ($menus as $menu) {
-            //echo "curent menu " . $menu["module"] . "<br/>";
             $module = $menu["module"];
             $rootingFile = "Modules/" . $module . "/" . ucfirst($module) . "Invoices.php";
-            //echo "rooting file = " . $rootingFile . "<br/>";
             if (file_exists($rootingFile)) {
 
                 $count++;
-                //echo $rootingFile . " exists <br/>";
                 require_once $rootingFile;
                 $className = ucfirst($module) . "Invoices";
                 $classTranslator = ucfirst($module) . "Translator";
@@ -84,7 +75,6 @@ class InvoicesController extends CoresecureController {
                 $model->listRoutes();
                 if ($model->count() > 0) {
                     $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);
-                    //echo "donfigTitle = " . $donfigTitle . "<br/>";
                     if ($donfigTitle != "") {
                         $txt = $donfigTitle;
                     } else {
@@ -93,7 +83,7 @@ class InvoicesController extends CoresecureController {
                     
                     $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}; padding: 10px">';
                     $html .= '<br/>';
-                    $html .= $txt;
+                    $html .= strtoupper($txt);
                     $html .= '</div>';
                     
                 }
