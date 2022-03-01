@@ -396,22 +396,17 @@ abstract class Model {
         return $this->runRequest($sql, $params)->fetchAll();
     }
 
-    public function admCount($tableName, $id_space= 0) {
+    public function admCount($tableName, $id_space=0) {
+        if ($tableName == null) {
+            $tableName = $this->tableName;
+        }
         $sql = "SELECT count(*) as total from $tableName where deleted=0";
         $params = array();
         if ($id_space) {
             $sql .= " AND id_space=?";
             $params = [$id_space];
-
         }
         return $this->runRequest($sql, $params)->fetch();
-    }
-
-    public function countForSpace($id_space) {
-        $sql = "SELECT count(*) as total FROM $this->tableName WHERE id_space=? AND deleted=0;";
-        $req = $this->runRequest($sql, array($id_space));
-        $total = $req->fetch();
-        return $total['total'];
     }
 
     /**

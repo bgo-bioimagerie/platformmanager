@@ -989,7 +989,6 @@ class CoreUser extends Model {
                 . "WHERE core_j_spaces_user.id_space=?";
         $req = $this->runRequest($sql, array($id_space));
         $total = $req->fetch();
-        Configuration::getLogger()->debug("[TEST]", ["total" => $total]);
         return $total['total'];
     }
 
