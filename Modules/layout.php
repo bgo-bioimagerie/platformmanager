@@ -36,7 +36,7 @@ if($isdev) {
         }
         ?>
         <?php if(isset($context['theme']) && $context['theme'] == 'dark') { ?>
-            <link rel="stylesheet" href="externals/pfm/themes/bootstrap-night.css">
+            <link rel="stylesheet" href="externals/pfm/dark-mode/bootstrap-night.css">
         <?php } else { ?>
             <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
         <?php } ?>

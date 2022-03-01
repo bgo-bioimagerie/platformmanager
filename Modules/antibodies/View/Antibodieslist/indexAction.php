@@ -30,7 +30,7 @@
 <div class="row pm-table">
     <div class="col-12">
         <div class="row">
-            <div class="col-10">
+            <div class="col-4">
                 <div class="dropdown">
                     <button id="antibodiesmenu" type="button" class="btn  btn-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <?php echo 'Menu ' . AntibodiesTranslator::antibodies($lang) ?>

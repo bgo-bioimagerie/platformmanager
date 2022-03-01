@@ -61,9 +61,6 @@
                         ?>
                         <div class="col-12 col-md-4 m-2">
                             <div class="card">
-                            <!-- IMAGE -->
-                            <?php if(isset($item["image"])) {?><img class="card-img-top" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
-                            <!-- TITLE -->
                             <div class="card-header">
                                 <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?></a>
                                 <?php if(isset($_SESSION["login"])) { ?>
@@ -78,10 +75,11 @@
 
                             <!-- DESC -->
                             <div class="card-body">
+                            <?php if(isset($item["image"])) {?><img class="card-img-top" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:218px;height:150px"><?php } ?>
                                 <?php echo $item["description"] ?>
                             </div>
                             <div class="card-footer">
-                                <small>
+                                <small class="mb-1">
                                 <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
                                 </small>
 

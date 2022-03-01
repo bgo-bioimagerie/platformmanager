@@ -23,15 +23,15 @@
     <div class="row">
 
         <div class="col-12 col-md-4">
-                <div><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
-                    <div style="margin: 10px"><a href="coretiles?mine=1"><button class="btn btn-primary btn-block"><?php echo CoreTranslator::MySpaces($lang); ?></button></a></li></div>
+            <div><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
+            <div class="btn-group-vertical btn-group-justified" role=group">
+                    <a class="m-1 btn btn-primary" href="coretiles?mine=1"><?php echo CoreTranslator::MySpaces($lang); ?></a>
                 <?php 
             foreach ($mainMenus as $menu) {
-                echo '<div style="margin: 10px" >';
-                echo sprintf('<a href="coretiles/1/%s"><button class="btn btn-primary btn-block">%s</button></a></li>', $menu['id'], $menu['name']);
-                echo '</div>';
+                echo sprintf('<a class="m-1 btn btn-primary" href="coretiles/1/%s">%s</a>', $menu['id'], $menu['name']);
             }
             ?>
+            </div>
         </div>
 
 
