@@ -67,7 +67,7 @@ class ClientsuseraccountsController extends ClientsController {
     /**
      * Returns a form in which user is given and we can select clients to link them to
      */
-    public function generateClientsUserForm($id_space, $id_user) {
+    public function generateClientsUserForm($id_space, $id_user, $todo=false) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelUser = new CoreUser();
@@ -78,12 +78,18 @@ class ClientsuseraccountsController extends ClientsController {
         $form = new Form($this->request, "clientsusersform");
         $form->setTitle(ClientsTranslator::addClientAccountFor($lang) . ": " . $userFullName);
         $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"]);
-        $form->setValidationButton(CoreTranslator::Add($lang), "corespaceuseredit" . "/" . $id_space . "/" . $id_user);
+
+        $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
+        if ($todo) {
+            $validationUrl .= "&redirect=todo";
+        } 
+
+        $form->setValidationButton(CoreTranslator::Add($lang), $validationUrl);
         $form->setButtonsWidth(4, 8);
         return $form;
     }
 
-    public function validateClientsUserForm($id_space, $id_user, $id_client) {
+    public function validateClientsUserForm($id_space, $id_user, $id_client, $todo=false) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelClientUser = new ClClientUser();
@@ -94,6 +100,9 @@ class ClientsuseraccountsController extends ClientsController {
         } else {
             $_SESSION["flash"] = ClientsTranslator::UserAlreadyLinkedToClient($lang);
             $_SESSION["flashClass"] = "warning";
+        }
+        if ($todo) {
+            $this->redirect("spaceadminedit/".$id_space);
         }
     }
 

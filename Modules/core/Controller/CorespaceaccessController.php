@@ -434,7 +434,7 @@ class CorespaceaccessController extends CoresecureController {
         ));
     }
 
-    public function generateSpaceAccessForm($id_space, $id_user) {
+    public function generateSpaceAccessForm($id_space, $id_user, $todo=false) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
@@ -454,12 +454,16 @@ class CorespaceaccessController extends CoresecureController {
         $form->addDate("date_convention", CoreTranslator::Date_convention($lang), false, $spaceUserInfo["date_convention"] ?? "");
         $form->addUpload("convention", CoreTranslator::Convention($lang), $spaceUserInfo["convention_url"] ?? "");
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "corespaceuseredit/".$id_space."/".$id_user);
+        $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
+        if ($todo) {
+            $validationUrl .= "&redirect=todo";
+        } 
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id_user);
         return $form;
     }
 
-    public function validateSpaceAccessForm($id_space, $id_user, $form) {
+    public function validateSpaceAccessForm($id_space, $id_user, $form, $todo=false) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelUserSpace = new CoreSpaceUser();
@@ -481,7 +485,12 @@ class CorespaceaccessController extends CoresecureController {
 
         $_SESSION["flash"] = CoreTranslator::UserAccessHasBeenSaved($lang);
         $_SESSION["flashClass"] = "success";
-        $this->redirect("corespaceuseredit/".$id_space."/".$id_user, ["origin" => "spaceaccess"]);
+
+        $redirectionUrl = $todo
+            ? "spaceadminedit/".$id_space
+            : "corespaceuseredit/".$id_space."/".$id_user;
+
+        $this->redirect($redirectionUrl, ["origin" => "spaceaccess"]);
     }
 
     /**

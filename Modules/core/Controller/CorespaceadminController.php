@@ -277,7 +277,7 @@ class CorespaceadminController extends CoresecureController {
         foreach(array_keys($todoData) as $module) {
             $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
         }
-
+        $todoData['redirectUrl'] = '?redirect=todo';
         return $todoData;
     }
 

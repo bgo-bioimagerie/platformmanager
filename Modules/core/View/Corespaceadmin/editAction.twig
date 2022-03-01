@@ -37,7 +37,7 @@
                                     disabled
                                     {{checked}} >
                                 <label for="{{task.id}}" style="font-weight:normal">
-                                    <a id="{{task.id}}_link" href="{{task.url}}">
+                                    <a id="{{task.id}}_link" href="{{task.url}}{{todolist.redirectUrl}}">
                                         {{task.title}}
                                     </a>
                                 </label>
@@ -86,7 +86,7 @@
             const taskNames = Array.from(customSelectors).map(item => item.id.split("_")[0]);
             taskNames.forEach(taskName => {
                 let element = document.getElementById(taskName + '_link') ?? false;
-                let url = element.href;
+                let [baseUrl, options] = element.href.split('?');
                 let selector = document.getElementById(taskName + '_select') ?? false;
 
                 element.addEventListener("click", (event) => {
@@ -94,13 +94,14 @@
                     if (selector.options[selector.selectedIndex].value != "") {
                         let targetUrl = event.target.href;
                         targetUrl += "?origin=" + taskName;
+                        targetUrl += "&" + options;
                         window.location = targetUrl;
                     }
                 });
 
                 selector.addEventListener("change", (event) => {
                     let selectedValue = event.target.options[event.target.selectedIndex].value;
-                    element.href = url + "/" + selectedValue;
+                    element.href = baseUrl + "/" + selectedValue;
                 });
             });
         }
