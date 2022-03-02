@@ -2,6 +2,7 @@
 
 ## 2.4.1 [unreleased]
 
+* [core] fix tile display error if no space
 * [helpdesk] close connection in anycase
 * [core] fix TODO in corespaceadmin, do not get all bookings, just count them
 * [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)

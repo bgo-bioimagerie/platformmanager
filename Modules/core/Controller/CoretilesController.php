@@ -207,6 +207,14 @@ class CoretilesController extends CorecookiesecureController {
             $title = $modelSubMenu->getName($id);
         }
 
+        // filter out items with no space
+        $refLength = count($items);
+        for ($i=0; $i<$refLength; $i++) {
+            if (!$items[$i]) {
+                unset($items[$i]);
+            }
+        }
+
         $starModel = new CoreStar();
         $starList = [];
         if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
