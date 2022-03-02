@@ -185,7 +185,7 @@ class FormAdd {
         $html = "";
         if ($label != "") {
             $html = "<div class=\"form-group row mb-3\">";
-            $html .= "<label class=\"control-label col-" . $labelWidth . "\">" . $label . "</label>";
+            $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . "</label>";
             $html .= "	<div class=\"col-" . $inputWidth . "\">";
         } else {
             $html .= "<div class=\"form-group row mb-3\">";

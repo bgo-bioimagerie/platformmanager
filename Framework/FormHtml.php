@@ -89,7 +89,7 @@ class FormHtml {
      */
     static public function comment($name, $labelWidth, $inputWidth) {
         $html = "<div class=\"mb-3 row" . "\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . "</label>";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         $html .= "<p>" . $name . "</p>";
         $html .= "</div>";
@@ -155,7 +155,7 @@ class FormHtml {
         }
         
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row" . $validated . "\">";
-        $html .= "<label class=\"col-$labelWidth form-label\">" . $label . $reqTxt . "</label>";
+        $html .= "<label class=\"col-$labelWidth col-form-label\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control";
         if ($checkUnicity) {
@@ -215,7 +215,7 @@ class FormHtml {
         }
 
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row" . $validated . "\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"password\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required . " " . $enabled;
@@ -244,7 +244,7 @@ class FormHtml {
         }
 
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row" . $validated . "\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . $star . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . $star . "</label>";
 
         $html .= "<div class='col-" . $inputWidth . "'>";
         $html .= "<div class='col-12 input-group date'>";
@@ -294,7 +294,7 @@ class FormHtml {
         //echo "hours values html = ";
         //print_r($value); echo "<br/>";
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row" . $validated . "\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class='col-" . $inputWidth . "'>";
 
         $html .= "<div class=\"row\">";
@@ -316,7 +316,7 @@ class FormHtml {
         //print_r($value); echo "<br/>";
         $html = "<div id=\"form_blk_$name\" class=\"col-12\">";
         $html .= "<div class=\"mb-3 row" . $validated . "\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class='col-" . $inputWidth . "'>";
 
         $html .= "<div class=\"row\">";
@@ -351,7 +351,7 @@ class FormHtml {
      */
     static public function color($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row" . $validated . "\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"color\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required;
@@ -380,7 +380,7 @@ class FormHtml {
         
         
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row " . $validated . "\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control";
         if ($checkUnicity) {
@@ -413,7 +413,7 @@ class FormHtml {
         }
         $float = $isFloat ? "step=\"any\"" : "";
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . $reqTxt . "</label>";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         $html .= "<input class=\"form-control\" type=\"number\" id=\"" . $name . "\" name=\"" . $name . "\"";
         $html .= " value=\"" . $value . "\"" . $required . " " . $float;
@@ -458,7 +458,7 @@ class FormHtml {
         if ($vect) {
             $vectv = "[]";
         }
-        $html = "<label class=\"form-label\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
+        $html = "<label class=\"col-form-label\" id=\"" . $name . "\" name=\"" . $name . $vectv . "\"";
         $html .= ">" . $value . "</label>";
         return $html;
     }
@@ -478,7 +478,7 @@ class FormHtml {
             $divid = "id='editor'";
         }
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         $html .= "<textarea " . $divid . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\">" . $value . "</textarea>";
         $html .= "</div>";
@@ -496,7 +496,7 @@ class FormHtml {
      */
     static public function upload($label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\"> ";
-        $html .= " <label class=\"form-label col-" . $labelWidth . "\"> " . $label . " </label> ";
+        $html .= " <label class=\"col-form-label col-" . $labelWidth . "\"> " . $label . " </label> ";
         $html .= "<div class=\"col-" . $inputWidth . "\">";
         
         if ($value != ""){
@@ -519,7 +519,7 @@ class FormHtml {
     static public function downloadbutton($formid, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
             $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
-            $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . "</label>";
+            $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . "</label>";
             $html .= "<div class=\"col-" . $inputWidth . "\">";
             $html .= "<input name=\"".$name."\" type=\"hidden\" value=\"".$value."\">";
             $html .= "<input type=\"submit\" id=\"" . $formid . "submit" . "\" class=\"btn btn-outline-dark\" value=\"" . $label . "\" />";
@@ -593,7 +593,7 @@ class FormHtml {
         }
 
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
-        $html .= "<label class=\"form-label col-" . $labelWidth . "\">" . $label . $star . "</label>";
+        $html .= "<label class=\"col-form-label col-" . $labelWidth . "\">" . $label . $star . "</label>";
         $html .= "	<div class=\"col-" . $inputWidth . "\">";
         $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value, $isMandatory, false, $submitOnChange);
         $html .= "</div>";
