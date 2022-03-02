@@ -208,10 +208,10 @@ class CoretilesController extends CorecookiesecureController {
         }
 
         // filter out items with no space
-        $refLength = count($items);
-        for ($i=0; $i<$refLength; $i++) {
-            if (!$items[$i]) {
-                unset($items[$i]);
+        $filteredItems = array();
+        for ($i=0; $i<count($items); $i++) {
+            if ($items[$i]) {
+                array_push($filteredItems, $items[$i]);
             }
         }
 
@@ -231,7 +231,7 @@ class CoretilesController extends CorecookiesecureController {
             'submenu' => $id,
             'iconType' => $modelCoreConfig->getParam("space_icon_type"),
             'showSubBar' => $showSubBar,
-            'items' => $items,
+            'items' => $filteredItems,
             'mainSubMenus' => $mainSubMenus,
             'title' => $title,
             'userSpaces' => $userSpaces['userSpaceIds'],
