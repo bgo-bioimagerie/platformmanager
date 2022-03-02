@@ -411,7 +411,7 @@ class CorespaceadminController extends CoresecureController {
     protected function checkForTasksDone($moduleTodo, $id_space) {
         for ($i=0; $i < count($moduleTodo['tasks']); $i++) {
             $model = new $moduleTodo['tasks'][$i]['id']();
-            $moduleTodo['tasks'][$i]['done'] = $model->admCount(null, $id_space)['total'];
+            $moduleTodo['tasks'][$i]['done'] = $model->admCount($id_space)['total'];
         }
         return $moduleTodo;
     }
