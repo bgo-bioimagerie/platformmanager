@@ -7,6 +7,7 @@
 * [core] fix TODO in corespaceadmin, do not get all bookings, just count them
 * [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)
 * [core] disable timezone, impacts existing bookings recorded as UTC
+* [booking] fix calendar when area has no resource
 
 ## 2.4.0
 
