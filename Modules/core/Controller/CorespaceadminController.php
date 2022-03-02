@@ -89,6 +89,17 @@ class CorespaceadminController extends CoresecureController {
         // Check user is superadmin or space admin
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
+
+        $flash = $this->request->getParameterNoException('flash');
+        Configuration::getLogger()->debug("[TEST]", ["flash var in spaceadminController" => $flash]);
+        if ($flash) {
+            $_SESSION['flash'] = $flash;
+            $flashClass = $this->request->getParameterNoException('flashClass');
+            if ($flashClass) {
+                $_SESSION['flashClass'] = $flashClass;
+            }
+        }
+
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
         $lang = $this->getLanguage();

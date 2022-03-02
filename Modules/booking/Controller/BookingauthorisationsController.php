@@ -13,6 +13,7 @@ require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Controller/CorespaceadminController.php';
 
 /**
  * 
@@ -138,10 +139,17 @@ class BookingauthorisationsController extends CoresecureController {
                 $id_visa,
                 CoreTranslator::dateToEn($date, $lang)
             );
-            $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
-            $_SESSION["flashClass"] = "success";
-            if ($todo) {
-                $this->redirect("spaceadminedit/".$id_space);
+
+            $flashMessage = ResourcesTranslator::AuthorisationAdded($lang);
+            $flashClass = "success";
+            
+            if (!$todo) {
+                $_SESSION["flash"] = $flashMessage;
+                $_SESSION["flashClass"] = $flashClass;
+            } else {
+                $c = new CorespaceadminController($this->request);
+                $this->request->setParams(['flash' => $flashMessage, 'flashClass' => $flashClass]);
+                $c->runAction("core", "edit", ["id_space" => $id_space]);
             }
     }
 

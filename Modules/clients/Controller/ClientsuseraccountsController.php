@@ -95,14 +95,19 @@ class ClientsuseraccountsController extends ClientsController {
         $modelClientUser = new ClClientUser();
         if (!$modelClientUser->exists($id_space, $id_client, $id_user)) {
             $modelClientUser->set($id_space, $id_client, $id_user);
-            $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
-            $_SESSION["flashClass"] = "success";
+            $flashMessage = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $flashClass = "success";
         } else {
-            $_SESSION["flash"] = ClientsTranslator::UserAlreadyLinkedToClient($lang);
-            $_SESSION["flashClass"] = "warning";
+            $flashMessage = ClientsTranslator::UserAlreadyLinkedToClient($lang);
+            $flashClass = "warning";
         }
-        if ($todo) {
-            $this->redirect("spaceadminedit/".$id_space);
+        if (!$todo) {
+            $_SESSION["flash"] = $flashMessage;
+            $_SESSION["flashClass"] = $flashClass;
+        } else {
+            $c = new CorespaceadminController($this->request);
+            $this->request->setParams(['flash' => $flashMessage, 'flashClass' => $flashClass]);
+            $c->runAction("core", "edit", ["id_space" => $id_space]);
         }
     }
 
