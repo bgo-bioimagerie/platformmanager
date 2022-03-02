@@ -2,8 +2,6 @@
 
     
 <?php startblock('content') ?>
-
-<?php include( "Modules/core/View/Coreusers/navbar.php" ); ?>
     
     <div class="container pm-form">
         <?php echo $formHtml ?>
