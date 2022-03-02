@@ -20,6 +20,10 @@ class Helpdesk extends Model {
     public static $STATUS_CLOSED = 3;
     public static $STATUS_SPAM = 4;
 
+    public function __construct() {
+        $this->tableName = "hp_tickets";
+    }
+
     /**
      * Create the stats_buckets table
      * 

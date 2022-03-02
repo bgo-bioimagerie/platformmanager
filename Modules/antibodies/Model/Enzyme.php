@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Enzyme extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_enzymes";
+    }
+
     /**
      * Create the espece table
      * 

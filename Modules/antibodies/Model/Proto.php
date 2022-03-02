@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Proto extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_protos";
+    }
+
     /**
      * Create the espece table
      * 
