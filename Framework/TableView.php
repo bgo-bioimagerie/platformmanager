@@ -169,7 +169,6 @@ class TableView {
      */
     public function isPrint() {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        //echo "url = " . $actual_link . "<br/>";
         if (strstr($actual_link, 'print=1')) {
             $this->isprint = true;
             return true;
@@ -183,7 +182,6 @@ class TableView {
      */
     public function isExport() {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        // echo "url = " . $actual_link . "<br/>";
         if (strstr($actual_link, 'csv=1')) {
             $this->iscsv = true;
             return true;
@@ -228,20 +226,17 @@ class TableView {
 
         if ($this->printAction != "" && $this->exportAction != "" && !$this->isprint) {
             $html .= "<div class=\"col-2 offset-10\">";
-            // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
             $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
             $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
             $html .= "</div>";
         } else {
             if ($this->printAction != "" && !$this->isprint) {
                 $html .= "<div class=\"col-2 offset-10\">";
-                // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
                 $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
                 $html .= "</div>";
             }
             if ($this->exportAction != "" && !$this->isprint) {
                 $html .= "<div class=\"col-2 offset-10\">";
-                // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
                 $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
                 $html .= "</div>";
             }
@@ -258,7 +253,6 @@ class TableView {
             $is_small = ' table-sm ';
        }
         $html .= "<div class=\"table-responsive\"><table id=\"".$this->tableID."\" class=\"table $is_small table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
-        //$html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";
 
         $isButtons = $this->isButtons();
         // table header
@@ -267,11 +261,7 @@ class TableView {
 
         for ($b = 0 ; $b < $isButtons ; $b++){
             $html .= "<th class=\"no-sort\"></th>";
-        }
-        //if ($isButtons){
-        //    $html .= "<th></th>";
-        //}
-        
+        }        
         
         if ($this->downloadButton != "") {
             $html .= "<th aria-label=\"download\"></th>";
@@ -297,11 +287,6 @@ class TableView {
         foreach ($data as $dat) {
             if ($this->printIt($dat)) {
                 $html .= "<tr>";
-                
-                
-                //if ($isButtons){
-                //    $html .= "<td>";
-                // }
                 
                 if (count($this->linesButtonActions) > 0 && !$this->isprint) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {

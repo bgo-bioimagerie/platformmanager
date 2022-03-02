@@ -22,7 +22,7 @@
 </div>
 
 <div class="col-12">
-    <table aria-label="month list of notes" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
+    <table role="presentation" aria-label="month list of notes" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
         <?php
         foreach ($notes as $dnote) {
             if ($dnote["is_month_task"] == 1) {

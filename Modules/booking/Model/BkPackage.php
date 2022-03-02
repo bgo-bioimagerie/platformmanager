@@ -193,11 +193,9 @@ class BkPackage extends Model {
 
     public function deletePackage($id_space, $id) {
         $sql = "UPDATE bk_packages SET deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
-        // $sql = "DELETE FROM bk_packages WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
 
         $sql2 = "UPDATE bk_j_packages_prices SET deleted=1,deleted_at=NOW() WHERE id_package = ? AND id_space=?";
-        //$sql2 = "DELETE FROM bk_j_packages_prices WHERE id_package = ? AND id_space=?";
         $this->runRequest($sql2, array($id, $id_space));
     }
 

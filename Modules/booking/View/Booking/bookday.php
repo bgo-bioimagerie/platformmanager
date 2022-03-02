@@ -13,7 +13,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 $startDate = $date;
 $toDate = null;
 $nbDays = 1;
-$resourcesBase = [$resourceBase];
+$resourcesBase = $resourceBase ? [$resourceBase] : [];
 $calEntries = [$calEntries];
 $from = ["day", $date, $bk_id_resource, $bk_id_area, $id_user];
 $isUserAuthorizedToBook = [ $isUserAuthorizedToBook];

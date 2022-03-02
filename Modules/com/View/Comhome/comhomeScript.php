@@ -60,8 +60,6 @@ var newsView = new Vue({
             popup_box.style.opacity = 1;  
         },
         closePopup(event) {
-            // hider.hide();
-            // popup_box.hide();
             hider.style.opacity = 0;
             popup_box.style.opacity = 0;
             popup_box.style.display = "none";

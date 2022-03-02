@@ -9,7 +9,7 @@
         <strong>Collection: <?php echo $collection["name"] ?></strong>
     </div>
     
-    <table aria-label="collection list" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $di ?>">
+    <table role="presentation" aria-label="collection list" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $di ?>">
         <tbody>
             <?php
             foreach ($notes as $dnote) {

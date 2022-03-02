@@ -29,7 +29,7 @@
 
 <div class="row" style="background-color: #ffffff;">
 
-    <table id="antibodies" class="table table-bordered table-striped" cellspacing="0" width="100%">
+    <table aria-label="list of antibodies" id="antibodies" class="table table-bordered table-striped" cellspacing="0" width="100%">
         <thead>
 
             <tr>

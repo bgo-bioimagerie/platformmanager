@@ -9,7 +9,7 @@
 </div>
 
 <div class="col-12">
-    <table aria-label="migration task list" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month ?>">
+    <table role="presentation" aria-label="migration task list" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month ?>">
         <tbody>
         <?php
         foreach ($notes as $dnote) {

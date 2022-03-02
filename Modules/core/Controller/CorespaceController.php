@@ -262,7 +262,6 @@ class CorespaceController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
-        // $this->spaceModel->deleteUser($id_space, $id_user);
         $this->redirect("spaceconfiguser/" . $id_space);
     }
 
