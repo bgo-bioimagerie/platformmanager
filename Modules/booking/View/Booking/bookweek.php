@@ -11,7 +11,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 $startDate = $mondayDate;
 $toDate = $sundayDate;
 $nbDays = 7;
-$resourcesBase = [$resourceBase];
+$resourcesBase = $resourceBase ? [$resourceBase]: [];
 $calEntries = [$calEntries];
 $from = ["week", $date, $bk_id_resource, $bk_id_area, $id_user];
 $isUserAuthorizedToBook = [ $isUserAuthorizedToBook];
