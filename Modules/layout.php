@@ -42,7 +42,6 @@ if($isdev) {
         <?php } ?>
         <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
-        <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
         <script src="externals/jquery-1.11.1.js"></script>
 
         <?php startblock('stylesheet') ?>
