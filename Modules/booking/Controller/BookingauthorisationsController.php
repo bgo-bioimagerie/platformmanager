@@ -96,7 +96,7 @@ class BookingauthorisationsController extends CoresecureController {
         return ["bkTableHtml" => $table->view($data, $headers), "data" => $data];
     }
 
-    public function generateBkAuthAddForm($id_space, $id_user, $controller, $lang) {
+    public function generateBkAuthAddForm($id_space, $id_user, $controller, $lang, $todo=false) {
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
         $modelReCategories = new ReCategory();
@@ -116,12 +116,18 @@ class BookingauthorisationsController extends CoresecureController {
         $form->addSelectMandatory("resource", ResourcesTranslator::Category(), $CategoryList['names'], $CategoryList['ids'], $defaultCategoryId);
         $form->addSelectMandatory("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
         $form->addDate("date", BookingTranslator::DateActivation($lang), true);
-        $form->setValidationButton(CoreTranslator::Save($lang), $controller . "/" . $id_space . "/" . $id_user, ["origin" => "bookingaccess"]);
+
+        $validationUrl = $controller . "/". $id_space."/". $id_user;
+        if ($todo) {
+            $validationUrl .= "&redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl, ["origin" => "bookingaccess"]);
 
         return $form;
     }
 
-    public function validateBkAuthAddForm($id_space, $id_user, $id_category, $id_visa, $date) {
+    public function validateBkAuthAddForm($id_space, $id_user, $id_category, $id_visa, $date, $todo=false) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelAuth = new BkAuthorization();
@@ -134,6 +140,9 @@ class BookingauthorisationsController extends CoresecureController {
             );
             $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
             $_SESSION["flashClass"] = "success";
+            if ($todo) {
+                $this->redirect("spaceadminedit/".$id_space);
+            }
     }
 
     public function historyAction($id_space, $id) {
