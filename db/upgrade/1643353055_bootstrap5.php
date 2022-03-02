@@ -24,6 +24,8 @@ class CoreUpgradeDB1643353055 extends Model {
     foreach ($icons as $key => $value) {
       $sql = "UPDATE core_space_menus SET icon=? WHERE icon=?";
       $this->runRequest($sql, [$value, $key]);
+      $sql = "UPDATE core_space_menus SET icon=? WHERE icon=?";
+      $this->runRequest($sql, [$value, 'glyphicon '.$key]);
     }
   }
 }
