@@ -13,7 +13,7 @@ if ($id_quote > 0) {
         <div class="pm-form">
 <?php } ?>
         <h3><?php echo QuoteTranslator::EditQuote($lang) ?></h3>
-        <div>
+        <div class="m-3">
             <a class="btn btn-outline-dark" href="clclientedit/<?php echo $id_space ?>">
                 <?php echo ClientsTranslator::NewClient($lang) ?>
             </a>
