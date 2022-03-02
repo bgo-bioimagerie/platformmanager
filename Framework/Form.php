@@ -190,11 +190,7 @@ class Form {
      * @param string $value Default value
      */
     protected function setValue($value) {
-        //if ($this->parseRequest) {
-        //    $this->values[] = $this->request->getParameterNoException($name);
-        //} else {
         $this->values[] = $value;
-        //}
     }
 
     /**
@@ -774,9 +770,6 @@ class Form {
             $html .= $formHtml->formFooter();
         }
 
-        if ($this->isDate === true) {
-            // $html .= $formHtml->timePickerScript();
-        }
         if ($this->isTextArea === true) {
             $html .= $formHtml->textAreaScript();
         }
@@ -791,9 +784,6 @@ class Form {
 
         if ($this->isFormAdd === true) {
             $html .= $this->formAdd->getJavascript();
-        }
-        if ($this->useAjax) {
-            //$html .= $formHtml->ajaxScript($this->id, $this->validationURL);
         }
 
         return $html;

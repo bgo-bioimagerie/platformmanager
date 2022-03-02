@@ -57,8 +57,6 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 		$elts = implode(':', $from);
 		$q .= "from=$elts";
 	}
-    // $mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
-    // $mois_en = Array("", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
     $days_fr = ["Lun", "Mar", "Merc", "Jeu", "Ven", "Sam", "Dim"];
     $days_en = ["Mon", "Tue", "Web", "Thu", "Fri", "Sat", "Sun"];

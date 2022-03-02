@@ -332,7 +332,6 @@ class CoreUser extends Model {
         $pwd = Configuration::get('admin_password', 'admin');
 
         $bytes = random_bytes(10);
-        // $apikey = bin2hex($bytes);
         $apikey = Configuration::get('admin_apikey', bin2hex($bytes));
 
         try {

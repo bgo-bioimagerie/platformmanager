@@ -330,7 +330,6 @@
                     <td> Total </td>
                     <?php
                     for ($i = 0; $i < count($resourcesNames); $i++) {
-                        // calcualte the sum
                         $sumC = 0;
                         $sumH = 0;
                         for ($x = 0; $x < count($entrySummary); $x++) {

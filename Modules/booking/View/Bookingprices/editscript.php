@@ -21,7 +21,6 @@
      * 
      */
     function showEditEntryForm(id_space, id_resource) {
-        // console.log("in showEditForm");
         const bkPricing = new ResourceBkPricing();
         bkPricing.resourceId = id_resource;
         bkPricing.belongingPrices = [];

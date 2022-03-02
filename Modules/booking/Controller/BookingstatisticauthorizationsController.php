@@ -102,7 +102,6 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         // summary
         $summary["total"] = $modelAuthorizations->getTotalForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctuser"] = $modelAuthorizations->getDistinctUserForPeriod($id_space, $period_begin, $period_end);
-        // $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctvisa"] = $modelAuthorizations->getDistinctVisaForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($id_space, $period_begin, $period_end);
         $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($id_space, $period_begin, $period_end);
@@ -112,14 +111,8 @@ class BookingstatisticauthorizationsController extends StatisticsController {
 
     protected function generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end) {
 
-        //echo "generateXls 1 <br/>";
-        //include_once ("externals/PHPExcel/Classes/PHPExcel.php");
-        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
-        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         
-
-        //echo "generateXls 2 <br/>";
         // Set properties
         $spreadsheet->getProperties()->setCreator("Platform-Manager");
         $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");

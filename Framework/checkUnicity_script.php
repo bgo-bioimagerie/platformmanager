@@ -117,7 +117,6 @@ function validateUserForm(origin) {
                     // Data is not valid
                     unicity = false;
                     if (!data.isUnique) {
-                        // TODO: find a way to get values from CoreTranslator !!!
                         msg = "this " + type + " already exists";
                         displayError(errors, elemHTML, msg);
                     }

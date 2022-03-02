@@ -258,7 +258,6 @@ class InvoiceslistController extends InvoicesController {
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName($this->request, $this->currentSpace);
-        // $object->setRequest($this->request);
         Configuration::getLogger()->debug('[invoices][delete]', ['controller' => $service['controller'], 'module' => $service['module'], 'id' => $id]);
         $object->runAction($service["module"], "delete", array($id_space, $id));
         

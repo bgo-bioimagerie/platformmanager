@@ -255,7 +255,6 @@ class CorespaceaccessController extends CoresecureController {
             "unit" => CoreTranslator::Unit($lang),
             "organization" => CoreTranslator::Organization($lang),
             "phone" => CoreTranslator::Phone($lang),
-            // "spaces" => CoreTranslator::Spaces($lang),
             "date_convention" => CoreTranslator::Convention($lang),
             "date_contract_end" => CoreTranslator::Date_end_contract($lang),
             "convention_url" => array("title" => CoreTranslator::Convention($lang),
