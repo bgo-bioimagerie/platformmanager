@@ -501,6 +501,9 @@ class BkCalendarEntry extends Model {
      * 
      */
     public function getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, array $resource_ids, $id_user='') {
+        if(empty($resource_ids)) {
+            return [];
+        }
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
 
         $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
