@@ -9,6 +9,7 @@
 * [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)
 * [core] disable timezone, impacts existing bookings recorded as UTC
 * [booking] fix calendar when area has no resource
+* [booking] fix calendar display when resa spans multiple days
 
 ## 2.4.0
 

@@ -2,7 +2,7 @@
 
 function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int $bk_id_area, string $id_user, string $lang) {
     
-    $html = '<div class="row"  style="background-color: #ffffff; padding-bottom: 12px;">
+    $html = '<div class="m-1 row"  style="background-color: #ffffff; padding-bottom: 12px;">
 	<div class="col-7 text-left">
 		<div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
 

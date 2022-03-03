@@ -218,7 +218,7 @@ class BkBookingSettings extends Model {
             } elseif ($entryList[$i]['font'] == "italic") {
                 $summary .= "</em>";
             }
-            if ($last == false) {
+            if ($summary && $last == false) {
                 if ($displayHorizontal) {
                     $summary .= " ";
                 } else {
