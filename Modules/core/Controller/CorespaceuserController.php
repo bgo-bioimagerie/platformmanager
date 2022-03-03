@@ -40,7 +40,7 @@ class CorespaceuserController extends CorespaceaccessController {
         $lang = $this->getLanguage();
         $origin = ["page" => $this->request->getParameterNoException("origin")];
         $todo = ($this->request->getParameterNoException("redirect") === "todo")
-            ? true: false;        
+            ? true : false;
         $modelOptions = new CoreSpaceAccessOptions();
         $options = array_reverse($modelOptions->getAll($id_space));
         $modules = array_map(function($option) { return $option['module'];}, $options);

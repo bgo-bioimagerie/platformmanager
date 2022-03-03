@@ -80,15 +80,35 @@ class ReareasController extends ResourcesBaseController {
         $form->addText("name", CoreTranslator::Name($lang), true, $area["name"]);
         $form->addSelect("is_restricted", ResourcesTranslator::IsRestricted("lang"), 
                 array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $area["restricted"]);
+
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "reareasedit/".$id_space."/".$id;
+        if ($todo) {
+            $validationUrl .= "&redirect=todo";
+        }
         
-        $form->setValidationButton(CoreTranslator::Ok($lang), "reareasedit/".$id_space."/".$id);
+        $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "reareas/".$id_space);
 
         if ($form->check()) {
             // run the database query
-            $id_area = $this->model->set($form->getParameter("id"), $form->getParameter("name"), 
-                    $form->getParameter("is_restricted"), $id_space);
-            return $this->redirect("reareas/".$id_space, [], ['rearea' => ['id' => $id_area]]);
+            $id_area = $this->model->set(
+                $form->getParameter("id"),
+                $form->getParameter("name"), 
+                $form->getParameter("is_restricted"),
+                $id_space);
+
+            $flashMessage = ResourcesTranslator::Item_created("area", $lang);
+            $flashClass = "success";
+
+            if (!$todo) {
+                $_SESSION["flash"] = $flashMessage;
+                $_SESSION["flashClass"] = $flashClass;
+                return $this->redirect("reareas/".$id_space, [], ['rearea' => ['id' => $id_area]]);
+            } else {
+                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+            }
+
         } else {
             // set the view
             $formHtml = $form->getHtml();

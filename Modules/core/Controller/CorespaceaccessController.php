@@ -288,7 +288,7 @@ class CorespaceaccessController extends CoresecureController {
     }
 
 
-    public function useraddAction($id_space){
+    public function useraddAction($id_space) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -311,8 +311,13 @@ class CorespaceaccessController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
         $formjoin->addSelect("role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"], "");
 
+        $todo = $this->request->getParameterNoException('redirect');
+        $formJoinValidationUrl = "corespaceaccessuseradd/".$id_space;
+        if ($todo) {
+            $formJoinValidationUrl .= "&redirect=todo";
+        }
 
-        $formjoin->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd/".$id_space);
+        $formjoin->setValidationButton(CoreTranslator::Ok($lang), $formJoinValidationUrl);
 
         if($formjoin->check()) {
             $modelCoreUser = new CoreUser();
@@ -332,7 +337,17 @@ class CorespaceaccessController extends CoresecureController {
 
             $modelUserSpace = new CoreSpaceUser();
             $modelUserSpace->setRole($user['idUser'], $id_space, $form->getParameter("role"));
-            return $this->redirect('corespaceaccessusers/'. $id_space);
+
+            $flashMessage = CoreTranslator::UserAccountAdded($user['login'], $lang);
+            $flashClass = "success";
+
+            if (!$todo) {
+                $_SESSION["flash"] = $flashMessage;
+                $_SESSION["flashClass"] = $flashClass;
+                $this->redirect('corespaceaccessusers/'. $id_space);
+            } else {
+                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+            }
         }
 
         if ($form->check()) {

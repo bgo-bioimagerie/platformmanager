@@ -105,7 +105,7 @@ class ClientsuseraccountsController extends ClientsController {
             $_SESSION["flash"] = $flashMessage;
             $_SESSION["flashClass"] = $flashClass;
         } else {
-            $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo"]);
+            $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
         }
     }
 
