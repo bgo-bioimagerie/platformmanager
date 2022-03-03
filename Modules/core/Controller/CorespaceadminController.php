@@ -308,12 +308,14 @@ class CorespaceadminController extends CoresecureController {
                 "tasks" => [
                     [
                         "id" => "users",
+                        "model" => "CoreUser",
                         "title" => UsersTranslator::Create_item("user", $lang),
                         "url" => "corespaceaccessuseradd/" . $id_space,
                         "done" => $modelUser->countSpaceActiveUsers($id_space)
                     ],
                     [
                         "id" => "pendingUsers",
+                        "model" => "CorePendingAccount",
                         "title" => UsersTranslator::Create_item("pending", $lang),
                         "url" => "corespacependingusers/" . $id_space,
                         "done" => $modelPending->countActivatedForSpace($id_space)
@@ -329,21 +331,25 @@ class CorespaceadminController extends CoresecureController {
                 "tasks" => [
                     [
                         "id" => "ReArea",
+                        "model" => "ReArea",
                         "title" => ResourcesTranslator::Create_item("area", $lang),
                         "url" => "reareasedit/" . $id_space,
                     ],
                     [
                         "id" => "ReCategory",
+                        "model" => "ReCategory",
                         "title" => ResourcesTranslator::Create_item("category", $lang),
                         "url" => "recategoriesedit/" . $id_space,
                     ],
                     [
                         "id" => "ResourceInfo",
+                        "model" => "ResourceInfo",
                         "title" => ResourcesTranslator::Create_item("resource", $lang),
                         "url" => "resourcesedit/" . $id_space,
                     ],
                     [
                         "id" => "ReVisa",
+                        "model" => "ReVisa",
                         "title" => ResourcesTranslator::Create_item("visa", $lang),
                         "url" => "resourceseditvisa/" . $id_space,
                     ],
@@ -358,22 +364,26 @@ class CorespaceadminController extends CoresecureController {
                 "title" => "Clients",
                 "tasks" => [
                     [
-                        "id" => "ClCompany",
+                        "id" => "company",
+                        "model" => "ClCompany",
                         "title" => ClientsTranslator::Create_item("company", $lang),
                         "url" => "clcompany/" . $id_space,
                     ],
                     [
-                        "id" => "ClPricing",
+                        "id" => "pricings",
+                        "model" => "ClPricing",
                         "title" => ClientsTranslator::Create_item("pricing", $lang),
                         "url" => "clpricingedit/" . $id_space,
                     ],
                     [
-                        "id" => "ClClient",
+                        "id" => "clients",
+                        "model" => "ClClient",
                         "title" => ClientsTranslator::Create_item("client", $lang),
                         "url" => "clclientedit/" . $id_space,
                     ],
                     [
-                        "id" => "CLClientUser",
+                        "id" => "clientsuser",
+                        "model" => "ClClientUser",
                         "title" => ClientsTranslator::Create_item("clientsuser", $lang),
                         "url" => "corespaceuseredit/" . $id_space,
                         "options" => [
@@ -393,17 +403,20 @@ class CorespaceadminController extends CoresecureController {
                 "title" => "Booking",
                 "tasks" => [
                     [
-                        "id" => "BkColorCode",
+                        "id" => "colorcodes",
+                        "model" => "BkColorCode",
                         "title" => BookingTranslator::Create_item("colorcode", $lang),
                         "url" => "bookingcolorcodeedit/" . $id_space,
                     ],
                     [
-                        "id" => "BkScheduling",
+                        "id" => "schedule",
+                        "model" => "BkScheduling",
                         "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
                         "url" => "bookingscheduling/" . $id_space,
                     ],
                     [
-                        "id" => "BkAuthorization",
+                        "id" => "auth",
+                        "model" => "BkAuthorization",
                         "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
                         "url" => "corespaceuseredit/" . $id_space,
                         "options" => [
@@ -412,12 +425,14 @@ class CorespaceadminController extends CoresecureController {
                         ]
                     ],
                     [
-                        "id" => "BkAccess",
+                        "id" => "access",
+                        "model" => "BkAccess",
                         "title" => BookingTranslator::Create_item("access", $lang),
                         "url" => "bookingaccessibilities/" . $id_space,
                     ],
                     [
-                        "id" => "BkCalendarEntry",
+                        "id" => "booking",
+                        "model" => "BkCalendarEntry",
                         "title" => BookingTranslator::Create_item("booking", $lang),
                         "url" => "bookingdayarea/" . $id_space,
                     ]
@@ -427,7 +442,7 @@ class CorespaceadminController extends CoresecureController {
 
     protected function checkForTasksDone($moduleTodo, $id_space) {
         for ($i=0; $i < count($moduleTodo['tasks']); $i++) {
-            $model = new $moduleTodo['tasks'][$i]['id']();
+            $model = new $moduleTodo['tasks'][$i]['model']();
             $moduleTodo['tasks'][$i]['done'] = $model->admCount($id_space)['total'];
         }
         return $moduleTodo;
