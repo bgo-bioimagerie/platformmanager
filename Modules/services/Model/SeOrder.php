@@ -11,6 +11,10 @@ require_once 'Modules/clients/Model/ClClientUser.php';
  */
 class SeOrder extends Model {
 
+    public function __construct() {
+        $this->tableName = "se_order";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_order` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,

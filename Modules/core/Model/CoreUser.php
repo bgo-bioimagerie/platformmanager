@@ -980,7 +980,17 @@ class CoreUser extends Model {
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
                 . "WHERE core_j_spaces_user.id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
-}
+    }
+
+    public function countSpaceActiveUsers($id_space) {
+        $sql = "SELECT count(core_users.id) AS total "
+                . "FROM core_j_spaces_user "
+                . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                . "WHERE core_j_spaces_user.id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
+        $total = $req->fetch();
+        return $total['total'];
+    }
 
     /**
      * get the informations of a user from it's id

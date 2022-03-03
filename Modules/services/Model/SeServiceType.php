@@ -15,6 +15,8 @@ class SeServiceType extends Model {
      * Constructor
      */
     public function __construct() {
+        $this->tableName = "se_service_types";
+        
         self::$serviceTypes[1] = "Quantity";
         self::$serviceTypes[2] = "Time minutes";
         self::$serviceTypes[3] = "Time hours";
