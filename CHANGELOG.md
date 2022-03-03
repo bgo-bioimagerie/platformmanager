@@ -2,6 +2,7 @@
 
 ## 2.4.1 [unreleased]
 
+* [core] add redirects to TODO after doing todo actions
 * [core] add missing tableName properties in model constructors
 * [space] improve todolist sql resquests
 * [helpdesk] close connection in anycase
