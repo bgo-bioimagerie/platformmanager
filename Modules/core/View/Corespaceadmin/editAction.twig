@@ -45,7 +45,7 @@
                                     <select id="{{task.id}}_select" class="customSelector">
                                         <option value="" selected="selected" disabled>{{task.options.defaultText}}</option>
                                         {% for item in task.options.list %}
-                                            <option value={{item.id}}>{{item.login}}</option>
+                                            <option value={{item[0]}}>{{item[1]}}</option>
                                         {% endfor %}
                                     </select>
                                 {% endif %}

@@ -58,7 +58,13 @@ class ClientscompanyController extends ClientsController {
         $form->addText('email', ClientsTranslator::Email($lang), true, $data["email"]);
         $form->addText('approval_number', ClientsTranslator::ApprovalNumber($lang), true, $data["approval_number"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "clcompany/" . $id_space);
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "clcompany/".$id_space;
+        if ($todo) {
+            $validationUrl .= "&redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
         $form->setButtonsWidth(4, 8);
 
         // Check if the form has been validated
@@ -67,10 +73,18 @@ class ClientscompanyController extends ClientsController {
             $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $form->getParameter("county"), $form->getParameter("country"), $form->getParameter("tel"), $form->getParameter("fax"), $form->getParameter("email"), $form->getParameter("approval_number")
             );
 
-            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
-            $_SESSION["flashClass"] = 'success';
-            // after the provider is saved we redirect to the providers list page
-            $this->redirect("clcompany/" . $id_space);
+            $flashMessage = ClientsTranslator::Data_has_been_saved($lang);
+            $flashClass = 'success';
+
+            if (!$todo) {
+                $_SESSION["flash"] = $flashMessage;
+                $_SESSION["flashClass"] = $flashClass;
+                // after the provider is saved we redirect to the providers list page
+                $this->redirect("clcompany/" . $id_space);
+            } else {
+                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+            }
+            
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

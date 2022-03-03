@@ -72,8 +72,14 @@ class BookingcolorcodesController extends BookingsettingsController {
         $roles = CoreSpace::roles($lang);
         $form->addSelect("who_can_use", BookingTranslator::WhoCanUse($lang), $roles["names"], $roles["ids"], $data["display_order"]);
         $form->addNumber("display_order", BookingTranslator::Display_order($lang), false, $data["display_order"]);
+
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "bookingcolorcodeedit/".$id_space."/".$id;
+        if ($todo) {
+            $validationUrl .= "&redirect=todo";
+        }
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingcolorcodeedit/".$id_space."/".$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "bookingcolorcodes/".$id_space);
         $form->setButtonsWidth(3, 9);
         
@@ -81,7 +87,17 @@ class BookingcolorcodesController extends BookingsettingsController {
             
             $newID = $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
             $model->setColorWhoCanUse($id_space, $newID, $form->getParameter("who_can_use"));
-            return $this->redirect("bookingcolorcodes/".$id_space, [], ['bkcode' => ['id' => $newID]]);
+
+            $flashMessage = BookingTranslator::Item_created("colorcode", $lang);
+            $flashClass = "success";
+
+            if (!$todo) {
+                $_SESSION["flash"] = $flashMessage;
+                $_SESSION["flashClass"] = $flashClass;
+                $this->redirect("bookingcolorcodes/".$id_space, [], ['bkcode' => ['id' => $newID]]);
+            } else {
+                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+            }
         }
         $formHtml = $form->getHtml($lang);
         

@@ -397,6 +397,7 @@ class CorespaceadminController extends CoresecureController {
 
     protected function getBookingTodo($id_space, $lang) {
         $modelUser = new CoreUser();
+        $modelReArea = new ReArea();
         $opt = "(".CoreTranslator::Optional($lang).") ";
         return 
             [
@@ -412,7 +413,11 @@ class CorespaceadminController extends CoresecureController {
                         "id" => "schedule",
                         "model" => "BkScheduling",
                         "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
-                        "url" => "bookingscheduling/" . $id_space,
+                        "url" => "bookingschedulingedit/" . $id_space,
+                        "options" => [
+                            "list" => $modelReArea->getForSpace($id_space),
+                            "defaultText" => ResourcesTranslator::Area($lang)
+                        ]
                     ],
                     [
                         "id" => "auth",
