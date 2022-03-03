@@ -42,6 +42,9 @@ class ReEvent extends Model {
     }
 
     public function getLastStateColors($id_space, array $id_resources){
+        if(empty($id_resources)) {
+            return [];
+        }
         $sql = "SELECT id_resource, re_state.color as color"
                 . " FROM re_event "
                 . " INNER JOIN re_state ON re_event.id_state = re_state.id"

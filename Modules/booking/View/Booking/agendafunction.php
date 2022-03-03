@@ -61,6 +61,13 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
     $days_fr = ["Lun", "Mar", "Merc", "Jeu", "Ven", "Sam", "Dim"];
     $days_en = ["Mon", "Tue", "Web", "Thu", "Fri", "Sat", "Sun"];
 
+    $month_fr = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"];
+    $month_en = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    $strmonth = $month_en[$mois-1];
+    if($lang == "fr") {
+        $strmonth = $month_fr[$mois-1];
+    }
 
     $l_day = date("t", mktime(0, 0, 0, $mois, 1, $annee));
     $x = date("N", mktime(0, 0, 0, $mois, 1, $annee));
@@ -74,7 +81,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 
     <div class="container">
         <div class="row"><div class="col-sm-12" style="text-align: center"><?php
-		echo $resourceBase['name'];
+		echo '<strong>'.$strmonth.'</strong> - '.$resourceBase['name'];
 		if($resourceBase['last_state'] != ""){
 			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
 		}
@@ -112,7 +119,11 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                     $modelBookingSetting = new BkBookingSettings();
                     $nbentries = 0;
                     foreach ($entries as $entry) {
-                        if (date("d", $entry["start_time"]) <= $i && date("d", $entry["end_time"]) >= $i) {
+                        $dstart = mktime(0, 0, 0, $mois, $i, $annee);
+                        $dend = mktime(23, 59, 59, $mois, $i, $annee);
+                        if(($entry['start_time'] >= $dstart &&$entry['start_time'] <= $dend) ||
+                        ($entry['end_time'] >= $dstart &&$entry['end_time'] <= $dend) ||
+                        ($entry['start_time'] < $dstart && $entry['end_time'] > $dend)) {
                             $found = true;
                             $shortDescription = $entry['short_description'];
                             ?>

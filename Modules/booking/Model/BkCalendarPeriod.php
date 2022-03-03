@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkCalendarPeriod extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calendar_period";
+    }
+
     /**
      * Create the calendar entry table
      *

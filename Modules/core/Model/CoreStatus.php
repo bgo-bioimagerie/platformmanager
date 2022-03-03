@@ -11,6 +11,10 @@ class CoreStatus extends Model {
 
     public static $USER = 1;
     public static $ADMIN = 2;
+
+    public function __construct() {
+        $this->tableName = "core_status";
+    }
     
     /**
      * Create the status table

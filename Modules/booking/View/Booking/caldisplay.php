@@ -29,6 +29,7 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 	// day title
 	$temp = explode("-", $startDate);
 	$date_unix = mktime(0,0,0,$temp[1], $temp[2]+$d, $temp[0]);
+	$date_next = $date_unix + 60 * 60 * 24;
 	$dayStream = date("l", $date_unix);
 	$monthStream = date("M", $date_unix);
 	$dayNumStream = date("d", $date_unix);
@@ -45,11 +46,16 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 			$cals = [];
 			foreach($calEntries[$r] as $c) {
 
-				$cd = date("l", $c["start_time"]);
-				$ce = date("l", $c["end_time"]);
+				// $cd = date("l", $c["start_time"]);
+				// $ce = date("l", $c["end_time"]);
+				if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
+					continue;
+				}
+				/*
 				if($cd != $dayStream && $ce != $dayStream) {
 					continue;
 				}
+				*/
 				$cals[] = $c;
 			}
 			$colResHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
@@ -137,7 +143,7 @@ th {
 				?>
 					
 				<?php
-					$style = '';
+					$style = 'padding: 1px !important;';
 					if(!$hcalEntry['text'] && $hcalEntry['expand']) {
 						$style .= 'border-top-style: hidden !important;';
 					}
@@ -146,7 +152,7 @@ th {
 					<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
 						<?php if($hcalEntry['free']) { ?>
 							<?php if ($hcalEntry['link']) { ?>
-							<div><a aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+							<div><a style="font-size: 8px" aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
 							<?php } ?>
 						<?php } else { ?>
 						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">

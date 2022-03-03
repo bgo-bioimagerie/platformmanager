@@ -827,7 +827,8 @@ class BookingController extends BookingabstractController {
             $i++;
         }
         $mondayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
-        $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 31, intval($curentDateE[0])));
+        $nbdays = date('t', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
+        $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + $nbdays, intval($curentDateE[0])));
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
@@ -861,9 +862,8 @@ class BookingController extends BookingabstractController {
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
-        $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 31, $dateArray[0]);
+        $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + $nbdays, $dateArray[0]);
         $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
-
         //echo "Cal entry count = " . count($calEntries) . "</br>";
         // curentdate unix
         $temp = explode("-", $curentDate);
