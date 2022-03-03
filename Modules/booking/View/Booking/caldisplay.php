@@ -143,7 +143,7 @@ th {
 				?>
 					
 				<?php
-					$style = '';
+					$style = 'padding: 1px !important;';
 					if(!$hcalEntry['text'] && $hcalEntry['expand']) {
 						$style .= 'border-top-style: hidden !important;';
 					}
