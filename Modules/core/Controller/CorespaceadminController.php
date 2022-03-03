@@ -90,16 +90,6 @@ class CorespaceadminController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
 
-        $flash = $this->request->getParameterNoException('flash');
-        Configuration::getLogger()->debug("[TEST]", ["flash var in spaceadminController" => $flash]);
-        if ($flash) {
-            $_SESSION['flash'] = $flash;
-            $flashClass = $this->request->getParameterNoException('flashClass');
-            if ($flashClass) {
-                $_SESSION['flashClass'] = $flashClass;
-            }
-        }
-
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
         $lang = $this->getLanguage();
@@ -254,6 +244,20 @@ class CorespaceadminController extends CoresecureController {
                 return $this->redirect("spaceadmin", [], ['space' => $newSpace]);
             }
         }
+
+         // set showTodo to true if coming back from a todo action
+         $showTodo = ($this->request->getParameterNoException('showTodo') == 1) ? true : false;
+
+         // get flash messages brought back from todoList actions
+         $flash = $this->request->getParameterNoException('flash');
+         if ($flash) {
+             $_SESSION['flash'] = $flash;
+             $flashClass = $this->request->getParameterNoException('flashClass');
+             if ($flashClass) {
+                 $_SESSION['flashClass'] = $flashClass;
+             }
+         }
+ 
         // generate todoList informations
         $todolist = ($id_space > 0) ? $this->todolist($space['id']) : null;
         return $this->render(
@@ -261,6 +265,7 @@ class CorespaceadminController extends CoresecureController {
                 "lang" => $lang,
                 "formHtml" => $form->getHtml($lang),
                 "todolist" => $todolist,
+                "showTodo" => $showTodo,
                 "data" => ["space" => $space]
             )
         );

@@ -9,9 +9,10 @@
                 id="todo_btn"
                 class="tab btn btn-primary"
                 style="margin:5px; font-weight:bold">
-                Show Todo
+                {% if showTodo %} Hide Todo {% else %} Show Todo {% endif %}
             </button>
         </div>
+        
         <div id="sections">
             <div id="spaceedit_todo">
                 <div class="page-header">
@@ -65,20 +66,21 @@
 
     <script>
         setLinks();
-        setShowAction();
-
-        function setShowAction() {
+        
+        const todoBtn = document.getElementById("todo_btn");
+        todoBtn.addEventListener("click", () => { showAction(); });
+        '{{showTodo}}' ? showAction() : todoBtn.innerHTML = "Show Todo";
+        
+        function showAction() {
             const todoBtn = document.getElementById("todo_btn");
             const section = document.getElementById("spaceedit_todo");
-            todoBtn.addEventListener("click", () => {
-                section.classList.toggle("expanded");
-                const expanded = section.classList.contains("expanded");
-                if (expanded) {
-                    todoBtn.innerHTML = "Hide Todo";
-                } else {
-                    todoBtn.innerHTML = "Show Todo";
-                }
-            });
+            section.classList.toggle("expanded");
+            const expanded = section.classList.contains("expanded");
+            if (expanded) {
+                todoBtn.innerHTML = "Hide Todo";
+            } else {
+                todoBtn.innerHTML = "Show Todo";
+            }
         }
 
         function setLinks() {

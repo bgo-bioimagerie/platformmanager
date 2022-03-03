@@ -105,9 +105,7 @@ class ClientsuseraccountsController extends ClientsController {
             $_SESSION["flash"] = $flashMessage;
             $_SESSION["flashClass"] = $flashClass;
         } else {
-            $c = new CorespaceadminController($this->request);
-            $this->request->setParams(['flash' => $flashMessage, 'flashClass' => $flashClass]);
-            $c->runAction("core", "edit", ["id_space" => $id_space]);
+            $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo"]);
         }
     }
 
