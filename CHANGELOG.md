@@ -10,6 +10,7 @@
 * [core] disable timezone, impacts existing bookings recorded as UTC
 * [booking] fix calendar when area has no resource
 * [booking] fix calendar display when resa spans multiple days
+* [booking] fix calendar month display for month overlap resa
 
 ## 2.4.0
 
