@@ -1,17 +1,5 @@
 <?php require_once 'Framework/ti.php' ?>
-<?php
-require_once 'Modules/core/Model/CoreInstall.php';
-use DebugBar\StandardDebugBar;
-use DebugBar\DataCollector\PDO\PDOCollector;
 
-$isdev = (getenv('PFM_MODE') == 'dev');
-if($isdev) {
-    CoreInstall::getDatabase();
-    $debugbar = new StandardDebugBar();
-    $debugbarRenderer = $debugbar->getJavascriptRenderer();
-    $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector(CoreInstall::getDatabase()));
-}
-?>
 <!DOCTYPE html>
 <html lang="<?php if(isset($lang)) {echo $lang;} else {echo "en";} ?>">
     <head>
@@ -20,7 +8,7 @@ if($isdev) {
         <?php
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
-        <meta name="mode" description="<?php echo $isdev ?>">
+        <meta name="mode" description="<?php echo $context['dev'] ? 'dev' : 'prod' ?>">
         <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
@@ -28,9 +16,9 @@ if($isdev) {
             <?php endblock() ?>
         </title>
         <?php
-        if($isdev) {
+        if($context['dev']) {
             echo '<script src="externals/vuejs/vue.js"></script>';
-            echo $debugbarRenderer->renderHead();
+            echo $context['_debugbarRenderer']->renderHead();
         } else {
             echo '<script src="externals/vuejs/vue.min.js"></script>';
         }
@@ -133,8 +121,8 @@ if($isdev) {
         <?php endblock() ?>
 
         <?php
-        if($isdev) {
-           echo $debugbarRenderer->render();
+        if($context['dev']) {
+           echo $context['_debugbarRenderer']->render();
         }
         ?>
 

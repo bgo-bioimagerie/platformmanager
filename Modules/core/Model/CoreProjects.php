@@ -11,6 +11,10 @@ require_once 'Framework/Model.php';
  * @author Sylvain Prigent
  */
 class CoreProjects extends Model {
+
+	public function __construct() {
+        $this->tableName = "core_projects";
+    }
         
 	/**
 	 * Create the Project table

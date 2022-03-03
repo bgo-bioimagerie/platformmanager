@@ -11,6 +11,10 @@ require_once 'Modules/core/Model/CoreSpace.php';
  */
 class BkBookingSettings extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_booking_settings";
+    }
+
     /**
      * Create the booking settings entry table
      *

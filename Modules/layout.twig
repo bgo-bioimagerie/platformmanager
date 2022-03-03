@@ -4,14 +4,14 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{{metadesc | default('')}}"/>
-        <meta name="mode" description="{{isdev}}">
+        <meta name="mode" description="{{context.dev ? 'dev' : 'prod'}}">
         <base href="{{context.rootWeb}}" >
         <title>
             {% block title %}{% endblock %}
         </title>
-        {% if dev %}
+        {% if context.dev %}
             <script src="externals/vuejs/vue.js"></script>
-            {{_debugbarRenderer.renderHeader()}}
+            {{context._debugbarRenderer.renderHead() | raw}}
         {% else %}
             <script src="externals/vuejs/vue.min.js"></script>
         {% endif %}
@@ -94,9 +94,8 @@
         </div>
         </footer>
         {% endblock %}
-
-        {% if dev %}
-            {{_debugbarRenderer.renderHeader()}}
+        {% if context.dev %}
+            {{context._debugbarRenderer.render() | raw}}
         {% endif %}
         <script src="externals/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     </body>

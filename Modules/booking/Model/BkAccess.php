@@ -58,7 +58,9 @@ class BkAccess extends Model {
     }
 
     public function getAccessIds($id_space, array $ids) {
-
+        if(empty($ids)) {
+            return [];
+        }
         $sql = "SELECT id_resource, id_access FROM bk_access WHERE id_resource IN (".implode(',', $ids).") AND id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();

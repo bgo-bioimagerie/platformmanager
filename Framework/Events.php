@@ -214,7 +214,7 @@ class EventHandler {
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $modelResource = new ResourceInfo();
-        $nbResources = $modelResource->admCount('re_info', $msg['space']['id']);
+        $nbResources = $modelResource->admCount($msg['space']['id']);
         
         $stat = ['name' => 'resources', 'fields' => ['value' => $nbResources['total']]];
         $statHandler = new Statistics();
@@ -239,7 +239,7 @@ class EventHandler {
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $modelService = new SeService();
-        $nbServices = $modelService->admCount('se_services', $msg['space']['id']);
+        $nbServices = $modelService->admCount($msg['space']['id']);
         
         $stat = ['name' => 'services', 'fields' => ['value' => $nbServices['total']]];
         $statHandler = new Statistics();

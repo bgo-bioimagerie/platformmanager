@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkBookingTableCSS extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_bookingcss";
+    }
+
     /**
      * Create the area table
      *

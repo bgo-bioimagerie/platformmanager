@@ -5,11 +5,15 @@ require_once 'Request.php';
 require_once 'View.php';
 require_once 'Errors.php';
 require_once 'Constants.php';
+require_once 'Modules/core/Model/CoreInstall.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+
+use DebugBar\StandardDebugBar;
+use DebugBar\DataCollector\PDO\PDOCollector;
 
 // Default navbar
 class Navbar{
@@ -351,8 +355,16 @@ abstract class Controller {
             "currentSpace" => $this->currentSpace,  // current space if any
             "role" => $this->role,   // user role in space if any
             "maintenance" => $this->maintenance,
-            "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null
+            "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+            "dev" => (getenv('PFM_MODE')=='dev')
         ];
+        if($dataView["context"]["dev"]) {
+            CoreInstall::getDatabase();
+            $debugbar = new StandardDebugBar();
+            $debugbarRenderer = $debugbar->getJavascriptRenderer();
+            $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector(CoreInstall::getDatabase()));
+            $dataView["context"]["_debugbarRenderer"] = $debugbarRenderer;
+        }
 
         if (getenv("PFM_MODE") == "test") {
             // Need to know module name and action

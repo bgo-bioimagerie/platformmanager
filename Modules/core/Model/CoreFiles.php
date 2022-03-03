@@ -13,6 +13,9 @@ class CoreFiles extends Model {
     public static int $IN_PROGRESS=2;
     public static int $ERROR=3;
 
+    public function __construct() {
+        $this->tableName = "core_files";
+    }
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_files` (
