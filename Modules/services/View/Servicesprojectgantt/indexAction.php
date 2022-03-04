@@ -6,8 +6,8 @@
 <?php startblock('stylesheet') ?>
 
 
-<link href="externals/jQueryGantt/css/style.css" type="text/css" rel="stylesheet">
-<link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css" rel="stylesheet" type="text/css">
+
+<link href="externals/node_modules/@taitems/jquery-gantt/css/style.css" type="text/css" rel="stylesheet">
 <style type="text/css">
 
     h1 {
@@ -22,6 +22,10 @@
     }
     table th:first-child {
         width: 150px;
+    }
+
+    .fn-gantt .nav-link {
+        padding: 0px;
     }
     
     <?php 
@@ -69,10 +73,8 @@
     
 </div>
 
-<script src="externals/jQueryGantt/js/jquery.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script src="externals/jQueryGantt/js/jquery.fn.gantt.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+
+<script src="externals/node_modules/@taitems/jquery-gantt/js/jquery.fn.gantt.min.js"></script>
 <script>
     
     $(function () {
@@ -95,7 +97,7 @@
                 // console.log("chart rendered");
             }
         });
-        prettyPrint();
+        //prettyPrint();
     });
     
 </script>
