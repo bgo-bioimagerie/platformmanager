@@ -40,7 +40,7 @@ class StatisticsconfigController extends CoresecureController {
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'statistics', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'statistics', 'signal');
+            $this->menusactivation($id_space, 'statistics', 'bar-chart');
             return $this->redirect("statisticsconfig/" . $id_space);
         }
 

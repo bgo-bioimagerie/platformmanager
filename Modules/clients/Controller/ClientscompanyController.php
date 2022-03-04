@@ -70,7 +70,7 @@ class ClientscompanyController extends ClientsController {
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
-            $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $form->getParameter("county"), $form->getParameter("country"), $form->getParameter("tel"), $form->getParameter("fax"), $form->getParameter("email"), $form->getParameter("approval_number")
+            $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $this->request->getParameterNoException("county"), $form->getParameter("country"), $form->getParameter("tel"), $this->request->getParameterNoException('fax'), $form->getParameter("email"), $form->getParameter("approval_number")
             );
 
             $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);

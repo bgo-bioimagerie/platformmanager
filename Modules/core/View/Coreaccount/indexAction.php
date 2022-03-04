@@ -18,12 +18,12 @@
 <div class="row" style="background-color: #fff; height:100%">
 
         <!-- Title -->
-        <div class="col-sm-12">
+        <div class="col-12">
             <h1 class="text-center login-title"><?php echo $home_title ?></h1>
         </div>
 
          <!-- Form -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
+        <div class="col-10 offset-1 text-center">
             <p></p>
             <?php echo $formHtml ?>
             <p></p>

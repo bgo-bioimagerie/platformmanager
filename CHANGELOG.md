@@ -1,6 +1,10 @@
 # Changes
 
-## 2.4.1 [unreleased]
+## 2.5.0
+
+* [core] use bootstrap5 and update/remove some libraries
+
+## 2.4.1
 
 * [core] add redirects to TODO after doing todo actions
 * [core] add missing tableName properties in model constructors
@@ -10,6 +14,8 @@
 * [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)
 * [core] disable timezone, impacts existing bookings recorded as UTC
 * [booking] fix calendar when area has no resource
+* [booking] fix calendar display when resa spans multiple days
+* [booking] fix calendar month display for month overlap resa
 
 ## 2.4.0
 

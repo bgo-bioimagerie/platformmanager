@@ -19,107 +19,108 @@
     
 <?php startblock('content') ?>
 
-<div class="container" id="welcome">
+<div class="" id="welcome">
     <div class="row">
 
-        <div class="col-md-2">
-                <div class="col-xs-12"><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
-                    <div style="margin: 10px"><a href="coretiles?mine=1"><button class="btn btn-primary btn-block"><?php echo CoreTranslator::MySpaces($lang); ?></button></a></li></div>
+        <div class="col-12 col-md-2">
+            <div><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
+            <div class="btn-group-vertical btn-group-justified" role=group">
+                    <a class="m-1 btn btn-primary" href="coretiles?mine=1"><?php echo CoreTranslator::MySpaces($lang); ?></a>
                 <?php 
             foreach ($mainMenus as $menu) {
-                echo '<div style="margin: 10px" >';
-                echo sprintf('<a href="coretiles/1/%s"><button class="btn btn-primary btn-block">%s</button></a></li>', $menu['id'], $menu['name']);
-                echo '</div>';
+                echo sprintf('<a class="m-1 btn btn-primary" href="coretiles/1/%s">%s</a>', $menu['id'], $menu['name']);
             }
             ?>
+            </div>
         </div>
 
 
-        <div class="col-md-6">
-            <div class="row" style="margin: 10px;">
-                <div class="col-xs-6">
-                    <input id="search" type="form-control" v-model="search" placeholder="search"/>
+        <div class="col-12 col-md-6">
+            <div class="row">
+                <div class="col-4">
+                    <input id="search" type="text" class="form-control" v-model="search" placeholder="search"/>
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-md-4 col-lg-2 modulebox" v-for="space in matches" :key="space.id">
-                    <a :href="`corespace/${space.id}`">
-                    <img v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="margin-left: -15px;width:218px;height:150px">
-                    </a>
-                    <p></p>
-                    <p style="color:#018181; ">
-                        <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="glyphicon glyphicon-lock"></span></a>
-                    </p>
-                    <p style="color:#a1a1a1; font-size:12px;">{{space.description}}</p>
-                    <div>
-                        <small v-if="space.support">
-                        support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
-                        </small>
+                <div class="col-12 col-md-4 m-2" v-for="space in matches" :key="space.id">
+                <div class="card text-dark bg-light">
+                    <div class="card-header">
+                        <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="bi-lock-fill"></span></a>
                     </div>
-                    <div v-if="space.join" style="bottom: 20px; right: 10px">
-                        <a :href="`coretilesselfjoinspace/${space.id}`">
-                            <button type="button" class="btn btn-md btn-success">{{space.join}}</button>
-                        </a>
+                   <div class="card-body">
+                        <img class="card-img-top" v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="width:100%">
+                        <p><small>{{space.description.substr(0, 50)}}</small></p>
+                        <div>
+                            <small v-if="space.support">
+                            support: <a :href="`mailto:${space.support}`">{{space.support}}</a>
+                            </small>
+                        </div>
                     </div>
-                    <div v-if="space.join_requested" style="bottom: 20px; right: 10px">
-                        <button type="button" class="btn btn-md btn-info" disabled>{{space.join_requested}}</button>
+                    <div class="card-footer">
+                        <div v-if="space.join" style="bottom: 20px">
+                            <a :href="`coretilesselfjoinspace/${space.id}`">
+                                <button type="button" class="btn btn-sm btn-success">{{space.join}}</button>
+                            </a>
+                        </div>
+                        <div v-if="space.join_requested" style="bottom: 20px">
+                            <button type="button" class="btn btn-sm btn-info" disabled>{{space.join_requested}}</button>
+                        </div>
                     </div>
+                </div>
                 </div>
             </div>
             <div class="row" id="user_stars">
                 <?php foreach($spaces as $item) { ?>
-                <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
-                    <a href="<?php echo "corespace/" . $item["id"] ?>">
-                    <?php if(isset($icon)) {?><img aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
-                    </a>
-                    <p></p>
-                    <p style="color:#018181; ">
+                <div class="col-12 col-md-6 m-2">
+                <div class="card text-dark bg-light">
+                    <div class="card-header">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
                         <?php if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
-                                <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="glyphicon glyphicon-star"></span></a>
+                                <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="bi-star-fill"></span></a>
                         <?php } ?>
-                        <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
-                    </p>
-                    <p style="color:#a1a1a1; font-size:12px;">
-                        <?php echo $item["description"] ?>
-                    </p>
-                    <div style="position: absolute; bottom: 0px">
+                        <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
+                    </div>
+                    <div class="card-body">
+                        <?php if(isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%"><?php } ?>
+                        <?php if(strlen($item['description']) > 50) { echo substr($item["description"], 0, 50)."..."; } else { echo $item['description']; } ?>
+                        </div>
+                    <div class="card-footer">
                         <small>
                         <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
                         </small>
                     </div>
-                </div>  
+                </div>
+                </div>
                 <?php } ?>
             </div>
 
 
             <div class="row" id="user_spaces">
                 <?php foreach($userSpaces as $item) { ?>
-                <div class="col-xs-12 col-md-4 col-lg-2 modulebox">
-                    <a href="<?php echo "corespace/" . $item["id"] ?>">
-                    <?php if(isset($icon)) {?><img aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
-                    </a>
-                    <p></p>
-                    <p style="color:#018181; ">
+                <div class="col-6 col-md-4 m-2">    
+                <div class="card text-dark bg-light">
+                    <?php if(isset($icon)) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                    <div class="card-header">
                         <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
-                        <?php if($item["status"] == 0) { echo '<span class="glyphicon glyphicon-lock" aria-hidden="true" aria-label="private"></span>'; } ?>
-                    </p>
-                    <p style="color:#a1a1a1; font-size:12px;">
+                        <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
+                    </div>
+                    <div class="card-body">
                         <?php echo $item["description"] ?>
-                    </p>
-                    <div style="position: absolute; bottom: 0px">
+                    </div>
+                    <div class="card-footer">
                         <small>
                         <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
                         </small>
                     </div>
-                </div>  
+                </div>
+                </div> 
                 <?php } ?>
             </div>
 
 
             <?php if(!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
             <div class="row">
-                <div class="col-xs-12 text-center" id ="welcome" style="min-height: 400px">
+                <div class="col-12 text-dark bg-light text-center m-3" id ="welcome" style="min-height: 400px">
                     <?php if($content) { echo $content; } else {?>
                         <h3 style="margin: 20px"><?php echo CoreTranslator::welcome($lang) ?></h3>
                         <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
@@ -132,15 +133,15 @@
             </div>
             <?php } ?>
         </div>
-        <div class="col-md-4" id="user_home">
+        <div class="col-12 col-md-4" id="user_home">
             <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { ?>
                 <div v-if="bookings && bookings.length > 0" id="future_bookings">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Bookings</div>
-                        <div class="panel-body">
+                    <div class="card text-dark bg-light">
+                        <div class="card-header">Bookings</div>
+                        <div class="card-body">
                             <div class="row" v-for="b in bookings">
-                                <div class="col-xs-12">
-                                    {{b.date}}: {{b.resource}} [{{b.space}}] <a :href="`/bookingeditreservation/${b.id_space}/r_${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                                <div class="col-12">
+                                    {{b.date}}: {{b.resource}} [{{b.space}}] <a :href="`/bookingeditreservation/${b.id_space}/r_${b.id}`"><span class="bi-zoom-in"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -148,12 +149,12 @@
                 </div>
 
                 <div v-if="projects && projects.length > 0" id="projects">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Service projects</div>
-                        <div class="panel-body">
+                    <div class="card text-dark bg-light">
+                        <div class="card-header">Service projects</div>
+                        <div class="card-body">
                             <div class="row" v-for="b in projects">
-                                <div class="col-xs-12">
-                                    {{b.date}}: {{b.name}} [{{b.space}}] <a :href="`/servicesprojectsheet/${b.id_space}/${b.id}`"><span class="glyphicon glyphicon-zoom-in"></span></a>
+                                <div class="col-12">
+                                    {{b.date}}: {{b.name}} [{{b.space}}] <a :href="`/servicesprojectsheet/${b.id_space}/${b.id}`"><span class="bi-zoom-in"></span></a>
                                 </div>
                             </div>
                         </div>

@@ -1242,25 +1242,11 @@ class CoreTranslator {
         return "Connection page data";
     }
 
-    public static function Carousel($lang) {
-        if ($lang == "fr") {
-            return "Carousel";
-        }
-        return "Carousel";
-    }
-
     public static function Image_Url($lang) {
         if ($lang == "fr") {
             return "Image url";
         }
         return "Image url";
-    }
-
-    public static function ViewCarousel($lang) {
-        if ($lang == "fr") {
-            return "Afficher le carousel";
-        }
-        return "View carousel";
     }
 
     public static function TheTwoPasswordAreDifferent($lang) {

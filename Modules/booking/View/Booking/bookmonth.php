@@ -12,7 +12,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 <link href="Modules/booking/Theme/styleagenda.css" rel="stylesheet" type="text/css" />
 
 <div class="row" style="background-color: #ffffff;">
-    <div class="col-xs-12">
+    <div class="col-12">
     <?php
 
     $from = ["month", $date, $bk_id_resource, $bk_id_area, $id_user];
@@ -33,7 +33,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 </div>
 
 <div class="row">
-    <div class="col-xs-12" style="background-color: #ffffff;">
+    <div class="col-12" style="background-color: #ffffff;">
     <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
     </div>
 </div>

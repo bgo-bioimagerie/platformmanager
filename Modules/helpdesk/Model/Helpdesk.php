@@ -124,8 +124,8 @@ class Helpdesk extends Model {
 
     public function addEmail($id_ticket, $body, $from, $files=[]) {
         // create message
-        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
-        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_EMAIL));
+        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at, subject)  VALUES (?,?,?,?, NOW(),?)';
+        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_EMAIL, ''));
         $id = $this->getDatabase()->lastInsertId();
 
         foreach($files as $attachment) {
@@ -137,8 +137,8 @@ class Helpdesk extends Model {
 
     public function addNote($id_ticket, $body, $from) {
         // create message
-        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
-        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE));
+        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at, subject)  VALUES (?,?,?,?, NOW(),?)';
+        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE, ''));
         return $this->getDatabase()->lastInsertId();
 
     }

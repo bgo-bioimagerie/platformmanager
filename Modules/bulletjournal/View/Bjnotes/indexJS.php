@@ -134,12 +134,12 @@
 
         function updateNoteListHtml(data) {
             //alert("start updateNoteListHtml " + JSON.stringify(data));
-            var typeicon = "glyphicon glyphicon-minus";
+            var typeicon = "bi-x-square-fill";
             if (data.type === 2) {
-                typeicon = "glyphicon glyphicon-asterisk";
+                typeicon = "bi-asterisk";
             }
             if (data.type === 3) {
-                typeicon = "glyphicon glyphicon-calendar";
+                typeicon = "bi-calendar3";
             }
 
             var styleTR = "";
@@ -184,8 +184,8 @@
                 if (data.status === 3) {
                     cancelTxt = "<?php echo BulletjournalTranslator::ReOpen($lang); ?>";
                 }
-                htmldata += "<td><button id=\"closetask_" + data.id + "\" class=\"btn btn-xs btn-primary\">" + editTxt + "</button></td>";
-                htmldata += "<td><button id=\"canceltask_" + data.id + "\" class=\"btn btn-xs btn-default\">" + cancelTxt + "</button></td>";
+                htmldata += "<td><button id=\"closetask_" + data.id + "\" class=\"btn btn-sm btn-primary\">" + editTxt + "</button></td>";
+                htmldata += "<td><button id=\"canceltask_" + data.id + "\" class=\"btn btn-sm btn-outline-dark\">" + cancelTxt + "</button></td>";
 
             } else {
                 htmldata += "<td></td>";

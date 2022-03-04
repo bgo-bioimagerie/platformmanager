@@ -163,7 +163,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             $basemodule = $module;
         }
         $modelSpace = new CoreSpace();
-        $modelSpace->setSpaceMenu($id_space, $basemodule, $module, "glyphicon-".$icon, 
+        $modelSpace->setSpaceMenu($id_space, $basemodule, $module, "bi-".$icon, 
         $this->request->getParameter($module."Menustatus"),
         $this->request->getParameter($module."DisplayMenu"),
         1,

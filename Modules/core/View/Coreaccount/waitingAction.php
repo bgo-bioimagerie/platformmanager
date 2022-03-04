@@ -15,7 +15,7 @@
 <!-- body -->
 <?php startblock('content') ?>
 <div class="row" style="background-color: #fff; height:100%">
-        <div class="col-sm-10 col-sm-offset-1 text-center">
+        <div class="col-10 offset-1 text-center">
             <p></p>
             <?php echo $message ?>
             <p></p>
