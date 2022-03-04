@@ -476,7 +476,7 @@ class CorespaceaccessController extends CoresecureController {
         return $form;
     }
 
-    public function validateSpaceAccessForm($id_space, $id_user, $form, $todo=false) {
+    public function validateSpaceAccessForm($id_space, $id_user, $form) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelUserSpace = new CoreSpaceUser();

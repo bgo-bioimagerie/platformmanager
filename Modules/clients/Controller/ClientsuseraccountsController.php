@@ -91,7 +91,7 @@ class ClientsuseraccountsController extends ClientsController {
         return $form;
     }
 
-    public function validateClientsUserForm($id_space, $id_user, $id_client, $todo=false) {
+    public function validateClientsUserForm($id_space, $id_user, $id_client) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelClientUser = new ClClientUser();

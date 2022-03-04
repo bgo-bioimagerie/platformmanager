@@ -128,7 +128,7 @@ class BookingauthorisationsController extends CoresecureController {
         return $form;
     }
 
-    public function validateBkAuthAddForm($id_space, $id_user, $id_category, $id_visa, $date, $todo=false) {
+    public function validateBkAuthAddForm($id_space, $id_user, $id_category, $id_visa, $date) {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelAuth = new BkAuthorization();
