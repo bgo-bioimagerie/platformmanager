@@ -2,11 +2,11 @@
 
 ## 2.5.0
 
+* [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
 
 ## 2.4.1
 
-* [core] add redirects to TODO after doing todo actions
 * [core] add missing tableName properties in model constructors
 * [space] improve todolist sql resquests
 * [helpdesk] close connection in anycase
