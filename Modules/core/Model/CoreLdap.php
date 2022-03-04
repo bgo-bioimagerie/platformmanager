@@ -42,7 +42,6 @@ class CoreLdap {
         // On traite le cas NON SSO
         // -> LDAP sans SSO
         // -> Imap
-        $passwd_md5 = md5($_password);
         if (@function_exists("ldap_connect")) {
             $login_search = preg_replace("/[^\-@._[:space:]a-zA-Z0-9]/", "", $_login);
             if ($login_search != $_login){
