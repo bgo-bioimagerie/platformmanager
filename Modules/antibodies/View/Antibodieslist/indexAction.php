@@ -302,7 +302,7 @@
 
         <div class="row">
             <div class="col-12">
-            <table id="antibodies" class="table table-striped table-bordered" style="font-size: 10px;" cellspacing="0" width="100%">
+            <table aria-label="list of antibodies" id="antibodies" class="table table-striped table-bordered" style="font-size: 10px;">
                 <thead>	 
                     <tr>
                         <th id="antibody" class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
@@ -395,7 +395,7 @@
 
 
                             <!-- TISSUS -->
-                            <td headers="tissues image" width="10%" class="text-left" style="background-color: #eeffee;">
+                            <td headers="tissues image" class="text-left" style="width:10%;background-color: #eeffee;">
 
                                 <?php
                                 foreach ($anticorps['tissus'] as $tissus) {
