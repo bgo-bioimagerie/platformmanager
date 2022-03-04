@@ -678,14 +678,6 @@ class FormHtml {
      * 
      * @return type
      */
-    static public function timePickerScript() {
-        return file_get_contents("Framework/timepicker_script.php");
-    }
-
-    /**
-     * 
-     * @return type
-     */
     static public function textAreaScript() {
         return file_get_contents("Framework/textarea_script.php");
     }

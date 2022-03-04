@@ -217,8 +217,9 @@ class TableView {
             $html .= "<head>";
             $html .= "<meta charset=\"UTF-8\" />";
             $html .= "<base href=\"" . $rootWeb . "\">";
-            $html .= "<link rel=\"stylesheet\" href=\"/externals/bootstrap/css/bootstrap.min.css\">";
+            $html .= "<link rel=\"stylesheet\" href=\"/externals/node_modules/bootstrap/dist/css/bootstrap.min.css\">";
             $html .= "</head>";
+
         }
         else{
             $html .= $this->addHeader();
