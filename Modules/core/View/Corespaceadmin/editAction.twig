@@ -69,7 +69,7 @@
         // setLinks();
 
         const todoBtn = document.getElementById("todo_btn");
-        '{{showTodo}}' ? showAction(todoBtn) : todoBtn.innerHTML = "Show Todo";
+        '{{showTodo}}' ? showAction() : todoBtn.innerHTML = "Show Todo";
         
         function showAction() {
             const section = document.getElementById("spaceedit_todo");
