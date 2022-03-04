@@ -469,7 +469,7 @@ class CorespaceaccessController extends CoresecureController {
 
         $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         } 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id_user);
@@ -498,12 +498,6 @@ class CorespaceaccessController extends CoresecureController {
 
         $_SESSION["flash"] = CoreTranslator::UserAccessHasBeenSaved($lang);
         $_SESSION["flashClass"] = "success";
-
-        $redirectionUrl = $todo
-            ? "spaceadminedit/".$id_space
-            : "corespaceuseredit/".$id_space."/".$id_user;
-
-        $this->redirect($redirectionUrl, ["origin" => "spaceaccess"]);
     }
 
     /**

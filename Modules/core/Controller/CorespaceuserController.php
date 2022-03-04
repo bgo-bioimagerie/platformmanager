@@ -49,6 +49,9 @@ class CorespaceuserController extends CorespaceaccessController {
         $spaceAccessFormHtml = $spaceAccessForm->getHtml($lang);
         if ($spaceAccessForm->check()) {
             $this->validateSpaceAccessForm($id_space, $id_user, $spaceAccessForm, $todo);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            }
             $origin['page'] = 'spaceaccess';
         }
         $forms = ['space' => ['forms' => [$spaceAccessFormHtml], 'show' => 1]];
@@ -62,6 +65,9 @@ class CorespaceuserController extends CorespaceaccessController {
             $clientsUserFormHtml = $clientsUserForm->getHtml($lang);
             if ($clientsUserForm->check()) {
                 $clientsUsersCTRL->validateClientsUserform($id_space, $id_user, $clientsUserForm->getParameter("id_client"), $todo);
+                if ($todo) {
+                    return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+                }
                 $origin['page'] = 'clientsuser';
             }
             $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user, $todo);
@@ -85,6 +91,9 @@ class CorespaceuserController extends CorespaceaccessController {
                     $bkAuthAddForm->getParameter("date"),
                     $todo
                 );
+                if ($todo) {
+                    return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+                }
                 $origin['page'] = 'bookingaccess';
             }
             $bkAuth = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit", $lang);

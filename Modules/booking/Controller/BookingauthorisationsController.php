@@ -142,10 +142,6 @@ class BookingauthorisationsController extends CoresecureController {
 
         $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
         $_SESSION["flashClass"] = "success";
-        
-        if ($todo) {
-            return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
-        }
     }
 
     public function historyAction($id_space, $id) {

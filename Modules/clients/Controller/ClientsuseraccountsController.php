@@ -95,14 +95,11 @@ class ClientsuseraccountsController extends ClientsController {
         $modelClientUser = new ClClientUser();
         if (!$modelClientUser->exists($id_space, $id_client, $id_user)) {
             $modelClientUser->set($id_space, $id_client, $id_user);
-            $flashMessage = ClientsTranslator::UserHasBeenAddedToClient($lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
+            $_SESSION["flashClass"] = "success";
         } else {
             $_SESSION["flash"] = ClientsTranslator::UserAlreadyLinkedToClient($lang);
             $_SESSION["flashClass"] = "warning";
-        }
-        if ($todo) {
-            return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
         }
     }
 
