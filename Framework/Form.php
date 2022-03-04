@@ -361,7 +361,7 @@ class Form {
         $this->choices[] = array();
         $this->choicesid[] = array();
         $this->validated[] = true;
-        $this->enabled[] = true;
+        $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
