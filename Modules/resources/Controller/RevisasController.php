@@ -125,7 +125,7 @@ class RevisasController extends ResourcesBaseController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "resourceseditvisa/".$id_space."/".$id;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
@@ -141,15 +141,13 @@ class RevisasController extends ResourcesBaseController {
             }
             $modelVisa->setActive($id_space, $id, $form->getParameter("is_active"));
 
-            $flashMessage = ResourcesTranslator::Item_created("visa", $lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = ResourcesTranslator::Item_created("visa", $lang);
+            $_SESSION["flashClass"] = "success";
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                return $this->redirect("resourcesvisa/".$id_space, [], ['revisa' => ['id' => $id]]);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect("resourcesvisa/".$id_space, [], ['revisa' => ['id' => $id]]);
             }
         } else {
             // set the view

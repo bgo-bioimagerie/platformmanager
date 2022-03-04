@@ -117,7 +117,7 @@ class ClientspricingsController extends ClientsController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "clpricingedit/".$id_space."/".$id;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
@@ -136,17 +136,16 @@ class ClientspricingsController extends ClientsController {
                     $form->getParameter("txtcolor"),
                 );
 
-            $flashMessage = ClientsTranslator::Data_has_been_saved($lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = "success";
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                // after the provider is saved we redirect to the providers list page
+                return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
             }
-            // after the provider is saved we redirect to the providers list page
+            
             
         } else {
             // set the view

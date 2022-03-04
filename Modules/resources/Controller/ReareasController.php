@@ -84,7 +84,7 @@ class ReareasController extends ResourcesBaseController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "reareasedit/".$id_space."/".$id;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
         
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
@@ -98,15 +98,13 @@ class ReareasController extends ResourcesBaseController {
                 $form->getParameter("is_restricted"),
                 $id_space);
 
-            $flashMessage = ResourcesTranslator::Item_created("area", $lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = ResourcesTranslator::Item_created("area", $lang);
+            $_SESSION["flashClass"] = "success";
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {                
                 return $this->redirect("reareas/".$id_space, [], ['rearea' => ['id' => $id_area]]);
-            } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
             }
 
         } else {

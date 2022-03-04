@@ -108,7 +108,7 @@ class BookingschedulingController extends BookingsettingsController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "bookingschedulingedit/".$id_space."/".$id_rearea;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
@@ -131,16 +131,13 @@ class BookingschedulingController extends BookingsettingsController {
                     $this->request->getParameter("resa_time_setting"), 
                     $this->request->getParameter("default_color_id"));
 
-
-            $flashMessage = BookingTranslator::Item_created("schedule", $lang);
-            $flashClass = "success";
-        
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
+            $_SESSION["flash"] = BookingTranslator::Item_created("schedule", $lang);
+            $_SESSION["flashClass"] = "success";
+                
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
             }
             
         }

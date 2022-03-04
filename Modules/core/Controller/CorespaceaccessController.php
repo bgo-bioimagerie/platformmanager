@@ -314,7 +314,7 @@ class CorespaceaccessController extends CoresecureController {
         $todo = $this->request->getParameterNoException('redirect');
         $formJoinValidationUrl = "corespaceaccessuseradd/".$id_space;
         if ($todo) {
-            $formJoinValidationUrl .= "&redirect=todo";
+            $formJoinValidationUrl .= "?redirect=todo";
         }
 
         $formjoin->setValidationButton(CoreTranslator::Ok($lang), $formJoinValidationUrl);
@@ -338,15 +338,13 @@ class CorespaceaccessController extends CoresecureController {
             $modelUserSpace = new CoreSpaceUser();
             $modelUserSpace->setRole($user['idUser'], $id_space, $form->getParameter("role"));
 
-            $flashMessage = CoreTranslator::UserAccountAdded($user['login'], $lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = CoreTranslator::UserAccountAdded($user['login'], $lang);
+            $_SESSION["flashClass"] = "success";
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                $this->redirect('corespaceaccessusers/'. $id_space);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect('corespaceaccessusers/'. $id_space);
             }
         }
 

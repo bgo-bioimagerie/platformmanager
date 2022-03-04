@@ -61,7 +61,7 @@ class ClientscompanyController extends ClientsController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "clcompany/".$id_space;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
@@ -73,16 +73,14 @@ class ClientscompanyController extends ClientsController {
             $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $form->getParameter("county"), $form->getParameter("country"), $form->getParameter("tel"), $form->getParameter("fax"), $form->getParameter("email"), $form->getParameter("approval_number")
             );
 
-            $flashMessage = ClientsTranslator::Data_has_been_saved($lang);
-            $flashClass = 'success';
+            $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = 'success';
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                // after the provider is saved we redirect to the providers list page
-                $this->redirect("clcompany/" . $id_space);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                // after the provider is saved we redirect to the providers list page
+                return $this->redirect("clcompany/" . $id_space);
             }
             
         } else {

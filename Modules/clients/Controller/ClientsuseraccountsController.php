@@ -81,7 +81,7 @@ class ClientsuseraccountsController extends ClientsController {
 
         $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         } 
 
         $form->setValidationButton(CoreTranslator::Add($lang), $validationUrl);
@@ -98,14 +98,11 @@ class ClientsuseraccountsController extends ClientsController {
             $flashMessage = ClientsTranslator::UserHasBeenAddedToClient($lang);
             $flashClass = "success";
         } else {
-            $flashMessage = ClientsTranslator::UserAlreadyLinkedToClient($lang);
-            $flashClass = "warning";
+            $_SESSION["flash"] = ClientsTranslator::UserAlreadyLinkedToClient($lang);
+            $_SESSION["flashClass"] = "warning";
         }
-        if (!$todo) {
-            $_SESSION["flash"] = $flashMessage;
-            $_SESSION["flashClass"] = $flashClass;
-        } else {
-            $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+        if ($todo) {
+            return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
         }
     }
 

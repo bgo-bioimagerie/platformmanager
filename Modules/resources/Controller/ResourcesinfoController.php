@@ -133,7 +133,7 @@ class ResourcesinfoController extends ResourcesBaseController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "resourcesedit/".$id_space."/".$id;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
@@ -170,15 +170,13 @@ class ResourcesinfoController extends ResourcesBaseController {
                 $modelResource->setImage($id_space, $id, $target_dir . $url);
             }
 
-            $flashMessage = ResourcesTranslator::Item_created("resource", $lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = ResourcesTranslator::Item_created("resource", $lang);
+            $_SESSION["flashClass"] = "success";
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                return $this->redirect("resources/".$id_space, [], ['resource' => ['id' => $id]]);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect("resources/".$id_space, [], ['resource' => ['id' => $id]]);
             }
         }
 

@@ -87,16 +87,14 @@ class BookingcolorcodesController extends BookingsettingsController {
             
             $newID = $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
             $model->setColorWhoCanUse($id_space, $newID, $form->getParameter("who_can_use"));
+            
+            $_SESSION["flash"] = BookingTranslator::Item_created("colorcode", $lang);
+            $_SESSION["flashClass"] = "success";
 
-            $flashMessage = BookingTranslator::Item_created("colorcode", $lang);
-            $flashClass = "success";
-
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                return $this->redirect("bookingcolorcodes/".$id_space, [], ['bkcode' => ['id' => $newID]]);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                return $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect("bookingcolorcodes/".$id_space, [], ['bkcode' => ['id' => $newID]]);
             }
         }
         $formHtml = $form->getHtml($lang);

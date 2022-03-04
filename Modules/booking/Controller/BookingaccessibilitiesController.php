@@ -54,7 +54,7 @@ class BookingaccessibilitiesController extends BookingsettingsController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "bookingaccessibilities/".$id_space;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
@@ -68,15 +68,13 @@ class BookingaccessibilitiesController extends BookingsettingsController {
                 $bkaccess[] = ['resource' => $resource['id'], 'bkaccess' => $accessId];
             }
 
-            $flashMessage = BookingTranslator::Item_created("access", $lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = BookingTranslator::Item_created("access", $lang);
+            $_SESSION["flashClass"] = "success";
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                return $this->redirect("bookingaccessibilities/".$id_space, [], ["bkaccess" => $bkaccess]);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect("bookingaccessibilities/".$id_space, [], ["bkaccess" => $bkaccess]);
             }
         }
 

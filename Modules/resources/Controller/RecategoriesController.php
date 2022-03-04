@@ -78,7 +78,7 @@ class RecategoriesController extends ResourcesBaseController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "recategoriesedit/".$id_space."/".$id;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
         
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
@@ -89,15 +89,13 @@ class RecategoriesController extends ResourcesBaseController {
             $model = new ReCategory();
             $id_cat = $model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
 
-            $flashMessage = ResourcesTranslator::Item_created("category", $lang);
-            $flashClass = "success";
+            $_SESSION["flash"] = ResourcesTranslator::Item_created("category", $lang);
+            $_SESSION["flashClass"] = "success";
 
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-                return $this->redirect("recategories/".$id_space, [], ['recategory' => ['id' => $id_cat]]);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect("recategories/".$id_space, [], ['recategory' => ['id' => $id_cat]]);
             }
         } else {
             // set the view

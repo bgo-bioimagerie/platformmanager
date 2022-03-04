@@ -120,7 +120,7 @@ class BookingauthorisationsController extends CoresecureController {
 
         $validationUrl = $controller . "/". $id_space."/". $id_user;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl, ["origin" => "bookingaccess"]);
@@ -140,15 +140,12 @@ class BookingauthorisationsController extends CoresecureController {
                 CoreTranslator::dateToEn($date, $lang)
             );
 
-            $flashMessage = ResourcesTranslator::AuthorisationAdded($lang);
-            $flashClass = "success";
-            
-            if (!$todo) {
-                $_SESSION["flash"] = $flashMessage;
-                $_SESSION["flashClass"] = $flashClass;
-            } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
-            }
+        $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
+        $_SESSION["flashClass"] = "success";
+        
+        if ($todo) {
+            return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+        }
     }
 
     public function historyAction($id_space, $id) {
