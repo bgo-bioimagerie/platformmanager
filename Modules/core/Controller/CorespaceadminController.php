@@ -284,8 +284,7 @@ class CorespaceadminController extends CoresecureController {
             if ($todoData[$module]['title'] != "Users") {
                 $todoData[$module] = $this->checkForTasksDone($todoData[$module], $id_space);
             }
-        }
-        $todoData['redirectUrl'] = '?redirect=todo';
+        }        
         return $todoData;
     }
 
