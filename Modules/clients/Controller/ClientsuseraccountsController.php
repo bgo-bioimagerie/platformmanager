@@ -51,8 +51,10 @@ class ClientsuseraccountsController extends ClientsController {
         $modelUser = new CoreUser();
         $userFullName = $modelUser->getUserFUllName($id_user);
         $accounts = $modelClientUser->getUserClientAccounts($id_user, $id_space);
+        $modelClient = new ClClient();
+        $clients = $modelClient->getForList($id_space);
 
-        if (empty($accounts)) {
+        if (empty($clients['ids'])) {
             $_SESSION['flash'] = ClientsTranslator::Client_needed($lang);
             $_SESSION['flashClass'] = 'warning';
         }
