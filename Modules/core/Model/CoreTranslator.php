@@ -1806,6 +1806,13 @@ class CoreTranslator {
         return "Add existing account";
     }
 
+    public static function UserAccountAdded($userLogin, $lang) {
+        if ($lang == "fr") {
+            return "le compte " . $userLogin . " à été ajouté à votre espace";
+        }
+        return "User account " . $userLogin . " has been added to your space";
+    }
+
     public static function AccessTo($lang){
         if ($lang == "fr") {
             return "Demande accès à";

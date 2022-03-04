@@ -458,4 +458,26 @@ class ResourcesTranslator {
         return $result;
     }
 
+    public static function Item_created($item, $lang = "") {
+        $result = "";
+            switch ($item) {
+                case "area":
+                    $result = ($lang === "fr") ? "domaine" : "area";
+                    break;
+                case "category":
+                    $result = ($lang === "fr") ? "catégorie" : "category";
+                    break;
+                case "resource":
+                    $result = ($lang === "fr") ? "ressource" : "resource";
+                    break;
+                case "visa":
+                    $result = "visa";
+                    break;
+                default:
+                    break;
+            }
+        $result .= ($lang === "fr") ? " créé(e)" : " created" ;
+        return $result;
+    }
+
 }

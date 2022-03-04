@@ -2,6 +2,7 @@
 
 ## 2.5.0
 
+* [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
 
 ## 2.4.1
