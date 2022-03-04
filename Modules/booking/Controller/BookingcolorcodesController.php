@@ -76,7 +76,7 @@ class BookingcolorcodesController extends BookingsettingsController {
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "bookingcolorcodeedit/".$id_space."/".$id;
         if ($todo) {
-            $validationUrl .= "&redirect=todo";
+            $validationUrl .= "?redirect=todo";
         }
         
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
@@ -94,9 +94,9 @@ class BookingcolorcodesController extends BookingsettingsController {
             if (!$todo) {
                 $_SESSION["flash"] = $flashMessage;
                 $_SESSION["flashClass"] = $flashClass;
-                $this->redirect("bookingcolorcodes/".$id_space, [], ['bkcode' => ['id' => $newID]]);
+                return $this->redirect("bookingcolorcodes/".$id_space, [], ['bkcode' => ['id' => $newID]]);
             } else {
-                $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
+                return $this->redirect("spaceadminedit/" . $id_space, ["flash" => $flashMessage, "flashClass" => $flashClass, "showTodo" => true]);
             }
         }
         $formHtml = $form->getHtml($lang);
