@@ -2,8 +2,8 @@
 
 function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int $bk_id_area, string $id_user, string $lang) {
     
-    $html = '<div class="row"  style="background-color: #ffffff; padding-bottom: 12px;">
-	<div class="col-md-7 text-left">
+    $html = '<div class="m-1 row"  style="background-color: #ffffff; padding-bottom: 12px;">
+	<div class="col-7 text-left">
 		<div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
 
 	$today = date("Y-m-d", time());
@@ -12,9 +12,9 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 
-	$html .= '<a rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>';
-	$html .= '<a rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>';
-	$html .= '<a rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-default"> '.BookingTranslator::Today($lang).' </button></a>';
+	$html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
+	$html .= '<a id="gonext" rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
+	$html .= '<a id="gocurrent" rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
 	$html .= '</div>';
 
 	$d = explode("-", $fromDate);
@@ -36,13 +36,13 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
     $weekareaactive = $kind == 'weekarea' ? 'active':'';
     $monthactive = $kind == 'month' ? 'active':'';
 
-	$html .= '<div class="col-md-5 text-right">
+	$html .= '<div class="col-5 text-right">
 		<div class="btn-group" role="group">';
-	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
-	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
-	$html .='			<a aria-label="go to week view" style="color:#333;" href="bookingweek/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekactive.'" type="button">'.BookingTranslator::Week($lang).'</button></a>';
-	$html .='			<a aria-label="go to week area view" style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
-	$html .='			<a aria-label="go to month view" style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-default '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
+	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
+	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
+	$html .='			<a aria-label="go to week view" style="color:#333;" href="bookingweek/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$weekactive.'" type="button">'.BookingTranslator::Week($lang).'</button></a>';
+	$html .='			<a aria-label="go to week area view" style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
+	$html .='			<a aria-label="go to month view" style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
     $html .='        </div>
         </div>
     </div>';
@@ -80,7 +80,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
     ?>
 
     <div class="container">
-        <div class="row"><div class="col-sm-12" style="text-align: center"><?php
+        <div class="row"><div class="col-12" style="text-align: center"><?php
 		echo '<strong>'.$strmonth.'</strong> - '.$resourceBase['name'];
 		if($resourceBase['last_state'] != ""){
 			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
@@ -101,7 +101,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 $case = 0;
                 if ($x > 1) {
                     for ($i = 1; $i < $x; $i++) {
-                        echo '<td class="desactive col-sm-1">&nbsp;</td>';
+                        echo '<td class="desactive col-1">&nbsp;</td>';
                         $case++;
                     }
                 }
@@ -109,11 +109,11 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                     $y = date("N", mktime(0, 0, 0, $mois, $i, $annee));
                     
                     $tile_date = date("Y-m-d", mktime(0, 0, 0, $mois, $i, $annee));
-                    echo "<td class=\"col-sm-1\">";
+                    echo "<td class=\"col-1\">";
                     ?>
                 <div style="text-align:right; font-size:12px; color:#999999;"> <?php echo $i ?> </div>
                 <?php $tileq = '?'.implode('&', ["bk_curentDate=$tile_date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]); ?>
-                <a class="glyphicon glyphicon-plus" href="bookingday/<?php echo $id_space .'/'.$tile_date.$tileq ?>"></a>
+                <a class="bi-plus" href="bookingday/<?php echo $id_space .'/'.$tile_date.$tileq ?>"></a>
                     <?php
                     $found = false;
                     $modelBookingSetting = new BkBookingSettings();

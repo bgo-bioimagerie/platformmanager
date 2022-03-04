@@ -42,6 +42,7 @@ class Navbar{
                     'toolMenu' => $toolMenu,
                     'toolAdmin' => $toolAdmin,
                     'impersonate' => $_SESSION['logged_login'] ?? null,
+                    "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
                     'lang' => $this->lang));
     }
 
@@ -138,6 +139,28 @@ abstract class Controller {
             $this->twig = new \Twig\Environment($loader, [
                 'cache' => '/tmp/pfm'
             ]);
+        }
+
+        if($request->getParameterNoException('theme')) {
+            $theme = $request->getParameterNoException('theme');
+            if($theme == 'switch') {
+                if(!isset($_SESSION['theme'])) {
+                    $theme = 'dark';
+                } else {
+                    switch ($_SESSION['theme']) {
+                        case 'dark':
+                            $theme = 'light';
+                            break;
+                        case 'light':
+                            $theme = 'dark';
+                            break;
+                        default:
+                            $theme = 'light';
+                            break;
+                    }
+                }
+            }
+            $_SESSION['theme'] = $theme;
         }
 
         $this->currentSpace = $space;
@@ -332,6 +355,7 @@ abstract class Controller {
             "currentSpace" => $this->currentSpace,  // current space if any
             "role" => $this->role,   // user role in space if any
             "maintenance" => $this->maintenance,
+            "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
             "dev" => (getenv('PFM_MODE')=='dev')
         ];
         if($dataView["context"]["dev"]) {

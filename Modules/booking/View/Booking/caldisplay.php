@@ -91,7 +91,7 @@ th {
 }
 </style>
 <div class="table-responsive">
-<table aria-label="bookings day view" class="table">
+<table aria-label="bookings day view" class="table table-sm">
 <thead>
 	<tr><th scope="col"></th>
 	<?php
@@ -131,7 +131,7 @@ th {
 	?>
 		<tr>
 			<?php if($e==0) { ?>
-				<th rowspan="<?php echo $nbBlocks ?>"  id="h<?php echo $i?>" class="col-xs-2"><?php echo $i ?>:00</th>
+				<th rowspan="<?php echo $nbBlocks ?>"  id="h<?php echo $i?>" class="col-2"><?php echo $i ?>:00</th>
 			<?php } ?>
 			<?php foreach($calDay as $calDayEntry => $calRes) { ?>
 				<?php for($r = 0 ; $r < count($resourcesBase) ; $r++){
@@ -152,7 +152,7 @@ th {
 					<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
 						<?php if($hcalEntry['free']) { ?>
 							<?php if ($hcalEntry['link']) { ?>
-							<div><a style="font-size: 8px" aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="glyphicon glyphicon-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+							<div><a  data-status="free" aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="bi-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
 							<?php } ?>
 						<?php } else { ?>
 						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">

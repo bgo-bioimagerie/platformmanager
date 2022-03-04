@@ -21,8 +21,18 @@ require_once 'Modules/core/Model/CoreOpenId.php';
  * Controller for the provider example of users module
  */
 class UseraccountController extends CoresecureController {
+    public function mainMenu() {
 
-
+        $lang = $this->getLanguage();
+        $dataView = [
+            'bgcolor' => Constants::COLOR_WHITE,
+            'color' => Constants::COLOR_BLACK,
+            'My_Account' => CoreTranslator::My_Account($lang),
+            'Informations' => CoreTranslator::Informations($lang),
+            'Password' => CoreTranslator::Password($lang),
+        ];
+        return $this->twig->render("Modules/core/View/Coreusers/navbar.twig", $dataView);
+    }
     /**
      * (non-PHPdoc)
      * @see Controller::index()

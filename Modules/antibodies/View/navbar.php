@@ -43,13 +43,13 @@ if ($ecmenucolortxt == "") {
 
 <div style="padding: 7px; background-color: <?php echo $ecmenucolor ?>; color:<?php echo $ecmenucolortxt ?>;">
 
-    <div class="col-md-12" style="margin-top: 0px;">
+    <div class="col-12" style="margin-top: 0px;">
 
         <h4 style="text-transform: uppercase;">Anticorps</h4>
 
     </div>
         
-    <div class="col-md-12">
+    <div class="col-12">
         <p id="separatorp">Listing</p>
 
         <div  class="btn-block" id="menu-button-div">
@@ -62,7 +62,7 @@ if ($ecmenucolortxt == "") {
         </div>
     </div>
 
-    <div class="col-md-12">
+    <div class="col-12">
         <p id="separatorp">Référence</p>
 
         <div  class="btn-block" id="menu-button-div">
@@ -75,7 +75,7 @@ if ($ecmenucolortxt == "") {
         </div>
     </div>
     
-        <div class="col-md-12">
+        <div class="col-12">
         <p id="separatorp">Tissus</p>
 
         <div  class="btn-block" id="menu-button-div">
@@ -96,7 +96,7 @@ if ($ecmenucolortxt == "") {
         </div>
     </div>
 
-    <div class="col-md-12">
+    <div class="col-12">
         <p id="separatorp">Détails Proto</p>
 
         <div  class="btn-block" id="menu-button-div">

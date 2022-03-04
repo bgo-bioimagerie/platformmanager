@@ -1,5 +1,9 @@
 # Changes
 
+## 2.5.0
+
+* [core] use bootstrap5 and update/remove some libraries
+
 ## 2.4.1
 
 * [core] add missing tableName properties in model constructors

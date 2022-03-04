@@ -260,7 +260,7 @@ class ServicesTranslator {
         if ($lang == "fr") {
             return "Date d'ouverture";
         }
-        return "Opened_date";
+        return "Opened date";
     }
 
     public static function Closed_date($lang) {

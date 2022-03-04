@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-form-short">
+<div class="pm-form-short container ">
     <form role="form" class="form-horizontal" action="bookinggrrstats/<?php echo $id_space ?>"
           method="post" id="statform">
 
@@ -16,14 +16,14 @@
         <?php
         if (isset($errorMessage) && $errorMessage != '') {
             ?>
-            <div class="alert alert-danger">
+            <div class="col-12 alert alert-danger">
                 <p><?php echo $errorMessage ?></p>
             </div>
         <?php } ?>
 
-        <div class="form-group ">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
-            <div class="col-xs-10">
+        <div class="form-group mb-3 row">
+            <label class="control-label col-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
+            <div class="col-10">
                 <div class='input-group date'>
 
                     <?php
@@ -37,9 +37,9 @@
                 </div>
             </div>
         </div>
-        <div class="form-group ">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
-            <div class="col-xs-10">
+        <div class="form-group mb-3 row">
+            <label class="control-label col-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
+            <div class="col-10">
                 <div class='input-group date'>
                     <?php
                     $date = "";
@@ -53,10 +53,10 @@
             </div>
         </div>
 
-        <div class="form-group ">
-            <label for="condition_et_ou" class="control-label col-xs-2"> Condition </label>
-            <div class="col-xs-10">
-                <select class="form-control" id="condition_et_ou" name="condition_et_ou" >
+        <div class="form-group mb-3 row ">
+            <label for="condition_et_ou" class="control-label col-2"> Condition </label>
+            <div class="col-10">
+                <select class="form-select" id="condition_et_ou" name="condition_et_ou" >
                     <OPTION value="and" <?php
                     if (isset($condition_et_ou) && $condition_et_ou == 1) {
                         echo "selected=\"selected\"";
@@ -72,12 +72,13 @@
 
         </div>
 
-        <div class="form-group">
-            <label for="champ" class="control-label col-xs-2"><?php echo BookingTranslator::query($lang) ?></label>
-            <div class="col-xs-10" id="champ">
+        <div class="form-group row mb-3">
+            <label for="champ" class="control-label col-2"><?php echo BookingTranslator::query($lang) ?></label>
+            <div class="col-10" id="champ">
                 <?php for ($i = 0; $i < 5; $i++) {
                     ?>
-                    <div class="col-xs-4">
+                    <div class="row">
+                    <div class="col-4">
                         <select class="form-control" name="champ[]" >
                             <?php
                             $checkedArea = "";
@@ -109,8 +110,8 @@
                         </select>
 
                     </div>
-                    <div class="col-xs-4">
-                        <select class="form-control" name="type_recherche[]" >
+                    <div class="col-4">
+                        <select class="form-select" name="type_recherche[]" >
                             <OPTION value="1" <?php
                             if (isset($type_recherche[$i]) && $type_recherche[$i] == 1) {
                                 echo "selected=\"selected\"";
@@ -123,7 +124,7 @@
                             ?>> <?php echo BookingTranslator::Does_not_contain($lang) ?> </OPTION>
                         </select>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-4">
                         <?php
                         $value = "";
                         if (isset($text[$i])) {
@@ -132,15 +133,16 @@
                         ?>
                         <input type="text" class="form-control" name="text[]" value="<?php echo $value ?>" />
                     </div>
+                    </div>
                 <?php }
                 ?>
             </div>
         </div>
         <br>
-        <div class="form-group">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Output($lang) ?></label>
-            <div class="col-xs-10">
-                <select class="form-control" name="output">
+        <div class="form-group row">
+            <label class="control-label col-2"><?php echo BookingTranslator::Output($lang) ?></label>
+            <div class="col-10">
+                <select class="form-select" name="output">
                     <?php
                     if (isset($output)) {
                         
@@ -175,10 +177,10 @@
             </div>
         </div>	
         <br>
-        <div class="form-group">
-            <label for="summary_rq" class="control-label col-xs-2">Résumé par (ne concerne que les résumés) :</label>
-            <div class="col-xs-10">
-                <select class="form-control" id="summary_rq" name="summary_rq">
+        <div class="form-group row">
+            <label for="summary_rq" class="control-label col-2">Résumé par (ne concerne que les résumés) :</label>
+            <div class="col-10">
+                <select class="form-select" id="summary_rq" name="summary_rq">
                     <?php
                     $checkedC = "";
                     $checkedS = "";
@@ -201,14 +203,14 @@
             </div>
         </div>
 
-        <div class="col-xs-2 col-xs-offset-10" id="button-div">
+        <div class="col-2 offset-10" id="button-div">
             <input class="form-control" id="name" type="hidden" name="is_request" value="y"/>
             <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Ok($lang) ?>" />
         </div>
     </form>
 </div>
 
-<div class="col-md-10 col-md-offset-2 pm-table-short">
+<div class="col-10 offset-2 pm-table-short">
 
     <?php
     if (isset($table)) {
@@ -263,7 +265,7 @@
 
 </div>
 
-<div class="col-md-10 col-md-offset-2" id="pm-table">
+<div class="col-10 offset-2" id="pm-table">
 
     <?php
     if (isset($summaryTable)) {

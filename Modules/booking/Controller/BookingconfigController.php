@@ -42,12 +42,12 @@ class BookingconfigController extends CoresecureController {
         // menu activation form
         $formMenusactivation = $this->menusactivationForm($id_space, 'booking', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'booking', 'calendar');
+            $this->menusactivation($id_space, 'booking', 'calendar3');
             return $this->redirect("bookingconfig/".$id_space);
         }
         $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'bookingsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivation($id_space, 'bookingsettings', 'calendar', 'booking');                   
+            $this->menusactivation($id_space, 'bookingsettings', 'calendar3', 'booking');                   
             
             $modelAccess = new CoreSpaceAccessOptions();
             $toolname = "bookingauthorisations";
