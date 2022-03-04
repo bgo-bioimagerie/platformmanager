@@ -9,7 +9,7 @@
                 id="todo_btn"
                 class="tab btn btn-primary"
                 style="margin:5px; font-weight:bold"
-                onclick="showAction()">
+                onclick="showAction">
                 Hide Todo
             </button>
         </div>
@@ -72,7 +72,6 @@
         '{{showTodo}}' ? showAction(todoBtn) : todoBtn.innerHTML = "Show Todo";
         
         function showAction() {
-            const todoBtn = event ? event.target : document.getElementById("todo_btn");
             const section = document.getElementById("spaceedit_todo");
             section.classList.toggle("expanded");
             const expanded = section.classList.contains("expanded");
