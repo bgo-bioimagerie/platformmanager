@@ -1,6 +1,6 @@
 # Changes
 
-## 2.4.1 [unreleased]
+## 2.4.1
 
 * [core] add missing tableName properties in model constructors
 * [space] improve todolist sql resquests
