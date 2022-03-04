@@ -8,7 +8,9 @@
             <button
                 id="todo_btn"
                 class="tab btn btn-primary"
-                style="margin:5px; font-weight:bold">
+                style="margin:5px; font-weight:bold"
+                onclick="showAction(event.target)">
+                Hide Todo
             </button>
         </div>
         
@@ -67,11 +69,9 @@
         setLinks();
         
         const todoBtn = document.getElementById("todo_btn");
-        todoBtn.addEventListener("click", () => { showAction(); });
-        '{{showTodo}}' ? showAction() : todoBtn.innerHTML = "Show Todo";
+        '{{showTodo}}' ? showAction(todoBtn) : todoBtn.innerHTML = "Show Todo";
         
-        function showAction() {
-            const todoBtn = document.getElementById("todo_btn");
+        function showAction(todoBtn) {
             const section = document.getElementById("spaceedit_todo");
             section.classList.toggle("expanded");
             const expanded = section.classList.contains("expanded");

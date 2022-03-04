@@ -245,18 +245,8 @@ class CorespaceadminController extends CoresecureController {
             }
         }
 
-         // set showTodo to true if coming back from a todo action
-         $showTodo = ($this->request->getParameterNoException('showTodo') == 1) ? true : false;
-
-         // get flash messages brought back from todoList actions
-         $flash = $this->request->getParameterNoException('flash');
-         if ($flash) {
-             $_SESSION['flash'] = $flash;
-             $flashClass = $this->request->getParameterNoException('flashClass');
-             if ($flashClass) {
-                 $_SESSION['flashClass'] = $flashClass;
-             }
-         }
+        // set showTodo to true if coming back from a todo action
+        $showTodo = ($this->request->getParameterNoException('showTodo') == 1) ? true : false;
  
         // generate todoList informations
         $todolist = ($id_space > 0) ? $this->todolist($space['id']) : null;
