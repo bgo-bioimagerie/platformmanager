@@ -4,6 +4,7 @@
 
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
+* [booking] add to calendar a summary view option
 
 ## 2.4.1
 

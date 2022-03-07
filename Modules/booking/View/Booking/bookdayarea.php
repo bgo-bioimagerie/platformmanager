@@ -11,11 +11,15 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 $startDate = $date;
 $toDate = null;
 $nbDays = 1;
-$from = ["dayarea", $date, $bk_id_resource, $bk_id_area, $id_user];
+$from = ["dayarea", $date, $bk_id_resource, $bk_id_area, $id_user, $detailedView ? 'detailed' : 'simple'];
 
 
-echo drawNavigation('dayarea', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $lang);
-include 'Modules/booking/View/Booking/caldisplay.php';
+echo drawNavigation('dayarea', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $detailedView, $lang);
+if($detailedView) {
+    include 'Modules/booking/View/Booking/caldisplay.php';
+} else {
+    include 'Modules/booking/View/Booking/simplecaldisplay.php';
+}
 
 
 ?>
