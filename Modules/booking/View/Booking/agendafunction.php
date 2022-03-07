@@ -3,7 +3,7 @@
 function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int $bk_id_area, string $id_user, bool $detailedView, string $lang) {
     
     $html = '<div class="m-1 row"  style="background-color: #ffffff; padding-bottom: 12px;">
-	<div class="col-7 text-left">
+	<div class="col-12 col-md-7 text-left">
 		<div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
 
 	$today = date("Y-m-d", time());
@@ -49,7 +49,7 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
         window.location.href=url;
     }</script>';
 
-	$html .= '<div class="col-4 text-right">
+	$html .= '<div class="col-12 col-md-4 text-right">
 		<div class="btn-group" role="group">';
 	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
 	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
@@ -60,7 +60,7 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
         </div>';
 
         if($kind != 'month') {
-            $html .='<div class="col-1">';
+            $html .='<div class="col-12 col-md-1 text-right">';
             $html .= '           <select onchange="switchView(this.options[this.selectedIndex].value)" class="form-select" aria-label="simple/detailed view" >';
             $simpleSelected = $detailedView ? '' : 'selected';
             $detailedSelected = $detailedView ? 'selected' : '';
