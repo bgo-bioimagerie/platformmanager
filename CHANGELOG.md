@@ -8,7 +8,7 @@
 ## 2.4.1
 
 * [core] add missing tableName properties in model constructors
-* [space] improve todolist sql resquests
+* [space] improve todolist sql requests
 * [helpdesk] close connection in anycase
 * [core] fix TODO in corespaceadmin, do not get all bookings, just count them
 * [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)
