@@ -16,6 +16,8 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
     <?php
 
     $from = ["month", $date, $bk_id_resource, $bk_id_area, $id_user];
+    if($bk_id_area == null) { $bk_id_area = '';}
+    if($bk_id_resource == null) { $bk_id_resource = '';}
 
     $nav = [
         'date' => $date,

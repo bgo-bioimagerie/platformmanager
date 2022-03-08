@@ -15,6 +15,8 @@ $resourcesBase = $resourceBase ? [$resourceBase]: [];
 $calEntries = [$calEntries];
 $from = ["week", $date, $bk_id_resource, $bk_id_area, $id_user];
 $isUserAuthorizedToBook = [ $isUserAuthorizedToBook];
+if($bk_id_area == null) { $bk_id_area = '';}
+if($bk_id_resource == null) { $bk_id_resource = '';}
 
 echo drawNavigation('week', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $lang);
 include 'Modules/booking/View/Booking/caldisplay.php';
