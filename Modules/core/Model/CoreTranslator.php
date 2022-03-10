@@ -2130,5 +2130,13 @@ class CoreTranslator {
         }
         return "optional";
     }
+
+    public static function NotFound($lang){
+        if($lang == "fr") {
+            return "non trouvé(e)";
+        }
+        return "not found";       
+
+    }
     
 }
