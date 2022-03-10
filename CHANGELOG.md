@@ -5,6 +5,7 @@
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
 * [booking] add to calendar a summary view option
+* [core][ldap] do not automatically add ldap users to spaces
 
 ## 2.4.1
 
