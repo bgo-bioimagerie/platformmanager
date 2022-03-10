@@ -311,23 +311,6 @@ class InInvoice extends Model {
                 }
             }
 
-            // $firstDateInfo = explode("-", $firstDate);
-            // $firstYear = $firstDateInfo[0];
-            /*
-            $i = 0;
-            while ($firstYear == "0000") {
-                $i++;
-                $firstDate = $data[$i]["date_generated"];
-                $firstDateInfo = explode("-", $firstDate);
-                $firstYear = $firstDateInfo[0];
-            }
-
-
-            $lastDate = $data[count($data) - 1]["date_generated"];
-            $lastDateInfo = explode("-", $lastDate);
-            $lastYear = $lastDateInfo[0];
-            */
-
             $years = array();
             for ($i = $firstYear; $i <= $lastYear; $i++) {
                 $years[] = $i;
@@ -363,7 +346,6 @@ class InInvoice extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE in_invoice SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM in_invoice WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

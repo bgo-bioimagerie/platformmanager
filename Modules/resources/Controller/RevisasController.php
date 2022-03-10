@@ -121,7 +121,14 @@ class RevisasController extends ResourcesBaseController {
         $ischoicesid = array(1, 2);
         $ischoices = array(ResourcesTranslator::Instructor($lang), CoreTranslator::Responsible($lang));
         $form->addSelect("instructor_status", ResourcesTranslator::Instructor_status($lang), $ischoices, $ischoicesid, $visaInfo["instructor_status"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "resourceseditvisa/" . $id_space . "/" . $id);
+
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "resourceseditvisa/".$id_space."/".$id;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "resourcesvisa/" . $id_space);
 
         if ($form->check()) {
@@ -133,7 +140,15 @@ class RevisasController extends ResourcesBaseController {
                 $id = $modelVisa->addVisa($id_space, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             }
             $modelVisa->setActive($id_space, $id, $form->getParameter("is_active"));
-            return $this->redirect("resourcesvisa/" . $id_space, [], ['revisa' => ['id' => $id]]);
+
+            $_SESSION["flash"] = ResourcesTranslator::Item_created("visa", $lang);
+            $_SESSION["flashClass"] = "success";
+
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {
+                return $this->redirect("resourcesvisa/".$id_space, [], ['revisa' => ['id' => $id]]);
+            }
         } else {
             // set the view
             $formHtml = $form->getHtml();

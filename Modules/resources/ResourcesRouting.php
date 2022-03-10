@@ -19,7 +19,6 @@ class ResourcesRouting extends Routing{
         
         // config
         $this->addRoute("resourcesconfig", "resourcesconfig", "resourcesconfig", "index", array("id_space"), array(""));
-        // $this->addRoute("resourcesconfigadmin", "resourcesconfigadmin", "resourcesconfigadmin", "index");
         $this->addRoute("resourceshelp", "resourceshelp", "resourceshelp", "index", array("id_space"), array(""));
         
         

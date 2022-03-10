@@ -89,6 +89,7 @@ class CorespaceadminController extends CoresecureController {
         // Check user is superadmin or space admin
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
+
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
         $lang = $this->getLanguage();
@@ -243,6 +244,10 @@ class CorespaceadminController extends CoresecureController {
                 return $this->redirect("spaceadmin", [], ['space' => $newSpace]);
             }
         }
+
+        // set showTodo to true if coming back from a todo action
+        $showTodo = ($this->request->getParameterNoException('showTodo') == 1) ? true : false;
+ 
         // generate todoList informations
         $todolist = ($id_space > 0) ? $this->todolist($space['id']) : null;
         return $this->render(
@@ -250,6 +255,7 @@ class CorespaceadminController extends CoresecureController {
                 "lang" => $lang,
                 "formHtml" => $form->getHtml($lang),
                 "todolist" => $todolist,
+                "showTodo" => $showTodo,
                 "data" => ["space" => $space]
             )
         );
@@ -272,12 +278,13 @@ class CorespaceadminController extends CoresecureController {
             }
         }
 
-        // set documentation urls
         $modulesDocUrl = "https://bgo-bioimagerie.github.io/platformmanager/modules/module/";
         foreach(array_keys($todoData) as $module) {
             $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
-        }
-
+            if ($todoData[$module]['title'] != "Users") {
+                $todoData[$module] = $this->checkForTasksDone($todoData[$module], $id_space);
+            }
+        }        
         return $todoData;
     }
 
@@ -290,92 +297,84 @@ class CorespaceadminController extends CoresecureController {
                 "tasks" => [
                     [
                         "id" => "users",
+                        "model" => "CoreUser",
                         "title" => UsersTranslator::Create_item("user", $lang),
                         "url" => "corespaceaccessuseradd/" . $id_space,
-                        "done" => $modelUser->getSpaceActiveUsers($id_space)
+                        "done" => $modelUser->countSpaceActiveUsers($id_space)
                     ],
                     [
                         "id" => "pendingUsers",
+                        "model" => "CorePendingAccount",
                         "title" => UsersTranslator::Create_item("pending", $lang),
                         "url" => "corespacependingusers/" . $id_space,
-                        "done" => $modelPending->getActivatedForSpace($id_space)
+                        "done" => $modelPending->countActivatedForSpace($id_space)
                     ],
                 ]
             ];
     }
 
     protected function getResourcesTodo($id_space, $lang) {
-        $modelArea = new ReArea();
-        $modelCategory = new ReCategory();
-        $modelResource = new ResourceInfo();
-        $modelVisa = new ReVisa();
-        
         return
             [
                 "title" => "Resources",
                 "tasks" => [
                     [
-                        "id" => "area",
+                        "id" => "ReArea",
+                        "model" => "ReArea",
                         "title" => ResourcesTranslator::Create_item("area", $lang),
                         "url" => "reareasedit/" . $id_space,
-                        "done" => $modelArea->getForSpace($id_space)
                     ],
                     [
-                        "id" => "category",
+                        "id" => "ReCategory",
+                        "model" => "ReCategory",
                         "title" => ResourcesTranslator::Create_item("category", $lang),
                         "url" => "recategoriesedit/" . $id_space,
-                        "done" => $modelCategory->getBySpace($id_space)
                     ],
                     [
-                        "id" => "resource",
+                        "id" => "ResourceInfo",
+                        "model" => "ResourceInfo",
                         "title" => ResourcesTranslator::Create_item("resource", $lang),
                         "url" => "resourcesedit/" . $id_space,
-                        "done" => $modelResource->getForSpace($id_space)
                     ],
                     [
-                        "id" => "visa",
+                        "id" => "ReVisa",
+                        "model" => "ReVisa",
                         "title" => ResourcesTranslator::Create_item("visa", $lang),
                         "url" => "resourceseditvisa/" . $id_space,
-                        "done" => $modelVisa->getForSpace($id_space)
                     ],
                 ]
             ];
     }
 
     protected function getClientsTodo($id_space, $lang) {
-        $modelCompany = new ClCompany();
-        $modelPricing = new ClPricing();
-        $modelClient = new ClClient();
-        $modelClientsuser = new ClClientUser();
         $modelUser = new CoreUser();
-
         return
             [
                 "title" => "Clients",
                 "tasks" => [
                     [
                         "id" => "company",
+                        "model" => "ClCompany",
                         "title" => ClientsTranslator::Create_item("company", $lang),
                         "url" => "clcompany/" . $id_space,
-                        "done" => $modelCompany->getForSpace($id_space)
                     ],
                     [
-                        "id" => "pricing",
+                        "id" => "pricings",
+                        "model" => "ClPricing",
                         "title" => ClientsTranslator::Create_item("pricing", $lang),
                         "url" => "clpricingedit/" . $id_space,
-                        "done" => !empty($modelPricing->getForList($id_space)['ids'])
                     ],
                     [
-                        "id" => "client",
+                        "id" => "clients",
+                        "model" => "ClClient",
                         "title" => ClientsTranslator::Create_item("client", $lang),
                         "url" => "clclientedit/" . $id_space,
-                        "done" => !empty($modelClient->getForList($id_space)['ids'])
                     ],
                     [
                         "id" => "clientsuser",
+                        "model" => "ClClientUser",
                         "title" => ClientsTranslator::Create_item("clientsuser", $lang),
                         "url" => "corespaceuseredit/" . $id_space,
-                        "done" => $modelClientsuser->getForSpace($id_space),
                         "options" => [
                             "list" => $modelUser->getSpaceActiveUsers($id_space),
                             "defaultText" => UsersTranslator::User_account($lang)
@@ -386,35 +385,34 @@ class CorespaceadminController extends CoresecureController {
     }
 
     protected function getBookingTodo($id_space, $lang) {
-        $modelBkEntry = new BkCalendarEntry();
-        $modelColor = new BkColorCode();
-        $modelSchedule = new BkScheduling();
-        $modelBkAccess = new BkAccess();
-        $modelBkAuth = new BkAuthorization();
         $modelUser = new CoreUser();
+        $modelReArea = new ReArea();
         $opt = "(".CoreTranslator::Optional($lang).") ";
-
-        return
+        return 
             [
                 "title" => "Booking",
                 "tasks" => [
                     [
                         "id" => "colorcodes",
+                        "model" => "BkColorCode",
                         "title" => BookingTranslator::Create_item("colorcode", $lang),
                         "url" => "bookingcolorcodeedit/" . $id_space,
-                        "done" => $modelColor->getForSpace($id_space)
                     ],
                     [
                         "id" => "schedule",
+                        "model" => "BkScheduling",
                         "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
-                        "url" => "bookingscheduling/" . $id_space,
-                        "done" => $modelSchedule->getForSpace($id_space)
+                        "url" => "bookingschedulingedit/" . $id_space,
+                        "options" => [
+                            "list" => $modelReArea->getForSpace($id_space),
+                            "defaultText" => ResourcesTranslator::Area($lang)
+                        ]
                     ],
                     [
                         "id" => "auth",
+                        "model" => "BkAuthorization",
                         "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
                         "url" => "corespaceuseredit/" . $id_space,
-                        "done" => $modelBkAuth->getForSpace($id_space),
                         "options" => [
                             "list" => $modelUser->getSpaceActiveUsers($id_space),
                             "defaultText" => UsersTranslator::User_account($lang)
@@ -422,18 +420,26 @@ class CorespaceadminController extends CoresecureController {
                     ],
                     [
                         "id" => "access",
+                        "model" => "BkAccess",
                         "title" => BookingTranslator::Create_item("access", $lang),
                         "url" => "bookingaccessibilities/" . $id_space,
-                        "done" => $modelBkAccess->getAll($id_space)
                     ],
                     [
                         "id" => "booking",
+                        "model" => "BkCalendarEntry",
                         "title" => BookingTranslator::Create_item("booking", $lang),
                         "url" => "bookingdayarea/" . $id_space,
-                        "done" => $modelBkEntry->countForSpace($id_space)
                     ]
                 ]
             ];
+    }
+
+    protected function checkForTasksDone($moduleTodo, $id_space) {
+        for ($i=0; $i < count($moduleTodo['tasks']); $i++) {
+            $model = new $moduleTodo['tasks'][$i]['model']();
+            $moduleTodo['tasks'][$i]['done'] = $model->admCount($id_space)['total'];
+        }
+        return $moduleTodo;
     }
 
     protected function preconfigureSpace($space) {

@@ -447,9 +447,6 @@ class CoreSpace extends Model {
             $tmp = $req->fetch();
             return $tmp["status"];
         } else {
-            //if ($this->isSpacePublic($id_space)) {
-            //    return CoreSpace::$USER;
-            //}
             return -1;
         }
     }

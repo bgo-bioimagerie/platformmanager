@@ -49,11 +49,6 @@ class CoreRouting extends Routing{
         $this->addRoute("coretilesdoc", "coretilesdoc", "coretiles", "doc");
         $this->addRoute("coretilesselfjoinspace", "coretilesselfjoinspace", "coretiles", "selfjoinspace", array("id_space"), array(""));
         
-        
-        // Update
-        // $this->addRoute("update", "update", "coreupdate", "update");
-        // $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
-        
         // Users
         $this->addRoute("coreusers", "coreusers", "coreusers", "index");
         $this->addRoute("coreusersedit", "coreusersedit", "coreusers", "edit", array("id"), array(""));

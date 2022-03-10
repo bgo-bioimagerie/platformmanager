@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class AcApplication extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_applications";
+    }
+
     /**
      * Create the espece table
      * 

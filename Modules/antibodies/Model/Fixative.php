@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Fixative extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_fixatives";
+    }
+
     /**
      * Create the espece table
      * 

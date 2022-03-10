@@ -29,10 +29,10 @@
     ?>
 
     <?php if ($use_packages) { ?>
-        <div class="col-xs-12">
-            <div class="form-check col-xs-8 col-xs-offset-4" style="margin-bottom: 10px">
-                <label class="">
-                    <input id="use_package" class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
+        <div>
+            <div class="checkbox col-8 offset-4">
+                <label>
+                    <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                 </label>
             </div>
 
@@ -51,10 +51,10 @@
     <?php if ($usePeriodicBooking) {
         ?>            
         <div class="form-group">
-            <label class="control-label col-xs-4">
+            <label class="control-label col-4">
                 <?php echo BookingTranslator::PeriodicityType($lang) ?> 
             </label>
-            <div class="col-xs-6">
+            <div class="col-6">
                 <div class="radio">
                     <label><input  type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
                 </div>
@@ -84,14 +84,14 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-xs-4">
+            <label class="control-label col-4">
                 <?php echo BookingTranslator::DateEndPeriodicity($lang) ?> 
             </label>
-            <div class="col-xs-6">
-                <div class='col-xs-12 input-group date'>
+            <div class="col-6">
+                <div class='col-12 input-group date'>
                     <input type='date' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo $periodInfo['enddate'] ?>"/>          
                     <span class="input-group-addon">          
-                        <span class="glyphicon glyphicon-calendar"></span>          
+                        <span class="bi-calendar3"></span>          
                     </span>
                 </div>
 
@@ -102,8 +102,8 @@
     <?php } ?>
 <!-- End periodicity -->
 
-<div class="col-xs-12"></div>
-<div id="buttons" class="col-xs-4 col-xs-offset-8">
+<div class="col-12"></div>
+<div id="buttons" class="col-4 offset-8">
     <?php if ($userCanEdit) { ?>	
         <input type="submit" class="btn btn-primary" value="Save" />
         <?php if ($id_reservation > 0) { ?>
@@ -123,11 +123,11 @@
     if($from) {
         $redirInfo = explode(':', $from);
         $redirPage = $redirInfo[0];
-        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]";
+        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]&view=$redirInfo[5]";
     }
     $url = "booking$redirPage/$id_space?$q"
     ?>
-    <button type="button" class="btn btn-default" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
+    <button type="button" class="btn btn-outline-dark" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
 </div>
 
 <?php echo $form->htmlClose() ?>
@@ -169,15 +169,15 @@ if ($packageChecked > 0) {
 <!--  Popup windows  -->
 <!--  *************  -->
 <link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
-<div id="hider" class="col-xs-12"></div> 
+<div id="hider" class="col-12"></div> 
 <div id="entriespopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a>
+    <div class="col-1 offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
 </div>
 <?php echo $formDelete ?>
 </div> 
 
 <div id="entriesperiodpopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesperiodbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a>
+    <div class="col-1 offset-11" style="text-align: right;"><a id="entriesperiodbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
 </div>
 <?php echo $formDeletePeriod ?>
 </div> 
