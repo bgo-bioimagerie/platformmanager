@@ -830,7 +830,7 @@ class BkCalendarEntry extends Model {
      * @param unknown $resource_id
      * @return multitype:
      */
-    public function getEmailsBookerResource($id_space, $resource_id) {
+    public function getEmailsBookerResource($id_space, $resource_id, $ts=0) {
 
         $sql = "SELECT DISTINCT user.email AS email 
                 FROM core_users AS user
@@ -842,8 +842,9 @@ class BkCalendarEntry extends Model {
                 AND bk_calendar_entry.id_space=?
                 AND user.is_active = 1
                 AND core_j_spaces_user.status>?
-                ;";
-        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space, CoreSpace::$VISITOR));
+                AND bk_calendar_entry.start_time > ?;";
+        $params = [$resource_id, $id_space, $id_space, CoreSpace::$VISITOR, $ts];
+        $req = $this->runRequest($sql, $params);
         return $req->fetchAll();
     }
 

@@ -17,6 +17,8 @@ $resourcesBase = $resourceBase ? [$resourceBase] : [];
 $calEntries = [$calEntries];
 $from = ["day", $date, $bk_id_resource, $bk_id_area, $id_user, $detailedView ? 'detailed' : 'simple'];
 $isUserAuthorizedToBook = [ $isUserAuthorizedToBook];
+if($bk_id_area == null) { $bk_id_area = '';}
+if($bk_id_resource == null) { $bk_id_resource = '';}
 
 echo drawNavigation('day', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $detailedView, $lang);
 ?>

@@ -971,10 +971,10 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canEdit) {
             throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
-        if ($sendEmail == 1) {
+        if ($sendEmail == 1 && $entryInfo["start_time"] > time()) {
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
-            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource);
+            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource, time());
             $subject = $resourceName . " has been freed";
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
 
