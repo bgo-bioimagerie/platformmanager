@@ -532,10 +532,10 @@ class BkCalendarEntry extends Model {
                 $data[$i]["phone"] = "";
             }
             if(!$data[$i]["color_bg"]) {
-                $data[$i]["color_bg"] = "aaaaaa";
+                $data[$i]["color_bg"] = "#aaaaaa";
             }
             if(!$data[$i]["color_text"]) {
-                $data[$i]["color_text"] = "000000";
+                $data[$i]["color_text"] = "#000000";
             }
         }
 

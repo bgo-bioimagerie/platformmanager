@@ -1,9 +1,9 @@
 <?php
 
-function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int $bk_id_area, string $id_user, string $lang) {
+function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int|string $bk_id_area, string $id_user, bool $detailedView, string $lang) {
     
-    $html = '<div class="row"  style="background-color: #ffffff; padding-bottom: 12px;">
-	<div class="col-md-7 text-left">
+    $html = '<div class="m-1 row"  style="background-color: #ffffff; padding-bottom: 12px;">
+	<div class="col-12 col-md-7 text-left">
 		<div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
 
 	$today = date("Y-m-d", time());
@@ -11,6 +11,14 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $reload = 'booking'.$kind.'/'.$id_space.$qc;
+
+    if(!$detailedView) {
+        $qc .= '&view=simple';
+        $qt .= '&view=simple';
+        $qb .= '&view=simple';
+        $qa .= '&view=simple';
+    }
 
 	$html .= '<a rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>';
 	$html .= '<a rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>';
@@ -36,7 +44,12 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
     $weekareaactive = $kind == 'weekarea' ? 'active':'';
     $monthactive = $kind == 'month' ? 'active':'';
 
-	$html .= '<div class="col-md-5 text-right">
+    $html .= '<script>function switchView(view) {
+        let url = "'.$reload.'" + "&view="+view; 
+        window.location.href=url;
+    }</script>';
+
+	$html .= '<div class="col-12 col-md-4 text-right">
 		<div class="btn-group" role="group">';
 	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
 	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
@@ -44,7 +57,20 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 	$html .='			<a aria-label="go to week area view" style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
 	$html .='			<a aria-label="go to month view" style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-default '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
     $html .='        </div>
-        </div>
+        </div>';
+
+        if($kind != 'month') {
+            $html .='<div class="col-12 col-md-1 text-right">';
+            $html .= '           <select onchange="switchView(this.options[this.selectedIndex].value)" class="form-control" aria-label="simple/detailed view" >';
+            $simpleSelected = $detailedView ? '' : 'selected';
+            $detailedSelected = $detailedView ? 'selected' : '';
+            $html .= '              <option '.$simpleSelected.' value="simple">'.BookingTranslator::SimpleView($lang).'</option>';
+            $html .= '              <option '.$detailedSelected.' value="detailed">'.BookingTranslator::DetailedView($lang).'</option>';
+            $html .= '           </select>';
+            $html .= '</div>';
+        }
+
+    $html .='
     </div>';
     return $html;
 

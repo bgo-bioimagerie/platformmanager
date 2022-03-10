@@ -1,5 +1,9 @@
 # Changes
 
+## 2.4.2
+
+* [booking] add to calendar a summary view option (#597)
+
 ## 2.4.1
 
 * [core] add missing tableName properties in model constructors

@@ -123,7 +123,7 @@
     if($from) {
         $redirInfo = explode(':', $from);
         $redirPage = $redirInfo[0];
-        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]";
+        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]&view=$redirInfo[5]";
     }
     $url = "booking$redirPage/$id_space?$q"
     ?>

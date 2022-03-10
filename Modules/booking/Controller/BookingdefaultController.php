@@ -201,7 +201,7 @@ class BookingdefaultController extends BookingabstractController {
         if($redir) {
             $redirInfo = explode(':', $redir);
             $redirPage = $redirInfo[0];
-            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4]];
+            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4], "view" => $redirInfo[5]];
         }
 
         if (!$canValidateBooking) {
