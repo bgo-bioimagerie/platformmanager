@@ -1760,4 +1760,18 @@ class BookingTranslator {
         }
         return "Closed";
     }
+
+    public static function SimpleView($lang="") {
+        if($lang == "fr") {
+            return "Résumé";
+        }
+        return "Summary";
+    }
+
+    public static function DetailedView($lang="") {
+        if($lang == "fr") {
+            return "Détails";
+        }
+        return "Detailed";
+    }
 }

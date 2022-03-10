@@ -283,6 +283,12 @@ class BookingController extends BookingabstractController {
         if($this->role > CoreSpace::$USER) {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
+
+        $detailedViewRequest = $this->request->getParameterNoException('view');
+        $detailedView = true;
+        if ($detailedViewRequest == 'simple') {
+            $detailedView = false;
+        }
         
 
         // view
@@ -306,6 +312,7 @@ class BookingController extends BookingabstractController {
             'bk_id_area' => $curentAreaId,
             'users' => $users,
             'id_user' => $id_user,
+            'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookday");
     }
@@ -442,6 +449,12 @@ class BookingController extends BookingabstractController {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
+        $detailedViewRequest = $this->request->getParameterNoException('view');
+        $detailedView = true;
+        if ($detailedViewRequest == 'simple') {
+            $detailedView = false;
+        }
+
         // view
         return $this->render(array(
             'id_space' => $id_space,
@@ -462,6 +475,7 @@ class BookingController extends BookingabstractController {
             'bk_id_area' => $curentAreaId,
             'users' => $users,
             'id_user' => $id_user,
+            'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookdayarea");
     }
@@ -583,6 +597,12 @@ class BookingController extends BookingabstractController {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
+        $detailedViewRequest = $this->request->getParameterNoException('view');
+        $detailedView = true;
+        if ($detailedViewRequest == 'simple') {
+            $detailedView = false;
+        }
+
         // view
         return $this->render(array(
             'lang' => $lang,
@@ -606,6 +626,7 @@ class BookingController extends BookingabstractController {
             'bk_id_area' => $curentAreaId,
             'users' => $users,
             'id_user' => $id_user,
+            'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookweek");
     }
@@ -763,6 +784,12 @@ class BookingController extends BookingabstractController {
             $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
+        $detailedViewRequest = $this->request->getParameterNoException('view');
+        $detailedView = true;
+        if ($detailedViewRequest == 'simple') {
+            $detailedView = false;
+        }
+
         // view
         return $this->render(array(
             'lang' => $lang,
@@ -787,6 +814,7 @@ class BookingController extends BookingabstractController {
             'bk_id_area' => $curentAreaId,
             'users' => $users,
             'id_user' => $id_user,
+            'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookweekarea");
     }
@@ -918,6 +946,7 @@ class BookingController extends BookingabstractController {
             'bk_id_area' => $curentAreaId,
             'users' => $users,
             'id_user' => $id_user,
+            'detailedView' => false,
             'data' => ['bookings' => $calEntries]
         ), "bookmonth");
     }
