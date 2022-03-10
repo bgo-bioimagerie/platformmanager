@@ -887,8 +887,6 @@ class CoreUser extends Model {
 
         // search for LDAP account
         else {
-            //echo "into LDap <br/>";
-            $modelCoreConfig = new CoreConfig();
             if (CoreLdapConfiguration::get('ldap_use', 0)) {
 
                 $modelLdap = new CoreLdap();
@@ -897,18 +895,11 @@ class CoreUser extends Model {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-
                     $userInfo = $this->user->getUserByLogin($login);
-                    //print_r($userInfo);
-
-                    $modelSpace = new CoreSpace();
-                    $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa) {
-                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
+                    if(!$userInfo['apikey']) {
+                        $this->user->newApiKey($userInfo['idUser']);
                     }
-
                     return $this->user->isActive($login);
                 }
             }
