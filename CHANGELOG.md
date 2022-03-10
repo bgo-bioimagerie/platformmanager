@@ -4,6 +4,7 @@
 
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
+* [core] show number of user clients in user admin view
 
 ## 2.4.1
 
