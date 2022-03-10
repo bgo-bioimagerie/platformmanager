@@ -14,6 +14,10 @@ require_once 'Modules/core/Model/CoreSpace.php';
  */
 class BkCalendarEntry extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calendar_entry";
+    }
+
     /**
      * Create the calendar entry table
      *
@@ -497,6 +501,9 @@ class BkCalendarEntry extends Model {
      * 
      */
     public function getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, array $resource_ids, $id_user='') {
+        if(empty($resource_ids)) {
+            return [];
+        }
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
 
         $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
@@ -782,6 +789,19 @@ class BkCalendarEntry extends Model {
         return false;
     }
 
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM bk_calendar_entry WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+
+    public function countForSpace($id_space) {
+        $sql = "SELECT count(*) as total FROM bk_calendar_entry WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        $total = $req->fetch();
+        return $total['total'];
+    }
+
     /**
      * Get all the entries of a given user
      * @param unknown $user_id
@@ -810,7 +830,7 @@ class BkCalendarEntry extends Model {
      * @param unknown $resource_id
      * @return multitype:
      */
-    public function getEmailsBookerResource($id_space, $resource_id) {
+    public function getEmailsBookerResource($id_space, $resource_id, $ts=0) {
 
         $sql = "SELECT DISTINCT user.email AS email 
                 FROM core_users AS user
@@ -822,8 +842,9 @@ class BkCalendarEntry extends Model {
                 AND bk_calendar_entry.id_space=?
                 AND user.is_active = 1
                 AND core_j_spaces_user.status>?
-                ;";
-        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space, CoreSpace::$VISITOR));
+                AND bk_calendar_entry.start_time > ?;";
+        $params = [$resource_id, $id_space, $id_space, CoreSpace::$VISITOR, $ts];
+        $req = $this->runRequest($sql, $params);
         return $req->fetchAll();
     }
 

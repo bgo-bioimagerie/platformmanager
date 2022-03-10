@@ -11,6 +11,10 @@ require_once 'Framework/Constants.php';
  */
 class BkColorCode extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_color_codes";
+    }
+
     /**
      * Create the SyColorCode table
      * 

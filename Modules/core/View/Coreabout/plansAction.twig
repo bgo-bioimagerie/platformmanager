@@ -19,10 +19,10 @@
     <div class="row">
     {% for plan in plans %}
       {% if plan["features"] %}
-        <div class="col-xs-12 col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-heading" style="background-color: {{plan["color"]}}" class="p{{plan["name"]}}">{{ plan["name"] }}</div>
-                <div class="panel-body">
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <div class="card-header" style="background-color: {{plan["color"]}}" class="p{{plan["name"]}}">{{ plan["name"] }}</div>
+                <div class="card-body">
                     <h1 class="pricing">{{ plan["price"] }} <small class="text-muted"> / mo</small></h1>
                     <ul>
                     {% for feature in plan["features"] %}

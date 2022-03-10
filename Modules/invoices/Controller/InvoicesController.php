@@ -24,57 +24,47 @@ class InvoicesController extends CoresecureController {
     public function navbar($id_space) {
 
         $lang = $this->getLanguage();
-        
-        $html  = '<div class="" style="border: none; margin-top: 7px; padding-right: 0px; padding-left: 0px;">';
+
+        $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a style="background-color:{{bgcolor}}; color: #fff;" href="invoices/'.$id_space.'"> {{title}}'; 
-        $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
+        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="invoices/'.$id_space.'"> {{title}}'; 
+        $html .= '    <span style="color: {{color}}; font-size:16px; float:right;" class=" hidden-xs showopacity {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
 
-        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}}; style="color: {{color}}"">';
-        $html .= '<a style="color: {{color}}" id="menu-button" href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
         $html .= '</div>';
         
-        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}};">';
-        $html .= '<a style="color: {{color}}" id="menu-button" href="invoicessent/' . $id_space . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicessent/' . $id_space . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
         $html .= '</div>';
         
-        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}};">';
-        $html .= '<a style="color: {{color}}" id="menu-button" href="invoicesvisas/' . $id_space . '">' . InvoicesTranslator::Visas($lang) . '</a>';
-        $html .= '<a style="color: {{color}}" id="menu-button" href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisas/' . $id_space . '">' . InvoicesTranslator::Visas($lang) . '</a>';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
         $html .= '</div>';
         
         
-        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}};">';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
         $html .= '<br/>';
         $html .= '</div>';
         
-        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}};">';
-        $html .= '<a style="color: {{color}}" href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
+        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+        $html .= '<a style="color:{{color}}" href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
         $html .= '</div>';
-        
-        $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}};">';
-        $html .= '<br/>';
-        $html .= '</div>';
-        
 
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
         $menus = $modelSpace->getDistinctSpaceMenusModules($id_space);
-        
-        //print_r($menus);
-        
+                
         $count = -1;
         foreach ($menus as $menu) {
-            //echo "curent menu " . $menu["module"] . "<br/>";
             $module = $menu["module"];
             $rootingFile = "Modules/" . $module . "/" . ucfirst($module) . "Invoices.php";
-            //echo "rooting file = " . $rootingFile . "<br/>";
             if (file_exists($rootingFile)) {
 
                 $count++;
-                //echo $rootingFile . " exists <br/>";
                 require_once $rootingFile;
                 $className = ucfirst($module) . "Invoices";
                 $classTranslator = ucfirst($module) . "Translator";
@@ -85,20 +75,15 @@ class InvoicesController extends CoresecureController {
                 $model->listRoutes();
                 if ($model->count() > 0) {
                     $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);
-                    //echo "donfigTitle = " . $donfigTitle . "<br/>";
                     if ($donfigTitle != "") {
                         $txt = $donfigTitle;
                     } else {
                         $txt = $module;
                     }
-
-                    if ($count > 0) {
-                        $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}}; color: {{color}}"><br/></div>';
-                    }
                     
-                    $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}}; color: {{color}}">';
+                    $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}; padding: 10px">';
                     $html .= '<br/>';
-                    $html .= $txt;
+                    $html .= strtoupper($txt);
                     $html .= '</div>';
                     
                 }
@@ -106,8 +91,8 @@ class InvoicesController extends CoresecureController {
                     $url = $model->getUrl($i);
                     $txt = $translator->$url($lang);
 
-                    $html .= '<div class=" pm-inline-div" style="background-color:{{bgcolor}};">';
-                    $html .= '<a style="color: {{color}}" href="' . $url . "/" . $id_space . '">' . $txt . '</a>';
+                    $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
+                    $html .= '<a style="color:{{color}}" href="' . $url . "/" . $id_space . '">' . $txt . '</a>';
                     $html .= '</div>';
                 }
             }

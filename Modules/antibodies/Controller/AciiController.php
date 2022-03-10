@@ -22,7 +22,7 @@ class AciiController extends AntibodiesController {
 
     // affiche la liste des Prelevements
     public function indexAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
         $aciisArray = $this->aciiModel->getBySpace($id_space);
 
@@ -42,7 +42,7 @@ class AciiController extends AntibodiesController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
         $acii = $this->aciiModel->get($id_space, $id);
@@ -72,7 +72,7 @@ class AciiController extends AntibodiesController {
     }
 
     public function deleteAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
         $this->aciiModel->delete($id_space, $id);
 

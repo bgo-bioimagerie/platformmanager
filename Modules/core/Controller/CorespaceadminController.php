@@ -16,6 +16,14 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+require_once 'Modules/clients/Controller/ClientsconfigController.php';
+require_once 'Modules/resources/Controller/ResourcesconfigController.php';
+require_once 'Modules/booking/Controller/BookingconfigController.php';
+
+require_once 'Modules/resources/Model/ResourcesTranslator.php';
+require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+require_once 'Modules/users/Model/UsersTranslator.php';
 
 
 /**
@@ -81,17 +89,22 @@ class CorespaceadminController extends CoresecureController {
         // Check user is superadmin or space admin
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
+
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
+        $lang = $this->getLanguage();
+
+        $formTitle = ($id_space > 0) ? "Edit_space" : "Create_space";
+
+        $form = new Form($this->request, "corespaceadminedit");
+        $form->setTitle(CoreTranslator::$formTitle($lang));
+
         if(!$space) {
             $space = CoreSpace::new();
+            $form->addSelect("preconfigure", CoreTranslator::Preconfigure_space($lang), array(CoreTranslator::no($lang),CoreTranslator::yes($lang)), array(0,1), 0);
         }
 
         $spaceAdmins = $modelSpace->spaceAdmins($id_space);
-        
-        $lang = $this->getLanguage();
-        $form = new Form($this->request, "corespaceadminedit");
-        $form->setTitle(CoreTranslator::Edit_space($lang));
         
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
@@ -134,7 +147,6 @@ class CorespaceadminController extends CoresecureController {
         $choices = $expirationChoices['labels'];
         $choicesid = $expirationChoices['ids'];
 
-
         $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $space['user_desactivate'] ?? 1);
         
         $formAdd = new FormAdd($this->request, "addformspaceedit");
@@ -148,7 +160,6 @@ class CorespaceadminController extends CoresecureController {
         if ($form->check()){
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
-            # $shortname = str_replace(" ", "", $shortname);
             $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
             if($space && $space['shortname']) {
                 // Cannot modify shortname once set
@@ -228,13 +239,254 @@ class CorespaceadminController extends CoresecureController {
             }
             
             $newSpace = $modelSpace->getSpace($id);
+
+            if ($this->request->getParameterNoException("preconfigure")) {
+                $this->preconfigureSpace($newSpace);
+            }
+
             if($isSuperAdmin) {
                 return $this->redirect("spaceadmin", [], ['space' => $newSpace]);
             }
         }
+
+        // set showTodo to true if coming back from a todo action
+        $showTodo = ($this->request->getParameterNoException('showTodo') == 1) ? true : false;
+ 
+        // generate todoList informations
+        $todolist = ($id_space > 0) ? $this->todolist($space['id']) : null;
+        return $this->render(
+            array(
+                "lang" => $lang,
+                "formHtml" => $form->getHtml($lang),
+                "todolist" => $todolist,
+                "showTodo" => $showTodo,
+                "data" => ["space" => $space]
+            )
+        );
         
-        return $this->render(array("lang" => $lang, "formHtml" => $form->getHtml($lang), "data" => ["space" => $space]));
-        
+    }
+
+    protected function todolist($id_space) {
+        $lang = $this->getLanguage();
+        $modelSpace = new CoreSpace();
+
+        $todoData = array();
+        $activeModules = array_column($modelSpace->getDistinctSpaceMenusModules($id_space), 'module');
+        $baseModules = array('users', 'resources', 'clients', 'booking');
+        array_push($activeModules, 'users');
+
+        foreach($baseModules as $baseModule) {
+            if (in_array($baseModule, $activeModules)) {
+                $fName = 'get' . ucFirst($baseModule) . 'Todo'; 
+                $todoData[$baseModule] = $this->$fName($id_space, $lang);
+            }
+        }
+
+        $modulesDocUrl = "https://bgo-bioimagerie.github.io/platformmanager/modules/module/";
+        foreach(array_keys($todoData) as $module) {
+            $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
+            if ($todoData[$module]['title'] != "Users") {
+                $todoData[$module] = $this->checkForTasksDone($todoData[$module], $id_space);
+            }
+        }        
+        return $todoData;
+    }
+
+    protected function getUsersTodo($id_space, $lang) {
+        $modelUser = new CoreUser();
+        $modelPending = new CorePendingAccount();
+        return
+            [
+                "title" => "Users",
+                "tasks" => [
+                    [
+                        "id" => "users",
+                        "model" => "CoreUser",
+                        "title" => UsersTranslator::Create_item("user", $lang),
+                        "url" => "corespaceaccessuseradd/" . $id_space,
+                        "done" => $modelUser->countSpaceActiveUsers($id_space)
+                    ],
+                    [
+                        "id" => "pendingUsers",
+                        "model" => "CorePendingAccount",
+                        "title" => UsersTranslator::Create_item("pending", $lang),
+                        "url" => "corespacependingusers/" . $id_space,
+                        "done" => $modelPending->countActivatedForSpace($id_space)
+                    ],
+                ]
+            ];
+    }
+
+    protected function getResourcesTodo($id_space, $lang) {
+        return
+            [
+                "title" => "Resources",
+                "tasks" => [
+                    [
+                        "id" => "ReArea",
+                        "model" => "ReArea",
+                        "title" => ResourcesTranslator::Create_item("area", $lang),
+                        "url" => "reareasedit/" . $id_space,
+                    ],
+                    [
+                        "id" => "ReCategory",
+                        "model" => "ReCategory",
+                        "title" => ResourcesTranslator::Create_item("category", $lang),
+                        "url" => "recategoriesedit/" . $id_space,
+                    ],
+                    [
+                        "id" => "ResourceInfo",
+                        "model" => "ResourceInfo",
+                        "title" => ResourcesTranslator::Create_item("resource", $lang),
+                        "url" => "resourcesedit/" . $id_space,
+                    ],
+                    [
+                        "id" => "ReVisa",
+                        "model" => "ReVisa",
+                        "title" => ResourcesTranslator::Create_item("visa", $lang),
+                        "url" => "resourceseditvisa/" . $id_space,
+                    ],
+                ]
+            ];
+    }
+
+    protected function getClientsTodo($id_space, $lang) {
+        $modelUser = new CoreUser();
+        return
+            [
+                "title" => "Clients",
+                "tasks" => [
+                    [
+                        "id" => "company",
+                        "model" => "ClCompany",
+                        "title" => ClientsTranslator::Create_item("company", $lang),
+                        "url" => "clcompany/" . $id_space,
+                    ],
+                    [
+                        "id" => "pricings",
+                        "model" => "ClPricing",
+                        "title" => ClientsTranslator::Create_item("pricing", $lang),
+                        "url" => "clpricingedit/" . $id_space,
+                    ],
+                    [
+                        "id" => "clients",
+                        "model" => "ClClient",
+                        "title" => ClientsTranslator::Create_item("client", $lang),
+                        "url" => "clclientedit/" . $id_space,
+                    ],
+                    [
+                        "id" => "clientsuser",
+                        "model" => "ClClientUser",
+                        "title" => ClientsTranslator::Create_item("clientsuser", $lang),
+                        "url" => "corespaceuseredit/" . $id_space,
+                        "options" => [
+                            "list" => $modelUser->getSpaceActiveUsers($id_space),
+                            "defaultText" => UsersTranslator::User_account($lang)
+                        ]
+                    ]
+                ]
+            ];
+    }
+
+    protected function getBookingTodo($id_space, $lang) {
+        $modelUser = new CoreUser();
+        $modelReArea = new ReArea();
+        $opt = "(".CoreTranslator::Optional($lang).") ";
+        return 
+            [
+                "title" => "Booking",
+                "tasks" => [
+                    [
+                        "id" => "colorcodes",
+                        "model" => "BkColorCode",
+                        "title" => BookingTranslator::Create_item("colorcode", $lang),
+                        "url" => "bookingcolorcodeedit/" . $id_space,
+                    ],
+                    [
+                        "id" => "schedule",
+                        "model" => "BkScheduling",
+                        "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
+                        "url" => "bookingschedulingedit/" . $id_space,
+                        "options" => [
+                            "list" => $modelReArea->getForSpace($id_space),
+                            "defaultText" => ResourcesTranslator::Area($lang)
+                        ]
+                    ],
+                    [
+                        "id" => "auth",
+                        "model" => "BkAuthorization",
+                        "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
+                        "url" => "corespaceuseredit/" . $id_space,
+                        "options" => [
+                            "list" => $modelUser->getSpaceActiveUsers($id_space),
+                            "defaultText" => UsersTranslator::User_account($lang)
+                        ]
+                    ],
+                    [
+                        "id" => "access",
+                        "model" => "BkAccess",
+                        "title" => BookingTranslator::Create_item("access", $lang),
+                        "url" => "bookingaccessibilities/" . $id_space,
+                    ],
+                    [
+                        "id" => "booking",
+                        "model" => "BkCalendarEntry",
+                        "title" => BookingTranslator::Create_item("booking", $lang),
+                        "url" => "bookingdayarea/" . $id_space,
+                    ]
+                ]
+            ];
+    }
+
+    protected function checkForTasksDone($moduleTodo, $id_space) {
+        for ($i=0; $i < count($moduleTodo['tasks']); $i++) {
+            $model = new $moduleTodo['tasks'][$i]['model']();
+            $moduleTodo['tasks'][$i]['done'] = $model->admCount($id_space)['total'];
+        }
+        return $moduleTodo;
+    }
+
+    protected function preconfigureSpace($space) {
+        if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
+            throw new PfmAuthException("Error 403: Permission denied", 403);
+        }
+
+        $lang = $this->getLanguage();
+        // TODO: set modules to activate at preconfiguration in config ?
+        $modulesToActivate = array(
+            ["name" => "booking", "status" => 2],
+            ["name" => "bookingsettings", "status" => 3],
+            ["name" => "clients", "status" => 3],
+            ["name" => "resources", "status" => 3],
+        );
+
+        // activate modules
+        foreach ($modulesToActivate as $module) {
+            $this->activateModule($module['name'], $module['status'], $space);
+        }
+
+        $this->redirect("spaceadminedit/". $space['id']);
+        $this->runAction('core', 'edit', ['id_space' => $space['id']]);
+
+        $_SESSION['flash'] = CoreTranslator::Space_preconfigured($lang);
+        $_SESSION['flashClass'] = "success";
+    }
+
+    protected function activateModule($moduleName, $status, $space) {
+        $formId = $moduleName . "menusactivationForm";
+        $moduleBaseName = strpos($moduleName, 'settings') ? explode("settings", $moduleName)[0] : $moduleName;
+        $params = array(
+            "path" => $moduleBaseName . "config/".$space['id'],
+            "formid" => $formId,
+            $moduleName . "Menustatus" => $status,
+            $moduleName . "DisplayMenu" => 0,
+            $moduleName . "DisplayColor" =>  $space['color'],
+            $moduleName . "DisplayColorTxt" => $space['txtcolor']
+        );
+        $this->request->setParams($params);
+        $ctrlName = $moduleBaseName . 'configController';
+        $c = new $ctrlName($this->request, $space);
+        $c->runAction($moduleBaseName, 'index', ['id_space' => $space['id']]);
     }
     
     public function deleteAction($id_space){

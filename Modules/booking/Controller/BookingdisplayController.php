@@ -47,7 +47,6 @@ class BookingdisplayController extends BookingsettingsController {
         $data = $modelCSS->getAreaCss($id_space, $id);
 
         $modelArea = new ReArea();
-        // $name = $modelArea->getName($id);
         $area = $modelArea->get($id_space, $id);
         $name = $area['name'];
 

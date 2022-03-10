@@ -255,7 +255,6 @@ class CorespaceaccessController extends CoresecureController {
             "unit" => CoreTranslator::Unit($lang),
             "organization" => CoreTranslator::Organization($lang),
             "phone" => CoreTranslator::Phone($lang),
-            // "spaces" => CoreTranslator::Spaces($lang),
             "date_convention" => CoreTranslator::Convention($lang),
             "date_contract_end" => CoreTranslator::Date_end_contract($lang),
             "convention_url" => array("title" => CoreTranslator::Convention($lang),
@@ -289,7 +288,7 @@ class CorespaceaccessController extends CoresecureController {
     }
 
 
-    public function useraddAction($id_space){
+    public function useraddAction($id_space) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -312,8 +311,13 @@ class CorespaceaccessController extends CoresecureController {
         $roles = $modelSpace->roles($lang);
         $formjoin->addSelect("role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"], "");
 
+        $todo = $this->request->getParameterNoException('redirect');
+        $formJoinValidationUrl = "corespaceaccessuseradd/".$id_space;
+        if ($todo) {
+            $formJoinValidationUrl .= "?redirect=todo";
+        }
 
-        $formjoin->setValidationButton(CoreTranslator::Ok($lang), "corespaceaccessuseradd/".$id_space);
+        $formjoin->setValidationButton(CoreTranslator::Ok($lang), $formJoinValidationUrl);
 
         if($formjoin->check()) {
             $modelCoreUser = new CoreUser();
@@ -333,7 +337,15 @@ class CorespaceaccessController extends CoresecureController {
 
             $modelUserSpace = new CoreSpaceUser();
             $modelUserSpace->setRole($user['idUser'], $id_space, $form->getParameter("role"));
-            return $this->redirect('corespaceaccessusers/'. $id_space);
+
+            $_SESSION["flash"] = CoreTranslator::UserAccountAdded($user['login'], $lang);
+            $_SESSION["flashClass"] = "success";
+
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {
+                return $this->redirect('corespaceaccessusers/'. $id_space);
+            }
         }
 
         if ($form->check()) {
@@ -435,7 +447,7 @@ class CorespaceaccessController extends CoresecureController {
         ));
     }
 
-    public function generateSpaceAccessForm($id_space, $id_user) {
+    public function generateSpaceAccessForm($id_space, $id_user, $todo=false) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
@@ -455,7 +467,11 @@ class CorespaceaccessController extends CoresecureController {
         $form->addDate("date_convention", CoreTranslator::Date_convention($lang), false, $spaceUserInfo["date_convention"] ?? "");
         $form->addUpload("convention", CoreTranslator::Convention($lang), $spaceUserInfo["convention_url"] ?? "");
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "corespaceuseredit/".$id_space."/".$id_user);
+        $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        } 
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id_user);
         return $form;
     }
@@ -482,7 +498,6 @@ class CorespaceaccessController extends CoresecureController {
 
         $_SESSION["flash"] = CoreTranslator::UserAccessHasBeenSaved($lang);
         $_SESSION["flashClass"] = "success";
-        $this->redirect("corespaceuseredit/".$id_space."/".$id_user, ["origin" => "spaceaccess"]);
     }
 
     /**
