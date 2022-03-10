@@ -868,24 +868,15 @@ class ServicesstatisticsprojectController extends ServicesController {
             $offset = 4;
             $projItemCount = 0;
             foreach ($entries as $entry) {
-                // print_r($entry);
-                // echo "<br/>";
                 $idx++;
                 $pos = $this->findItemPos2($items, $entry["id"]);
-                //echo "id = " . $entry["id"] . " pos = " . $pos . "<br/>";
                 if ($pos > 0 && $entry["pos"] > 0) {
 
                     $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
                     $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
-                    //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
             }
-            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
-            //if($projItemCount == 0){
-            //    $spreadsheet->getActiveSheet()->removeRow($curentLine);
-            //    $curentLine--;
-            //}
         }
 
         // total services sum

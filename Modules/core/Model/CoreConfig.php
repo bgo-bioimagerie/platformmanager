@@ -10,6 +10,10 @@ require_once 'Framework/Configuration.php';
  */
 class CoreConfig extends Model {
 
+    public function __construct() {
+        $this->tableName = "core_config";
+    }
+
     private static $params = null;
 
     /**

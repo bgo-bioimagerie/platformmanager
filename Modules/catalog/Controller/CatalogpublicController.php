@@ -12,7 +12,7 @@ require_once 'Modules/catalog/Model/CatalogTranslator.php';
 require_once 'Modules/antibodies/Model/Status.php';
 require_once 'Modules/antibodies/Model/Anticorps.php';
 /**
- * 
+ * @deprecated ??? see no related usage
  * @author sprigent
  * Controller for the home page
  */
@@ -48,8 +48,7 @@ class CatalogpublicController extends Controller {
         }
         
         if ($idCategory == -12 || ( $idCategory == 0 && $categories[0]["id"] == -12)) {
-            $this->antibodiesAction($id_space, $categories);
-            return;
+            return $this->antibodiesAction($id_space, $categories);
         }
         // header
         $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);
@@ -71,7 +70,7 @@ class CatalogpublicController extends Controller {
         $lang = $this->getLanguage();
 
         $modelAntibody = new Anticorps();
-        $entries = $modelAntibody->getAnticorpsInfoCatalog();
+        $entries = $modelAntibody->getAnticorpsInfoCatalog($id_space);
 
         $statusModel = new Status();
         $status = $statusModel->getBySpace($id_space);
@@ -81,7 +80,7 @@ class CatalogpublicController extends Controller {
         $pageLogo = $modelCoreConfig->getParamSpace("CaPublicPageLogo", $id_space);
         
         // view
-        $this->render(array(
+        return $this->render(array(
             'id_space' => $id_space,
             'categories' => $categories,
             'entries' => $entries,

@@ -13,6 +13,7 @@ require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Controller/CorespaceadminController.php';
 
 /**
  * 
@@ -96,7 +97,7 @@ class BookingauthorisationsController extends CoresecureController {
         return ["bkTableHtml" => $table->view($data, $headers), "data" => $data];
     }
 
-    public function generateBkAuthAddForm($id_space, $id_user, $controller, $lang) {
+    public function generateBkAuthAddForm($id_space, $id_user, $controller, $lang, $todo=false) {
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
         $modelReCategories = new ReCategory();
@@ -116,7 +117,13 @@ class BookingauthorisationsController extends CoresecureController {
         $form->addSelectMandatory("resource", ResourcesTranslator::Category(), $CategoryList['names'], $CategoryList['ids'], $defaultCategoryId);
         $form->addSelectMandatory("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
         $form->addDate("date", BookingTranslator::DateActivation($lang), true);
-        $form->setValidationButton(CoreTranslator::Save($lang), $controller . "/" . $id_space . "/" . $id_user, ["origin" => "bookingaccess"]);
+
+        $validationUrl = $controller . "/". $id_space."/". $id_user;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl, ["origin" => "bookingaccess"]);
 
         return $form;
     }
@@ -132,8 +139,9 @@ class BookingauthorisationsController extends CoresecureController {
                 $id_visa,
                 CoreTranslator::dateToEn($date, $lang)
             );
-            $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
-            $_SESSION["flashClass"] = "success";
+
+        $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
+        $_SESSION["flashClass"] = "success";
     }
 
     public function historyAction($id_space, $id) {

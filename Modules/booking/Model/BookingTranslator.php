@@ -392,8 +392,6 @@ class BookingTranslator {
 
             return BookingTranslator::translateDayFromEn($dayStream, $lang) . " " . $dayNumStream . " " . BookingTranslator::translateMonthFromEn($monthStream, $lang) . " " . $yearStream;
 
-            // setlocale(LC_TIME, "fr_FR");
-            // return utf8_encode(strftime('%A %d %B %Y', $time));
         }
         // english
 
@@ -1687,9 +1685,9 @@ class BookingTranslator {
 
     public static function VisaNeeded($lang) {
         if ($lang == "fr") {
-            return "Vous devez d'abord spécifier un visa dans le module Ressources > Visas";
+            return "Pour ajouter une autorisation de réservation, vous devez d'abord spécifier un visa dans le module Ressources > Visas";
         }
-        return "You need first to specify a visa in Resources module>Visas";
+        return "In order to add a booking authorization, you need to specify a visa in Resources module>Visas";
     }
 
     public static function maxInvoicingUnits($lang) {
@@ -1721,10 +1719,73 @@ class BookingTranslator {
         return "My bookings";
     }
 
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "colorcode":
+                    $result .= ($lang === "fr") ? "un code couleur" : "a color code";
+                    break;
+                case "schedule":
+                    $result = ($lang === "fr") ? "Editer un profil horaire pour un domaine" : "Edit a schedule profile for one area";
+                    break;
+                case "authorisations":
+                    $result = ($lang === "fr") ? "Gérer les autorisations de réservation pour :" : "Manage booking authorisations for:";
+                    break;
+                    case "access":
+                        $result = ($lang === "fr") ? "Gérer les accès aux ressources" : "Manage resources access";
+                        break;
+                case "booking":
+                    $result .= ($lang === "fr") ? "une première réservation" : "a first reservation";
+                    break;
+                default:
+                    break;
+            }
+        return $result;
+    }
+
+    public static function Item_created($item, $lang = "") {
+        $result = "";
+            switch ($item) {
+                case "colorcode":
+                    $result = ($lang === "fr") ? "code couleur" : "color code";
+                    break;
+                case "schedule":
+                    $result = ($lang === "fr") ? "profil horaire" : "schedule profile";
+                    break;
+                case "authorisations":
+                    $result = ($lang === "fr") ? "autorisation de réservation" : "booking authorisation";
+                    break;
+                    case "access":
+                        $result = ($lang === "fr") ? "accès aux ressources" : "resources access";
+                        break;
+                case "booking":
+                    $result = ($lang === "fr") ? "réservation" : "reservation";
+                    break;
+                default:
+                    break;
+            }
+            $result .= ($lang === "fr") ? " sauvegardé(e)" : " saved";
+        return $result;
+    }
+    
     public static function Closed($lang = "") {
         if($lang == "fr") {
             return "Fermé";
         }
         return "Closed";
+    }
+
+    public static function SimpleView($lang="") {
+        if($lang == "fr") {
+            return "Résumé";
+        }
+        return "Summary";
+    }
+
+    public static function DetailedView($lang="") {
+        if($lang == "fr") {
+            return "Détails";
+        }
+        return "Detailed";
     }
 }

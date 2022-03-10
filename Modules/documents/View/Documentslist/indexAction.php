@@ -2,15 +2,15 @@
 
 
 <?php startblock('content') ?>
-<div class="container">
+<div class="container pm-table">
     <div class="row">
-        <div class="col-sm-12" id="doctree">
+        <div class="col-12" id="doctree">
 
 
         <?php if($userSpaceStatus >= CoreSpace::$MANAGER){ ?> 
-        <div class="col-md-2" style="padding-top:7px;">
+        <div class="col-2" style="padding-top:7px;">
             <button type="button" class="btn btn-default" v-on:click="create()">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <?php echo DocumentsTranslator::Add_Doc($lang) ?>
+                <span class="bi-plus" aria-hidden="true"></span> <?php echo DocumentsTranslator::Add_Doc($lang) ?>
             </button>
             <p></p>
         </div>
@@ -26,14 +26,14 @@
                 </tr></thead>
                 <tbody>
                     <tr v-if="level > 0">
-                        <td v-on:click="up()"><span class="glyphicon glyphicon-folder-open"></span></td>
+                        <td v-on:click="up()"><span class="bi-folder2-open"></span></td>
                         <td>..</td>
                         <td></td>
                         <td></td>
                     </tr>
                     <tr v-for="doc in docs">
-                        <td><div v-if="doc.folder" v-on:click="goto(doc)" aria-label="go to folder"><span class="glyphicon glyphicon-folder-open"></span></div><div aria-label="download" v-if="!doc.folder" v-on:click="download(doc.id)"><span class="glyphicon glyphicon-save-file"></span></div></td>
-                        <td>{{doc.display}} <span style="margin-left: 10px" v-if="!doc.folder && doc.visibility!='Public'" class="glyphicon glyphicon-lock"></span></td>
+                        <td><div v-if="doc.folder" v-on:click="goto(doc)" aria-label="go to folder"><span class="bi-folder2-open"></span></div><div aria-label="download" v-if="!doc.folder" v-on:click="download(doc.id)"><span class="bi-download"></span></div></td>
+                        <td>{{doc.display}} <span style="margin-left: 10px" v-if="!doc.folder && doc.visibility!='Public'" class="bi-file-lock"></span></td>
                         <td><span v-if="!doc.folder">{{doc.date_modified}}</span></td>
                         <td><span v-if="!doc.folder">{{doc.user}}</span></td>
                         <td><?php if($context['role'] > CoreSpace::$USER) { ?>
@@ -59,7 +59,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="match in matches">
-                            <td><div aria-label="download" v-on:click="download(match.id)"><span class="glyphicon glyphicon-save-file"></span></div></td>
+                            <td><div aria-label="download" v-on:click="download(match.id)"><span class="bi-download"></span></div></td>
                             <td>{{match.title}}</td>
                             <td><?php if($context['role'] > CoreSpace::$USER) { ?>
                                 <div>

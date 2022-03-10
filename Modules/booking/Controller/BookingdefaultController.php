@@ -136,10 +136,8 @@ class BookingdefaultController extends BookingabstractController {
             return true;
         }
 
-        // $modelConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
         $limitHours = $modelRestrictions->getBookingDelayUserCanEdit($id_space, $id_resource);
-        //$limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
 
         if ($id_recipient == $id_user) {
 
@@ -160,7 +158,7 @@ class BookingdefaultController extends BookingabstractController {
         $lang = $this->getLanguage();
 
         $modelUser = new CoreUser();
-        $userStatus = $modelUser->getStatus($_SESSION["id_user"]);
+        //$userStatus = $modelUser->getStatus($_SESSION["id_user"]);
         $modelResource = new ResourceInfo();
         $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
         $modelBkAccess = new BkAccess();
@@ -186,19 +184,15 @@ class BookingdefaultController extends BookingabstractController {
             throw new PfmParamException('no end date nor duration specified');
         }
 
-        $curentDate = date("Y-m-d", time());
-        if (isset($_SESSION['bk_curentDate'])) {
-            $curentDate = $_SESSION['bk_curentDate'];
-        }
-        $temp = explode("-", $curentDate);
+        $temp = explode("-", $dateResaStart);
         try {
             $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
         } catch(Exception $e) {
-            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $curentDate]);
+            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $dateResaStart]);
             $curentDateUnix = time();
         }
 
-        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
+        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $curentDateUnix);
 
         $redir = $this->request->getParameterNoException('from');
 
@@ -207,7 +201,7 @@ class BookingdefaultController extends BookingabstractController {
         if($redir) {
             $redirInfo = explode(':', $redir);
             $redirPage = $redirInfo[0];
-            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4]];
+            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4], "view" => $redirInfo[5]];
         }
 
         if (!$canValidateBooking) {
@@ -702,7 +696,8 @@ class BookingdefaultController extends BookingabstractController {
         $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
-        $form->addHidden("id", $resaInfo["id"]);
+        // $form->addHidden("id", $resaInfo["id"]);
+        $form->addText("id", "Id", false, $resaInfo['id'], false, true);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
@@ -986,10 +981,10 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canEdit) {
             throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
-        if ($sendEmail == 1) {
+        if ($sendEmail == 1 && $entryInfo["start_time"] > time()) {
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
-            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource);
+            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource, time());
             $subject = $resourceName . " has been freed";
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
 

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Prelevement extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_prelevements";
+    }
+
     /**
      * Create the espece table
      * 

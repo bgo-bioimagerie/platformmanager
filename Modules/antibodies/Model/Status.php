@@ -10,6 +10,10 @@ require_once 'Framework/Constants.php';
  */
 class Status extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_status";
+    }
+
     /**
      * Create the Status table
      * 

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Linker extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_linkers";
+    }
+
     /**
      * Create the espece table
      * 
