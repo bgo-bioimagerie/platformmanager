@@ -386,7 +386,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
+        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
 
 }
