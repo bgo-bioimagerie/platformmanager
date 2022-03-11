@@ -7,6 +7,7 @@
 * [core] show number of user clients in user admin view
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
+* [core] add option to tables to view all elements
 
 ## 2.4.1
 
