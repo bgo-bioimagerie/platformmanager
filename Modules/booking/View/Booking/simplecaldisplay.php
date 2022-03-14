@@ -132,7 +132,7 @@ th {
 						</div>
 					<?php } ?>
 					<?php
-						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".date('H', $last_end_time)."-00_".$resId.$q;
+						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".date('H-i', $last_end_time)."_".$resId.$q;
 					?>
 						<div><a  data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"><small></a></div>
 					</td>
