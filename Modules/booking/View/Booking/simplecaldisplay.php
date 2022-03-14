@@ -108,7 +108,7 @@ th {
 					<td>
 					<?php foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
-							$text = '#'.$hcalEntry['id'].' '.date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']);
+							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
 							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
 							if($extra) {
@@ -117,7 +117,7 @@ th {
 							$hcalEntry['text'] = $text;
 							$hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
 						?>
-						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
+						<div class="text-center tcellResa"  style="margin-bottom: 2px; border-radius: 30px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
 						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
 							</a>
 						</div>
