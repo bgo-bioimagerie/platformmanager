@@ -108,7 +108,7 @@ th {
 					<td>
 					<?php foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
-							$text = '#'.$hcalEntry['id'].' '.date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']);
+							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']). ' #'.$hcalEntry['id'];
 							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
 							if($extra) {
