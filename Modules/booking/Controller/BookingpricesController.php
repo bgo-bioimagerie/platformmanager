@@ -101,7 +101,7 @@ class BookingpricesController extends BookingsettingsController {
             foreach ($packages as $package) {
                 $count++;
                 for ($b = 0; $b < count($belongings); $b++) {
-                    $data[$belongings[$b]["id"]] = $modelPrice->getPackagePrice($id_space, $package["id"], $resources[$i]["id"], $belongings[$b]["id"]);
+                    $data[$belongings[$b]["id"]] = $modelPrice->getPackagePrice($id_space, $package["id_package"], $resources[$i]["id"], $belongings[$b]["id"]);
                 }
                 $data['id_resource'] = $resources[$i]["id"] . "-pk-" . $package["id_package"];
                 $data['resource'] = $resources[$i]["name"] . " " . $package["name"];
