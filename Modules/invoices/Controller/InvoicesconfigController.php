@@ -47,7 +47,7 @@ class InvoicesconfigController extends CoresecureController {
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'invoices', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'invoices', 'euro');
+            $this->menusactivation($id_space, 'invoices', 'currency-euro');
             return $this->redirect("invoicesconfig/" . $id_space);
         }
 

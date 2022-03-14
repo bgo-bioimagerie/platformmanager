@@ -5,11 +5,15 @@ require_once 'Request.php';
 require_once 'View.php';
 require_once 'Errors.php';
 require_once 'Constants.php';
+require_once 'Modules/core/Model/CoreInstall.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+
+use DebugBar\StandardDebugBar;
+use DebugBar\DataCollector\PDO\PDOCollector;
 
 // Default navbar
 class Navbar{
@@ -38,6 +42,7 @@ class Navbar{
                     'toolMenu' => $toolMenu,
                     'toolAdmin' => $toolAdmin,
                     'impersonate' => $_SESSION['logged_login'] ?? null,
+                    "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
                     'lang' => $this->lang));
     }
 
@@ -134,6 +139,28 @@ abstract class Controller {
             $this->twig = new \Twig\Environment($loader, [
                 'cache' => '/tmp/pfm'
             ]);
+        }
+
+        if($request->getParameterNoException('theme')) {
+            $theme = $request->getParameterNoException('theme');
+            if($theme == 'switch') {
+                if(!isset($_SESSION['theme'])) {
+                    $theme = 'dark';
+                } else {
+                    switch ($_SESSION['theme']) {
+                        case 'dark':
+                            $theme = 'light';
+                            break;
+                        case 'light':
+                            $theme = 'dark';
+                            break;
+                        default:
+                            $theme = 'light';
+                            break;
+                    }
+                }
+            }
+            $_SESSION['theme'] = $theme;
         }
 
         $this->currentSpace = $space;
@@ -235,7 +262,7 @@ abstract class Controller {
             //$this->{$this->action}();
         } else {
             $classController = get_class($this);
-            throw new PfmException("Action '$action'Action in not defined in the class '$classController'", 500);
+            throw new PfmException("Action '$action'Action not defined in the class '$classController'", 500);
         }
     }
 
@@ -276,7 +303,17 @@ abstract class Controller {
         $classController = get_class($this);
         $controllerView = str_replace("Controller", "", $classController);
 
-        if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == "application/json"){
+        $isJson = false;
+        if(isset($_SERVER['HTTP_ACCEPT'])) {
+            $accept = explode(',', $_SERVER['HTTP_ACCEPT']);
+            foreach($accept as $a) {
+                if($a == "application/json") {
+                    $isJson = true;
+                    break;
+                }
+            }
+        }
+        if($isJson){
             header('Content-Type: application/json');
             if(isset($dataView['data'])) {
                 ob_start();
@@ -317,8 +354,17 @@ abstract class Controller {
             "lang" => $this->getLanguage(),
             "currentSpace" => $this->currentSpace,  // current space if any
             "role" => $this->role,   // user role in space if any
-            "maintenance" => $this->maintenance
+            "maintenance" => $this->maintenance,
+            "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+            "dev" => (getenv('PFM_MODE')=='dev')
         ];
+        if($dataView["context"]["dev"]) {
+            CoreInstall::getDatabase();
+            $debugbar = new StandardDebugBar();
+            $debugbarRenderer = $debugbar->getJavascriptRenderer();
+            $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector(CoreInstall::getDatabase()));
+            $dataView["context"]["_debugbarRenderer"] = $debugbarRenderer;
+        }
 
         if (getenv("PFM_MODE") == "test") {
             // Need to know module name and action

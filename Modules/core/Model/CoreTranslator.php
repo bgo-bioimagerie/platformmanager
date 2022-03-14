@@ -274,9 +274,9 @@ class CoreTranslator {
 
     public static function Organization($lang) {
         if ($lang == "fr") {
-            return "Organisation/entreprise";
+            return "Organisation / entreprise";
         }
-        return "Organization/Company";
+        return "Organization / Company";
     }
 
     public static function Responsible($lang) {
@@ -723,6 +723,13 @@ class CoreTranslator {
             return "désactiver un compte utilisateur lorsque";
         }
         return "Deactivate user account when";
+    }
+
+    public static function Preconfigure_space($lang = "") {
+        if ($lang == "fr") {
+            return "Préconfigurer l'espace";
+        }
+        return "Pre-configure space";
     }
 
     public static function never($lang = "") {
@@ -1214,6 +1221,13 @@ class CoreTranslator {
         return "Managers";
     }
 
+    public static function Admins($lang) {
+        if ($lang == "fr") {
+            return "Administrateurs";
+        }
+        return "Administrators";
+    }
+
     public static function UnixDate($unitTime, $lang) {
         if ($lang == "fr") {
             return date("d/m/Y \à H:i", $unitTime);
@@ -1228,25 +1242,11 @@ class CoreTranslator {
         return "Connection page data";
     }
 
-    public static function Carousel($lang) {
-        if ($lang == "fr") {
-            return "Carousel";
-        }
-        return "Carousel";
-    }
-
     public static function Image_Url($lang) {
         if ($lang == "fr") {
             return "Image url";
         }
         return "Image url";
-    }
-
-    public static function ViewCarousel($lang) {
-        if ($lang == "fr") {
-            return "Afficher le carousel";
-        }
-        return "View carousel";
     }
 
     public static function TheTwoPasswordAreDifferent($lang) {
@@ -1373,6 +1373,13 @@ class CoreTranslator {
             return "Modifier espace";
         }
         return "Edit space";
+    }
+
+    public static function Create_space($lang) {
+        if ($lang == "fr") {
+            return "Ajouter un espace";
+        }
+        return "Add space";
     }
 
     public static function PrivateA($lang) {
@@ -1778,6 +1785,13 @@ class CoreTranslator {
         return "Or";
     }
 
+    public static function Space_preconfigured($lang) {
+        if ($lang == "fr") {
+            return "Espace préconfiguré";
+        }
+        return "Space preconfigured";
+    }
+
     public static function CreateAccount($lang) {
         if ($lang == "fr") {
             return "Créer un compte";
@@ -1790,6 +1804,13 @@ class CoreTranslator {
             return "Ajouter un compte existant";
         }
         return "Add existing account";
+    }
+
+    public static function UserAccountAdded($userLogin, $lang) {
+        if ($lang == "fr") {
+            return "le compte " . $userLogin . " à été ajouté à votre espace";
+        }
+        return "User account " . $userLogin . " has been added to your space";
     }
 
     public static function AccessTo($lang){
@@ -2101,6 +2122,21 @@ class CoreTranslator {
             return "Droits d'édition";
         }
         return "Edition access";
+    }
+
+    public static function Optional($lang){
+        if($lang == "fr") {
+            return "optionnel";
+        }
+        return "optional";
+    }
+
+    public static function NotFound($lang){
+        if($lang == "fr") {
+            return "non trouvé(e)";
+        }
+        return "not found";       
+
     }
     
 }

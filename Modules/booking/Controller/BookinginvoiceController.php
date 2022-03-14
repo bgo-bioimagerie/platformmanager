@@ -348,7 +348,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $module = "services";
         $controller = "servicesinvoiceproject";
         $number = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice($id_space, $module, $controller, $number, date("Y-m-d", time()), $id_unit, $id_resp);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
 
         // parse content
@@ -458,7 +458,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resp = $clientInfos["contact_name"];
         $useTTC = true;
 
-        return $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos);
+        return $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos, lang: $lang);
     }
 
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
@@ -474,7 +474,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resp = $clientInfos["contact_name"];
         
         $useTTC = true;
-        return $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos);
+        return $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos, lang: $lang);
     }
 
     protected function unparseContent($id_space, $id_item, $lang) {

@@ -11,7 +11,7 @@ require_once 'Modules/bulletjournal/Model/BjCollection.php';
 /**
  * 
  * @author sprigent
- * Controller for the home page
+ * @deprecated unused
  */
 class BjcollectionsController extends CoresecureController {
 

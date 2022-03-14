@@ -22,7 +22,7 @@ class PrelevementsController extends AntibodiesController {
 
     // affiche la liste des Prelevementss
     public function indexAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
         $prelevementssArray = $this->model->getBySpace($id_space);
 
@@ -42,7 +42,7 @@ class PrelevementsController extends AntibodiesController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
         $prelevements = $this->model->get($id_space,$id);
@@ -72,7 +72,7 @@ class PrelevementsController extends AntibodiesController {
     }
 
     public function deleteAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
         $this->model->delete($id_space,$id);
         $this->redirect("prelevements/" . $id_space);

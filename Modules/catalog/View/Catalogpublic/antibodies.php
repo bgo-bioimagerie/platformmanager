@@ -1,17 +1,15 @@
 <?php include 'Modules/catalog/View/publiclayout.php' ?>
 
+<?php startblock('stylesheet') ?>
+<link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+
+<script src="externals/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="externals/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<?php endblock() ?>
+
 <?php startblock('content') ?>
-
+<div class="container">
 <?php include('Modules/catalog/View/Catalogpublic/toolbar.php') ?>
-
-
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/fixedColumns.bootstrap.min.css">
-
-    <script src="externals/dataTables/jquery-1.12.3.js"></script>
-    <script src="externals/dataTables/jquery.dataTables.min.js"></script>
-    <script src="externals/dataTables/dataTables.bootstrap.min.js"></script>
-    <script src="externals/dataTables/dataTables.fixedColumns.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -28,15 +26,9 @@
     </script>
 
 
-
-
-<div class="row" style="height:15px; background-color: #ffffff;">
-
-</div>
-
 <div class="row" style="background-color: #ffffff;">
 
-    <table id="antibodies" class="table table-bordered table-striped" cellspacing="0" width="100%">
+    <table aria-label="list of antibodies" id="antibodies" class="table table-bordered table-striped" cellspacing="0" width="100%">
         <thead>
 
             <tr>
@@ -131,6 +123,7 @@
 
         </tbody>
     </table>
+</div>
 </div>
 
 <?php endblock(); ?>

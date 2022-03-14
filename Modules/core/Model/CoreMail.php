@@ -4,6 +4,10 @@ require_once 'Framework/Model.php';
 
 class CoreMail extends Model {
 
+    public function __construct() {
+        $this->tableName = "core_mail_unsubscribe";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_mail_unsubscribe` (
         `id` int(11) NOT NULL AUTO_INCREMENT,

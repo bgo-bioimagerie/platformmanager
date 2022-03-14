@@ -42,6 +42,9 @@ class ReEvent extends Model {
     }
 
     public function getLastStateColors($id_space, array $id_resources){
+        if(empty($id_resources)) {
+            return [];
+        }
         $sql = "SELECT id_resource, re_state.color as color"
                 . " FROM re_event "
                 . " INNER JOIN re_state ON re_event.id_state = re_state.id"
@@ -97,7 +100,6 @@ class ReEvent extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE re_event SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM re_event WHERE id = ? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
     }
 

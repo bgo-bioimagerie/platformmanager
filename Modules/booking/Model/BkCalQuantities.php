@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkCalQuantities extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calquantities";
+    }
+
     /**
      * Create the calsupplementaries table
      *
@@ -155,7 +159,6 @@ class BkCalQuantities extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE bk_calquantities SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM bk_calquantities WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

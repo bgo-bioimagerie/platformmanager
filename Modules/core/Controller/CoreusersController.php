@@ -77,7 +77,7 @@ class CoreusersController extends CoresecureController {
 
         }
 
-        $tableHtml = $table->view($data, $header);
+        $tableHtml = $table->view($data, $header, true);
         return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang, "data" => ["users" => $users]));
     }
 

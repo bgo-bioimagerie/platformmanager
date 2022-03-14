@@ -121,7 +121,8 @@ function PMGraph(canvas) {
 
 
         // node start position
-        startNodeCenter = this.nodes[this.nodesMap.get(arc.node_start_id)].center;
+        let startNodeCenter = this.nodes[this.nodesMap.get(arc.node_start_id)].center;
+        let x1, y1;
         if (arc.node_start_side === "center") {
             x1 = startNodeCenter.x;
             y1 = startNodeCenter.y;
@@ -144,7 +145,8 @@ function PMGraph(canvas) {
         }
 
         // node end position
-        endNodeCenter = this.nodes[this.nodesMap.get(arc.node_end_id)].center;
+        let endNodeCenter = this.nodes[this.nodesMap.get(arc.node_end_id)].center;
+        let x2,y2;
         if (arc.node_end_side === "center") {
             x2 = endNodeCenter.x;
             y2 = endNodeCenter.y;
@@ -165,9 +167,6 @@ function PMGraph(canvas) {
             x2 = endNodeCenter.x;
             y2 = endNodeCenter.y + this.nodes[this.nodesMap.get(arc.node_end_id)].size.width / 4;
         }
-
-        //alert("pos arc = " + x1 + ", " + x2 + ", " + y1 + ", " + y2);
-
         this.canvas.drawLine({
             layer: true,
             strokeStyle: arc.style.color,
@@ -181,10 +180,10 @@ function PMGraph(canvas) {
 
     this.render = function () {
 
-        for (i = 0; i < this.arcs.length; i++) {
+        for (let i = 0; i < this.arcs.length; i++) {
             this.renderArc(this.arcs[i]);
         }
-        for (i = 0; i < this.nodes.length; i++) {
+        for (let i = 0; i < this.nodes.length; i++) {
             this.renderNode(this.nodes[i]);
         }
 

@@ -40,7 +40,12 @@ For information on reservation. Can be set as mandatory.
 
 #### Packages
 
-    **To be documented**
+A resource can be shared out in packages. So, when making a reservation for a specific resource, users can choose one of its packages.
+A package is defined by its name, the resource it is linked to and its duration.
+
+![basic configuration](../../../packages_1.png)
+
+For a usage example, see [How to manage interdependant booking resources](../../../use_cases/interdependant_resources)
 
 #### Quantities
 

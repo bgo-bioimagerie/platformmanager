@@ -3,13 +3,13 @@
     
 <?php startblock('content') ?>
 
-<div class="col-md-10" id="pm-table">
+<div class="col-10" id="pm-table">
     
-    <div class="col-xs-12 text-center" style="text-transform:uppercase; color:#666;">
+    <div class="col-12 text-center" style="text-transform:uppercase; color:#666;">
         <strong>Collection: <?php echo $collection["name"] ?></strong>
     </div>
     
-    <table aria-label="collection list" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $di ?>">
+    <table role="presentation" aria-label="collection list" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month . "-" . $di ?>">
         <tbody>
             <?php
             foreach ($notes as $dnote) {
@@ -19,15 +19,16 @@
                         $d = "0" . $i;
                     }
                     if ($dnote["date"] == $year . "-" . $month . "-" . $d) {
-                        $typeicon = "glyphicon glyphicon-minus";
+                        //echo "found <br/>";
+                        $typeicon = "bi-x-square-fill";
                         if ($dnote["type"] == 2) {
-                            $typeicon = "glyphicon glyphicon-asterisk";
+                            $typeicon = "bi-asterisk";
                             if ($dnote["migrated"] == 1) {
-                                $typeicon = "glyphicon glyphicon-chevron-right";
+                                $typeicon = "bi-chevron-right";
                             }
                         }
                         if ($dnote["type"] == 3) {
-                            $typeicon = "glyphicon glyphicon-calendar";
+                            $typeicon = "bi-calendar3";
                         }
                         ?>
 
@@ -84,8 +85,8 @@
                                     $cancelTxt = BulletjournalTranslator::ReOpen($lang);
                                 }
                                 ?>
-                                <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-primary"><?php echo $editTxt ?></button></td>
-                                <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo $cancelTxt ?></button></td>
+                                <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-primary"><?php echo $editTxt ?></button></td>
+                                <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo $cancelTxt ?></button></td>
                                 <?php
                             } else {
                                 ?>

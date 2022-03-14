@@ -137,8 +137,6 @@ class BookingInvoice extends InvoiceModel {
         $resources = $modelResouces->getBySpace($id_space);
 
         // get the pricing
-        // old: $timePrices = $this->getUnitTimePricesForEachResource($resources, $LABpricingid, $id_resp, $id_space);
-        // old: $packagesPrices = $this->getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
         $timePrices = $this->getUnitTimePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
         Configuration::getLogger()->debug('[invoice][booking] time prices', ['client' => $id_resp, 'id' => $LABpricingid, 'prices' => $timePrices]);
         $packagesPrices = $this->getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);

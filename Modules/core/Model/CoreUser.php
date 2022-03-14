@@ -332,7 +332,6 @@ class CoreUser extends Model {
         $pwd = Configuration::get('admin_password', 'admin');
 
         $bytes = random_bytes(10);
-        // $apikey = bin2hex($bytes);
         $apikey = Configuration::get('admin_apikey', bin2hex($bytes));
 
         try {
@@ -888,8 +887,6 @@ class CoreUser extends Model {
 
         // search for LDAP account
         else {
-            //echo "into LDap <br/>";
-            $modelCoreConfig = new CoreConfig();
             if (CoreLdapConfiguration::get('ldap_use', 0)) {
 
                 $modelLdap = new CoreLdap();
@@ -898,18 +895,11 @@ class CoreUser extends Model {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-
                     $userInfo = $this->user->getUserByLogin($login);
-                    //print_r($userInfo);
-
-                    $modelSpace = new CoreSpace();
-                    $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa) {
-                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
+                    if(!$userInfo['apikey']) {
+                        $this->user->newApiKey($userInfo['idUser']);
                     }
-
                     return $this->user->isActive($login);
                 }
             }
@@ -981,7 +971,17 @@ class CoreUser extends Model {
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
                 . "WHERE core_j_spaces_user.id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
-}
+    }
+
+    public function countSpaceActiveUsers($id_space) {
+        $sql = "SELECT count(core_users.id) AS total "
+                . "FROM core_j_spaces_user "
+                . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                . "WHERE core_j_spaces_user.id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
+        $total = $req->fetch();
+        return $total['total'];
+    }
 
     /**
      * get the informations of a user from it's id
