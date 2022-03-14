@@ -130,6 +130,17 @@ class BkPackage extends Model {
         }
     }
 
+    public function getByPackageID($id_space, $id_package, $id_resource) {
+        $sql = "SELECT * FROM bk_packages WHERE id_package=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $req = $this->runRequest($sql, array($id_package, $id_resource, $id_space));
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            return $tmp;
+        } else {
+            return null;
+        }
+    }
+
     public function addPackage($id_space, $id_package, $id_resource, $duration, $name) {
 
         $sql = "insert into bk_packages(id_package, id_resource, duration, name, id_space)"
