@@ -106,7 +106,11 @@ th {
 					$style = '';
 				?>
 					<td>
-					<?php foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
+					<?php
+					$hcalEntry = null;
+					$lastHour = $day_begin;
+					$last_end = null;
+					foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
 							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
 							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
@@ -122,7 +126,10 @@ th {
 							</a>
 						</div>
 					<?php } ?>
-
+					<?php
+						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_8-00_".$resId.$q;
+					?>
+						<div><a  data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"></a></div>
 					</td>
 				
 	<?php } ?>
