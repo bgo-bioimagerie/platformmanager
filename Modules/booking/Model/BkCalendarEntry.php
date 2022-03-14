@@ -258,6 +258,7 @@ class BkCalendarEntry extends Model {
             "package_id" => 0,
             "responsible_id" => $resps_id,
             "invoice_id" => 0,
+            "reason" => self::$REASON_BOOKING,
             "all_day_long" => 0);
     }
 
@@ -276,10 +277,10 @@ class BkCalendarEntry extends Model {
         if (!$id) {
             $sql = "INSERT INTO bk_calendar_entry (start_time, end_time, resource_id, booked_by_id, recipient_id, 
                     last_update, color_type_id, short_description, full_description, quantities, 
-                    supplementaries, package_id, responsible_id, id_space, supplementaries, reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    supplementaries, package_id, responsible_id, id_space, reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
                 $last_update, $color_type_id, $short_description, $full_description, $quantities,
-                $supplementaries, $package_id, $responsible_id, $id_space, '', $reason));
+                $supplementaries, $package_id, $responsible_id, $id_space, $reason));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "SELECT * FROM bk_calendar_entry WHERE id=? AND id_space=?";
