@@ -14,6 +14,10 @@ require_once 'Modules/core/Model/CoreSpace.php';
  */
 class BkCalendarEntry extends Model {
 
+    public static $REASON_BOOKING = 0;
+    public static $REASON_HOLIDAY = 1;
+    public static $REASON_MAINTENANCE = 2;
+
     public function __construct() {
         $this->tableName = "bk_calendar_entry";
     }
@@ -44,6 +48,7 @@ class BkCalendarEntry extends Model {
         `period_id` int(11) NOT NULL DEFAULT 0,
         `all_day_long` int(1) NOT NULL DEFAULT 0,
         `deleted` int(1) NOT NULL DEFAULT 0,
+        `reason` int NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
@@ -266,15 +271,15 @@ class BkCalendarEntry extends Model {
         $this->runRequest($sql, array($deleted, $id, $id_space));
     }
 
-    public function setEntry($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id) {
+    public function setEntry($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id, $reason=0) {
         $old = null;
         if (!$id) {
             $sql = "INSERT INTO bk_calendar_entry (start_time, end_time, resource_id, booked_by_id, recipient_id, 
                     last_update, color_type_id, short_description, full_description, quantities, 
-                    supplementaries, package_id, responsible_id, id_space) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?, ?)";
+                    supplementaries, package_id, responsible_id, id_space, supplementaries, reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
                 $last_update, $color_type_id, $short_description, $full_description, $quantities,
-                $supplementaries, $package_id, $responsible_id, $id_space));
+                $supplementaries, $package_id, $responsible_id, $id_space, '', $reason));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "SELECT * FROM bk_calendar_entry WHERE id=? AND id_space=?";
@@ -282,10 +287,10 @@ class BkCalendarEntry extends Model {
             $old = ['start_time' => $oldRes['start_time'], 'resource_id' => $oldRes['resource_id'], 'recipient_id' => $oldRes['recipient_id'], 'booked_by_id' => $oldRes['booked_by_id'], 'responsible_id' => $oldRes['responsible_id']];
             $sql = "UPDATE bk_calendar_entry SET start_time=?, end_time=?, resource_id=?, booked_by_id=?, recipient_id=?, 
                     last_update=?, color_type_id=?, short_description=?, full_description=?, quantities=?, 
-                    supplementaries=?, package_id=?, responsible_id=? WHERE id=? AND deleted=0 AND id_space=?";
+                    supplementaries=?, package_id=?, responsible_id=?, reason=? WHERE id=? AND deleted=0 AND id_space=?";
             $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
                 $last_update, $color_type_id, $short_description, $full_description, $quantities,
-                $supplementaries, $package_id, $responsible_id, $id, $id_space));
+                $supplementaries, $package_id, $responsible_id, $reason, $id, $id_space));
         }
         Events::send(["action" => Events::ACTION_CAL_ENTRY_EDIT, "bk_calendar_entry_old" => $old, "bk_calendar_entry" => ["id" => intval($id), "id_space" => $id_space]]);
 
@@ -307,13 +312,13 @@ class BkCalendarEntry extends Model {
      * @param number $quantity
      * @return string
      */
-    public function addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0) {
+    public function addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0, $reason=0) {
 
         $sql = "insert into bk_calendar_entry(start_time, end_time, resource_id, booked_by_id, recipient_id, 
-							last_update, color_type_id, short_description, full_description, quantities, package_id, id_space)"
-                . " values(?,?,?,?,?,?,?,?,?,?,?,?)";
+							last_update, color_type_id, short_description, full_description, quantities, package_id, id_space,supplementaries, reason)"
+                . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
-            $last_update, $color_type_id, $short_description, $full_description, $quantity, $package, $id_space));
+            $last_update, $color_type_id, $short_description, $full_description, $quantity, $package, $id_space, '', $reason));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -907,6 +912,12 @@ class BkCalendarEntry extends Model {
         $q = array('today' => $now, 'id_user' => $id_user, 'id_space' => $id_space);
         $res = $this->runRequest($sql, $q);
         return $res->fetchAll();
+    }
+
+    public function blockedEntries($id_space) {
+        $sql = "SELECT * FROM bk_calendar_entry WHERE reason>0 AND id_space=? AND deleted=0 ORDER BY start_time DESC";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
     }
 
 }

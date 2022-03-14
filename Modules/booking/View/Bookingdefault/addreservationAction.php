@@ -30,7 +30,7 @@
 
     <?php if ($use_packages) { ?>
         <div>
-            <div class="checkbox col-8 offset-4">
+            <div class="checkbox col-8 mb-3">
                 <label>
                     <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                 </label>

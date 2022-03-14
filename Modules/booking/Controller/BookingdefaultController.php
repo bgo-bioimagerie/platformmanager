@@ -701,6 +701,9 @@ class BookingdefaultController extends BookingabstractController {
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
+        if($resaInfo['reason'] > 0) {
+            $form->addText("reason", BookingTranslator::Reason($lang), false, BookingTranslator::BlockReason($resaInfo['reason'], $lang), false, true);
+        }
 
         $resourceName = $modelResource->get($id_space, $id_resource)['name'];
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {

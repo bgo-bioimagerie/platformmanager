@@ -8,6 +8,7 @@
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
 * [core] add option to tables to view all elements
+* [booking] list blocked resources and add a reason column on bkcalentry (booking, holiday, maintenance)
 
 ## 2.4.1
 
