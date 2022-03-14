@@ -836,7 +836,7 @@ class BookingdefaultController extends BookingabstractController {
         $pIds = array();
         foreach ($packages as $p) {
             $pNames[] = $p["name"];
-            $pIds[] = $p["id_package"];
+            $pIds[] = $p["id"];
         }
 
         $use_packages = false;

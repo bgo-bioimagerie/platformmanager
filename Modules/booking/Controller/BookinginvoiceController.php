@@ -268,7 +268,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
             }
             $packages = $modelPackages->getByResource($id_space, $r["id"]);
             foreach ($packages as $p) {
-                $ids[] = $r["id"] . "_pk_" . $p["id_package"];
+                $ids[] = $r["id"] . "_pk_" . $p["id"];
                 $names[] = $r["name"] . " " . $p["name"];
             }
         }

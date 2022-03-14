@@ -59,7 +59,7 @@ class BkPackage extends Model {
     }
     
     public function getName($id_space, $id){
-        $sql = "SELECT name FROM bk_packages WHERE id_package=? AND deleted=0 AND id_space=?";
+        $sql = "SELECT name FROM bk_packages WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req ? $req[0] : null;
     }

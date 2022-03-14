@@ -478,7 +478,7 @@ class BookingInvoice extends InvoiceModel {
 
             $pricesPackages = array();
             for ($i = 0; $i < count($packages); $i++) {
-                $price = $modelPriceOwner->getPackagePrice($id_space, $packages[$i]["id"], $resource["id"], $id_client);
+                $price = $modelPriceOwner->getPackagePrice($id_space, $packages[$i]["id_package"], $resource["id"], $id_client);
                 if ($price >= 0) {
                     $packages[$i]["price"] = $price;
                 } else {
