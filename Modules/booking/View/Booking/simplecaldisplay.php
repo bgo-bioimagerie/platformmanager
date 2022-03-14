@@ -109,9 +109,14 @@ th {
 					<?php
 					$hcalEntry = null;
 					$lastHour = $day_begin;
-					$last_end = null;
+					$temp = explode("-", $calDays[$calDay]);
+					$last_end_time = mktime($day_begin,0,0,$temp[1], $temp[2], $temp[0]);
 					foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
+						
+						if($hcalEntry['start_time'] <= $last_end_time){
+							$last_end_time = $hcalEntry['end_time'];
+						}
 							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
 							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
@@ -127,9 +132,9 @@ th {
 						</div>
 					<?php } ?>
 					<?php
-						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_8-00_".$resId.$q;
+						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".date('H', $last_end_time)."-00_".$resId.$q;
 					?>
-						<div><a  data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"></a></div>
+						<div><a  data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"><small></a></div>
 					</td>
 				
 	<?php } ?>
