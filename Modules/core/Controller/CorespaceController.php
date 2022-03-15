@@ -99,9 +99,6 @@ class CorespaceController extends CoresecureController {
         }
         $spaceMenuItems = $this->spaceModel->getSpaceMenus($space["id"], $role);
 
-        $modelPending = new CorePendingAccount();
-        $isPending = $modelPending->isActuallyPending($id_space, $_SESSION['id_user']);
-
         $configModel = new CoreConfig();
         for ($i = 0; $i < count($spaceMenuItems); $i++) {
             $item = $spaceMenuItems[$i];
@@ -134,7 +131,6 @@ class CorespaceController extends CoresecureController {
         }
         return $this->render(array(
             "role" => $role,
-            "isPending" => $isPending,
             "isMemberOfSpace" => $isMemberOfSpace,
             "lang" => $lang,
             "id_space" => $id_space,
