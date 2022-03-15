@@ -325,7 +325,6 @@ class CoretilesController extends CorecookiesecureController {
             // User is not member of space
             $modelSpacePending = new CorePendingAccount();
             $isPending = $modelSpacePending->isActuallyPending($id_user, $id_space);
-
             if (!$isPending) {
                 // User hasn't already an unanswered request to join
                 $spaceModel = new CoreSpace();
