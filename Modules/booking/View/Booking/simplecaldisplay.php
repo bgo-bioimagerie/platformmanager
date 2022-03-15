@@ -122,7 +122,10 @@ th {
 							</a>
 						</div>
 					<?php } ?>
-
+					<?php
+						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".$day_begin."-00_".$resId.$q;
+					?>
+						<div><a data-status="free" aria-label="book " class="glyphicon glyphicon-plus" href="<?php echo $linkAdress ?>"><small></a></div>
 					</td>
 				
 	<?php } ?>

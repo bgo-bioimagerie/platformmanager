@@ -1,5 +1,9 @@
 # Changes
 
+## 2.4.3
+
+* [booking] simple cal view, add link for new booking at day begin
+
 ## 2.4.2
 
 * [booking] add to calendar a summary view option (#597)
