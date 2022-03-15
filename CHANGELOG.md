@@ -8,6 +8,7 @@
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
 * [core] add option to tables to view all elements
+* [booking] change booking compute (day/night/we/closed) and get details #565
 
 ## 2.4.1
 
