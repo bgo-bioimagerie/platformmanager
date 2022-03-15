@@ -81,6 +81,7 @@ class CorespaceController extends CoresecureController {
         $lang = $this->getLanguage();
         $role = 0;
         $showAdmMenu = false;
+        $isMemberOfSpace = false;
 
         if ($_SESSION['user_status'] > CoreStatus::$USER) {
             $showAdmMenu = true;
@@ -89,12 +90,17 @@ class CorespaceController extends CoresecureController {
             $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
             if ($role == -1) {
                 $role = CoreSpace::$VISITOR;
+            } else {
+                $isMemberOfSpace = true;
             }
             if ($role > CoreSpace::$MANAGER) {
                 $showAdmMenu = true;
             }
         }
         $spaceMenuItems = $this->spaceModel->getSpaceMenus($space["id"], $role);
+
+        $modelPending = new CorePendingAccount();
+        $isPending = $modelPending->isActuallyPending($id_space, $_SESSION['id_user']);
 
         $configModel = new CoreConfig();
         for ($i = 0; $i < count($spaceMenuItems); $i++) {
@@ -128,6 +134,8 @@ class CorespaceController extends CoresecureController {
         }
         return $this->render(array(
             "role" => $role,
+            "isPending" => $isPending,
+            "isMemberOfSpace" => $isMemberOfSpace,
             "lang" => $lang,
             "id_space" => $id_space,
             "space" => $space,
