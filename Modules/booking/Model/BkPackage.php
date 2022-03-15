@@ -59,7 +59,7 @@ class BkPackage extends Model {
     }
     
     public function getName($id_space, $id){
-        $sql = "SELECT name FROM bk_packages WHERE id_package=? AND deleted=0 AND id_space=?";
+        $sql = "SELECT name FROM bk_packages WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req ? $req[0] : null;
     }
@@ -133,6 +133,17 @@ class BkPackage extends Model {
             return $tmp[0];
         } else {
             return 0;
+        }
+    }
+
+    public function getByPackageID($id_space, $id_package, $id_resource) {
+        $sql = "SELECT * FROM bk_packages WHERE id_package=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $req = $this->runRequest($sql, array($id_package, $id_resource, $id_space));
+        if ($req->rowCount() == 1) {
+            $tmp = $req->fetch();
+            return $tmp;
+        } else {
+            return null;
         }
     }
 
