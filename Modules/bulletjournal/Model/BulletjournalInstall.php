@@ -42,7 +42,7 @@ class BulletjournalInstall extends Model {
         
         
         if (!file_exists('data/bulletjournal/')) {
-            mkdir('data/bulletjournal/', 0777, true);
+            mkdir('data/bulletjournal/', 0755, true);
         }
     }
 }

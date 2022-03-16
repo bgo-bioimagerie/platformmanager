@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tests/StatisticsBaseTest.php';
-
+require_once 'Modules/core/Model/CoreFiles.php';
 require_once 'Modules/statistics/Controller/StatisticsglobalController.php';
 require_once 'Modules/booking/Controller/BookingstatisticauthorizationsController.php';
 require_once 'Modules/booking/Controller/BookingstatisticsController.php';
@@ -28,6 +28,7 @@ class StatisticsTest extends StatisticsBaseTest {
         
         $ctx = $this->Context();
         $spaces = $ctx['spaces'];
+        $cf = new CoreFiles();
         foreach($spaces as $spaceName => $data) {
             $space = $this->space($spaceName);
             $user = $this->user($data['managers'][0]);
@@ -44,7 +45,9 @@ class StatisticsTest extends StatisticsBaseTest {
             ]);
             $c = new StatisticsglobalController($req, $space);
             $data = $c->runAction('statistics', 'index', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['file'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
             $req = $this->request([
                 "path" => "bookingstatisticauthorizations/".$space['id'],
@@ -54,7 +57,9 @@ class StatisticsTest extends StatisticsBaseTest {
             ]);
             $c = new BookingstatisticauthorizationsController($req, $space);
             $data = $c->runAction('statistics', 'index', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['file'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
 
             $re = new ReCategory();
@@ -66,7 +71,9 @@ class StatisticsTest extends StatisticsBaseTest {
 
             $c = new BookingstatisticauthorizationsController($req, $space);
             $data = $c->runAction('statistics', 'authorizedusersquery', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['file'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
 
             $req = $this->request([
@@ -78,7 +85,9 @@ class StatisticsTest extends StatisticsBaseTest {
 
             $c = new BookingstatisticsController($req, $space);
             $data = $c->runAction('statistics', 'statbookingusers', ['id_space' => $space['id']]);
-            $this->assertTrue($data != null && $data != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
             $req = $this->request([
                 "path" => "bookingreservationstats/".$space['id'],
@@ -90,7 +99,9 @@ class StatisticsTest extends StatisticsBaseTest {
             ]);
             $c = new BookingstatisticsController($req, $space);
             $data = $c->runAction('bookingstatistics', 'statreservations', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['file'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
             $req = $this->request([
                 "path" => "statquantities/".$space['id'],
@@ -100,7 +111,10 @@ class StatisticsTest extends StatisticsBaseTest {
             ]);
             $c = new BookingstatisticsController($req, $space);
             $data = $c->runAction('bookingstatistics', 'statquantities', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['stats'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            // if no quantities will be in error, so do not test
+            //$f = $cf->get($data['stats']['id']);
+            //$this->assertTrue($f['status'] == CoreFiles::$READY);
 
             $req = $this->request([
                 "path" => "bookingstatreservationresp/".$space['id'],
@@ -110,7 +124,9 @@ class StatisticsTest extends StatisticsBaseTest {
             ]);
             $c = new BookingstatisticsController($req, $space);
             $data = $c->runAction('bookingstatistics', 'statreservationresp', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['stats'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
 
             $req = $this->request([
@@ -122,7 +138,9 @@ class StatisticsTest extends StatisticsBaseTest {
 
             $c = new ServicesstatisticsprojectController($req, $space);
             $data = $c->runAction('statistics', 'index', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['file'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
 
             $req = $this->request([
@@ -131,7 +149,9 @@ class StatisticsTest extends StatisticsBaseTest {
 
             $c = new ServicesstatisticsprojectController($req, $space);
             $data = $c->runAction('statistics', 'samplesreturn', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['file'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
             $req = $this->request([
                 "path" => "servicesstatisticsmailresps/".$space['id'],
@@ -141,7 +161,9 @@ class StatisticsTest extends StatisticsBaseTest {
             ]);
             $c = new ServicesstatisticsprojectController($req, $space);
             $data = $c->runAction('services', 'mailresps', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['stats'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
 
             $req = $this->request([
@@ -152,7 +174,9 @@ class StatisticsTest extends StatisticsBaseTest {
             ]);
             $c = new ServicesstatisticsorderController($req, $space);
             $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
-            $this->assertTrue($data['data']['file'] != '');
+            $this->assertTrue($data['stats']['id'] > 0);
+            $f = $cf->get($data['stats']['id']);
+            $this->assertTrue($f['status'] == CoreFiles::$READY);
 
         break;
         }
