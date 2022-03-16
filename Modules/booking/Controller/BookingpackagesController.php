@@ -22,7 +22,6 @@ class BookingpackagesController extends BookingsettingsController {
      */
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
-
         $lang = $this->getLanguage();
 
         $modelResource = new ResourceInfo();
@@ -41,10 +40,13 @@ class BookingpackagesController extends BookingsettingsController {
         $packagesNames = array();
         $packagesDuration = array();
         foreach ($packages as $p) {
-            $packagesIds[] = $p["id_package"];
-            $packagesIdsRes[] = $p["id_resource"];
-            $packagesNames[] = $p["name"];
-            $packagesDuration[] = $p["duration"];
+            // Displays only packages with existing resources (packages with deleted resources won't display but still exist in database)
+            if (in_array($p['id_resource'], $choicesRid)) {
+                $packagesIdsRes[] = $p["id_resource"];    
+                $packagesIds[] = $p["id_package"];
+                $packagesNames[] = $p["name"];
+                $packagesDuration[] = $p["duration"];
+            }
         }
 
         $form = new Form($this->request, "packagesForm");
