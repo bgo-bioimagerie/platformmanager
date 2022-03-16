@@ -39,8 +39,8 @@ class BkScheduling extends Model {
         return array("id" => 0, "is_monday" => 1, "is_tuesday" => 1,
             "is_wednesday" => 1, "is_thursday" => 1, "is_friday" => 1,
             "is_saturday" => 0, "is_sunday" => 0, "day_begin" => 8,
-            "day_end" => 18, "size_bloc_resa" => 3600, "booking_time_scale" => 1,
-            "resa_time_setting" => 1, "default_color_id" => 1, "id_rearea" => 0);
+            "day_end" => 18, "size_bloc_resa" => 3600, "booking_time_scale" => 2,
+            "resa_time_setting" => 2, "default_color_id" => 1, "id_rearea" => 0);
     }
 
     
@@ -58,7 +58,7 @@ class BkScheduling extends Model {
         if($minutes == "") {
             $minutes = 0;
         }
-        $sql = "SELECT size_bloc_resa FROM bk_schedulings WHERE id=(SELECT id_area FROM re_info WHERE id=? AND deleted=0 AND id_space=? )";
+        $sql = "SELECT size_bloc_resa FROM bk_schedulings WHERE id_rearea=(SELECT id_area FROM re_info WHERE id=? AND deleted=0 AND id_space=? )";
         $req = $this->runRequest($sql, array($id_resource, $id_space));
         if ($req->rowCount() > 0){
             $d = $req->fetch();
@@ -229,6 +229,11 @@ class BkScheduling extends Model {
         $sql = "SELECT * from bk_schedulings WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_bkScheduling, $id_space));
         return ($req->rowCount() == 1);
+    }
+
+    public function getForSpace($id_space) {
+        $sql = "SELECT * from bk_schedulings WHERE id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
     /**

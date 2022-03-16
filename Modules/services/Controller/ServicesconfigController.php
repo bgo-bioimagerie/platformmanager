@@ -41,7 +41,7 @@ class ServicesconfigController extends CoresecureController {
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'services', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'services', 'plus');
+            $this->menusactivation($id_space, 'services', 'basket');
             return $this->redirect("servicesconfig/" . $id_space);
         }
 

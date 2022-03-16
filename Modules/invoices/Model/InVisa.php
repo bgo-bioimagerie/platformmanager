@@ -11,6 +11,10 @@ require_once 'Modules/core/Model/CoreUser.php';
  */
 class InVisa extends Model {
 
+    public function __construct() {
+        $this->tableName = "in_visa";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `in_visa` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -112,7 +116,6 @@ class InVisa extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE in_visa SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM in_visa WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

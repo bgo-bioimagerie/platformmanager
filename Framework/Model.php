@@ -74,7 +74,7 @@ abstract class Model {
 
         } catch (Exception $e) {
             $msg = $e->getMessage();
-            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine()]);
+            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
             if(Configuration::get('sentry_dsn', '')) {
                 \Sentry\captureException($e);
             }
@@ -374,35 +374,32 @@ abstract class Model {
         $this->runRequest($sql);
     }
 
-    public function admGetBy($tableName, $key, $value, $id_space=0) {
-        $sql = "SELECT * from $tableName WHERE $key=?";
+    public function admGetBy($key, $value, $id_space=0) {
+        $sql = "SELECT * from $this->tableName WHERE $key=?";
         $params = array($value);
         if ($id_space) {
             $sql .= " AND id_space=?";
             $params[] = $id_space;
-
         }
         return $this->runRequest($sql,$params)->fetch();
     }
 
-    public function admGetAll($tableName, $id_space=0) {
-        $sql = "SELECT * from $tableName";
+    public function admGetAll($id_space=0) {
+        $sql = "SELECT * from $this->tableName";
         $params = array();
         if ($id_space) {
             $sql .= " WHERE id_space=?";
             $params = [$id_space];
-
         }
         return $this->runRequest($sql, $params)->fetchAll();
     }
 
-    public function admCount($tableName, $id_space= 0) {
-        $sql = "SELECT count(*) as total from $tableName where deleted=0";
+    public function admCount($id_space=0) {
+        $sql = "SELECT count(*) as total from $this->tableName where deleted=0";
         $params = array();
         if ($id_space) {
             $sql .= " AND id_space=?";
             $params = [$id_space];
-
         }
         return $this->runRequest($sql, $params)->fetch();
     }

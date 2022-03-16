@@ -38,6 +38,7 @@ services:
       PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
       PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
       PFM_REDIS_HOST: redis
+      PFM_TIMEZONE: 'UTC'
     working_dir: /var/www/platformmanager
     entrypoint: ["/pfmextra-entrypoint.sh", "helpdesk"]
     volumes:
@@ -79,6 +80,7 @@ services:
       PFM_ADMIN_EMAIL: admin@pfm.org
       PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
       PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
+      PFM_TIMEZONE: 'UTC'
     depends_on:
         - mysql
         - pfm-rabbitmq
@@ -127,6 +129,7 @@ services:
       PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER}
       PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD}
       PFM_HELPDESK_IMAP_TLS:
+      PFM_TIMEZONE: 'UTC'
     depends_on:
         - mysql
         - pfm-rabbitmq

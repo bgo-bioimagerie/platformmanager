@@ -32,7 +32,6 @@ class ServicesInstall extends Model {
 
         $modelServiceType = new SeServiceType();
         $modelServiceType->createTable();
-        // $modelServiceType->createDefault();
 
         $modelSePurchase = new SePurchase();
         $modelSePurchase->createTable();

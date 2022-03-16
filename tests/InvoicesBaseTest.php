@@ -103,9 +103,10 @@ class InvoicesBaseTest extends BaseTest {
     }
 
     protected function doInvoice($space, $user, $client){
+        $nb_invoices = 0;
         Configuration::getLogger()->debug('generate invoices', ['user' => $user, 'space' => $space]);
         $this->asUser($user['login'], $space['id']);
-        $dateStart = new DateTime('first day of this month');
+        $dateStart = new DateTime('first day of last month');
         $dateEnd = new DateTime('last day of next month');
         $req = $this->request([
             "path" => "bookinginvoice/".$space['id'],
@@ -115,9 +116,11 @@ class InvoicesBaseTest extends BaseTest {
             "id_resp" => $client['id']
         ]);
         $c = new BookinginvoiceController($req, $space);
-        $data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
-        $invoice_id = $data['invoice']["id"];
-        $this->assertTrue($invoice_id > 0);
+        $c->runAction('booking', 'index', ['id_space' => $space['id']]);
+        $list = $this->listInvoices($space);
+        $this->assertTrue(count($list) > $nb_invoices);
+        $nb_invoices++;
+        $booking_invoice_id = $list[0]['id'];
 
 
         // invoice order
@@ -129,9 +132,10 @@ class InvoicesBaseTest extends BaseTest {
             "id_client" => $client['id']
         ]);
         $c = new ServicesinvoiceorderController($req, $space);
-        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
-        $service_invoice_id = $data['invoice']["id"];
-        $this->assertTrue($service_invoice_id > 0);
+        $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $list = $this->listInvoices($space);
+        $this->assertTrue(count($list) > $nb_invoices);
+        $nb_invoices++;
 
 
         // invoice service
@@ -143,9 +147,12 @@ class InvoicesBaseTest extends BaseTest {
             "id_resp" => $client['id']
         ]);
         $c = new ServicesinvoiceprojectController($req, $space);
-        $data = $c->runAction('services', 'index', ['id_space' => $space['id']]);
-        $service_invoice_id = $data['invoice']["id"];
-        $this->assertTrue($service_invoice_id > 0);
+        $c->runAction('services', 'index', ['id_space' => $space['id']]);
+        $list = $this->listInvoices($space);
+        $this->assertTrue(count($list) > $nb_invoices);
+        $nb_invoices++;
+        $service_invoice_id = $list[0]['id'];
+
         $req = $this->request([
             "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
         ]);
@@ -182,14 +189,14 @@ class InvoicesBaseTest extends BaseTest {
 
 
         $req = $this->request([
-            "path" => "bookinginvoiceedit/".$space['id'].'/'.$invoice_id.'/1'
+            "path" => "bookinginvoiceedit/".$space['id'].'/'.$booking_invoice_id.'/1'
         ]);
         // try generate pdf
         $c = new BookinginvoiceController($req, $space);
-        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 1]);
+        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $booking_invoice_id, 'pdf' => 1]);
 
         // with details
-        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $invoice_id, 'pdf' => 2]);
+        $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id_invoice' => $booking_invoice_id, 'pdf' => 2]);
 
         $req = $this->request([
             "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Organe extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_organes";
+    }
+
     /**
      * Create the organe table
      * 

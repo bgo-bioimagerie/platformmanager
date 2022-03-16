@@ -3,7 +3,7 @@
 require_once 'Framework/Model.php';
 
 /**
- * Class defining the Area model
+ * @deprecated unused
  *
  * @author Sylvain Prigent
  */
@@ -37,11 +37,10 @@ class BjCollection extends Model {
         if ($this->exists($id_space, $id)) {
             $sql = "UPDATE bj_collections SET name=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($name, $id, $id_space));
-            return $id;
         } else {
             $sql = "INSERT INTO bj_collections (id_space, name) VALUES (?,?)";
             $this->runRequest($sql, array($id_space, $name));
-            return $this->getDatabase()->lastInsertId();
+            $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }

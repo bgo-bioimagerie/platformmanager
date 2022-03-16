@@ -13,14 +13,12 @@ require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SePrice.php';
-//require_once 'Modules/services/Model/SeStats.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
 
-// require_once 'externals/PHPExcel/Classes/PHPExcel.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
 
@@ -33,7 +31,6 @@ class ServicesstatisticsorderController extends ServicesController {
      */
     public function __construct(Request $request, ?array $space=null) {
         parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
 
     }

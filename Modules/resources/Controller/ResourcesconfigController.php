@@ -41,7 +41,7 @@ class ResourcesconfigController extends CoresecureController {
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'resources', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'resources', 'registration-mark');
+            $this->menusactivation($id_space, 'resources', 'truck');
             return $this->redirect("resourcesconfig/".$id_space);
         }
 

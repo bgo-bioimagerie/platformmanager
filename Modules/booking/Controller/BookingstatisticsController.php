@@ -218,13 +218,6 @@ class BookingstatisticsController extends StatisticsController {
         $graphArray = $modelGraph->getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
         $graphTimeArray = $modelGraph->getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
 
-        // $modelResource = new ResourceInfo();
-        // $resources = $modelResource->getForSpace($id_space);
-        // $resourcesNumber = count($resources);
-
-        // $modelResourceC = new ReCategory();
-        // $resourcesCategory = $modelResourceC->getBySpace($id_space);
-        // $resourcesCategoryNumber = count($resourcesCategory);
         // render data
         $camembertCount = $modelGraph->getCamembertArray($id_space, $month_start, $year_start, $month_end, $year_end);
         $camembertTimeCount = $modelGraph->getCamembertTimeArray($id_space, $month_start, $year_start, $month_end, $year_end);

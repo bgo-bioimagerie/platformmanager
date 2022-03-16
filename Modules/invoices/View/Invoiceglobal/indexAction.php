@@ -3,14 +3,14 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-table">
+<div class="pm-table row">
     <h3><?php echo InvoicesTranslator::NewInvoice($lang) ?> </h3>
     
-    <div class="col-md-10">
+    <div class="col-12">
         <?php echo $formAll ?>
     </div>
 
-    <div class="col-md-10">
+    <div class="col-12">
         <?php echo $formByPeriod ?>
     </div>
 

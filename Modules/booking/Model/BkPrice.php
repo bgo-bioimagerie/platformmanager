@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkPrice extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_prices";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_prices` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,

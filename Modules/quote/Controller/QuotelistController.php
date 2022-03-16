@@ -415,6 +415,7 @@ class QuotelistController extends QuoteController {
 
         $details = "";
         $invoiceInfo["title"] = "";
+        $invoiceInfo["module"] = QuoteTranslator::quote($lang);
         $number = "";
         $unit = "";
 
@@ -443,7 +444,7 @@ class QuotelistController extends QuoteController {
                 'total' => $total,
                 'useTTC' => $useTTC,
                 'details' => $details,
-                'clientsInfos' => null,
+                'clientInfos' => null,
                 'invoiceInfo' => $invoiceInfo,
                 'isquote' => $isquote
             ]);
@@ -453,7 +454,6 @@ class QuotelistController extends QuoteController {
 
 
         // convert in PDF
-        // require_once('externals/html2pdf/vendor/autoload.php');
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             //$html2pdf->setModeDebug();

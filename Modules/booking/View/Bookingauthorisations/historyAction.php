@@ -5,6 +5,7 @@
 
 <div class="pm-table">
     
+    <?php echo $formHtml ?>
     <?php echo $tableHtml ?>
     
 </div>

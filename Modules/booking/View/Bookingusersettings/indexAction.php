@@ -3,9 +3,9 @@
     
 <?php startblock('content') ?>
 
-<div class="col-xs-12 col-md-12">
+<div class="col-12 col-12">
     
-    <div class="col-xs-12 col-md-10 col-md-offset-1" style="background-color: #fff; border-radius: 7px; padding: 7px;">
+    <div class="col-12 col-10 offset-1" style="background-color: #fff; border-radius: 7px; padding: 7px;">
         <?php echo $form ?>
     </div>
     

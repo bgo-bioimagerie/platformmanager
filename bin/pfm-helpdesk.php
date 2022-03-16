@@ -37,11 +37,19 @@ function isReply($mail, $headersDetailed) {
         }
     }
     if(!$isReply) {
-        $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? $headersDetailed["X-GND-Status"] == "BOUNCE" : false;
+        $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? str_starts_with($headersDetailed["X-GND-Status"][0], "BOUNCE") : false;
         if($isReply) {
             Configuration::getLogger()->debug('[helpdesk] bounce');
         }
     }
+
+    if(!$isReply) {
+        $isReply = array_key_exists("Auto-Submitted", $headersDetailed) ? str_starts_with($headersDetailed["Auto-Submitted"][0], "auto-replied") : false;
+        if($isReply) {
+            Configuration::getLogger()->debug('[helpdesk] auto-reply');
+        }
+    }
+
     Configuration::getLogger()->debug('[helpdesk] is reply?', [
         'headers' => $headersDetailed,
         'subject' => $mail->subject,
@@ -182,7 +190,7 @@ Configuration::getLogger()->debug('Connecting...', ['url' => $inbox.':'.$port.'/
 
 while(true) {
     try {
-    $mbox = imap_open('{'.$inbox.':'.$port.'/pop3'.$tls.'}', $login, $password);
+        $mbox = imap_open('{'.$inbox.':'.$port.'/pop3'.$tls.'}', $login, $password);
     } catch(Throwable $err) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
         if(Configuration::get('sentry_dsn', '')) {
@@ -207,6 +215,7 @@ while(true) {
         }
     }
 
+    $isClosed = false;
     if (FALSE === $mails) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
     } else {
@@ -216,6 +225,10 @@ while(true) {
             $sp = new CoreSpace();
             $spaces = $sp->getSpaces('id');
             if(!$spaces) {
+                Configuration::getLogger()->debug('No space defined, waiting....');
+                if($mbox) {
+                    imap_close($mbox);
+                }
                 sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
                 continue;
             }
@@ -316,6 +329,7 @@ while(true) {
                 $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
             imap_close($mbox, CL_EXPUNGE);
+            $isClosed = true;
 
             $hm = new Helpdesk();
             $hm->remind();
@@ -324,6 +338,14 @@ while(true) {
             Configuration::getLogger()->error('[helpdesk] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }
 
+    }
+    if(!$isClosed) {
+        Configuration::getLogger()->debug('Closing connexion');
+        try {
+            imap_close($mbox);
+        } catch(Throwable $e) {
+            Configuration::getLogger()->debug('Close error', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+        }
     }
     sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
 

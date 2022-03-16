@@ -21,8 +21,10 @@ plans:
     id: 1
     features:
       - Grafana statistics interactive dashboards
+      - Document visibility scopes
     flags:
       - grafana
+      - documents
   - name: silver
     color: silver
     id: 2

@@ -3,7 +3,7 @@
 require_once 'Framework/Model.php';
 
 /**
- * Class defining the Area model
+ * @deprecated unused
  *
  * @author Sylvain Prigent
  */

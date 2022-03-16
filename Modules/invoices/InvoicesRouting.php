@@ -3,6 +3,10 @@
 require_once 'Framework/Routing.php';
 
 class InvoicesRouting extends Routing{
+
+    public function routes($router) {
+        $router->map('GET', '/invoices/[i:id_space]/[i:id_invoice]/details', 'invoices/invoiceglobal/details', 'invoices_details');
+    }
     
     public function listRoutes(){
         

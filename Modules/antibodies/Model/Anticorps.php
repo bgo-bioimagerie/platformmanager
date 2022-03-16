@@ -16,6 +16,10 @@ require_once 'Modules/antibodies/Model/AcApplication.php';
  */
 class Anticorps extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_anticorps";
+    }
+
     /**
      * Create the unit table
      * 

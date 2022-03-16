@@ -1,5 +1,8 @@
 <?php
 
+require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/services/Model/ServicesTranslator.php';
+
 /**
  * Class to translate the syggrif views
  * 
@@ -250,9 +253,9 @@ class InvoicesTranslator {
 
     public static function Invoice_Responsible($lang = "") {
         if ($lang == "fr") {
-            return "Facturer un responsable";
+            return "Facturer un client";
         }
-        return "Invoice a person in charge";
+        return "Invoice a client";
     }
 
     public static function PDFTemplate($lang = "") {
@@ -428,6 +431,19 @@ class InvoicesTranslator {
             return 'Attention, il faut définir un template dans la configuration';
         }
         return 'Warning: no template defined in configuration';
+    }
+
+    public static function Module($module, $lang){
+        switch ($module) {
+            case 'booking':
+                return BookingTranslator::MAD($lang);
+            case 'services':
+                return ServicesTranslator::services($lang);
+            case 'invoices':
+                return '';
+            default:
+                return $module;
+        }
     }
 
 }

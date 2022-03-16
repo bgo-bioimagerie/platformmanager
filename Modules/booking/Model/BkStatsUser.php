@@ -347,7 +347,7 @@ class BkStatsUser extends Model {
 
         // get resource category
         $modelResource = new ReCategory();
-        $resourceInfo = $modelResource->getName($id_space, $resource_id); // ->getResourcesCategory($resource_id);
+        $resourceInfo = $modelResource->getName($id_space, $resource_id);
         if(!$resourceInfo) {
             throw new PfmParamException('resource not found');
         }
