@@ -2,6 +2,8 @@
 
 ## 2.5.0
 
+* [packages] can't add a resource to a package in which it is already included 
+* [packages] can delete packages elements individually
 * [core] hide space unsubscribe button if user is pending or not member of space
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
