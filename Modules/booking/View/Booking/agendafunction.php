@@ -38,37 +38,38 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 
 	$html .= '</div>';
 
-    $dayactive = $kind == 'day' ? 'active':'';
-    $dayareaactive = $kind == 'dayarea' ? 'active':'';
-    $weekactive = $kind == 'week' ? 'active':'';
-    $weekareaactive = $kind == 'weekarea' ? 'active':'';
-    $monthactive = $kind == 'month' ? 'active':'';
+    $dayselected = $kind == 'day' ? 'selected':'';
+    $dayareaselected = $kind == 'dayarea' ? 'selected':'';
+    $weekselected = $kind == 'week' ? 'selected':'';
+    $weekareaselected = $kind == 'weekarea' ? 'actselectedive':'';
+    $monthselected = $kind == 'month' ? 'selected':'';
 
     $html .= '<script>function switchView(view) {
         let url = "'.$reload.'" + "&view="+view; 
         window.location.href=url;
     }</script>';
 
-	$html .= '<div class="col-12 col-md-4 text-right">
-		<div class="btn-group" role="group">';
-	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
-	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
-	$html .='			<a aria-label="go to week view" style="color:#333;" href="bookingweek/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$weekactive.'" type="button">'.BookingTranslator::Week($lang).'</button></a>';
-	$html .='			<a aria-label="go to week area view" style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
-	$html .='			<a aria-label="go to month view" style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-outline-dark '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
-    $html .='        </div>
-        </div>';
+    $html .= '<div class="col-12 col-md-3 text-right">';
+    $html .= '<select id="selectview" class="form-select" onchange="location.href=this.value">';
+    $html .='			<option aria-label="go to day view" value="bookingday/'.$id_space.$qc.'" '.$dayselected.'>'.BookingTranslator::Day($lang).'</option>';
+	$html .= '			<option aria-label="go to day area view" value="bookingdayarea/'.$id_space.$qc.'" '.$dayareaselected.'>'.BookingTranslator::Day_Area($lang).'</option>';
+	$html .='			<option aria-label="go to week view" value="bookingweek/'.$id_space.$qc.'" '.$weekselected.' >'.BookingTranslator::Week($lang).'</option>';
+	$html .='			<option aria-label="go to week area view" value="bookingweekarea/'.$id_space.$qc.'" '.$weekareaselected.'>'.BookingTranslator::Week_Area($lang).'</option>';
+	$html .='			<option aria-label="go to month view" value="bookingmonth/'.$id_space.$qc.'" '.$monthselected.'>'.BookingTranslator::Month($lang).'</option>';
+    $html .= '</select>';
+    $html .= '</div>';
 
-        if($kind != 'month') {
-            $html .='<div class="col-12 col-md-1 text-right">';
-            $html .= '           <select onchange="switchView(this.options[this.selectedIndex].value)" class="form-select" aria-label="simple/detailed view" >';
-            $simpleSelected = $detailedView ? '' : 'selected';
-            $detailedSelected = $detailedView ? 'selected' : '';
-            $html .= '              <option '.$simpleSelected.' value="simple">'.BookingTranslator::SimpleView($lang).'</option>';
-            $html .= '              <option '.$detailedSelected.' value="detailed">'.BookingTranslator::DetailedView($lang).'</option>';
-            $html .= '           </select>';
-            $html .= '</div>';
-        }
+
+    if($kind != 'month') {
+        $html .='<div class="col-12 col-md-2 text-right">';
+        $html .= '           <select onchange="switchView(this.options[this.selectedIndex].value)" class="form-select" aria-label="simple/detailed view" >';
+        $simpleSelected = $detailedView ? '' : 'selected';
+        $detailedSelected = $detailedView ? 'selected' : '';
+        $html .= '              <option '.$simpleSelected.' value="simple">'.BookingTranslator::SimpleView($lang).'</option>';
+        $html .= '              <option '.$detailedSelected.' value="detailed">'.BookingTranslator::DetailedView($lang).'</option>';
+        $html .= '           </select>';
+        $html .= '</div>';
+    }
 
     $html .='
     </div>';

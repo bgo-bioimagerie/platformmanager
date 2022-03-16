@@ -13,6 +13,7 @@ require_once 'Modules/invoices/Model/GlobalInvoice.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 require_once 'Modules/booking/Model/BkPrice.php';
 require_once 'Modules/booking/Model/BkOwnerPrice.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ResourcesTranslator.php';
@@ -116,6 +117,84 @@ class InvoiceglobalController extends InvoiceAbstractController {
             "invoiceitem" => $invoiceitem,
             "validateURL" => $validateURL
         ));
+    }
+
+    public function detailsAction($id_space, $id_invoice) {
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelInvoice = new InInvoice();
+        $invoice = $modelInvoice->get($id_space, $id_invoice);
+        if(!$invoice) {
+            throw new PfmParamException('invoice not found');
+        }
+        $modelItem = new InInvoiceItem();
+        $invoiceitem = $modelItem->getForInvoice($id_space, $id_invoice);
+        $details = json_decode($invoiceitem['content'], true);
+
+        $mres = new ResourceInfo();
+        $musers = new CoreSpace();
+        $resources = $mres->getForSpace($id_space);
+        $rmap = [];
+        foreach ($resources as $r) {
+            $rmap[$r['id']] = $r['name'];
+        }
+        $users= $musers->getUsers($id_space);
+        $umap = [];
+        foreach ($users as $u) {
+            $umap[$u['id']] = $u['firstname'].' '.$u['name'];
+        }
+
+        $data = [];
+        $others = [];
+
+        foreach ($details as $detail) {
+            $module = $detail['module'];
+            if ($module == 'booking' && array_key_exists('details', $detail['data'])) {
+                foreach ($detail['data']['details'] as $d) {
+                    $data[] = [
+                        'module' => $module,
+                        'id' => $d['id'],
+                        'start_time' => date('Y-m-d h-i', $d['start_time']),
+                        'end_time' => date('Y-m-d h-i', $d['end_time']),
+                        'day' => $d['nb_hours_day'],
+                        'night' => $d['nb_hours_night'],
+                        'we' => $d['nb_hours_we'],
+                        'url' => 'bookingeditreservation/'.$id_space.'/r_'.$d['id'],
+                        'user' => $umap[$d['user']] ?? '',
+                        'resource' => $rmap[$d['resource']] ?? ''
+                    ];
+                }
+            } else {
+                foreach($detail['data']['count'] as $d) {
+                    $others[] = [
+                        'module' => $module,
+                        'id' => $d['id'] ?? '',
+                        'quantity' => $d['quantity'],
+                        'resource' => $d['label']
+                    ];
+                }
+
+            }
+        }
+
+        $table = new TableView('bookingDetails');
+        $table->setTitle("Bookings - " . $invoice['number'], 3);
+        $table->addDownloadButton('url');
+        $headers = array("module" => "Module", "id" => "Id", "resource" => "Resource", "user" => "User", "start_time" => "Start", "end_time" => "End", "day" => "Day/H", "night" => "Night/H", "we" => "We/H");
+        $tableHtml = '';
+        if(!empty($data)) {
+            $tableHtml = $table->view($data, $headers);
+        }
+
+        $table2 = new TableView('otherDetails');
+        $table2->setTitle("Others - " . $invoice['number'], 3);
+        $headers2 = array("module" => "Module", "id" => "Id", "resource" => "Resource", "quantity" => "Quantity");
+        $tableHtml2 = $table2->view($others, $headers2);
+
+        $this->render(['lang' => $lang, 'id_space' => $id_space, 'table' => $tableHtml, 'table2' => $tableHtml2, 'invoice' => $invoice, 'data' => ['invoicedetails' => $details]]);
+
+
     }
 
     public function pdfAction($id_space, $id_invoice, $details = 0) {

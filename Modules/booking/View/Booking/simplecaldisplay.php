@@ -106,9 +106,18 @@ th {
 					$style = '';
 				?>
 					<td>
-					<?php foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
+					<?php
+					$hcalEntry = null;
+					$lastHour = $day_begin;
+					$temp = explode("-", $calDays[$calDay]);
+					$last_end_time = mktime($day_begin,0,0,$temp[1], $temp[2], $temp[0]);
+					foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
-							$text = '#'.$hcalEntry['id'].' '.date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']);
+						
+						if($hcalEntry['start_time'] <= $last_end_time){
+							$last_end_time = $hcalEntry['end_time'];
+						}
+							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
 							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
 							if($extra) {
@@ -117,12 +126,15 @@ th {
 							$hcalEntry['text'] = $text;
 							$hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
 						?>
-						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
+						<div class="text-center tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
 						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
 							</a>
 						</div>
 					<?php } ?>
-
+					<?php
+						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".date('H-i', $last_end_time)."_".$resId.$q;
+					?>
+						<div><a  data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"><small></a></div>
 					</td>
 				
 	<?php } ?>

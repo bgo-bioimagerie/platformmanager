@@ -71,7 +71,7 @@ class BookingnightweController extends BookingsettingsController {
         );
         $tableHtml = $table->view($pricingArray, $tableContent);
         
-        $this->render(array("id_space" => $id_space, "lang" => $lang, 'tableHtml' => $tableHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, 'tableHtml' => $tableHtml, 'data' => ['pricings' => $pricingArray]));
     }
     
     public function editAction($id_space, $id){

@@ -262,7 +262,7 @@ class ServicesInvoice extends InvoiceModel {
         $ordersServices = $ordersContent['services'];
         foreach($ordersServices as $orderService) {
             $name = $ssm->getName($id_space, $orderService['id']);
-            $content["count"][] = array("label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice']);
+            $content["count"][] = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice']);
         }
 
         // close orders
@@ -281,7 +281,7 @@ class ServicesInvoice extends InvoiceModel {
         $projectServices = $projectsContent['services'];
         foreach($projectServices as $projectService){
             $name = $ssm->getName($id_space, $projectService['id']);
-            $content["count"][] = array("label" => $name, "quantity" => $projectService['quantity'], "unitprice" => $projectService['unitprice']);
+            $content["count"][] = array("id" => $projectService['id'], "label" => $name, "quantity" => $projectService['quantity'], "unitprice" => $projectService['unitprice']);
             $modelProject->setServiceInvoice($id_space, $projectService["id"], $id_invoice);
         }
 

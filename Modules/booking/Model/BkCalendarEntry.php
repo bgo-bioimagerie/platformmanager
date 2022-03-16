@@ -5,7 +5,10 @@ require_once 'Framework/Events.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/booking/Model/BkScheduling.php';
+require_once 'Modules/booking/Model/BkNightWE.php';
 
 /**
  * Class defining the GRR area model
@@ -538,10 +541,10 @@ class BkCalendarEntry extends Model {
                 $data[$i]["phone"] = "";
             }
             if(!$data[$i]["color_bg"]) {
-                $data[$i]["color_bg"] = "aaaaaa";
+                $data[$i]["color_bg"] = "#aaaaaa";
             }
             if(!$data[$i]["color_text"]) {
-                $data[$i]["color_text"] = "000000";
+                $data[$i]["color_text"] = "#000000";
             }
         }
 
@@ -919,6 +922,159 @@ class BkCalendarEntry extends Model {
         $sql = "SELECT * FROM bk_calendar_entry WHERE reason>0 AND id_space=? AND deleted=0 ORDER BY start_time DESC";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
+    }
+
+    public function computeDuration($id_space, $booking) {
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $id_resource = $booking['resource_id'];
+        $id_client = $booking['responsible_id'];
+        $start_time = $booking['start_time'];
+        $end_time = $booking['end_time'];
+        $bkScheduling = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $day_begin = $bkScheduling['day_begin'];
+        $day_end = $bkScheduling['day_end'];
+
+        $modelClient = new ClCLient();
+        $LABpricingid = $modelClient->getPricingID($id_space, $id_client);
+        $pricingModel = new BkNightWE();
+        $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
+        if(!$pricingInfo) {
+            throw new PfmException('no pricing found for client '.$id_client);
+        }
+
+        $night_begin = $pricingInfo['night_start'];
+        $night_end = $pricingInfo['night_end'];
+        $we_array = explode(",", $pricingInfo['choice_we']);
+        $night_rate = $pricingInfo['tarif_night'] == 1 ? true : false;
+        $we_rate = $pricingInfo['tarif_we'] == 1 ? true : false;
+        
+        $searchDate_start = $start_time;
+        $searchDate_end = $end_time;
+
+        $booking_time_scale = 2;
+        $resa_block_size = 3600;
+        switch ($booking_time_scale) {
+            case '1':
+                $gap = $resa_block_size;
+                break;
+            case '2':
+                $gap = 3600;
+                break;
+            case '3':
+                $gap = 3600 * 24;
+                break;
+            default:
+                $gap = 3600;
+                break;
+        }
+
+        $gaps = [];
+        $gapDuration = 0;
+        $timeStep = $searchDate_start;
+        $kind = null;
+
+        while ($timeStep < $searchDate_end) {
+            $is_open = true; // is open ? (is_monday etc...)
+            $d = strtolower(date('l', $timeStep));
+            if(!array_key_exists('is_'.$d, $bkScheduling) || !$bkScheduling['is_'.$d]) {
+                $is_open = false;
+            }
+            if(date('G', $timeStep) >= $day_end || date('G', $timeStep) < $day_begin || !$is_open) { // after day end continue till open
+                if($kind && $kind!="closed") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'closed';
+            } else if($we_rate && $we_array[date('N', $timeStep)-1] == 1) {
+                // weekend
+                if($kind && $kind != "we") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'we';
+            } else if($night_rate && (date('G', $timeStep) < $night_end || date('G', $timeStep) >= $night_begin)) {
+                if($kind && $kind != "night") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'night';
+            } else {
+                if($kind && $kind != 'day') {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                }
+                    $gapDuration += $gap;
+                
+                $kind = 'day';
+            }
+
+            $timeStep += $gap;
+        }
+        if($gapDuration > 0) {
+            $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+        }
+
+        $total_duration = 0;
+        $nb_day = 0;
+        $nb_night = 0;
+        $nb_we = 0;
+        $nb_closed = 0;
+        foreach ($gaps as $gap) {
+            if($gap['kind'] == 'closed') {
+                $nb_closed += $gap['duration'];
+                continue;
+            }
+            $total_duration += $gap['duration'];
+            switch ($gap['kind']) {
+                case 'day':
+                    $nb_day += $gap['duration'];
+                    break;
+                case 'night':
+                    $nb_night += $gap['duration'];
+                    break;
+                case 'we':
+                    $nb_we += $gap['duration'];
+                    break;
+                default:
+                    Configuration::getLogger()->error('[compute] unknown kind', ['kind' => $gap['kind']]);
+            }
+        }
+
+        $nb_hours_closed = round($nb_closed / 3600, 1);
+        $nb_hours_day = round($nb_day / 3600, 1);
+        $nb_hours_night = round($nb_night / 3600, 1);
+        $nb_hours_we = round($nb_we / 3600, 1);
+        $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
+        $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
+        $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
+        $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+
+        $result = [
+            'total' => $total_duration,
+            'steps' => $gaps,
+            'hours' => [
+                'nb_hours_closed' => $nb_hours_closed,
+                'nb_hours_day' => $nb_hours_day,
+                'nb_hours_night' => $nb_hours_night,
+                'nb_hours_we' => $nb_hours_we,
+                'ratio_bookings_day' => $ratio_bookings_day,
+                'ratio_bookings_night' => $ratio_bookings_night,
+                'ratio_bookings_we' => $ratio_bookings_we
+            ]
+        ];
+        Configuration::getLogger()->debug('[booking] compute_duration', $result);
+        return $result;
     }
 
 }
