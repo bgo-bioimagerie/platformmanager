@@ -204,16 +204,16 @@ class BkPackage extends Model {
         $this->runRequest($sql, array($id_package, $id_pricing, $price, $id_space));
     }
 
-    public function removeUnlistedPackages($id_space, $packageID) {
-
+    public function removeUnlistedPackages($id_space, $ids, $idIsPackage=false) {
+        $id_column = $idIsPackage ? "id_package" : "id";
         $sql = "SELECT id, id_package FROM bk_packages WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_space));
         $databasePackages = $req->fetchAll();
 
         foreach ($databasePackages as $dbPackage) {
             $found = false;
-            foreach ($packageID as $pid) {
-                if ($dbPackage["id_package"] == $pid) {
+            foreach ($ids as $pid) {
+                if ($dbPackage[$id_column] == $pid) {
                     $found = true;
                     break;
                 }

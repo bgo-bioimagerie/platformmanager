@@ -91,7 +91,8 @@ class BookingpackagesController extends BookingsettingsController {
             foreach ($packageID as $id) {
                 if($id && !in_array($id, $packagesIds)) {
                     Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id]);
-                    throw new PfmAuthException('access denied for this resource', 403);                }
+                    throw new PfmAuthException('access denied for this resource', 403);
+                }
             }
 
 
@@ -153,8 +154,15 @@ class BookingpackagesController extends BookingsettingsController {
                 }
             }
             */
-   
-            $modelPackages->removeUnlistedPackages($id_space, $packageID);
+            //  get all ids from id_packages
+            // TODO: to test with deleted resources
+            $id_packages = [];
+            for ($i=0; $i<count($packageID); $i++) {
+                array_push($id_packages, $modelPackages->getByPackageID($id_space, $packageID[$i], $packageResource[$i])['id']);
+            }
+
+            // $modelPackages->removeUnlistedPackages($id_space, $packageID);
+            $modelPackages->removeUnlistedPackages($id_space, $id_packages, false);
             $_SESSION["flash"] = BookingTranslator::Packages_saved($lang);
             $_SESSION["flashClass"] = 'success';
             $this->redirect("bookingpackages/".$id_space);
