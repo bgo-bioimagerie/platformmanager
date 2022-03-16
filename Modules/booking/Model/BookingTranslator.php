@@ -730,6 +730,13 @@ class BookingTranslator {
         return "Packages have been saved";
     }
 
+    public static function Package_resource_exists($packageName, $resourceName, $lang) {
+        if ($lang == "fr") {
+            return "Le forfait " . $packageName . " contient déjà la ressource " . $resourceName;
+        }
+        return "Resource " . $resourceName . " already in package " . $packageName;
+    }
+
     public static function Is_mandatory($lang) {
         if ($lang == "fr") {
             return "Champ obligatoire";

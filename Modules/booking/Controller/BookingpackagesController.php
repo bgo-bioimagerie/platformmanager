@@ -102,6 +102,8 @@ class BookingpackagesController extends BookingsettingsController {
                    $packs[$packageName[$p]] = $packageID[$p];
                 }
             }
+
+            $couplePackageResourceExists = false;
             for ($p = 0; $p < count($packageID); $p++) {
                 if($packageName[$p] == "") {
                     continue;
@@ -110,6 +112,12 @@ class BookingpackagesController extends BookingsettingsController {
                     // If package id not set, use from known packages
                     if(isset($packs[$packageName[$p]])) {
                         $packageID[$p] = $packs[$packageName[$p]];
+                        if ($this->couplePackageResourceExists($packageID[$p],$packageResource[$p], $id_space)) {
+                            $couplePackageResourceExists = [
+                                "resource" => $modelResource->get($id_space, $packageResource[$p])['name'],
+                                "package" => $packageName[$p]
+                            ];
+                        }
                     } else {
                         // Or create a new package
                        $cvm = new CoreVirtual();
@@ -163,8 +171,18 @@ class BookingpackagesController extends BookingsettingsController {
 
             // $modelPackages->removeUnlistedPackages($id_space, $packageID);
             $modelPackages->removeUnlistedPackages($id_space, $id_packages, false);
-            $_SESSION["flash"] = BookingTranslator::Packages_saved($lang);
-            $_SESSION["flashClass"] = 'success';
+            if ($couplePackageResourceExists) {
+                $_SESSION["flash"] = BookingTranslator::Package_resource_exists(
+                    $couplePackageResourceExists["package"],
+                    $couplePackageResourceExists["resource"],
+                    $lang
+                );
+                $_SESSION["flashClass"] = 'danger';
+            } else {
+                $_SESSION["flash"] = BookingTranslator::Packages_saved($lang);
+                $_SESSION["flashClass"] = 'success';
+            }
+            
             $this->redirect("bookingpackages/".$id_space);
             return;
         }
@@ -175,6 +193,17 @@ class BookingpackagesController extends BookingsettingsController {
             "lang" => $lang,
             'formHtml' => $formHtml
         ));
+    }
+
+    protected function couplePackageResourceExists($id_package, $id_resource, $id_space) {
+        $modelPackage = new BkPackage();
+        $dbPackages = $modelPackage->getByResource($id_space, $id_resource);
+        foreach ($dbPackages as $dbPackage) {
+            if ($dbPackage['id_package'] == $id_package) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
